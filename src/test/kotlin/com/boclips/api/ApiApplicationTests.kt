@@ -38,12 +38,12 @@ class ApiApplicationTests : AbstractIntegrationTest() {
     }
 
     @Test
-    fun deleteProvider_deletesVideosFromPlaylistsByProvider() {
+    fun deleteProvider_deletesVideosFromPlaylistsByProviderReturningRecordsDeleted() {
         webClient.delete().uri("/content-providers/SNTV").exchange()
                 .expectStatus().is2xxSuccessful
                 .expectBody()
                 .jsonPath("$.success").isEqualTo(true)
-                .jsonPath("$.videosRemoved").isEqualTo(1)
+                .jsonPath("$.playlistEntriesRemoved").isEqualTo(1)
 
 
         val videos = mongoTemplate.findAll(Document::class.java, "videodescriptors")
@@ -56,7 +56,7 @@ class ApiApplicationTests : AbstractIntegrationTest() {
                 .expectStatus().is2xxSuccessful
                 .expectBody()
                 .jsonPath("$.success").isEqualTo(true)
-                .jsonPath("$.videosRemoved").isEqualTo(1)
+                .jsonPath("$.orderlinesEntriesRemoved").isEqualTo(1)
 
 
         val videos = mongoTemplate.findAll(Document::class.java, "orderlines")

@@ -1,3 +1,6 @@
+application-production.yml
+application-staging.yml
+
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
