@@ -25,7 +25,6 @@ class E2eApplicationTests {
     @Autowired
     lateinit var homePage: HomePage
 
-
     @Test
     fun boclips_pearson_loads() {
         loginPage.go()
@@ -34,7 +33,6 @@ class E2eApplicationTests {
         await().untilAsserted {
             assertThat(homePage.getCollections()).hasSize(9)
         }
-
     }
 }
 
