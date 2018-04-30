@@ -39,10 +39,12 @@ repositories {
 	mavenCentral()
 }
 
-
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter')
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	compile("org.jetbrains.kotlin:kotlin-reflect")
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile 'org.springframework.boot:spring-boot-starter'
+	compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+	compile 'org.jetbrains.kotlin:kotlin-reflect'
+
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile 'org.seleniumhq.selenium:selenium-java'
+	testCompile 'org.awaitility:awaitility:3.1.0'
 }
