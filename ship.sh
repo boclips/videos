@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -ex
+
+git pull -r
+
+./gradlew build
+
+git push
