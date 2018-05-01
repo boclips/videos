@@ -1,1 +1,0 @@
-db.getCollectionNames().forEach(collectionName => db[collectionName].drop())
