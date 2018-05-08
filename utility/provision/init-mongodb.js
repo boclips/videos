@@ -89,3 +89,92 @@ db.users.insert({
     "username": "dummy-user",
     "__v": 0
 });
+
+db.assettypes.insert({
+    "date_created": new Date().toISOString(),
+    "uuid": "86ba3dea-5c0e-480d-bac3-b8e152029daf",
+    "name": "Other",
+    "description": "Other",
+    "__v": 0,
+    "date_updated": new Date().toISOString(),
+    "type_id": 0
+});
+db.assettypes.insert({
+    "date_created": new Date().toISOString(),
+    "uuid": "c0eff993-4501-4abc-9cb0-bc8269d26c89",
+    "name": "News",
+    "description": "News",
+    "__v": 0,
+    "date_updated": new Date().toISOString(),
+    "type_id": 1
+});
+db.assettypes.insert({
+    "date_created": new Date().toISOString(),
+    "uuid": "8359dcbc-e17b-4318-850a-32137ac807b1",
+    "name": "Stock",
+    "description": "Stock",
+    "__v": 0,
+    "date_updated": new Date().toISOString(),
+    "type_id": 2
+});
+db.assettypes.insert({
+    "date_created": new Date().toISOString(),
+    "uuid": "2063e39c-199f-41d2-9a1f-e984cd558c46",
+    "name": "Instructional Clips",
+    "description": "Instructional Clips",
+    "__v": 0,
+    "date_updated": new Date().toISOString(),
+    "type_id": 3
+});
+db.assettypes.insert({
+    "date_created": new Date().toISOString(),
+    "uuid": "80bafe64-3607-4614-9c22-d516f28460dd",
+    "name": "TV Clips",
+    "description": "TV Clips",
+    "__v": 0,
+    "date_updated": new Date().toISOString(),
+    "type_id": 4
+});
+db.assettypes.insert({
+    "date_created": new Date().toISOString(),
+    "uuid": "a3309ae4-7c5a-46de-8ca4-77ea13fb9492",
+    "name": "News Package",
+    "description": "News Package",
+    "__v": 0,
+    "date_updated": new Date().toISOString(),
+    "type_id": 5
+});
+db.assettypes.insert({
+    "date_created": new Date().toISOString(),
+    "uuid": "a625831a-71ab-4360-9f2e-415d75e90f36",
+    "name": "UGC News",
+    "description": "UGC News",
+    "__v": 0,
+    "date_updated": new Date().toISOString(),
+    "type_id": 6
+});
+db.assettypes.insert({
+    "date_updated": new Date().toISOString(),
+    "date_created": new Date().toISOString(),
+    "name": "360 VR Stock",
+    "description": "360 VR Stock",
+    "type_id": 7,
+    "uuid": "8339db9e-0019-4d04-a255-1602334d6936",
+    "__v": 0
+});
+db.assettypes.insert({
+    "date_updated": new Date().toISOString(),
+    "date_created": new Date().toISOString(),
+    "uuid": "vVHc31q5pB9nXU4UdSeNM7O5WIhOyTLLWWpeTDCcAPaqeFCbwo6BlwzEnyNlKLmZmhHyz9elVsfPTeMQBKnbc9ts570eOJ98pCbb",
+    "name": "360 VR Immersive",
+    "description": "360 VR Immersive",
+    "type_id": 8,
+});
+db.assettypes.insert({
+    "uuid": "6cb95077-e467-43a6-881f-da8b872fbfce",
+    "name": "Short Programme",
+    "description": "Short Programme",
+    "date_created": new Date().toISOString(),
+    "type_id": 9,
+    "__v": 0
+});
