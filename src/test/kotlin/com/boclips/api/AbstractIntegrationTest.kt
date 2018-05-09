@@ -35,6 +35,9 @@ abstract class AbstractIntegrationTest {
     @Value("classpath:/mongo/orderlines.json")
     lateinit var orderlines: Resource
 
+    @Value("classpath:/mongo/sources.json")
+    lateinit var sources: Resource
+
     @Before
     fun setUp() {
         cleanDB()
@@ -49,6 +52,10 @@ abstract class AbstractIntegrationTest {
         mongoTemplate.dropCollection("orderlines")
         ObjectMapper().readValue(orderlines.file.readText(), List::class.java).forEach {
             mongoTemplate.insert(it!!, "orderlines")
+        }
+        mongoTemplate.dropCollection("sources")
+        ObjectMapper().readValue(sources.file.readText(), List::class.java).forEach {
+            mongoTemplate.insert(it!!, "sources")
         }
     }
 
