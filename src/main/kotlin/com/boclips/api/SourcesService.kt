@@ -1,25 +1,28 @@
 package com.boclips.api
 
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.*
 
 @Component
 class SourcesService(val sourcesRepository: SourcesRepository) {
-    fun getAllSources(): List<Source> {
+    fun getAllSources(): Flux<Source> {
         return sourcesRepository.findAll()
     }
 
-    fun createSource(name: String): Boolean {
-        val existingSource = sourcesRepository.findByName(name)
-
-        if(existingSource != null) {
-            return false
-        }
-
-        val now = ZonedDateTime.now(ZoneOffset.UTC).toString()
-        sourcesRepository.save(Source(name = name, dateCreated = now, dateUpdated = now, uuid = UUID.randomUUID().toString()))
-        return true
+    fun createSource(name: String): Mono<Boolean> {
+        return sourcesRepository.findByName(name)
+                .map { false }
+                .defaultIfEmpty(true)
+                .filter { it }
+                .flatMap {
+                    val now = ZonedDateTime.now(ZoneOffset.UTC).toString()
+                    sourcesRepository.save(Source(name = name, dateCreated = now, dateUpdated = now, uuid = UUID.randomUUID().toString()))
+                            .map { true }
+                }
+                .defaultIfEmpty(false)
     }
 }
