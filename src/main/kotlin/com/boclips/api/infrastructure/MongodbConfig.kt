@@ -1,4 +1,4 @@
-package com.boclips.api
+package com.boclips.api.infrastructure
 
 import com.mongodb.async.client.MongoClientSettings
 import com.mongodb.connection.ConnectionPoolSettings
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 
 @Component
-class ApplicationConfig : MongoClientSettingsBuilderCustomizer {
+class MongodbConfig : MongoClientSettingsBuilderCustomizer {
     override fun customize(clientSettingsBuilder: MongoClientSettings.Builder) {
         clientSettingsBuilder.connectionPoolSettings(ConnectionPoolSettings.builder()
                 .maxSize(20)

@@ -4,7 +4,7 @@ import com.mongodb.client.result.DeleteResult
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.whenever
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.bson.Document
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
 import java.net.ConnectException
 
-class ApiApplicationTests : AbstractIntegrationTest() {
+class ContentProviderControllerTests : AbstractIntegrationTest() {
 
     private val NON_SNTV_VIDEO = 2439228
 
@@ -26,7 +26,40 @@ class ApiApplicationTests : AbstractIntegrationTest() {
     lateinit var reactiveMongoTemplate: ReactiveMongoTemplate
 
     @Test
-    fun deleteProvider_deletesVideosByProvider() {
+    fun getContentProviders_returnsContentProviders() {
+        webClient.get().uri("/content-providers").exchange()
+                .expectStatus().is2xxSuccessful
+                .expectBody()
+                .jsonPath("$._embedded.contentProviders[0].name").isEqualTo("Sky News")
+    }
+
+    @Test
+    fun putContentProvider_whenItDoesNotExist_createsNewContentProvider() {
+
+        webClient.put().uri("/content-providers/TeD").exchange()
+                .expectStatus().isCreated
+
+        webClient.get().uri("/content-providers").exchange()
+                .expectStatus().is2xxSuccessful
+                .expectBody()
+                .jsonPath("$._embedded.contentProviders[1].name").isEqualTo("TeD")
+    }
+
+    @Test
+    fun putContentProvider_whenItExists_doesNotCreateANewContentProvider() {
+
+        webClient.put().uri("/content-providers/Sky News").exchange()
+                .expectStatus().isOk
+
+        webClient.get().uri("/content-providers").exchange()
+                .expectStatus().is2xxSuccessful
+                .expectBody()
+                .jsonPath("$._embedded.contentProviders[0].name").isEqualTo("Sky News")
+                .jsonPath("$._embedded.contentProviders[1]").doesNotExist()
+    }
+
+    @Test
+    fun deleteContentProvider_deletesVideosByProvider() {
         webClient.delete().uri("/content-providers/SNTV").exchange()
                 .expectStatus().is2xxSuccessful
                 .expectBody()
@@ -34,11 +67,11 @@ class ApiApplicationTests : AbstractIntegrationTest() {
                 .jsonPath("$.videosRemoved").isEqualTo(1)
 
 
-        assertThat(videos.findAll().map { it.source }).containsExactly("Grinberg, Paramount, Pathe Newsreels")
+        Assertions.assertThat(videos.findAll().map { it.source }).containsExactly("Grinberg, Paramount, Pathe Newsreels")
     }
 
     @Test
-    fun deleteProvider_deletesVideosFromPlaylistsByProviderReturningRecordsDeleted() {
+    fun deleteContentProvider_deletesVideosFromPlaylistsByProviderReturningRecordsDeleted() {
         webClient.delete().uri("/content-providers/SNTV").exchange()
                 .expectStatus().is2xxSuccessful
                 .expectBody()
@@ -47,11 +80,11 @@ class ApiApplicationTests : AbstractIntegrationTest() {
 
 
         val videos = mongoTemplate.findAll(Document::class.java, "videodescriptors")
-        assertThat(videos.map { it["reference_id"] }).containsExactly(NON_SNTV_VIDEO)
+        Assertions.assertThat(videos.map { it["reference_id"] }).containsExactly(NON_SNTV_VIDEO)
     }
 
     @Test
-    fun deleteProvider_deletesVideosFromCartsByProvider() {
+    fun deleteContentProvider_deletesVideosFromCartsByProvider() {
         webClient.delete().uri("/content-providers/SNTV").exchange()
                 .expectStatus().is2xxSuccessful
                 .expectBody()
@@ -60,11 +93,11 @@ class ApiApplicationTests : AbstractIntegrationTest() {
 
 
         val videos = mongoTemplate.findAll(Document::class.java, "orderlines")
-        assertThat(videos.map { it["asset_id"] }).containsExactly(NON_SNTV_VIDEO)
+        Assertions.assertThat(videos.map { it["asset_id"] }).containsExactly(NON_SNTV_VIDEO)
     }
 
     @Test
-    fun deleteProvider_whenSomeMongoQueryFails_returnsError() {
+    fun deleteContentProvider_whenSomeMongoQueryFails_returnsError() {
         doReturn(DeleteResult.acknowledged(1).toMono()).whenever(reactiveMongoTemplate).remove(any<Query>(), any<String>())
         doReturn(Mono.error<Exception>(ConnectException())).whenever(reactiveMongoTemplate).remove(any<Query>(), any<String>())
 
@@ -74,8 +107,7 @@ class ApiApplicationTests : AbstractIntegrationTest() {
                 .jsonPath("$.success").isEqualTo(false)
                 .jsonPath("$.videosRemoved").isEqualTo(0)
 
-        assertThat(videos.findAll()).hasSize(2)
+        Assertions.assertThat(videos.findAll()).hasSize(2)
     }
-
-
 }
+

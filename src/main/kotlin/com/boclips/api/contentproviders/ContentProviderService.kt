@@ -1,5 +1,6 @@
-package com.boclips.api
+package com.boclips.api.contentproviders
 
+import com.boclips.api.VideoRepository
 import mu.KLogging
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
@@ -10,10 +11,17 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toFlux
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.util.*
 
 @Transactional(readOnly = true)
 @Service
-class ContentProviderService(val videoRepository: VideoRepository, val mongoTemplate: ReactiveMongoTemplate) {
+class ContentProviderService(
+        val videoRepository: VideoRepository,
+        val contentProviderRepository: ContentProviderRepository,
+        val mongoTemplate: ReactiveMongoTemplate
+) {
     companion object : KLogging()
 
     fun deleteContentProvider(contentProviderName: String): Mono<DeleteResult> {
@@ -37,6 +45,24 @@ class ContentProviderService(val videoRepository: VideoRepository, val mongoTemp
                     } else result
                 }
     }
+
+    fun getAllContentProviders(): Flux<ContentProvider> {
+        return contentProviderRepository.findAll()
+    }
+
+    fun createContentProvider(name: String): Mono<Boolean> {
+        return contentProviderRepository.findByName(name)
+                .map { false }
+                .defaultIfEmpty(true)
+                .filter { it }
+                .flatMap {
+                    val now = ZonedDateTime.now(ZoneOffset.UTC).toString()
+                    contentProviderRepository.save(ContentProvider(name = name, dateCreated = now, dateUpdated = now, uuid = UUID.randomUUID().toString()))
+                            .map { true }
+                }
+                .defaultIfEmpty(false)
+    }
+
 }
 
 data class DeleteResult(val success: Boolean = true, val videosRemoved: Int = 0, val playlistEntriesRemoved: Long = 0, val orderlinesEntriesRemoved: Long = 0) {

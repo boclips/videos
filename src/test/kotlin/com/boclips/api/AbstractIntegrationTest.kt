@@ -29,14 +29,8 @@ abstract class AbstractIntegrationTest {
     @Autowired
     lateinit var mongoTemplate: MongoTemplate
 
-    @Value("classpath:/mongo/video-playlist.json")
-    lateinit var videoPlaylist: Resource
-
-    @Value("classpath:/mongo/orderlines.json")
-    lateinit var orderlines: Resource
-
-    @Value("classpath:/mongo/sources.json")
-    lateinit var sources: Resource
+    @Value("classpath:/mongo/*.json")
+    lateinit var collections: Array<Resource>
 
     @Before
     fun setUp() {
@@ -45,17 +39,13 @@ abstract class AbstractIntegrationTest {
     }
 
     private fun cleanMongo() {
-        mongoTemplate.dropCollection("videodescriptors")
-        ObjectMapper().readValue(videoPlaylist.file.readText(), List::class.java).forEach {
-            mongoTemplate.insert(it!!, "videodescriptors")
-        }
-        mongoTemplate.dropCollection("orderlines")
-        ObjectMapper().readValue(orderlines.file.readText(), List::class.java).forEach {
-            mongoTemplate.insert(it!!, "orderlines")
-        }
-        mongoTemplate.dropCollection("sources")
-        ObjectMapper().readValue(sources.file.readText(), List::class.java).forEach {
-            mongoTemplate.insert(it!!, "sources")
+
+        collections.forEach { collectionFile ->
+            val collection = collectionFile.filename!!.removeSuffix(".json")
+            mongoTemplate.dropCollection(collection)
+            ObjectMapper().readValue(collectionFile.file.readText(), List::class.java).forEach { document ->
+                mongoTemplate.insert(document!!, collection)
+            }
         }
     }
 
