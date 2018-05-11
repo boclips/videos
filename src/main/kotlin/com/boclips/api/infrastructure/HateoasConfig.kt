@@ -10,14 +10,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.support.MessageSourceAccessor
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
-import org.springframework.hateoas.config.EnableEntityLinks
 import org.springframework.hateoas.core.EvoInflectorRelProvider
 import org.springframework.hateoas.hal.CurieProvider
 import org.springframework.hateoas.hal.HalConfiguration
 import org.springframework.hateoas.hal.Jackson2HalModule
 
 @Configuration
-@EnableEntityLinks
 class HateoasConfig {
 
     @Bean
@@ -40,7 +38,7 @@ class HateoasConfig {
             val curieProvider = getCurieProvider(beanFactory)
 
             objectMapper.registerModule(Jackson2HalModule())
-            val halConfiguration = HalConfiguration().withRenderSingleLinks(HalConfiguration.RenderSingleLinks.AS_ARRAY)
+            val halConfiguration = HalConfiguration().withRenderSingleLinks(HalConfiguration.RenderSingleLinks.AS_SINGLE)
             objectMapper.setHandlerInstantiator(Jackson2HalModule.HalHandlerInstantiator(
                     EvoInflectorRelProvider(),
                     curieProvider,

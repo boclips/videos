@@ -1,58 +1,55 @@
 package com.boclips.api
 
-import com.mongodb.client.result.DeleteResult
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.whenever
+import com.boclips.api.testsupport.SKY_NEWS_ID
 import org.assertj.core.api.Assertions
 import org.bson.Document
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.SpyBean
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate
-import org.springframework.data.mongodb.core.query.Query
 import reactor.core.publisher.Mono
-import reactor.core.publisher.toMono
-import java.net.ConnectException
 
-class ContentProviderControllerTests : AbstractIntegrationTest() {
+class ContentProviderControllerIntegrationTest : AbstractIntegrationTest() {
 
     private val NON_SNTV_VIDEO = 2439228
 
     @Autowired
     lateinit var videos: VideoRepository
 
-    @SpyBean
-    lateinit var reactiveMongoTemplate: ReactiveMongoTemplate
-
     @Test
     fun getContentProviders_returnsContentProviders() {
         webClient.get().uri("/content-providers").exchange()
-                .expectStatus().is2xxSuccessful
+                .expectStatus().isOk
                 .expectBody()
                 .jsonPath("$._embedded.contentProviders[0].name").isEqualTo("Sky News")
     }
 
     @Test
-    fun putContentProvider_whenItDoesNotExist_createsNewContentProvider() {
+    fun getContentProviders_containsSelfLinks() {
+        webClient.get().uri("/content-providers").exchange()
+                .expectStatus().isOk
+                .expectBody()
+                .jsonPath("$._embedded.contentProviders[0]._links.self").isNotEmpty
+    }
 
-        webClient.put().uri("/content-providers/TeD").exchange()
+    @Test
+    fun postContentProvider_whenItDoesNotExist_createsNewContentProvider() {
+        val body: Mono<Map<*, *>> = Mono.just(mapOf("name" to "TeD"))
+        webClient.post().uri("/content-providers").body(body, Map::class.java).exchange()
                 .expectStatus().isCreated
 
         webClient.get().uri("/content-providers").exchange()
-                .expectStatus().is2xxSuccessful
+                .expectStatus().isOk
                 .expectBody()
                 .jsonPath("$._embedded.contentProviders[1].name").isEqualTo("TeD")
     }
 
     @Test
-    fun putContentProvider_whenItExists_doesNotCreateANewContentProvider() {
-
-        webClient.put().uri("/content-providers/Sky News").exchange()
+    fun postContentProvider_whenItExists_doesNotCreateANewContentProvider() {
+        val body: Mono<Map<*, *>> = Mono.just(mapOf("name" to "Sky News"))
+        webClient.post().uri("/content-providers").body(body, Map::class.java).exchange()
                 .expectStatus().isOk
 
         webClient.get().uri("/content-providers").exchange()
-                .expectStatus().is2xxSuccessful
+                .expectStatus().isOk
                 .expectBody()
                 .jsonPath("$._embedded.contentProviders[0].name").isEqualTo("Sky News")
                 .jsonPath("$._embedded.contentProviders[1]").doesNotExist()
@@ -97,17 +94,19 @@ class ContentProviderControllerTests : AbstractIntegrationTest() {
     }
 
     @Test
-    fun deleteContentProvider_whenSomeMongoQueryFails_returnsError() {
-        doReturn(DeleteResult.acknowledged(1).toMono()).whenever(reactiveMongoTemplate).remove(any<Query>(), any<String>())
-        doReturn(Mono.error<Exception>(ConnectException())).whenever(reactiveMongoTemplate).remove(any<Query>(), any<String>())
-
-        webClient.delete().uri("/content-providers/SNTV").exchange()
-                .expectStatus().is2xxSuccessful
+    fun getContentProvider() {
+        webClient.get().uri("/content-providers/$SKY_NEWS_ID").exchange()
+                .expectStatus().isOk
                 .expectBody()
-                .jsonPath("$.success").isEqualTo(false)
-                .jsonPath("$.videosRemoved").isEqualTo(0)
-
-        Assertions.assertThat(videos.findAll()).hasSize(2)
+                .jsonPath("$.name").exists()
+                .jsonPath("$._links.self.href").exists()
     }
+
+    @Test
+    fun getContentProvider_whenNoResource_returns404() {
+        webClient.get().uri("/content-providers/non-existing-content-provider").exchange()
+                .expectStatus().isNotFound
+    }
+
 }
 

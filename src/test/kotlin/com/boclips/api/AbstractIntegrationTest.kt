@@ -1,6 +1,7 @@
 package com.boclips.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.bson.types.ObjectId
 import org.flywaydb.core.Flyway
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -43,9 +44,13 @@ abstract class AbstractIntegrationTest {
         collections.forEach { collectionFile ->
             val collection = collectionFile.filename!!.removeSuffix(".json")
             mongoTemplate.dropCollection(collection)
-            ObjectMapper().readValue(collectionFile.file.readText(), List::class.java).forEach { document ->
-                mongoTemplate.insert(document!!, collection)
-            }
+            ObjectMapper().readValue(collectionFile.file.readText(), List::class.java)
+                    .filterNotNull()
+                    .map { it as MutableMap<String, Any> }
+                    .forEach { document ->
+                        document["_id"] = ObjectId(document["_id"] as String)
+                        mongoTemplate.insert(document, collection)
+                    }
         }
     }
 

@@ -63,6 +63,10 @@ class ContentProviderService(
                 .defaultIfEmpty(false)
     }
 
+    fun getById(contentProviderId: String): Mono<ContentProvider> {
+        return contentProviderRepository.findById(contentProviderId)
+    }
+
 }
 
 data class DeleteResult(val success: Boolean = true, val videosRemoved: Int = 0, val playlistEntriesRemoved: Long = 0, val orderlinesEntriesRemoved: Long = 0) {

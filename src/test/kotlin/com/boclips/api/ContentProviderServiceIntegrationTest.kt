@@ -1,7 +1,7 @@
 package com.boclips.api
 
-import com.boclips.api.contentproviders.ContentProvider
 import com.boclips.api.contentproviders.ContentProviderService
+import com.boclips.api.testsupport.SKY_NEWS_ID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,8 @@ class ContentProviderServiceIntegrationTest : AbstractIntegrationTest() {
     fun getAllSources_returnsAllSources() {
         val sources = contentProviderService.getAllContentProviders().collectList().block()
 
-        assertThat(sources).containsExactly(ContentProvider(name = "Sky News", dateCreated = "2017-05-13T15:56:44.822Z", dateUpdated = "2017-05-13T15:56:44.822Z", uuid = "86360cc5-019e-4b13-9048-1d571e825108"))
+        assertThat(sources).hasSize(1)
+        assertThat(sources!!.first().id).isEqualTo(SKY_NEWS_ID)
     }
 
     @Test
@@ -36,5 +37,12 @@ class ContentProviderServiceIntegrationTest : AbstractIntegrationTest() {
 
         assertThat(created).isFalse()
         assertThat(contentProviderService.getAllContentProviders().collectList().block()).hasSize(1)
+    }
+
+    @Test
+    fun get_whenExists_returnsContentProvider() {
+        val contentProvider = contentProviderService.getById(SKY_NEWS_ID).block()!!
+
+        assertThat(contentProvider.id).isEqualTo(SKY_NEWS_ID)
     }
 }
