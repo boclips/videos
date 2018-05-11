@@ -38,6 +38,7 @@ TRUNCATE TABLE syslog;
 DELETE FROM teacherlevels;
 DELETE FROM teachersubjects;
 TRUNCATE TABLE tiny_url;
+TRUNCATE TABLE metadata_orig;
 
 DELETE FROM type;
 INSERT INTO type (id, name, displayOrder) VALUES (0, 'Other', 4);
