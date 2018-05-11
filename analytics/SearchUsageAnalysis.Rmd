@@ -1,0 +1,61 @@
+---
+title: "Search usage analysis in the last month"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+allSearches = read.csv("full_data.csv", colClasses = c("factor","factor","factor","Date","factor"))
+allSearches$theme = as.factor(gsub('www.', '', allSearches$theme))
+
+userDetails = read.csv("all-users.csv")
+allSearches = merge(x = allSearches, y = userDetails, by.x = "user", by.y = "id")
+
+summary(allSearches)
+allSearches=subset(allSearches, !grepl("boclips.com", email))
+```
+
+```{r themes, echo=FALSE}
+oneMonthSearches = subset(allSearches, date_created > as.Date("2018-04-09"))
+oneMonthSearches$theme = factor(oneMonthSearches$theme)
+oneMonthSearches$user = factor(oneMonthSearches$user)
+
+themeFrequencies=data.frame(table(data.frame(oneMonthSearches$theme)))
+colnames(themeFrequencies)=c("theme", "count")
+
+par(cex=0.7)
+plot(themeFrequencies, type="s", xlab="Theme", ylab="Count")
+
+kable(themeFrequencies[,1:2], caption = "Queries by theme", col.names = c("Theme", "Count"))
+```
+
+## Most active users per theme
+```{r users, echo=FALSE}
+userFrequencies=data.frame(table(data.frame(oneMonthSearches$user)))
+colnames(userFrequencies)=c("user", "count")
+
+userTheme = unique(subset(oneMonthSearches, select=c("user", "theme")))
+userFrequencies = merge(x = userFrequencies, y = userTheme, by = "user")
+userFrequencies = merge(x = userFrequencies, y = userDetails, by.x = "user", by.y = "id")
+
+userFrequencies = userFrequencies[order(-userFrequencies$count),]
+
+activeUsersByTheme = function(themeName) {
+  filteredUsers = subset(userFrequencies, theme == themeName & count > 5)
+  filteredUsers = head(filteredUsers, 50)
+  filteredUsers = subset(filteredUsers, select=c("name", "surname", "email", "count"))
+  kable(filteredUsers, caption = paste("Most active users on", themeName), row.names = FALSE, col.names = c("First Name", "Last Name", "Email", "# Queries"))
+}
+
+activeUsersByTheme("boclips.com")
+activeUsersByTheme("pearson.boclips.com")
+activeUsersByTheme("watchboclips.com")
+# activeUsersByTheme("lbs.boclips.com")
+```
+
+```{r boclips-users, echo=FALSE}
+
+```

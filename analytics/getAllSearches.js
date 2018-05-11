@@ -13,23 +13,23 @@ let cursor = db.analytics.requests.aggregate([
     {
         $group: {_id: {referrer: '$referrer', user: '$user', date_created: '$date_created'}}
     }
-])
+]);
 
-const cleanUrl = (input) => decodeURI(input)
-print('[')
+const cleanUrl = (input) => decodeURI(input);
+print('[');
 while (cursor.hasNext()) {
-    let el = cursor.next()
+    let el = cursor.next();
 
     let extractSearchKeywordRegex = /(?:https?:\/\/)?([^\/]+)\/search\/([^\?]*)(.*)/g;
     let matches = extractSearchKeywordRegex.exec(el._id.referrer);
-    el.theme = cleanUrl(matches[1])
-    el.keyword = cleanUrl(matches[2])
-    el.user = el._id.user ? el._id.user.valueOf() : null
-    el.date_created = el._id.date_created ? el._id.date_created : null
-    el.modifiers = cleanUrl(matches[3])
-    el.modifiers = el.modifiers ? el.modifiers.replace('?', '').split('&') : []
+    el.theme = cleanUrl(matches[1]);
+    el.keyword = cleanUrl(matches[2]);
+    el.user = el._id.user ? el._id.user.valueOf() : null;
+    el.date_created = el._id.date_created ? el._id.date_created : null;
+    el.modifiers = cleanUrl(matches[3]);
+    el.modifiers = el.modifiers ? el.modifiers.replace('?', '').split('&') : [];
 
-    delete el._id
+    delete el._id;
     print(tojson(el),",")
 }
-print(']')
+print(']');
