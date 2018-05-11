@@ -1,3 +1,5 @@
 *.csv
 *.tex
 *.pdf
+
+.Rhistory
