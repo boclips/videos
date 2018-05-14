@@ -2,6 +2,7 @@ package com.boclips.api
 
 import com.boclips.api.presentation.ResourceNotFoundException
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -49,6 +50,13 @@ class PackageControllerTest {
     fun getPackage_whenNoResource_throwsResourceNotFoundException() {
         whenever(packageService.getById(any())).thenReturn(Mono.empty())
         controller.getPackage("package-id", UriComponentsBuilder.newInstance()).block()
+    }
+
+    @Test
+    fun excludeContentProvider() {
+        controller.excludeContentProvider("http://host:port/crap/content-providers/content-provider-id", "package-id")
+
+        verify(packageService).excludeContentProvider("package-id", "content-provider-id")
     }
 
 }

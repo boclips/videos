@@ -66,4 +66,5 @@ dependencies {
     testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
     testCompile 'org.springframework.security:spring-security-test'
     testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
+    testCompile 'info.solidsoft.mockito:mockito-java8:2.3.0'
 }

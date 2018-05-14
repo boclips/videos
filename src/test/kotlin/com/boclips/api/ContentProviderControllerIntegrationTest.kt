@@ -39,7 +39,7 @@ class ContentProviderControllerIntegrationTest : AbstractIntegrationTest() {
         webClient.get().uri("/content-providers").exchange()
                 .expectStatus().isOk
                 .expectBody()
-                .jsonPath("$._embedded.contentProviders[1].name").isEqualTo("TeD")
+                .jsonPath("$._embedded.contentProviders[2].name").isEqualTo("TeD")
     }
 
     @Test
@@ -52,7 +52,8 @@ class ContentProviderControllerIntegrationTest : AbstractIntegrationTest() {
                 .expectStatus().isOk
                 .expectBody()
                 .jsonPath("$._embedded.contentProviders[0].name").isEqualTo("Sky News")
-                .jsonPath("$._embedded.contentProviders[1]").doesNotExist()
+                .jsonPath("$._embedded.contentProviders[1].name").isEqualTo("The School of Life")
+                .jsonPath("$._embedded.contentProviders[2]").doesNotExist()
     }
 
     @Test

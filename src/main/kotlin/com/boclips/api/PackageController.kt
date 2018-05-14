@@ -1,8 +1,7 @@
 package com.boclips.api
 
-import com.boclips.api.infrastructure.configuration.WebfluxLinkBuilder
-import com.boclips.api.presentation.resources.Package
 import com.boclips.api.presentation.ResourceNotFoundException
+import com.boclips.api.presentation.resources.Package
 import org.springframework.hateoas.Resources
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -27,10 +26,8 @@ class PackageController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun excludeContentProvider(
             @RequestBody contentProviderUrl: String,
-            @PathVariable("packageId") id: String
-    ) {
-
-    }
+            @PathVariable("packageId") packageId: String
+    ) = packageService.excludeContentProvider(packageId, contentProviderUrl.substringAfterLast("/"))
 
     @GetMapping("/{packageId}")
     fun getPackage(@PathVariable packageId: String, uriBuilder: UriComponentsBuilder) =

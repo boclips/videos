@@ -1,6 +1,7 @@
 package com.boclips.api.contentproviders
 
 import com.boclips.api.VideoRepository
+import com.boclips.api.infrastructure.ContentProviderEntity
 import mu.KLogging
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
@@ -47,7 +48,7 @@ class ContentProviderService(
     }
 
     fun getAll(): Flux<ContentProvider> {
-        return contentProviderRepository.findAll()
+        return contentProviderRepository.findAll().map { it.toContentProvider() }
     }
 
     fun create(name: String): Mono<Boolean> {
@@ -57,14 +58,14 @@ class ContentProviderService(
                 .filter { it }
                 .flatMap {
                     val now = ZonedDateTime.now(ZoneOffset.UTC).toString()
-                    contentProviderRepository.save(ContentProvider(name = name, dateCreated = now, dateUpdated = now, uuid = UUID.randomUUID().toString()))
+                    contentProviderRepository.save(ContentProviderEntity(name = name, dateCreated = now, dateUpdated = now, uuid = UUID.randomUUID().toString()))
                             .map { true }
                 }
                 .defaultIfEmpty(false)
     }
 
     fun getById(contentProviderId: String): Mono<ContentProvider> {
-        return contentProviderRepository.findById(contentProviderId)
+        return contentProviderRepository.findById(contentProviderId).map { it.toContentProvider() }
     }
 
 }

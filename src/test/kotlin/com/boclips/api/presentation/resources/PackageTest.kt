@@ -1,5 +1,6 @@
 package com.boclips.api.presentation.resources
 
+import com.boclips.api.contentproviders.ContentProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.hateoas.Link
@@ -29,9 +30,10 @@ class PackageTest {
 
     @Test
     fun fromPackage_transformsExcludedContentProviders() {
-        val packageResource = Package.fromPackage(com.boclips.api.Package("package-id", "name", listOf("item-1", "item-2")), UriComponentsBuilder.newInstance())
+        val packageResource = Package.fromPackage(com.boclips.api.Package("package-id", "name", listOf(ContentProvider(name = "item-1"), ContentProvider(name = "item-2"))), UriComponentsBuilder.newInstance())
 
-        assertThat(packageResource.excludedContentProviders).containsExactly("item-1", "item-2")
+        assertThat(packageResource.excludedContentProviders).hasSize(2)
+        assertThat(packageResource.excludedContentProviders.first().name).isEqualTo("item-1")
     }
 
 }

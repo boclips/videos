@@ -1,9 +1,8 @@
 package com.boclips.api.contentproviders
 
-import com.boclips.api.infrastructure.configuration.WebfluxLinkBuilder
-import com.boclips.api.infrastructure.toResourceOfResources
-import com.boclips.api.presentation.resources.ContentProvider
 import com.boclips.api.presentation.ResourceNotFoundException
+import com.boclips.api.presentation.resources.ContentProvider
+import org.springframework.hateoas.Resources
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -17,16 +16,15 @@ class ContentProviderController(val contentProviderService: ContentProviderServi
 
     @GetMapping
     fun getContentProviders(uriBuilder: UriComponentsBuilder) =
-            contentProviderService.getAll().toResourceOfResources({
-                listOf(
-                        WebfluxLinkBuilder.fromContextPath(uriBuilder).slash("/content-providers").slash(it.id).withSelfRel())
-            })
+            contentProviderService.getAll()
+                    .map { ContentProvider.fromContentProvider(it, uriBuilder) }
+                    .collectList()
+                    .map { Resources(it) }
 
     @GetMapping("/{contentProviderId}")
     fun getContentProvider(@PathVariable contentProviderId: String, uriBuilder: UriComponentsBuilder) =
             contentProviderService.getById(contentProviderId)
-                    .map { ContentProvider(it.name) }
-                    .doOnNext { it.add(WebfluxLinkBuilder.fromContextPath(uriBuilder).slash("/content-providers").slash(contentProviderId).withSelfRel()) }
+                    .map { ContentProvider.fromContentProvider(it, uriBuilder) }
                     .switchIfEmpty(ResourceNotFoundException().toMono())
 
     @PostMapping

@@ -1,11 +1,9 @@
 package com.boclips.api
 
 import com.boclips.api.testsupport.PEARSON_PACKAGE_ID
-import com.boclips.api.testsupport.SKY_NEWS_ID
-import com.boclips.api.testsupport.SKY_NEWS_NAME
+import com.boclips.api.testsupport.SCHOOL_OF_LIFE_ID
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -40,11 +38,10 @@ class PackageControllerIntegrationTest : AbstractIntegrationTest() {
                 .jsonPath("$._links.self.href").exists()
     }
 
-    @Ignore("WIP")
     @Test
     fun excludeContentProvider_whenPreviouslyIncluded() {
-        val skyNewsUrl = webClient
-                .get().uri("/content-providers/${SKY_NEWS_ID}").exchange()
+        val schoolOfLifeUrl = webClient
+                .get().uri("/content-providers/${SCHOOL_OF_LIFE_ID}").exchange()
                 .getJsonPathAsString("$._links.self.href")
 
         val pearsonPackage = webClient
@@ -52,18 +49,14 @@ class PackageControllerIntegrationTest : AbstractIntegrationTest() {
                 .getBodyAsString()
         val excludedContentProviderUrl = JsonPath.parse(pearsonPackage).read<String>("$._links.excludedContentProvider.href")
         val packageUrl = JsonPath.parse(pearsonPackage).read<String>("$._links.self.href")
-        assertThat(webClient.get().uri(packageUrl).exchange()
-                .getJsonPathAsString("$.excludedContentProviders[0].name")).isEqualTo(SKY_NEWS_NAME)
 
         webClient
-                .patch().uri(excludedContentProviderUrl).contentType(MediaType("text", "uri-list")).syncBody(skyNewsUrl).exchange()
+                .patch().uri(excludedContentProviderUrl).contentType(MediaType("text", "uri-list")).syncBody(schoolOfLifeUrl).exchange()
                 .expectStatus().isNoContent
 
         assertThat(webClient.get().uri(packageUrl).exchange()
-                .getJsonPathAsString("$.contentProviders[?(@.id='${SKY_NEWS_ID}')].excluded")).isEqualTo(true)
+                .getJsonPathAsString("$.excludedContentProviders[1]._links.self.href")).isEqualTo(schoolOfLifeUrl)
     }
-
-
 }
 
 fun WebTestClient.ResponseSpec.getBodyAsString() = this.expectStatus().is2xxSuccessful().returnResult(String::class.java).responseBody.blockFirst()

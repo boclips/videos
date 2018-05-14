@@ -1,5 +1,6 @@
 package com.boclips.api.infrastructure
 
+import com.boclips.api.contentproviders.ContentProvider
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import javax.persistence.Id
@@ -10,7 +11,7 @@ data class PackageEntity(
         val id: String,
         val name: String,
         @Field("search_filters")
-        val searchFilters: List<SearchFilter>
+        val searchFilters: MutableList<SearchFilter>
 ) {
     fun toPackage() = com.boclips.api.Package(
             id = this.id,
@@ -18,7 +19,7 @@ data class PackageEntity(
             excludedContentProviders = this.searchFilters
                     .filter { it._refType == SearchFilterType.Source }
                     .filter { it.invertFilter }
-                    .flatMap { it.items }
+                    .flatMap { it.items.map { ContentProvider("", id = it) } }
     )
 }
 
@@ -26,7 +27,7 @@ data class SearchFilter(
         val _refType: SearchFilterType,
         @Field("invert_filter")
         val invertFilter: Boolean,
-        val items: List<String>
+        val items: MutableSet<String>
 )
 
 enum class SearchFilterType {
