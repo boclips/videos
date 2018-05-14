@@ -1,4 +1,4 @@
-package com.boclips.api.infrastructure
+package com.boclips.api.infrastructure.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.BeanCreationException

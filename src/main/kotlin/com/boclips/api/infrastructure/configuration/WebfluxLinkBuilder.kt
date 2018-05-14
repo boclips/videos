@@ -1,4 +1,4 @@
-package com.boclips.api.infrastructure
+package com.boclips.api.infrastructure.configuration
 
 import org.springframework.hateoas.core.LinkBuilderSupport
 import org.springframework.web.util.UriComponentsBuilder

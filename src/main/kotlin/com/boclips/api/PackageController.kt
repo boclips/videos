@@ -1,26 +1,27 @@
 package com.boclips.api
 
-import com.boclips.api.infrastructure.WebfluxLinkBuilder
-import com.boclips.api.infrastructure.toResourceOfResources
+import com.boclips.api.infrastructure.configuration.WebfluxLinkBuilder
+import com.boclips.api.presentation.resources.Package
+import com.boclips.api.presentation.ResourceNotFoundException
+import org.springframework.hateoas.Resources
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
+import reactor.core.publisher.Mono
+import reactor.core.publisher.toMono
 
 @RestController
 @RequestMapping("packages")
 class PackageController(
-        val packageRepository: PackageRepository
+        val packageService: PackageService
 ) {
 
     @GetMapping
-    fun getPackages(uriBuilder: UriComponentsBuilder) = packageRepository.findAll().toResourceOfResources({
-        listOf(
-                WebfluxLinkBuilder.fromContextPath(uriBuilder)
-                        .slash("packages")
-                        .slash(it.id)
-                        .slash("search-filters?type=exclude=true")
-                        .withRel("excludeContentProvider"))
-    })
+    fun getPackages(uriBuilder: UriComponentsBuilder): Mono<Resources<Package>> =
+            packageService.getAll()
+                    .map { Package.fromPackage(it, uriBuilder) }
+                    .collectList()
+                    .map { Resources(it) }
 
     @PatchMapping("/{packageId}/content-providers", params = ["exclude=true"])
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -31,4 +32,9 @@ class PackageController(
 
     }
 
+    @GetMapping("/{packageId}")
+    fun getPackage(@PathVariable packageId: String, uriBuilder: UriComponentsBuilder) =
+            packageService.getById(packageId)
+                    .map { Package.fromPackage(it, uriBuilder) }
+                    .switchIfEmpty(ResourceNotFoundException().toMono())
 }

@@ -1,7 +1,7 @@
 package com.boclips.api.contentproviders
 
-import com.boclips.api.presentation.ContentProviderResource
 import com.boclips.api.presentation.ResourceNotFoundException
+import com.boclips.api.presentation.resources.ContentProvider
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -25,8 +25,8 @@ class ContentProviderControllerTest {
 
     @Test
     fun getContentProviderService() {
-        whenever(contentProviderService.getById("content-provider-id")).thenReturn(Mono.just(ContentProvider("bla").apply { id = "content-provider-id" }))
-        val expectedResource = ContentProviderResource(name = "bla").apply { add(Link("/content-providers/content-provider-id", "self")) }
+        whenever(contentProviderService.getById("content-provider-id")).thenReturn(Mono.just(com.boclips.api.contentproviders.ContentProvider("bla").apply { id = "content-provider-id" }))
+        val expectedResource = ContentProvider(name = "bla").apply { add(Link("/content-providers/content-provider-id", "self")) }
 
         val output = controller.getContentProvider("content-provider-id", UriComponentsBuilder.newInstance()).block()!!
 

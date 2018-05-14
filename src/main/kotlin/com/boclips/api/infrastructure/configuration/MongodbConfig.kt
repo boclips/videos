@@ -1,4 +1,4 @@
-package com.boclips.api.infrastructure
+package com.boclips.api.infrastructure.configuration
 
 import com.mongodb.async.client.MongoClientSettings
 import com.mongodb.connection.ConnectionPoolSettings

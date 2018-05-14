@@ -24,7 +24,7 @@ class ContentProviderService(
 ) {
     companion object : KLogging()
 
-    fun deleteContentProvider(contentProviderName: String): Mono<DeleteResult> {
+    fun deleteByName(contentProviderName: String): Mono<DeleteResult> {
         val videos = videoRepository.findBySource(contentProviderName)
         logger.info { "attempting to remove $videos videos" }
         return videos.toFlux()
@@ -46,11 +46,11 @@ class ContentProviderService(
                 }
     }
 
-    fun getAllContentProviders(): Flux<ContentProvider> {
+    fun getAll(): Flux<ContentProvider> {
         return contentProviderRepository.findAll()
     }
 
-    fun createContentProvider(name: String): Mono<Boolean> {
+    fun create(name: String): Mono<Boolean> {
         return contentProviderRepository.findByName(name)
                 .map { false }
                 .defaultIfEmpty(true)
