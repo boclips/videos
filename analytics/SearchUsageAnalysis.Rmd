@@ -1,7 +1,18 @@
 ---
-title: "Search usage analysis in the last month"
+title: "Search analysis: past 30 days"
 output: pdf_document
 ---
+
+# How are search queries counted
+In this analysis we count search queries as distinct phrases typed by a user. That means that:
+
+- When a user types some text and hits 'search', this is counted as one search query.
+- When a user explores further pages of search results, it is NOT counted as another query.
+- When a user uses filters to narrow down results, it is NOT counted as another query.
+- When a user goes back to boclips one week after they made a search and types the same phrase they had used before, it is NOT counted as another query.
+- When two different users type the same text, it is counted as 2 queries.
+
+The following numbers are based on the above definition.
 
 ```{r setup, include=FALSE}
 library(knitr)
@@ -16,23 +27,28 @@ allSearches = merge(x = allSearches, y = userDetails, by.x = "user", by.y = "id"
 
 summary(allSearches)
 allSearches=subset(allSearches, !grepl("boclips.com", email))
+allSearches = subset(allSearches, date_created > as.Date("2018-04-09"))
+allSearches = subset(allSearches, select = c("user", "keyword", "theme"))
+allSearches = unique(allSearches)
 ```
 
+# Volume of search queries
 ```{r themes, echo=FALSE}
-oneMonthSearches = subset(allSearches, date_created > as.Date("2018-04-09"))
+oneMonthSearches = data.frame(allSearches)
 oneMonthSearches$theme = factor(oneMonthSearches$theme)
 oneMonthSearches$user = factor(oneMonthSearches$user)
 
 themeFrequencies=data.frame(table(data.frame(oneMonthSearches$theme)))
 colnames(themeFrequencies)=c("theme", "count")
 
+kable(themeFrequencies[,1:2], caption = "Queries by theme", col.names = c("Theme", "Count"))
 par(cex=0.7)
 plot(themeFrequencies, type="s", xlab="Theme", ylab="Count")
 
-kable(themeFrequencies[,1:2], caption = "Queries by theme", col.names = c("Theme", "Count"))
 ```
 
-## Most active users per theme
+# Most active users per theme
+Here are the users who made the most number of search queries recently.
 ```{r users, echo=FALSE}
 userFrequencies=data.frame(table(data.frame(oneMonthSearches$user)))
 colnames(userFrequencies)=c("user", "count")
@@ -56,6 +72,57 @@ activeUsersByTheme("watchboclips.com")
 # activeUsersByTheme("lbs.boclips.com")
 ```
 
-```{r boclips-users, echo=FALSE}
+
+# Search phrases
+Here are the most commonly used search phrases.
+```{r phraseFreqs, echo=FALSE}
+topPhrasesByTheme = function(themeName) {
+  allPhrases = subset(allSearches, theme == themeName)
+  allPhrases = subset(allPhrases, select = c("keyword"))
+  colnames(allPhrases)=c("text")
+  
+  allPhrases$text = tolower(allPhrases$text)
+  allPhrases$text = gsub("[^[:alnum:][:space:]]","",allPhrases$text)
+  allPhrases = subset(allPhrases, text != "")
+  
+  
+  phraseHist = data.frame(table(allPhrases))
+  phraseHist = phraseHist[order(phraseHist$Freq, decreasing = TRUE),]
+  phraseHist = head(phraseHist, 100)
+  phraseHist = subset(phraseHist, Freq > 1)
+  colnames(phraseHist) = c("Phrase", "Count")
+  kable(phraseHist, row.names = FALSE, caption = paste("Most frequent phrases on", themeName))
+}
+
+topPhrasesByTheme("boclips.com")
+topPhrasesByTheme("pearson.boclips.com")
+topPhrasesByTheme("watchboclips.com")
+
+```
+
+## Search words
+```{r wordFreqs, echo=FALSE}
+topWordsByTheme = function(themeName) {
+  themeSearches = subset(allSearches, theme == themeName)
+  splitWords = strsplit(as.character(themeSearches$keyword), " ")
+  allWords = data.frame(unlist(splitWords))
+  colnames(allWords)=c("word")
+  
+  allWords$word = tolower(allWords$word)
+  allWords$word = gsub("[^[:alnum:][:space:]]","",allWords$word)
+  stopwords = c("", "and", "or", "in", "of", "the", "to", "a")
+  allWords = subset(allWords, !(word %in% stopwords))
+  
+  wordsHist = data.frame(table(allWords))
+  wordsHist = wordsHist[order(wordsHist$Freq, decreasing = TRUE),]
+  wordsHist = head(wordsHist, 100)
+  wordsHist = subset(wordsHist, Freq > 1)
+  colnames(wordsHist) = c("Word", "Count")
+  kable(wordsHist, row.names = FALSE, caption = paste("Most frequent words on", themeName))
+}
+
+topWordsByTheme("boclips.com")
+topWordsByTheme("pearson.boclips.com")
+topWordsByTheme("watchboclips.com")
 
 ```
