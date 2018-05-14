@@ -16,21 +16,42 @@ The following numbers are based on the above definition.
 
 ```{r setup, include=FALSE}
 library(knitr)
+library(stringr)
+library(urltools)
 
 knitr::opts_chunk$set(echo = TRUE)
 
-allSearches = read.csv("full_data.csv", colClasses = c("factor","factor","factor","Date","factor"))
-allSearches$theme = as.factor(gsub('www.', '', allSearches$theme))
+objectIdValueOf = function(s) {
+  return(regmatches(s,regexpr("[a-z0-9]{24}",s)))
+}
 
-userDetails = read.csv("all-users.csv")
+parseUrl = function(url) {
+  pattern = "(?:.*://)?([^/]+)/search/([^?]*)[?]?.*"
+  columns = str_match(url, pattern)
+  colnames(columns) = c("url", "theme", "query")
+  return(columns)
+}
+
+allSearches = read.csv("all-searches.csv", col.names = c("url", "user", "timestamp"), colClasses = c("character", "character", "Date"))
+allSearches$user = factor(objectIdValueOf(allSearches$user))
+
+allSearches = merge(x = allSearches, y = parseUrl(allSearches$url), by = "url")
+allSearches$query = url_decode(allSearches$query)
+
+userDetails = read.csv("all-users.csv", col.names = c("id", "email", "name", "surname"), colClasses = "character")
+userDetails$id = factor(objectIdValueOf(userDetails$id))
+
 allSearches = merge(x = allSearches, y = userDetails, by.x = "user", by.y = "id")
 
-summary(allSearches)
 allSearches=subset(allSearches, !grepl("boclips.com", email))
-allSearches = subset(allSearches, date_created > as.Date("2018-04-09"))
-allSearches = subset(allSearches, select = c("user", "keyword", "theme"))
+allSearches = subset(allSearches, timestamp > as.Date("2018-04-15"))
+
+oupSearches = allSearches[endsWith(allSearches$email, "oup.com"),]
+allSearches = subset(allSearches, select = c("user", "query", "theme"))
 allSearches = unique(allSearches)
 ```
+
+
 
 # Volume of search queries
 ```{r themes, echo=FALSE}
@@ -78,7 +99,7 @@ Here are the most commonly used search phrases.
 ```{r phraseFreqs, echo=FALSE}
 topPhrasesByTheme = function(themeName) {
   allPhrases = subset(allSearches, theme == themeName)
-  allPhrases = subset(allPhrases, select = c("keyword"))
+  allPhrases = subset(allPhrases, select = c("query"))
   colnames(allPhrases)=c("text")
   
   allPhrases$text = tolower(allPhrases$text)
@@ -104,7 +125,7 @@ topPhrasesByTheme("watchboclips.com")
 ```{r wordFreqs, echo=FALSE}
 topWordsByTheme = function(themeName) {
   themeSearches = subset(allSearches, theme == themeName)
-  splitWords = strsplit(as.character(themeSearches$keyword), " ")
+  splitWords = strsplit(as.character(themeSearches$query), " ")
   allWords = data.frame(unlist(splitWords))
   colnames(allWords)=c("word")
   
