@@ -1,0 +1,21 @@
+[
+  {
+    "_id": "5914259571b7892774f8f0c8",
+    "date_updated": "2017-05-15T16:42:41.745Z",
+    "date_created": "2017-05-11T08:49:25.634Z",
+    "name": "pearson",
+    "uuid": "153e4ed9-890f-4320-a173-5dd5eb02bffb",
+    "search_filters": [
+      {
+        "_refType": "Source",
+        "invert_filter": true,
+        "_id": "5914259571b7892774f8f0ca",
+        "items": [
+          "59172cbce5a04e5e69d1ba30"
+        ]
+      }
+    ],
+    "clients": [],
+    "__v": 0
+  }
+]
