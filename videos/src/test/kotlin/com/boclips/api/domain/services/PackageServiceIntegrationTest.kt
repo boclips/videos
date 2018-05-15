@@ -1,5 +1,7 @@
-package com.boclips.api
+package com.boclips.api.domain.services
 
+import com.boclips.api.testsupport.AbstractIntegrationTest
+import com.boclips.api.domain.model.Package
 import com.boclips.api.testsupport.PEARSON_PACKAGE_ID
 import com.boclips.api.testsupport.PEARSON_PACKAGE_NAME
 import com.boclips.api.testsupport.SCHOOL_OF_LIFE_ID

@@ -1,6 +1,6 @@
-package com.boclips.api
+package com.boclips.api.presentation
 
-import com.boclips.api.presentation.ResourceNotFoundException
+import com.boclips.api.domain.services.PackageService
 import com.boclips.api.presentation.resources.Package
 import org.springframework.hateoas.Resources
 import org.springframework.http.HttpStatus

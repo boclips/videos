@@ -1,4 +1,4 @@
-package com.boclips.api.contentproviders
+package com.boclips.api.infrastructure
 
 import com.boclips.api.infrastructure.ContentProviderEntity
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository

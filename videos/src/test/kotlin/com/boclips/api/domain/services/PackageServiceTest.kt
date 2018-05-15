@@ -1,6 +1,7 @@
-package com.boclips.api
+package com.boclips.api.domain.services
 
 import com.boclips.api.infrastructure.PackageEntity
+import com.boclips.api.infrastructure.PackageRepository
 import com.boclips.api.infrastructure.SearchFilter
 import com.boclips.api.infrastructure.SearchFilterType
 import com.boclips.api.presentation.IllegalFilterException

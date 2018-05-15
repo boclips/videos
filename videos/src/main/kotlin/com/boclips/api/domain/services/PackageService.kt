@@ -1,5 +1,7 @@
-package com.boclips.api
+package com.boclips.api.domain.services
 
+import com.boclips.api.infrastructure.PackageRepository
+import com.boclips.api.domain.model.Package
 import com.boclips.api.infrastructure.PackageEntity
 import com.boclips.api.infrastructure.SearchFilter
 import com.boclips.api.infrastructure.SearchFilterType
@@ -11,7 +13,7 @@ import reactor.core.publisher.Mono
 class PackageService(
         val packageRepository: PackageRepository
 ) {
-    fun getById(packageId: String): Mono<com.boclips.api.Package> {
+    fun getById(packageId: String): Mono<Package> {
         return packageRepository.findById(packageId).map { it.toPackage() }
     }
 

@@ -1,6 +1,7 @@
-package com.boclips.api.contentproviders
+package com.boclips.api.presentation
 
-import com.boclips.api.presentation.ResourceNotFoundException
+import com.boclips.api.domain.services.ContentProviderService
+import com.boclips.api.domain.services.DeleteResult
 import com.boclips.api.presentation.resources.ContentProvider
 import org.springframework.hateoas.Resources
 import org.springframework.http.HttpStatus

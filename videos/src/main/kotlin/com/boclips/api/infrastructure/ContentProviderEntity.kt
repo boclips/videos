@@ -1,6 +1,6 @@
 package com.boclips.api.infrastructure
 
-import com.boclips.api.contentproviders.ContentProvider
+import com.boclips.api.domain.model.ContentProvider
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.util.*

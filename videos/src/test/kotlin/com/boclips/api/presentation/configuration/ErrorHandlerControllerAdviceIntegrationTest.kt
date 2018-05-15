@@ -1,7 +1,9 @@
-package com.boclips.api.presentation
+package com.boclips.api.presentation.configuration
 
-import com.boclips.api.AbstractIntegrationTest
-import com.boclips.api.PackageService
+import com.boclips.api.testsupport.AbstractIntegrationTest
+import com.boclips.api.domain.services.PackageService
+import com.boclips.api.presentation.IllegalFilterException
+import com.boclips.api.presentation.ResourceNotFoundException
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test

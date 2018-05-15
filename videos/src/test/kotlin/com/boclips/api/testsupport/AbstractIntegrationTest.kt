@@ -1,4 +1,4 @@
-package com.boclips.api
+package com.boclips.api.testsupport
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.bson.types.ObjectId

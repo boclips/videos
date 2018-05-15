@@ -1,4 +1,4 @@
-package com.boclips.api
+package com.boclips.api.domain.model
 
 import javax.persistence.Entity
 import javax.persistence.Id

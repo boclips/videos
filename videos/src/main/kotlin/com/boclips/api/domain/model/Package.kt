@@ -1,6 +1,4 @@
-package com.boclips.api
-
-import com.boclips.api.contentproviders.ContentProvider
+package com.boclips.api.domain.model
 
 data class Package(
         val id: String,

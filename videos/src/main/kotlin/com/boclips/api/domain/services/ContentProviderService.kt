@@ -1,6 +1,8 @@
-package com.boclips.api.contentproviders
+package com.boclips.api.domain.services
 
-import com.boclips.api.VideoRepository
+import com.boclips.api.infrastructure.ContentProviderRepository
+import com.boclips.api.domain.model.ContentProvider
+import com.boclips.api.infrastructure.videos.VideoRepository
 import com.boclips.api.infrastructure.ContentProviderEntity
 import mu.KLogging
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate

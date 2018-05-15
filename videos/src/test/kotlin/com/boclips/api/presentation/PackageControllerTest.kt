@@ -1,6 +1,7 @@
-package com.boclips.api
+package com.boclips.api.presentation
 
-import com.boclips.api.presentation.ResourceNotFoundException
+import com.boclips.api.domain.model.Package
+import com.boclips.api.domain.services.PackageService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever

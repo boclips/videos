@@ -1,5 +1,7 @@
 package com.boclips.api
 
+import com.boclips.api.infrastructure.videos.VideoRepository
+import com.boclips.api.testsupport.AbstractIntegrationTest
 import com.boclips.api.testsupport.SKY_NEWS_ID
 import org.assertj.core.api.Assertions
 import org.bson.Document

@@ -1,6 +1,7 @@
 package com.boclips.api.infrastructure
 
-import com.boclips.api.contentproviders.ContentProvider
+import com.boclips.api.domain.model.ContentProvider
+import com.boclips.api.domain.model.Package
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import javax.persistence.Id
@@ -13,7 +14,7 @@ data class PackageEntity(
         @Field("search_filters")
         val searchFilters: MutableList<SearchFilter>
 ) {
-    fun toPackage() = com.boclips.api.Package(
+    fun toPackage() = Package(
             id = this.id,
             name = this.name,
             excludedContentProviders = this.searchFilters

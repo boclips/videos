@@ -1,6 +1,6 @@
-package com.boclips.api
+package com.boclips.api.domain.services
 
-import com.boclips.api.contentproviders.ContentProviderService
+import com.boclips.api.testsupport.AbstractIntegrationTest
 import com.boclips.api.testsupport.SKY_NEWS_ID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

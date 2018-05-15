@@ -1,5 +1,6 @@
 package com.boclips.api
 
+import com.boclips.api.testsupport.AbstractIntegrationTest
 import com.boclips.api.testsupport.PEARSON_PACKAGE_ID
 import com.boclips.api.testsupport.SCHOOL_OF_LIFE_ID
 import com.jayway.jsonpath.JsonPath
