@@ -1,3 +1,7 @@
+use video-ingestor-db;
+db.getCollectionNames().forEach(collectionName => db[collectionName].drop());
+
+use km4;
 db.getCollectionNames().forEach(collectionName => db[collectionName].drop());
 
 var clientId = ObjectId();
