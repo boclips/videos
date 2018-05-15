@@ -1,4 +1,4 @@
-package com.boclips.api.infrastructure
+package com.boclips.api.infrastructure.packages
 
 import com.boclips.api.domain.model.ContentProvider
 import com.boclips.api.domain.model.Package

@@ -1,40 +1,13 @@
 package com.boclips.api.domain.services
 
-import com.boclips.api.infrastructure.PackageRepository
 import com.boclips.api.domain.model.Package
-import com.boclips.api.infrastructure.PackageEntity
-import com.boclips.api.infrastructure.SearchFilter
-import com.boclips.api.infrastructure.SearchFilterType
-import com.boclips.api.presentation.IllegalFilterException
-import org.springframework.stereotype.Service
+import com.boclips.api.infrastructure.packages.PackageEntity
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-@Service
-class PackageService(
-        val packageRepository: PackageRepository
-) {
-    fun getById(packageId: String): Mono<Package> {
-        return packageRepository.findById(packageId).map { it.toPackage() }
-    }
-
-    fun getAll() = packageRepository.findAll().map { it.toPackage() }
-
-    fun excludeContentProvider(packageId: String, contentProviderId: String): Mono<PackageEntity> {
-        return packageRepository.findById(packageId)
-                .map { p ->
-                    var filter = p.searchFilters.firstOrNull { it._refType == SearchFilterType.Source }
-
-                    if (filter == null) {
-                        filter = SearchFilter(SearchFilterType.Source, true, mutableSetOf())
-                        p.searchFilters.add(filter)
-                    }
-
-                    if (!filter.invertFilter) throw IllegalFilterException()
-
-                    filter.items.add(contentProviderId)
-
-                    return@map p
-                }
-                .flatMap { packageRepository.save(it) }
-    }
+interface PackageService {
+    fun getById(packageId: String): Mono<Package>
+    fun getAll(): Flux<Package>
+    fun excludeContentProvider(packageId: String, contentProviderId: String): Mono<PackageEntity>
 }
+

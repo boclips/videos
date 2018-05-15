@@ -1,5 +1,8 @@
 package com.boclips.api.infrastructure
 
+import com.boclips.api.infrastructure.packages.PackageEntity
+import com.boclips.api.infrastructure.packages.SearchFilter
+import com.boclips.api.infrastructure.packages.SearchFilterType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

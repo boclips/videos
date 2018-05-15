@@ -2,6 +2,7 @@ package com.boclips.api.domain.services
 
 import com.boclips.api.testsupport.AbstractIntegrationTest
 import com.boclips.api.domain.model.Package
+import com.boclips.api.infrastructure.packages.PackageServiceImpl
 import com.boclips.api.testsupport.PEARSON_PACKAGE_ID
 import com.boclips.api.testsupport.PEARSON_PACKAGE_NAME
 import com.boclips.api.testsupport.SCHOOL_OF_LIFE_ID
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class PackageServiceIntegrationTest : AbstractIntegrationTest() {
 
     @Autowired
-    lateinit var packageService: PackageService
+    lateinit var packageService: PackageServiceImpl
 
     @Test
     fun getAll_returnsAllPackages() {

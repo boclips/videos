@@ -1,9 +1,10 @@
 package com.boclips.api.domain.services
 
-import com.boclips.api.infrastructure.PackageEntity
-import com.boclips.api.infrastructure.PackageRepository
-import com.boclips.api.infrastructure.SearchFilter
-import com.boclips.api.infrastructure.SearchFilterType
+import com.boclips.api.infrastructure.packages.PackageEntity
+import com.boclips.api.infrastructure.packages.PackageRepository
+import com.boclips.api.infrastructure.packages.SearchFilter
+import com.boclips.api.infrastructure.packages.SearchFilterType
+import com.boclips.api.infrastructure.packages.PackageServiceImpl
 import com.boclips.api.presentation.IllegalFilterException
 import com.boclips.api.testsupport.PEARSON_PACKAGE_ID
 import com.boclips.api.testsupport.SCHOOL_OF_LIFE_ID
@@ -23,10 +24,10 @@ import org.mockito.junit.MockitoJUnitRunner
 import reactor.core.publisher.Mono
 
 @RunWith(MockitoJUnitRunner::class)
-class PackageServiceTest {
+class PackageServiceImplTest {
 
     @InjectMocks
-    lateinit var packageService: PackageService
+    lateinit var packageService: PackageServiceImpl
 
     @Mock
     lateinit var packageRepository: PackageRepository

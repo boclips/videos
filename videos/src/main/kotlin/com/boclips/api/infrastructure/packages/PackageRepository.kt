@@ -1,6 +1,5 @@
-package com.boclips.api.infrastructure
+package com.boclips.api.infrastructure.packages
 
-import com.boclips.api.infrastructure.PackageEntity
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 
 interface PackageRepository : ReactiveMongoRepository<PackageEntity, String>
