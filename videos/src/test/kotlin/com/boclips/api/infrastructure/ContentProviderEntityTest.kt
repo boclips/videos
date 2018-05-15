@@ -1,5 +1,6 @@
 package com.boclips.api.infrastructure
 
+import com.boclips.api.infrastructure.contentprovider.ContentProviderEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

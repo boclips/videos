@@ -1,15 +1,16 @@
 package com.boclips.api.domain.services
 
+import com.boclips.api.infrastructure.contentprovider.ContentProviderServiceImpl
 import com.boclips.api.testsupport.AbstractIntegrationTest
 import com.boclips.api.testsupport.SKY_NEWS_ID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class ContentProviderServiceIntegrationTest : AbstractIntegrationTest() {
+class ContentProviderServiceImplIntegrationTest : AbstractIntegrationTest() {
 
     @Autowired
-    lateinit var contentProviderService: ContentProviderService
+    lateinit var contentProviderService: ContentProviderServiceImpl
 
     @Test
     fun getAll_returnsAllContentProviders() {
