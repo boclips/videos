@@ -43,9 +43,10 @@ userDetails$id = factor(objectIdValueOf(userDetails$id))
 
 allSearches = merge(x = allSearches, y = userDetails, by.x = "user", by.y = "id")
 
-allSearches=subset(allSearches, !grepl("boclips.com", email))
+allSearches = subset(allSearches, !grepl("boclips.com", email))
 allSearches = subset(allSearches, timestamp > as.Date("2018-04-15"))
 
+emailSearches = allSearches$email
 oupSearches = allSearches[endsWith(allSearches$email, "oup.com"),]
 allSearches = subset(allSearches, select = c("user", "query", "theme"))
 allSearches = unique(allSearches)
@@ -93,6 +94,25 @@ activeUsersByTheme("watchboclips.com")
 # activeUsersByTheme("lbs.boclips.com")
 ```
 
+# Most active email domains
+```{r domains, echo=FALSE}
+
+groupByDomain = function(emails) {
+  pattern = ".*@(.*)"
+  columns = data.frame(str_match(emails, pattern))
+  colnames(columns) = c("email", "domain")
+  freqs = data.frame(table(columns$domain))
+  colnames(freqs) = c("domain", "count")
+  freqs = freqs[order(-freqs$count),]
+  return(freqs)
+}
+
+domains = groupByDomain(emailSearches)
+kable(domains, caption = "Most active email domains", row.names = FALSE, col.names = c("Domain", "# Queries"))
+write.csv(domains, file = "domains.csv", row.names = FALSE)
+
+```
+
 
 # Search phrases
 Here are the most commonly used search phrases.
@@ -109,9 +129,10 @@ topPhrasesByTheme = function(themeName) {
   
   phraseHist = data.frame(table(allPhrases))
   phraseHist = phraseHist[order(phraseHist$Freq, decreasing = TRUE),]
-  phraseHist = head(phraseHist, 100)
-  phraseHist = subset(phraseHist, Freq > 1)
   colnames(phraseHist) = c("Phrase", "Count")
+  write.csv(phraseHist, file = paste("phrases-", themeName, ".csv"), row.names = FALSE)
+  phraseHist = head(phraseHist, 100)
+  phraseHist = subset(phraseHist, Count > 1)
   kable(phraseHist, row.names = FALSE, caption = paste("Most frequent phrases on", themeName))
 }
 
@@ -136,9 +157,10 @@ topWordsByTheme = function(themeName) {
   
   wordsHist = data.frame(table(allWords))
   wordsHist = wordsHist[order(wordsHist$Freq, decreasing = TRUE),]
-  wordsHist = head(wordsHist, 100)
-  wordsHist = subset(wordsHist, Freq > 1)
   colnames(wordsHist) = c("Word", "Count")
+  write.csv(wordsHist, file = paste("words-", themeName, ".csv"), row.names = FALSE)
+  wordsHist = head(wordsHist, 100)
+  wordsHist = subset(wordsHist, Count > 1)
   kable(wordsHist, row.names = FALSE, caption = paste("Most frequent words on", themeName))
 }
 
