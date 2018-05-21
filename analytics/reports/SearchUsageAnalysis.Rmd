@@ -18,6 +18,7 @@ The following numbers are based on the above definition.
 library(knitr)
 library(stringr)
 library(urltools)
+library(analytics)
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -130,7 +131,7 @@ topPhrasesByTheme = function(themeName) {
   phraseHist = data.frame(table(allPhrases))
   phraseHist = phraseHist[order(phraseHist$Freq, decreasing = TRUE),]
   colnames(phraseHist) = c("Phrase", "Count")
-  write.csv(phraseHist, file = paste("phrases-", themeName, ".csv"), row.names = FALSE)
+  write.csv(phraseHist, file = paste("phrases-", themeName, ".csv", sep = ""), row.names = FALSE)
   phraseHist = head(phraseHist, 100)
   phraseHist = subset(phraseHist, Count > 1)
   kable(phraseHist, row.names = FALSE, caption = paste("Most frequent phrases on", themeName))
@@ -158,7 +159,7 @@ topWordsByTheme = function(themeName) {
   wordsHist = data.frame(table(allWords))
   wordsHist = wordsHist[order(wordsHist$Freq, decreasing = TRUE),]
   colnames(wordsHist) = c("Word", "Count")
-  write.csv(wordsHist, file = paste("words-", themeName, ".csv"), row.names = FALSE)
+  write.csv(wordsHist, file = paste("words-", themeName, ".csv", sep = ""), row.names = FALSE)
   wordsHist = head(wordsHist, 100)
   wordsHist = subset(wordsHist, Count > 1)
   kable(wordsHist, row.names = FALSE, caption = paste("Most frequent words on", themeName))
