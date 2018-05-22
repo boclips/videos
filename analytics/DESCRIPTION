@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Author: person("Jacek", "Rzeniewicz", email = "jacek@boclips.com", role = c("aut", "cre"))
 Maintainer: Jacek Rzeniewicz <jacek@boclips.com>
 Description: What the package does (one paragraph).
-Depends: R (>= 3.5.0), quanteda, urltools
+Depends: R (>= 3.5.0), quanteda, urltools, stringr
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
