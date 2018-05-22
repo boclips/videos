@@ -17,7 +17,6 @@ The following numbers are based on the above definition.
 ```{r setup, include=FALSE}
 library(knitr)
 library(stringr)
-library(urltools)
 library(analytics)
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -26,18 +25,10 @@ objectIdValueOf = function(s) {
   return(regmatches(s,regexpr("[a-z0-9]{24}",s)))
 }
 
-parseUrl = function(url) {
-  pattern = "(?:.*://)?([^/]+)/search/([^?]*)[?]?.*"
-  columns = str_match(url, pattern)
-  colnames(columns) = c("url", "theme", "query")
-  return(columns)
-}
-
 allSearches = read.csv("all-searches.csv", col.names = c("url", "user", "timestamp"), colClasses = c("character", "character", "Date"))
 allSearches$user = factor(objectIdValueOf(allSearches$user))
 
-allSearches = merge(x = allSearches, y = parseUrl(allSearches$url), by = "url")
-allSearches$query = url_decode(allSearches$query)
+allSearches = cbind(allSearches, parse_search_url(allSearches$url))
 
 userDetails = read.csv("all-users.csv", col.names = c("id", "email", "name", "surname"), colClasses = "character")
 userDetails$id = factor(objectIdValueOf(userDetails$id))

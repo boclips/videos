@@ -5,3 +5,7 @@
 From R REPL:
 
     devtools::test()
+
+Or:
+
+    testthat::auto_test_package(".")
