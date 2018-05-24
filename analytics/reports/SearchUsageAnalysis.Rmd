@@ -16,74 +16,38 @@ The following numbers are based on the above definition.
 
 ```{r setup, include=FALSE}
 library(knitr)
-library(stringr)
 library(analytics)
 
 knitr::opts_chunk$set(echo = TRUE)
 
-objectIdValueOf = function(s) {
-  return(regmatches(s,regexpr("[a-z0-9]{24}",s)))
-}
-
-allSearches = read.csv("all-searches.csv", col.names = c("url", "user", "timestamp"), colClasses = c("character", "character", "Date"))
-allSearches$user = factor(objectIdValueOf(allSearches$user))
-
-allSearches = cbind(allSearches, parse_search_url(allSearches$url))
-
-userDetails = read.csv("all-users.csv", col.names = c("id", "email", "name", "surname"), colClasses = "character")
-userDetails$id = factor(objectIdValueOf(userDetails$id))
-
-allSearches = merge(x = allSearches, y = userDetails, by.x = "user", by.y = "id")
-
-allSearches = subset(allSearches, !grepl("boclips.com", email))
-allSearches = subset(allSearches, timestamp > as.Date("2018-04-15"))
-
-emailSearches = allSearches$email
-oupSearches = allSearches[endsWith(allSearches$email, "oup.com"),]
-allSearches = subset(allSearches, select = c("user", "query", "theme"))
-allSearches = unique(allSearches)
+searches = load_search_requests("all-searches.csv", "all-users.csv", after = as.Date("2018-04-15"))
 ```
 
 
 
 # Volume of search queries
 ```{r themes, echo=FALSE}
-oneMonthSearches = data.frame(allSearches)
-oneMonthSearches$theme = factor(oneMonthSearches$theme)
-oneMonthSearches$user = factor(oneMonthSearches$user)
-
-themeFrequencies=data.frame(table(data.frame(oneMonthSearches$theme)))
+themeFrequencies=data.frame(table(factor(searches$theme)))
 colnames(themeFrequencies)=c("theme", "count")
 
-kable(themeFrequencies[,1:2], caption = "Queries by theme", col.names = c("Theme", "Count"))
+kable(themeFrequencies, caption = "Queries by theme", col.names = c("Theme", "Count"))
 par(cex=0.7)
 plot(themeFrequencies, type="s", xlab="Theme", ylab="Count")
 
 ```
 
 # Most active users per theme
-Here are the users who made the most number of search queries recently.
+Here are the users who made the most search queries.
 ```{r users, echo=FALSE}
-userFrequencies=data.frame(table(data.frame(oneMonthSearches$user)))
-colnames(userFrequencies)=c("user", "count")
-
-userTheme = unique(subset(oneMonthSearches, select=c("user", "theme")))
-userFrequencies = merge(x = userFrequencies, y = userTheme, by = "user")
-userFrequencies = merge(x = userFrequencies, y = userDetails, by.x = "user", by.y = "id")
-
-userFrequencies = userFrequencies[order(-userFrequencies$count),]
-
 activeUsersByTheme = function(themeName) {
-  filteredUsers = subset(userFrequencies, theme == themeName & count > 5)
-  filteredUsers = head(filteredUsers, 50)
-  filteredUsers = subset(filteredUsers, select=c("name", "surname", "email", "count"))
-  kable(filteredUsers, caption = paste("Most active users on", themeName), row.names = FALSE, col.names = c("First Name", "Last Name", "Email", "# Queries"))
+  frequencies = searches %>% with_theme(themeName) %>% email_freqs(min.count = 5, limit.rows = 50)
+  
+  kable(frequencies, caption = paste("Most active users on", themeName), row.names = FALSE, col.names = c("Email", "# Queries"))
 }
 
 activeUsersByTheme("boclips.com")
 activeUsersByTheme("pearson.boclips.com")
 activeUsersByTheme("watchboclips.com")
-# activeUsersByTheme("lbs.boclips.com")
 ```
 
 # Most active email domains
@@ -99,7 +63,7 @@ groupByDomain = function(emails) {
   return(freqs)
 }
 
-domains = groupByDomain(emailSearches)
+domains = groupByDomain(searches$email)
 kable(domains, caption = "Most active email domains", row.names = FALSE, col.names = c("Domain", "# Queries"))
 write.csv(domains, file = "domains.csv", row.names = FALSE)
 
@@ -110,7 +74,7 @@ write.csv(domains, file = "domains.csv", row.names = FALSE)
 Here are the most commonly used search phrases.
 ```{r phraseFreqs, echo=FALSE}
 topPhrasesByTheme = function(themeName) {
-  allPhrases = subset(allSearches, theme == themeName)
+  allPhrases = subset(searches, theme == themeName)
   allPhrases = subset(allPhrases, select = c("query"))
   colnames(allPhrases)=c("text")
   
@@ -137,7 +101,7 @@ topPhrasesByTheme("watchboclips.com")
 ## Search words
 ```{r wordFreqs, echo=FALSE}
 topWordsByTheme = function(themeName) {
-  themeSearches = subset(allSearches, theme == themeName)
+  themeSearches = subset(searches, theme == themeName)
   splitWords = strsplit(as.character(themeSearches$query), " ")
   allWords = data.frame(unlist(splitWords))
   colnames(allWords)=c("word")
