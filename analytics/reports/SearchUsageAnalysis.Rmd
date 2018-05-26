@@ -2,6 +2,14 @@
 title: "Search analysis: past 30 days"
 output: pdf_document
 ---
+```{r setup, include=FALSE}
+library(knitr)
+library(analytics)
+
+knitr::opts_chunk$set(echo = FALSE, comment=NA)
+
+searches = load_search_requests("all-searches.csv", "all-users.csv", after = as.Date("2018-04-15"))
+```
 
 # How are search queries counted
 In this analysis we count search queries as distinct phrases typed by a user. That means that:
@@ -14,35 +22,21 @@ In this analysis we count search queries as distinct phrases typed by a user. Th
 
 The following numbers are based on the above definition.
 
-```{r setup, include=FALSE}
-library(knitr)
-library(analytics)
-
-knitr::opts_chunk$set(echo = TRUE)
-
-searches = load_search_requests("all-searches.csv", "all-users.csv", after = as.Date("2018-04-15"))
-```
-
-
-
 # Volume of search queries
-```{r themes, echo=FALSE}
-themeFrequencies=data.frame(table(factor(searches$theme)))
-colnames(themeFrequencies)=c("theme", "count")
-
-kable(themeFrequencies, caption = "Queries by theme", col.names = c("Theme", "Count"))
-par(cex=0.7)
-plot(themeFrequencies, type="s", xlab="Theme", ylab="Count")
-
+```{r themes}
+searches$theme %>% 
+  freqs_table(valuesAsFactors = TRUE) %T>%
+  kable(caption = "Queries by theme", col.names = c("Theme", "Count"), row.names = FALSE) %T>%
+  plot(., type="s", xlab="value", ylab="count")
 ```
 
 # Most active users per theme
 Here are the users who made the most search queries.
-```{r users, echo=FALSE}
+```{r users}
 activeUsersByTheme = function(themeName) {
-  frequencies = searches %>% with_theme(themeName) %>% email_freqs(min.count = 5, limit.rows = 50)
-  
-  kable(frequencies, caption = paste("Most active users on", themeName), row.names = FALSE, col.names = c("Email", "# Queries"))
+  searches %>% with_theme(themeName) %>% .$email %>% 
+    freqs_table(min.count = 5, limit.rows = 50) %>%
+    kable(caption = paste("Most active users on", themeName), row.names = FALSE, col.names = c("Email", "# Queries"))
 }
 
 activeUsersByTheme("boclips.com")
@@ -51,77 +45,41 @@ activeUsersByTheme("watchboclips.com")
 ```
 
 # Most active email domains
-```{r domains, echo=FALSE}
-
-groupByDomain = function(emails) {
-  pattern = ".*@(.*)"
-  columns = data.frame(str_match(emails, pattern))
-  colnames(columns) = c("email", "domain")
-  freqs = data.frame(table(columns$domain))
-  colnames(freqs) = c("domain", "count")
-  freqs = freqs[order(-freqs$count),]
-  return(freqs)
-}
-
-domains = groupByDomain(searches$email)
-kable(domains, caption = "Most active email domains", row.names = FALSE, col.names = c("Domain", "# Queries"))
-write.csv(domains, file = "domains.csv", row.names = FALSE)
-
+```{r domains}
+searches$email %>% email_domain %>% freqs_table(min.count = 5, limit.rows = 20) %T>%
+    write.csv(file = "domains.csv", row.names = FALSE) %>%
+    kable(caption = "Most active email domains", row.names = FALSE, col.names = c("Domain", "# Queries"))
 ```
-
 
 # Search phrases
 Here are the most commonly used search phrases.
-```{r phraseFreqs, echo=FALSE}
+```{r phraseFreqs}
 topPhrasesByTheme = function(themeName) {
-  allPhrases = subset(searches, theme == themeName)
-  allPhrases = subset(allPhrases, select = c("query"))
-  colnames(allPhrases)=c("text")
-  
-  allPhrases$text = tolower(allPhrases$text)
-  allPhrases$text = gsub("[^[:alnum:][:space:]]","",allPhrases$text)
-  allPhrases = subset(allPhrases, text != "")
-  
-  
-  phraseHist = data.frame(table(allPhrases))
-  phraseHist = phraseHist[order(phraseHist$Freq, decreasing = TRUE),]
-  colnames(phraseHist) = c("Phrase", "Count")
-  write.csv(phraseHist, file = paste("phrases-", themeName, ".csv", sep = ""), row.names = FALSE)
-  phraseHist = head(phraseHist, 100)
-  phraseHist = subset(phraseHist, Count > 1)
-  kable(phraseHist, row.names = FALSE, caption = paste("Most frequent phrases on", themeName))
+  searches %>% with_theme(themeName) %>% .$query %>%
+    clean_phrases %>%
+    freqs_table %T>%
+    write.csv(file = paste("phrases-", themeName, ".csv", sep = ""), row.names = FALSE) %>%
+    freqs_table_filter(limit.rows = 100, min.count = 2) %>%
+    kable(row.names = FALSE, caption = paste("Most frequent phrases on", themeName))
 }
 
 topPhrasesByTheme("boclips.com")
 topPhrasesByTheme("pearson.boclips.com")
 topPhrasesByTheme("watchboclips.com")
-
 ```
 
 ## Search words
-```{r wordFreqs, echo=FALSE}
+```{r wordFreqs}
 topWordsByTheme = function(themeName) {
-  themeSearches = subset(searches, theme == themeName)
-  splitWords = strsplit(as.character(themeSearches$query), " ")
-  allWords = data.frame(unlist(splitWords))
-  colnames(allWords)=c("word")
-  
-  allWords$word = tolower(allWords$word)
-  allWords$word = gsub("[^[:alnum:][:space:]]","",allWords$word)
-  stopwords = c("", "and", "or", "in", "of", "the", "to", "a")
-  allWords = subset(allWords, !(word %in% stopwords))
-  
-  wordsHist = data.frame(table(allWords))
-  wordsHist = wordsHist[order(wordsHist$Freq, decreasing = TRUE),]
-  colnames(wordsHist) = c("Word", "Count")
-  write.csv(wordsHist, file = paste("words-", themeName, ".csv", sep = ""), row.names = FALSE)
-  wordsHist = head(wordsHist, 100)
-  wordsHist = subset(wordsHist, Count > 1)
-  kable(wordsHist, row.names = FALSE, caption = paste("Most frequent words on", themeName))
+  searches %>% with_theme(themeName) %>% .$query %>%
+    clean_words %>%
+    freqs_table %T>%
+    write.csv(file = paste("words-", themeName, ".csv", sep = ""), row.names = FALSE) %>%
+    freqs_table_filter(min.count = 2, limit.rows = 100) %>%
+    kable(row.names = FALSE, caption = paste("Most frequent words on", themeName))
 }
 
 topWordsByTheme("boclips.com")
 topWordsByTheme("pearson.boclips.com")
 topWordsByTheme("watchboclips.com")
-
 ```
