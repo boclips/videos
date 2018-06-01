@@ -3,6 +3,7 @@
 set -x -e
 
 pushd ..
+  Rscript install-dependencies.R
   R CMD install .
 popd
 
