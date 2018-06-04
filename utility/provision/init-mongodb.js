@@ -1,7 +1,76 @@
-use video-ingestor-db;
+db = db.getSiblingDB('video-ingestor-db');
 db.getCollectionNames().forEach(collectionName => db[collectionName].drop());
 
-use km4;
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60003",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60004",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60005",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60006",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60007",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60008",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60009",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60010",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60011",
+    "provider": "Singapore Press Holdings"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knoweconomist",
+    provider: "Bloomberg"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowhollywoodreporter",
+    provider: "Bloomberg"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowlux",
+    provider: "Bloomberg"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowstat",
+    provider: "Bloomberg"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowbiz",
+    provider: "Bloomberg"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowfeatures",
+    provider: "Bloomberg"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowesp",
+    provider: "Bloomberg"
+});
+db.httpSources.insert({
+    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowall",
+    provider: "Bloomberg"
+});
+
+db = db.getSiblingDB('km4');
 db.getCollectionNames().forEach(collectionName => db[collectionName].drop());
 
 var clientId = ObjectId();
