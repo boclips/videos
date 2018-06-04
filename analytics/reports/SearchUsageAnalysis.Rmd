@@ -8,7 +8,8 @@ library(analytics)
 
 knitr::opts_chunk$set(echo = FALSE, comment=NA)
 
-searches = load_search_requests("all-searches.csv", "all-users.csv", after = as.Date("2018-05-01"))
+monthAgo = seq(Sys.Date(), length = 2, by = "-1 month")[2]
+searches = load_search_requests("all-searches.csv", "all-users.csv", after = monthAgo)
 ```
 
 # How are search queries counted
@@ -82,4 +83,10 @@ topWordsByTheme = function(themeName) {
 topWordsByTheme("boclips.com")
 topWordsByTheme("pearson.boclips.com")
 topWordsByTheme("watchboclips.com")
+```
+
+
+# Data set
+```{r dates}
+cat(paste(monthAgo, "-", Sys.Date()))
 ```
