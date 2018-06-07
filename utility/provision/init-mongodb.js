@@ -74,11 +74,14 @@ db = db.getSiblingDB('km4');
 db.getCollectionNames().forEach(collectionName => db[collectionName].drop());
 
 var clientId = ObjectId();
+var watchboclipsClientId = ObjectId();
 var organizationId = ObjectId();
+var watchboclipsOrganizationId = ObjectId();
 var packageId = ObjectId();
 var pricePolicyId = ObjectId();
 var superAdminId = ObjectId();
 var dummyUserId = ObjectId();
+var watchboclipsUserId = ObjectId();
 var licenseCode5Years = "5YR_SR";
 var typeIdInstructional = 3;
 var pricePolicyCode = "BASE";
@@ -90,6 +93,14 @@ db.clients.insert({
     "name": "Boclips",
     "__v": 0,
     "client_id": "boclips"
+});
+
+db.clients.insert({
+    "_id": watchboclipsClientId,
+    "secret": "Wh4t3v3rY0uW4ntMat3",
+    "name": "BoTeachers",
+    "client_id": "boteachers",
+    "__v": 0
 });
 
 db.licenses.insert({
@@ -125,7 +136,7 @@ db.packages.insert({
     }, {"_refType": "Assettype", "invert_filter": false, "_id": "594d38ed9caf602da1d5f7b1", "items": []}],
     "uuid": "908a5511-df4c-4609-9895-f0436e6f3c13",
     "__v": 2,
-    "clients": [clientId.valueOf()]
+    "clients": [clientId.valueOf(), watchboclipsClientId.valueOf()]
 });
 
 db.organizations.insert({
@@ -137,6 +148,17 @@ db.organizations.insert({
     "uuid": "504bab82-6937-48a1-b941-4e28e12c9eda",
     "__v": 0,
     "package": packageId.valueOf()
+});
+
+db.organizations.insert({
+    "_id": watchboclipsOrganizationId,
+    "date_updated": new Date().toISOString(),
+    "date_created": new Date().toISOString(),
+    "name": "Play Teachers - USA",
+    "address": "USA",
+    "uuid": "41b73068-2e66-4824-9754-c47ffc3fa446",
+    "__v": 0,
+    "package": packageId
 });
 
 db.users.insert({
@@ -175,6 +197,33 @@ db.users.insert({
     "name": "User",
     "username": "dummy-user",
     "__v": 0
+});
+
+db.users.insert({
+    "_id": watchboclipsUserId,
+    "date_updated": new Date().toISOString(),
+    "date_created": new Date().toISOString(),
+    "email": "teacher@gmail.com",
+    "city": "London",
+    "extra_fields": {
+        "school_name": "The Boclips School",
+        "school_type": "Secondary",
+        "teacher_advisory_panel": true,
+        "_id": ObjectId()
+    },
+    "organization": watchboclipsOrganizationId,
+    "original_registration": ObjectId(),
+    "uuid": "e9e7cb45-1a6d-411d-b19b-795bf3184843",
+    "disabled": false,
+    "_registration_completed": true,
+    "preferences": [],
+    "role": "teacher",
+    "password": "$2a$10$ULpGmDMluFEoIx80Kx7YJuKa96khbEQ1qhcDCGFnPKZqouUp.6F2O",
+    "surname": "Chaos",
+    "name": "Professor",
+    "username": "teacher",
+    "__v": 0,
+    "_self_registration": true
 });
 
 db.assettypes.insert({
