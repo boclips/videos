@@ -79,6 +79,10 @@ var packageId = ObjectId();
 var pricePolicyId = ObjectId();
 var superAdminId = ObjectId();
 var dummyUserId = ObjectId();
+var licenseCode5Years = "5YR_SR";
+var typeIdInstructional = 3;
+var pricePolicyCode = "BASE";
+var licenseId = ObjectId();
 
 db.clients.insert({
     "_id": clientId,
@@ -88,11 +92,21 @@ db.clients.insert({
     "client_id": "boclips"
 });
 
+db.licenses.insert({
+    "_id": licenseId,
+    "date_created": new Date().toISOString(),
+    "uuid": "624a567a-5644-438f-8330-077bcfc8d668",
+    "code": licenseCode5Years,
+    "description": "Term 5 year Single Region",
+    "__v": 0,
+    "date_updated": new Date().toISOString()
+});
+
 db.pricepolicies.insert({
     "_id": pricePolicyId,
     "date_updated": new Date().toISOString(),
     "date_created": new Date().toISOString(),
-    "code": "BASE",
+    "code": pricePolicyCode,
     "uuid": "e6516e74-4509-4d83-9859-12a4cbcecc54",
     "__v": 4
 });
@@ -197,7 +211,7 @@ db.assettypes.insert({
     "description": "Instructional Clips",
     "__v": 0,
     "date_updated": new Date().toISOString(),
-    "type_id": 3
+    "type_id": typeIdInstructional
 });
 db.assettypes.insert({
     "date_created": new Date().toISOString(),
@@ -250,4 +264,27 @@ db.assettypes.insert({
     "date_created": new Date().toISOString(),
     "type_id": 9,
     "__v": 0
+});
+
+db.assettypeprices.insert({
+    "_id": ObjectId(),
+    "date_updated": new Date().toISOString(),
+    "date_created": new Date().toISOString(),
+    "code": pricePolicyCode,
+    "base_price": 150,
+    "asset_type": ObjectId("5b110f0e1ae60f2c7915b564"),
+    "uuid": "f375a264-ab9a-4037-b849-27eaeb1506cc",
+    "__v": 0,
+    "parent": pricePolicyId
+});
+
+db.licenseprices.insert({
+    "date_updated": new Date().toISOString(),
+    "date_created": new Date().toISOString(),
+    "price_variation": 0.15,
+    "license": licenseId,
+    "uuid": "8066827f-d8e3-4a60-9afa-ae7b71f05889",
+    "__v": 0,
+    "code": pricePolicyCode,
+    "parent": pricePolicyId
 });
