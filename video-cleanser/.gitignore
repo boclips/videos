@@ -1,0 +1,5 @@
+src/main/resources/application-production.yml
+/build/
+/out/
+
+.DS_Store

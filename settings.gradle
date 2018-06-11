@@ -1,2 +1,3 @@
 include 'e2e'
 include 'videos'
+include 'video-cleanser'
