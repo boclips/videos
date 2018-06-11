@@ -1,4 +1,5 @@
 SET SQL_SAFE_UPDATES = 0;
+
 DELETE FROM SharedVideos;
 DELETE FROM aboutuscontents;
 DELETE FROM analytics;
