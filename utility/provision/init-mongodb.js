@@ -36,7 +36,7 @@ addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowl
 addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowstat');
 addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowbiz');
 addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowfeatures');
-addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowesp');
+// addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowesp');
 addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowall');
 
 db = db.getSiblingDB('km4');
