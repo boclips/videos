@@ -52,5 +52,7 @@ INSERT INTO type (id, name, displayOrder) VALUES (6, 'UGC News', 6);
 INSERT INTO type (id, name, displayOrder) VALUES (7, '360 VR Stock', 7);
 INSERT INTO type (id, name, displayOrder) VALUES (8, '360 VR Immersive', 8);
 INSERT INTO type (id, name, displayOrder) VALUES (9, 'Short Programme', 9);
+INSERT INTO type (id, name, displayOrder) VALUES (10, 'TED Talks', 10);
+INSERT INTO type (id, name, displayOrder) VALUES (11, 'TED-Ed', 11);
 
 ALTER TABLE metadata_orig AUTO_INCREMENT=10;

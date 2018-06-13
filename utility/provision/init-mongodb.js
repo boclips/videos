@@ -1,339 +1,267 @@
+function guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 db = db.getSiblingDB('video-ingestor-db');
 db.getCollectionNames().forEach(collectionName => db[collectionName].drop());
 
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60003",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60004",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60005",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60006",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60007",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60008",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60009",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60010",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    "url": "https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60011",
-    "provider": "Singapore Press Holdings"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knoweconomist",
-    provider: "Bloomberg"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowhollywoodreporter",
-    provider: "Bloomberg"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowlux",
-    provider: "Bloomberg"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowstat",
-    provider: "Bloomberg"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowbiz",
-    provider: "Bloomberg"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowfeatures",
-    provider: "Bloomberg"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowesp",
-    provider: "Bloomberg"
-});
-db.httpSources.insert({
-    url: "http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowall",
-    provider: "Bloomberg"
-});
+const addFeed = (provider, url) => {
+    db.httpSources.insert({
+        'url': url,
+        'provider': provider
+    });
+};
+
+const SPH = 'Singapore Press Holdings';
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60003');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60004');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60005');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60006');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60007');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60008');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60009');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60010');
+addFeed(SPH, 'https://www.razor.tv/feeds/6/video?key=ddfb8d9fc3280dc023f7990f5480fad1&feed_id=60011');
+
+const BLOOMBERG = 'Bloomberg';
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knoweconomist');
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowhollywoodreporter');
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowlux');
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowstat');
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowbiz');
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowfeatures');
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowesp');
+addFeed(BLOOMBERG, 'http://know:47052956@vfeed.synd.bloomberg.com/f/nJEtBC/knowall');
 
 db = db.getSiblingDB('km4');
 db.getCollectionNames().forEach(collectionName => db[collectionName].drop());
 
-var clientId = ObjectId();
-var watchboclipsClientId = ObjectId();
-var organizationId = ObjectId();
-var watchboclipsOrganizationId = ObjectId();
-var packageId = ObjectId();
-var pricePolicyId = ObjectId();
-var superAdminId = ObjectId();
-var dummyUserId = ObjectId();
-var watchboclipsUserId = ObjectId();
-var licenseCode5Years = "5YR_SR";
-var typeIdInstructional = 3;
-var pricePolicyCode = "BASE";
-var licenseId = ObjectId();
+const BASE_PRICE_POLICY_CODE = 'BASE';
+const PEARSON_PRICE_POLICY_CODE = 'PEARSON';
 
-db.clients.insert({
-    "_id": clientId,
-    "secret": "B3stEduc4t10n4lV1d3os",
-    "name": "Boclips",
-    "__v": 0,
-    "client_id": "boclips"
-});
+const addClient = (clientId, secret) => {
+    const id = ObjectId();
+    db.clients.insert({
+        _id: id,
+        secret,
+        name: clientId,
+        client_id: clientId,
+        __v: 0.0,
+    });
+    return id;
+};
 
-db.clients.insert({
-    "_id": watchboclipsClientId,
-    "secret": "Wh4t3v3rY0uW4ntMat3",
-    "name": "BoTeachers",
-    "client_id": "boteachers",
-    "__v": 0
-});
+const addPricePolicy = (code) => {
+    const id = ObjectId();
+    db.pricepolicies.insert({
+        _id: id,
+        date_updated: new Date().toISOString(),
+        date_created: new Date().toISOString(),
+        code,
+        uuid: guid(),
+        __v: 0
+    });
+    return id;
+};
 
-db.licenses.insert({
-    "_id": licenseId,
-    "date_created": new Date().toISOString(),
-    "uuid": "624a567a-5644-438f-8330-077bcfc8d668",
-    "code": licenseCode5Years,
-    "description": "Term 5 year Single Region",
-    "__v": 0,
-    "date_updated": new Date().toISOString()
-});
+const addPackage = (name, pricePolicyId, clients) => {
+    const id = ObjectId();
+    db.packages.insert({
+        _id: id,
+        name,
+        date_created: new Date().toISOString(),
+        date_updated: new Date().toISOString(),
+        uuid: guid(),
+        search_filters: [],
+        clients,
+        price_policy: pricePolicyId,
+        __v: 0,
+    });
+    return id;
+};
 
-db.pricepolicies.insert({
-    "_id": pricePolicyId,
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "code": pricePolicyCode,
-    "uuid": "e6516e74-4509-4d83-9859-12a4cbcecc54",
-    "__v": 4
-});
+const addOrganization = (name, packageObjectId) => {
+    const id = ObjectId();
+    db.organizations.insert({
+        _id: id,
+        date_updated: new Date().toISOString(),
+        date_created: new Date().toISOString(),
+        name,
+        address: '',
+        package: packageObjectId,
+        uuid: guid(),
+        __v: 0,
+    });
+    return id;
+};
 
-db.packages.insert({
-    "_id": packageId,
-    "name": "default",
-    "date_created": new Date().toISOString(),
-    "date_updated": new Date().toISOString(),
-    "price_policy": pricePolicyId.valueOf(),
-    "search_filters": [{
-        "_refType": "Source",
-        "invert_filter": true,
-        "_id": "594d38ed9caf602da1d5f7b0",
-        "items": ["5914252c71b7892774f8f0c7", "596747fda270460a9c07af7f"]
-    }, {"_refType": "Assettype", "invert_filter": false, "_id": "594d38ed9caf602da1d5f7b1", "items": []}],
-    "uuid": "908a5511-df4c-4609-9895-f0436e6f3c13",
-    "__v": 2,
-    "clients": [clientId.valueOf(), watchboclipsClientId.valueOf()]
-});
+const createUser = (username, email, password, role, organizationId) => {
+    db.users.insert({
+        _id: ObjectId(),
+        date_updated: new Date().toISOString(),
+        date_created: new Date().toISOString(),
+        email,
+        address: '',
+        organization: organizationId,
+        uuid: guid(),
+        disabled: false,
+        _registration_completed: false,
+        preferences: [],
+        role: 'super',
+        password,
+        surname: username,
+        name: 'User',
+        username,
+        __v: 0
+    });
+};
 
-db.organizations.insert({
-    "_id": organizationId,
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "name": "Knowledgemotion",
-    "address": "South Bank",
-    "uuid": "504bab82-6937-48a1-b941-4e28e12c9eda",
-    "__v": 0,
-    "package": packageId.valueOf()
-});
+const addAssetType = function (typeIdNumeric, assetTypeName) {
+    const id = ObjectId();
+    db.assettypes.insert({
+        _id: id,
+        uuid: guid(),
+        type_id: typeIdNumeric,
+        name: assetTypeName,
+        description: assetTypeName,
+        date_created: new Date().toISOString(),
+        date_updated: new Date().toISOString(),
+        __v: 0,
+    });
+    return id;
+};
 
-db.organizations.insert({
-    "_id": watchboclipsOrganizationId,
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "name": "Play Teachers - USA",
-    "address": "USA",
-    "uuid": "41b73068-2e66-4824-9754-c47ffc3fa446",
-    "__v": 0,
-    "package": packageId
-});
+const addAssetTypePrices = function (assetTypeId, pricePolicyId, pricePolicyCode, basePrice) {
+    db.assettypeprices.insert({
+        _id: ObjectId(),
+        date_updated: new Date().toISOString(),
+        date_created: new Date().toISOString(),
+        code: pricePolicyCode,
+        base_price: basePrice,
+        asset_type: assetTypeId,
+        uuid: guid(),
+        __v: 0,
+        parent: pricePolicyId
+    });
+};
 
-db.users.insert({
-    "_id": superAdminId,
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "email": "superadmin@boclips.com",
-    "address": "",
-    "organization": organizationId.valueOf(),
-    "uuid": "f66c9a21-4a9f-441a-890e-99d0b86a3d8f",
-    "disabled": false,
-    "_registration_completed": false,
-    "preferences": [],
-    "role": "super",
-    "password": "$2a$10$mlYj.NmRL9FfZ2fGzuaYJu2LvGLVAmqaxLECSThXJEXhMhMwtx.9e",
-    "surname": "Duper",
-    "name": "Super",
-    "username": "super-admin",
-    "__v": 0
-});
+const addLicense = (code, description) => {
+    const id = ObjectId();
+    db.licenses.insert({
+        _id: id,
+        uuid: guid(),
+        date_created: new Date().toISOString(),
+        date_updated: new Date().toISOString(),
+        code,
+        description,
+        __v: 0
+    });
+    return id;
+};
 
-db.users.insert({
-    "_id": dummyUserId,
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "email": "standard@boclips.com",
-    "address": "",
-    "organization": organizationId.valueOf(),
-    "uuid": "f66c9a21-4a9f-441a-890e-99d0b86a3d6f",
-    "disabled": false,
-    "_registration_completed": false,
-    "preferences": [],
-    "role": "standard",
-    "password": "$2a$10$ULpGmDMluFEoIx80Kx7YJuKa96khbEQ1qhcDCGFnPKZqouUp.6F2O",
-    "surname": "Dummy",
-    "name": "User",
-    "username": "dummy-user",
-    "__v": 0
-});
+const addLicensePrice = (licenseId, pricePolicyId, pricePolicyCode, priceVariation) => {
+    db.licenseprices.insert({
+        uuid: guid(),
+        license: licenseId,
+        parent: pricePolicyId,
+        code: pricePolicyCode,
+        price_variation: priceVariation,
+        __v: 0,
+        date_updated: new Date().toISOString(),
+        date_created: new Date().toISOString(),
+    });
+};
 
-db.users.insert({
-    "_id": watchboclipsUserId,
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "email": "teacher@gmail.com",
-    "city": "London",
-    "extra_fields": {
-        "school_name": "The Boclips School",
-        "school_type": "Secondary",
-        "teacher_advisory_panel": true,
-        "_id": ObjectId()
-    },
-    "organization": watchboclipsOrganizationId,
-    "original_registration": ObjectId(),
-    "uuid": "e9e7cb45-1a6d-411d-b19b-795bf3184843",
-    "disabled": false,
-    "_registration_completed": true,
-    "preferences": [],
-    "role": "teacher",
-    "password": "$2a$10$ULpGmDMluFEoIx80Kx7YJuKa96khbEQ1qhcDCGFnPKZqouUp.6F2O",
-    "surname": "Chaos",
-    "name": "Professor",
-    "username": "teacher",
-    "__v": 0,
-    "_self_registration": true
-});
+const boclipsClientId = addClient('boclips', 'B3stEduc4t10n4lV1d3os');
+const pearsonClientId = addClient('pearson', 'B3st3duc4t10nC0mp4ny');
 
-db.assettypes.insert({
-    "date_created": new Date().toISOString(),
-    "uuid": "86ba3dea-5c0e-480d-bac3-b8e152029daf",
-    "name": "Other",
-    "description": "Other",
-    "__v": 0,
-    "date_updated": new Date().toISOString(),
-    "type_id": 0
-});
-db.assettypes.insert({
-    "date_created": new Date().toISOString(),
-    "uuid": "c0eff993-4501-4abc-9cb0-bc8269d26c89",
-    "name": "News",
-    "description": "News",
-    "__v": 0,
-    "date_updated": new Date().toISOString(),
-    "type_id": 1
-});
-db.assettypes.insert({
-    "date_created": new Date().toISOString(),
-    "uuid": "8359dcbc-e17b-4318-850a-32137ac807b1",
-    "name": "Stock",
-    "description": "Stock",
-    "__v": 0,
-    "date_updated": new Date().toISOString(),
-    "type_id": 2
-});
-db.assettypes.insert({
-    "date_created": new Date().toISOString(),
-    "uuid": "2063e39c-199f-41d2-9a1f-e984cd558c46",
-    "name": "Instructional Clips",
-    "description": "Instructional Clips",
-    "__v": 0,
-    "date_updated": new Date().toISOString(),
-    "type_id": typeIdInstructional
-});
-db.assettypes.insert({
-    "date_created": new Date().toISOString(),
-    "uuid": "80bafe64-3607-4614-9c22-d516f28460dd",
-    "name": "TV Clips",
-    "description": "TV Clips",
-    "__v": 0,
-    "date_updated": new Date().toISOString(),
-    "type_id": 4
-});
-db.assettypes.insert({
-    "date_created": new Date().toISOString(),
-    "uuid": "a3309ae4-7c5a-46de-8ca4-77ea13fb9492",
-    "name": "News Package",
-    "description": "News Package",
-    "__v": 0,
-    "date_updated": new Date().toISOString(),
-    "type_id": 5
-});
-db.assettypes.insert({
-    "date_created": new Date().toISOString(),
-    "uuid": "a625831a-71ab-4360-9f2e-415d75e90f36",
-    "name": "UGC News",
-    "description": "UGC News",
-    "__v": 0,
-    "date_updated": new Date().toISOString(),
-    "type_id": 6
-});
-db.assettypes.insert({
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "name": "360 VR Stock",
-    "description": "360 VR Stock",
-    "type_id": 7,
-    "uuid": "8339db9e-0019-4d04-a255-1602334d6936",
-    "__v": 0
-});
-db.assettypes.insert({
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "uuid": "vVHc31q5pB9nXU4UdSeNM7O5WIhOyTLLWWpeTDCcAPaqeFCbwo6BlwzEnyNlKLmZmhHyz9elVsfPTeMQBKnbc9ts570eOJ98pCbb",
-    "name": "360 VR Immersive",
-    "description": "360 VR Immersive",
-    "type_id": 8,
-});
-db.assettypes.insert({
-    "uuid": "6cb95077-e467-43a6-881f-da8b872fbfce",
-    "name": "Short Programme",
-    "description": "Short Programme",
-    "date_created": new Date().toISOString(),
-    "type_id": 9,
-    "__v": 0
-});
+const basePricePolicyId = addPricePolicy(BASE_PRICE_POLICY_CODE);
+const pearsonPricePolicyId = addPricePolicy(PEARSON_PRICE_POLICY_CODE);
 
-db.assettypeprices.insert({
-    "_id": ObjectId(),
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "code": pricePolicyCode,
-    "base_price": 150,
-    "asset_type": ObjectId("5b110f0e1ae60f2c7915b564"),
-    "uuid": "f375a264-ab9a-4037-b849-27eaeb1506cc",
-    "__v": 0,
-    "parent": pricePolicyId
-});
+const defaultPackageId = addPackage('default', basePricePolicyId, [boclipsClientId]);
+const pearsonPackageId = addPackage('pearson', pearsonPricePolicyId, [pearsonClientId]);
 
-db.licenseprices.insert({
-    "date_updated": new Date().toISOString(),
-    "date_created": new Date().toISOString(),
-    "price_variation": 0.15,
-    "license": licenseId,
-    "uuid": "8066827f-d8e3-4a60-9afa-ae7b71f05889",
-    "__v": 0,
-    "code": pricePolicyCode,
-    "parent": pricePolicyId
-});
+const knowledgeMotionOrgId = addOrganization('Knowledgemotion', defaultPackageId);
+const pearsonOrgId = addOrganization('Pearson', pearsonPackageId);
+
+createUser('super-admin', 'superadmin@boclips.com', '$2a$10$mlYj.NmRL9FfZ2fGzuaYJu2LvGLVAmqaxLECSThXJEXhMhMwtx.9e', 'super', knowledgeMotionOrgId);
+createUser('dummy-user', 'standard@boclips.com', '$2a$10$ULpGmDMluFEoIx80Kx7YJuKa96khbEQ1qhcDCGFnPKZqouUp.6F2O', 'standard', knowledgeMotionOrgId);
+createUser('pearson', 'pearson@pearson.com', '$2a$10$ULpGmDMluFEoIx80Kx7YJuKa96khbEQ1qhcDCGFnPKZqouUp.6F2O', 'standard', pearsonOrgId);
+
+const otherAssetTypeId = addAssetType(0, 'Other');
+addAssetTypePrices(otherAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 250);
+
+const newsAssetTypeId = addAssetType(1, 'News');
+addAssetTypePrices(newsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 400);
+addAssetTypePrices(newsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 199.5);
+
+const stockAssetTypeId = addAssetType(2, 'Stock');
+addAssetTypePrices(stockAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 200);
+addAssetTypePrices(stockAssetTypeId, pearsonPricePolicyId, 'PEARSON', 66.5);
+
+const instructionalClipsAssetTypeId = addAssetType(3, 'Instructional Clips');
+addAssetTypePrices(instructionalClipsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 800.0);
+addAssetTypePrices(instructionalClipsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 399);
+
+const tvClipsAssetTypeId = addAssetType(4, 'TV Clips');
+addAssetTypePrices(tvClipsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 800);
+addAssetTypePrices(tvClipsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 399);
+
+const newsPackageAssetTypeId = addAssetType(5, 'News Package');
+addAssetTypePrices(newsPackageAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 400);
+addAssetTypePrices(newsPackageAssetTypeId, pearsonPricePolicyId, 'PEARSON', 199.5);
+
+const ugcNewsAssetTypeId = addAssetType(6, 'UGC News');
+addAssetTypePrices(ugcNewsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 250);
+addAssetTypePrices(ugcNewsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 199.5);
+
+const vr360StockAssetTypeId = addAssetType(7, '360 VR Stock');
+addAssetTypePrices(vr360StockAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 800.0);
+addAssetTypePrices(vr360StockAssetTypeId, pearsonPricePolicyId, 'PEARSON', 800.0);
+
+const vr360ImmersiveAssetTypeId = addAssetType(8, '360 VR Immersive');
+addAssetTypePrices(vr360ImmersiveAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 1000.0);
+addAssetTypePrices(vr360ImmersiveAssetTypeId, pearsonPricePolicyId, 'PEARSON', 1000.0);
+
+const shortProgrammeAssetTypeId = addAssetType(9, 'Short Programme');
+addAssetTypePrices(shortProgrammeAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 5000.0);
+addAssetTypePrices(shortProgrammeAssetTypeId, pearsonPricePolicyId, 'PEARSON', 5000.0);
+
+const tedTalksAssetTypeObjectId = addAssetType(10, 'TED Talks');
+addAssetTypePrices(tedTalksAssetTypeObjectId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 5000);
+
+const tedEdAssetTypeObjectId = addAssetType(11, 'TED-Ed');
+addAssetTypePrices(tedEdAssetTypeObjectId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 2000);
+
+const license3yrSrId = addLicense('3YR_SR', 'Term 3 year Single Region');
+addLicensePrice(license3yrSrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, -0.25);
+
+const license1yrSrId = addLicense('1YR_SR', 'Term 1 year Single Region');
+addLicensePrice(license1yrSrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, -0.6);
+
+const license5yrSrId = addLicense('5YR_SR', 'Term 5 year Single Region');
+addLicensePrice(license5yrSrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 0);
+
+const license10yrWId = addLicense('10YR_W', 'Term 10 year Worldwide');
+addLicensePrice(license10yrWId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 0);
+
+const license5yrMrId = addLicense('5YR_MR', 'Term 5 year Multi Region');
+addLicensePrice(license5yrMrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 0.15);
+
+const license10yrSrId = addLicense('10YR_SR', 'Term 10 year Single Region');
+addLicensePrice(license10yrSrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 0.25);
+
+const license10yrMrId = addLicense('10YR_MR', 'Term 10 year Multi Region');
+addLicensePrice(license10yrMrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 0.4);
+
+const license3yrMrId = addLicense('3YR_MR', 'Term 3 year Multi Region');
+addLicensePrice(license3yrMrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, -0.15);
+
+const license1yrMrId = addLicense('1YR_MR', 'Term 1 year Multi Region');
+addLicensePrice(license1yrMrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, -0.4);
