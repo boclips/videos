@@ -234,10 +234,10 @@ addAssetTypePrices(shortProgrammeAssetTypeId, basePricePolicyId, BASE_PRICE_POLI
 addAssetTypePrices(shortProgrammeAssetTypeId, pearsonPricePolicyId, 'PEARSON', 5000.0);
 
 const tedTalksAssetTypeObjectId = addAssetType(10, 'TED Talks');
-addAssetTypePrices(tedTalksAssetTypeObjectId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 5000);
+addAssetTypePrices(tedTalksAssetTypeObjectId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 4347.82608696);
 
 const tedEdAssetTypeObjectId = addAssetType(11, 'TED-Ed');
-addAssetTypePrices(tedEdAssetTypeObjectId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 2000);
+addAssetTypePrices(tedEdAssetTypeObjectId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 1739.13043478);
 
 const license3yrSrId = addLicense('3YR_SR', 'Term 3 year Single Region');
 addLicensePrice(license3yrSrId, basePricePolicyId, BASE_PRICE_POLICY_CODE, -0.25);
