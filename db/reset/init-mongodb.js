@@ -199,39 +199,39 @@ addAssetTypePrices(otherAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 
 
 const newsAssetTypeId = addAssetType(1, 'News');
 addAssetTypePrices(newsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 400);
-addAssetTypePrices(newsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 199.5);
+addAssetTypePrices(newsAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 199.5);
 
 const stockAssetTypeId = addAssetType(2, 'Stock');
 addAssetTypePrices(stockAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 200);
-addAssetTypePrices(stockAssetTypeId, pearsonPricePolicyId, 'PEARSON', 66.5);
+addAssetTypePrices(stockAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 66.5);
 
 const instructionalClipsAssetTypeId = addAssetType(3, 'Instructional Clips');
 addAssetTypePrices(instructionalClipsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 800.0);
-addAssetTypePrices(instructionalClipsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 399);
+addAssetTypePrices(instructionalClipsAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 399);
 
 const tvClipsAssetTypeId = addAssetType(4, 'TV Clips');
 addAssetTypePrices(tvClipsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 800);
-addAssetTypePrices(tvClipsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 399);
+addAssetTypePrices(tvClipsAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 399);
 
 const newsPackageAssetTypeId = addAssetType(5, 'News Package');
 addAssetTypePrices(newsPackageAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 400);
-addAssetTypePrices(newsPackageAssetTypeId, pearsonPricePolicyId, 'PEARSON', 199.5);
+addAssetTypePrices(newsPackageAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 199.5);
 
 const ugcNewsAssetTypeId = addAssetType(6, 'UGC News');
 addAssetTypePrices(ugcNewsAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 250);
-addAssetTypePrices(ugcNewsAssetTypeId, pearsonPricePolicyId, 'PEARSON', 199.5);
+addAssetTypePrices(ugcNewsAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 199.5);
 
 const vr360StockAssetTypeId = addAssetType(7, '360 VR Stock');
 addAssetTypePrices(vr360StockAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 800.0);
-addAssetTypePrices(vr360StockAssetTypeId, pearsonPricePolicyId, 'PEARSON', 800.0);
+addAssetTypePrices(vr360StockAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 800.0);
 
 const vr360ImmersiveAssetTypeId = addAssetType(8, '360 VR Immersive');
 addAssetTypePrices(vr360ImmersiveAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 1000.0);
-addAssetTypePrices(vr360ImmersiveAssetTypeId, pearsonPricePolicyId, 'PEARSON', 1000.0);
+addAssetTypePrices(vr360ImmersiveAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 1000.0);
 
 const shortProgrammeAssetTypeId = addAssetType(9, 'Short Programme');
 addAssetTypePrices(shortProgrammeAssetTypeId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 5000.0);
-addAssetTypePrices(shortProgrammeAssetTypeId, pearsonPricePolicyId, 'PEARSON', 5000.0);
+addAssetTypePrices(shortProgrammeAssetTypeId, pearsonPricePolicyId, PEARSON_PRICE_POLICY_CODE, 5000.0);
 
 const tedTalksAssetTypeObjectId = addAssetType(10, 'TED Talks');
 addAssetTypePrices(tedTalksAssetTypeObjectId, basePricePolicyId, BASE_PRICE_POLICY_CODE, 4347.82608696);
