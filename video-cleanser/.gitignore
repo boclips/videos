@@ -1,4 +1,4 @@
-src/main/resources/application-production.yml
+src/main/resources/application-*.yml
 /build/
 /out/
 

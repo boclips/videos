@@ -1,5 +1,6 @@
 kaltura:
   session:
+  host:
 
 spring:
   datasource:

@@ -1,16 +1,16 @@
 buildscript {
-	ext {
-		kotlinVersion = '1.2.41'
-		springBootVersion = '2.0.2.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-	}
+    ext {
+        kotlinVersion = '1.2.41'
+        springBootVersion = '2.0.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+    }
 }
 
 apply plugin: 'kotlin'
@@ -23,32 +23,34 @@ group = 'com.boclips'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 compileKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
-	}
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
 }
 compileTestKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
-	}
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	compile 'org.springframework.boot:spring-boot-starter'
-	compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-	compile 'org.jetbrains.kotlin:kotlin-reflect'
-	compile 'org.springframework.boot:spring-boot-starter-jdbc'
-	compile 'org.springframework:spring-web'
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    compile 'org.jetbrains.kotlin:kotlin-reflect'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.boot:spring-boot-starter-web'
 
-	testCompile 'org.springframework.boot:spring-boot-starter-test'
-	testCompile 'org.awaitility:awaitility:3.1.0'
-	testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
-	testCompile 'com.h2database:h2'
-	testCompile 'org.flywaydb:flyway-core'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.awaitility:awaitility:3.1.0'
+    testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
+    testCompile 'com.h2database:h2'
+    testCompile 'org.flywaydb:flyway-core'
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.18.0"
+    testCompile 'com.mashape.unirest:unirest-java:1.4.9'
 }
