@@ -17,8 +17,8 @@ class KalturaClient(val kalturaProperties: KalturaProperties) {
     private val MEDIA_ENDPOINT = "/api_v3/service/media/action/list"
     private val restTemplate = RestTemplate()
 
-    fun fetch(): List<MediaItem> {
-        val request = HttpEntity<MultiValueMap<String, String>>(buildData(), buildHeaders())
+    fun fetchPagedMedia(pageSize: Int = 500, pageIndex: Int = 0): List<MediaItem> {
+        val request = HttpEntity<MultiValueMap<String, String>>(buildData(pageSize, pageIndex), buildHeaders())
 
         val response = restTemplate.postForEntity(
                 URI("${kalturaProperties.host}$MEDIA_ENDPOINT"),
@@ -28,10 +28,12 @@ class KalturaClient(val kalturaProperties: KalturaProperties) {
         return response.body?.let { it.items }.orEmpty()
     }
 
-    private fun buildData(): LinkedMultiValueMap<String, String> {
+    private fun buildData(pageSize: Int, currentPage: Int): LinkedMultiValueMap<String, String> {
         val map = LinkedMultiValueMap<String, String>()
         map.add("format", "1")
         map.add("ks", kalturaProperties.session)
+        map.add("pager[pageSize]", pageSize.toString())
+        map.add("pager[pageIndex]", currentPage.toString())
         return map
     }
 

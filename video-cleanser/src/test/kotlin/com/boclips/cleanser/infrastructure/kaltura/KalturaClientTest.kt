@@ -10,11 +10,17 @@ import org.junit.Test
 
 class KalturaClientTest {
     val wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8089))
+    val kalturaClient = KalturaClient(KalturaProperties(host = "http://localhost:8089", session = "test-session"))
 
     @Before
     fun startAndResetWireMock() {
         wireMockServer.start()
         wireMockServer.resetAll()
+        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(loadFixture("two-successful-videos.json"))))
     }
 
     @After
@@ -24,18 +30,29 @@ class KalturaClientTest {
 
     @Test
     fun fetch_returnsMediaItemsWithReferenceIds() {
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(loadFixture("two-successful-videos.json"))))
-        val kalturaClient = KalturaClient(KalturaProperties(host = "http://localhost:8089"))
-
-        val mediaEntries = kalturaClient.fetch()
+        val mediaEntries = kalturaClient.fetchPagedMedia(500, 0)
 
         assertThat(mediaEntries).hasSize(2)
         assertThat(mediaEntries[0].referenceId).isEqualTo("1")
         assertThat(mediaEntries[1].referenceId).isEqualTo("2")
+    }
+
+    @Test
+    fun fetch_pagination_respectsPageSize() {
+        kalturaClient.fetchPagedMedia(pageSize = 100)
+
+        wireMockServer.verify(1, WireMock
+                .postRequestedFor(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
+                .withRequestBody(WireMock.containing("pager%5BpageSize%5D=100")))
+    }
+
+    @Test
+    fun fetch_pagination_respectsCurrentPage() {
+        kalturaClient.fetchPagedMedia(pageIndex = 2)
+
+        wireMockServer.verify(1, WireMock
+                .postRequestedFor(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
+                .withRequestBody(WireMock.containing("pager%5BpageIndex%5D=2")))
     }
 
     private fun loadFixture(fileName: String) = Object::getClass.javaClass.classLoader.getResource(fileName).readBytes()
