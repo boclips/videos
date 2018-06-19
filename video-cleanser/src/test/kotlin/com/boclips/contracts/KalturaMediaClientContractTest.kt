@@ -1,22 +1,22 @@
 package com.boclips.contracts
 
-import com.boclips.cleanser.infrastructure.kaltura.KalturaClient
+import com.boclips.cleanser.infrastructure.kaltura.KalturaMediaClient
 import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("staging")
-class KalturaClientContractTest {
+class KalturaMediaClientContractTest {
 
     @Test
     fun canFetchMediaEntries() {
-        val kalturaClient = KalturaClient(KalturaProperties(
+        val kalturaClient = KalturaMediaClient(KalturaProperties(
                 host = "https://www.kaltura.com",
                 session = generateSession())
         )
 
-        val mediaEntries = kalturaClient.fetchPagedMedia(10, 0)
+        val mediaEntries = kalturaClient.fetch(10, 0)
 
         assertThat(mediaEntries).hasSize(10)
     }
