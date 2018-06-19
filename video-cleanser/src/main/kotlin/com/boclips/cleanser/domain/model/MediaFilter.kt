@@ -1,4 +1,4 @@
-package com.boclips.cleanser.infrastructure.kaltura
+package com.boclips.cleanser.domain.model
 
 class MediaFilter(val key: MediaFilterType, val value: String)
 

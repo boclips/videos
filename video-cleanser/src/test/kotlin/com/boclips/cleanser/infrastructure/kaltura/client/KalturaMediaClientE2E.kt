@@ -1,5 +1,6 @@
-package com.boclips.cleanser.infrastructure.kaltura
+package com.boclips.cleanser.infrastructure.kaltura.client
 
+import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.test.context.ActiveProfiles
