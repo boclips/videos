@@ -1,5 +1,8 @@
-package com.boclips.cleanser.infrastructure.kaltura
+package com.boclips.cleanser.infrastructure.kaltura.client
 
+import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
+import com.boclips.cleanser.domain.model.MediaFilter
+import com.boclips.cleanser.domain.model.MediaFilterType
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration

@@ -1,7 +1,8 @@
-package com.boclips.cleanser.infrastructure.kaltura
+package com.boclips.cleanser.infrastructure.kaltura.client
 
-import com.boclips.cleanser.infrastructure.kaltura.response.MediaItem
-import com.boclips.cleanser.infrastructure.kaltura.response.MediaList
+import com.boclips.cleanser.domain.model.MediaItem
+import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
+import com.boclips.cleanser.domain.model.MediaFilter
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -33,7 +34,7 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
                     URI("${kalturaProperties.host}$ENDPOINT"),
                     request,
                     MediaList::class.java)
-            if (response.body == null) throw IllegalStateException("Received a response without a body") else return response.body!!
+            if (response.body == null) throw IllegalStateException("Received a client without a body") else return response.body!!
         } catch (ex: Exception) {
             throw KalturaClientException(ex)
         }
