@@ -6,9 +6,9 @@ import com.boclips.cleanser.infrastructure.kaltura.KalturaVideosRepository
 
 class CleanserServiceImpl(val boclipsVideosRepository: BoclipsVideosRepository,
                           val kalturaVideosRepository: KalturaVideosRepository) : CleanserService {
-    override fun getNonPlayableVideos(): Set<String> {
-        val videosInKaltura = kalturaVideosRepository.getAllIds()
-        val videosOnBoclips = boclipsVideosRepository.getAllLegacyIds().map { it.toString() }.toSet()
+    override fun getUnplayableVideos(): Set<String> {
+        val videosInKaltura = kalturaVideosRepository.getReadyMediaEntries().map { it.referenceId }
+        val videosOnBoclips = boclipsVideosRepository.getAllPublishedVideos().map { it.toString() }.toSet()
         return videosOnBoclips - videosInKaltura
     }
 }

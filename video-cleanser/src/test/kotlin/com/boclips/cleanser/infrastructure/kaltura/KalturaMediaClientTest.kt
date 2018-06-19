@@ -10,8 +10,8 @@ import org.junit.Before
 import org.junit.Test
 
 class KalturaMediaClientTest {
-    val wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8089))
-    val kalturaClient = KalturaMediaClient(KalturaProperties(host = "http://localhost:8089", session = "test-session"))
+    private val wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8089))
+    private val kalturaClient = KalturaMediaClient(KalturaProperties(host = "http://localhost:8089", session = "test-session"))
 
     @Before
     fun startAndResetWireMock() {
@@ -72,7 +72,8 @@ class KalturaMediaClientTest {
     fun fetch_takesOptionalFilters() {
         val filters = listOf(
                 MediaFilter(MediaFilterType.CREATED_AT_LESS_THAN_OR_EQUAL, "173131231"),
-                MediaFilter(MediaFilterType.CREATED_AT_GREATER_THAN_OR_EQUAL, "123131231")
+                MediaFilter(MediaFilterType.CREATED_AT_GREATER_THAN_OR_EQUAL, "123131231"),
+                MediaFilter(MediaFilterType.STATUS_IN, "2,-2")
         )
 
         kalturaClient.fetch(filters = filters)
@@ -81,6 +82,7 @@ class KalturaMediaClientTest {
                 .postRequestedFor(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .withRequestBody(WireMock.containing("filter%5BcreatedAtLessThanOrEqual%5D=173131231"))
                 .withRequestBody(WireMock.containing("filter%5BcreatedAtGreaterThanOrEqual%5D=123131231"))
+                .withRequestBody(WireMock.containing("filter%5BstatusIn%5D=2%2C-2"))
         )
     }
 

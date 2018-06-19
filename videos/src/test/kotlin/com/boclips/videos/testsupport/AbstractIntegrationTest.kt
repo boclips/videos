@@ -2,7 +2,6 @@ package com.boclips.videos.testsupport
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.bson.types.ObjectId
-import org.flywaydb.core.Flyway
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,9 +24,6 @@ abstract class AbstractIntegrationTest {
     protected lateinit var webClient: WebTestClient
 
     @Autowired
-    lateinit var flyway: Flyway
-
-    @Autowired
     lateinit var mongoTemplate: MongoTemplate
 
     @Value("classpath:/mongo/*.json")
@@ -35,7 +31,6 @@ abstract class AbstractIntegrationTest {
 
     @Before
     fun setUp() {
-        cleanDB()
         cleanMongo()
     }
 
@@ -51,13 +46,6 @@ abstract class AbstractIntegrationTest {
                         document["_id"] = ObjectId(document["_id"] as String)
                         mongoTemplate.insert(document, collection)
                     }
-        }
-    }
-
-    private fun cleanDB() {
-        flyway.apply {
-            clean()
-            migrate()
         }
     }
 }

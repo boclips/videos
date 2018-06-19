@@ -46,33 +46,33 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.13'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.awaitility:awaitility:3.1.0'
     testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
     testCompile 'com.h2database:h2'
-    testCompile 'org.flywaydb:flyway-core'
     testCompile "com.github.tomakehurst:wiremock-standalone:2.18.0"
     testCompile 'com.mashape.unirest:unirest-java:1.4.9'
 }
 
 /**
- * Runs all tests, except contract tests
+ * Runs all tests, except e2e tests
  */
 test {
     filter {
         includeTestsMatching "*Test"
     }
-    exclude 'com/boclips/contracts/**'
+    exclude 'com/boclips/e2e/**'
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "test"
 }
 
 /**
- * Verifies generated pacts against real services
+ * Run tests against staging environment
  */
-task testContracts(type: Test) {
+task testE2E(type: Test) {
     filter {
-        includeTestsMatching "*ContractTest"
+        includeTestsMatching "*E2E"
     }
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "staging"
 }

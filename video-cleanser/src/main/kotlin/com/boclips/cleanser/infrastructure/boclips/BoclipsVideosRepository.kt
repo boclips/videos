@@ -6,7 +6,7 @@ import java.sql.ResultSet
 
 @Repository
 class BoclipsVideosRepository(val jdbcTemplate: JdbcTemplate) {
-    fun getAllLegacyIds() = jdbcTemplate.query(
+    fun getAllPublishedVideos() = jdbcTemplate.query(
             "SELECT id FROM metadata_orig WHERE reference_id IS NULL",
             { resultSet: ResultSet, _ ->
                 resultSet.getInt("id")
