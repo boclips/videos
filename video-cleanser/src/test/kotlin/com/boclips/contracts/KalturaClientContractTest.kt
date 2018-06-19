@@ -16,9 +16,9 @@ class KalturaClientContractTest {
                 session = generateSession())
         )
 
-        val mediaEntries = kalturaClient.fetch()
+        val mediaEntries = kalturaClient.fetchPagedMedia(10, 0)
 
-        assertThat(mediaEntries).isNotEmpty
+        assertThat(mediaEntries).hasSize(10)
     }
 
     private fun generateSession() =

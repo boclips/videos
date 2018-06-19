@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 @Component
 class KalturaVideosRepository(val kalturaClient: KalturaClient) {
     fun getAllIds(): Set<String> {
-        return kalturaClient.fetch()
+        return kalturaClient.fetchPagedMedia(500, 0)
                 .map { it.referenceId }.toSet()
     }
 }
