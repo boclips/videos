@@ -1,44 +1,21 @@
 package com.boclips.cleanser.infrastructure.kaltura
 
-import com.boclips.testsupport.AbstractSpringIntegrationTest
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.*
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.boclips.cleanser.infrastructure.kaltura.response.MediaItem
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.mockito.Mockito
 
-class KalturaVideosRepositoryTest : AbstractSpringIntegrationTest() {
-    val wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8089))
-
-    @Autowired
+class KalturaVideosRepositoryTest {
     lateinit var kalturaVideosRepository: KalturaVideosRepository
-
-    @Before
-    fun startAndResetWireMock() {
-        wireMockServer.start()
-        wireMockServer.resetAll()
-    }
-
-    @After
-    fun stopWireMock() {
-        wireMockServer.stop()
-    }
 
     @Test
     fun getAllNonErroredVideos_parsesMediaItems() {
-        wireMockServer.stubFor(post(urlEqualTo("/api_v3/service/media/action/list"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(loadFixture("two-successful-videos.json"))))
+        val mockKalturaClient = Mockito.mock(KalturaClient::class.java)
+        kalturaVideosRepository = KalturaVideosRepository(mockKalturaClient)
+        Mockito.`when`(mockKalturaClient.fetch()).thenReturn(listOf(MediaItem(referenceId = "1"), MediaItem(referenceId = "2")))
 
         val allNonErroredVideoIds = kalturaVideosRepository.getAllIds()
 
         assertThat(allNonErroredVideoIds).containsExactly("1", "2")
     }
-
-    private fun loadFixture(fileName: String) = Object::getClass.javaClass.classLoader.getResource(fileName).readBytes()
 }
