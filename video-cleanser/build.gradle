@@ -63,7 +63,7 @@ test {
     filter {
         includeTestsMatching "*Test"
     }
-    exclude 'com/boclips/e2e/**'
+    exclude 'com/boclips/**/*E2E'
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "test"
 }
 
