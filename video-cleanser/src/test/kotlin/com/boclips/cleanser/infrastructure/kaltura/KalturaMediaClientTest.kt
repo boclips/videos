@@ -57,13 +57,6 @@ class KalturaMediaClientTest {
     }
 
     @Test
-    fun count_returnsCountOfEntireCollection() {
-        val count = kalturaClient.count()
-
-        assertThat(count).isEqualTo(2L)
-    }
-
-    @Test
     fun fetch_throwsIfSomethingWentWrong() {
         wireMockServer.resetAll()
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
@@ -73,6 +66,29 @@ class KalturaMediaClientTest {
                         .withBody("something went wrong")))
 
         assertThatThrownBy { kalturaClient.fetch() }.isInstanceOf(KalturaClientException::class.java)
+    }
+
+    @Test
+    fun fetch_takesOptionalFilters() {
+        val filters = listOf(
+                MediaFilter(MediaFilterType.CREATED_AT_LESS_THAN_OR_EQUAL, "173131231"),
+                MediaFilter(MediaFilterType.CREATED_AT_GREATER_THAN_OR_EQUAL, "123131231")
+        )
+
+        kalturaClient.fetch(filters = filters)
+
+        wireMockServer.verify(1, WireMock
+                .postRequestedFor(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
+                .withRequestBody(WireMock.containing("filter%5BcreatedAtLessThanOrEqual%5D=173131231"))
+                .withRequestBody(WireMock.containing("filter%5BcreatedAtGreaterThanOrEqual%5D=123131231"))
+        )
+    }
+
+    @Test
+    fun count_returnsCountOfEntireCollection() {
+        val count = kalturaClient.count()
+
+        assertThat(count).isEqualTo(2L)
     }
 
     private fun loadFixture(fileName: String) = Object::getClass.javaClass.classLoader.getResource(fileName).readBytes()

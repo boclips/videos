@@ -18,12 +18,12 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
     private val restTemplate = RestTemplate()
 
     fun count(): Long {
-        val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize = 1, pageIndex = 0), buildHeaders())
+        val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize = 1, pageIndex = 0, filters = emptyList()), buildHeaders())
         return post(request).count
     }
 
-    fun fetch(pageSize: Int = 500, pageIndex: Int = 0): List<MediaItem> {
-        val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize, pageIndex), buildHeaders())
+    fun fetch(pageSize: Int = 500, pageIndex: Int = 0, filters: List<MediaFilter> = emptyList()): List<MediaItem> {
+        val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize, pageIndex, filters), buildHeaders())
         return post(request).items
     }
 
@@ -39,13 +39,15 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
         }
     }
 
-    private fun buildRequestBody(pageSize: Int?, pageIndex: Int?): LinkedMultiValueMap<String, String> {
+    private fun buildRequestBody(pageSize: Int?, pageIndex: Int?, filters: List<MediaFilter>): LinkedMultiValueMap<String, String> {
         val params = LinkedMultiValueMap<String, String>()
         params.add("format", "1")
         params.add("ks", kalturaProperties.session)
-
+        
         if (pageSize != null) params.add("pager[pageSize]", pageSize.toString())
         if (pageIndex != null) params.add("pager[pageIndex]", pageIndex.toString())
+
+        filters.forEach { filter -> params.add(filter.key.filterKey, filter.value) }
 
         return params
     }
