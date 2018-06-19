@@ -43,7 +43,7 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
         val params = LinkedMultiValueMap<String, String>()
         params.add("format", "1")
         params.add("ks", kalturaProperties.session)
-        
+
         if (pageSize != null) params.add("pager[pageSize]", pageSize.toString())
         if (pageIndex != null) params.add("pager[pageIndex]", pageIndex.toString())
 

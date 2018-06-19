@@ -1,13 +1,11 @@
-package com.boclips.contracts
+package com.boclips.cleanser.infrastructure.kaltura
 
-import com.boclips.cleanser.infrastructure.kaltura.KalturaMediaClient
-import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("staging")
-class KalturaMediaClientContractTest {
+class KalturaMediaClientE2E {
 
     @Test
     fun canFetchMediaEntries() {

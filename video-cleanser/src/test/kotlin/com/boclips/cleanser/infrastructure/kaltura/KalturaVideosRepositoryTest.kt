@@ -9,14 +9,15 @@ class KalturaVideosRepositoryTest {
     lateinit var kalturaVideosRepository: KalturaVideosRepository
 
     @Test
-    fun getAllNonErroredVideos_parsesMediaItems() {
+    fun getReadyMediaEntries_parsesMediaItems() {
         val mockKalturaClient = Mockito.mock(KalturaMediaClient::class.java)
         kalturaVideosRepository = KalturaVideosRepository(mockKalturaClient)
         Mockito.`when`(mockKalturaClient.fetch(500, 0))
                 .thenReturn(listOf(MediaItem(referenceId = "1"), MediaItem(referenceId = "2")))
 
-        val allNonErroredVideoIds = kalturaVideosRepository.getAllIds()
+        val mediaItems = kalturaVideosRepository.getReadyMediaEntries()
 
-        assertThat(allNonErroredVideoIds).containsExactly("1", "2")
+        assertThat(mediaItems).containsExactly(MediaItem(referenceId = "1"), MediaItem(referenceId = "2"))
     }
+    
 }

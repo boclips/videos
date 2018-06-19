@@ -19,6 +19,15 @@ abstract class AbstractSpringIntegrationTest {
 
     @Before
     fun setUp() {
+        jdbcTemplate.execute("""
+            CREATE TABLE IF NOT EXISTS metadata_orig
+                (
+                    id INT auto_increment
+                        PRIMARY KEY,
+                    reference_id VARCHAR(666)
+                );
+        """.trimIndent())
+
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
     }
 }
