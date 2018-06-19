@@ -41,10 +41,11 @@ repositories {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
-    compile 'org.springframework.boot:spring-boot-starter-jdbc'
-    compile 'org.springframework.boot:spring-boot-starter-web'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.awaitility:awaitility:3.1.0'
@@ -53,4 +54,25 @@ dependencies {
     testCompile 'org.flywaydb:flyway-core'
     testCompile "com.github.tomakehurst:wiremock-standalone:2.18.0"
     testCompile 'com.mashape.unirest:unirest-java:1.4.9'
+}
+
+/**
+ * Runs all tests, except contract tests
+ */
+test {
+    filter {
+        includeTestsMatching "*Test"
+    }
+    exclude 'com/boclips/contracts/**'
+    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "test"
+}
+
+/**
+ * Verifies generated pacts against real services
+ */
+task testContracts(type: Test) {
+    filter {
+        includeTestsMatching "*ContractTest"
+    }
+    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "staging"
 }

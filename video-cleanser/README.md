@@ -4,6 +4,20 @@
 
 The client can run in different environments. Copy `application.yml` and amend the environment information.
 
+
+## Development
+
+Run all tests, excluding contract test:
+```
+./gradlew video-cleanser:test
+```
+
+Run contract test:
+```
+./gradlew video-cleanser:testContracts
+```
+
+
 ## Generating Kaltura Session
 
 ```
@@ -17,6 +31,7 @@ curl -X POST https://www.kaltura.com/api_v3/service/session/action/start \
 ```
 
 More information about generating the session can be found in the [Kaltura API](https://developer.kaltura.com/api-docs/Generate_API_Sessions/session/session_start).
+
 
 ## Listing media entries with time-window
 ```
