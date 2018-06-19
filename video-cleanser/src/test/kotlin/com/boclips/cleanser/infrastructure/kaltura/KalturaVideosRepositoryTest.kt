@@ -10,9 +10,9 @@ class KalturaVideosRepositoryTest {
 
     @Test
     fun getAllNonErroredVideos_parsesMediaItems() {
-        val mockKalturaClient = Mockito.mock(KalturaClient::class.java)
+        val mockKalturaClient = Mockito.mock(KalturaMediaClient::class.java)
         kalturaVideosRepository = KalturaVideosRepository(mockKalturaClient)
-        Mockito.`when`(mockKalturaClient.fetchPagedMedia(500, 0)).thenReturn(listOf(MediaItem(referenceId = "1"), MediaItem(referenceId = "2")))
+        Mockito.`when`(mockKalturaClient.fetch(500, 0)).thenReturn(listOf(MediaItem(referenceId = "1"), MediaItem(referenceId = "2")))
 
         val allNonErroredVideoIds = kalturaVideosRepository.getAllIds()
 

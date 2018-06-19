@@ -4,4 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class MediaList(@JsonProperty("objects") val items: List<MediaItem> = emptyList())
+data class MediaList(
+        @JsonProperty("objects") val items: List<MediaItem> = emptyList(),
+        @JsonProperty("totalCount") val count: Long
+)
