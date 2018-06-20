@@ -1,8 +1,8 @@
 package com.boclips.cleanser.infrastructure.kaltura.client
 
 import com.boclips.cleanser.domain.model.MediaFilter
-import com.boclips.cleanser.domain.model.MediaItem
 import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
+import com.boclips.cleanser.infrastructure.kaltura.MediaItem
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -15,7 +15,6 @@ import java.net.URI
 
 @Component
 class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
-    private val ENDPOINT = "/api_v3/service/media/action/list"
     private val restTemplate = RestTemplate()
 
     fun count(filters: List<MediaFilter> = emptyList()): Long {
@@ -31,7 +30,7 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
     private fun post(request: HttpEntity<MultiValueMap<String, String>>): MediaList {
         try {
             val response = restTemplate.postForEntity(
-                    URI("${kalturaProperties.host}$ENDPOINT"),
+                    URI("${kalturaProperties.host}/api_v3/service/media/action/list"),
                     request,
                     MediaList::class.java)
             if (response.body == null) throw IllegalStateException("Received a client without a body") else return response.body!!

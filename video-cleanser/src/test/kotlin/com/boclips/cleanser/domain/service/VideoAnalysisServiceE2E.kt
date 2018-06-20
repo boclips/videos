@@ -11,18 +11,18 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("staging")
-class VideoCleanserServiceE2E {
+class VideoAnalysisServiceE2E {
     @Autowired
-    lateinit var videoCleanserService: CleanserService
+    lateinit var videoAnalysisService: VideoAnalysisService
 
     @Test
     fun countAllVideosFromKaltura() {
-        assertThat(videoCleanserService.countAllKalturaVideos()).isGreaterThan(28000)
+        assertThat(videoAnalysisService.countAllKalturaVideos()).isGreaterThan(28000)
     }
 
     @Test
     fun getAllReadyVideosFromKaltura() {
-        val allVideoIds = videoCleanserService.getReadyVideosFromKaltura()
+        val allVideoIds = videoAnalysisService.getReadyVideosFromKaltura()
 
         assertThat(allVideoIds.size).isGreaterThan(2000)
         assertThat(allVideoIds.size).isLessThan(5000)
@@ -30,36 +30,41 @@ class VideoCleanserServiceE2E {
 
     @Test
     fun getAllFaultyVideosFromKaltura() {
-        val allVideoIds = videoCleanserService.getFaultyVideosFromKaltura()
+        val allVideoIds = videoAnalysisService.getFaultyVideosFromKaltura()
 
         assertThat(allVideoIds.size).isGreaterThan(20000)
     }
 
     @Test
     fun getAllVideosFromKaltura() {
-        val allVideoIds = videoCleanserService.getAllVideosFromKaltura()
+        val allVideoIds = videoAnalysisService.getAllVideosFromKaltura()
 
         assertThat(allVideoIds.size).isGreaterThan(30000)
     }
 
     @Test
-    fun getAllPlayableVideos_videosInBoclipsAndInKaltura() {
-        val unplayableVideos = videoCleanserService.getPlayableVideos()
+    fun getAllVideosFromBoclips() {
+        assertThat(videoAnalysisService.countAllBoclipsVideos()).isGreaterThan(100)
+    }
 
-        assertThat(unplayableVideos.size).isGreaterThan(2000)
+    @Test
+    fun getAllPlayableVideos_videosInBoclipsAndInKaltura() {
+        val playableVideos = videoAnalysisService.getPlayableVideos()
+
+        assertThat(playableVideos.size).isGreaterThan(100)
     }
 
     @Test
     fun getAllUnplayableVideos_videosInBoclipsNotInKaltura() {
-        val unplayableVideos = videoCleanserService.getUnplayableVideos()
+        val unplayableVideos = videoAnalysisService.getUnplayableVideos()
 
         assertThat(unplayableVideos).hasSize(0)
     }
 
     @Test
     fun getFreeableVideos_videosInKalturaNotInBoclips() {
-        val unplayableVideos = videoCleanserService.getFreeableVideos()
+        val freeableVideos = videoAnalysisService.getFreeableVideos()
 
-        assertThat(unplayableVideos.size).isEqualTo(0)
+        assertThat(freeableVideos.size).isEqualTo(0)
     }
 }

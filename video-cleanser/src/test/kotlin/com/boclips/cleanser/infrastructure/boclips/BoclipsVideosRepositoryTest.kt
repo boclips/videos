@@ -14,7 +14,7 @@ class BoclipsVideosRepositoryTest : AbstractSpringIntegrationTest() {
         jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, null)")
         jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(2, null)")
 
-        assertThat(boclipsVideosRepository.getAllPublishedVideos()).containsExactly("1", "2")
+        assertThat(boclipsVideosRepository.getAllVideos()).containsExactly("1", "2")
     }
 
     @Test
@@ -22,6 +22,16 @@ class BoclipsVideosRepositoryTest : AbstractSpringIntegrationTest() {
         jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, 'a reference id')")
         jdbcTemplate.update("INSERT INTO metadata_orig(id) VALUES(2)")
 
-        assertThat(boclipsVideosRepository.getAllPublishedVideos()).containsExactly("a reference id", "2")
+        assertThat(boclipsVideosRepository.getAllVideos()).containsExactly("a reference id", "2")
+    }
+
+    @Test
+    fun countAllVideos() {
+        assertThat(boclipsVideosRepository.countAllVideos()).isEqualTo(0)
+
+        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, null)")
+        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(2, null)")
+
+        assertThat(boclipsVideosRepository.countAllVideos()).isEqualTo(2)
     }
 }
