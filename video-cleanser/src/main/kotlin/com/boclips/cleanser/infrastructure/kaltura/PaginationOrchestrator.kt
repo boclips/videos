@@ -16,11 +16,11 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
     companion object : KLogging()
 
     fun fetchAll(searchFilters: List<MediaFilter> = emptyList()): List<MediaItem> {
-        val startTime = LocalDateTime.of(2015, Month.JANUARY, 1, 0, 0, 0)
-        val endTime = LocalDateTime.now()
+        val startTimeBeforeTimeOfBoclips = LocalDateTime.of(2013, Month.JANUARY, 1, 0, 0, 0)
+        val endTimeWithTimezoneBuffer = LocalDateTime.now().plusDays(1)
 
-        logger.info("Start fetching Media Entries from $startTime to $endTime")
-        return fetchOrSplit(searchFilters, startTime.toEpochSecond(ZoneOffset.UTC), endTime.toEpochSecond(ZoneOffset.UTC))
+        logger.info("Start fetching Media Entries from $startTimeBeforeTimeOfBoclips to $endTimeWithTimezoneBuffer")
+        return fetchOrSplit(searchFilters, startTimeBeforeTimeOfBoclips.toEpochSecond(ZoneOffset.UTC), endTimeWithTimezoneBuffer.toEpochSecond(ZoneOffset.UTC))
     }
 
     private fun fetchOrSplit(filters: List<MediaFilter>, dateStart: Long, dateEnd: Long): List<MediaItem> {
