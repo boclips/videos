@@ -8,8 +8,13 @@ import java.sql.ResultSet
 @Repository
 class BoclipsVideosRepository(val jdbcTemplate: JdbcTemplate) : BoclipsVideoService {
     override fun getAllPublishedVideos() = jdbcTemplate.query(
-            "SELECT id FROM metadata_orig WHERE reference_id IS NULL",
-            { resultSet: ResultSet, _ ->
-                resultSet.getInt("id")
-            }).toSet()
+            "SELECT id, reference_id FROM metadata_orig") { resultSet: ResultSet, _ ->
+        val referenceId = resultSet.getString("reference_id")
+
+        if (referenceId.isNullOrBlank()) {
+            resultSet.getInt("id").toString()
+        } else {
+            referenceId
+        }
+    }.toSet()
 }

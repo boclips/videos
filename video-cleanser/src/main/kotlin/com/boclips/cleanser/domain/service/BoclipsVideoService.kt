@@ -1,5 +1,5 @@
 package com.boclips.cleanser.domain.service
 
 interface BoclipsVideoService {
-    fun getAllPublishedVideos(): Set<Int>
+    fun getAllPublishedVideos(): Set<String>
 }
