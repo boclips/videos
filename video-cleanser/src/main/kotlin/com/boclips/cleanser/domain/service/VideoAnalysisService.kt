@@ -27,19 +27,19 @@ class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
 
     fun getUnplayableVideos(): Set<String> {
         val videosInKaltura = kalturaMediaService.getReadyMediaEntries()
-        val videosOnBoclips = boclipsVideoService.getAllVideos()
+        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.id }.toSet()
         return videosOnBoclips - videosInKaltura
     }
 
     fun getPlayableVideos(): Set<String> {
         val videosInKaltura = kalturaMediaService.getReadyMediaEntries()
-        val videosOnBoclips = boclipsVideoService.getAllVideos()
+        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.id }.toSet()
         return videosOnBoclips.intersect(videosInKaltura)
     }
 
     fun getFreeableVideos(): Set<String> {
         val videosInKaltura = kalturaMediaService.getReadyMediaEntries()
-        val videosOnBoclips = boclipsVideoService.getAllVideos()
+        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.id }.toSet()
         return videosInKaltura - videosOnBoclips
     }
 }

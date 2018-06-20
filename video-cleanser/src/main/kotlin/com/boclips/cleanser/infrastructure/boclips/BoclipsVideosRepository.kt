@@ -1,5 +1,6 @@
 package com.boclips.cleanser.infrastructure.boclips
 
+import com.boclips.cleanser.domain.model.BoclipsVideo
 import com.boclips.cleanser.domain.service.BoclipsVideoService
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -12,14 +13,20 @@ class BoclipsVideosRepository(val jdbcTemplate: JdbcTemplate) : BoclipsVideoServ
         return count ?: 0
     }
 
-    override fun getAllVideos() = jdbcTemplate.query("SELECT id, reference_id FROM metadata_orig")
+    override fun getAllVideos() = jdbcTemplate.query("SELECT id, reference_id, title, source FROM metadata_orig")
     { resultSet: ResultSet, _ ->
         val referenceId = resultSet.getString("reference_id")
 
-        if (referenceId.isNullOrBlank()) {
+        val id = if (referenceId.isNullOrBlank()) {
             resultSet.getInt("id").toString()
         } else {
             referenceId
         }
+
+        BoclipsVideo(
+                id = id,
+                title = resultSet.getString("title"),
+                contentProvider = resultSet.getString("source")
+        )
     }.toSet()
 }
