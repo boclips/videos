@@ -16,7 +16,27 @@ class VideoCleanserServiceE2E {
     lateinit var videoCleanserService: CleanserService
 
     @Test
-    fun videosWithFaultyKalturaVideo() {
+    fun countAllVideosFromKaltura() {
+        assertThat(videoCleanserService.countAllKalturaVideos()).isGreaterThan(28000)
+    }
+
+    @Test
+    fun getAllReadyVideosFromKaltura() {
+        val allVideoIds = videoCleanserService.getReadyVideosFromKaltura()
+
+        assertThat(allVideoIds.size).isGreaterThan(2000)
+        assertThat(allVideoIds.size).isLessThan(10000)
+    }
+
+    @Test
+    fun getAllFaultyVideosFromKaltura() {
+        val allVideoIds = videoCleanserService.getFaultyVideosFromKaltura()
+
+        assertThat(allVideoIds.size).isGreaterThan(10000)
+    }
+
+    @Test
+    fun getAllUnplayableVideos() {
         val unplayableVideos = videoCleanserService.getUnplayableVideos()
 
         assertThat(unplayableVideos).hasSize(0)

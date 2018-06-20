@@ -9,4 +9,16 @@ class CleanserService(val boclipsVideosRepository: BoclipsVideosRepository,
         val videosOnBoclips = boclipsVideosRepository.getAllPublishedVideos().map { it.toString() }.toSet()
         return videosOnBoclips - videosInKaltura
     }
+
+    fun getFaultyVideosFromKaltura(): Set<String> {
+        return kalturaMediaService.getFaultyMediaEntries().map { it.referenceId }.toSet()
+    }
+
+    fun getReadyVideosFromKaltura(): Set<String> {
+        return kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
+    }
+
+    fun countAllKalturaVideos(): Long {
+        return kalturaMediaService.countAllMediaEntries()
+    }
 }
