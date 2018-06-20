@@ -14,14 +14,14 @@ class BoclipsVideosRepositoryTest : AbstractSpringIntegrationTest() {
         jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, null)")
         jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(2, null)")
 
-        assertThat(boclipsVideosRepository.getAllPublishedVideos()).containsExactly(1, 2)
+        assertThat(boclipsVideosRepository.getAllPublishedVideos()).containsExactly("1", "2")
     }
 
     @Test
-    fun getAllIds_withoutVideosWithReferenceId() {
+    fun getAllIds_prefersReferenceIdOverId() {
         jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, 'a reference id')")
         jdbcTemplate.update("INSERT INTO metadata_orig(id) VALUES(2)")
 
-        assertThat(boclipsVideosRepository.getAllPublishedVideos()).containsExactly(2)
+        assertThat(boclipsVideosRepository.getAllPublishedVideos()).containsExactly("a reference id", "2")
     }
 }

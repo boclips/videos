@@ -1,9 +1,9 @@
 package com.boclips.cleanser.infrastructure
 
-import com.boclips.cleanser.infrastructure.boclips.BoclipsVideosRepository
-import com.boclips.cleanser.infrastructure.kaltura.TimePagedKalturaMediaService
 import com.boclips.cleanser.domain.model.MediaItem
 import com.boclips.cleanser.domain.service.CleanserService
+import com.boclips.cleanser.infrastructure.boclips.BoclipsVideosRepository
+import com.boclips.cleanser.infrastructure.kaltura.TimePagedKalturaMediaService
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -25,7 +25,7 @@ class CleanserServiceTest {
 
     @Test
     fun returnsDifferenceBetweenBoAndKaltura() {
-        whenever(boclipsVideosRepo.getAllPublishedVideos()).thenReturn(setOf(1, 2, 3))
+        whenever(boclipsVideosRepo.getAllPublishedVideos()).thenReturn(setOf("1", "2", "3"))
         whenever(timePagedKalturaVideosRepo.getReadyMediaEntries()).thenReturn(
                 setOf(
                         MediaItem(referenceId = "2"),
