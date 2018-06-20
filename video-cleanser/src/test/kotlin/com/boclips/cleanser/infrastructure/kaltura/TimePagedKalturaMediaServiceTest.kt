@@ -7,16 +7,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.Mockito
 
-class PagedKalturaMediaServiceTest {
+class TimePagedKalturaMediaServiceTest {
     @Test
-    fun getReadyMediaEntries_parsesMediaItems() {
+    fun handlesSmallDataSet() {
         val mockKalturaClient = Mockito.mock(KalturaMediaClient::class.java)
+        Mockito.`when`(mockKalturaClient.count(emptyList())).thenReturn(2L)
         Mockito.`when`(mockKalturaClient.fetch(any(), any(), any()))
                 .thenReturn(listOf(MediaItem(referenceId = "1"), MediaItem(referenceId = "2")))
 
-        val mediaItems = PagedKalturaMediaService(mockKalturaClient).getReadyMediaEntries()
+        val mediaItems = TimePagedKalturaMediaService(mockKalturaClient).getReadyMediaEntries()
 
         assertThat(mediaItems).containsExactly(MediaItem(referenceId = "1"), MediaItem(referenceId = "2"))
     }
-
 }

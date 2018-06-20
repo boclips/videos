@@ -91,7 +91,7 @@ class KalturaMediaClientTest {
 
     @Test
     fun count_returnsCountOfEntireCollection() {
-        val count = kalturaClient.count()
+        val count = kalturaClient.count(emptyList())
 
         assertThat(count).isEqualTo(2L)
     }

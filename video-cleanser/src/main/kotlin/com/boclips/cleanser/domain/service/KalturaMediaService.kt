@@ -4,4 +4,6 @@ import com.boclips.cleanser.domain.model.MediaItem
 
 interface KalturaMediaService {
     fun getReadyMediaEntries(): Set<MediaItem>
+    fun getFaultyMediaEntries(): Set<MediaItem>
+    fun countAllMediaEntries(): Long
 }

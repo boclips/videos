@@ -1,8 +1,8 @@
 package com.boclips.cleanser.infrastructure.kaltura.client
 
+import com.boclips.cleanser.domain.model.MediaFilter
 import com.boclips.cleanser.domain.model.MediaItem
 import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
-import com.boclips.cleanser.domain.model.MediaFilter
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -18,8 +18,8 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
     private val ENDPOINT = "/api_v3/service/media/action/list"
     private val restTemplate = RestTemplate()
 
-    fun count(): Long {
-        val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize = 1, pageIndex = 0, filters = emptyList()), buildHeaders())
+    fun count(filters: List<MediaFilter> = emptyList()): Long {
+        val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize = 1, pageIndex = 0, filters = filters), buildHeaders())
         return post(request).count
     }
 
