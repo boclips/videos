@@ -1,6 +1,7 @@
 package com.boclips.testsupport
 
 import com.boclips.cleanser.domain.model.BoclipsVideo
+import com.boclips.cleanser.domain.model.KalturaVideo
 import java.util.*
 
 class TestFactory {
@@ -9,5 +10,8 @@ class TestFactory {
             return BoclipsVideo(id = id, title = "Some great title", contentProvider = "Bloomie")
         }
 
+        fun kalturaVideo(referenceId: String): KalturaVideo {
+            return KalturaVideo(referenceId = referenceId)
+        }
     }
 }

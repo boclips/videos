@@ -1,5 +1,6 @@
 package com.boclips.cleanser.infrastructure.kaltura
 
+import com.boclips.cleanser.domain.model.KalturaVideo
 import com.boclips.cleanser.domain.model.MediaFilter
 import com.boclips.cleanser.domain.model.MediaFilterType
 import com.boclips.cleanser.domain.service.KalturaMediaService
@@ -16,20 +17,20 @@ class PagedKalturaMediaService(
                 kalturaMediaClient.count(listOf(MediaFilter(MediaFilterType.STATUS_NOT_EQUAL, "2")))
     }
 
-    override fun getReadyMediaEntries(): Set<String> {
+    override fun getReadyMediaEntries(): Set<KalturaVideo> {
         val searchFilters: List<MediaFilter> = listOf(MediaFilter(MediaFilterType.STATUS_IN, "2"))
         return fetch(searchFilters)
     }
 
-    override fun getFaultyMediaEntries(): Set<String> {
+    override fun getFaultyMediaEntries(): Set<KalturaVideo> {
         val searchFilters: List<MediaFilter> = listOf(MediaFilter(MediaFilterType.STATUS_NOT_EQUAL, "2"))
         return fetch(searchFilters)
     }
 
-    private fun fetch(searchFilters: List<MediaFilter> = emptyList()): Set<String> {
+    private fun fetch(searchFilters: List<MediaFilter> = emptyList()): Set<KalturaVideo> {
         return paginationOrchestrator
                 .fetchAll(searchFilters)
-                .map { it.referenceId }
+                .map { KalturaVideo(referenceId = it.referenceId) }
                 .toSet()
     }
 }
