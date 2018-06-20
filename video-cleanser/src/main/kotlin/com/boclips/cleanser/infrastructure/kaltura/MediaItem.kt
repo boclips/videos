@@ -1,4 +1,4 @@
-package com.boclips.cleanser.domain.model
+package com.boclips.cleanser.infrastructure.kaltura
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
