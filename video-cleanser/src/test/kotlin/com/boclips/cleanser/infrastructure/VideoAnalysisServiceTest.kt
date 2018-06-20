@@ -3,6 +3,7 @@ package com.boclips.cleanser.infrastructure
 import com.boclips.cleanser.domain.service.VideoAnalysisService
 import com.boclips.cleanser.infrastructure.boclips.BoclipsVideosRepository
 import com.boclips.cleanser.infrastructure.kaltura.PagedKalturaMediaService
+import com.boclips.testsupport.TestFactory
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -24,7 +25,10 @@ class VideoAnalysisServiceTest {
 
     @Test
     fun returnsDifferenceBetweenBoAndKaltura() {
-        whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf("1", "2", "3"))
+        whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
+                TestFactory.boclipsVideo(id = "1"),
+                TestFactory.boclipsVideo(id = "2"),
+                TestFactory.boclipsVideo(id = "3")))
         whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf("2", "3", "4"))
 
         assertThat(videoAnalysisService.getUnplayableVideos()).containsExactly("1")
@@ -32,7 +36,9 @@ class VideoAnalysisServiceTest {
 
     @Test
     fun returnsDifferenceBetweenKalturaAndBoclips() {
-        whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf("1", "2"))
+        whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
+                TestFactory.boclipsVideo(id = "1"),
+                TestFactory.boclipsVideo(id = "2")))
         whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf("2", "3", "4"))
 
         assertThat(videoAnalysisService.getFreeableVideos()).containsExactly("3", "4")
@@ -40,7 +46,10 @@ class VideoAnalysisServiceTest {
 
     @Test
     fun returnsPlayableVideos() {
-        whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf("1", "2"))
+        whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
+                TestFactory.boclipsVideo(id = "1"),
+                TestFactory.boclipsVideo(id = "2")
+        ))
         whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf("2", "3", "4"))
 
         assertThat(videoAnalysisService.getPlayableVideos()).containsExactly("2")

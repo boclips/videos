@@ -11,27 +11,34 @@ class BoclipsVideosRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getAllIds() {
-        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, null)")
-        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(2, null)")
+        addRow(id = "1", title = "great title", contentProvider = "Bloomie")
+        addRow(id = "2")
 
-        assertThat(boclipsVideosRepository.getAllVideos()).containsExactly("1", "2")
+        assertThat(boclipsVideosRepository.getAllVideos().first().id).isEqualTo("1")
+        assertThat(boclipsVideosRepository.getAllVideos().first().title).isEqualTo("great title")
+        assertThat(boclipsVideosRepository.getAllVideos().first().contentProvider).isEqualTo("Bloomie")
     }
 
     @Test
     fun getAllIds_prefersReferenceIdOverId() {
-        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, 'a reference id')")
-        jdbcTemplate.update("INSERT INTO metadata_orig(id) VALUES(2)")
+        addRow(id = "1", referenceId = "'a reference id'")
+        addRow(id = "2")
 
-        assertThat(boclipsVideosRepository.getAllVideos()).containsExactly("a reference id", "2")
+        assertThat(boclipsVideosRepository.getAllVideos().map { it.id }).containsExactly("a reference id", "2")
     }
 
     @Test
     fun countAllVideos() {
         assertThat(boclipsVideosRepository.countAllVideos()).isEqualTo(0)
 
-        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(1, null)")
-        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id) VALUES(2, null)")
+        addRow(id = "1")
+        addRow(id = "2")
 
         assertThat(boclipsVideosRepository.countAllVideos()).isEqualTo(2)
+    }
+
+    private fun addRow(id: String? = "NULL", referenceId: String? = "NULL", title: String? = "some title", contentProvider: String? = "some cp") {
+        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id, title, source) " +
+                "VALUES('$id', $referenceId, '$title', '$contentProvider')")
     }
 }

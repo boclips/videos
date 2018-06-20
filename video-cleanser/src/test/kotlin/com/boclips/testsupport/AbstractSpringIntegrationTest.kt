@@ -24,7 +24,9 @@ abstract class AbstractSpringIntegrationTest {
                 (
                     id INT auto_increment
                         PRIMARY KEY,
-                    reference_id VARCHAR(666)
+                    reference_id VARCHAR(666),
+                    title MEDIUMTEXT,
+                    source VARCHAR(45)
                 );
         """.trimIndent())
 
