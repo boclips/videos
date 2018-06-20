@@ -1,24 +1,15 @@
-# Utility to enhance data quality
+# Video Analyser
 
-## Configuring the client
+A tool to help us manage videos in our databases and Kaltura.
 
-The client can run in different environments. Copy `application.yml` and amend the environment information.
+## Setup
 
-
-## Development
-
-Run all tests, excluding contract test:
 ```
-./gradlew video-cleanser:test
+./setup-secrets.sh <your lastpass username>
 ```
 
-Run contract test:
-```
-./gradlew video-cleanser:testContracts
-```
-
-
-## Generating Kaltura Session
+This will download the secret staging and production configuration. 
+Make sure the session in the secret note has not expired. Should it expire, here is how you can create a new one:
 
 ```
 curl -X POST https://www.kaltura.com/api_v3/service/session/action/start \
@@ -32,17 +23,14 @@ curl -X POST https://www.kaltura.com/api_v3/service/session/action/start \
 
 More information about generating the session can be found in the [Kaltura API](https://developer.kaltura.com/api-docs/Generate_API_Sessions/session/session_start).
 
+## Development
 
-## Listing media entries with time-window
+Run all tests, excluding contract test:
 ```
-curl -X POST https://www.kaltura.com/api_v3/service/media/action/list \
-    -d "ks=$KALTURA_SESSION" \
-    -d "userSecret=USERNAME" \
-    -d "name=Knowledgemotion" \
-    -d "format=1" \
-    -d "filter[createdAtGreaterThanOrEqual]=1527465600" \
-    -d "filter[createdAtLessThanOrEqual]=1527765520"
+./gradlew video-cleanser:test
 ```
 
-More information about getting a list of all media entries can be found [here](https://developer.kaltura.com/console/Ingest_and_Upload_Media/media/media_list?query=list)
-
+Run contract test:
+```
+./gradlew video-cleanser:testContracts
+```
