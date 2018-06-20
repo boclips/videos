@@ -6,6 +6,7 @@ import com.boclips.cleanser.infrastructure.kaltura.PagedKalturaMediaService
 import com.boclips.testsupport.TestFactory
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
@@ -23,13 +24,20 @@ class VideoAnalysisServiceTest {
     @InjectMocks
     lateinit var videoAnalysisService: VideoAnalysisService
 
+    @Before
+    fun setUp() {
+        whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf(
+                TestFactory.kalturaVideo(referenceId = "2"),
+                TestFactory.kalturaVideo(referenceId = "3"),
+                TestFactory.kalturaVideo(referenceId = "4")))
+    }
+
     @Test
     fun returnsDifferenceBetweenBoAndKaltura() {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
                 TestFactory.boclipsVideo(id = "1"),
                 TestFactory.boclipsVideo(id = "2"),
                 TestFactory.boclipsVideo(id = "3")))
-        whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf("2", "3", "4"))
 
         assertThat(videoAnalysisService.getUnplayableVideos()).containsExactly("1")
     }
@@ -39,7 +47,6 @@ class VideoAnalysisServiceTest {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
                 TestFactory.boclipsVideo(id = "1"),
                 TestFactory.boclipsVideo(id = "2")))
-        whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf("2", "3", "4"))
 
         assertThat(videoAnalysisService.getFreeableVideos()).containsExactly("3", "4")
     }
@@ -50,7 +57,6 @@ class VideoAnalysisServiceTest {
                 TestFactory.boclipsVideo(id = "1"),
                 TestFactory.boclipsVideo(id = "2")
         ))
-        whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf("2", "3", "4"))
 
         assertThat(videoAnalysisService.getPlayableVideos()).containsExactly("2")
     }
