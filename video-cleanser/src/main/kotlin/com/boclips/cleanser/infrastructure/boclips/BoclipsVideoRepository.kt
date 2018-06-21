@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 @Repository
-class BoclipsVideosRepository(val jdbcTemplate: JdbcTemplate) : BoclipsVideoService {
+class BoclipsVideoRepository(val jdbcTemplate: JdbcTemplate) : BoclipsVideoService {
     override fun countAllVideos(): Int {
         val count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM metadata_orig", Int::class.java)
         return count ?: 0
