@@ -61,7 +61,7 @@ class KalturaMediaClientTest : AbstractWireMockTest() {
     }
 
     @Test
-    fun fetch_throwsIfSomethingWentWrong() {
+    fun fetch_throwsIfSomethingUnexpectedWentWrong() {
         wireMockServer.resetAll()
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -70,6 +70,32 @@ class KalturaMediaClientTest : AbstractWireMockTest() {
                         .withBody("something went wrong")))
 
         assertThatThrownBy { kalturaClient.fetch() }.isInstanceOf(KalturaClientException::class.java)
+    }
+
+    @Test
+    fun fetch_abortsIfBodyIsEmpty() {
+        wireMockServer.resetAll()
+        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                ))
+
+        assertThatThrownBy { kalturaClient.fetch() }.isInstanceOf(KalturaClientException::class.java)
+    }
+
+    @Test
+    fun fetch_canCopeWithEmptyObjects() {
+        wireMockServer.resetAll()
+        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(loadFixture("empty-objects.json"))))
+
+        val mediaItems = kalturaClient.fetch()
+
+        assertThat(mediaItems).hasSize(0)
     }
 
     @Test

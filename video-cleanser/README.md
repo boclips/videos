@@ -23,6 +23,14 @@ curl -X POST https://www.kaltura.com/api_v3/service/session/action/start \
 
 More information about generating the session can be found in the [Kaltura API](https://developer.kaltura.com/api-docs/Generate_API_Sessions/session/session_start).
 
+## Usage
+
+```
+java -jar executable.jar 
+```
+
+This will boot up a shell which should be self explanatory.
+
 ## Development
 
 Run all tests, excluding contract test:

@@ -3,9 +3,11 @@ package com.boclips.cleanser.infrastructure.kaltura.client
 import com.boclips.cleanser.domain.model.MediaFilter
 import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
 import com.boclips.cleanser.infrastructure.kaltura.MediaItem
+import mu.KLogging
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -15,6 +17,8 @@ import java.net.URI
 
 @Component
 class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
+    companion object : KLogging()
+
     private val restTemplate = RestTemplate()
 
     fun count(filters: List<MediaFilter> = emptyList()): Long {
@@ -34,6 +38,9 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
                     request,
                     MediaList::class.java)
             if (response.body == null) throw IllegalStateException("Received a client without a body") else return response.body!!
+        } catch (ex: HttpMessageConversionException) {
+            logger.error("Failed to fetch or serialize object for request ${request.body}, exception: $ex")
+            return MediaList(count = 0)
         } catch (ex: Exception) {
             throw KalturaClientException(ex)
         }
