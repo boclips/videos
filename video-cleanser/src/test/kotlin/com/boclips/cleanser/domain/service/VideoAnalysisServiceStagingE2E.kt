@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("staging")
-class VideoAnalysisServiceE2E {
+class VideoAnalysisServiceStagingE2E {
     @Autowired
     lateinit var videoAnalysisService: VideoAnalysisService
 

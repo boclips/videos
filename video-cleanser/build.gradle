@@ -64,7 +64,7 @@ test {
     filter {
         includeTestsMatching "*Test"
     }
-    exclude 'com/boclips/**/*E2E'
+    exclude 'com/boclips/**/*StagingE2E'
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "test"
 }
 
@@ -73,7 +73,7 @@ test {
  */
 task testE2E(type: Test) {
     filter {
-        includeTestsMatching "*E2E"
+        includeTestsMatching "*StagingE2E"
     }
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "staging"
 }
