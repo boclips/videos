@@ -1,8 +1,8 @@
 package com.boclips.cleanser.infrastructure.kaltura.client
 
-import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
 import com.boclips.cleanser.domain.model.MediaFilter
 import com.boclips.cleanser.domain.model.MediaFilterType
+import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
@@ -39,6 +39,14 @@ class KalturaMediaClientTest {
         assertThat(mediaEntries).hasSize(2)
         assertThat(mediaEntries[0].referenceId).isEqualTo("1")
         assertThat(mediaEntries[1].referenceId).isEqualTo("2")
+    }
+
+    @Test
+    fun fetch_returnsMediaItemsWithIds() {
+        val mediaEntries = kalturaClient.fetch(500, 0)
+
+        assertThat(mediaEntries[0].id).isEqualTo("1_27l1ue65")
+        assertThat(mediaEntries[1].id).isEqualTo("1_antpp8un")
     }
 
     @Test

@@ -11,7 +11,7 @@ class TestFactory {
         }
 
         fun kalturaVideo(referenceId: String): KalturaVideo {
-            return KalturaVideo(referenceId = referenceId)
+            return KalturaVideo(referenceId = referenceId, id = "89")
         }
     }
 }

@@ -30,7 +30,7 @@ class PagedKalturaMediaService(
     private fun fetch(searchFilters: List<MediaFilter> = emptyList()): Set<KalturaVideo> {
         return paginationOrchestrator
                 .fetchAll(searchFilters)
-                .map { KalturaVideo(referenceId = it.referenceId) }
+                .map { KalturaVideo(referenceId = it.referenceId, id = it.id) }
                 .toSet()
     }
 }
