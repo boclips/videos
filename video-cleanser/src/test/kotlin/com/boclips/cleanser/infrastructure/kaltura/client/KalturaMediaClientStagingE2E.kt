@@ -6,7 +6,7 @@ import org.junit.Test
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("staging")
-class KalturaMediaClientE2E {
+class KalturaMediaClientStagingE2E {
 
     @Test
     fun canFetchMediaEntries() {
