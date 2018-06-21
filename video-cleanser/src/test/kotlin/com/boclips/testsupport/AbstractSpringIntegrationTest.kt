@@ -13,7 +13,7 @@ import org.springframework.test.jdbc.JdbcTestUtils
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
-abstract class AbstractSpringIntegrationTest {
+abstract class AbstractSpringIntegrationTest : AbstractWireMockTest() {
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
 

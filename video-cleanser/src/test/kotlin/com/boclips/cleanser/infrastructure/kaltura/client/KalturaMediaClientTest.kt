@@ -3,33 +3,26 @@ package com.boclips.cleanser.infrastructure.kaltura.client
 import com.boclips.cleanser.domain.model.MediaFilter
 import com.boclips.cleanser.domain.model.MediaFilterType
 import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
-import com.github.tomakehurst.wiremock.WireMockServer
+import com.boclips.testsupport.AbstractWireMockTest
+import com.boclips.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class KalturaMediaClientTest {
-    private val wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8089))
-    private val kalturaClient = KalturaMediaClient(KalturaProperties(host = "http://localhost:8089", session = "test-session"))
+class KalturaMediaClientTest : AbstractWireMockTest() {
+    private val kalturaClient = KalturaMediaClient(KalturaProperties(
+            host = "http://localhost:${AbstractWireMockTest.PORT}",
+            session = "test-session"))
 
     @Before
-    fun startAndResetWireMock() {
-        wireMockServer.start()
-        wireMockServer.resetAll()
+    fun setUp() {
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(loadFixture("two-successful-videos.json"))))
-    }
-
-    @After
-    fun stopWireMock() {
-        wireMockServer.stop()
     }
 
     @Test
@@ -103,6 +96,4 @@ class KalturaMediaClientTest {
 
         assertThat(count).isEqualTo(2L)
     }
-
-    private fun loadFixture(fileName: String) = Object::getClass.javaClass.classLoader.getResource(fileName).readBytes()
 }
