@@ -1,7 +1,7 @@
 package com.boclips.cleanser.infrastructure
 
 import com.boclips.cleanser.domain.service.VideoAnalysisService
-import com.boclips.cleanser.infrastructure.boclips.BoclipsVideosRepository
+import com.boclips.cleanser.infrastructure.boclips.BoclipsVideoRepository
 import com.boclips.cleanser.infrastructure.kaltura.PagedKalturaMediaService
 import com.boclips.testsupport.TestFactory
 import com.nhaarman.mockito_kotlin.whenever
@@ -16,7 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class VideoAnalysisServiceTest {
     @Mock
-    lateinit var boclipsVideoService: BoclipsVideosRepository
+    lateinit var boclipsVideoService: BoclipsVideoRepository
 
     @Mock
     lateinit var kalturaMediaService: PagedKalturaMediaService
