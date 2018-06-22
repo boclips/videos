@@ -16,7 +16,7 @@ class PagedKalturaMediaService(
 
     override fun countAllMediaEntries(): Long {
         return kalturaMediaClient.count(listOf(MediaFilter(MediaFilterType.STATUS_IN, "2"))) +
-                kalturaMediaClient.count(listOf(MediaFilter(MediaFilterType.STATUS_NOT_EQUAL, "2")))
+                kalturaMediaClient.count(listOf(MediaFilter(MediaFilterType.STATUS_NOT_IN, "2")))
     }
 
     override fun getReadyMediaEntries(): Set<KalturaVideo> {
@@ -34,7 +34,7 @@ class PagedKalturaMediaService(
     }
 
     override fun getFaultyMediaEntries(): Set<KalturaVideo> {
-        val searchFilters: List<MediaFilter> = listOf(MediaFilter(MediaFilterType.STATUS_NOT_EQUAL, "2"))
+        val searchFilters: List<MediaFilter> = listOf(MediaFilter(MediaFilterType.STATUS_NOT_IN, "2,4"))
         val faultyKalturaVideos = fetch(searchFilters)
         logger.info("Returning ${faultyKalturaVideos.size} faulty Kaltura Videos")
         return faultyKalturaVideos

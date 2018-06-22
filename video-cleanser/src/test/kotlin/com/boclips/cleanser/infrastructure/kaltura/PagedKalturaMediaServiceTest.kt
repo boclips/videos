@@ -24,7 +24,7 @@ class PagedKalturaMediaServiceTest {
 
         verify(mockKalturaClient, times(2)).count(check {
             assertThat(extractFilters(it))
-                    .containsAnyElementsOf(listOf(MediaFilterType.STATUS_IN, MediaFilterType.STATUS_NOT_EQUAL))
+                    .containsAnyElementsOf(listOf(MediaFilterType.STATUS_IN, MediaFilterType.STATUS_NOT_IN))
         })
     }
 
@@ -84,7 +84,7 @@ class PagedKalturaMediaServiceTest {
 
         verify(mockPagingationOrchestrator, times(1)).fetchAll(check {
             val mediaFilter = it[0]
-            assertThat(mediaFilter.key).isEqualTo(MediaFilterType.STATUS_NOT_EQUAL)
+            assertThat(mediaFilter.key).isEqualTo(MediaFilterType.STATUS_NOT_IN)
             assertThat(mediaFilter.value).isEqualTo("2")
         })
     }

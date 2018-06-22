@@ -10,6 +10,22 @@ import java.io.File
 class UserShell(private val videoAnalysisService: VideoAnalysisService) {
     private val csvGenerator = com.boclips.cleanser.presentation.CsvGenerator()
 
+    @ShellMethod("Generate report with all faulty videos on Kaltura")
+    fun faultyVideosKaltura(@ShellOption(help = "Specify filename") filename: String) {
+        println("Fetching faulty videos on Kaltura...")
+        val unplayableVideos = videoAnalysisService.getFaultyVideosFromKaltura().map { transform(it) }
+        writeVideosToFile(filename, unplayableVideos)
+        println("Finished job fetching faulty videos on Kaltura")
+    }
+
+    @ShellMethod("Generate report with all ready videos on Kaltura")
+    fun allVideosKaltura(@ShellOption(help = "Specify filename") filename: String) {
+        println("Fetching ready videos on Kaltura...")
+        val allVideosKaltura = videoAnalysisService.getAllVideosFromKaltura().map { transform(it) }
+        writeVideosToFile(filename, allVideosKaltura)
+        println("Finished job fetching all videos on Kaltura")
+    }
+
     @ShellMethod("Generate report with all unplayable videos")
     fun unplayableVideos(@ShellOption(help = "Specify filename") filename: String) {
         println("Fetching unplayable videos...")
