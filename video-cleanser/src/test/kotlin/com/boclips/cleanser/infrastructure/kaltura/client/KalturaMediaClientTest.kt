@@ -14,7 +14,7 @@ class KalturaMediaClientTest : AbstractSpringIntegrationTest() {
     lateinit var kalturaClient: KalturaMediaClient
 
     @Test
-    fun fetch_returnsMediaItemsWithReferenceIds() {
+    fun fetch_mediaItem() {
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
@@ -24,26 +24,16 @@ class KalturaMediaClientTest : AbstractSpringIntegrationTest() {
         val mediaEntries = kalturaClient.fetch(500, 0)
 
         assertThat(mediaEntries).hasSize(2)
+
         assertThat(mediaEntries[0].referenceId).isEqualTo("1")
-        assertThat(mediaEntries[1].referenceId).isEqualTo("2")
-    }
-
-    @Test
-    fun fetch_returnsMediaItemsWithIds() {
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(loadFixture("two-successful-videos.json"))))
-
-        val mediaEntries = kalturaClient.fetch(500, 0)
-
         assertThat(mediaEntries[0].id).isEqualTo("1_27l1ue65")
+
+        assertThat(mediaEntries[1].referenceId).isEqualTo("2")
         assertThat(mediaEntries[1].id).isEqualTo("1_antpp8un")
     }
 
     @Test
-    fun fetch_pagination_respectsPageSize() {
+    fun fetch_respectsPageSize() {
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
@@ -58,7 +48,7 @@ class KalturaMediaClientTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun fetch_pagination_respectsCurrentPage() {
+    fun fetch_respectsPageIndex() {
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
