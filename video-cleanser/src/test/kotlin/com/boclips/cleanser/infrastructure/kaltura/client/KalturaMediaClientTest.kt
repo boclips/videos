@@ -2,19 +2,17 @@ package com.boclips.cleanser.infrastructure.kaltura.client
 
 import com.boclips.cleanser.domain.model.MediaFilter
 import com.boclips.cleanser.domain.model.MediaFilterType
-import com.boclips.cleanser.infrastructure.kaltura.KalturaProperties
 import com.boclips.testsupport.AbstractSpringIntegrationTest
-import com.boclips.testsupport.AbstractWireMockTest
 import com.boclips.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import org.springframework.beans.factory.annotation.Autowired
 
 class KalturaMediaClientTest : AbstractSpringIntegrationTest() {
-    private val kalturaClient = KalturaMediaClient(KalturaProperties(
-            host = "http://localhost:${AbstractWireMockTest.PORT}",
-            session = "test-session"))
+    @Autowired
+    lateinit var kalturaClient: KalturaMediaClient
 
     @Test
     fun fetch_returnsMediaItemsWithReferenceIds() {

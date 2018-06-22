@@ -7,46 +7,32 @@ import mu.KLogging
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.http.converter.HttpMessageConversionException
-import org.springframework.remoting.RemoteAccessException
-import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.springframework.web.client.RestClientException
-import org.springframework.web.client.RestTemplate
 import java.net.URI
 
 
 @Service
-class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
+class KalturaMediaClient(
+        val kalturaProperties: KalturaProperties,
+        val retryHttpService: RetryHttpService) {
     companion object : KLogging()
-
-    private val restTemplate = RestTemplate()
 
     fun count(filters: List<MediaFilter> = emptyList()): Long {
         val body = buildRequestBody(pageSize = 1, pageIndex = 0, filters = filters)
         val request = HttpEntity<MultiValueMap<String, String>>(body, buildHeaders())
-        return post(request).count
+        return postWithRetries(request).count
     }
 
     fun fetch(pageSize: Int = 500, pageIndex: Int = 0, filters: List<MediaFilter> = emptyList()): List<MediaItem> {
         val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize, pageIndex, filters), buildHeaders())
-        return post(request).items
+        return postWithRetries(request).items
     }
 
-    @Retryable(value = [
-        RemoteAccessException::class,
-        HttpMessageConversionException::class,
-        NullPointerException::class,
-        RestClientException::class
-    ], maxAttempts = 5)
-    private fun post(request: HttpEntity<MultiValueMap<String, String>>): MediaList {
+    private fun postWithRetries(request: HttpEntity<MultiValueMap<String, String>>): MediaList {
         try {
-            return restTemplate.postForEntity(
-                    URI("${kalturaProperties.host}/api_v3/service/media/action/list"),
-                    request,
-                    MediaList::class.java).body!!
+            return retryHttpService.post(request, URI("${kalturaProperties.host}/api_v3/service/media/action/list"))
         } catch (ex: Exception) {
             logger.error("Something went unexpectedly wrong ${request.body}, exception: $ex")
             throw KalturaClientException(ex)
