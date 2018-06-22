@@ -47,6 +47,9 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-configuration-processor'
+    compile "org.springframework.boot:spring-boot-starter-aop"
+    compile 'org.springframework.retry:spring-retry:1.2.2.RELEASE'
+
     compile 'org.springframework.shell:spring-shell-starter:2.0.1.BUILD-SNAPSHOT'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
