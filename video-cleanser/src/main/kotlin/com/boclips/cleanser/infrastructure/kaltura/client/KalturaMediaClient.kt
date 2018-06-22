@@ -32,15 +32,15 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
     }
 
     private fun post(request: HttpEntity<MultiValueMap<String, String>>): MediaList {
-        try {
+        return try {
             val response = restTemplate.postForEntity(
                     URI("${kalturaProperties.host}/api_v3/service/media/action/list"),
                     request,
                     MediaList::class.java)
-            if (response.body == null) throw IllegalStateException("Received a client without a body") else return response.body!!
+            if (response.body == null) throw IllegalStateException("Received a client without a body") else response.body!!
         } catch (ex: HttpMessageConversionException) {
             logger.error("Failed to fetch or serialize object for request ${request.body}, exception: $ex")
-            return MediaList(count = 0)
+            MediaList(count = 0)
         } catch (ex: Exception) {
             throw KalturaClientException(ex)
         }

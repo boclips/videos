@@ -40,10 +40,30 @@ class PagedKalturaMediaServiceTest {
     }
 
     @Test
-    fun getReadyMediaEntries_filtersOutMediaItemWithNullReferenceIc() {
+    fun getReadyMediaEntries_filtersOutMediaItemWithNullReferenceId() {
         whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0")))
 
         val readyMediaEntries = kalturaMediaService.getReadyMediaEntries()
+
+        assertThat(readyMediaEntries).hasSize(0)
+    }
+
+    @Test
+    fun getPendingMediaEntries_passesOnCorrectFilters() {
+        kalturaMediaService.getPendingMediaEntries()
+
+        verify(mockPagingationOrchestrator, times(1)).fetchAll(check {
+            val mediaFilter = it[0]
+            assertThat(mediaFilter.key).isEqualTo(MediaFilterType.STATUS_IN)
+            assertThat(mediaFilter.value).isEqualTo("4")
+        })
+    }
+
+    @Test
+    fun getPendingMediaEntries_filtersOutMediaItemWithNullReferenceIc() {
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0")))
+
+        val readyMediaEntries = kalturaMediaService.getPendingMediaEntries()
 
         assertThat(readyMediaEntries).hasSize(0)
     }

@@ -5,6 +5,7 @@ import com.boclips.cleanser.domain.model.MediaFilterType
 import com.boclips.cleanser.infrastructure.kaltura.client.KalturaMediaClient
 import mu.KLogging
 import org.springframework.stereotype.Component
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
@@ -19,7 +20,7 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
         val startTimeBeforeTimeOfBoclips = LocalDateTime.of(2013, Month.JANUARY, 1, 0, 0, 0)
         val endTimeWithTimezoneBuffer = LocalDateTime.now().plusDays(1)
 
-        logger.info("Start fetching Media Entries from $startTimeBeforeTimeOfBoclips to $endTimeWithTimezoneBuffer")
+        logger.info("Start fetching Media Entries from $startTimeBeforeTimeOfBoclips to $endTimeWithTimezoneBuffer with filters $searchFilters")
         return fetchOrSplit(searchFilters, startTimeBeforeTimeOfBoclips.toEpochSecond(ZoneOffset.UTC), endTimeWithTimezoneBuffer.toEpochSecond(ZoneOffset.UTC))
     }
 
@@ -36,7 +37,9 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
             val mid = (dateEnd - dateStart) / 2
             fetchOrSplit(filters, dateStart, dateStart + mid) + fetchOrSplit(filters, dateStart + mid, dateEnd)
         } else {
-            logger.info("Fetching $numberOfEntriesForInterval entries")
+            logger.info("Fetching $numberOfEntriesForInterval entries for interval " +
+                    "${Instant.ofEpochSecond(dateStart).atZone(ZoneOffset.UTC)} - " +
+                    "${Instant.ofEpochSecond(dateEnd).atZone(ZoneOffset.UTC)}")
             fetchPages(filters + timeFilters)
         }
     }
@@ -51,11 +54,14 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
     private fun fetchPages(filters: List<MediaFilter>): List<MediaItem> {
         val count = kalturaMediaClient.count(filters = filters)
         val numberOfRequests = Math.ceil(count.toDouble() / pageSize.toDouble()).toInt()
+        logger.info("Paging request ($numberOfRequests pages) to fetch $count entries")
 
         return IntRange(0, numberOfRequests)
                 .flatMap { i ->
                     logger.info("Fetching page $i with filters $filters")
-                    kalturaMediaClient.fetch(pageIndex = i, filters = filters)
+                    val result = kalturaMediaClient.fetch(pageIndex = i, filters = filters)
+                    logger.info("Fetched ${result.size} entries with filters $filters")
+                    result
                 }
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component
 class PagedKalturaMediaService(
         private val kalturaMediaClient: KalturaMediaClient,
         private val paginationOrchestrator: PaginationOrchestrator) : KalturaMediaService {
-
     companion object : KLogging()
 
     override fun countAllMediaEntries(): Long {
@@ -22,12 +21,23 @@ class PagedKalturaMediaService(
 
     override fun getReadyMediaEntries(): Set<KalturaVideo> {
         val searchFilters: List<MediaFilter> = listOf(MediaFilter(MediaFilterType.STATUS_IN, "2"))
-        return fetch(searchFilters)
+        val readyKalturaVideos = fetch(searchFilters)
+        logger.info("Returning ${readyKalturaVideos.size} READY Kaltura Videos")
+        return readyKalturaVideos
+    }
+
+    override fun getPendingMediaEntries(): Set<KalturaVideo> {
+        val searchFilters: List<MediaFilter> = listOf(MediaFilter(MediaFilterType.STATUS_IN, "4"))
+        val pendingKalturaVideos = fetch(searchFilters)
+        logger.info("Returning ${pendingKalturaVideos.size} PENDING Kaltura Videos")
+        return pendingKalturaVideos
     }
 
     override fun getFaultyMediaEntries(): Set<KalturaVideo> {
         val searchFilters: List<MediaFilter> = listOf(MediaFilter(MediaFilterType.STATUS_NOT_EQUAL, "2"))
-        return fetch(searchFilters)
+        val faultyKalturaVideos = fetch(searchFilters)
+        logger.info("Returning ${faultyKalturaVideos.size} faulty Kaltura Videos")
+        return faultyKalturaVideos
     }
 
     private fun fetch(searchFilters: List<MediaFilter> = emptyList()): Set<KalturaVideo> {
