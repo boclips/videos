@@ -40,6 +40,15 @@ class PagedKalturaMediaServiceTest {
     }
 
     @Test
+    fun getReadyMediaEntries_filtersOutMediaItemWithNullReferenceIc() {
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0")))
+
+        val readyMediaEntries = kalturaMediaService.getReadyMediaEntries()
+
+        assertThat(readyMediaEntries).hasSize(0)
+    }
+
+    @Test
     fun getReadyMediaEntries_returnsKalturaVideos() {
         whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = "9", id = "0")))
 
@@ -68,6 +77,15 @@ class PagedKalturaMediaServiceTest {
 
         assertThat(kalturaVideos.first().referenceId).isEqualTo("9")
         assertThat(kalturaVideos.first().id).isEqualTo("0")
+    }
+
+    @Test
+    fun getFaultyMediaEntries_filtersOutNullReferenceId() {
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0")))
+
+        val kalturaVideos = kalturaMediaService.getFaultyMediaEntries()
+
+        assertThat(kalturaVideos).hasSize(0)
     }
 
     private fun extractFilters(it: List<MediaFilter>) = it.map { it.key }
