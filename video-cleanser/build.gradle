@@ -49,38 +49,17 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile "org.springframework.boot:spring-boot-starter-aop"
     compile 'org.springframework.retry:spring-retry:1.2.2.RELEASE'
-
     compile 'org.springframework.shell:spring-shell-starter:2.0.1.BUILD-SNAPSHOT'
+
+    compile 'mysql:mysql-connector-java:5.1.13'
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.6"
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
-    compile 'mysql:mysql-connector-java:5.1.13'
     compile 'io.github.microutils:kotlin-logging:1.4.9'
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.6"
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.awaitility:awaitility:3.1.0'
     testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
     testCompile 'com.h2database:h2'
     testCompile "com.github.tomakehurst:wiremock-standalone:2.18.0"
-}
-
-/**
- * Runs all tests, except e2e tests
- */
-test {
-    filter {
-        includeTestsMatching "*Test"
-    }
-    exclude 'com/boclips/**/*StagingE2E'
-    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "test"
-}
-
-/**
- * Run tests against staging environment
- */
-task testE2E(type: Test) {
-    filter {
-        includeTestsMatching "*StagingE2E"
-    }
-    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "staging"
 }
