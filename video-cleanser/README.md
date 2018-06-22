@@ -8,8 +8,8 @@ A tool to help us manage videos in our databases and Kaltura.
 ./setup-secrets.sh <your lastpass username>
 ```
 
-This will download the secret staging and production configuration. 
-Make sure the session in the secret note has not expired. Should it expire, here is how you can create a new one:
+This will download the secret staging and production configuration.  
+Should the session expire, here is how you can create a new one:
 
 ```
 curl -X POST https://www.kaltura.com/api_v3/service/session/action/start \
@@ -25,20 +25,11 @@ More information about generating the session can be found in the [Kaltura API](
 
 ## Usage
 
-```
-java -jar executable.jar 
-```
-
-This will boot up a shell which should be self explanatory.
+Run main in production profile. This will boot up a shell which should be self explanatory.
 
 ## Development
 
 Run all tests, excluding contract test:
 ```
 ./gradlew video-cleanser:test
-```
-
-Run contract test:
-```
-./gradlew video-cleanser:testContracts
 ```
