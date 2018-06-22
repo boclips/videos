@@ -82,7 +82,7 @@ class VideoAnalysisServiceTest {
                 TestFactory.boclipsVideo(id = "1"),
                 TestFactory.boclipsVideo(id = "2")))
 
-        assertThat(videoAnalysisService.getFreeableVideos()).containsExactly("3", "4")
+        assertThat(videoAnalysisService.getRemovableKalturaVideos()).containsExactly("3", "4")
     }
 
     @Test
