@@ -10,7 +10,8 @@ class KalturaMediaClientStagingE2E {
     fun canFetchMediaEntries() {
         val kalturaClient = KalturaMediaClient(KalturaProperties(
                 host = "https://www.kaltura.com",
-                session = generateSession())
+                session = generateSession()),
+                RetryHttpService()
         )
 
         val mediaEntries = kalturaClient.fetch(10, 0)
