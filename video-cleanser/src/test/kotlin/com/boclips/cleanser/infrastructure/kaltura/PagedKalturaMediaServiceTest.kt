@@ -85,7 +85,7 @@ class PagedKalturaMediaServiceTest {
         verify(mockPagingationOrchestrator, times(1)).fetchAll(check {
             val mediaFilter = it[0]
             assertThat(mediaFilter.key).isEqualTo(MediaFilterType.STATUS_NOT_IN)
-            assertThat(mediaFilter.value).isEqualTo("2")
+            assertThat(mediaFilter.value).isEqualTo("2,4")
         })
     }
 

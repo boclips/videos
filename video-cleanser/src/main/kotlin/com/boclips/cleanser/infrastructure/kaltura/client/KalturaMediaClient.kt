@@ -42,7 +42,8 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
             logger.error("Failed to fetch or serialize object for request ${request.body}, exception: $ex")
             MediaList(count = 0)
         } catch (ex: Exception) {
-            throw KalturaClientException(ex)
+            logger.error("Something went unexpectedly wrong ${request.body}, exception: $ex")
+            MediaList(count = 0)
         }
     }
 

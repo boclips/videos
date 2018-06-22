@@ -7,7 +7,6 @@ import com.boclips.testsupport.AbstractWireMockTest
 import com.boclips.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
 import org.junit.Test
 
@@ -61,7 +60,7 @@ class KalturaMediaClientTest : AbstractWireMockTest() {
     }
 
     @Test
-    fun fetch_throwsIfSomethingUnexpectedWentWrong() {
+    fun fetch_failsGentlyIfSomethingUnexpectedWentWrong() {
         wireMockServer.resetAll()
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -69,11 +68,11 @@ class KalturaMediaClientTest : AbstractWireMockTest() {
                         .withHeader("Content-Type", "application/json")
                         .withBody("something went wrong")))
 
-        assertThatThrownBy { kalturaClient.fetch() }.isInstanceOf(KalturaClientException::class.java)
+        assertThat(kalturaClient.fetch()).hasSize(0)
     }
 
     @Test
-    fun fetch_abortsIfBodyIsEmpty() {
+    fun fetch_failsGentlyIfBodyIsEmpty() {
         wireMockServer.resetAll()
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -81,7 +80,7 @@ class KalturaMediaClientTest : AbstractWireMockTest() {
                         .withHeader("Content-Type", "application/json")
                 ))
 
-        assertThatThrownBy { kalturaClient.fetch() }.isInstanceOf(KalturaClientException::class.java)
+        assertThat(kalturaClient.fetch()).hasSize(0)
     }
 
     @Test

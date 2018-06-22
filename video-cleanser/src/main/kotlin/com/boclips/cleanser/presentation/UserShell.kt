@@ -18,12 +18,20 @@ class UserShell(private val videoAnalysisService: VideoAnalysisService) {
         println("Finished job fetching faulty videos on Kaltura")
     }
 
+    @ShellMethod("Generate report with all non-errored videos on Kaltura")
+    fun nonErroredVideosOnKaltura(@ShellOption(help = "Specify filename") filename: String) {
+        println("Fetching non-errored videos on Kaltura...")
+        val readyAndPendingVideos = videoAnalysisService.getNonErrorVideosFromKaltura().map { transform(it) }
+        writeVideosToFile(filename, readyAndPendingVideos)
+        println("Finished job fetching non-errored videos on Kaltura")
+    }
+
     @ShellMethod("Generate report with all ready videos on Kaltura")
-    fun allVideosKaltura(@ShellOption(help = "Specify filename") filename: String) {
-        println("Fetching ready videos on Kaltura...")
-        val allVideosKaltura = videoAnalysisService.getAllVideosFromKaltura().map { transform(it) }
-        writeVideosToFile(filename, allVideosKaltura)
-        println("Finished job fetching all videos on Kaltura")
+    fun allVideosBoclips(@ShellOption(help = "Specify filename") filename: String) {
+        println("Fetching ready videos on Boclips...")
+        val boclipsVideos = videoAnalysisService.getAllVideosFromBoclips().map { transform(it) }
+        writeVideosToFile(filename, boclipsVideos)
+        println("Finished job fetching all videos on Boclips")
     }
 
     @ShellMethod("Generate report with all unplayable videos")
@@ -39,7 +47,7 @@ class UserShell(private val videoAnalysisService: VideoAnalysisService) {
         println("Fetching all playable videos...")
         val playableVideos = videoAnalysisService.getPlayableVideos().map { transform(it) }
         writeVideosToFile(filename, playableVideos)
-        println("Finished job fetching unplayable videos")
+        println("Finished job fetching playable videos")
     }
 
     @ShellMethod("Generate report with all freeable Kaltura videos")

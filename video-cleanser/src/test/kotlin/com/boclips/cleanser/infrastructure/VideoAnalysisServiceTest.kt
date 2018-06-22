@@ -35,6 +35,37 @@ class VideoAnalysisServiceTest {
     }
 
     @Test
+    fun getFaultyVideosFromKaltura() {
+        whenever(kalturaMediaService.getFaultyMediaEntries()).thenReturn(setOf(
+                TestFactory.kalturaVideo(referenceId = "2"),
+                TestFactory.kalturaVideo(referenceId = "3")))
+
+        val faultyVideosFromKaltura = videoAnalysisService.getFaultyVideosFromKaltura()
+
+        assertThat(faultyVideosFromKaltura).contains("2", "3")
+    }
+
+    @Test
+    fun getNonErrorVideosFromKaltura() {
+        whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf(
+                TestFactory.kalturaVideo(referenceId = "2")))
+
+        whenever(kalturaMediaService.getPendingMediaEntries()).thenReturn(setOf(
+                TestFactory.kalturaVideo(referenceId = "1")))
+
+        assertThat(videoAnalysisService.getNonErrorVideosFromKaltura()).contains("1", "2")
+    }
+
+    @Test
+    fun getAllVideosFromBoclips() {
+        whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
+                TestFactory.boclipsVideo(id = "1"),
+                TestFactory.boclipsVideo(id = "2")))
+
+        assertThat(videoAnalysisService.getAllVideosFromBoclips()).contains("1", "2")
+    }
+
+    @Test
     fun getUnplayableVideos_allBoclipsVideosMinusReadyAndPending() {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
                 TestFactory.boclipsVideo(id = "1"),
