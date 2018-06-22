@@ -8,21 +8,25 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConversionException
-import org.springframework.stereotype.Component
+import org.springframework.remoting.RemoteAccessException
+import org.springframework.retry.annotation.Retryable
+import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
+import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import java.net.URI
 
 
-@Component
+@Service
 class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
     companion object : KLogging()
 
     private val restTemplate = RestTemplate()
 
     fun count(filters: List<MediaFilter> = emptyList()): Long {
-        val request = HttpEntity<MultiValueMap<String, String>>(buildRequestBody(pageSize = 1, pageIndex = 0, filters = filters), buildHeaders())
+        val body = buildRequestBody(pageSize = 1, pageIndex = 0, filters = filters)
+        val request = HttpEntity<MultiValueMap<String, String>>(body, buildHeaders())
         return post(request).count
     }
 
@@ -31,19 +35,21 @@ class KalturaMediaClient(val kalturaProperties: KalturaProperties) {
         return post(request).items
     }
 
+    @Retryable(value = [
+        RemoteAccessException::class,
+        HttpMessageConversionException::class,
+        NullPointerException::class,
+        RestClientException::class
+    ], maxAttempts = 5)
     private fun post(request: HttpEntity<MultiValueMap<String, String>>): MediaList {
-        return try {
-            val response = restTemplate.postForEntity(
+        try {
+            return restTemplate.postForEntity(
                     URI("${kalturaProperties.host}/api_v3/service/media/action/list"),
                     request,
-                    MediaList::class.java)
-            if (response.body == null) throw IllegalStateException("Received a client without a body") else response.body!!
-        } catch (ex: HttpMessageConversionException) {
-            logger.error("Failed to fetch or serialize object for request ${request.body}, exception: $ex")
-            MediaList(count = 0)
+                    MediaList::class.java).body!!
         } catch (ex: Exception) {
             logger.error("Something went unexpectedly wrong ${request.body}, exception: $ex")
-            MediaList(count = 0)
+            throw KalturaClientException(ex)
         }
     }
 
