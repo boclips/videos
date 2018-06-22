@@ -5,7 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class BoclipsVideoRepositoryTest : AbstractSpringIntegrationTest() {
+class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var boclipsVideoRepository: BoclipsVideoRepository
 
