@@ -8,7 +8,7 @@ import java.io.File
 
 @ShellComponent
 class UserShell(private val videoAnalysisService: VideoAnalysisService) {
-    private val csvGenerator = com.boclips.cleanser.presentation.CsvGenerator()
+    val csvGenerator: CsvGenerator = CsvGenerator()
 
     @ShellMethod("Generate report with all faulty videos on Kaltura")
     fun faultyVideosKaltura(@ShellOption(help = "Specify filename of report") filename: String) {

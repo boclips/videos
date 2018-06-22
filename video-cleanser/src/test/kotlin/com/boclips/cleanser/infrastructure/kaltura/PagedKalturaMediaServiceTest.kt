@@ -14,9 +14,9 @@ import org.mockito.Mockito
 
 
 class PagedKalturaMediaServiceTest {
-    val mockKalturaClient = Mockito.mock(KalturaMediaClient::class.java)
-    val mockPagingationOrchestrator = Mockito.mock(PaginationOrchestrator::class.java)
-    val kalturaMediaService = PagedKalturaMediaService(mockKalturaClient, mockPagingationOrchestrator)
+    private val mockKalturaClient = Mockito.mock(KalturaMediaClient::class.java)
+    private val mockPagingationOrchestrator = Mockito.mock(PaginationOrchestrator::class.java)
+    private val kalturaMediaService = PagedKalturaMediaService(mockKalturaClient, mockPagingationOrchestrator)
 
     @Test
     fun countAllMediaEntries_passesOnCorrectFilters() {

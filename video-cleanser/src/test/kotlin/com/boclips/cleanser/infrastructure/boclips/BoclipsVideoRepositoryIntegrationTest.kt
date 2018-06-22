@@ -1,6 +1,7 @@
 package com.boclips.cleanser.infrastructure.boclips
 
 import com.boclips.testsupport.AbstractSpringIntegrationTest
+import com.boclips.testsupport.insert
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,8 +12,8 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getAllIds() {
-        addRow(id = "1", title = "great title", contentProvider = "Bloomie")
-        addRow(id = "2")
+        jdbcTemplate.update(insert(id = "1", title = "great title", contentProvider = "Bloomie"))
+        jdbcTemplate.update(insert(id = "2"))
 
         assertThat(boclipsVideoRepository.getAllVideos().first().id).isEqualTo("1")
         assertThat(boclipsVideoRepository.getAllVideos().first().title).isEqualTo("great title")
@@ -21,8 +22,8 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getAllIds_prefersReferenceIdOverId() {
-        addRow(id = "1", referenceId = "'a reference id'")
-        addRow(id = "2")
+        jdbcTemplate.update(insert(id = "1", referenceId = "a reference id"))
+        jdbcTemplate.update(insert(id = "2"))
 
         assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly("a reference id", "2")
     }
@@ -31,14 +32,10 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun countAllVideos() {
         assertThat(boclipsVideoRepository.countAllVideos()).isEqualTo(0)
 
-        addRow(id = "1")
-        addRow(id = "2")
+        jdbcTemplate.update(insert(id = "1"))
+        jdbcTemplate.update(insert(id = "2"))
 
         assertThat(boclipsVideoRepository.countAllVideos()).isEqualTo(2)
     }
 
-    private fun addRow(id: String? = "NULL", referenceId: String? = "NULL", title: String? = "some title", contentProvider: String? = "some cp") {
-        jdbcTemplate.update("INSERT INTO metadata_orig(id, reference_id, title, source) " +
-                "VALUES('$id', $referenceId, '$title', '$contentProvider')")
-    }
 }

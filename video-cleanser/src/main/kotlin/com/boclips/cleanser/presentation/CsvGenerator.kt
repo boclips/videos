@@ -3,7 +3,7 @@ package com.boclips.cleanser.presentation
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import java.io.File
 
-class CsvGenerator {
+open class CsvGenerator {
     private val mapper = CsvMapper()
 
     fun writeCsv(file: File, videos: Collection<BoclipsVideoCsv>) {
