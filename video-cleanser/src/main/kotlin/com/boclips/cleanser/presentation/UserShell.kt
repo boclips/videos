@@ -11,54 +11,42 @@ class UserShell(private val videoAnalysisService: VideoAnalysisService) {
     private val csvGenerator = com.boclips.cleanser.presentation.CsvGenerator()
 
     @ShellMethod("Generate report with all faulty videos on Kaltura")
-    fun faultyVideosKaltura(@ShellOption(help = "Specify filename") filename: String) {
-        println("Fetching faulty videos on Kaltura...")
-        val unplayableVideos = videoAnalysisService.getFaultyVideosFromKaltura().map { transform(it) }
-        writeVideosToFile(filename, unplayableVideos)
-        println("Finished job fetching faulty videos on Kaltura")
+    fun faultyVideosKaltura(@ShellOption(help = "Specify filename of report") filename: String) {
+        val videos = videoAnalysisService.getFaultyVideosFromKaltura().map { transform(it) }
+        writeVideosToFile(filename, videos)
     }
 
-    @ShellMethod("Generate report with all non-errored videos on Kaltura")
-    fun nonErroredVideosOnKaltura(@ShellOption(help = "Specify filename") filename: String) {
-        println("Fetching non-errored videos on Kaltura...")
+    @ShellMethod("Generate report with all ready and pending videos hosted on Kaltura")
+    fun nonErroredVideosOnKaltura(@ShellOption(help = "Specify filename of report") filename: String) {
         val readyAndPendingVideos = videoAnalysisService.getNonErrorVideosFromKaltura().map { transform(it) }
         writeVideosToFile(filename, readyAndPendingVideos)
-        println("Finished job fetching non-errored videos on Kaltura")
     }
 
-    @ShellMethod("Generate report with all ready videos on Kaltura")
-    fun allVideosBoclips(@ShellOption(help = "Specify filename") filename: String) {
-        println("Fetching ready videos on Boclips...")
+    @ShellMethod("Generate report with all ready videos hosted on Kaltura")
+    fun allVideosBoclips(@ShellOption(help = "Specify filename of report") filename: String) {
         val boclipsVideos = videoAnalysisService.getAllVideosFromBoclips().map { transform(it) }
         writeVideosToFile(filename, boclipsVideos)
-        println("Finished job fetching all videos on Boclips")
     }
 
-    @ShellMethod("Generate report with all unplayable videos")
-    fun unplayableVideos(@ShellOption(help = "Specify filename") filename: String) {
-        println("Fetching unplayable videos...")
+    @ShellMethod("Generate report of all unplayable videos (videos on Boclips but not playable on Kaltura)")
+    fun unplayableVideos(@ShellOption(help = "Specify filename of report") filename: String) {
         val unplayableVideos = videoAnalysisService.getUnplayableVideos().map { transform(it) }
         writeVideosToFile(filename, unplayableVideos)
-        println("Finished job fetching unplayable videos")
     }
 
-    @ShellMethod("Generate report with all playable videos")
+    @ShellMethod("Generate report of all playable videos (videos available on Boclips, as well as Kaltura)")
     fun playableVideos(@ShellOption(help = "Please specify file name") filename: String) {
-        println("Fetching all playable videos...")
         val playableVideos = videoAnalysisService.getPlayableVideos().map { transform(it) }
         writeVideosToFile(filename, playableVideos)
-        println("Finished job fetching playable videos")
     }
 
-    @ShellMethod("Generate report with all freeable Kaltura videos")
+    @ShellMethod("Generate report of all removable Kaltura videos (videos on Kaltura but not on Boclips)")
     fun freeableVideos(@ShellOption(help = "Please specify file name") filename: String) {
-        println("Fetching all freeable videos...")
-        val freeableVideosIds = videoAnalysisService.getFreeableVideos().map { transform(it) }
+        val freeableVideosIds = videoAnalysisService.getRemovableKalturaVideos().map { transform(it) }
         writeVideosToFile(filename, freeableVideosIds)
-        println("Finished job fetching freeable videos")
     }
 
-    @ShellMethod("Count all videos")
+    @ShellMethod("Count all videos on Boclips and/or Kaltura")
     fun countVideos(@ShellOption(help = "Specify source (kaltura, boclips, all)", defaultValue = "all") source: String) {
         if ("kaltura" == source.toLowerCase() || "all" == source.toLowerCase()) {
             val allKalturaVideos = videoAnalysisService.countAllKalturaVideos()
@@ -71,7 +59,7 @@ class UserShell(private val videoAnalysisService: VideoAnalysisService) {
     }
 
     private fun writeVideosToFile(filename: String, videos: List<BoclipsVideoCsv>) {
-        println("Writing videos to file $filename")
+        println("Writing report to file $filename")
         val file = File(filename)
         csvGenerator.writeCsv(file, videos)
         println("Success! ${file.absolutePath} contains ${videos.size} of videos")

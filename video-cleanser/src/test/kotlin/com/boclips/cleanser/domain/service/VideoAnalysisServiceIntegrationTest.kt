@@ -55,7 +55,7 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
                         .withHeader("Content-Type", "application/json")
                         .withBody(loadFixture("two-successful-videos.json"))))
 
-        val freeableVideos = videoAnalysisService.getFreeableVideos()
+        val freeableVideos = videoAnalysisService.getRemovableKalturaVideos()
 
         assertThat(freeableVideos).hasSize(2)
         assertThat(freeableVideos).contains("1", "2")
