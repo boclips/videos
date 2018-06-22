@@ -6,7 +6,6 @@ import com.boclips.testsupport.AbstractSpringIntegrationTest
 import com.boclips.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -71,32 +70,6 @@ class KalturaMediaClientTest : AbstractSpringIntegrationTest() {
         wireMockServer.verify(1, WireMock
                 .postRequestedFor(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .withRequestBody(WireMock.containing("pager%5BpageIndex%5D=2")))
-    }
-
-    @Test
-    fun fetch_retriesAndThenThrowsWhenSomethingWentWrong() {
-        wireMockServer.resetAll()
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("something went wrong")))
-
-        assertThatThrownBy { kalturaClient.fetch() }.isInstanceOf(KalturaClientException::class.java)
-    }
-
-    @Test
-    fun fetch_canCopeWithEmptyObjects() {
-        wireMockServer.resetAll()
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(loadFixture("empty-objects.json"))))
-
-        val mediaItems = kalturaClient.fetch()
-
-        assertThat(mediaItems).hasSize(0)
     }
 
     @Test
