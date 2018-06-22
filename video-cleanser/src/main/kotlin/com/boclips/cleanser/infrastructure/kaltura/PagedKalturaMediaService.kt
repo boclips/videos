@@ -5,12 +5,15 @@ import com.boclips.cleanser.domain.model.MediaFilter
 import com.boclips.cleanser.domain.model.MediaFilterType
 import com.boclips.cleanser.domain.service.KalturaMediaService
 import com.boclips.cleanser.infrastructure.kaltura.client.KalturaMediaClient
+import mu.KLogging
 import org.springframework.stereotype.Component
 
 @Component
 class PagedKalturaMediaService(
         private val kalturaMediaClient: KalturaMediaClient,
         private val paginationOrchestrator: PaginationOrchestrator) : KalturaMediaService {
+
+    companion object : KLogging()
 
     override fun countAllMediaEntries(): Long {
         return kalturaMediaClient.count(listOf(MediaFilter(MediaFilterType.STATUS_IN, "2"))) +
@@ -30,7 +33,15 @@ class PagedKalturaMediaService(
     private fun fetch(searchFilters: List<MediaFilter> = emptyList()): Set<KalturaVideo> {
         return paginationOrchestrator
                 .fetchAll(searchFilters)
-                .map { KalturaVideo(referenceId = it.referenceId, id = it.id) }
+                .filter { item ->
+                    if (item.referenceId == null) {
+                        logger.warn("Retrieved MediaItem with null referenceId: $item")
+                        false
+                    } else {
+                        true
+                    }
+                }
+                .map { KalturaVideo(referenceId = it.referenceId!!, id = it.id) }
                 .toSet()
     }
 }
