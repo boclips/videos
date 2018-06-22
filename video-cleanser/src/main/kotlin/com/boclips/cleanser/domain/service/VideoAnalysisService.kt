@@ -1,6 +1,6 @@
 package com.boclips.cleanser.domain.service
 
-class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
+open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
                            private val kalturaMediaService: KalturaMediaService) {
     fun getFaultyVideosFromKaltura(): Set<String> {
         return kalturaMediaService.getFaultyMediaEntries().map { it.referenceId }.toSet()
