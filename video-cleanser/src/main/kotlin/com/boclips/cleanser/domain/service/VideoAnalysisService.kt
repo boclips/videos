@@ -26,9 +26,10 @@ open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoSer
     }
 
     fun getUnplayableVideos(): Set<String> {
-        val videosInKaltura = kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
+        val readyVideosInKaltura = kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
+        val pendingVideosInKaltura = kalturaMediaService.getPendingMediaEntries().map {it.referenceId}.toSet()
         val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.id }.toSet()
-        return videosOnBoclips - videosInKaltura
+        return videosOnBoclips - (readyVideosInKaltura + pendingVideosInKaltura)
     }
 
     fun getPlayableVideos(): Set<String> {

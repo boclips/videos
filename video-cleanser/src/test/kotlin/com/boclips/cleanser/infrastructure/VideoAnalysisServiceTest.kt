@@ -30,14 +30,17 @@ class VideoAnalysisServiceTest {
                 TestFactory.kalturaVideo(referenceId = "2"),
                 TestFactory.kalturaVideo(referenceId = "3"),
                 TestFactory.kalturaVideo(referenceId = "4")))
+        whenever(kalturaMediaService.getPendingMediaEntries()).thenReturn(setOf(
+                TestFactory.kalturaVideo(referenceId = "5")))
     }
 
     @Test
-    fun returnsDifferenceBetweenBoAndKaltura() {
+    fun getUnplayableVideos_allBoclipsVideosMinusReadyAndPending() {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
                 TestFactory.boclipsVideo(id = "1"),
                 TestFactory.boclipsVideo(id = "2"),
-                TestFactory.boclipsVideo(id = "3")))
+                TestFactory.boclipsVideo(id = "3"),
+                TestFactory.boclipsVideo(id = "5")))
 
         assertThat(videoAnalysisService.getUnplayableVideos()).containsExactly("1")
     }
