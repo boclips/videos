@@ -1,9 +1,11 @@
 package com.boclips.cleanser.domain.service
 
+import com.boclips.cleanser.infrastructure.kaltura.client.KalturaClientException
 import com.boclips.testsupport.AbstractSpringIntegrationTest
 import com.boclips.testsupport.insert
 import com.boclips.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -60,6 +62,13 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(removableVideos).hasSize(2)
         assertThat(removableVideos).contains("1", "2")
+    }
+
+    @Test
+    fun canHandleConnectionDrops() {
+        Assertions.assertThatThrownBy {
+            videoAnalysisService.getFaultyVideosFromKaltura()
+        }.isInstanceOf(KalturaClientException::class.java)
     }
 
 }

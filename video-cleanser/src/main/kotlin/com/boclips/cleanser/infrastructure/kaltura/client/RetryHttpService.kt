@@ -23,9 +23,9 @@ class RetryHttpService {
                     uri,
                     request,
                     MediaList::class.java).body!!
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             logger.warn("Request $uri failed, retrying...")
-            throw HttpRequestException()
+            throw HttpRequestException(ex)
         }
     }
 }
