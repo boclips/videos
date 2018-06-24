@@ -14,9 +14,7 @@ class RetryHttpService {
 
     private val restTemplate = RestTemplate()
 
-    @Retryable(value = [
-        HttpRequestException::class
-    ], maxAttempts = 5)
+    @Retryable(value = [HttpRequestException::class], maxAttempts = 5)
     fun post(request: HttpEntity<MultiValueMap<String, String>>, uri: URI): MediaList {
         try {
             return restTemplate.postForEntity(
