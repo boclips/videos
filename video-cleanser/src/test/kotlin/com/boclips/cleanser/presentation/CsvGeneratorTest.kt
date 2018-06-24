@@ -14,16 +14,16 @@ class CsvGeneratorTest {
             .withArrayElementSeparator(",")
 
     @Test
-    fun generateCsv() {
+    fun generateCsvWithIds() {
         val file = File.createTempFile("test.csv", ".tmp")
 
-        csvGenerator.writeCsv(file, setOf(createRowEntry("1"), createRowEntry("2")))
+        csvGenerator.writeCsv(file, setOf(boclipsVideoCsv("1"), boclipsVideoCsv("2")))
 
         assertThat(extractRows(file)[0].id).isEqualTo("1")
         assertThat(extractRows(file)[1].id).isEqualTo("2")
     }
 
-    private fun createRowEntry(id: String): BoclipsVideoCsv {
+    private fun boclipsVideoCsv(id: String): BoclipsVideoCsv {
         val boclipsVideoCsv = BoclipsVideoCsv()
         boclipsVideoCsv.id = id
         return boclipsVideoCsv
