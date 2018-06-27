@@ -1,4 +1,4 @@
-package com.boclips.testsupport
+package com.boclips.videoanalyser.testsupport
 
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -20,13 +20,16 @@ abstract class AbstractSpringIntegrationTest : AbstractWireMockTest() {
     @Before
     fun setUp() {
         jdbcTemplate.execute("""
-            CREATE TABLE IF NOT EXISTS metadata_orig
+            create table if not exists metadata_orig
                 (
-                    id INT auto_increment
-                        PRIMARY KEY,
-                    reference_id VARCHAR(666),
-                    title MEDIUMTEXT,
-                    source VARCHAR(45)
+                      id             int auto_increment
+                    primary key,
+                  source         varchar(45)     null,
+                  title          mediumtext      null,
+                  description    mediumtext      null,
+                  date           date            null,
+                  duration       varchar(12)     null,
+                  reference_id   varchar(45)     null
                 );
         """.trimIndent())
 

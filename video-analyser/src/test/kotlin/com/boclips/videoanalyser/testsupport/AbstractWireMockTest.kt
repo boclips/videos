@@ -1,4 +1,4 @@
-package com.boclips.testsupport
+package com.boclips.videoanalyser.testsupport
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration

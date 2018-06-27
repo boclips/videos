@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.kaltura.client
 
-import com.boclips.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions
 import org.junit.Test

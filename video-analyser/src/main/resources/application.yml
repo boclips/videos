@@ -7,3 +7,5 @@ spring:
     url:
     username:
     password:
+  main:
+    web-application-type: none

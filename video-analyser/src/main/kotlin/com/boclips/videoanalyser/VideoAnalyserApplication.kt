@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class VideoCleanserApplication
+class VideoAnalyserApplication
 
 fun main(args: Array<String>) {
-    runApplication<VideoCleanserApplication>(*args)
+    runApplication<VideoAnalyserApplication>(*args)
 }

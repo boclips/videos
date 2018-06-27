@@ -2,8 +2,8 @@ package com.boclips.videoanalyser.infrastructure.kaltura.client
 
 import com.boclips.videoanalyser.domain.model.MediaFilter
 import com.boclips.videoanalyser.domain.model.MediaFilterType
-import com.boclips.testsupport.AbstractSpringIntegrationTest
-import com.boclips.testsupport.loadFixture
+import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videoanalyser.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

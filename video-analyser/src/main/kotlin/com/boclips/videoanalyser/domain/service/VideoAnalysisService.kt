@@ -1,5 +1,9 @@
 package com.boclips.videoanalyser.domain.service
 
+import com.boclips.videoanalyser.domain.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.model.KalturaVideo
+import com.boclips.videoanalyser.presentation.BoclipsVideoCsv
+
 open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
                                 private val kalturaMediaService: KalturaMediaService) {
     fun countAllKalturaVideos(): Long {
@@ -10,36 +14,37 @@ open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoSer
         return boclipsVideoService.countAllVideos()
     }
 
-    fun getFaultyVideosFromKaltura(): Set<String> {
-        return kalturaMediaService.getFaultyMediaEntries().map { it.referenceId }.toSet()
+    fun getFaultyVideosFromKaltura(): Set<BoclipsVideo> {
+        return boclipsVideoService.getVideoMetadata(kalturaMediaService.getFaultyMediaEntries().map { it.referenceId }.toSet())
     }
 
-    fun getNonErrorVideosFromKaltura(): Set<String> {
+    fun getNonErrorVideosFromKaltura(): Set<BoclipsVideo> {
         val pendingVideosInKaltura = kalturaMediaService.getPendingMediaEntries().map { it.referenceId }.toSet()
         val readyVideosInKaltura = kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
-        return pendingVideosInKaltura + readyVideosInKaltura
+        return boclipsVideoService.getVideoMetadata(pendingVideosInKaltura + readyVideosInKaltura)
     }
 
-    fun getAllVideosFromBoclips(): Set<String> {
-        return boclipsVideoService.getAllVideos().map { it.id }.toSet()
+    fun getAllVideosFromBoclips(): Set<BoclipsVideo> {
+        return boclipsVideoService.getVideoMetadata(boclipsVideoService.getAllVideos().map { it.kalturaReferenceId() }.toSet())
     }
 
-    fun getPlayableVideos(): Set<String> {
+    fun getPlayableVideos(): Set<BoclipsVideo> {
         val videosInKaltura = kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
-        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.id }.toSet()
-        return videosOnBoclips.intersect(videosInKaltura)
+        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.kalturaReferenceId() }.toSet()
+        return boclipsVideoService.getVideoMetadata(videosOnBoclips.intersect(videosInKaltura))
     }
 
-    fun getUnplayableVideos(): Set<String> {
+    fun getUnplayableVideos(): Set<BoclipsVideo> {
         val pendingVideosInKaltura = kalturaMediaService.getPendingMediaEntries().map { it.referenceId }.toSet()
         val readyVideosInKaltura = kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
-        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.id }.toSet()
-        return videosOnBoclips - (readyVideosInKaltura + pendingVideosInKaltura)
+        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.kalturaReferenceId() }.toSet()
+        return boclipsVideoService.getVideoMetadata(videosOnBoclips - (readyVideosInKaltura + pendingVideosInKaltura))
     }
 
-    fun getRemovableKalturaVideos(): Set<String> {
-        val videosInKaltura = kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
-        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.id }.toSet()
-        return videosInKaltura - videosOnBoclips
+    fun getRemovableKalturaVideos(): Set<KalturaVideo> {
+        val videosInKaltura = kalturaMediaService.getReadyMediaEntries()
+        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.kalturaReferenceId() }.toSet()
+
+        return videosInKaltura.filter { !videosOnBoclips.contains(it.referenceId) }.toSet()
     }
 }

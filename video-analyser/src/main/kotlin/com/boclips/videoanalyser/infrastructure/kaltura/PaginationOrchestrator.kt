@@ -9,6 +9,8 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
+import java.util.stream.Collectors
+import java.util.stream.IntStream
 
 @Component
 class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
@@ -56,12 +58,13 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
         val numberOfRequests = Math.ceil(count.toDouble() / pageSize.toDouble()).toInt()
         logger.info("Paging request ($numberOfRequests pages) to fetch $count entries")
 
-        return IntRange(0, numberOfRequests)
+        return IntStream.range(0, numberOfRequests).mapToObj { it }.parallel()
                 .flatMap { i ->
                     logger.info("Fetching page $i with filters $filters")
                     val result = kalturaMediaClient.fetch(pageIndex = i, filters = filters)
                     logger.info("Fetched ${result.size} entries with filters $filters")
-                    result
+                    result.stream()
                 }
+                .collect(Collectors.toList())
     }
 }

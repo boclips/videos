@@ -1,9 +1,9 @@
 package com.boclips.videoanalyser.domain.service
 
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaClientException
-import com.boclips.testsupport.AbstractSpringIntegrationTest
-import com.boclips.testsupport.insert
-import com.boclips.testsupport.loadFixture
+import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videoanalyser.testsupport.MetadataTestRepository
+import com.boclips.videoanalyser.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
@@ -15,11 +15,14 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoAnalysisService: VideoAnalysisService
 
+    @Autowired
+    lateinit var metadataTestRepository: MetadataTestRepository
+
     @Test
     fun getUnplayableVideos() {
-        jdbcTemplate.update(insert(id = "10", title = "some unplayable video"))
-        jdbcTemplate.update(insert(referenceId = "20", title = "another unplayable video"))
-        jdbcTemplate.update(insert(id = "1", title = "some playable video"))
+        metadataTestRepository.insert(id = "10", title = "some unplayable video")
+        metadataTestRepository.insert(referenceId = "20", title = "another unplayable video")
+        metadataTestRepository.insert(id = "1", title = "some playable video")
 
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -30,13 +33,13 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val unplayableVideos = videoAnalysisService.getUnplayableVideos()
 
         assertThat(unplayableVideos).hasSize(2)
-        assertThat(unplayableVideos).contains("10", "20")
+        assertThat(unplayableVideos.map { it.kalturaReferenceId() }).contains("10", "20")
     }
 
     @Test
     fun getPlayableVideos() {
-        jdbcTemplate.update(insert(id = "1", title = "some playable video"))
-        jdbcTemplate.update(insert(referenceId = "2", title = "some playable video"))
+        metadataTestRepository.insert(id = "1", title = "some playable video")
+        metadataTestRepository.insert(id = "27", referenceId = "2", title = "some playable video")
 
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -47,7 +50,7 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val playableVideos = videoAnalysisService.getPlayableVideos()
 
         assertThat(playableVideos).hasSize(2)
-        assertThat(playableVideos).contains("1", "2")
+        assertThat(playableVideos.map { it.kalturaReferenceId() }).contains("1", "2")
     }
 
     @Test
@@ -61,7 +64,7 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val removableVideos = videoAnalysisService.getRemovableKalturaVideos()
 
         assertThat(removableVideos).hasSize(2)
-        assertThat(removableVideos).contains("1", "2")
+        assertThat(removableVideos.map { it.referenceId }).contains("1", "2")
     }
 
     @Test
