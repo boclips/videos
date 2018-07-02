@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.2.41'
+        kotlinVersion = '1.2.50'
         springBootVersion = '2.0.3.RELEASE'
     }
     repositories {
@@ -53,7 +53,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile "org.springframework.boot:spring-boot-starter-aop"
     compile 'org.springframework.retry:spring-retry:1.2.2.RELEASE'
-    compile 'org.springframework.shell:spring-shell-starter:2.0.1.BUILD-SNAPSHOT'
+    compile 'org.springframework.shell:spring-shell-starter:2.0.1.RELEASE'
 
     compile 'mysql:mysql-connector-java:5.1.13'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.6'
