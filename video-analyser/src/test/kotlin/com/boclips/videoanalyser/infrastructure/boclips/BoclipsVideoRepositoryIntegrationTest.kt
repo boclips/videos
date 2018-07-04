@@ -42,18 +42,20 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 id = "1",
                 title = "great title",
                 contentProvider = "Bloomie",
+                contentProviderId = "b1",
                 description = "desc",
                 duration = "01:02:03",
                 date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay()
         )
-        metadataTestRepository.insert(id = "2", title = null, contentProvider = null)
-        metadataTestRepository.insert(id = "3", title = null, contentProvider = null)
+        metadataTestRepository.insert(id = "2", title = null, contentProvider = null, contentProviderId = null)
+        metadataTestRepository.insert(id = "3", title = null, contentProvider = null, contentProviderId = null)
 
         assertThat(boclipsVideoRepository.getVideoMetadata(setOf("1", "2"))).containsExactly(
                 BoclipsVideo(
                         id = "1",
                         title = "great title",
                         contentProvider = "Bloomie",
+                        contentProviderId = "b1",
                         duration = "01:02:03",
                         date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay(),
                         description = "desc"
@@ -69,6 +71,7 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 referenceId = "reference-id-1",
                 title = "great title",
                 contentProvider = "Bloomie",
+                contentProviderId = "b1",
                 description = "desc",
                 duration = "01:02:03",
                 date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay()
@@ -80,6 +83,7 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         referenceId = "reference-id-1",
                         title = "great title",
                         contentProvider = "Bloomie",
+                        contentProviderId = "b1",
                         duration = "01:02:03",
                         date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay(),
                         description = "desc"

@@ -1,6 +1,7 @@
 package com.boclips.videoanalyser.presentation
 
 import com.boclips.videoanalyser.domain.service.VideoAnalysisService
+import com.boclips.videoanalyser.presentation.BoclipsVideoCsv.Companion.ALL_COLUMNS
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 import org.springframework.shell.standard.ShellOption
@@ -35,9 +36,9 @@ class UserShell(private val videoAnalysisService: VideoAnalysisService) {
     }
 
     @ShellMethod("Generate report of all playable videos (videos available on Boclips, as well as Kaltura)")
-    fun playableVideos(@ShellOption(help = "Please specify file name") filename: String) {
+    fun playableVideos(@ShellOption(help = "Please specify file name") filename: String, @ShellOption(help = "CSV columns") columns: String?) {
         val playableVideos = videoAnalysisService.getPlayableVideos().map { BoclipsVideoCsv.from(it) }
-        writeVideosToFile(filename, playableVideos)
+        writeVideosToFile(filename, playableVideos, columns)
     }
 
     @ShellMethod("Generate report of all removable Kaltura videos (videos on Kaltura but not on Boclips)")
@@ -58,10 +59,10 @@ class UserShell(private val videoAnalysisService: VideoAnalysisService) {
         }
     }
 
-    private fun writeVideosToFile(filename: String, videos: List<BoclipsVideoCsv>) {
+    private fun writeVideosToFile(filename: String, videos: List<BoclipsVideoCsv>, columns: String? = null) {
         println("Writing report to file $filename")
         val file = File(filename)
-        csvGenerator.writeCsv(file, videos)
+        csvGenerator.writeCsv(file, videos, columns?.split(",")?.toSet() ?: ALL_COLUMNS)
         println("Success! ${file.absolutePath} contains ${videos.size} of videos")
     }
 }

@@ -9,19 +9,24 @@ import java.sql.ResultSet
 
 @Repository
 class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : BoclipsVideoService {
+
+    companion object {
+        private const val FIELDS = "id, reference_id, title, source, unique_id, duration, description, date"
+    }
+
     override fun getVideoMetadata(ids: Collection<String>): Set<BoclipsVideo> {
         val numericIds = ids.filter { it.toIntOrNull() != null }
         val output = mutableSetOf<BoclipsVideo>()
         if (numericIds.isNotEmpty()) {
             output += jdbcTemplate.query(
-                    "SELECT id, reference_id, title, source, duration, description, date FROM metadata_orig where id in (:ids) and reference_id is null",
+                    "SELECT $FIELDS FROM metadata_orig where id in (:ids) and reference_id is null",
                     mapOf("ids" to numericIds),
                     this::mapResultsToBoclipsVideos)
                     .toSet()
         }
 
         return output + jdbcTemplate.query(
-                "SELECT id, reference_id, title, source, duration, description, date FROM metadata_orig where reference_id in (:ids)",
+                "SELECT $FIELDS FROM metadata_orig where reference_id in (:ids)",
                 mapOf("ids" to ids),
                 this::mapResultsToBoclipsVideos)
                 .toSet()
@@ -32,7 +37,7 @@ class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : Boc
             jdbcTemplate.queryForObject("SELECT COUNT(1) FROM metadata_orig", emptyMap<String, Any>(), Int::class.java)
                     ?: 0
 
-    override fun getAllVideos() = jdbcTemplate.query("SELECT id, reference_id, title, source, duration, description, date FROM metadata_orig", this::mapResultsToBoclipsVideos)
+    override fun getAllVideos() = jdbcTemplate.query("SELECT $FIELDS FROM metadata_orig", this::mapResultsToBoclipsVideos)
             .toSet()
 
     private fun mapResultsToBoclipsVideos(resultSet: ResultSet, index: Int): BoclipsVideo {
@@ -45,7 +50,8 @@ class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : Boc
                 duration = resultSet.getString("duration"),
                 description = resultSet.getString("description"),
                 date = resultSet.getTimestamp("date")?.toLocalDateTime(),
-                contentProvider = resultSet.getString("source")
+                contentProvider = resultSet.getString("source"),
+                contentProviderId = resultSet.getString("unique_id")
         )
     }
 }

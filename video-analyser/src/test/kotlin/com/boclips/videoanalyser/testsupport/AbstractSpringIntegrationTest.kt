@@ -25,6 +25,7 @@ abstract class AbstractSpringIntegrationTest : AbstractWireMockTest() {
                       id             int auto_increment
                     primary key,
                   source         varchar(45)     null,
+                  unique_id      mediumtext      null,
                   title          mediumtext      null,
                   description    mediumtext      null,
                   date           date            null,

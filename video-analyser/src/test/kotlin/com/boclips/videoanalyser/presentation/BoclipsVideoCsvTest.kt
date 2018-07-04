@@ -4,6 +4,7 @@ import com.boclips.videoanalyser.domain.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.model.KalturaVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.Month
 
@@ -17,6 +18,7 @@ class BoclipsVideoCsvTest {
                 title = "t1",
                 description = "d1",
                 provider = "p1",
+                providerId = "pid1",
                 duration = "01:02:03",
                 date = LocalDateTime.of(2018, Month.DECEMBER, 1, 2, 3, 4)
         )
@@ -26,6 +28,7 @@ class BoclipsVideoCsvTest {
                 title = "t1",
                 description = "d1",
                 contentProvider = "p1",
+                contentProviderId = "pid1",
                 duration = "01:02:03",
                 date = LocalDateTime.of(2018, Month.DECEMBER, 1, 2, 3, 4)
         ))

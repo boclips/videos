@@ -6,19 +6,21 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 
 data class BoclipsVideoCsv(
-        @JsonProperty(value = "Id")
+        @JsonProperty(value = ID)
         var id: String? = null,
-        @JsonProperty(value = "Reference Id")
+        @JsonProperty(value = REFERENCE_ID)
         var referenceId: String? = null,
-        @JsonProperty(value = "Title")
+        @JsonProperty(value = TITLE)
         var title: String? = null,
-        @JsonProperty(value = "Content Provider")
+        @JsonProperty(value = CONTENT_PROVIDER)
         var provider: String? = null,
-        @JsonProperty(value = "Description")
+        @JsonProperty(value = CONTENT_PROVIDER_ID)
+        var providerId: String? = null,
+        @JsonProperty(value = DESCRIPTION)
         var description: String? = null,
-        @JsonProperty(value = "Date")
+        @JsonProperty(value = DATE)
         var date: LocalDateTime? = null,
-        @JsonProperty(value = "Duration")
+        @JsonProperty(value = DURATION)
         var duration: String? = null
 ) {
     companion object {
@@ -27,6 +29,7 @@ data class BoclipsVideoCsv(
             referenceId = video.referenceId
             title = video.title
             provider = video.contentProvider
+            providerId = video.contentProviderId
             description = video.description
             date = video.date
             duration = video.duration
@@ -36,5 +39,17 @@ data class BoclipsVideoCsv(
             id = video.id
             referenceId = video.referenceId
         }
+
+        const val ID = "Id"
+        const val REFERENCE_ID = "Reference Id"
+        const val TITLE = "Title"
+        const val CONTENT_PROVIDER = "Content Provider"
+        const val CONTENT_PROVIDER_ID = "Content Provider Id"
+        const val DESCRIPTION = "Description"
+        const val DATE = "Date"
+        const val DURATION = "Duration"
+
+        val ALL_COLUMNS = setOf(ID, REFERENCE_ID, TITLE, CONTENT_PROVIDER, CONTENT_PROVIDER_ID, DESCRIPTION, DATE, DURATION)
     }
+
 }

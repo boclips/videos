@@ -12,17 +12,19 @@ class MetadataTestRepository(val jdbcTemplate: NamedParameterJdbcTemplate) {
             referenceId: String? = null,
             title: String? = "some title",
             contentProvider: String? = "some cp",
+            contentProviderId: String? = "some cp id",
             description: String? = null,
             duration: String? = null,
             date: LocalDateTime? = null
     ) {
         jdbcTemplate.update("""
-            INSERT INTO metadata_orig(id, reference_id, title, source, description, duration, date)
+            INSERT INTO metadata_orig(id, reference_id, title, source, unique_id, description, duration, date)
             VALUES(
                 :id,
                 :referenceId,
                 :title,
                 :contentProvider,
+                :contentProviderId,
                 :description,
                 :duration,
                 :date)
@@ -31,6 +33,7 @@ class MetadataTestRepository(val jdbcTemplate: NamedParameterJdbcTemplate) {
                 "referenceId" to referenceId,
                 "title" to title,
                 "contentProvider" to contentProvider,
+                "contentProviderId" to contentProviderId,
                 "description" to description,
                 "duration" to duration,
                 "date" to date
