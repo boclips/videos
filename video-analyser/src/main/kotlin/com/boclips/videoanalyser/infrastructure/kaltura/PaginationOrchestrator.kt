@@ -29,7 +29,7 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
     private fun fetchOrSplit(filters: List<MediaFilter>, dateStart: Long, dateEnd: Long): List<MediaItem> {
         val timeFilters = createTimeFilters(dateEnd, dateStart)
         val numberOfEntriesForInterval = kalturaMediaClient.count(filters + timeFilters)
-        logger.info("Found $numberOfEntriesForInterval entries to be fetched for current request")
+        logger.info("Found $numberOfEntriesForInterval entries to be fetched for current request ($dateStart until $dateEnd)")
 
         return if (numberOfEntriesForInterval == 0L) {
             logger.info("Aborting execution as no videos in interval found")
@@ -37,12 +37,26 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
         } else if (numberOfEntriesForInterval > maxEntries) {
             logger.info("Splitting time interval in half as $numberOfEntriesForInterval is greater than $maxEntries")
             val mid = (dateEnd - dateStart) / 2
-            fetchOrSplit(filters, dateStart, dateStart + mid) + fetchOrSplit(filters, dateStart + mid, dateEnd)
+            val result = fetchOrSplit(filters, dateStart, dateStart + mid) + fetchOrSplit(filters, dateStart + mid, dateEnd)
+
+            val uniqueResults = result.map { it.id }.toSet()
+            if(uniqueResults.size.toLong() < numberOfEntriesForInterval) {
+                throw Error("Expected $numberOfEntriesForInterval in time range ($dateStart until $dateEnd) but retrieved ${uniqueResults.size} (after the split)")
+            }
+
+            logger.info("Combined results from sub-intervals of ($dateStart until $dateEnd) have the expected size $numberOfEntriesForInterval")
+            return result
         } else {
             logger.info("Fetching $numberOfEntriesForInterval entries for interval " +
-                    "${Instant.ofEpochSecond(dateStart).atZone(ZoneOffset.UTC)} - " +
-                    "${Instant.ofEpochSecond(dateEnd).atZone(ZoneOffset.UTC)}")
-            fetchPages(filters + timeFilters)
+                    "${Instant.ofEpochSecond(dateStart).atZone(ZoneOffset.UTC).toOffsetDateTime()} - " +
+                    "${Instant.ofEpochSecond(dateEnd).atZone(ZoneOffset.UTC).toOffsetDateTime()}")
+            val result = fetchPages(filters + timeFilters)
+            val uniqueResults = result.map { it.id }.toSet()
+            if(uniqueResults.size.toLong() < numberOfEntriesForInterval) {
+                throw Error("Expected $numberOfEntriesForInterval in time range ($dateStart until $dateEnd) but retrieved ${uniqueResults.size}")
+            }
+            logger.info("Results from time range ($dateStart until $dateEnd) have the expected size $numberOfEntriesForInterval")
+            return result
         }
     }
 
@@ -58,7 +72,7 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
         val numberOfRequests = Math.ceil(count.toDouble() / pageSize.toDouble()).toInt()
         logger.info("Paging request ($numberOfRequests pages) to fetch $count entries")
 
-        return IntStream.range(0, numberOfRequests).mapToObj { it }.parallel()
+        return IntStream.range(0, numberOfRequests).map{ it + 1 }.mapToObj { it }.parallel()
                 .flatMap { i ->
                     logger.info("Fetching page $i with filters $filters")
                     val result = kalturaMediaClient.fetch(pageIndex = i, filters = filters)

@@ -2,7 +2,6 @@ package com.boclips.videoanalyser.domain.service
 
 import com.boclips.videoanalyser.domain.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.model.KalturaVideo
-import com.boclips.videoanalyser.presentation.BoclipsVideoCsv
 
 open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
                                 private val kalturaMediaService: KalturaMediaService) {
@@ -35,9 +34,9 @@ open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoSer
     }
 
     fun getUnplayableVideos(): Set<BoclipsVideo> {
+        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.kalturaReferenceId() }.toSet()
         val pendingVideosInKaltura = kalturaMediaService.getPendingMediaEntries().map { it.referenceId }.toSet()
         val readyVideosInKaltura = kalturaMediaService.getReadyMediaEntries().map { it.referenceId }.toSet()
-        val videosOnBoclips = boclipsVideoService.getAllVideos().map { it.kalturaReferenceId() }.toSet()
         return boclipsVideoService.getVideoMetadata(videosOnBoclips - (readyVideosInKaltura + pendingVideosInKaltura))
     }
 
