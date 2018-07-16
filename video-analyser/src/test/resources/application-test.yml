@@ -2,6 +2,9 @@ kaltura:
   host: http://localhost:8089
   session: abc-kaltura-session
 
+legacy-search:
+  base-url: http://localhost:8089
+
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL;DATABASE_TO_UPPER=false

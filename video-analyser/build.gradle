@@ -52,10 +52,12 @@ dependencies {
     compile 'org.springframework.shell:spring-shell-starter:2.0.1.BUILD-SNAPSHOT'
 
     compile 'mysql:mysql-connector-java:5.1.13'
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.6"
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.6'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
     compile 'io.github.microutils:kotlin-logging:1.4.9'
+    compile 'com.jayway.jsonpath:json-path'
+
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.awaitility:awaitility:3.1.0'

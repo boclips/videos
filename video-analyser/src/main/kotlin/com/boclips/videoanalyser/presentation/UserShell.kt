@@ -59,6 +59,11 @@ class UserShell(private val videoAnalysisService: VideoAnalysisService) {
         }
     }
 
+    @ShellMethod("Search benchmark")
+    fun searchBenchmark(@ShellOption(help = "Please specify search-query/video dataset file name ") filename: String) {
+
+    }
+
     private fun writeVideosToFile(filename: String, videos: List<BoclipsVideoCsv>, columns: String?) {
         println("Writing report to file $filename")
         val file = File(filename)
