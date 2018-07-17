@@ -4,6 +4,7 @@ kaltura:
 
 legacy-search:
   base-url: http://localhost:8089
+  token: testboclipstoken
 
 spring:
   datasource:

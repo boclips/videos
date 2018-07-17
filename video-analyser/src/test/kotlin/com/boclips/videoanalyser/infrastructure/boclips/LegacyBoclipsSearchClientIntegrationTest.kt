@@ -3,6 +3,7 @@ package com.boclips.videoanalyser.infrastructure.boclips
 import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,6 +17,7 @@ class LegacyBoclipsSearchClientIntegrationTest : AbstractSpringIntegrationTest()
     @Test
     fun search() {
         wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/search?q=_text_:(enzyme)"))
+                .withHeader("Authorization", equalTo("Bearer testboclipstoken"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")

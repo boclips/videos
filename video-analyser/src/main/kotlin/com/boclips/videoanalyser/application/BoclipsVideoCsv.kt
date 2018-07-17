@@ -1,4 +1,4 @@
-package com.boclips.videoanalyser.presentation
+package com.boclips.videoanalyser.application
 
 import com.boclips.videoanalyser.domain.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.model.KalturaVideo

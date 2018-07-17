@@ -1,6 +1,6 @@
-package com.boclips.videoanalyser.presentation
+package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.presentation.BoclipsVideoCsv.Companion.ALL_COLUMNS
+import com.boclips.videoanalyser.application.BoclipsVideoCsv.Companion.ALL_COLUMNS
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.csv.CsvMapper

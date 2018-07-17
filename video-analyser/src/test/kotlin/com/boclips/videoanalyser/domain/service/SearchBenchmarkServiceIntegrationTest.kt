@@ -20,7 +20,6 @@ class SearchBenchmarkServiceIntegrationTest : AbstractSpringIntegrationTest() {
                         .withHeader("Content-Type", "application/json")
                         .withBody(loadFixture("legacy-solr-response.json"))))
 
-
         val searchExpectation = SearchExpectation("enzyme", "2499583")
 
         val (total, hits) = searchBenchmarkService.benchmark(listOf(searchExpectation))
