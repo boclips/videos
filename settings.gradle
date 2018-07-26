@@ -1,3 +1,4 @@
 include 'e2e'
 include 'videos'
 include 'video-analyser'
+include 'mysql2es'

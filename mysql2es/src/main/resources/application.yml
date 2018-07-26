@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:mysql://bo-production.cwbhgzdorcpr.eu-west-1.rds.amazonaws.com:3306/bo-production?useUnicode=yes&characterEncoding=UTF-8
+    username: damsql
+    password: Champagn3
+  elasticsearch:
+    jest:
+      uri: https://search-test-search-gvzmbjdq7khuhjdtb33zbldpqu.eu-west-1.es.amazonaws.com
