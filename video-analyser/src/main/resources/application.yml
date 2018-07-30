@@ -9,3 +9,7 @@ spring:
     password:
   main:
     web-application-type: none
+
+legacy-search:
+  base-url:
+  token:

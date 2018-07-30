@@ -91,4 +91,25 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
     }
 
+    @Test
+    fun deleteVideos() {
+        metadataTestRepository.insert(id = "1", title = "great title", contentProvider = "Bloomie")
+        metadataTestRepository.insert(id = "2")
+        metadataTestRepository.insert(id = "3")
+
+        boclipsVideoRepository.deleteVideos(setOf(BoclipsVideo(id = "1"), BoclipsVideo(id = "3")))
+
+        assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly("2")
+    }
+
+    @Test
+    fun deleteVideos_whenBigBatch() {
+        (1..150).forEach {
+            metadataTestRepository.insert(id = "$it")
+        }
+
+        boclipsVideoRepository.deleteVideos((1..100).map { BoclipsVideo(id = "$it") }.toSet())
+
+        assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly(*((101..150).map { "$it" }.toTypedArray()))
+    }
 }

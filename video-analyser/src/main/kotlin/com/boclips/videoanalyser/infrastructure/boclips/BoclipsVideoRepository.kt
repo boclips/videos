@@ -6,12 +6,13 @@ import mu.KLogging
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 
 
 @Repository
 class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : BoclipsVideoService {
-
     companion object : KLogging() {
+
         private const val FIELDS = "id, reference_id, title, source, unique_id, duration, description, date"
     }
 
@@ -43,6 +44,17 @@ class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : Boc
         return jdbcTemplate.query("SELECT $FIELDS FROM metadata_orig", this::mapResultsToBoclipsVideos)
                 .toSet()
     }
+
+    override fun deleteVideos(videos: Set<BoclipsVideo>) {
+        videos.asSequence().map { it.id.toInt() }.chunked(50).toList().forEach {
+            jdbcTemplate.update(
+                    "DELETE FROM metadata_orig WHERE id in (:ids)",
+                    MapSqlParameterSource().apply { addValue("ids", it) }
+
+            )
+        }
+    }
+
 
     private fun mapResultsToBoclipsVideos(resultSet: ResultSet, index: Int): BoclipsVideo {
         val referenceId = resultSet.getString("reference_id")

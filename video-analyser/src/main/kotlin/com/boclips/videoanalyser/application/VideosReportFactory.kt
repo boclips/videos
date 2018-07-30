@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 import java.io.File
 
 @Service
-class CreateVideosReport(private val videoAnalysisService: VideoAnalysisService) {
+class VideosReportFactory(private val videoAnalysisService: VideoAnalysisService) {
 
     private val csvGenerator = CsvGenerator()
 
