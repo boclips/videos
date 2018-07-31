@@ -2,6 +2,7 @@ package com.boclips.e2e
 
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.openqa.selenium.By
@@ -26,6 +27,7 @@ class E2eApplicationTests {
     lateinit var homePage: HomePage
 
     @Test
+    @Ignore("sample test")
     fun boclips_pearson_loads() {
         loginPage.go()
         loginPage.login("slim-pearson-staging-vendor", "Passw0rd")
