@@ -1,7 +1,6 @@
-package com.boclips.videoanalyser.infrastructure
+package com.boclips.videoanalyser.domain.analysis.service
 
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
-import com.boclips.videoanalyser.domain.service.VideoAnalysisService
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
 import com.boclips.videoanalyser.infrastructure.boclips.BoclipsVideoRepository
 import com.boclips.videoanalyser.infrastructure.kaltura.PagedKalturaMediaService
 import com.boclips.videoanalyser.testsupport.TestFactory

@@ -1,5 +1,7 @@
-package com.boclips.videoanalyser.domain.service
+package com.boclips.videoanalyser.domain.search_benchmark.service
 
+import com.boclips.videoanalyser.domain.search_benchmark.service.SearchBenchmarkService
+import com.boclips.videoanalyser.domain.search_benchmark.domain.SearchExpectation
 import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock.*

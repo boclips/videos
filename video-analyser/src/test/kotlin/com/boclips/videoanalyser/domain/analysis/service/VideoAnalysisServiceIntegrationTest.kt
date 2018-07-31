@@ -1,4 +1,4 @@
-package com.boclips.videoanalyser.domain.service
+package com.boclips.videoanalyser.domain.analysis.service
 
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaClientException
 import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest

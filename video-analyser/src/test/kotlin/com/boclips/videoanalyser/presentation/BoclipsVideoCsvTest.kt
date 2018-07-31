@@ -1,8 +1,8 @@
 package com.boclips.videoanalyser.presentation
 
 import com.boclips.videoanalyser.application.BoclipsVideoCsv
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
-import com.boclips.videoanalyser.domain.model.KalturaVideo
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.model.KalturaVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime

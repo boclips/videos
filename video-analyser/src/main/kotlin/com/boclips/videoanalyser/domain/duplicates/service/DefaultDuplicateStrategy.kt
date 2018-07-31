@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.domain.duplicates.service
 
 import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
 import org.springframework.stereotype.Component
 
 @Component

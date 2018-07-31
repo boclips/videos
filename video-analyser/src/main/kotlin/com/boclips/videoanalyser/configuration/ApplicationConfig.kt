@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.configuration
 
-import com.boclips.videoanalyser.domain.service.VideoAnalysisService
+import com.boclips.videoanalyser.domain.analysis.service.VideoAnalysisService
 import com.boclips.videoanalyser.infrastructure.boclips.BoclipsVideoRepository
 import com.boclips.videoanalyser.infrastructure.kaltura.PagedKalturaMediaService
 import com.boclips.videoanalyser.infrastructure.kaltura.PaginationOrchestrator

@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.domain.service.VideoAnalysisService
+import com.boclips.videoanalyser.domain.analysis.service.VideoAnalysisService
 import org.springframework.stereotype.Service
 import java.io.File
 

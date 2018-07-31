@@ -1,7 +1,9 @@
-package com.boclips.videoanalyser.domain.service
+package com.boclips.videoanalyser.domain.analysis.service
 
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
-import com.boclips.videoanalyser.domain.model.KalturaVideo
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.model.KalturaVideo
+import com.boclips.videoanalyser.domain.common.service.BoclipsVideoService
+import com.boclips.videoanalyser.domain.common.service.KalturaMediaService
 
 open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
                                 private val kalturaMediaService: KalturaMediaService) {

@@ -1,8 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.boclips
 
-import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
-import com.boclips.videoanalyser.domain.service.BoclipsVideoService
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.service.BoclipsVideoService
 import mu.KLogging
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository

@@ -1,7 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.boclips
 
-import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
 import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.MetadataTestRepository
 import org.assertj.core.api.Assertions.assertThat

@@ -1,6 +1,6 @@
-package com.boclips.videoanalyser.domain.service
+package com.boclips.videoanalyser.domain.common.service
 
-import com.boclips.videoanalyser.domain.model.KalturaVideo
+import com.boclips.videoanalyser.domain.common.model.KalturaVideo
 
 interface KalturaMediaService {
     fun getReadyMediaEntries(): Set<KalturaVideo>

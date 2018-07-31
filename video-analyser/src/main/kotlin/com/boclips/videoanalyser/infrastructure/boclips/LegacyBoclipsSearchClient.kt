@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.boclips
 
-import com.boclips.videoanalyser.domain.service.SearchClient
+import com.boclips.videoanalyser.domain.search_benchmark.service.SearchClient
 import com.jayway.jsonpath.JsonPath
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpEntity

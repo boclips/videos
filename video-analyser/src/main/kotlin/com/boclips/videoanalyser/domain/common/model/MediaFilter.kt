@@ -1,4 +1,4 @@
-package com.boclips.videoanalyser.domain.model
+package com.boclips.videoanalyser.domain.common.model
 
 class MediaFilter(val key: MediaFilterType, val value: String) {
     override fun toString(): String {

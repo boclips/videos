@@ -1,5 +1,8 @@
-package com.boclips.videoanalyser.domain.service
+package com.boclips.videoanalyser.domain.search_benchmark.service
 
+import com.boclips.videoanalyser.domain.search_benchmark.service.SearchBenchmarkService
+import com.boclips.videoanalyser.domain.search_benchmark.domain.SearchExpectation
+import com.boclips.videoanalyser.domain.search_benchmark.service.SearchClient
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -32,7 +35,7 @@ class SearchBenchmarkServiceTest{
         whenever(searchClient.searchTop10("enzyme")).thenReturn(listOf("123"))
         whenever(searchClient.searchTop10("dog")).thenReturn(listOf("333"))
 
-        val (total, hits) = searchBenchmarkService.benchmark(listOf(SearchExpectation("enzyme", "123"),SearchExpectation("dog", "333")))
+        val (total, hits) = searchBenchmarkService.benchmark(listOf(SearchExpectation("enzyme", "123"), SearchExpectation("dog", "333")))
 
         assertThat(hits).isEqualTo(2)
         assertThat(total).isEqualTo(2)

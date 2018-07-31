@@ -1,10 +1,8 @@
-package com.boclips.videoanalyser.domain.service
+package com.boclips.videoanalyser.domain.search_benchmark.service
 
+import com.boclips.videoanalyser.domain.search_benchmark.domain.SearchBenchmarkReport
+import com.boclips.videoanalyser.domain.search_benchmark.domain.SearchExpectation
 import org.springframework.stereotype.Service
-
-data class SearchExpectation(val query: String, val videoId: String)
-
-data class SearchBenchmarkReport(val total: Int, val hits: Int)
 
 @Service
 class SearchBenchmarkService(private val searchClient: SearchClient) {

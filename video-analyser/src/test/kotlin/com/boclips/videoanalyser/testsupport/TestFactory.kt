@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.testsupport
 
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
-import com.boclips.videoanalyser.domain.model.KalturaVideo
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.model.KalturaVideo
 import java.util.*
 
 class TestFactory {

@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.domain.service.SearchExpectation
+import com.boclips.videoanalyser.domain.search_benchmark.domain.SearchExpectation
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class SearchExpectationCsv(@JsonProperty(value = "QUERY") val query: String, @JsonProperty(value = "VIDEO") val video: String) {

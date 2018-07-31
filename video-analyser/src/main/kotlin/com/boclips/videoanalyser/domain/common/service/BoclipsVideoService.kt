@@ -1,6 +1,6 @@
-package com.boclips.videoanalyser.domain.service
+package com.boclips.videoanalyser.domain.common.service
 
-import com.boclips.videoanalyser.domain.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
 
 interface BoclipsVideoService {
     fun countAllVideos(): Int

@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.kaltura.client
 
-import com.boclips.videoanalyser.domain.model.MediaFilter
+import com.boclips.videoanalyser.domain.common.model.MediaFilter
 import com.boclips.videoanalyser.infrastructure.kaltura.KalturaProperties
 import com.boclips.videoanalyser.infrastructure.kaltura.MediaItem
 import mu.KLogging

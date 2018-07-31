@@ -1,4 +1,4 @@
-package com.boclips.videoanalyser.domain.model
+package com.boclips.videoanalyser.domain.common.model
 
 import java.time.LocalDateTime
 
