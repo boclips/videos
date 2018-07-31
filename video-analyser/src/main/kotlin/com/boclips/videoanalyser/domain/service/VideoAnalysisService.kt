@@ -2,9 +2,8 @@ package com.boclips.videoanalyser.domain.service
 
 import com.boclips.videoanalyser.domain.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.model.KalturaVideo
-import org.springframework.cache.annotation.Cacheable
 
-class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
+open class VideoAnalysisService(private val boclipsVideoService: BoclipsVideoService,
                                 private val kalturaMediaService: KalturaMediaService) {
     fun countAllKalturaVideos(): Long {
         return kalturaMediaService.countAllMediaEntries()

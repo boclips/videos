@@ -13,3 +13,8 @@ spring:
 legacy-search:
   base-url:
   token:
+
+logging:
+  level:
+    ROOT: warn
+    com.boclips: info

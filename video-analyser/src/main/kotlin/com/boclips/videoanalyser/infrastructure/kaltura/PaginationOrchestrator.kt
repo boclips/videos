@@ -53,7 +53,7 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
             val result = fetchPages(filters + timeFilters)
             val uniqueResults = result.map { it.id }.toSet()
             if(uniqueResults.size.toLong() < numberOfEntriesForInterval) {
-                throw Error("Expected $numberOfEntriesForInterval in time range ($dateStart until $dateEnd) but retrieved ${uniqueResults.size}")
+                logger.error("Expected $numberOfEntriesForInterval in time range ($dateStart until $dateEnd) but retrieved ${uniqueResults.size}")
             }
             logger.info("Results from time range ($dateStart until $dateEnd) have the expected size $numberOfEntriesForInterval")
             return result

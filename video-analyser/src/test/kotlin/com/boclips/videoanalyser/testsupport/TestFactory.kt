@@ -6,8 +6,17 @@ import java.util.*
 
 class TestFactory {
     companion object {
-        fun boclipsVideo(id: String = UUID.randomUUID().toString()): BoclipsVideo {
-            return BoclipsVideo(id = id, title = "Some great title", contentProvider = "Bloomie")
+        fun boclipsVideo(
+                id: String = UUID.randomUUID().toString(),
+                contentProviderId: String? = null,
+                contentProvider: String? = "Bloomie"
+        ): BoclipsVideo {
+            return BoclipsVideo(
+                    id = id,
+                    title = "Some great title",
+                    contentProvider = contentProvider,
+                    contentProviderId = contentProviderId
+            )
         }
 
         fun kalturaVideo(referenceId: String): KalturaVideo {

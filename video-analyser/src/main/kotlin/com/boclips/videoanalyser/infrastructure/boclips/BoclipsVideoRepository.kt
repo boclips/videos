@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.boclips
 
+import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
 import com.boclips.videoanalyser.domain.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.service.BoclipsVideoService
 import mu.KLogging
@@ -14,8 +15,8 @@ class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : Boc
     companion object : KLogging() {
 
         private const val FIELDS = "id, reference_id, title, source, unique_id, duration, description, date"
-    }
 
+    }
     override fun getVideoMetadata(ids: Collection<String>): Set<BoclipsVideo> {
         val numericIds = ids.filter { it.toIntOrNull() != null }
         val output = mutableSetOf<BoclipsVideo>()
