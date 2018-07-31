@@ -2,6 +2,8 @@ package com.boclips.videoanalyser.testsupport
 
 import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.common.model.KalturaVideo
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.*
 
 class TestFactory {
@@ -9,13 +11,18 @@ class TestFactory {
         fun boclipsVideo(
                 id: String = UUID.randomUUID().toString(),
                 contentProviderId: String? = null,
-                contentProvider: String? = "Bloomie"
+                contentProvider: String? = "Bloomie",
+                title: String? = "Some great title",
+                duration: String? = null,
+                date: LocalDateTime? = null
         ): BoclipsVideo {
             return BoclipsVideo(
                     id = id,
-                    title = "Some great title",
+                    title = title,
                     contentProvider = contentProvider,
-                    contentProviderId = contentProviderId
+                    contentProviderId = contentProviderId,
+                    duration = duration,
+                    date = date
             )
         }
 

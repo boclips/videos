@@ -2,6 +2,7 @@ package com.boclips.videoanalyser.domain.duplicates.service
 
 import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
 import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.duplicates.service.strategies.DuplicateStrategy
 import com.boclips.videoanalyser.infrastructure.boclips.BoclipsVideoRepository
 import com.boclips.videoanalyser.testsupport.TestFactory.Companion.boclipsVideo
 import com.nhaarman.mockito_kotlin.verify
@@ -23,7 +24,7 @@ class DelegatingDuplicateServiceTest {
     @Mock
     lateinit var boclipsVideoRepository: BoclipsVideoRepository
 
-    private val allDuplicateFake = object : DuplicateStrategy{
+    private val allDuplicateFake = object : DuplicateStrategy {
         override fun findDuplicates(videos: Iterable<BoclipsVideo>) = setOf(Duplicate(
                 originalVideo = videos.first(),
                 duplicates = videos.toList().subList(1, videos.toList().size)
