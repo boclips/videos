@@ -21,10 +21,12 @@ data class BoclipsVideoCsv(
         @JsonProperty(value = DATE)
         var date: LocalDateTime? = null,
         @JsonProperty(value = DURATION)
-        var duration: String? = null
+        var duration: String? = null,
+        @JsonProperty(value = NOTES)
+        var notes: String? = null
 ) {
     companion object {
-        fun from(video: BoclipsVideo) = BoclipsVideoCsv().apply {
+        fun from(video: BoclipsVideo, notes: String? = null) = BoclipsVideoCsv().apply {
             id = video.id
             referenceId = video.referenceId
             title = video.title
@@ -33,6 +35,7 @@ data class BoclipsVideoCsv(
             description = video.description
             date = video.date
             duration = video.duration
+            this.notes = notes
         }
 
         fun from(video: KalturaVideo) = BoclipsVideoCsv().apply {
@@ -48,8 +51,9 @@ data class BoclipsVideoCsv(
         const val DESCRIPTION = "Description"
         const val DATE = "Date"
         const val DURATION = "Duration"
+        const val NOTES = "Notes"
 
-        val ALL_COLUMNS = setOf(ID, REFERENCE_ID, TITLE, CONTENT_PROVIDER, CONTENT_PROVIDER_ID, DESCRIPTION, DATE, DURATION)
+        val ALL_COLUMNS = setOf(ID, REFERENCE_ID, TITLE, CONTENT_PROVIDER, CONTENT_PROVIDER_ID, DESCRIPTION, DATE, DURATION, NOTES)
     }
 
 }

@@ -20,7 +20,8 @@ class BoclipsVideoCsvTest {
                 provider = "p1",
                 providerId = "pid1",
                 duration = "01:02:03",
-                date = LocalDateTime.of(2018, Month.DECEMBER, 1, 2, 3, 4)
+                date = LocalDateTime.of(2018, Month.DECEMBER, 1, 2, 3, 4),
+                notes = "a note"
         )
         val boclipsVideoCsv = BoclipsVideoCsv.from(BoclipsVideo(
                 id = "1",
@@ -31,7 +32,7 @@ class BoclipsVideoCsvTest {
                 contentProviderId = "pid1",
                 duration = "01:02:03",
                 date = LocalDateTime.of(2018, Month.DECEMBER, 1, 2, 3, 4)
-        ))
+        ), "a note")
 
         assertThat(boclipsVideoCsv).isEqualTo(expectedCsv)
     }

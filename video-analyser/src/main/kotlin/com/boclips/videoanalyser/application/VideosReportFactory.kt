@@ -1,11 +1,15 @@
 package com.boclips.videoanalyser.application
 
 import com.boclips.videoanalyser.domain.analysis.service.VideoAnalysisService
+import com.boclips.videoanalyser.domain.duplicates.service.DelegatingDuplicateService
 import org.springframework.stereotype.Service
 import java.io.File
 
 @Service
-class VideosReportFactory(private val videoAnalysisService: VideoAnalysisService) {
+class VideosReportFactory(
+        private val videoAnalysisService: VideoAnalysisService,
+        private val duplicateService: DelegatingDuplicateService
+) {
 
     private val csvGenerator = CsvGenerator()
 
@@ -37,6 +41,14 @@ class VideosReportFactory(private val videoAnalysisService: VideoAnalysisService
     fun freeableVideos(filename: String, columns: String?) {
         val freeableVideosIds = videoAnalysisService.getRemovableKalturaVideos().map { BoclipsVideoCsv.from(it) }
         writeVideosToFile(filename, freeableVideosIds, columns)
+    }
+
+    fun duplicates(filename: String, columns: String?) {
+        val duplicates = duplicateService.getDuplicates().flatMap { duplicate -> listOf(
+                BoclipsVideoCsv.from(duplicate.originalVideo,"ORIGINAL"),
+                *(duplicate.duplicates.map { BoclipsVideoCsv.from(it,"DUPLICATES")}.toTypedArray())
+        ) }
+        writeVideosToFile(filename, duplicates, columns)
     }
 
     fun countKalturaVideos(): String {

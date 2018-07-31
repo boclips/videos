@@ -2,6 +2,7 @@ package com.boclips.videoanalyser.presentation
 
 import com.boclips.videoanalyser.application.VideosReportFactory
 import com.boclips.videoanalyser.application.RunSearchBenchmark
+import com.boclips.videoanalyser.domain.duplicates.service.DelegatingDuplicateService
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 import org.springframework.shell.standard.ShellOption
@@ -49,6 +50,13 @@ class VideoReporting(private val videoReportFactory: VideosReportFactory) {
             @ShellOption(help = "Please specify file name") filename: String,
             @ShellOption(help = "CSV columns", defaultValue = ShellOption.NULL) columns: String?) {
         videoReportFactory.freeableVideos(filename, columns)
+    }
+
+    @ShellMethod("Generate report of soft duplicates")
+    fun duplicates(
+            @ShellOption(help = "Please specify file name") filename: String,
+            @ShellOption(help = "CSV columns", defaultValue = ShellOption.NULL) columns: String?) {
+        videoReportFactory.duplicates(filename, columns)
     }
 
     @ShellMethod("Count all videos on Boclips and/or Kaltura")
