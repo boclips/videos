@@ -1,39 +1,52 @@
 package com.boclips.videoanalyser.testsupport
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.bson.types.ObjectId
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.io.Resource
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.jdbc.JdbcTestUtils
+import org.springframework.transaction.annotation.Transactional
 
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 abstract class AbstractSpringIntegrationTest : AbstractWireMockTest() {
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
 
+    @Autowired
+    lateinit var mongoTemplate: MongoTemplate
+
+    @Value("classpath:/db/mongo/*.json")
+    lateinit var collections: Array<Resource>
+
     @Before
     fun setUp() {
-        jdbcTemplate.execute("""
-            create table if not exists metadata_orig
-                (
-                      id             int auto_increment
-                    primary key,
-                  source         varchar(45)     null,
-                  unique_id      mediumtext      null,
-                  title          mediumtext      null,
-                  description    mediumtext      null,
-                  date           date            null,
-                  duration       varchar(12)     null,
-                  reference_id   varchar(45)     null
-                );
-        """.trimIndent())
+        cleanMongo()
+    }
 
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
+    private fun cleanMongo() {
+
+        collections.forEach { collectionFile ->
+            val collection = collectionFile.filename!!.removeSuffix(".json")
+            mongoTemplate.dropCollection(collection)
+            ObjectMapper().readValue(collectionFile.file.readText(), List::class.java)
+                    .filterNotNull()
+                    .map { it as MutableMap<String, Any> }
+                    .forEach { document ->
+                        document["_id"] = ObjectId(document["_id"] as String)
+                        mongoTemplate.insert(document, collection)
+                    }
+        }
     }
 }

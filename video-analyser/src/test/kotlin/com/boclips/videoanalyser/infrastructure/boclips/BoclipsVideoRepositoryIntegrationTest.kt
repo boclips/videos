@@ -21,7 +21,7 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         metadataTestRepository.insert(id = "1", title = "great title", contentProvider = "Bloomie")
         metadataTestRepository.insert(id = "2")
 
-        assertThat(boclipsVideoRepository.getAllVideos().first().id).isEqualTo("1")
+        assertThat(boclipsVideoRepository.getAllVideos().first().id).isEqualTo(1)
         assertThat(boclipsVideoRepository.getAllVideos().first().title).isEqualTo("great title")
         assertThat(boclipsVideoRepository.getAllVideos().first().contentProvider).isEqualTo("Bloomie")
     }
@@ -52,7 +52,7 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(boclipsVideoRepository.getVideoMetadata(setOf("1", "2"))).containsExactly(
                 BoclipsVideo(
-                        id = "1",
+                        id = 1,
                         title = "great title",
                         contentProvider = "Bloomie",
                         contentProviderId = "b1",
@@ -60,7 +60,7 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay(),
                         description = "desc"
                 ),
-                BoclipsVideo(id = "2")
+                BoclipsVideo(id = 2)
         )
     }
 
@@ -79,7 +79,7 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(boclipsVideoRepository.getVideoMetadata(setOf("reference-id-1"))).containsExactly(
                 BoclipsVideo(
-                        id = "1",
+                        id = 1,
                         referenceId = "reference-id-1",
                         title = "great title",
                         contentProvider = "Bloomie",
@@ -97,9 +97,9 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         metadataTestRepository.insert(id = "2")
         metadataTestRepository.insert(id = "3")
 
-        boclipsVideoRepository.deleteVideos(setOf(BoclipsVideo(id = "1"), BoclipsVideo(id = "3")))
+        boclipsVideoRepository.deleteVideos(setOf(BoclipsVideo(id = 1), BoclipsVideo(id = 3)))
 
-        assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly("2")
+        assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly(2)
     }
 
     @Test
@@ -108,8 +108,8 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             metadataTestRepository.insert(id = "$it")
         }
 
-        boclipsVideoRepository.deleteVideos((1..100).map { BoclipsVideo(id = "$it") }.toSet())
+        boclipsVideoRepository.deleteVideos((1..100).map { BoclipsVideo(id = it) }.toSet())
 
-        assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly(*((101..150).map { "$it" }.toTypedArray()))
+        assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly(*((101..150).map { it }.toTypedArray()))
     }
 }

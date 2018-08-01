@@ -35,7 +35,7 @@ class VideoAnalysisServiceTest {
                 TestFactory.kalturaVideo(referenceId = "5")))
         whenever(boclipsVideoService.getVideoMetadata(any())).thenAnswer { invocation ->
             val set : Collection<String> = invocation.arguments[0] as Collection<String>
-            set.map { BoclipsVideo(id = it) }.toSet()
+            set.map { BoclipsVideo(id = it.toInt()) }.toSet()
         }
     }
 
@@ -47,7 +47,7 @@ class VideoAnalysisServiceTest {
 
         val faultyVideosFromKaltura = videoAnalysisService.getFaultyVideosFromKaltura()
 
-        assertThat(faultyVideosFromKaltura.map { it.id }).contains("2", "3")
+        assertThat(faultyVideosFromKaltura.map { it.id }).contains(2, 3)
     }
 
     @Test
@@ -58,34 +58,34 @@ class VideoAnalysisServiceTest {
         whenever(kalturaMediaService.getPendingMediaEntries()).thenReturn(setOf(
                 TestFactory.kalturaVideo(referenceId = "1")))
 
-        assertThat(videoAnalysisService.getNonErrorVideosFromKaltura().map { it.id }).contains("1", "2")
+        assertThat(videoAnalysisService.getNonErrorVideosFromKaltura().map { it.id }).contains(1, 2)
     }
 
     @Test
     fun getAllVideosFromBoclips() {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
-                TestFactory.boclipsVideo(id = "1"),
-                TestFactory.boclipsVideo(id = "2")))
+                TestFactory.boclipsVideo(id = 1),
+                TestFactory.boclipsVideo(id = 2)))
 
-        assertThat(videoAnalysisService.getAllVideosFromBoclips().map { it.id }).contains("1", "2")
+        assertThat(videoAnalysisService.getAllVideosFromBoclips().map { it.id }).contains(1, 2)
     }
 
     @Test
     fun getUnplayableVideos_allBoclipsVideosMinusReadyAndPending() {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
-                TestFactory.boclipsVideo(id = "1"),
-                TestFactory.boclipsVideo(id = "2"),
-                TestFactory.boclipsVideo(id = "3"),
-                TestFactory.boclipsVideo(id = "5")))
+                TestFactory.boclipsVideo(id = 1),
+                TestFactory.boclipsVideo(id = 2),
+                TestFactory.boclipsVideo(id = 3),
+                TestFactory.boclipsVideo(id = 5)))
 
-        assertThat(videoAnalysisService.getUnplayableVideos().map { it.id }).containsExactly("1")
+        assertThat(videoAnalysisService.getUnplayableVideos().map { it.id }).containsExactly(1)
     }
 
     @Test
     fun returnsDifferenceBetweenKalturaAndBoclips() {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
-                TestFactory.boclipsVideo(id = "1"),
-                TestFactory.boclipsVideo(id = "2")))
+                TestFactory.boclipsVideo(id = 1),
+                TestFactory.boclipsVideo(id = 2)))
 
         assertThat(videoAnalysisService.getRemovableKalturaVideos().map { it.referenceId }).containsExactly("3", "4")
     }
@@ -93,10 +93,10 @@ class VideoAnalysisServiceTest {
     @Test
     fun returnsPlayableVideos() {
         whenever(boclipsVideoService.getAllVideos()).thenReturn(setOf(
-                TestFactory.boclipsVideo(id = "1"),
-                TestFactory.boclipsVideo(id = "2")
+                TestFactory.boclipsVideo(id = 1),
+                TestFactory.boclipsVideo(id = 2)
         ))
 
-        assertThat(videoAnalysisService.getPlayableVideos().map { it.id }).containsExactly("2")
+        assertThat(videoAnalysisService.getPlayableVideos().map { it.id }).containsExactly(2)
     }
 }

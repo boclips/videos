@@ -3,7 +3,7 @@ package com.boclips.videoanalyser.domain.common.model
 import java.time.LocalDateTime
 
 data class BoclipsVideo(
-        val id: String,
+        val id: Int,
         val referenceId: String? = null,
         val title: String? = null,
         val contentProvider: String? = null,
@@ -12,5 +12,5 @@ data class BoclipsVideo(
         val date: LocalDateTime? = null,
         val duration: String? = null
 ) {
-    fun kalturaReferenceId() = if (referenceId.isNullOrBlank()) id else referenceId!!
+    fun kalturaReferenceId() = if (referenceId.isNullOrBlank()) "$id" else referenceId!!
 }

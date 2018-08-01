@@ -24,7 +24,7 @@ class BoclipsVideoCsvTest {
                 notes = "a note"
         )
         val boclipsVideoCsv = BoclipsVideoCsv.from(BoclipsVideo(
-                id = "1",
+                id = 1,
                 referenceId = "ref-1",
                 title = "t1",
                 description = "d1",

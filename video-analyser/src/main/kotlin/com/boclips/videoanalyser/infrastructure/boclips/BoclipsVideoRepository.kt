@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 
 
 @Repository
-class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : BoclipsVideoService {
+class BoclipsVideoRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : BoclipsVideoService {
     companion object : KLogging() {
 
         private const val FIELDS = "id, reference_id, title, source, unique_id, duration, description, date"
@@ -46,7 +46,7 @@ class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : Boc
     }
 
     override fun deleteVideos(videos: Set<BoclipsVideo>) {
-        videos.asSequence().map { it.id.toInt() }.chunked(50).toList().forEach {
+        videos.asSequence().map { it.id }.chunked(50).toList().forEach {
             jdbcTemplate.update(
                     "DELETE FROM metadata_orig WHERE id in (:ids)",
                     MapSqlParameterSource().apply { addValue("ids", it) }
@@ -60,7 +60,7 @@ class BoclipsVideoRepository(val jdbcTemplate: NamedParameterJdbcTemplate) : Boc
         val referenceId = resultSet.getString("reference_id")
 
         return BoclipsVideo(
-                id = resultSet.getInt("id").toString(),
+                id = resultSet.getInt("id"),
                 referenceId = referenceId,
                 title = resultSet.getString("title"),
                 duration = resultSet.getString("duration"),

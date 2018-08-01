@@ -1,7 +1,8 @@
 package com.boclips.videoanalyser.domain.duplicates.service
 
-import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
 import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.service.VideoRemapperService
+import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
 import com.boclips.videoanalyser.domain.duplicates.service.strategies.DuplicateStrategy
 import com.boclips.videoanalyser.infrastructure.boclips.BoclipsVideoRepository
 import com.boclips.videoanalyser.testsupport.TestFactory.Companion.boclipsVideo
@@ -24,6 +25,9 @@ class DelegatingDuplicateServiceTest {
     @Mock
     lateinit var boclipsVideoRepository: BoclipsVideoRepository
 
+    @Mock
+    lateinit var remapperService: VideoRemapperService
+
     private val allDuplicateFake = object : DuplicateStrategy {
         override fun findDuplicates(videos: Iterable<BoclipsVideo>) = setOf(Duplicate(
                 originalVideo = videos.first(),
@@ -36,7 +40,7 @@ class DelegatingDuplicateServiceTest {
         val videos = setOf(boclipsVideo())
         whenever(boclipsVideoRepository.getAllVideos()).thenReturn(videos)
 
-        DelegatingDuplicateService(setOf(strategy1, strategy2), boclipsVideoRepository).getDuplicates()
+        DelegatingDuplicateService(setOf(strategy1, strategy2), boclipsVideoRepository, remapperService).getDuplicates()
 
         verify(strategy1).findDuplicates(videos)
         verify(strategy2).findDuplicates(videos)
@@ -54,7 +58,7 @@ class DelegatingDuplicateServiceTest {
         )
         whenever(boclipsVideoRepository.getAllVideos()).thenReturn(videos)
 
-        DelegatingDuplicateService(setOf(allDuplicateFake, strategy2), boclipsVideoRepository).getDuplicates()
+        DelegatingDuplicateService(setOf(allDuplicateFake, strategy2), boclipsVideoRepository, remapperService).getDuplicates()
 
         verify(strategy2).findDuplicates(setOf(originalVideo))
     }

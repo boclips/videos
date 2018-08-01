@@ -1,8 +1,8 @@
 package com.boclips.videoanalyser.presentation
 
-import com.boclips.videoanalyser.domain.duplicates.service.DelegatingDuplicateService
-import com.boclips.videoanalyser.domain.common.service.BoclipsVideoService
 import com.boclips.videoanalyser.domain.analysis.service.VideoAnalysisService
+import com.boclips.videoanalyser.domain.common.service.BoclipsVideoService
+import com.boclips.videoanalyser.domain.duplicates.service.DelegatingDuplicateService
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 
@@ -17,7 +17,7 @@ class VideoAdministration(
     fun removeUnplayableVideos() {
         say("We'll grab existing VPCS first. It'll take a while and nothing will be deleted until you confirm.")
         val unplayableVideos = videoAnalysisService.getUnplayableVideos()
-        return if(askYesNo("We found ${unplayableVideos.size} VPCS. Do you want to PERMANENTLY remove them?")) {
+        return if (askYesNo("We found ${unplayableVideos.size} VPCS. Do you want to PERMANENTLY remove them?")) {
             say("Removing VPCS, hold on tight \uD83D\uDCA3")
             boclipsVideoService.deleteVideos(unplayableVideos)
             say("Success, Boclips is VPCS-free.")
@@ -31,9 +31,9 @@ class VideoAdministration(
         say("Searching for duplicates...")
         val duplicates = duplicateService.getDuplicates()
         say("We found ${duplicates.size} entries with duplicates.")
-        return if(askYesNo("Do you want to remove ${duplicates.flatMap { it.duplicates }.size} videos and remap basket and playlist to the original version?")) {
+        return if (askYesNo("Do you want to remove ${duplicates.flatMap { it.duplicates }.size} videos and remap basket and playlist to the original version?")) {
             say("Removing duplicates, hold on tight \uD83D\uDCA3")
-            TODO("we never implemented this shit")
+            duplicateService.deleteDuplicates()
             say("Success, Boclips is duplicates-free.")
         } else {
             say("Gotya, you keep your crap \uD83D\uDCA9")

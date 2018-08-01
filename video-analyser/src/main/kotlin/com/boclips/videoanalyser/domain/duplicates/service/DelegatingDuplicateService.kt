@@ -1,6 +1,7 @@
 package com.boclips.videoanalyser.domain.duplicates.service
 
 import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.common.service.VideoRemapperService
 import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
 import com.boclips.videoanalyser.domain.duplicates.service.strategies.DuplicateStrategy
 import com.boclips.videoanalyser.infrastructure.boclips.BoclipsVideoRepository
@@ -9,7 +10,8 @@ import org.springframework.stereotype.Service
 @Service
 class DelegatingDuplicateService(
         val strategies: Set<DuplicateStrategy>,
-        val boclipsVideoRepository: BoclipsVideoRepository
+        val boclipsVideoRepository: BoclipsVideoRepository,
+        val remapperService: VideoRemapperService
 ) : DuplicateService {
     override fun getDuplicates(): Set<Duplicate> {
         val videos = boclipsVideoRepository.getAllVideos()
@@ -22,14 +24,11 @@ class DelegatingDuplicateService(
         }.toSet()
     }
 
-    override fun deleteDuplicates() {
-        /*
-        (delegate on repo)
-        remap videodescriptors(reference_id=video_id)
-        remap orderlines(asset_id=video_id)
+    override fun deleteDuplicates() = getDuplicates().let { duplicates ->
+        duplicates.forEach { remapperService.remapBasketsPlaylistsAndCollections(it) }
 
-        remove videos (delgate on repo)
-        */
+        val allDuplicates = duplicates.flatMap { it.duplicates }.toSet()
+        boclipsVideoRepository.deleteVideos(allDuplicates)
     }
 
 }

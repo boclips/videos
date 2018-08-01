@@ -52,6 +52,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile "org.springframework.boot:spring-boot-starter-aop"
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
     compile 'org.springframework.retry:spring-retry:1.2.2.RELEASE'
     compile 'org.springframework.shell:spring-shell-starter:2.0.1.RELEASE'
 
@@ -67,5 +68,8 @@ dependencies {
     testCompile 'org.awaitility:awaitility:3.1.0'
     testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
     testCompile 'com.h2database:h2'
+    testCompile 'org.flywaydb:flyway-core'
     testCompile "com.github.tomakehurst:wiremock-standalone:2.18.0"
+    testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+
 }

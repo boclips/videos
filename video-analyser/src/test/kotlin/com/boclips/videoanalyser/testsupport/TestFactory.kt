@@ -9,7 +9,7 @@ import java.util.*
 class TestFactory {
     companion object {
         fun boclipsVideo(
-                id: String = UUID.randomUUID().toString(),
+                id: Int = Math.random().toInt(),
                 contentProviderId: String? = null,
                 contentProvider: String? = "Bloomie",
                 title: String? = "Some great title",

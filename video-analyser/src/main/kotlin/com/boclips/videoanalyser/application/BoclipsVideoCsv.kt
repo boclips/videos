@@ -27,7 +27,7 @@ data class BoclipsVideoCsv(
 ) {
     companion object {
         fun from(video: BoclipsVideo, notes: String? = null) = BoclipsVideoCsv().apply {
-            id = video.id
+            id = "${video.id}"
             referenceId = video.referenceId
             title = video.title
             provider = video.contentProvider
