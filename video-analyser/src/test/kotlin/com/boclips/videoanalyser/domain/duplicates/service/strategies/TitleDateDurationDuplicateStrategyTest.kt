@@ -47,4 +47,27 @@ class TitleDateDurationDuplicateStrategyTest {
 
         Assertions.assertThat(output).isEmpty()
     }
+
+    @Test
+    fun `WHEN blacklisted`() {
+        val now = LocalDateTime.now()
+        val originalVideo = TestFactory.boclipsVideo(title = "duplicate", contentProvider = "cp1", date = now, duration = "10:00")
+        val videos = listOf(
+                originalVideo.copy(contentProvider = "1 Minute in the Museum"),
+                originalVideo.copy(contentProvider = "Atmosphaeres"),
+                originalVideo.copy(contentProvider = "Bridgeman"),
+                originalVideo.copy(contentProvider = "EngVid"),
+                originalVideo.copy(contentProvider = "Intelecom Learning"),
+
+                originalVideo.copy(contentProvider = "1 Minute in the Museum"),
+                originalVideo.copy(contentProvider = "Atmosphaeres"),
+                originalVideo.copy(contentProvider = "Bridgeman"),
+                originalVideo.copy(contentProvider = "EngVid"),
+                originalVideo.copy(contentProvider = "Intelecom Learning")
+        )
+
+        val output: Set<Duplicate> = subject.findDuplicates(videos)
+
+        Assertions.assertThat(output).hasSize(0)
+    }
 }

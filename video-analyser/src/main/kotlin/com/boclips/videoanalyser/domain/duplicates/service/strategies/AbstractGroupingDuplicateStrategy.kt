@@ -8,10 +8,12 @@ import com.boclips.videoanalyser.domain.duplicates.model.Duplicate
  */
 abstract class AbstractGroupingDuplicateStrategy : DuplicateStrategy {
 
-    abstract fun getGroupingKey(video: BoclipsVideo) : Any
+    abstract fun getGroupingKey(video: BoclipsVideo): Any
+    open fun prefilter(video: BoclipsVideo) = true
 
     final override fun findDuplicates(videos: Iterable<BoclipsVideo>) = videos
-            .groupBy{video -> getGroupingKey(video)}
+            .filter { prefilter(it) }
+            .groupBy { video -> getGroupingKey(video) }
             .filter { it.value.size > 1 }
             .map {
                 Duplicate(

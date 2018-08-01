@@ -6,6 +6,17 @@ import java.time.LocalDateTime
 
 @Component
 class TitleDateDurationDuplicateStrategy : AbstractGroupingDuplicateStrategy() {
+
+    override fun prefilter(video: BoclipsVideo): Boolean {
+        return !setOf(
+                "1 Minute in the Museum",
+                "Atmosphaeres",
+                "Bridgeman",
+                "EngVid",
+                "Intelecom Learning"
+        ).contains(video.contentProvider )
+    }
+
     override fun getGroupingKey(video: BoclipsVideo) =
             Key(
                     title = video.title,
