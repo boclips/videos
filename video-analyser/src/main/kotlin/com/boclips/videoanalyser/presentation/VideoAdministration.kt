@@ -33,7 +33,7 @@ class VideoAdministration(
         say("We found ${duplicates.size} entries with duplicates.")
         return if (askYesNo("Do you want to remove ${duplicates.flatMap { it.duplicates }.size} videos and remap basket and playlist to the original version?")) {
             say("Removing duplicates, hold on tight \uD83D\uDCA3")
-            duplicateService.deleteDuplicates()
+            duplicateService.deleteDuplicates(duplicates)
             say("Success, Boclips is duplicates-free.")
         } else {
             say("Gotya, you keep your crap \uD83D\uDCA9")

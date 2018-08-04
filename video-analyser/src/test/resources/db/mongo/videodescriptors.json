@@ -11,6 +11,20 @@
     },
     "__v": 0
   },
+
+  {
+    "_id": "5ad70c633fb790536abf5839",
+    "date_updated": "2018-04-18T09:14:11.239Z",
+    "date_created": "2018-04-18T09:14:11.239Z",
+    "reference_id": 2439228,
+    "uuid": "4a893765-2490-4e1f-b983-1b2710c60992",
+    "connection": {
+      "item": "5ad4a3e3e1ce3071d71edc1a",
+      "_refModel": "Playlist"
+    },
+    "__v": 0
+  },
+
   {
     "_id": "5ad4a49c3fb790536abe796a",
     "date_updated": "2018-04-16T13:26:52.288Z",

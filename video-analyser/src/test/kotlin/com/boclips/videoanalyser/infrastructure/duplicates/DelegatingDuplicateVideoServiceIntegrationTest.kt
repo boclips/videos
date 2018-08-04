@@ -36,11 +36,15 @@ class DelegatingDuplicateVideoServiceIntegrationTest : AbstractSpringIntegration
         assertThat(jdbcTemplate.queryForList("select id from metadata_orig where id=2516942 or id=2439228").map { it["id"] })
                 .containsExactlyInAnyOrder(2439228, 2516942)
 
-        subject.deleteDuplicates()
+        subject.deleteDuplicates(subject.getDuplicates())
 
         assertThat(jdbcTemplate.queryForList("select id from metadata_orig where id=2516942 or id=2439228").map { it["id"] })
                 .containsExactly(2439228)
         val baskets = mongoTemplate.findAll<Map<String, Any>>("orderlines")
         assertThat(baskets.map { it["asset_id"] }).containsExactly(2439228, 2439228)
+        val videodescriptors = mongoTemplate.findAll<Map<String, Any>>("videodescriptors")
+        assertThat(videodescriptors.map { it["reference_id"] }).containsExactly(2439228, 2439228)
+        assertThat(videodescriptors.map { (it["connection"] as Map<String, Any>)["item"] })
+                .containsExactlyInAnyOrder("5ad4a3e3e1ce3071d71edc1c", "5ad4a3e3e1ce3071d71edc1a")
     }
 }

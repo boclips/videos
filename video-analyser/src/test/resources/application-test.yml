@@ -13,3 +13,7 @@ spring:
     exclude: >
       org.springframework.shell.jline.JLineShellAutoConfiguration,
       org.springframework.shell.standard.commands.StandardCommandsAutoConfiguration
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG

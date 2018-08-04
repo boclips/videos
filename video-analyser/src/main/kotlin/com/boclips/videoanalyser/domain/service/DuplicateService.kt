@@ -4,5 +4,5 @@ import com.boclips.videoanalyser.domain.model.DuplicateVideo
 
 interface DuplicateService {
     fun getDuplicates(): Set<DuplicateVideo>
-    fun deleteDuplicates()
+    fun deleteDuplicates(duplicates: Set<DuplicateVideo>)
 }
