@@ -1,7 +1,9 @@
 package com.boclips.videoanalyser.configuration
 
-import com.boclips.videoanalyser.domain.analysis.service.VideoAnalysisService
-import com.boclips.videoanalyser.infrastructure.boclips.BoclipsVideoRepository
+import com.boclips.videoanalyser.domain.service.DuplicateService
+import com.boclips.videoanalyser.domain.service.VideoAnalysisService
+import com.boclips.videoanalyser.infrastructure.BoclipsVideoRepository
+import com.boclips.videoanalyser.infrastructure.duplicates.DelegatingDuplicateService
 import com.boclips.videoanalyser.infrastructure.kaltura.PagedKalturaMediaService
 import com.boclips.videoanalyser.infrastructure.kaltura.PaginationOrchestrator
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaMediaClient
@@ -22,4 +24,9 @@ class ApplicationConfig {
     fun paginationOrchestrator(kalturaMediaClient: KalturaMediaClient): PaginationOrchestrator {
         return PaginationOrchestrator(kalturaMediaClient, 10000, 500)
     }
+
+//    @Bean
+//    fun duplicateService(duplicateService: DelegatingDuplicateService): DuplicateService {
+//        return duplicateService
+//    }
 }

@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.kaltura
 
-import com.boclips.videoanalyser.domain.common.model.MediaFilter
-import com.boclips.videoanalyser.domain.common.model.MediaFilterType
+import com.boclips.videoanalyser.domain.model.MediaFilter
+import com.boclips.videoanalyser.domain.model.MediaFilterType
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaMediaClient
 import com.nhaarman.mockito_kotlin.check
 import com.nhaarman.mockito_kotlin.times

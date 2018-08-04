@@ -1,9 +1,9 @@
 package com.boclips.videoanalyser.infrastructure.kaltura
 
-import com.boclips.videoanalyser.domain.common.model.KalturaVideo
-import com.boclips.videoanalyser.domain.common.model.MediaFilter
-import com.boclips.videoanalyser.domain.common.model.MediaFilterType
-import com.boclips.videoanalyser.domain.common.service.KalturaMediaService
+import com.boclips.videoanalyser.domain.model.KalturaVideo
+import com.boclips.videoanalyser.domain.model.MediaFilter
+import com.boclips.videoanalyser.domain.model.MediaFilterType
+import com.boclips.videoanalyser.domain.service.KalturaMediaService
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaMediaClient
 import mu.KLogging
 import org.springframework.stereotype.Component

@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.kaltura.client
 
-import com.boclips.videoanalyser.domain.common.model.MediaFilter
-import com.boclips.videoanalyser.domain.common.model.MediaFilterType
+import com.boclips.videoanalyser.domain.model.MediaFilter
+import com.boclips.videoanalyser.domain.model.MediaFilterType
 import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.loadFixture
 import com.github.tomakehurst.wiremock.client.WireMock

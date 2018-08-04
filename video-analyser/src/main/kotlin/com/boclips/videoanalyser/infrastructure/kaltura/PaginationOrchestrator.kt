@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.kaltura
 
-import com.boclips.videoanalyser.domain.common.model.MediaFilter
-import com.boclips.videoanalyser.domain.common.model.MediaFilterType
+import com.boclips.videoanalyser.domain.model.MediaFilter
+import com.boclips.videoanalyser.domain.model.MediaFilterType
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaMediaClient
 import mu.KLogging
 import org.springframework.stereotype.Component
@@ -40,7 +40,7 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
             val result = fetchOrSplit(filters, dateStart, dateStart + mid) + fetchOrSplit(filters, dateStart + mid, dateEnd)
 
             val uniqueResults = result.map { it.id }.toSet()
-            if(uniqueResults.size.toLong() < numberOfEntriesForInterval) {
+            if (uniqueResults.size.toLong() < numberOfEntriesForInterval) {
                 throw Error("Expected $numberOfEntriesForInterval in time range ($dateStart until $dateEnd) but retrieved ${uniqueResults.size} (after the split)")
             }
 
@@ -52,7 +52,7 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
                     "${Instant.ofEpochSecond(dateEnd).atZone(ZoneOffset.UTC).toOffsetDateTime()}")
             val result = fetchPages(filters + timeFilters)
             val uniqueResults = result.map { it.id }.toSet()
-            if(uniqueResults.size.toLong() < numberOfEntriesForInterval) {
+            if (uniqueResults.size.toLong() < numberOfEntriesForInterval) {
                 logger.error("Expected $numberOfEntriesForInterval in time range ($dateStart until $dateEnd) but retrieved ${uniqueResults.size}")
             }
             logger.info("Results from time range ($dateStart until $dateEnd) have the expected size $numberOfEntriesForInterval")
@@ -72,7 +72,7 @@ class PaginationOrchestrator(private val kalturaMediaClient: KalturaMediaClient,
         val numberOfRequests = Math.ceil(count.toDouble() / pageSize.toDouble()).toInt()
         logger.info("Paging request ($numberOfRequests pages) to fetch $count entries")
 
-        return IntStream.range(0, numberOfRequests).map{ it + 1 }.mapToObj { it }.parallel()
+        return IntStream.range(0, numberOfRequests).map { it + 1 }.mapToObj { it }.parallel()
                 .flatMap { i ->
                     logger.info("Fetching page $i with filters $filters")
                     val result = kalturaMediaClient.fetch(pageIndex = i, filters = filters)

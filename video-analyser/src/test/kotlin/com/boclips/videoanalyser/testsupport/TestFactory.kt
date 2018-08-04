@@ -1,10 +1,8 @@
 package com.boclips.videoanalyser.testsupport
 
-import com.boclips.videoanalyser.domain.common.model.BoclipsVideo
-import com.boclips.videoanalyser.domain.common.model.KalturaVideo
-import java.time.Duration
+import com.boclips.videoanalyser.domain.model.BoclipsVideo
+import com.boclips.videoanalyser.domain.model.KalturaVideo
 import java.time.LocalDateTime
-import java.util.*
 
 class TestFactory {
     companion object {

@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.jdbc.JdbcTestUtils
 import org.springframework.transaction.annotation.Transactional
 
 
@@ -36,7 +35,6 @@ abstract class AbstractSpringIntegrationTest : AbstractWireMockTest() {
     }
 
     private fun cleanMongo() {
-
         collections.forEach { collectionFile ->
             val collection = collectionFile.filename!!.removeSuffix(".json")
             mongoTemplate.dropCollection(collection)

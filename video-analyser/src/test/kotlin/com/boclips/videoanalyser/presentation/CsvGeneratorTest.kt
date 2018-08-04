@@ -1,9 +1,9 @@
 package com.boclips.videoanalyser.presentation
 
-import com.boclips.videoanalyser.application.BoclipsVideoCsv
-import com.boclips.videoanalyser.application.CsvGenerator
-import com.boclips.videoanalyser.application.BoclipsVideoCsv.Companion.CONTENT_PROVIDER
-import com.boclips.videoanalyser.application.BoclipsVideoCsv.Companion.CONTENT_PROVIDER_ID
+import com.boclips.videoanalyser.application.csv.BoclipsVideoCsv
+import com.boclips.videoanalyser.application.csv.CsvGenerator
+import com.boclips.videoanalyser.application.csv.BoclipsVideoCsv.Companion.CONTENT_PROVIDER
+import com.boclips.videoanalyser.application.csv.BoclipsVideoCsv.Companion.CONTENT_PROVIDER_ID
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

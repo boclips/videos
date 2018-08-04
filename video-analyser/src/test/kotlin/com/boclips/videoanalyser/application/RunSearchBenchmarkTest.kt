@@ -1,8 +1,8 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.domain.search_benchmark.domain.SearchBenchmarkReport
-import com.boclips.videoanalyser.domain.search_benchmark.service.SearchBenchmarkService
-import com.boclips.videoanalyser.domain.search_benchmark.domain.SearchExpectation
+import com.boclips.videoanalyser.domain.model.search.SearchBenchmarkReport
+import com.boclips.videoanalyser.domain.service.search.SearchBenchmarkService
+import com.boclips.videoanalyser.domain.model.search.SearchExpectation
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever

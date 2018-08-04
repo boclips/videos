@@ -1,6 +1,7 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.domain.search_benchmark.service.SearchBenchmarkService
+import com.boclips.videoanalyser.application.csv.ExpectationsCsvReader
+import com.boclips.videoanalyser.domain.service.search.SearchBenchmarkService
 import org.springframework.stereotype.Service
 import java.io.FileInputStream
 

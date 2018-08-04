@@ -1,15 +1,15 @@
 package com.boclips.videoanalyser.presentation
 
-import com.boclips.videoanalyser.domain.analysis.service.VideoAnalysisService
-import com.boclips.videoanalyser.domain.common.service.BoclipsVideoService
-import com.boclips.videoanalyser.domain.duplicates.service.DelegatingDuplicateService
+import com.boclips.videoanalyser.domain.service.BoclipsVideoService
+import com.boclips.videoanalyser.domain.service.DuplicateService
+import com.boclips.videoanalyser.domain.service.VideoAnalysisService
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 
 @ShellComponent
 class VideoAdministration(
         private val videoAnalysisService: VideoAnalysisService,
-        private val duplicateService: DelegatingDuplicateService,
+        private val duplicateService: DuplicateService,
         private val boclipsVideoService: BoclipsVideoService
 ) {
 
