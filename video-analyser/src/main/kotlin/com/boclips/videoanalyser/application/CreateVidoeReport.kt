@@ -12,7 +12,6 @@ class CreateVidoeReport(
         private val videoAnalysisService: VideoAnalysisService,
         private val duplicateService: DelegatingDuplicateService
 ) {
-
     private val csvGenerator = CsvGenerator()
 
     fun faultyVideosKaltura(filename: String, columns: String?) {
