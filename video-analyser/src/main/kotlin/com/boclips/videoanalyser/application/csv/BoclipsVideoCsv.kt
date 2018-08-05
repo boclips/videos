@@ -10,6 +10,8 @@ data class BoclipsVideoCsv(
         var id: String? = null,
         @JsonProperty(value = REFERENCE_ID)
         var referenceId: String? = null,
+        @JsonProperty(value = KALTURA_DOWNLOAD_URL)
+        var kalturaDownloadUrl: String? = null,
         @JsonProperty(value = TITLE)
         var title: String? = null,
         @JsonProperty(value = CONTENT_PROVIDER)
@@ -41,10 +43,12 @@ data class BoclipsVideoCsv(
         fun from(video: KalturaVideo) = BoclipsVideoCsv().apply {
             id = video.id
             referenceId = video.referenceId
+            kalturaDownloadUrl = video.downloadUrl
         }
 
         const val ID = "Id"
         const val REFERENCE_ID = "Reference Id"
+        const val KALTURA_DOWNLOAD_URL = "Kaltura Download"
         const val TITLE = "Title"
         const val CONTENT_PROVIDER = "Content Provider"
         const val CONTENT_PROVIDER_ID = "Content Provider Id"

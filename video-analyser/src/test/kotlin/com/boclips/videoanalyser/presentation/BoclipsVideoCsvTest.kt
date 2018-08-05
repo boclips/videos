@@ -46,11 +46,13 @@ class BoclipsVideoCsvTest {
                 description = null,
                 provider = null,
                 duration = null,
-                date = null
+                date = null,
+                kalturaDownloadUrl = "http://kalatura-download.com/video9201"
         )
         val boclipsVideoCsv = BoclipsVideoCsv.from(KalturaVideo(
                 id = "1",
-                referenceId = "ref-1"
+                referenceId = "ref-1",
+                downloadUrl = "http://kalatura-download.com/video9201"
         ))
 
         assertThat(boclipsVideoCsv).isEqualTo(expectedCsv)

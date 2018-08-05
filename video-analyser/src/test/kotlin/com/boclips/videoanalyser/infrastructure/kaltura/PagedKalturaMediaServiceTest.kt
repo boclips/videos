@@ -41,7 +41,7 @@ class PagedKalturaMediaServiceTest {
 
     @Test
     fun getReadyMediaEntries_filtersOutMediaItemWithNullReferenceId() {
-        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0")))
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0", downloadUrl = "something.com/download")))
 
         val readyMediaEntries = kalturaMediaService.getReadyMediaEntries()
 
@@ -61,7 +61,7 @@ class PagedKalturaMediaServiceTest {
 
     @Test
     fun getPendingMediaEntries_filtersOutMediaItemWithNullReferenceIc() {
-        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0")))
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0", downloadUrl = "something.com/download")))
 
         val readyMediaEntries = kalturaMediaService.getPendingMediaEntries()
 
@@ -70,12 +70,13 @@ class PagedKalturaMediaServiceTest {
 
     @Test
     fun getReadyMediaEntries_returnsKalturaVideos() {
-        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = "9", id = "0")))
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = "9", id = "0", downloadUrl = "something.com/url")))
 
         val kalturaVideos = kalturaMediaService.getReadyMediaEntries()
 
         assertThat(kalturaVideos.first().referenceId).isEqualTo("9")
         assertThat(kalturaVideos.first().id).isEqualTo("0")
+        assertThat(kalturaVideos.first().downloadUrl).isEqualTo("something.com/url")
     }
 
     @Test
@@ -91,17 +92,18 @@ class PagedKalturaMediaServiceTest {
 
     @Test
     fun getFaultyMediaEntries_returnsKalturaVideos() {
-        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = "9", id = "0")))
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = "9", id = "0", downloadUrl = "something.com/url")))
 
         val kalturaVideos = kalturaMediaService.getFaultyMediaEntries()
 
         assertThat(kalturaVideos.first().referenceId).isEqualTo("9")
         assertThat(kalturaVideos.first().id).isEqualTo("0")
+        assertThat(kalturaVideos.first().downloadUrl).isEqualTo("something.com/url")
     }
 
     @Test
     fun getFaultyMediaEntries_filtersOutNullReferenceId() {
-        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0")))
+        whenever(mockPagingationOrchestrator.fetchAll(anyList())).thenReturn(listOf(MediaItem(referenceId = null, id = "0", downloadUrl = "something.com/url")))
 
         val kalturaVideos = kalturaMediaService.getFaultyMediaEntries()
 

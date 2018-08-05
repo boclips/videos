@@ -12,9 +12,7 @@ import java.sql.ResultSet
 @Repository
 class BoclipsVideoRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : BoclipsVideoService {
     companion object : KLogging() {
-
         private const val FIELDS = "id, reference_id, title, source, unique_id, duration, description, date"
-
     }
 
     override fun getVideoMetadata(ids: Collection<String>): Set<BoclipsVideo> {

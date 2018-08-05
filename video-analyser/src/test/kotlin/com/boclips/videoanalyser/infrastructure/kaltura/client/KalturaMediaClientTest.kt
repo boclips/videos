@@ -27,9 +27,11 @@ class KalturaMediaClientTest : AbstractSpringIntegrationTest() {
 
         assertThat(mediaEntries[0].referenceId).isEqualTo("1")
         assertThat(mediaEntries[0].id).isEqualTo("1_27l1ue65")
+        assertThat(mediaEntries[0].downloadUrl).isEqualTo("https://cdnapisec.kaltura.com/p/2394162/sp/239416200/playManifest/entryId/1_27l1ue65/format/download/protocol/https/flavorParamIds/0")
 
         assertThat(mediaEntries[1].referenceId).isEqualTo("2")
         assertThat(mediaEntries[1].id).isEqualTo("1_antpp8un")
+        assertThat(mediaEntries[1].downloadUrl).isEqualTo("https://cdnapisec.kaltura.com/p/2394162/sp/239416200/playManifest/entryId/1_antpp8un/format/download/protocol/https/flavorParamIds/0")
     }
 
     @Test

@@ -51,7 +51,7 @@ class PagedKalturaMediaService(
                         true
                     }
                 }
-                .map { KalturaVideo(referenceId = it.referenceId!!, id = it.id) }
+                .map { KalturaVideo(referenceId = it.referenceId!!, id = it.id, downloadUrl = it.downloadUrl) }
                 .toSet()
     }
 }
