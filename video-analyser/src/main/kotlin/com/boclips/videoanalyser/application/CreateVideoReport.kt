@@ -2,15 +2,15 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.videoanalyser.application.csv.BoclipsVideoCsv
 import com.boclips.videoanalyser.application.csv.CsvGenerator
+import com.boclips.videoanalyser.domain.service.DuplicateService
 import com.boclips.videoanalyser.domain.service.VideoAnalysisService
-import com.boclips.videoanalyser.infrastructure.duplicates.DelegatingDuplicateService
 import org.springframework.stereotype.Service
 import java.io.File
 
 @Service
-class CreateVidoeReport(
+class CreateVideoReport(
         private val videoAnalysisService: VideoAnalysisService,
-        private val duplicateService: DelegatingDuplicateService
+        private val duplicateService: DuplicateService
 ) {
     private val csvGenerator = CsvGenerator()
 

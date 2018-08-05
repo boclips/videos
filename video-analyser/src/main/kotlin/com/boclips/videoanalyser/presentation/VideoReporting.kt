@@ -1,12 +1,12 @@
 package com.boclips.videoanalyser.presentation
 
-import com.boclips.videoanalyser.application.CreateVidoeReport
+import com.boclips.videoanalyser.application.CreateVideoReport
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 import org.springframework.shell.standard.ShellOption
 
 @ShellComponent
-class VideoReporting(private val videoReport: CreateVidoeReport) {
+class VideoReporting(private val videoReport: CreateVideoReport) {
 
     @ShellMethod("Generate report with all faulty videos on Kaltura")
     fun faultyVideosKaltura(
