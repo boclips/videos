@@ -67,7 +67,8 @@ class CreateVideoReport(
     private fun writeVideosToFile(filename: String, videos: List<BoclipsVideoCsv>, columns: String?) {
         println("Writing report to file $filename")
         val file = File(filename)
-        csvGenerator.writeCsv(file, videos, columns?.split(",")?.toSet() ?: BoclipsVideoCsv.ALL_COLUMNS)
+        val headerColumns = columns?.split(",")?.toSet() ?: BoclipsVideoCsv.ALL_COLUMNS
+        csvGenerator.writeCsv(file, videos, headerColumns)
         println("Success! ${file.absolutePath} contains ${videos.size} of videos")
     }
 }

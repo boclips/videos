@@ -34,7 +34,7 @@ class VideoAnalysisServiceTest {
         whenever(kalturaMediaService.getPendingMediaEntries()).thenReturn(setOf(
                 TestFactory.kalturaVideo(referenceId = "5")))
         whenever(boclipsVideoService.getVideoMetadata(any())).thenAnswer { invocation ->
-            val set : Collection<String> = invocation.arguments[0] as Collection<String>
+            val set: Collection<String> = invocation.arguments[0] as Collection<String>
             set.map { BoclipsVideo(id = it.toInt()) }.toSet()
         }
     }
@@ -97,6 +97,7 @@ class VideoAnalysisServiceTest {
                 TestFactory.boclipsVideo(id = 2)
         ))
 
-        assertThat(videoAnalysisService.getPlayableVideos().map { it.id }).containsExactly(2)
+        assertThat(videoAnalysisService.getPlayableVideos().map { it.boclipsVideo.id }).containsExactly(2)
+        assertThat(videoAnalysisService.getPlayableVideos().map { it.kalturaVideo.referenceId }).containsExactly("2")
     }
 }

@@ -2,6 +2,7 @@ package com.boclips.videoanalyser.application.csv
 
 import com.boclips.videoanalyser.domain.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.model.KalturaVideo
+import com.boclips.videoanalyser.domain.model.PlayableVideo
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 
@@ -46,9 +47,21 @@ data class BoclipsVideoCsv(
             kalturaDownloadUrl = video.downloadUrl
         }
 
+        fun from(video: PlayableVideo) = BoclipsVideoCsv().apply {
+            id = "${video.boclipsVideo.id}"
+            referenceId = video.boclipsVideo.referenceId
+            title = video.boclipsVideo.title
+            provider = video.boclipsVideo.contentProvider
+            providerId = video.boclipsVideo.contentProviderId
+            description = video.boclipsVideo.description
+            date = video.boclipsVideo.date
+            duration = video.boclipsVideo.duration
+            kalturaDownloadUrl = video.kalturaVideo.downloadUrl
+        }
+
         const val ID = "Id"
         const val REFERENCE_ID = "Reference Id"
-        const val KALTURA_DOWNLOAD_URL = "Kaltura Download"
+        const val KALTURA_DOWNLOAD_URL = "Download URL"
         const val TITLE = "Title"
         const val CONTENT_PROVIDER = "Content Provider"
         const val CONTENT_PROVIDER_ID = "Content Provider Id"
@@ -57,7 +70,7 @@ data class BoclipsVideoCsv(
         const val DURATION = "Duration"
         const val NOTES = "Notes"
 
-        val ALL_COLUMNS = setOf(ID, REFERENCE_ID, TITLE, CONTENT_PROVIDER, CONTENT_PROVIDER_ID, DESCRIPTION, DATE, DURATION, NOTES)
+        val ALL_COLUMNS = setOf(ID, REFERENCE_ID, TITLE, CONTENT_PROVIDER, CONTENT_PROVIDER_ID, DESCRIPTION, DATE, DURATION, NOTES, KALTURA_DOWNLOAD_URL)
     }
 
 }

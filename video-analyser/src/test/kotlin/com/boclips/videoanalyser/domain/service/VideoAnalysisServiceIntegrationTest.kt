@@ -50,7 +50,8 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val playableVideos = videoAnalysisService.getPlayableVideos()
 
         assertThat(playableVideos).hasSize(2)
-        assertThat(playableVideos.map { it.kalturaReferenceId() }).contains("1", "2")
+        assertThat(playableVideos.map { it.boclipsVideo.kalturaReferenceId() }).contains("1", "2")
+        assertThat(playableVideos.map { it.kalturaVideo.referenceId }).contains("1", "2")
     }
 
     @Test

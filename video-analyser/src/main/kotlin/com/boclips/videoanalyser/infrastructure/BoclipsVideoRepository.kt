@@ -35,7 +35,6 @@ class BoclipsVideoRepository(private val jdbcTemplate: NamedParameterJdbcTemplat
                 mapOf("ids" to ids),
                 this::mapResultsToBoclipsVideos)
                 .toSet()
-
     }
 
     override fun countAllVideos() =
