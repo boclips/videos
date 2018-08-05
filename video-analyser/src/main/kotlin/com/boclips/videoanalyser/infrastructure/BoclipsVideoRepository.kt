@@ -16,6 +16,10 @@ class BoclipsVideoRepository(private val jdbcTemplate: NamedParameterJdbcTemplat
     }
 
     override fun getVideoMetadata(ids: Collection<String>): Set<BoclipsVideo> {
+        if (ids.isEmpty()) {
+            return emptySet()
+        }
+
         val numericIds = ids.filter { it.toIntOrNull() != null }
         val output = mutableSetOf<BoclipsVideo>()
         if (numericIds.isNotEmpty()) {
