@@ -20,7 +20,7 @@ spec:
         image: eu.gcr.io/boclips-prod/boclips/video-service:${VERSION}
         ports:
         - name: http
-          containerPort: 5000
+          containerPort: 8080
           protocol: TCP
         envFrom:
         - secretRef:
