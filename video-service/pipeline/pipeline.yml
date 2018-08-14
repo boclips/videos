@@ -1,0 +1,112 @@
+---
+jobs:
+- name: build
+  plan:
+  - get: source
+    trigger: true
+  - put: version
+    params:
+      bump: patch
+  - task: build-and-test
+    file: source/video-service/pipeline/tasks/build.yml
+  - put: container-registry
+    params:
+      build: dist
+      additional_tags: version/version
+      tag_as_latest: true
+
+- name: deploy-staging
+  plan:
+  - get: version
+    passed: [build]
+    trigger: true
+  - get: source
+    passed: [build]
+  - get: infrastructure
+  - task: render-manifests
+    file: infrastructure/concourse/tasks/render-manifests.yml
+    params:
+      DOMAIN: staging-boclips.com
+      INPUT_MANIFESTS_DIR: source/video-service/k8s
+  - put: staging
+    params:
+      kubectl: apply -f rendered_manifests/all.yaml
+      wait_until_ready_selector: app=video-service
+
+- name: deploy-production
+  plan:
+  - get: version
+    passed: [deploy-staging]
+  - get: source
+    passed: [deploy-staging]
+  - get: infrastructure
+  - task: render-manifests
+    file: infrastructure/concourse/tasks/render-manifests.yml
+    params:
+      DOMAIN: boclips.com
+      INPUT_MANIFESTS_DIR: source/video-service/k8s
+  - put: production
+    params:
+      kubectl: apply -f rendered_manifests/all.yaml
+      wait_until_ready_selector: app=video-service
+
+resources:
+- name: source
+  type: git
+  source:
+    uri: git@github.com:knowledgemotion/videos.git
+    branch: master
+    private_key: {{videos-repo-key}}
+
+- name: infrastructure
+  type: git
+  source:
+    branch: master
+    private_key: {{infrastructure-repo-key}}
+    uri: git@github.com:knowledgemotion/infrastructure.git
+
+- name: version
+  type: semver
+  source:
+    initial_version: "0.0.1"
+    driver: git
+    uri: git@github.com:knowledgemotion/versions.git
+    branch: master
+    file: video-service
+    private_key: {{versions-repo-key}}
+
+- name: container-registry
+  type: docker-image
+  source:
+    repository: eu.gcr.io/boclips-prod/boclips/video-service
+    username: _json_key
+    password: {{gcr-key}}
+
+- name: staging
+  type: kubernetes
+  source:
+    server: {{kubernetes-server}}
+    namespace: staging
+    token: {{kubernetes-staging-token}}
+    certificate_authority: {{kubernetes-staging-ca}}
+
+- name: production
+  type: kubernetes
+  source:
+    server: {{kubernetes-server}}
+    namespace: production
+    token: {{kubernetes-production-token}}
+    certificate_authority: {{kubernetes-production-ca}}
+
+resource_types:
+- name: maven-resource
+  type: docker-image
+  source:
+    repository: pivotalpa/maven-resource
+    tag: latest
+
+- name: kubernetes
+  type: docker-image
+  source:
+    repository: zlabjp/kubernetes-resource
+    tag: "1.11"

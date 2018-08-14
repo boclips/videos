@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: java
+    tag: 'latest'
+
+inputs:
+  - name: source
+  - name: version
+
+outputs:
+  - name: dist
+
+caches:
+  - path: source/video-service/pipeline/scripts/.gradle
+
+run:
+  path: source/video-service/pipeline/scripts/build.sh
