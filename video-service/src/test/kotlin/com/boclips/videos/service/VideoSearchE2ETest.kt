@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic
 import pl.allegro.tech.embeddedelasticsearch.IndexSettings
 import pl.allegro.tech.embeddedelasticsearch.PopularProperties
+import java.util.concurrent.TimeUnit
 
 
 @RunWith(SpringRunner::class)
@@ -46,6 +47,7 @@ class VideoSearchE2ETest {
                 .withElasticVersion("6.3.2")
                 .withSetting(PopularProperties.HTTP_PORT, elasticSearchProperties.port)
                 .withIndex("videos", IndexSettings.builder().build())
+                .withStartTimeout(2, TimeUnit.MINUTES)
                 .build()
                 .start()
     }
