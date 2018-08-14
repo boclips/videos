@@ -21,7 +21,7 @@ then
 fi
 
 COMMAND="mongo \
-    --host \"mongodb://cluster0-shard-00-00-jvwjy.mongodb.net:27017,cluster0-shard-00-01-jvwjy.mongodb.net:27017,cluster0-shard-00-02-jvwjy.mongodb.net:27017/km4?replicaSet=Cluster0-shard-0\" \
+    --host \"mongodb://boclips-staging-cluster-shard-00-00-lbj4p.gcp.mongodb.net:27017,boclips-staging-cluster-shard-00-01-lbj4p.gcp.mongodb.net:27017,boclips-staging-cluster-shard-00-02-lbj4p.gcp.mongodb.net:27017/backend-db?replicaSet=boclips-staging-cluster-shard-0\" \
     --ssl \
     --authenticationDatabase admin \
     --username \"$MONGO_USER\" \
