@@ -8,6 +8,7 @@ jobs:
     params:
       bump: patch
   - task: build-and-test
+    privileged: true
     file: source/video-service/pipeline/tasks/build.yml
   - put: container-registry
     params:

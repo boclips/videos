@@ -18,4 +18,4 @@ caches:
   - path: source/video-service/pipeline/scripts/.gradle
 
 run:
-  path: source/video-service/pipeline/scripts/build.sh
+  path: source/video-service/pipeline/scripts/build_as_notroot.sh
