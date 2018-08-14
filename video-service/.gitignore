@@ -1,10 +1,6 @@
-application-production.yml
-application-staging.yml
-
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
-/out/
 
 ### STS ###
 .apt_generated
@@ -20,10 +16,10 @@ application-staging.yml
 *.iws
 *.iml
 *.ipr
+/out/
 
 ### NetBeans ###
 /nbproject/private/
-/build/
 /nbbuild/
 /dist/
 /nbdist/

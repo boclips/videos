@@ -1,7 +1,0 @@
-management:
-  endpoints:
-    web:
-      base-path: /management
-  endpoint:
-    health:
-      show-details: always
