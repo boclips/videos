@@ -58,6 +58,7 @@ resources:
     uri: git@github.com:knowledgemotion/videos.git
     branch: master
     private_key: {{videos-repo-key}}
+    paths: [video-service/**]
 
 - name: infrastructure
   type: git
