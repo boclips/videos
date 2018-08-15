@@ -1,78 +1,79 @@
 package com.boclips.mysql2es
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.data.annotation.Id
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.http.RequestEntity
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
-import org.springframework.util.MultiValueMap
-import org.springframework.web.client.RestClientException
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
-import org.springframework.web.client.postForEntity
-import java.net.URI
-
 
 data class Video(
-        @Id
-        public val id: String? = null,
-        public val source: String? = null,
-        public val unique_id: String? = null,
-        public val namespace: String? = null,
-        public val title: String? = null,
-        public val description: String? = null,
-        public val date: String? = null,
-        public val duration: String? = null,
-        public val keywords: String? = null,
-        public val price_category: String? = null,
-        public val sounds: String? = null,
-        public val color: String? = null,
-        public val location: String? = null,
-        public val country: String? = null,
-        public val state: String? = null,
-        public val city: String? = null,
-        public val region: String? = null,
-        public val alternative_id: String? = null,
-        public val alt_source: String? = null,
-        public val restrictions: String? = null,
-        public val type_id: String? = null,
-        public val reference_id: String? = null
+        @Id val id: String? = null,
+        val source: String? = null,
+        val unique_id: String? = null,
+        val namespace: String? = null,
+        val title: String? = null,
+        val description: String? = null,
+        val date: String? = null,
+        val duration: String? = null,
+        val keywords: String? = null,
+        val price_category: String? = null,
+        val sounds: String? = null,
+        val color: String? = null,
+        val location: String? = null,
+        val country: String? = null,
+        val state: String? = null,
+        val city: String? = null,
+        val region: String? = null,
+        val alternative_id: String? = null,
+        val alt_source: String? = null,
+        val restrictions: String? = null,
+        val type_id: String? = null,
+        val reference_id: String? = null
+)
+
+@Component
+@ConfigurationProperties(prefix = "elasticsearch")
+data class ElasticSearchProperties(
+        var host: String = "",
+        var port: Int = 0,
+        var username: String = "",
+        var password: String = ""
 )
 
 @Service
-class EsClient(private val restTemplateBuilder: RestTemplateBuilder) {
-    private val restTemplate = restTemplateBuilder.rootUri("https://search-test-search-gvzmbjdq7khuhjdtb33zbldpqu.eu-west-1.es.amazonaws.com").build()
+class EsClient(restTemplateBuilder: RestTemplateBuilder, elasticSearchProperties: ElasticSearchProperties) {
+    private val restTemplate = restTemplateBuilder.rootUri("https://${elasticSearchProperties.host}:${elasticSearchProperties.port}").basicAuthorization(elasticSearchProperties.username, elasticSearchProperties.password).build()
     private var totalSent = 0
 
-    fun index(videos: List<Video>) {
+    fun index(videos: List<Video>, indexName: String) {
         val body = StringBuilder()
 
         videos.forEach { video ->
             val objectMapper = ObjectMapper()
             val document = objectMapper.writeValueAsString(video)
 
-            body.appendln("{ \"index\" : { \"_index\" : \"curated-videos\", \"_type\" : \"_doc\", \"_id\" : \"${video.id}\" } }")
+            body.appendln("{ \"index\" : { \"_index\" : \"$indexName\", \"_type\" : \"_doc\", \"_id\" : \"${video.id}\" } }")
             body.appendln(document)
         }
 
-        println("Sending ${videos.size} videos to ES")
+        print("Sending ${videos.size} videos to ES... ")
 
         val request = HttpEntity(body.toString(), HttpHeaders().apply { set("Content-Type", "application/x-ndjson") })
-        val responseEntity = restTemplate.exchange("/curated-videos/_bulk", HttpMethod.POST, request, String::class.java)
+        val responseEntity = restTemplate.exchange("/$indexName/_bulk", HttpMethod.POST, request, String::class.java)
 
         totalSent += videos.size
 
-        println("Response was ${responseEntity.statusCode}: $totalSent videos sent so far")
+        println("${responseEntity.statusCode.reasonPhrase}: $totalSent videos sent so far.")
     }
 }
 
 
-@Service
-class Indexer(private val esClient: EsClient) {
+class Indexer(private val esClient: EsClient, private val indexName: String) {
     private val buffer: MutableList<Video> = mutableListOf()
 
     fun index(video: Video) {
@@ -81,12 +82,12 @@ class Indexer(private val esClient: EsClient) {
     }
 
     fun flush() {
-        esClient.index(buffer)
+        esClient.index(buffer, indexName)
         buffer.clear()
     }
 
     private fun tryFlush() {
-        if (buffer.size > 1000) {
+        if (buffer.size > 100) {
             this.flush()
         }
     }
@@ -94,10 +95,17 @@ class Indexer(private val esClient: EsClient) {
 
 
 @Service
-class MigrationService(private val jdbcTemplate: JdbcTemplate, private val indexer: Indexer) {
+class MigrationService(private val jdbcTemplate: JdbcTemplate, private val esClient: EsClient) {
 
-    fun migrateData(query: String) {
+    fun migrateData(query: String, indexName: String) {
+
+        println(query)
+
         jdbcTemplate.query(query) { resultSet ->
+
+            println("Indexing...")
+
+            val indexer = Indexer(esClient, indexName)
 
             while (resultSet.next()) {
                 val id = resultSet.getString("id")
