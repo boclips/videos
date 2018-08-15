@@ -1,7 +1,7 @@
-package com.boclips.videos.service
+package com.boclips.videos.service.infrastructure
 
+import com.boclips.videos.service.domain.SearchService
 import com.boclips.videos.service.domain.model.Video
-import org.apache.http.Header
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -11,41 +11,27 @@ import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.hateoas.Resources
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.stereotype.Service
 
+@Service
+class ElasticSearchService(private val elasticSearchProperties: ElasticSearchProperties) : SearchService {
 
-@RestController("v1/videos")
-class VideoController {
-
-    @Autowired
-    lateinit var elasticSearchProperties: ElasticSearchProperties
-
-    @GetMapping
-    fun search(@RequestParam("query") query: String): Resources<Video> {
-        val videos = getRestHighLevelClient()
+    override fun search(query: String): List<Video> {
+        return getRestHighLevelClient()
                 .use { client ->
                     val searchRequest = SearchRequest(arrayOf("videos"), SearchSourceBuilder()
                             .query(QueryBuilders.simpleQueryStringQuery(query)))
                     val response = client.search(searchRequest)
-                    response.hits.hits.map { it.sourceAsMap }.map { result ->
-                        println(result)
-                        Video(title = result["title"].toString())
-                    }
+                    response.hits.hits.map { it.sourceAsMap }.map { result -> Video(title = result["title"].toString()) }
                 }
-
-        return Resources(videos)
     }
 
     private fun getRestHighLevelClient(): RestHighLevelClient {
         val credentialsProvider = BasicCredentialsProvider()
         credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(elasticSearchProperties.username, elasticSearchProperties.password))
 
-        val builder = RestClient.builder(HttpHost(elasticSearchProperties.host, elasticSearchProperties.port, elasticSearchProperties.scheme)).setHttpClientConfigCallback {
-            httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+        val builder = RestClient.builder(HttpHost(elasticSearchProperties.host, elasticSearchProperties.port, elasticSearchProperties.scheme)).setHttpClientConfigCallback { httpClientBuilder ->
+            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
         }
         return RestHighLevelClient(builder)
     }
