@@ -21,8 +21,7 @@ class ElasticSearchService(private val elasticSearchProperties: ElasticSearchPro
                 .use { client ->
                     val searchRequest = SearchRequest(arrayOf("videos"), SearchSourceBuilder()
                             .query(QueryBuilders.simpleQueryStringQuery(query)))
-                    val response = client.search(searchRequest)
-                    response.hits.hits.map { it.sourceAsMap }.map { result -> Video(title = result["title"].toString()) }
+                    client.search(searchRequest).hits.hits.map(SearchHitConverter::convert)
                 }
     }
 
