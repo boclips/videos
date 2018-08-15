@@ -1,7 +1,11 @@
 package com.boclips.videos.service
 
 import com.boclips.videos.service.domain.model.Video
+import org.apache.http.Header
 import org.apache.http.HttpHost
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
@@ -27,14 +31,22 @@ class VideoController {
                     val searchRequest = SearchRequest(arrayOf("videos"), SearchSourceBuilder()
                             .query(QueryBuilders.simpleQueryStringQuery(query)))
                     val response = client.search(searchRequest)
-                    response.hits.toList().map { Video() }
+                    response.hits.hits.map { it.sourceAsMap }.map { result ->
+                        println(result)
+                        Video(title = result["title"].toString())
+                    }
                 }
 
         return Resources(videos)
     }
 
     private fun getRestHighLevelClient(): RestHighLevelClient {
-        val builder = RestClient.builder(HttpHost(elasticSearchProperties.host, elasticSearchProperties.port))
+        val credentialsProvider = BasicCredentialsProvider()
+        credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(elasticSearchProperties.username, elasticSearchProperties.password))
+
+        val builder = RestClient.builder(HttpHost(elasticSearchProperties.host, elasticSearchProperties.port, elasticSearchProperties.scheme)).setHttpClientConfigCallback {
+            httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+        }
         return RestHighLevelClient(builder)
     }
 }

@@ -7,8 +7,7 @@ import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
-import org.hamcrest.Matchers.empty
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,7 +24,6 @@ import pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic
 import pl.allegro.tech.embeddedelasticsearch.IndexSettings
 import pl.allegro.tech.embeddedelasticsearch.PopularProperties
 import java.util.concurrent.TimeUnit
-
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -66,7 +64,9 @@ class VideoSearchE2ETest {
 
         mockMvc.perform(get("/v1/videos?query=elephants"))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("._embedded.videoList", not(empty<Any>())))
+                .andExpect(jsonPath("$._embedded.videoList", hasSize<Any>(2)))
+                .andExpect(jsonPath("$._embedded.videoList[0].title", containsString("elephants")))
+                .andExpect(jsonPath("$._embedded.videoList[1].title", containsString("elephants")))
     }
 
     fun indexVideos(vararg videos: Video) {
