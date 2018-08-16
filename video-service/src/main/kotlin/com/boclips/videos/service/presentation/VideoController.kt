@@ -4,7 +4,7 @@ import com.boclips.videos.service.domain.model.Video
 import org.springframework.hateoas.Resources
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-import com.boclips.videos.service.domain.SearchService
+import com.boclips.videos.service.domain.service.SearchService
 import org.springframework.web.bind.annotation.RestController
 
 
