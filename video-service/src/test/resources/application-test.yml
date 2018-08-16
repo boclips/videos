@@ -4,8 +4,3 @@ elasticsearch:
   port: 9350
   username:
   password:
-
-logging:
-  level:
-    org.apache.http: TRACE
-    org.elasticsearch: TRACE
