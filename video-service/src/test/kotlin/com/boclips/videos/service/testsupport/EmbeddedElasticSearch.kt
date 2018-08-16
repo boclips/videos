@@ -5,6 +5,7 @@ import com.boclips.videos.service.infrastructure.ElasticSearchProperties
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.http.HttpHost
 import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
@@ -19,7 +20,7 @@ class EmbeddedElasticSearch(private val elasticSearchProperties: ElasticSearchPr
     val embeddedElastic: EmbeddedElastic = EmbeddedElastic.builder()
             .withElasticVersion("6.3.2")
             .withSetting(PopularProperties.HTTP_PORT, elasticSearchProperties.port)
-            .withStartTimeout(2, TimeUnit.MINUTES)
+            .withStartTimeout(1, TimeUnit.MINUTES)
             .build()
             .start()
 
@@ -31,8 +32,6 @@ class EmbeddedElasticSearch(private val elasticSearchProperties: ElasticSearchPr
                 Video(id = "test-id-4", title = "clip about elephants", description = "animals rock"),
                 Video(id = "test-id-5", title = "test title 5", description = "test description 5")
         )
-
-        Thread.sleep(4000)
     }
 
     fun index(vararg videos: Video) {
@@ -42,7 +41,9 @@ class EmbeddedElasticSearch(private val elasticSearchProperties: ElasticSearchPr
             val document = objectMapper.writeValueAsString(video)
 
             RestHighLevelClient(RestClient.builder(HttpHost(elasticSearchProperties.host, elasticSearchProperties.port))).use { client ->
-                val indexRequest = IndexRequest("videos", "_doc", "${video.id}").source(document, XContentType.JSON)
+                val indexRequest = IndexRequest("videos", "_doc", "${video.id}")
+                        .source(document, XContentType.JSON)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)
                 client.index(indexRequest)
             }
         }
