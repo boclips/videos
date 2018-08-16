@@ -17,14 +17,14 @@ import java.util.concurrent.TimeUnit
 @Service
 class EmbeddedElasticSearch(private val elasticSearchProperties: ElasticSearchProperties) {
 
-    val embeddedElastic: EmbeddedElastic = EmbeddedElastic.builder()
-            .withElasticVersion("6.3.2")
-            .withSetting(PopularProperties.HTTP_PORT, elasticSearchProperties.port)
-            .withStartTimeout(1, TimeUnit.MINUTES)
-            .build()
-            .start()
-
     init {
+        EmbeddedElastic.builder()
+                .withElasticVersion("6.3.2")
+                .withSetting(PopularProperties.HTTP_PORT, elasticSearchProperties.port)
+                .withStartTimeout(1, TimeUnit.MINUTES)
+                .build()
+                .start()
+
         index(
                 Video(id = "test-id-1", title = "test title 1", description = "test description 1"),
                 Video(id = "test-id-2", title = "test title 2", description = "test description 2"),
