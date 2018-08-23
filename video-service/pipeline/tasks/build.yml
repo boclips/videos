@@ -14,8 +14,9 @@ inputs:
 outputs:
   - name: dist
 
+
 caches:
-  - path: source/video-service/pipeline/scripts/.gradle
+  - path: .gradle/
 
 run:
   path: source/video-service/pipeline/scripts/asroot.sh
