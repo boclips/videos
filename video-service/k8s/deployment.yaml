@@ -27,7 +27,7 @@ spec:
             name: video-service
         resources:
           requests:
-            cpu: "100m"
+            cpu: "1m"
             memory: "100Mi"
           limits:
             cpu: "100m"
