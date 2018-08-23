@@ -29,6 +29,7 @@ jobs:
     params:
       DOMAIN: staging-boclips.com
       INPUT_MANIFESTS_DIR: source/video-service/k8s
+      REPLICAS: 1
   - put: staging
     params:
       kubectl: apply -f rendered_manifests/all.yaml
@@ -46,6 +47,7 @@ jobs:
     params:
       DOMAIN: boclips.com
       INPUT_MANIFESTS_DIR: source/video-service/k8s
+      REPLICAS: 2
   - put: production
     params:
       kubectl: apply -f rendered_manifests/all.yaml
