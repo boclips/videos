@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure
 
-import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.service.SearchService
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials

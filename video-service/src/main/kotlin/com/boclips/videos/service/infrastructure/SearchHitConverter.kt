@@ -12,5 +12,5 @@ object SearchHitConverter {
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
-    fun convert(searchHit: SearchHit): Video = objectMapper.readValue(searchHit.sourceAsString)
+    fun convert(searchHit: SearchHit): Video = objectMapper.readValue<ElasticSearchVideo>(searchHit.sourceAsString).toVideo()
 }
