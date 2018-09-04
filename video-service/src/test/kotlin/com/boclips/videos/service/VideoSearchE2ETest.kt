@@ -1,6 +1,6 @@
 package com.boclips.videos.service
 
-import com.boclips.videos.service.testsupport.AbstractIntegrationTest
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.hasSize
 import org.junit.Test
@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class VideoSearchE2ETest : AbstractIntegrationTest() {
+class VideoSearchE2ETest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 

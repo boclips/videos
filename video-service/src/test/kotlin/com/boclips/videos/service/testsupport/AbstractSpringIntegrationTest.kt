@@ -10,4 +10,4 @@ import org.springframework.test.context.junit4.SpringRunner
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-abstract class AbstractIntegrationTest 
+abstract class AbstractSpringIntegrationTest

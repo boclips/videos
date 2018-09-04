@@ -7,13 +7,13 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
+class HealthControllerIntegrationTest: AbstractSpringIntegrationTest() {
+
     @Autowired
-    lateinit var mockMvc: MockMvc
+    lateinit var mvc: MockMvc
 
     @Test
-    fun `returns 400 for invalid search request`() {
-        mockMvc.perform(get("/v1/videos"))
-                .andExpect(status().`is`(400))
+    fun `health endpoint is available`() {
+        mvc.perform(get("/actuator/health")).andExpect(status().isOk)
     }
 }

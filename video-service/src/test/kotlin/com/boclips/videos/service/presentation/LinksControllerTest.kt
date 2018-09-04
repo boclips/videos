@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.testsupport.AbstractIntegrationTest
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.CoreMatchers
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class LinksControllerTest : AbstractIntegrationTest() {
+class LinksControllerTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
