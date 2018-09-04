@@ -14,3 +14,10 @@ spec:
         backend:
           serviceName: video-service
           servicePort: http
+  - host: teacherspet.${DOMAIN}
+    http:
+      paths:
+      - path: /v1
+        backend:
+          serviceName: video-service
+          servicePort: http
