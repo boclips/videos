@@ -34,6 +34,7 @@ jobs:
     params:
       kubectl: apply -f rendered_manifests/all.yaml
       wait_until_ready_selector: app=video-service
+      wait_until_ready: 60
 
 - name: deploy-production
   plan:
@@ -52,6 +53,7 @@ jobs:
     params:
       kubectl: apply -f rendered_manifests/all.yaml
       wait_until_ready_selector: app=video-service
+      wait_until_ready: 60
 
 resources:
 - name: source
