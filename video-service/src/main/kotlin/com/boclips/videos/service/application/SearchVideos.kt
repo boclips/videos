@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application
 
 import com.boclips.videos.service.domain.service.SearchService
-import com.boclips.videos.service.presentation.VideoResource
+import com.boclips.videos.service.presentation.resources.VideoResource
 
 class SearchVideos(val searchService: SearchService) {
     fun execute(query: String?): List<VideoResource> {
