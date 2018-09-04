@@ -27,8 +27,28 @@ spec:
             name: video-service
         resources:
           requests:
-            cpu: "1m"
-            memory: "300Mi"
-          limits:
-            cpu: "100m"
+            cpu: "700m"
             memory: "500Mi"
+          limits:
+            cpu: "700m"
+            memory: "2Gi"
+
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          failureThreshold: 2
+          initialDelaySeconds: 40
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 5
