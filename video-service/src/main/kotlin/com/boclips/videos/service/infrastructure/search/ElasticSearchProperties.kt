@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure
+package com.boclips.videos.service.infrastructure.search
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component

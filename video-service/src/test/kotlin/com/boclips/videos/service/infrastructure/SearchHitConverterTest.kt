@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure
 
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.infrastructure.search.SearchHitConverter
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit

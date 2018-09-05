@@ -1,6 +1,8 @@
 package com.boclips.videos.service
 
+import com.boclips.videos.service.infrastructure.analytics.AnalyticsRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.hasSize
 import org.junit.Test
@@ -14,12 +16,17 @@ class VideoSearchE2ETest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Autowired
+    lateinit var analyticsRepository: AnalyticsRepository
+
     @Test
-    fun `exposes search endpoint`() {
+    fun `search for videos`() {
         mockMvc.perform(get("/v1/videos?query=elephants"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(2)))
                 .andExpect(jsonPath("$._embedded.videos[0].title", containsString("elephants")))
                 .andExpect(jsonPath("$._embedded.videos[1].title", containsString("elephants")))
+
+        assertThat(analyticsRepository.count()).isEqualTo(1)
     }
 }

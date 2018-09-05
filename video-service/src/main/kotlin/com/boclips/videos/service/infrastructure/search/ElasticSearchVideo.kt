@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure
+package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.videos.service.domain.model.Video
 import com.fasterxml.jackson.annotation.JsonCreator

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.infrastructure.ElasticSearchProperties
+import com.boclips.videos.service.infrastructure.search.ElasticSearchProperties
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.http.HttpHost
 import org.elasticsearch.action.index.IndexRequest

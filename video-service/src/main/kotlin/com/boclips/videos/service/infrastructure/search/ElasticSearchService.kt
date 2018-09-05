@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure
+package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.service.SearchService
@@ -13,7 +13,6 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.springframework.stereotype.Service
 
-@Service
 class ElasticSearchService(private val elasticSearchProperties: ElasticSearchProperties) : SearchService {
 
     override fun search(query: String): List<Video> {
