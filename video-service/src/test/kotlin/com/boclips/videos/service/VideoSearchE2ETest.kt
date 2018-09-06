@@ -1,6 +1,6 @@
 package com.boclips.videos.service
 
-import com.boclips.videos.service.infrastructure.analytics.AnalyticsRepository
+import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
@@ -17,7 +17,7 @@ class VideoSearchE2ETest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Autowired
-    lateinit var analyticsRepository: AnalyticsRepository
+    lateinit var eventLogRepository: EventLogRepository
 
     @Test
     fun `search for videos`() {
@@ -27,6 +27,6 @@ class VideoSearchE2ETest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].title", containsString("elephants")))
                 .andExpect(jsonPath("$._embedded.videos[1].title", containsString("elephants")))
 
-        assertThat(analyticsRepository.count()).isEqualTo(1)
+        assertThat(eventLogRepository.count()).isEqualTo(1)
     }
 }

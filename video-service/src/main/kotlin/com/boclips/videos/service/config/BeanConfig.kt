@@ -1,13 +1,12 @@
 package com.boclips.videos.service.config
 
 import com.boclips.videos.service.application.SearchVideos
-import com.boclips.videos.service.domain.service.AnalyticsSearchServiceDecorator
-import com.boclips.videos.service.domain.service.AnalyticsService
 import com.boclips.videos.service.domain.service.SearchService
-import com.boclips.videos.service.infrastructure.analytics.AnalyticsRepository
-import com.boclips.videos.service.infrastructure.analytics.MongoAnalyticsService
+import com.boclips.videos.service.infrastructure.event.EventLogRepository
+import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.search.ElasticSearchProperties
 import com.boclips.videos.service.infrastructure.search.ElasticSearchService
+import com.boclips.videos.service.infrastructure.search.EventLoggingSearchService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -15,9 +14,9 @@ import org.springframework.context.annotation.Configuration
 class BeanConfig {
 
     @Bean
-    fun searchService(elasticSearchProperties: ElasticSearchProperties, analyticsService: AnalyticsService): SearchService {
+    fun searchService(elasticSearchProperties: ElasticSearchProperties, eventService: EventService): SearchService {
         val searchService = ElasticSearchService(elasticSearchProperties)
-        return AnalyticsSearchServiceDecorator(searchService, analyticsService)
+        return EventLoggingSearchService(searchService, eventService)
     }
 
     @Bean
@@ -26,7 +25,7 @@ class BeanConfig {
     }
 
     @Bean
-    fun analyticsService(analyticsRepository: AnalyticsRepository): AnalyticsService {
-        return MongoAnalyticsService(analyticsRepository)
+    fun eventService(eventLogRepository: EventLogRepository): EventService {
+        return EventService(eventLogRepository)
     }
 }
