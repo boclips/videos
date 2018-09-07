@@ -13,14 +13,17 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.springframework.stereotype.Service
 
-class ElasticSearchService(private val elasticSearchProperties: ElasticSearchProperties) : SearchService {
+class ElasticSearchService(
+        private val searchHitConverter: SearchHitConverter,
+        private val elasticSearchProperties: ElasticSearchProperties
+) : SearchService {
 
     override fun search(query: String): List<Video> {
         return getRestHighLevelClient()
                 .use { client ->
                     val searchRequest = SearchRequest(arrayOf("videos"), SearchSourceBuilder()
                             .query(QueryBuilders.simpleQueryStringQuery(query)))
-                    client.search(searchRequest).hits.hits.map(SearchHitConverter::convert)
+                    client.search(searchRequest).hits.hits.map(searchHitConverter::convert)
                 }
     }
 
