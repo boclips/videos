@@ -20,7 +20,7 @@ data class Video(
         val description: String? = null,
         val date: String? = null,
         val duration: String? = null,
-        val keywords: String? = null,
+        val keywords: List<String> = emptyList(),
         val price_category: String? = null,
         val sounds: String? = null,
         val color: String? = null,
@@ -39,6 +39,7 @@ data class Video(
 @Component
 @ConfigurationProperties(prefix = "elasticsearch")
 data class ElasticSearchProperties(
+        var scheme: String = "https",
         var host: String = "",
         var port: Int = 0,
         var username: String = "",
@@ -47,7 +48,7 @@ data class ElasticSearchProperties(
 
 @Service
 class EsClient(restTemplateBuilder: RestTemplateBuilder, elasticSearchProperties: ElasticSearchProperties) {
-    private val restTemplate = restTemplateBuilder.rootUri("https://${elasticSearchProperties.host}:${elasticSearchProperties.port}").basicAuthorization(elasticSearchProperties.username, elasticSearchProperties.password).build()
+    private val restTemplate = restTemplateBuilder.rootUri("${elasticSearchProperties.scheme}://${elasticSearchProperties.host}:${elasticSearchProperties.port}").basicAuthorization(elasticSearchProperties.username, elasticSearchProperties.password).build()
     private var totalSent = 0
 
     fun index(videos: List<Video>, indexName: String) {
@@ -57,7 +58,7 @@ class EsClient(restTemplateBuilder: RestTemplateBuilder, elasticSearchProperties
             val objectMapper = ObjectMapper()
             val document = objectMapper.writeValueAsString(video)
 
-            body.appendln("{ \"index\" : { \"_index\" : \"$indexName\", \"_type\" : \"_doc\", \"_id\" : \"${video.id}\" } }")
+            body.appendln("{ \"index\" : { \"_index\" : \"$indexName\", \"_type\" : \"video\", \"_id\" : \"${video.id}\" } }")
             body.appendln(document)
         }
 
@@ -82,12 +83,14 @@ class Indexer(private val esClient: EsClient, private val indexName: String) {
     }
 
     fun flush() {
-        esClient.index(buffer, indexName)
-        buffer.clear()
+        if(buffer.size > 0) {
+            esClient.index(buffer, indexName)
+            buffer.clear()
+        }
     }
 
     private fun tryFlush() {
-        if (buffer.size > 100) {
+        if (buffer.size >= 100) {
             this.flush()
         }
     }
@@ -140,7 +143,7 @@ class MigrationService(private val jdbcTemplate: JdbcTemplate, private val esCli
                         description = description,
                         date = date,
                         duration = duration,
-                        keywords = keywords,
+                        keywords = keywords.split(','),
                         price_category = price_category,
                         sounds = sounds,
                         color = color,
