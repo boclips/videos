@@ -102,8 +102,9 @@ const addOrganization = (name, packageObjectId) => {
 };
 
 const createUser = (username, email, password, role, organizationId) => {
+    const userId = ObjectId();
     db.users.insert({
-        _id: ObjectId(),
+        _id: userId,
         date_updated: new Date().toISOString(),
         date_created: new Date().toISOString(),
         email,
@@ -119,6 +120,16 @@ const createUser = (username, email, password, role, organizationId) => {
         name: 'User',
         username,
         __v: 0
+    });
+    db.carts.insert({
+        _id : ObjectId(),
+        date_updated : new Date().toISOString(),
+        date_created : new Date().toISOString(),
+        init_cart : true,
+        user : userId,
+        uuid : guid(),
+        _refModel : "Cart",
+        __v : 0
     });
 };
 
