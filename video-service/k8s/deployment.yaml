@@ -15,6 +15,15 @@ spec:
       labels:
         app: video-service
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 10
+            preference:
+              matchExpressions: [{key: priority, operator: In, values: [noncritical]}]
+
+      $TOLERATE_NONCRITICAL_STAGING
+
       containers:
       - name: video-service
         image: eu.gcr.io/boclips-prod/boclips/video-service:${VERSION}
