@@ -35,8 +35,11 @@ compileTestKotlin {
     }
 }
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
 }
 
 
@@ -51,6 +54,8 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect")
     compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:6.3.2")
     compile("org.elasticsearch:elasticsearch:6.3.2")
+    compile("com.github.knowledgemotion:kaltura-client:0.6.0")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')

@@ -5,10 +5,10 @@ import com.boclips.videos.service.testsupport.withTeacher
 import org.hamcrest.Matchers.*
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -21,8 +21,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$._embedded.videos[0].duration", equalTo("PT1M2S")))
+                .andExpect(jsonPath("$._embedded.videos[0].duration", equalTo("PT1M")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp")))
+                .andExpect(jsonPath("$._embedded.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-3.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-3.mp4")))
                 .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
     }
 

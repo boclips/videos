@@ -1,7 +1,5 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.service.SearchService
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -21,7 +19,7 @@ class ElasticSearchService(
         private val elasticSearchProperties: ElasticSearchProperties
 ) : SearchService {
 
-    override fun search(query: String): List<Video> {
+    override fun search(query: String): SearchResults {
         return getRestHighLevelClient()
                 .use { client ->
                     val findMatchesQuery = QueryBuilders.multiMatchQuery(query, "title", "title.std", "description", "description.std", "keywords")
@@ -40,7 +38,8 @@ class ElasticSearchService(
                             SearchSourceBuilder().query(findMatchesQuery).addRescorer(rescorer)
                     )
 
-                    client.search(searchRequest).hits.hits.map(searchHitConverter::convert)
+                    val videos = client.search(searchRequest).hits.hits.map(searchHitConverter::convert)
+                    return SearchResults(videos)
                 }
     }
 

@@ -9,5 +9,7 @@ data class Video(
         val description: String,
         val duration: Duration,
         val releasedOn: LocalDate,
-        val contentProvider: String
+        val contentProvider: String,
+        val streamUrl: String,
+        val thumbnailUrl: String
 )

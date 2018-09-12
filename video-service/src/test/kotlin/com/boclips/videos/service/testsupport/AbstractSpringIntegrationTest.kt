@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles("test", "fake-kaltura")
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired

@@ -11,7 +11,9 @@ data class VideoResource(
         val description: String? = null,
         val duration: Duration? = null,
         val releasedOn: LocalDate? = null,
-        val contentProvider: String? = null
+        val contentProvider: String? = null,
+        val streamUrl: String? = null,
+        val thumbnailUrl: String? = null
 ) {
     companion object {
         fun from(video: Video): VideoResource {
@@ -20,7 +22,9 @@ data class VideoResource(
                     description = video.description,
                     contentProvider = video.contentProvider,
                     releasedOn = video.releasedOn,
-                    duration = video.duration
+                    duration = video.duration,
+                    streamUrl = video.streamUrl,
+                    thumbnailUrl = video.thumbnailUrl
             )
         }
     }

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure
 
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
 import com.boclips.videos.service.infrastructure.search.SearchHitConverter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -8,11 +8,8 @@ import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Duration
-import java.time.LocalDate
-import java.time.Month
 
-class SearchHitConverterTest: AbstractSpringIntegrationTest() {
+class SearchHitConverterTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var searchHitConverter: SearchHitConverter
@@ -23,6 +20,7 @@ class SearchHitConverterTest: AbstractSpringIntegrationTest() {
         val searchHit = SearchHit(14).sourceRef(BytesArray("""
             {
                 "id": "14",
+                "reference_id": "ref-id-14",
                 "title": "The title",
                 "description": "The description",
                 "source": "TeD",
@@ -34,13 +32,13 @@ class SearchHitConverterTest: AbstractSpringIntegrationTest() {
 
         val video = searchHitConverter.convert(searchHit)
 
-        assertThat(video).isEqualTo(Video(
+        assertThat(video).isEqualTo(ElasticSearchVideo(
                 id = "14",
+                referenceId = "ref-id-14",
                 title = "The title",
                 description = "The description",
-                contentProvider = "TeD",
-                releasedOn = LocalDate.of(2014, Month.MAY, 13),
-                duration = Duration.ofSeconds(20).plusMinutes(1).plusHours(2)
+                source = "TeD",
+                date = "2014-05-13"
         ))
     }
 }
