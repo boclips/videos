@@ -1,8 +1,6 @@
 package com.boclips.videos.service.presentation
 
 import org.springframework.hateoas.Resource
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -12,5 +10,8 @@ import org.springframework.web.bind.annotation.RestController
 class LinksController {
 
     @GetMapping
-    fun search(): Resource<String> = Resource("", VideoController.searchLink())
+    fun search(): Resource<String> = Resource("",
+            VideoController.searchLink(),
+            UserController.profileLink()
+    )
 }
