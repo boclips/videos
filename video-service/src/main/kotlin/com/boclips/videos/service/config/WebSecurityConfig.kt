@@ -11,17 +11,13 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+class WebSecurityConfig(val boclipsProperties: BoclipsConfigProperties) : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
@@ -37,8 +33,10 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     @Bean
     public override fun userDetailsService() =
             InMemoryUserDetailsManager(
-                    User.withUsername("teacher")
-                            .password(passwordEncoder().encode("test"))
+                    User.withUsername(boclipsProperties.teacher.username
+                            ?: throw IllegalStateException("Missing env-var BOCLIPS_TEACHER_USERNAME - used to log in"))
+                            .password(passwordEncoder().encode(boclipsProperties.teacher.password)
+                                    ?: throw IllegalStateException("Missing env-var BOCLIPS_TEACHER_PASSWORD - used to log in"))
                             .roles("VIDEOS")
                             .build()
             )
