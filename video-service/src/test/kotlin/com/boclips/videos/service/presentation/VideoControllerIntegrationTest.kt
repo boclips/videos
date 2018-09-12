@@ -23,6 +23,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$._embedded.videos[0].duration", equalTo("PT1M2S")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp")))
+                .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
     }
 
     @Test

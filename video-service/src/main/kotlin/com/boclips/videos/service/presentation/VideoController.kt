@@ -22,6 +22,6 @@ class VideoController(private val searchVideos: SearchVideos) {
     @GetMapping
     fun search(@RequestParam("query") query: String?): Resources<*> {
         val videos = searchVideos.execute(query)
-        return resourcesOf(videos, VideoResource::class)
+        return resourcesOf(videos, VideoResource::class).apply { add(searchLink()) }
     }
 }
