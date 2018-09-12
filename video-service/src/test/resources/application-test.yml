@@ -9,3 +9,8 @@ elasticsearch:
   port: 9350
   username:
   password:
+
+klient:
+  partnerId: no-partner-id
+  userId: no-user-id
+  secret: no-secret
