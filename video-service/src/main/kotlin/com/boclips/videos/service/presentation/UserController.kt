@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/user")
 class UserController {
     companion object {
-        fun profileLink() = profileLinkBuilder().withRel("user")!!
-        fun profileLinkBuilder() = linkTo(methodOn(UserController::class.java).profile())!!
+        fun profileLink(rel: String = "user") = linkTo(methodOn(UserController::class.java).profile()).withRel(rel)!!
     }
 
     @GetMapping
-    fun profile() : Resource<String> = Resource("",
-            profileLinkBuilder().withSelfRel()
-    )
+    fun profile(): Resource<String> = Resource("", profileLink("self"))
 }

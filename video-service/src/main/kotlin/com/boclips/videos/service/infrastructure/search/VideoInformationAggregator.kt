@@ -15,7 +15,7 @@ object VideoInformationAggregator {
                 }
     }
 
-    private fun convert(elasticSearchVideo: ElasticSearchVideo, mediaEntry: MediaEntry): Video {
+    fun convert(elasticSearchVideo: ElasticSearchVideo, mediaEntry: MediaEntry): Video {
         return Video(
                 id = elasticSearchVideo.id,
                 title = elasticSearchVideo.title,

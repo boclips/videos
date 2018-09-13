@@ -21,6 +21,15 @@ class DefaultVideoService(
                 videos.map { it.referenceId }.toTypedArray()
     }
 
+    override fun findById(id: String): Video? {
+        return searchService.findById(id)
+                ?.let {
+                    val mediaEntry = kalturaClient.mediaEntryByReferenceId(it.referenceId).orElse(null)
+                            ?: return@let null
+                    convert(it, mediaEntry)
+                }
+    }
+
     override fun find(query: String): List<Video> {
         val searchResults = searchService.search(query)
 

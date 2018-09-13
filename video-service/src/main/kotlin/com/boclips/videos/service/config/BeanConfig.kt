@@ -6,6 +6,9 @@ import com.boclips.videos.service.application.SearchVideos
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.search.ElasticSearchProperties
+import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
+import com.boclips.videos.service.infrastructure.search.ElasticSearchService
 import com.boclips.videos.service.infrastructure.search.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
@@ -25,7 +28,7 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     }
 
     @Bean
-    fun searchHitConverter() = SearchHitConverter(objectMapper)
+    fun searchHitConverter() = ElasticSearchResultConverter(objectMapper)
 
     @Bean
     fun searchVideos(videoService: VideoService) = SearchVideos(videoService)

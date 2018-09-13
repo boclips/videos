@@ -7,6 +7,7 @@ import java.time.LocalDate
 
 @Relation(collectionRelation = "videos")
 data class VideoResource(
+        val id: String? = null,
         val title: String? = null,
         val description: String? = null,
         val duration: Duration? = null,
@@ -18,6 +19,7 @@ data class VideoResource(
     companion object {
         fun from(video: Video): VideoResource {
             return VideoResource(
+                    id = video.id,
                     title = video.title,
                     description = video.description,
                     contentProvider = video.contentProvider,

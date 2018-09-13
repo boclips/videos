@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure
 
 import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
-import com.boclips.videos.service.infrastructure.search.SearchHitConverter
+import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
@@ -9,14 +9,13 @@ import org.elasticsearch.search.SearchHit
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class SearchHitConverterTest : AbstractSpringIntegrationTest() {
+class ElasticSearchResultConverterTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var searchHitConverter: SearchHitConverter
+    lateinit var elasticSearchResultConverter: ElasticSearchResultConverter
 
     @Test
-    fun convert() {
-
+    fun `convert search hit`() {
         val searchHit = SearchHit(14).sourceRef(BytesArray("""
             {
                 "id": "14",
@@ -30,7 +29,7 @@ class SearchHitConverterTest : AbstractSpringIntegrationTest() {
             }
         """.trimIndent()))
 
-        val video = searchHitConverter.convert(searchHit)
+        val video = elasticSearchResultConverter.convert(searchHit)
 
         assertThat(video).isEqualTo(ElasticSearchVideo(
                 id = "14",
@@ -41,4 +40,5 @@ class SearchHitConverterTest : AbstractSpringIntegrationTest() {
                 date = "2014-05-13"
         ))
     }
+
 }

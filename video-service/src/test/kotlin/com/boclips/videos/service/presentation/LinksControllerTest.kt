@@ -1,8 +1,6 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.withTeacher
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,5 +21,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.user.href", endsWith("/user")))
                 .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
                 .andExpect(jsonPath("$._links.search.templated", equalTo(true)))
+                .andExpect(jsonPath("$._links.video.href", containsString("/videos/")))
+                .andExpect(jsonPath("$._links.video.templated", equalTo(true)))
     }
 }

@@ -2,7 +2,7 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.MediaEntry
-import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.client.TestKalturaClient
 import com.boclips.kalturaclient.streams.StreamUrls
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
