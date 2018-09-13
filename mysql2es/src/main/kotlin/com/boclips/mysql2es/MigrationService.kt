@@ -50,12 +50,12 @@ data class ElasticSearchProperties(
 class EsClient(restTemplateBuilder: RestTemplateBuilder, elasticSearchProperties: ElasticSearchProperties) {
     private val restTemplate = restTemplateBuilder.rootUri("${elasticSearchProperties.scheme}://${elasticSearchProperties.host}:${elasticSearchProperties.port}").basicAuthorization(elasticSearchProperties.username, elasticSearchProperties.password).build()
     private var totalSent = 0
+    private val objectMapper = ObjectMapper()
 
     fun index(videos: List<Video>, indexName: String) {
         val body = StringBuilder()
 
         videos.forEach { video ->
-            val objectMapper = ObjectMapper()
             val document = objectMapper.writeValueAsString(video)
 
             body.appendln("{ \"index\" : { \"_index\" : \"$indexName\", \"_type\" : \"video\", \"_id\" : \"${video.id}\" } }")
@@ -156,9 +156,9 @@ class MigrationService(private val jdbcTemplate: JdbcTemplate, private val esCli
                         alt_source = alt_source,
                         restrictions = restrictions,
                         type_id = type_id,
-                        reference_id = reference_id))
+                        reference_id = reference_id ?: id
+                ))
             }
-
             indexer.flush()
         }
     }
