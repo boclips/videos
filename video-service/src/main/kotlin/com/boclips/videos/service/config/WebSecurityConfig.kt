@@ -2,6 +2,7 @@ package com.boclips.videos.service.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -21,6 +22,7 @@ class WebSecurityConfig(val boclipsProperties: BoclipsConfigProperties) : WebSec
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
+                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .httpBasic().authenticationEntryPoint(authenticationEntryPoint()).and()
                 .authorizeRequests()

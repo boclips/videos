@@ -3,7 +3,6 @@ package com.boclips.videos.service.application
 import com.boclips.videos.service.application.exceptions.QueryValidationException
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.infrastructure.search.SearchService
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.mockito.Mockito.`when`
