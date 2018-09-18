@@ -6,7 +6,9 @@ import com.boclips.videos.service.presentation.PlaybackEvent
 import java.time.ZonedDateTime
 
 class CreateEvent(private val eventService: EventService) {
-    fun execute(event: PlaybackEvent) {
+    fun execute(event: PlaybackEvent?) {
+        event ?: throw InvalidEventException("Event cannot be null")
+
         if (event.playerIdentifier.isNullOrBlank()) throw InvalidEventException("playerIdentifier must be specified")
         if (event.videoIdentifier.isNullOrBlank()) throw InvalidEventException("videoIdentifier must be specified")
 

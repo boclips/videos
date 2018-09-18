@@ -13,6 +13,7 @@ class LinksController {
     fun search(): Resource<String> = Resource("",
             VideoController.searchLink(),
             VideoController.videoLink(),
+            EventController.createEventLink(),
             UserController.profileLink()
     )
 }

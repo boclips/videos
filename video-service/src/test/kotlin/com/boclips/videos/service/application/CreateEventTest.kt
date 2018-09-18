@@ -33,6 +33,11 @@ class CreateEventTest {
     }
 
     @Test
+    fun `handles null object`() {
+        assertThatThrownBy { createEvent.execute(null) }
+    }
+
+    @Test
     fun `validates player identifier`() {
         assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerIdentifier = null)) }
         assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerIdentifier = "")) }
