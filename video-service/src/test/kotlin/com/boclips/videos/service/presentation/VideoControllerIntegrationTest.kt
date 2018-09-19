@@ -7,6 +7,7 @@ import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -28,6 +29,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-3.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/test-id-3")))
                 .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
+    }
+
+    @Test
+    fun `returns 200 for OPTIONS requests`() {
+        mockMvc.perform(options("/v1/videos"))
+                .andExpect(status().isOk)
     }
 
     @Test
