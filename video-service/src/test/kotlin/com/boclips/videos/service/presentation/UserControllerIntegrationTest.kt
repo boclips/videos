@@ -8,12 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class UserControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Test
+    fun `returns 200 for options request`() {
+        mockMvc.perform(options("/v1/user"))
+                .andExpect(status().isOk)
+    }
 
     @Test
     fun `get user info`() {
