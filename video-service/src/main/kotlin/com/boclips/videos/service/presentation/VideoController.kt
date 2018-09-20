@@ -2,9 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.SearchVideos
 import com.boclips.videos.service.presentation.resources.VideoResource
-import com.boclips.videos.service.presentation.resources.resourcesOf
 import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.web.bind.annotation.*
@@ -18,10 +16,10 @@ class VideoController(private val searchVideos: SearchVideos) {
         fun videoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).video(id)).withRel(rel)
     }
 
-    @GetMapping
-    fun search(@RequestParam("query") query: String?): Resources<*> {
-        val videos = searchVideos.execute(query)
-        return resourcesOf(videos.map { toVideoResource(it) }, VideoResource::class).apply { add(searchLink()) }
+    @GetMapping("/search")
+    fun search(@RequestParam("query") query: String?): Resource<SearchResponse> {
+        val results = searchVideos.execute(query)
+        return Resource(SearchResponse(searchId = results.searchId, query = results.query, videos = results.videos.map { toVideoResource(it) }))
     }
 
     @GetMapping("/{id}")

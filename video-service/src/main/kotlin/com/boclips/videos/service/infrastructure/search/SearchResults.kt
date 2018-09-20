@@ -1,3 +1,3 @@
 package com.boclips.videos.service.infrastructure.search
 
-data class SearchResults(val videos: List<ElasticSearchVideo>)
+data class ElasticSearchResults(val videos: List<ElasticSearchVideo>)

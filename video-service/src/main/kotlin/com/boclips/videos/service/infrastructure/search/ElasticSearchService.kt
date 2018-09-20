@@ -35,7 +35,7 @@ class ElasticSearchService(
         client = RestHighLevelClient(builder)
     }
 
-    override fun search(query: String): SearchResults {
+    override fun search(query: String): ElasticSearchResults {
         val findMatchesQuery = QueryBuilders.multiMatchQuery(query, "title", "title.std", "description", "description.std", "keywords")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
@@ -53,7 +53,7 @@ class ElasticSearchService(
         )
 
         val videos = client.search(searchRequest).hits.hits.map(elasticSearchResultConverter::convert)
-        return SearchResults(videos)
+        return ElasticSearchResults(videos)
     }
 
 

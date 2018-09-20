@@ -16,7 +16,7 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `searches are stored as analytics events`() {
-        eventService.saveEvent(SearchEvent("brownie", 9))
+        eventService.saveEvent(SearchEvent("e01", "brownie", 9))
 
         assertThat(eventLogRepository.count()).isEqualTo(1)
     }

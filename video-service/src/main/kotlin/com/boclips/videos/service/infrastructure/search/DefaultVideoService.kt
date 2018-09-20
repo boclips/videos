@@ -2,14 +2,16 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.service.SearchResults
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.Event
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.search.VideoInformationAggregator.convert
+import java.util.*
 
-data class SearchEventData(val query: String, val resultsReturned: Int)
+data class SearchEventData(val searchId: String, val query: String, val resultsReturned: Int)
 
-class SearchEvent(query: String, resultsReturned: Int) : Event<SearchEventData>("SEARCH", SearchEventData(query, resultsReturned))
+class SearchEvent(searchId: String, query: String, resultsReturned: Int) : Event<SearchEventData>("SEARCH", SearchEventData(searchId, query, resultsReturned))
 
 class DefaultVideoService(
         private val searchService: SearchService,
@@ -30,14 +32,18 @@ class DefaultVideoService(
                 }
     }
 
-    override fun find(query: String): List<Video> {
+    override fun search(query: String): SearchResults {
         val searchResults = searchService.search(query)
 
         val referenceIds = extractKalturaReferenceIds(searchResults.videos)
         val mediaEntries = kalturaClient.mediaEntriesByReferenceIds(*referenceIds)
 
-        eventService.saveEvent(SearchEvent(query, searchResults.videos.size))
+        val id = UUID.randomUUID().toString()
 
-        return convert(searchResults.videos, mediaEntries)
+        eventService.saveEvent(SearchEvent(id, query, searchResults.videos.size))
+
+        val videos = convert(searchResults.videos, mediaEntries)
+
+        return SearchResults(searchId = id, query = query, videos = videos)
     }
 }

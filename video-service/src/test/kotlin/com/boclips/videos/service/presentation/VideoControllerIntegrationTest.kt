@@ -17,43 +17,46 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `search for videos`() {
-        mockMvc.perform(get("/v1/videos?query=powerful").withTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=powerful").withTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("test-id-3")))
-                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
-                .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
-                .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$._embedded.videos[0].duration", equalTo("PT1M")))
-                .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp")))
-                .andExpect(jsonPath("$._embedded.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-3.mp4")))
-                .andExpect(jsonPath("$._embedded.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-3.mp4")))
-                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/test-id-3")))
-                .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
+                .andExpect(jsonPath("$.searchId", not(isEmptyOrNullString())))
+                .andExpect(jsonPath("$.query", equalTo("powerful")))
+                .andExpect(jsonPath("$.videos[0].id", equalTo("test-id-3")))
+                .andExpect(jsonPath("$.videos[0].title", equalTo("powerful video about elephants")))
+                .andExpect(jsonPath("$.videos[0].description", equalTo("test description 3")))
+                .andExpect(jsonPath("$.videos[0].releasedOn", equalTo("2018-02-11")))
+                .andExpect(jsonPath("$.videos[0].duration", equalTo("PT1M")))
+                .andExpect(jsonPath("$.videos[0].contentProvider", equalTo("cp")))
+                .andExpect(jsonPath("$.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-3.mp4")))
+                .andExpect(jsonPath("$.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-3.mp4")))
+                .andExpect(jsonPath("$.videos[0]._links.self.href", containsString("/videos/test-id-3")))
     }
 
     @Test
     fun `returns 200 for OPTIONS requests`() {
-        mockMvc.perform(options("/v1/videos"))
+        mockMvc.perform(options("/v1/videos/search"))
                 .andExpect(status().isOk)
     }
 
     @Test
     fun `returns 401 for anonymous search request`() {
-        mockMvc.perform(get("/v1/videos"))
+        mockMvc.perform(get("/v1/videos/search"))
                 .andExpect(status().isUnauthorized)
     }
 
     @Test
     fun `returns 400 for invalid search request`() {
-        mockMvc.perform(get("/v1/videos").withTeacher())
+        mockMvc.perform(get("/v1/videos/search").withTeacher())
                 .andExpect(status().`is`(400))
     }
 
     @Test
     fun `returns empty videos array when there are no results`() {
-        mockMvc.perform(get("/v1/videos?query=somethingthatdoesntexistever").withTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=somethingthatdoesntexistever").withTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos", emptyIterable<Any>()))
+                .andExpect(jsonPath("$.searchId", not(isEmptyOrNullString())))
+                .andExpect(jsonPath("$.query", equalTo("somethingthatdoesntexistever")))
+                .andExpect(jsonPath("$.videos", emptyIterable<Any>()))
     }
 
     @Test
