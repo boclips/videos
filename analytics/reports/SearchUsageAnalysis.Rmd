@@ -1,5 +1,5 @@
 ---
-title: "Search analysis: past 30 days"
+title: "Search analysis: past year"
 output: pdf_document
 ---
 ```{r setup, include=FALSE}
@@ -8,8 +8,8 @@ library(analytics)
 
 knitr::opts_chunk$set(echo = FALSE, comment=NA)
 
-monthAgo = seq(Sys.Date(), length = 2, by = "-1 month")[2]
-searches = load_search_requests("all-searches.csv", "all-users.csv", after = monthAgo)
+timeRangeStart = seq(Sys.Date(), length = 2, by = "-12 month")[2]
+searches = load_search_requests("all-searches.csv", "all-users.csv", after = timeRangeStart)
 ```
 
 # How are search queries counted
@@ -25,31 +25,30 @@ The following numbers are based on the above definition.
 
 # Volume of search queries
 ```{r themes}
-searches$theme %>% 
+searches$theme %>%
   freqs_table(valuesAsFactors = TRUE) %T>%
-  kable(caption = "Queries by theme", col.names = c("Theme", "Count"), row.names = FALSE) %T>%
-  plot(., type="s", xlab="value", ylab="count")
+  kable(caption = "Queries by theme", col.names = c("Theme", "Count"), row.names = FALSE) # %T>%
+  # plot(., type="s", xlab="value", ylab="count")
 ```
 
-# Most active users per theme
-Here are the users who made the most search queries.
 ```{r users}
+# Most active users per theme
 activeUsersByTheme = function(themeName) {
-  searches %>% with_theme(themeName) %>% .$email %>% 
+  searches %>% with_theme(themeName) %>% .$email %>%
     freqs_table(min.count = 5, limit.rows = 50) %>%
     kable(caption = paste("Most active users on", themeName), row.names = FALSE, col.names = c("Email", "# Queries"))
 }
 
-activeUsersByTheme("boclips.com")
-activeUsersByTheme("pearson.boclips.com")
-activeUsersByTheme("watchboclips.com")
+# activeUsersByTheme("boclips.com")
+# activeUsersByTheme("pearson.boclips.com")
+# activeUsersByTheme("watchboclips.com")
 ```
 
-# Most active email domains
 ```{r domains}
-searches$email %>% email_domain %>% freqs_table(min.count = 5, limit.rows = 20) %T>%
-    write.csv(file = "domains.csv", row.names = FALSE) %>%
-    kable(caption = "Most active email domains", row.names = FALSE, col.names = c("Domain", "# Queries"))
+# Most active email domains
+#searches$email %>% email_domain %>% freqs_table(min.count = 5, limit.rows = 20) %T>%
+#    write.csv(file = "domains.csv", row.names = FALSE) %>%
+#    kable(caption = "Most active email domains", row.names = FALSE, col.names = c("Domain", "# Queries"))
 ```
 
 # Search phrases
@@ -60,7 +59,7 @@ topPhrasesByTheme = function(themeName) {
     clean_phrases %>%
     freqs_table %T>%
     write.csv(file = paste("phrases-", themeName, ".csv", sep = ""), row.names = FALSE) %>%
-    freqs_table_filter(limit.rows = 100, min.count = 2) %>%
+    freqs_table_filter(limit.rows = 500, min.count = 4) %>%
     kable(row.names = FALSE, caption = paste("Most frequent phrases on", themeName))
 }
 
@@ -76,7 +75,7 @@ topWordsByTheme = function(themeName) {
     clean_words %>%
     freqs_table %T>%
     write.csv(file = paste("words-", themeName, ".csv", sep = ""), row.names = FALSE) %>%
-    freqs_table_filter(min.count = 2, limit.rows = 100) %>%
+    freqs_table_filter(min.count = 4, limit.rows = 500) %>%
     kable(row.names = FALSE, caption = paste("Most frequent words on", themeName))
 }
 
@@ -88,5 +87,5 @@ topWordsByTheme("watchboclips.com")
 
 # Data set
 ```{r dates}
-cat(paste(monthAgo, "-", Sys.Date()))
+cat(paste(timeRangeStart, "-", Sys.Date()))
 ```
