@@ -15,7 +15,8 @@ class CreateEventTest {
             segmentStartSeconds = 10,
             segmentEndSeconds = 20,
             videoDurationSeconds = 60,
-            captureTime = "2018-01-01T00:00:00.000Z"
+            captureTime = "2018-01-01T00:00:00.000Z",
+            searchId = "search-id"
     )
 
 

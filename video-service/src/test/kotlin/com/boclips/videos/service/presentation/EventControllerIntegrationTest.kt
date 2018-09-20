@@ -30,7 +30,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "segmentStartSeconds" : 0,
                     "segmentEndSeconds" : 100,
                     "videoDurationSeconds" : 200,
-                    "captureTime" : "2018-01-01T00:00:00.000Z"
+                    "captureTime" : "2018-01-01T00:00:00.000Z",
+                    "searchId" : "srch-123"
                     }""".trimMargin())
         )
                 .andExpect(status().isCreated)

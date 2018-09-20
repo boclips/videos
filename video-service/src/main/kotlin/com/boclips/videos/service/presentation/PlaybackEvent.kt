@@ -6,5 +6,6 @@ data class PlaybackEvent(
         val segmentStartSeconds: Long?,
         val segmentEndSeconds: Long?,
         val videoDurationSeconds: Long?,
-        val captureTime: String?
+        val captureTime: String?,
+        val searchId: String?
 )

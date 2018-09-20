@@ -28,7 +28,8 @@ class CreateEvent(private val eventService: EventService) {
                 "segmentStartSeconds" to event.segmentStartSeconds!!,
                 "segmentEndSeconds" to event.segmentEndSeconds!!,
                 "videoDurationSeconds" to event.videoDurationSeconds!!,
-                "captureTime" to event.captureTime!!
+                "captureTime" to event.captureTime!!,
+                "searchId" to event.searchId
         )))
     }
 
