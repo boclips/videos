@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application
 
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.presentation.PlaybackEvent
+import com.boclips.videos.service.presentation.CreatePlaybackEventCommand
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
@@ -9,7 +9,7 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 
 class CreateEventTest {
-    val playbackEvent = PlaybackEvent(
+    val playbackEvent = CreatePlaybackEventCommand(
             playerIdentifier = "event-id",
             videoIdentifier = "v678",
             segmentStartSeconds = 10,

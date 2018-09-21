@@ -7,11 +7,12 @@ import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.Event
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.search.VideoInformationAggregator.convert
+import java.time.ZonedDateTime
 import java.util.*
 
 data class SearchEventData(val searchId: String, val query: String, val resultsReturned: Int)
 
-class SearchEvent(searchId: String, query: String, resultsReturned: Int) : Event<SearchEventData>("SEARCH", SearchEventData(searchId, query, resultsReturned))
+class SearchEvent(timestamp: ZonedDateTime, searchId: String, query: String, resultsReturned: Int) : Event<SearchEventData>("SEARCH", timestamp, SearchEventData(searchId, query, resultsReturned))
 
 class DefaultVideoService(
         private val searchService: SearchService,
@@ -40,7 +41,7 @@ class DefaultVideoService(
 
         val id = UUID.randomUUID().toString()
 
-        eventService.saveEvent(SearchEvent(id, query, searchResults.videos.size))
+        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), id, query, searchResults.videos.size))
 
         val videos = convert(searchResults.videos, mediaEntries)
 

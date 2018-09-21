@@ -31,6 +31,7 @@ class WebSecurityConfig(val boclipsProperties: BoclipsConfigProperties) : WebSec
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/v1").permitAll()
                 .antMatchers("/v1/").permitAll()
+                .antMatchers(HttpMethod.GET, "/v1/events/status").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/v1/**").permitAll()
                 .anyRequest().authenticated()
     }

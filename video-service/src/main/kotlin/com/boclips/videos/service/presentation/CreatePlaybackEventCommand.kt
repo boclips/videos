@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-data class PlaybackEvent(
+data class CreatePlaybackEventCommand(
         val playerIdentifier: String?,
         val videoIdentifier: String?,
         val segmentStartSeconds: Long?,

@@ -2,10 +2,12 @@ package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.KalturaClientConfig
+import com.boclips.videos.service.application.CheckEventsStatus
 import com.boclips.videos.service.application.CreateEvent
 import com.boclips.videos.service.application.SearchVideos
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
+import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.search.ElasticSearchProperties
 import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
@@ -24,7 +26,7 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     }
 
     @Bean
-    fun eventService(eventLogRepository: EventLogRepository) = EventService(eventLogRepository)
+    fun eventService(eventLogRepository: EventLogRepository,eventMonitoringConfig: EventMonitoringConfig) = EventService(eventLogRepository, eventMonitoringConfig)
 
     @Bean
     fun searchVideos(videoService: VideoService) = SearchVideos(videoService)
@@ -32,6 +34,11 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     @Bean
     fun createEvent(eventService: EventService): CreateEvent {
         return CreateEvent(eventService)
+    }
+
+    @Bean
+    fun checkEventsStatus(eventService: EventService): CheckEventsStatus {
+        return CheckEventsStatus(eventService)
     }
 
     @Bean

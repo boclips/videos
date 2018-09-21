@@ -14,3 +14,9 @@ klient:
   partnerId: no-partner-id
   userId: no-user-id
   secret: no-secret
+
+event:
+  monitoring:
+    lookbackHours:
+      search: 1
+      playback: 1
