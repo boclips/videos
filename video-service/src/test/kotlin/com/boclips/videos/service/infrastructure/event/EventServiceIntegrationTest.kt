@@ -83,13 +83,13 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     private fun savePlaybackEvent(timestamp: ZonedDateTime, searchId: String?) {
         eventLogRepository.save(PlaybackEvent(
-                playerIdentifier = "player-id",
+                playerId = "player-id",
                 captureTime = timestamp,
                 searchId = searchId,
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,
                 videoDurationSeconds = 50,
-                videoIdentifier = "video-id"
+                videoId = "video-id"
         ))
     }
 

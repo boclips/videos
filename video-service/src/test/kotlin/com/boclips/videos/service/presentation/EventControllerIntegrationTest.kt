@@ -31,8 +31,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .withTeacher()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{
-                    "playerIdentifier": "123",
-                    "videoIdentifier" : "v555",
+                    "playerId": "123",
+                    "videoId" : "v555",
                     "segmentStartSeconds" : 0,
                     "segmentEndSeconds" : 100,
                     "videoDurationSeconds" : 200,
@@ -49,13 +49,13 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `status is 200 when there are events`() {
         eventLogRepository.save(SearchEvent(ZonedDateTime.now(), "search-id", "query", 10))
         eventLogRepository.save(PlaybackEvent(
-                playerIdentifier = "player-id",
+                playerId = "player-id",
                 captureTime = ZonedDateTime.now(),
                 searchId = "search-id",
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,
                 videoDurationSeconds = 50,
-                videoIdentifier = "video-id"
+                videoId = "video-id"
         ))
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/events/status"))
                 .andExpect(status().isOk)

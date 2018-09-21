@@ -10,8 +10,8 @@ import org.mockito.Mockito.mock
 
 class CreateEventTest {
     val playbackEvent = CreatePlaybackEventCommand(
-            playerIdentifier = "event-id",
-            videoIdentifier = "v678",
+            playerId = "player-id",
+            videoId = "v678",
             segmentStartSeconds = 10,
             segmentEndSeconds = 20,
             videoDurationSeconds = 60,
@@ -40,14 +40,14 @@ class CreateEventTest {
 
     @Test
     fun `validates player identifier`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerIdentifier = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerIdentifier = "")) }
+        assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerId = null)) }
+        assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerId = "")) }
     }
 
     @Test
     fun `validates video identifier`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoIdentifier = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoIdentifier = "")) }
+        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoId = null)) }
+        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoId = "")) }
     }
 
     @Test

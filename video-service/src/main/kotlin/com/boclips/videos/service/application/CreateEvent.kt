@@ -6,8 +6,8 @@ import com.boclips.videos.service.presentation.CreatePlaybackEventCommand
 import java.time.ZonedDateTime
 
 data class PlaybackEventData(
-        val playerIdentifier: String,
-        val videoIdentifier: String,
+        val playerId: String,
+        val videoId: String,
         val segmentStartSeconds: Long,
         val segmentEndSeconds: Long,
         val videoDurationSeconds: Long,
@@ -15,16 +15,16 @@ data class PlaybackEventData(
 )
 
 class PlaybackEvent(
-        playerIdentifier: String,
-        videoIdentifier: String,
+        playerId: String,
+        videoId: String,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
         videoDurationSeconds: Long,
         captureTime: ZonedDateTime,
         searchId: String?
 ) : Event<PlaybackEventData>("PLAYBACK", captureTime, PlaybackEventData(
-        playerIdentifier = playerIdentifier,
-        videoIdentifier = videoIdentifier,
+        playerId = playerId,
+        videoId = videoId,
         segmentStartSeconds = segmentStartSeconds,
         segmentEndSeconds = segmentEndSeconds,
         videoDurationSeconds = videoDurationSeconds,
@@ -35,16 +35,16 @@ class CreateEvent(private val eventService: EventService) {
     fun execute(event: CreatePlaybackEventCommand?) {
         event ?: throw InvalidEventException("Event cannot be null")
 
-        if (event.playerIdentifier.isNullOrBlank()) throw InvalidEventException("playerIdentifier must be specified")
-        if (event.videoIdentifier.isNullOrBlank()) throw InvalidEventException("videoIdentifier must be specified")
+        if (event.playerId.isNullOrBlank()) throw InvalidEventException("playerId must be specified")
+        if (event.videoId.isNullOrBlank()) throw InvalidEventException("videoId must be specified")
 
         if (isNullOrNegative(event.segmentEndSeconds)) throw InvalidEventException("segmentEndSeconds must be specified")
         if (isNullOrNegative(event.segmentStartSeconds)) throw InvalidEventException("segmentStartSeconds must be specified")
         if (isNullOrNegative(event.videoDurationSeconds)) throw InvalidEventException("videoDurationSeconds must be specified")
 
         eventService.saveEvent(PlaybackEvent(
-                playerIdentifier = event.playerIdentifier!!,
-                videoIdentifier = event.videoIdentifier!!,
+                playerId = event.playerId!!,
+                videoId = event.videoId!!,
                 segmentStartSeconds = event.segmentStartSeconds!!,
                 segmentEndSeconds = event.segmentEndSeconds!!,
                 videoDurationSeconds = event.videoDurationSeconds!!,
