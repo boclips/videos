@@ -16,6 +16,7 @@ import com.boclips.videos.service.infrastructure.search.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.mongodb.core.MongoTemplate
 
 @Configuration
 class BeanConfig(val objectMapper: ObjectMapper) {
@@ -26,7 +27,7 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     }
 
     @Bean
-    fun eventService(eventLogRepository: EventLogRepository,eventMonitoringConfig: EventMonitoringConfig) = EventService(eventLogRepository, eventMonitoringConfig)
+    fun eventService(eventLogRepository: EventLogRepository,eventMonitoringConfig: EventMonitoringConfig, mongoTemplate: MongoTemplate) = EventService(eventLogRepository, eventMonitoringConfig, mongoTemplate)
 
     @Bean
     fun searchVideos(videoService: VideoService) = SearchVideos(videoService)

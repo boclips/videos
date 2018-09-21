@@ -6,12 +6,14 @@ import com.boclips.videos.service.infrastructure.search.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.withTeacher
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.*
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.ZonedDateTime
 
@@ -57,12 +59,20 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ))
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/events/status"))
                 .andExpect(status().isOk)
+                .andExpect(jsonPath("$.healthy", `is`(true)))
+                .andExpect(jsonPath("$.latestSearch", not(isEmptyOrNullString())))
+                .andExpect(jsonPath("$.latestPlaybackInSearch", not(isEmptyOrNullString())))
     }
 
     @Test
     fun `status is 500 when there are no events`() {
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/events/status"))
-                .andExpect(status().is5xxServerError)
+                .andExpect(status().isServiceUnavailable)
+                .andExpect(jsonPath("$.healthy", `is`(false)))
+                .andExpect(jsonPath("$.latestSearch", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.latestPlaybackInSearch", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.latestPlaybackStandalone", isEmptyOrNullString()))
+
     }
 
 

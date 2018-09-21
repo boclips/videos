@@ -1,7 +1,12 @@
 package com.boclips.videos.service.infrastructure.event
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.aggregation.Aggregation
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -12,17 +17,61 @@ data class LookbackHours(var search: Long = 24, var playback: Long = 24)
 @ConfigurationProperties(prefix = "event.monitoring")
 data class EventMonitoringConfig(val lookbackHours: LookbackHours)
 
+data class EventsStatus(
+        val healthy: Boolean,
+        val latestSearch: ZonedDateTime?,
+        val latestPlaybackInSearch: ZonedDateTime?,
+        val latestPlaybackStandalone: ZonedDateTime?
+)
+
 class EventService(
         private val eventLogRepository: EventLogRepository,
-        private val eventMonitoringConfig: EventMonitoringConfig
-) {
+        private val eventMonitoringConfig: EventMonitoringConfig,
+        private val mongoTemplate: MongoTemplate
+        ) {
     fun <T> saveEvent(event: Event<T>) {
         eventLogRepository.insert(event)
     }
 
-    fun status(): Boolean {
-        val utcNow = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()
-        return eventLogRepository.countByTypeAfter("PLAYBACK", utcNow.minusHours(eventMonitoringConfig.lookbackHours.playback)) > 0 &&
-                eventLogRepository.countByTypeAfter("SEARCH", utcNow.minusHours(eventMonitoringConfig.lookbackHours.search)) > 0
+    fun status(): EventsStatus {
+        val utcNow = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC)
+
+        val mostRecentSearch = mostRecentEventByType(typeEquals("SEARCH"))
+        val mostRecentPlaybackInSearch = mostRecentEventByType(typeEquals("PLAYBACK").andOperator(searchIdSpecified()))
+        val mostRecentPlaybackStandalone = mostRecentEventByType(typeEquals("PLAYBACK").andOperator(searchIdNotSpecified()))
+
+        val recentSearchExists = mostRecentSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.search)) ?: false
+        val recentPlaybackExists = mostRecentPlaybackInSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.playback)) ?: false
+
+        val healthy = recentSearchExists && recentPlaybackExists
+
+        return EventsStatus(
+                healthy = healthy,
+                latestSearch = mostRecentSearch,
+                latestPlaybackInSearch = mostRecentPlaybackInSearch,
+                latestPlaybackStandalone = mostRecentPlaybackStandalone
+        )
     }
+
+    fun mostRecentEventByType(criteria: Criteria): ZonedDateTime? {
+        val filterByType = Aggregation.match(criteria)
+        val findMax = Aggregation.project("type").andExpression("max(timestamp)").`as`("timestamp")
+
+        val result = mongoTemplate.aggregate(Aggregation.newAggregation(Event::class.java, listOf(
+                filterByType,
+                findMax
+        )), "event-log", MaxTimestampAggregationResult::class.java).mappedResults
+
+        return if(result.isEmpty()) null else result[0].timestamp.atZone(ZoneOffset.UTC)
+    }
+
+    private fun typeEquals(type: String) = Criteria("type").isEqualTo(type)
+
+    private fun searchIdSpecified() = Criteria("data.searchId").ne(null)
+
+    private fun searchIdNotSpecified() = Criteria("data.searchId").`is`(null)
+
+
 }
+
+data class MaxTimestampAggregationResult(val timestamp: LocalDateTime)

@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.CheckEventsStatus
 import com.boclips.videos.service.application.CreateEvent
+import com.boclips.videos.service.infrastructure.event.EventsStatus
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -24,10 +25,12 @@ class EventController(
     }
 
     @GetMapping("/status")
-    fun status(): ResponseEntity<String> {
-        if(!checkEventsStatus.execute()) {
-            return ResponseEntity("Something wrong with the events", HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-        return ResponseEntity("OK", HttpStatus.OK)
+    fun status(): ResponseEntity<EventsStatus> {
+
+        val status = checkEventsStatus.execute()
+
+        val code = if(status.healthy) HttpStatus.OK else HttpStatus.SERVICE_UNAVAILABLE
+
+        return ResponseEntity(status, code)
     }
 }
