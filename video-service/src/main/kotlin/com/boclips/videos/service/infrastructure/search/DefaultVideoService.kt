@@ -2,10 +2,10 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.service.SearchResults
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.Event
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.event.RequestId
 import com.boclips.videos.service.infrastructure.search.VideoInformationAggregator.convert
 import java.time.ZonedDateTime
 import java.util.*
@@ -17,7 +17,8 @@ class SearchEvent(timestamp: ZonedDateTime, searchId: String, query: String, res
 class DefaultVideoService(
         private val searchService: SearchService,
         private val eventService: EventService,
-        private val kalturaClient: KalturaClient
+        private val kalturaClient: KalturaClient,
+        private val requestId: RequestId
 ) : VideoService {
     companion object {
         fun extractKalturaReferenceIds(videos: List<ElasticSearchVideo>) =
@@ -33,18 +34,16 @@ class DefaultVideoService(
                 }
     }
 
-    override fun search(query: String): SearchResults {
+    override fun search(query: String): List<Video> {
         val searchResults = searchService.search(query)
 
         val referenceIds = extractKalturaReferenceIds(searchResults.videos)
         val mediaEntries = kalturaClient.mediaEntriesByReferenceIds(*referenceIds)
 
-        val id = UUID.randomUUID().toString()
+        requestId.id = UUID.randomUUID().toString()
 
-        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), id, query, searchResults.videos.size))
+        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), requestId.id!!, query, searchResults.videos.size))
 
-        val videos = convert(searchResults.videos, mediaEntries)
-
-        return SearchResults(searchId = id, query = query, videos = videos)
+        return convert(searchResults.videos, mediaEntries)
     }
 }

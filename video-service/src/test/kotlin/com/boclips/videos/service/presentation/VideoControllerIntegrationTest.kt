@@ -2,6 +2,8 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.withTeacher
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,6 +32,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-3.mp4")))
                 .andExpect(jsonPath("$.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-3.mp4")))
                 .andExpect(jsonPath("$.videos[0]._links.self.href", containsString("/videos/test-id-3")))
+    }
+
+    @Test
+    fun `searchId is unique`() {
+        val searchId1 = getSearchId()
+        val searchId2 = getSearchId()
+
+        assertThat(searchId1).isNotBlank()
+        assertThat(searchId1).isNotEqualTo(searchId2)
+    }
+
+    private fun getSearchId(): String {
+        val content = mockMvc.perform(get("/v1/videos/search?query=powerful").withTeacher())
+                .andExpect(status().isOk)
+                .andReturn()
+                .response.contentAsString
+        return ObjectMapper().readValue(content, Map::class.java)["searchId"].toString()
     }
 
     @Test

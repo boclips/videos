@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.event.RequestId
 import com.boclips.videos.service.infrastructure.search.ElasticSearchProperties
 import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
 import com.boclips.videos.service.infrastructure.search.ElasticSearchService
@@ -16,21 +17,24 @@ import com.boclips.videos.service.infrastructure.search.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Scope
+import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.web.context.WebApplicationContext
 
 @Configuration
 class BeanConfig(val objectMapper: ObjectMapper) {
 
     @Bean
-    fun videoService(searchService: SearchService, eventService: EventService, kalturaClient: KalturaClient): VideoService {
-        return DefaultVideoService(searchService = searchService, eventService = eventService, kalturaClient = kalturaClient)
+    fun videoService(searchService: SearchService, eventService: EventService, kalturaClient: KalturaClient, requestId: RequestId): VideoService {
+        return DefaultVideoService(searchService = searchService, eventService = eventService, kalturaClient = kalturaClient, requestId = requestId)
     }
 
     @Bean
     fun eventService(eventLogRepository: EventLogRepository,eventMonitoringConfig: EventMonitoringConfig, mongoTemplate: MongoTemplate) = EventService(eventLogRepository, eventMonitoringConfig, mongoTemplate)
 
     @Bean
-    fun searchVideos(videoService: VideoService) = SearchVideos(videoService)
+    fun searchVideos(videoService: VideoService, requestId: RequestId) = SearchVideos(videoService, requestId)
 
     @Bean
     fun createEvent(eventService: EventService): CreateEvent {
@@ -56,4 +60,10 @@ class BeanConfig(val objectMapper: ObjectMapper) {
             .userId(kalturaClientProperties.userId)
             .secret(kalturaClientProperties.secret)
             .build())
+
+    @Bean
+    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    fun requestId(): RequestId {
+        return RequestId()
+    }
 }
