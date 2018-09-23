@@ -22,9 +22,9 @@ class InteractionsFormatterTest {
         val formatted = InteractionsFormatter.format(interactions)
 
         assertThat(formatted).isEqualTo(
-                """>  2018-02-03T10:11:12Z root
+                """>  2018-02-03T12:11:12Z another
+                  |>  2018-02-03T10:11:12Z root
                   |   2018-02-03T11:11:12Z nested
-                  |>  2018-02-03T12:11:12Z another
                 """.trimMargin())
     }
 }
