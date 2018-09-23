@@ -42,19 +42,10 @@ class InteractionTest {
         val interactions = Interaction.fromSearchAndPlaybackEvents(listOf(SearchAndPlayback(searchEvent, listOf(playbackEvent))))
 
         assertThat(interactions).hasSize(1)
+        assertThat(interactions.first().timestamp).isEqualTo(now.minusMinutes(1))
         assertThat(interactions.first().description).isEqualTo("Search for 'boston' (10 results).")
         assertThat(interactions.first().related).hasSize(1)
         assertThat(interactions.first().related.first().description).isEqualTo("Watch 30s of video-id.")
-    }
-
-    @Test
-    fun `fromSearchAndPlaybackEvents uses latest time as parent interaction timestamp`() {
-        val searchEvent = TestFactories.createSearchEvent(searchId = "search-id", timestamp = now.minusMinutes(1))
-        val playbackEvent = TestFactories.createPlaybackEvent(searchId = "search-id", captureTime = now)
-
-        val interactions = Interaction.fromSearchAndPlaybackEvents(listOf(SearchAndPlayback(searchEvent, listOf(playbackEvent))))
-
-        assertThat(interactions.first().timestamp).isEqualTo(now)
     }
 
     @Test
@@ -79,6 +70,18 @@ class InteractionTest {
         val sorted = sortRecursively(listOf(Interaction(timestamp = now, description = "root", related = related)))
 
         assertThat(sorted[0].related).containsExactly(firstInteraction, secondInteraction, thirdInteraction)
+    }
+
+    @Test
+    fun `sortRecursively uses nested event max timestamp for sorting root level`() {
+        val related = Interaction(timestamp = now, description = "related", related = emptyList())
+        val rootInteraction = Interaction(timestamp = now.minusMinutes(2), description = "root", related = listOf(related))
+        val another = Interaction(timestamp = now.minusMinutes(1), description = "another", related = emptyList())
+
+        val sorted = sortRecursively(listOf(rootInteraction, another))
+
+        assertThat(sorted[0].description).isEqualTo("another")
+        assertThat(sorted[1].description).isEqualTo("root")
     }
 
 

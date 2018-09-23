@@ -21,7 +21,7 @@ class GroupRelatedEventsTest {
         assertThat(groupes.searches.first().playbackEvents).isEqualTo(listOf(playbackEvent))
     }
     @Test
-    fun `does not attache playback event to search when searchId is null`() {
+    fun `does not attach playback event to search when searchId is null`() {
 
         val searchEvent = TestFactories.createSearchEvent(searchId = "search-id")
         val playbackEvent = TestFactories.createPlaybackEvent(searchId = null)
