@@ -1,10 +1,10 @@
-package com.boclips.videos.service.application
+package com.boclips.videos.service.application.search
 
 import com.boclips.videos.service.application.exceptions.QueryValidationException
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.RequestId
-import com.boclips.videos.service.presentation.resources.VideoResource
+import com.boclips.videos.service.presentation.video.VideoResource
 
 class SearchVideos(val videoService: VideoService, val requestId: RequestId) {
     fun execute(query: String?): SearchResultsResource {

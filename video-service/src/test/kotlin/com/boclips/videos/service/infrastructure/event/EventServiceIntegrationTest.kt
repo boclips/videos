@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.event
 
-import com.boclips.videos.service.application.PlaybackEvent
+import com.boclips.videos.service.application.event.PlaybackEvent
 import com.boclips.videos.service.infrastructure.search.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -81,8 +81,19 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(status.latestPlaybackStandalone).isNull()
     }
 
+    @Test
+    fun `interactions`() {
+        saveSearchEvent(ZonedDateTime.now())
+        savePlaybackEvent(ZonedDateTime.now(), "e01")
+        savePlaybackEvent(ZonedDateTime.now(), null)
+
+        val interactions = eventService.latestInteractions()
+
+        assertThat(interactions).hasSize(2)
+    }
+
     private fun savePlaybackEvent(timestamp: ZonedDateTime, searchId: String?) {
-        eventLogRepository.save(PlaybackEvent(
+        eventService.saveEvent(PlaybackEvent(
                 playerId = "player-id",
                 captureTime = timestamp,
                 searchId = searchId,

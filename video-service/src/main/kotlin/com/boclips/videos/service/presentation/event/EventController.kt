@@ -1,8 +1,9 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.event
 
-import com.boclips.videos.service.application.CheckEventsStatus
-import com.boclips.videos.service.application.CreateEvent
+import com.boclips.videos.service.application.event.CheckEventsStatus
+import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.infrastructure.event.EventsStatus
+import com.boclips.videos.service.application.event.CreatePlaybackEventCommand
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

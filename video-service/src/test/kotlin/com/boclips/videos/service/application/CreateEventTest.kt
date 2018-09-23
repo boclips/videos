@@ -1,7 +1,8 @@
 package com.boclips.videos.service.application
 
+import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.presentation.CreatePlaybackEventCommand
+import com.boclips.videos.service.application.event.CreatePlaybackEventCommand
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before

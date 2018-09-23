@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.user
 
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo

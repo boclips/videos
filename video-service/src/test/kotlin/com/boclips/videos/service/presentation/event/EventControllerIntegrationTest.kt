@@ -1,7 +1,9 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.event
 
-import com.boclips.videos.service.application.PlaybackEvent
+import com.boclips.videos.service.application.event.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.EventEntity
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
+import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.search.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.withTeacher
@@ -25,6 +27,9 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var eventLogRepository: EventLogRepository
 
+    @Autowired
+    lateinit var eventService: EventService
+
     @Test
     fun `posted events are being saved`() {
         mockMvc.perform(post("/v1/events")
@@ -47,8 +52,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `status is 200 when there are events`() {
-        eventLogRepository.save(SearchEvent(ZonedDateTime.now(), "search-id", "query", 10))
-        eventLogRepository.save(PlaybackEvent(
+        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), "search-id", "query", 10))
+        eventService.saveEvent(PlaybackEvent(
                 playerId = "player-id",
                 captureTime = ZonedDateTime.now(),
                 searchId = "search-id",
@@ -72,7 +77,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.latestSearch", isEmptyOrNullString()))
                 .andExpect(jsonPath("$.latestPlaybackInSearch", isEmptyOrNullString()))
                 .andExpect(jsonPath("$.latestPlaybackStandalone", isEmptyOrNullString()))
-
     }
 
 

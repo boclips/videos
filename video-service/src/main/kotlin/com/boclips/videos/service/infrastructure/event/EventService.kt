@@ -1,5 +1,11 @@
 package com.boclips.videos.service.infrastructure.event
 
+import com.boclips.videos.service.infrastructure.event.analysis.GroupEventsByType
+import com.boclips.videos.service.infrastructure.event.analysis.GroupRelatedEvents
+import com.boclips.videos.service.infrastructure.event.analysis.Interaction
+import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromPlaybackEvents
+import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromSearchAndPlaybackEvents
+import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.sortRecursively
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
@@ -30,7 +36,7 @@ class EventService(
         private val mongoTemplate: MongoTemplate
         ) {
     fun <T> saveEvent(event: Event<T>) {
-        eventLogRepository.insert(event)
+        eventLogRepository.insert(EventEntity.fromEvent(event))
     }
 
     fun status(): EventsStatus {
@@ -53,7 +59,19 @@ class EventService(
         )
     }
 
-    fun mostRecentEventByType(criteria: Criteria): ZonedDateTime? {
+    fun latestInteractions(): List<Interaction> {
+        val events = eventLogRepository.findAll().map { it.toEvent() }
+
+        val (allSearchEvents, allPlaybackEvents) = GroupEventsByType.groupByType(events)
+
+        val relatedEvents = GroupRelatedEvents.create(allSearchEvents, allPlaybackEvents)
+
+        val interactions = fromPlaybackEvents(relatedEvents.standalonePlaybacks) + fromSearchAndPlaybackEvents(relatedEvents.searches)
+
+        return sortRecursively(interactions)
+    }
+
+    private fun mostRecentEventByType(criteria: Criteria): ZonedDateTime? {
         val filterByType = Aggregation.match(criteria)
         val findMax = Aggregation.project("type").andExpression("max(timestamp)").`as`("timestamp")
 

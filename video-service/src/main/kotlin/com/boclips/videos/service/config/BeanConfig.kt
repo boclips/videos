@@ -2,9 +2,10 @@ package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.KalturaClientConfig
-import com.boclips.videos.service.application.CheckEventsStatus
-import com.boclips.videos.service.application.CreateEvent
-import com.boclips.videos.service.application.SearchVideos
+import com.boclips.videos.service.application.event.CheckEventsStatus
+import com.boclips.videos.service.application.event.CreateEvent
+import com.boclips.videos.service.application.event.GetLatestInteractions
+import com.boclips.videos.service.application.search.SearchVideos
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.web.context.WebApplicationContext
+
 
 @Configuration
 class BeanConfig(val objectMapper: ObjectMapper) {
@@ -65,5 +67,10 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     fun requestId(): RequestId {
         return RequestId()
+    }
+
+    @Bean
+    fun getLatestInteractions(eventService: EventService): GetLatestInteractions {
+        return GetLatestInteractions(eventService)
     }
 }

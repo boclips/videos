@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.kalturaclient.MediaEntry
 import com.boclips.kalturaclient.streams.StreamUrls
-import com.boclips.videos.service.testsupport.ElasticSearchVideoFactory
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.Duration
@@ -12,7 +12,7 @@ class VideoInformationAggregatorTest {
 
     @Test
     fun `convert a list of elastic search videos and a list of media entries to a list of domain videos`() {
-        val elasticSearchVideo = ElasticSearchVideoFactory.create(id = "video-id", referenceId = "ref-id")
+        val elasticSearchVideo = TestFactories.createElasticSearchVideos(id = "video-id", referenceId = "ref-id")
         val mediaEntry = MediaEntry.builder()
                 .referenceId("ref-id")
                 .streams(StreamUrls("http://template/[FORMAT]"))
@@ -35,7 +35,7 @@ class VideoInformationAggregatorTest {
 
     @Test
     fun `conversion skips items when there is no media entry`() {
-        val elasticSearchVideo = ElasticSearchVideoFactory.create(id = "video-id")
+        val elasticSearchVideo = TestFactories.createElasticSearchVideos(id = "video-id")
 
         val videos = VideoInformationAggregator.convert(listOf(elasticSearchVideo), emptyMap())
 

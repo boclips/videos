@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.resources
+package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.Video
 import org.springframework.hateoas.core.Relation

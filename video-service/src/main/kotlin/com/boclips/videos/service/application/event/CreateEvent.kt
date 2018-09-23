@@ -1,8 +1,7 @@
-package com.boclips.videos.service.application
+package com.boclips.videos.service.application.event
 
 import com.boclips.videos.service.infrastructure.event.Event
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.presentation.CreatePlaybackEventCommand
 import java.time.ZonedDateTime
 
 data class PlaybackEventData(

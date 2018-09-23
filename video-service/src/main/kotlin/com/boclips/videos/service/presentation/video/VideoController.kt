@@ -1,7 +1,6 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.application.SearchVideos
-import com.boclips.videos.service.presentation.resources.VideoResource
+import com.boclips.videos.service.application.search.SearchVideos
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn

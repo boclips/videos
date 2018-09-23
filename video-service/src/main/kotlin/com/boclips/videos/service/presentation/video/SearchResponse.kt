@@ -1,6 +1,6 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.presentation.resources.VideoResource
+import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.Resource
 
 data class SearchResponse(
