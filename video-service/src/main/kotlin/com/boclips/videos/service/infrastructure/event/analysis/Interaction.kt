@@ -12,7 +12,8 @@ data class Interaction(val timestamp: ZonedDateTime, val description: String, va
 
             fun formatDescription(events: List<PlaybackEvent>): String {
                 val totalSeconds = events.map { it.data.segmentEndSeconds - it.data.segmentStartSeconds }.sum()
-                return "Watch ${formatSeconds(totalSeconds)} of ${events.first().data.videoId}."
+                val videoData = events.first().data
+                return "Watch ${formatSeconds(totalSeconds)} of ${videoData.videoId} (duration ${formatSeconds(videoData.videoDurationSeconds)})."
             }
 
             return events

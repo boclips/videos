@@ -21,7 +21,7 @@ class InteractionTest {
         val interactions = Interaction.fromPlaybackEvents(listOf(event1, event2))
 
         assertThat(interactions).hasSize(1)
-        assertThat(interactions[0]).isEqualTo(Interaction(timestamp = now, description = "Watch 1m 0s of 123.", related = emptyList()))
+        assertThat(interactions[0]).isEqualTo(Interaction(timestamp = now, description = "Watch 1m 0s of 123 (duration 1m 0s).", related = emptyList()))
     }
 
     @Test
@@ -45,7 +45,7 @@ class InteractionTest {
         assertThat(interactions.first().timestamp).isEqualTo(now.minusMinutes(1))
         assertThat(interactions.first().description).isEqualTo("Search for 'boston' (10 results).")
         assertThat(interactions.first().related).hasSize(1)
-        assertThat(interactions.first().related.first().description).isEqualTo("Watch 30s of video-id.")
+        assertThat(interactions.first().related.first().description).isEqualTo("Watch 30s of video-id (duration 1m 0s).")
     }
 
     @Test
