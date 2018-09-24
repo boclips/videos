@@ -56,6 +56,7 @@ dependencies {
     compile("org.elasticsearch:elasticsearch:6.3.2")
     compile("com.github.knowledgemotion:kaltura-client:0.24.0")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
+    compile("io.github.microutils:kotlin-logging:1.4.9")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')

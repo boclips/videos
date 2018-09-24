@@ -7,6 +7,7 @@ import com.boclips.videos.service.infrastructure.event.Event
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.RequestId
 import com.boclips.videos.service.infrastructure.search.VideoInformationAggregator.convert
+import mu.KLogging
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -20,7 +21,7 @@ class DefaultVideoService(
         private val kalturaClient: KalturaClient,
         private val requestId: RequestId
 ) : VideoService {
-    companion object {
+    companion object : KLogging() {
         fun extractKalturaReferenceIds(videos: List<ElasticSearchVideo>) =
                 videos.map { it.referenceId }.toTypedArray()
     }
@@ -38,6 +39,7 @@ class DefaultVideoService(
         val searchResults = searchService.search(query)
 
         val referenceIds = extractKalturaReferenceIds(searchResults.videos)
+        logger.info("Retrieving media entries for reference ids: ${referenceIds.joinToString(",")}")
         val mediaEntries = kalturaClient.mediaEntriesByReferenceIds(*referenceIds)
 
         requestId.id = UUID.randomUUID().toString()
