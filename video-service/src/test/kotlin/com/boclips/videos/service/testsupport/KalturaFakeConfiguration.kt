@@ -1,9 +1,9 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.kalturaclient.MediaEntry
-import com.boclips.kalturaclient.client.TestKalturaClient
-import com.boclips.kalturaclient.streams.StreamUrls
+import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.kalturaclient.KalturaClientTest
+import com.boclips.kalturaclient.media.streams.StreamUrls
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -16,7 +16,7 @@ class KalturaFakeConfiguration {
     @Bean
     @Primary
     fun fakeKalturaClient(): KalturaClient {
-        val testKalturaClient = TestKalturaClient()
+        val testKalturaClient = KalturaClientTest()
         testKalturaClient.addMediaEntry(mediaEntry("1"))
         testKalturaClient.addMediaEntry(mediaEntry("2"))
         testKalturaClient.addMediaEntry(mediaEntry("3"))

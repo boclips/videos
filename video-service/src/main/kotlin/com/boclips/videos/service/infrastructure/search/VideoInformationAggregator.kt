@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.kalturaclient.MediaEntry
-import com.boclips.kalturaclient.streams.StreamFormat
+import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.Video
 import java.time.LocalDate
 

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.kalturaclient.MediaEntry
-import com.boclips.kalturaclient.streams.StreamUrls
+import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
