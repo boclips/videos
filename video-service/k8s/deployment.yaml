@@ -22,7 +22,7 @@ spec:
             preference:
               matchExpressions: [{key: priority, operator: In, values: [noncritical]}]
 
-      $TOLERATE_NONCRITICAL_STAGING
+      $TOLERATE_NONCRITICAL_EXCEPT_PRODUCTION
 
       containers:
       - name: video-service
