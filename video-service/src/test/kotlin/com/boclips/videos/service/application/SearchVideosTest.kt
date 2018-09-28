@@ -3,6 +3,7 @@ package com.boclips.videos.service.application
 import com.boclips.videos.service.application.exceptions.QueryValidationException
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.SearchVideos
+import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.RequestId
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -14,7 +15,7 @@ class SearchVideosTest {
 
     @Test
     fun `execute throws an exception when query is null`() {
-        val searchVideos = SearchVideos(mock(VideoService::class.java), RequestId())
+        val searchVideos = SearchVideos(mock(SearchService::class.java), RequestId())
 
         assertThatThrownBy {
             searchVideos.execute(null)
@@ -23,7 +24,7 @@ class SearchVideosTest {
 
     @Test
     fun `get throws an exception when no result`() {
-        val searchService = mock(VideoService::class.java)
+        val searchService = mock(SearchService::class.java)
         `when`(searchService.findById("sometin'")).thenReturn(null)
         val searchVideos = SearchVideos(searchService, RequestId())
 

@@ -4,11 +4,11 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class DefaultVideoServiceTest {
+class ElasticSearchServiceTest {
     @Test
     fun `extract reference ids from search result`() {
         val videos = listOf(TestFactories.createElasticSearchVideos(referenceId = "the-one"))
-        val referenceIds = DefaultVideoService.extractKalturaReferenceIds(videos)
+        val referenceIds = ElasticSearchService.extractKalturaReferenceIds(videos)
 
         assertThat(referenceIds).containsExactly("the-one")
     }

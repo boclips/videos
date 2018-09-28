@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.SearchVideos
+import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
@@ -28,15 +29,15 @@ import org.springframework.web.context.WebApplicationContext
 class BeanConfig(val objectMapper: ObjectMapper) {
 
     @Bean
-    fun videoService(searchService: SearchService, eventService: EventService, kalturaClient: KalturaClient, requestId: RequestId): VideoService {
-        return DefaultVideoService(searchService = searchService, eventService = eventService, kalturaClient = kalturaClient, requestId = requestId)
+    fun videoService(): VideoService {
+        return DefaultVideoService()
     }
 
     @Bean
     fun eventService(eventLogRepository: EventLogRepository,eventMonitoringConfig: EventMonitoringConfig, mongoTemplate: MongoTemplate) = EventService(eventLogRepository, eventMonitoringConfig, mongoTemplate)
 
     @Bean
-    fun searchVideos(videoService: VideoService, requestId: RequestId) = SearchVideos(videoService, requestId)
+    fun searchVideos(searchService: SearchService, requestId: RequestId) = SearchVideos(searchService, requestId)
 
     @Bean
     fun createEvent(eventService: EventService): CreateEvent {
@@ -49,8 +50,8 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     }
 
     @Bean
-    fun searchService(elasticSearchProperties: ElasticSearchProperties): SearchService {
-        return ElasticSearchService(searchHitConverter(), elasticSearchProperties)
+    fun searchService(elasticSearchProperties: ElasticSearchProperties, eventService: EventService, kalturaClient: KalturaClient, requestId: RequestId): SearchService {
+        return ElasticSearchService(searchHitConverter(), kalturaClient, eventService, requestId, elasticSearchProperties)
     }
 
     @Bean
