@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.search
+package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.exceptions.QueryValidationException
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException

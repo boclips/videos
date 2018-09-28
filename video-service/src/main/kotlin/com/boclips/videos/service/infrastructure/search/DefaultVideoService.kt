@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.Event
@@ -23,16 +24,15 @@ class DefaultVideoService(
 ) : VideoService {
     companion object : KLogging() {
         fun extractKalturaReferenceIds(videos: List<ElasticSearchVideo>) =
-                videos.map { it.referenceId }.toTypedArray()
+                videos.map { it.referenceId }
     }
 
     override fun findById(id: String): Video? {
-        return searchService.findById(id)
-                ?.let {
-                    val mediaEntry = kalturaClient.mediaEntryByReferenceId(it.referenceId).orElse(null)
-                            ?: return@let null
-                    convert(it, mediaEntry)
-                }
+        val elasticSearchVideo = searchService.findById(id) ?: return null
+        val kalturaVideo = kalturaClient.getMediaEntriesByReferenceId(elasticSearchVideo.referenceId).firstOrNull()
+                ?: return null
+
+        return convert(elasticSearchVideo, kalturaVideo)
     }
 
     override fun search(query: String): List<Video> {
@@ -40,12 +40,17 @@ class DefaultVideoService(
 
         val referenceIds = extractKalturaReferenceIds(searchResults.videos)
         logger.info("Retrieving media entries for reference ids: ${referenceIds.joinToString(",")}")
-        val mediaEntries = kalturaClient.mediaEntriesByReferenceIds(*referenceIds)
+        val mediaEntries: Map<String, MediaEntry> = getKalturaVideoByReferenceId(referenceIds)
 
         requestId.id = UUID.randomUUID().toString()
 
         eventService.saveEvent(SearchEvent(ZonedDateTime.now(), requestId.id!!, query, searchResults.videos.size))
 
         return convert(searchResults.videos, mediaEntries)
+    }
+
+    fun getKalturaVideoByReferenceId(referenceIds: List<String>): Map<String, MediaEntry> {
+        val mediaEntries: Map<String, List<MediaEntry>> = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
+        return mediaEntries.mapValues { it.value.first() }
     }
 }

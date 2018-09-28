@@ -2,7 +2,7 @@ package com.boclips.videos.service.application
 
 import com.boclips.videos.service.application.exceptions.QueryValidationException
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
-import com.boclips.videos.service.application.search.SearchVideos
+import com.boclips.videos.service.application.video.SearchVideos
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.RequestId
 import org.assertj.core.api.Assertions.assertThatThrownBy

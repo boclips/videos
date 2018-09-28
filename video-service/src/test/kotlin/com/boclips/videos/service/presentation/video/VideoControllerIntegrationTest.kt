@@ -1,15 +1,14 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.withTeacher
+import com.boclips.videos.service.testsupport.authenticateAsTeacher
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -19,7 +18,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `search for videos`() {
-        mockMvc.perform(get("/v1/videos/search?query=powerful").withTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.searchId", not(isEmptyOrNullString())))
                 .andExpect(jsonPath("$.query", equalTo("powerful")))
@@ -44,7 +43,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun getSearchId(): String {
-        val content = mockMvc.perform(get("/v1/videos/search?query=powerful").withTeacher())
+        val content = mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
                 .andExpect(status().isOk)
                 .andReturn()
                 .response.contentAsString
@@ -65,13 +64,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 400 for invalid search request`() {
-        mockMvc.perform(get("/v1/videos/search").withTeacher())
+        mockMvc.perform(get("/v1/videos/search").authenticateAsTeacher())
                 .andExpect(status().`is`(400))
     }
 
     @Test
     fun `returns empty videos array when there are no results`() {
-        mockMvc.perform(get("/v1/videos/search?query=somethingthatdoesntexistever").withTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=somethingthatdoesntexistever").authenticateAsTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.searchId", not(isEmptyOrNullString())))
                 .andExpect(jsonPath("$.query", equalTo("somethingthatdoesntexistever")))
@@ -80,7 +79,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `video details`() {
-        mockMvc.perform(get("/v1/videos/test-id-3").withTeacher())
+        mockMvc.perform(get("/v1/videos/test-id-3").authenticateAsTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.id", equalTo("test-id-3")))
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
@@ -101,7 +100,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 404 for inexistent video`() {
-        mockMvc.perform(get("/v1/videos/does-not-exist").withTeacher())
+        mockMvc.perform(get("/v1/videos/does-not-exist").authenticateAsTeacher())
                 .andExpect(status().`is`(404))
     }
 }

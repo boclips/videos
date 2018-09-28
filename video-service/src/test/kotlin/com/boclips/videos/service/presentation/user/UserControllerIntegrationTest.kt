@@ -1,11 +1,9 @@
 package com.boclips.videos.service.presentation.user
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.withTeacher
-import org.hamcrest.Matchers.*
+import com.boclips.videos.service.testsupport.authenticateAsTeacher
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options
@@ -24,7 +22,7 @@ class UserControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `get user info`() {
-        mockMvc.perform(get("/v1/user").withTeacher())
+        mockMvc.perform(get("/v1/user").authenticateAsTeacher())
                 .andExpect(status().isOk)
     }
 

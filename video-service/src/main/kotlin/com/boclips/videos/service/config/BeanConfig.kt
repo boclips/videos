@@ -5,7 +5,7 @@ import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
-import com.boclips.videos.service.application.search.SearchVideos
+import com.boclips.videos.service.application.video.SearchVideos
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
