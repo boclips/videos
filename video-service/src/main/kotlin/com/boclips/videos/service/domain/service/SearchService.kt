@@ -1,8 +1,7 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoId
 
 interface SearchService {
-    fun search(query: String): List<Video>
-    fun findById(id: String): Video?
+    fun search(query: String): List<VideoId>
 }

@@ -1,8 +1,13 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.videos.service.application.event.PlaybackEvent
+import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.domain.model.VideoPlayback
+import com.boclips.videos.service.infrastructure.event.SearchEvent
 import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
-import com.boclips.videos.service.infrastructure.search.SearchEvent
+import java.time.Duration
+import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -53,6 +58,18 @@ object TestFactories {
             captureTime = captureTime,
             searchId = searchId
     )
+
+    fun createVideo(videoPlayback: VideoPlayback? = null): Video {
+        return Video(
+                videoId = VideoId(videoId = "123", referenceId = "ref-id-1"),
+                title = "title",
+                description = "description",
+                duration = Duration.ofMinutes(2),
+                releasedOn = LocalDate.parse("2018-01-01"),
+                videoPlayback = videoPlayback,
+                contentProvider = "AP"
+        )
+    }
 
 }
 

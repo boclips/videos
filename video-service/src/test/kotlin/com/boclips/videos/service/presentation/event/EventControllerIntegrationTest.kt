@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation.event
 import com.boclips.videos.service.application.event.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.search.SearchEvent
+import com.boclips.videos.service.infrastructure.event.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.authenticateAsTeacher
 import org.assertj.core.api.Assertions.assertThat

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.event.analysis
 
 import com.boclips.videos.service.application.event.PlaybackEvent
-import com.boclips.videos.service.infrastructure.search.SearchEvent
+import com.boclips.videos.service.infrastructure.event.SearchEvent
 
 data class RelatedEvents(val searches: List<SearchAndPlayback>, val standalonePlaybacks: List<PlaybackEvent>)
 
@@ -23,7 +23,7 @@ object GroupRelatedEvents {
     private fun splitPlaybackEventsBySearchIdPresence(playbackEvents: List<PlaybackEvent>): Pair<List<PlaybackEvent>, List<PlaybackEvent>> {
 
         return playbackEvents.fold(Pair(emptyList(), emptyList())) { (withSearchId, withoutSearchId), event ->
-            if(event.data.searchId == null)
+            if (event.data.searchId == null)
                 Pair(withSearchId, withoutSearchId + event)
             else
                 Pair(withSearchId + event, withoutSearchId)
@@ -32,7 +32,7 @@ object GroupRelatedEvents {
 
     private data class SearchAndPlaybackBySearchId(val map: Map<String, SearchAndPlayback>) {
 
-        constructor(searchEvents: List<SearchEvent>) : this(searchEvents.groupBy({it.data.searchId}) { SearchAndPlayback(it, emptyList()) }.mapValues { it.value.first() })
+        constructor(searchEvents: List<SearchEvent>) : this(searchEvents.groupBy({ it.data.searchId }) { SearchAndPlayback(it, emptyList()) }.mapValues { it.value.first() })
 
         fun add(playbackEvent: PlaybackEvent): SearchAndPlaybackBySearchId {
             val searchId = playbackEvent.data.searchId!!

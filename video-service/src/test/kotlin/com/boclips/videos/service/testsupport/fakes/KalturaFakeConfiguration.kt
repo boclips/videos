@@ -1,4 +1,4 @@
-package com.boclips.videos.service.testsupport
+package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.media.MediaEntry

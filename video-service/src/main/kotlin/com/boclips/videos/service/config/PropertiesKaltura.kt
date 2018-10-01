@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConfigurationProperties(prefix = "klient")
-data class KalturaClientProperties(
+data class PropertiesKaltura(
         var partnerId: String = "",
         var userId: String = "",
         var secret: String = ""

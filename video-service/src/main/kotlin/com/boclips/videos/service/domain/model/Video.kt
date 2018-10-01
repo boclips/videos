@@ -4,12 +4,15 @@ import java.time.Duration
 import java.time.LocalDate
 
 data class Video(
-        val id: String,
+        val videoId: VideoId,
         val title: String,
         val description: String,
         val duration: Duration,
         val releasedOn: LocalDate,
         val contentProvider: String,
-        val streamUrl: String,
-        val thumbnailUrl: String
-)
+        val videoPlayback: VideoPlayback?
+) {
+    fun isPlayable(): Boolean {
+        return videoPlayback !== null
+    }
+}

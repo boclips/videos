@@ -1,35 +1,33 @@
 package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.videos.service.domain.service.SearchService
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.junit4.SpringRunner
 
-class ElasticSearchServiceIntegrationTest : AbstractSpringIntegrationTest() {
+@RunWith(SpringRunner::class)
+@SpringBootTest
+@ActiveProfiles("test", "search-test")
+class ElasticSearchServiceIntegrationTest {
 
     @Autowired
     lateinit var searchService: SearchService
 
     @Test
-    fun search() {
+    fun `finds a video with keyword in description`() {
         val result = searchService.search("powerful")
 
-        assertThat(result[0].id).isEqualTo("test-id-3")
-        assertThat(result[0].title).isNotBlank()
-        assertThat(result[0].description).isNotBlank()
-        assertThat(result[0].releasedOn).isNotNull()
-        assertThat(result[0].contentProvider).isNotBlank()
+        assertThat(result[0].videoId).isEqualTo("test-id-3")
     }
 
     @Test
-    fun findById() {
-        val result = searchService.findById("test-id-3")
+    fun `returns empty collection for empty result`() {
+        val result = searchService.search("somethingthatdoesntexist")
 
-        assertThat(result!!.id).isEqualTo("test-id-3")
-        assertThat(result.title).isNotBlank()
-        assertThat(result.description).isNotBlank()
-        assertThat(result.releasedOn).isNotNull()
-        assertThat(result.contentProvider).isNotBlank()
+        assertThat(result).hasSize(0)
     }
 }

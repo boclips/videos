@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.videos.service.infrastructure.search.ElasticSearchProperties
+import com.boclips.videos.service.config.PropertiesElasticSearch
 import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.http.HttpHost
@@ -9,21 +9,23 @@ import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic
 import pl.allegro.tech.embeddedelasticsearch.PopularProperties
 import java.util.concurrent.TimeUnit
 
 @Service
+@Profile("search-test")
 class EmbeddedElasticSearch(
-        private val elasticSearchProperties: ElasticSearchProperties,
+        private val propertiesElasticSearch: PropertiesElasticSearch,
         private val objectMapper: ObjectMapper
-        ) {
+) {
 
     init {
         EmbeddedElastic.builder()
                 .withElasticVersion("6.3.2")
-                .withSetting(PopularProperties.HTTP_PORT, elasticSearchProperties.port)
+                .withSetting(PopularProperties.HTTP_PORT, propertiesElasticSearch.port)
                 .withStartTimeout(1, TimeUnit.MINUTES)
                 .build()
                 .start()
@@ -76,7 +78,7 @@ class EmbeddedElasticSearch(
         videos.forEach { video ->
             val document = objectMapper.writeValueAsString(video)
 
-            RestHighLevelClient(RestClient.builder(HttpHost(elasticSearchProperties.host, elasticSearchProperties.port))).use { client ->
+            RestHighLevelClient(RestClient.builder(HttpHost(propertiesElasticSearch.host, propertiesElasticSearch.port))).use { client ->
                 val indexRequest = IndexRequest("videos", "_doc", "${video.id}")
                         .source(document, XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)

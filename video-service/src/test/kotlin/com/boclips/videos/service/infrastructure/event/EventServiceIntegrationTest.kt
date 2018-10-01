@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.event
 
 import com.boclips.videos.service.application.event.PlaybackEvent
-import com.boclips.videos.service.infrastructure.search.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

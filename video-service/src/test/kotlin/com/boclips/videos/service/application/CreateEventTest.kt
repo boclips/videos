@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application
 
 import com.boclips.videos.service.application.event.CreateEvent
-import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.application.event.CreatePlaybackEventCommand
+import com.boclips.videos.service.infrastructure.event.EventService
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
@@ -19,7 +19,6 @@ class CreateEventTest {
             captureTime = "2018-01-01T00:00:00.000Z",
             searchId = "search-id"
     )
-
 
     lateinit var createEvent: CreateEvent
 

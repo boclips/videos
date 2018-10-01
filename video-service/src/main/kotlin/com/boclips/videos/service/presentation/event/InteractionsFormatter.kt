@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation.event
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 
 object InteractionsFormatter {
-
     fun format(interactions: List<Interaction>): String {
         return interactions.reversed()
                 .flatMap { listOf(">  ${format(it)}") + it.related.map { "   ${format(it)}" } }

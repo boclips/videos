@@ -1,7 +1,5 @@
-package com.boclips.videos.service.infrastructure
+package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
-import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray

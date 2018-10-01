@@ -49,6 +49,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-hateoas')
     compile('org.springframework.boot:spring-boot-starter-data-mongodb')
     compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-jdbc')
     compile('com.fasterxml.jackson.module:jackson-module-kotlin')
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("org.jetbrains.kotlin:kotlin-reflect")
@@ -57,9 +58,13 @@ dependencies {
     compile("com.github.knowledgemotion:kaltura-client:0.27.0")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
     compile("io.github.microutils:kotlin-logging:1.4.9")
+    compile('mysql:mysql-connector-java')
+
+    compileOnly("org.springframework.boot:spring-boot-configuration-processor")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
     testCompile('pl.allegro.tech:embedded-elasticsearch:2.7.0')
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
+    testCompile('com.h2database:h2')
 }
