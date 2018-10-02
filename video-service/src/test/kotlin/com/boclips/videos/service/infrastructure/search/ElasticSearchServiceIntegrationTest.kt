@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.search
 
+import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.service.SearchService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -21,7 +22,7 @@ class ElasticSearchServiceIntegrationTest {
     fun `finds a video with keyword in description`() {
         val result = searchService.search("powerful")
 
-        assertThat(result[0].videoId).isEqualTo("test-id-3")
+        assertThat(result[0].videoId).isEqualTo("390")
     }
 
     @Test
@@ -30,4 +31,16 @@ class ElasticSearchServiceIntegrationTest {
 
         assertThat(result).hasSize(0)
     }
+
+    @Test
+    fun `remove entry from index`() {
+        val deletedVideo = VideoId(videoId = "690")
+
+        assertThat(searchService.isIndexed(deletedVideo)).isTrue()
+
+        searchService.removeFromSearch(deletedVideo)
+
+        assertThat(searchService.isIndexed(deletedVideo)).isFalse()
+    }
+
 }

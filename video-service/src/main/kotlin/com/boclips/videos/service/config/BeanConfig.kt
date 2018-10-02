@@ -5,6 +5,7 @@ import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
+import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.SearchService
@@ -41,6 +42,11 @@ class BeanConfig(val objectMapper: ObjectMapper) {
                     playbackService = playbackService,
                     requestId = requestId
             )
+
+    @Bean
+    fun deleteVideos(videoService: VideoService): DeleteVideos {
+        return DeleteVideos(videoService)
+    }
 
     @Bean
     fun videoService(searchService: SearchService, videoRepository: VideoRepository): VideoService {

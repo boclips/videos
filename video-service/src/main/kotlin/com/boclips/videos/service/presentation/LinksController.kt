@@ -15,7 +15,7 @@ class LinksController {
     @GetMapping
     fun search(): Resource<String> = Resource("",
             VideoController.searchLink(),
-            VideoController.videoLink(),
+            VideoController.getVideoLink(),
             EventController.createEventLink(),
             UserController.profileLink()
     )

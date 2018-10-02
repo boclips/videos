@@ -32,7 +32,7 @@ class EmbeddedElasticSearch(
 
         index(
                 ElasticSearchVideo(
-                        id = "test-id-1",
+                        id = "190",
                         referenceId = "ref-id-1",
                         title = "test title 1",
                         description = "test description 1",
@@ -40,7 +40,7 @@ class EmbeddedElasticSearch(
                         source = "cp"
                 ),
                 ElasticSearchVideo(
-                        id = "test-id-2",
+                        id = "290",
                         referenceId = "ref-id-2",
                         title = "test title 2",
                         description = "test description 2",
@@ -48,7 +48,7 @@ class EmbeddedElasticSearch(
                         source = "cp"
                 ),
                 ElasticSearchVideo(
-                        id = "test-id-3",
+                        id = "390",
                         referenceId = "ref-id-3",
                         title = "powerful video about elephants",
                         description = "test description 3",
@@ -56,7 +56,7 @@ class EmbeddedElasticSearch(
                         source = "cp"
                 ),
                 ElasticSearchVideo(
-                        id = "test-id-4",
+                        id = "490",
                         referenceId = "ref-id-4",
                         title = "clip about elephants",
                         description = "animals rock",
@@ -64,10 +64,18 @@ class EmbeddedElasticSearch(
                         source = "cp"
                 ),
                 ElasticSearchVideo(
-                        id = "test-id-5",
+                        id = "590",
                         referenceId = "ref-id-5",
                         title = "test title 5",
                         description = "test description 5",
+                        date = "2018-02-11",
+                        source = "cp"
+                ),
+                ElasticSearchVideo(
+                        id = "690",
+                        referenceId = "ref-id-6",
+                        title = "test title 6",
+                        description = "test description 6",
                         date = "2018-02-11",
                         source = "cp"
                 )

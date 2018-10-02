@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import java.time.Duration
@@ -44,5 +44,10 @@ class MysqlVideoService(
                 contentProvider = videoEntity.source!!,
                 videoPlayback = null
         )
+    }
+
+    override fun removeVideo(video: Video) {
+        searchService.removeFromSearch(video.videoId)
+        videoRepository.deleteById(video.videoId.videoId.toLong())
     }
 }

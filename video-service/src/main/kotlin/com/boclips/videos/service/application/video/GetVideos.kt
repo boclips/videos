@@ -33,8 +33,9 @@ class GetVideos(
         val playableVideos = playbackService.getVideosWithPlayback(videosWithoutPlayback)
 
         val videoResources = videoToResourceConverter.convert(playableVideos)
-                .map { x -> Resource(x, VideoController.videoLink(x.id, "self")) }
+                .map { x -> Resource(x, VideoController.getVideoLink(x.id, "self")) }
 
+        // TODO: Discuss requestID
         return SearchResource(searchId = requestId.id ?: "", query = query, videos = videoResources)
     }
 }

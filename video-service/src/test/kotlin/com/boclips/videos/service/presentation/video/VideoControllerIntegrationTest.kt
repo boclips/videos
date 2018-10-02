@@ -10,8 +10,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -31,7 +30,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `search for videos`() {
+    fun `returns 200 videos with text query`() {
         mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.query", equalTo("powerful")))
@@ -65,7 +64,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `video details`() {
+    fun `returns 200 for valid video`() {
         mockMvc.perform(get("/v1/videos/123").authenticateAsTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.id", equalTo("123")))
@@ -89,6 +88,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 404 for inexistent video`() {
         mockMvc.perform(get("/v1/videos/9999").authenticateAsTeacher())
                 .andExpect(status().`is`(404))
+    }
+
+    @Test
+    fun `returns 200 when video is deleted`() {
+        mockMvc.perform(delete("/v1/videos/123").authenticateAsTeacher())
+                .andExpect(status().`is`(200))
     }
 
     @Ignore

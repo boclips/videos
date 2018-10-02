@@ -6,11 +6,12 @@ import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.RequestId
 import com.boclips.videos.service.infrastructure.event.SearchEvent
-import mu.KLogging
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
@@ -30,12 +31,6 @@ class ElasticSearchService(
         propertiesElasticSearch: PropertiesElasticSearch
 ) : SearchService {
     private val client: RestHighLevelClient
-
-    companion object : KLogging() {
-        fun extractKalturaReferenceIds(videos: List<ElasticSearchVideo>) =
-                videos.map { it.referenceId }
-
-    }
 
     init {
         val credentialsProvider = BasicCredentialsProvider()
@@ -73,6 +68,15 @@ class ElasticSearchService(
         )
 
         return client.search(searchRequest).hits.hits.map(elasticSearchResultConverter::convert)
+    }
+
+    override fun removeFromSearch(videoId: VideoId) {
+        client.delete(DeleteRequest("videos", "_doc", videoId.videoId))
+    }
+
+    override fun isIndexed(videoId: VideoId): Boolean {
+        val get = client.get(GetRequest("videos", "_doc", videoId.videoId))
+        return get.isExists
     }
 
 }

@@ -1,8 +1,9 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -14,6 +15,9 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoService: VideoService
+
+    @Autowired
+    lateinit var searchService: SearchService
 
     @Test
     fun `find multiple videos by video ids`() {
@@ -81,5 +85,19 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(videos).hasSize(1)
         assertThat(videos[0].videoId.videoId == "123")
+    }
+
+    @Test
+    fun `remove a video`() {
+        saveVideo(123, "Some title", "test description 3")
+
+        val videoIdToBeDeleted = VideoId(videoId = "123")
+        val videoToBeDeleted = videoService.findVideoBy(videoIdToBeDeleted)
+        videoService.removeVideo(videoToBeDeleted)
+
+        val deletedVideo = videoRepository.findById(123)
+        assertThat(deletedVideo).isEmpty()
+
+        assertThat(searchService.isIndexed(videoIdToBeDeleted)).isFalse()
     }
 }
