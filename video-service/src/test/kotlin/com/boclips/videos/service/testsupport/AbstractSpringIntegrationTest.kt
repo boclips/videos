@@ -20,7 +20,7 @@ import java.time.Duration
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test", "fake-kaltura", "fake-search", "fake-requestid")
+@ActiveProfiles("test", "fake-kaltura", "fake-search")
 @Transactional
 abstract class AbstractSpringIntegrationTest {
 
