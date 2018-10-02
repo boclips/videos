@@ -25,10 +25,17 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
     override fun getVideoWithPlayback(video: Video): Video {
         val referenceId = video.videoId.referenceId ?: throw VideoPlaybackNotFound()
 
-        val mediaEntry = kalturaClient.getMediaEntriesByReferenceId(referenceId)
+        val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(referenceId)
 
-        val streamUrl = mediaEntry.first().streams.withFormat(StreamFormat.MPEG_DASH)
-        val thumbnailUrl = mediaEntry.first().thumbnailUrl
+        if (mediaEntries.isEmpty()) throw VideoPlaybackNotFound()
+
+        val streamUrl = mediaEntries.first().streams.withFormat(StreamFormat.MPEG_DASH)
+        val thumbnailUrl = mediaEntries.first().thumbnailUrl
+        
         return video.copy(videoPlayback = VideoPlayback(streamUrl = streamUrl, thumbnailUrl = thumbnailUrl))
+    }
+
+    override fun removePlayback(video: Video) {
+        kalturaClient.deleteMediaEntriesByReferenceId(video.videoId.referenceId)
     }
 }

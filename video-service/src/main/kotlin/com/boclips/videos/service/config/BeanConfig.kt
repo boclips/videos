@@ -49,8 +49,13 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     }
 
     @Bean
-    fun videoService(searchService: SearchService, jdbcTemplate: NamedParameterJdbcTemplate): VideoService {
-        return MysqlVideoService(searchService = searchService, jdbcTemplate = jdbcTemplate)
+    fun videoService(searchService: SearchService,
+                     jdbcTemplate: NamedParameterJdbcTemplate,
+                     playbackService: PlaybackService): VideoService {
+        return MysqlVideoService(
+                searchService = searchService,
+                jdbcTemplate = jdbcTemplate,
+                playbackVideo = playbackService)
     }
 
     @Bean

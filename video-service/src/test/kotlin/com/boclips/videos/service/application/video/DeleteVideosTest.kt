@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.service.VideoService
@@ -16,6 +17,9 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoService: VideoService
+
+    @Autowired
+    lateinit var kalturaClient: KalturaClient
 
     @Test
     fun `requesting deletion of an existing video deletes the video from MySQL`() {
@@ -35,6 +39,17 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         assertThat(fakeSearchService.search("irrelevant query"))
                 .doesNotContain(VideoId(videoId = "123"))
+    }
+
+    @Test
+    fun `requesting deletion removes the video from kaltura`() {
+        saveVideo(videoId = 123, referenceId = "ref-123")
+        kalturaClient.createMediaEntry("ref-123")
+        assertThat(kalturaClient.getMediaEntriesByReferenceId("ref-123")).isNotEmpty()
+
+        deleteVideos.delete("123")
+
+        assertThat(kalturaClient.getMediaEntriesByReferenceId("ref-123")).isEmpty()
     }
 
     @Test

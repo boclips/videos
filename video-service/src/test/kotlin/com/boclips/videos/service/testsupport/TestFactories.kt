@@ -59,9 +59,9 @@ object TestFactories {
             searchId = searchId
     )
 
-    fun createVideo(videoPlayback: VideoPlayback? = null): Video {
+    fun createVideo(videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String = "ref-id-1"): Video {
         return Video(
-                videoId = VideoId(videoId = "123", referenceId = "ref-id-1"),
+                videoId = VideoId(videoId = videoId, referenceId = referenceId),
                 title = "title",
                 description = "description",
                 duration = Duration.ofMinutes(2),

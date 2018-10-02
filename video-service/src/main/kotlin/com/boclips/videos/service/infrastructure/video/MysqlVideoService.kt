@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -16,6 +17,7 @@ import java.util.*
 
 class MysqlVideoService(
         private val searchService: SearchService,
+        private val playbackVideo: PlaybackService,
         private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : VideoService {
     private val SELECT_QUERY = "SELECT * FROM metadata_orig WHERE id IN (:ids)"
@@ -41,6 +43,7 @@ class MysqlVideoService(
     override fun removeVideo(video: Video) {
         searchService.removeFromSearch(video.videoId)
         deleteById(video.videoId.videoId.toLong())
+        playbackVideo.removePlayback(video)
     }
 
     private fun convertToVideo(videoEntity: VideoEntity): Video {
