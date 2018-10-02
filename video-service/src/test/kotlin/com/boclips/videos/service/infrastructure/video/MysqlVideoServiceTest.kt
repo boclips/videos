@@ -95,8 +95,8 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
         val videoToBeDeleted = videoService.findVideoBy(videoIdToBeDeleted)
         videoService.removeVideo(videoToBeDeleted)
 
-        val deletedVideo = videoRepository.findById(123)
-        assertThat(deletedVideo).isEmpty()
+        assertThatThrownBy { videoService.findVideoBy(VideoId(videoId = "123")) }
+                .isInstanceOf(VideoNotFoundException::class.java)
 
         assertThat(searchService.isIndexed(videoIdToBeDeleted)).isFalse()
     }

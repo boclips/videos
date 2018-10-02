@@ -67,4 +67,5 @@ dependencies {
     testCompile('pl.allegro.tech:embedded-elasticsearch:2.7.0')
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
     testCompile('com.h2database:h2')
+    testCompile('org.flywaydb:flyway-core')
 }

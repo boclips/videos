@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -13,14 +14,17 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var deleteVideos: DeleteVideos
 
+    @Autowired
+    lateinit var videoService: VideoService
+
     @Test
     fun `requesting deletion of an existing video deletes the video from MySQL`() {
         saveVideo(videoId = 123)
 
         deleteVideos.delete("123")
 
-        assertThat(videoRepository.findById(123))
-                .isEmpty
+        assertThatThrownBy { videoService.findVideoBy(VideoId(videoId = "123")) }
+                .isInstanceOf(VideoNotFoundException::class.java)
     }
 
     @Test

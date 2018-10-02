@@ -18,7 +18,6 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackService
 import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
 import com.boclips.videos.service.infrastructure.search.ElasticSearchService
 import com.boclips.videos.service.infrastructure.video.MysqlVideoService
-import com.boclips.videos.service.infrastructure.video.VideoRepository
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
@@ -26,6 +25,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.web.context.WebApplicationContext
 
 
@@ -49,8 +49,8 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     }
 
     @Bean
-    fun videoService(searchService: SearchService, videoRepository: VideoRepository): VideoService {
-        return MysqlVideoService(searchService = searchService, videoRepository = videoRepository)
+    fun videoService(searchService: SearchService, jdbcTemplate: NamedParameterJdbcTemplate): VideoService {
+        return MysqlVideoService(searchService = searchService, jdbcTemplate = jdbcTemplate)
     }
 
     @Bean

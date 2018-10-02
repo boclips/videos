@@ -23,6 +23,5 @@ class VideoEntity(
         var alt_source: String? = null,
         var restrictions: String? = null,
         var type_id: String? = null,
-        var available: String? = null,
         var reference_id: String? = null
 )
