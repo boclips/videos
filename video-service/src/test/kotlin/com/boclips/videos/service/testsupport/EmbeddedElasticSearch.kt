@@ -27,7 +27,7 @@ class EmbeddedElasticSearch(
         EmbeddedElastic.builder()
                 .withElasticVersion("6.3.2")
                 .withSetting(PopularProperties.HTTP_PORT, propertiesElasticSearch.port)
-                .withStartTimeout(1, TimeUnit.MINUTES)
+                .withStartTimeout(2, TimeUnit.MINUTES)
                 .build()
                 .start()
 

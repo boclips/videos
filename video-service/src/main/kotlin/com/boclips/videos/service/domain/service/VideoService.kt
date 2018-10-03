@@ -10,4 +10,3 @@ interface VideoService {
     fun findVideoBy(videoId: VideoId): Video
     fun removeVideo(video: Video)
 }
-
