@@ -1,5 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.kaltura
 
+import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.videoanalyser.domain.model.KalturaVideo
 import com.boclips.videoanalyser.domain.model.MediaFilter
 import com.boclips.videoanalyser.domain.model.MediaFilterType
@@ -11,7 +13,9 @@ import org.springframework.stereotype.Component
 @Component
 class PagedKalturaMediaService(
         private val kalturaMediaClient: KalturaMediaClient,
-        private val paginationOrchestrator: PaginationOrchestrator) : KalturaMediaService {
+        private val paginationOrchestrator: PaginationOrchestrator,
+        private val kalturaClient: KalturaClient
+) : KalturaMediaService {
     companion object : KLogging()
 
     override fun countAllMediaEntries(): Long {
@@ -38,6 +42,20 @@ class PagedKalturaMediaService(
         val faultyKalturaVideos = fetch(searchFilters)
         logger.info("Returning ${faultyKalturaVideos.size} faulty Kaltura Videos")
         return faultyKalturaVideos
+    }
+
+    override fun removeMediaEntries(videos: Set<KalturaVideo>): Set<KalturaVideo> {
+        val successfulDeletions = mutableSetOf<KalturaVideo>()
+        videos.forEach {
+            try {
+                kalturaClient.deleteMediaEntriesByReferenceId(it.referenceId)
+                logger.info { "Deleted video ${it.referenceId}" }
+                successfulDeletions.add(it)
+            } catch (ex: KalturaClientApiException) {
+                logger.warn { "Failed to delete video $it" }
+            }
+        }
+        return successfulDeletions
     }
 
     private fun fetch(searchFilters: List<MediaFilter> = emptyList()): Set<KalturaVideo> {

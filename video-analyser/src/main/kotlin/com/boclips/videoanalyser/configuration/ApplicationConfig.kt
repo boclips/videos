@@ -1,5 +1,7 @@
 package com.boclips.videoanalyser.configuration
 
+import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.videoanalyser.domain.service.VideoAnalysisService
 import com.boclips.videoanalyser.domain.service.search.SearchBenchmarkService
 import com.boclips.videoanalyser.domain.service.search.SearchClient
@@ -28,5 +30,15 @@ class ApplicationConfig {
     @Bean
     fun searchBenchmarkService(searchClient: SearchClient): SearchBenchmarkService {
         return SearchBenchmarkService(searchClient)
+    }
+
+    @Bean
+    fun kalturaClient(propertiesKaltura: PropertiesKaltura): KalturaClient {
+        return KalturaClient.create(KalturaClientConfig.builder()
+                .partnerId(propertiesKaltura.partnerId)
+                .userId(propertiesKaltura.userId)
+                .secret(propertiesKaltura.secret)
+                .sessionTtl(86400)
+                .build())
     }
 }

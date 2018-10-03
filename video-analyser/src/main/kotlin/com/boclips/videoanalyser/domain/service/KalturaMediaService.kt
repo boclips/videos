@@ -7,4 +7,5 @@ interface KalturaMediaService {
     fun getFaultyMediaEntries(): Set<KalturaVideo>
     fun getPendingMediaEntries(): Set<KalturaVideo>
     fun countAllMediaEntries(): Long
+    fun removeMediaEntries(videos: Set<KalturaVideo>): Set<KalturaVideo>
 }

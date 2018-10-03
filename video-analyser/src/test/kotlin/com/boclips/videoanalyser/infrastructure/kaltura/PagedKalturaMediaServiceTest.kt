@@ -1,5 +1,8 @@
 package com.boclips.videoanalyser.infrastructure.kaltura
 
+import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.videoanalyser.domain.model.KalturaVideo
 import com.boclips.videoanalyser.domain.model.MediaFilter
 import com.boclips.videoanalyser.domain.model.MediaFilterType
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaMediaClient
@@ -14,9 +17,10 @@ import org.mockito.Mockito
 
 
 class PagedKalturaMediaServiceTest {
+    private val kalturaClient = TestKalturaClient()
     private val mockKalturaClient = Mockito.mock(KalturaMediaClient::class.java)
     private val mockPagingationOrchestrator = Mockito.mock(PaginationOrchestrator::class.java)
-    private val kalturaMediaService = PagedKalturaMediaService(mockKalturaClient, mockPagingationOrchestrator)
+    private val kalturaMediaService = PagedKalturaMediaService(mockKalturaClient, mockPagingationOrchestrator, kalturaClient)
 
     @Test
     fun countAllMediaEntries_passesOnCorrectFilters() {
@@ -108,6 +112,19 @@ class PagedKalturaMediaServiceTest {
         val kalturaVideos = kalturaMediaService.getFaultyMediaEntries()
 
         assertThat(kalturaVideos).hasSize(0)
+    }
+
+    @Test
+    fun removeKalturaVideos() {
+        kalturaClient.addMediaEntry(MediaEntry.builder().id("1").referenceId("1").build())
+
+        val videoToBeRemoved = KalturaVideo(referenceId = "1", id = "1", downloadUrl = "")
+        val videosToBeRemoved = setOf(videoToBeRemoved)
+        val removedMediaEntries = kalturaMediaService.removeMediaEntries(videosToBeRemoved)
+
+        assertThat(removedMediaEntries).hasSize(1)
+        assertThat(removedMediaEntries.first()).isEqualTo(videoToBeRemoved)
+        assertThat(kalturaClient.getMediaEntriesByReferenceId("1")).hasSize(0)
     }
 
     private fun extractFilters(it: List<MediaFilter>) = it.map { it.key }

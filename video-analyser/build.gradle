@@ -44,6 +44,7 @@ repositories {
     maven {
         url 'https://repo.spring.io/libs-snapshot'
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -62,6 +63,7 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect'
     compile 'io.github.microutils:kotlin-logging:1.4.9'
     compile 'com.jayway.jsonpath:json-path'
+    compile 'com.github.knowledgemotion:kaltura-client:0.33.0'
     
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.awaitility:awaitility:3.1.0'
