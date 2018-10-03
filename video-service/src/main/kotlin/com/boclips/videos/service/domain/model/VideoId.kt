@@ -19,4 +19,8 @@ class VideoId(
         return videoId.hashCode()
     }
 
+    override fun toString(): String {
+        return "[id = ${this.videoId}, referenceId = ${this.referenceId}]"
+    }
+
 }

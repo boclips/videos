@@ -73,7 +73,10 @@ class BeanConfig(val objectMapper: ObjectMapper) {
                     mongoTemplate = mongoTemplate)
 
     @Bean
-    fun searchService(propertiesElasticSearch: PropertiesElasticSearch, eventService: EventService, kalturaClient: KalturaClient, requestId: RequestId): SearchService {
+    fun searchService(propertiesElasticSearch: PropertiesElasticSearch,
+                      eventService: EventService,
+                      kalturaClient: KalturaClient,
+                      requestId: RequestId): SearchService {
         return ElasticSearchService(
                 elasticSearchResultConverter = searchHitConverter(),
                 eventService = eventService,

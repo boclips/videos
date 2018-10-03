@@ -1,14 +1,19 @@
 package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamFormat
+import com.boclips.videos.service.application.exceptions.VideoPlaybackNotDeleted
 import com.boclips.videos.service.application.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.domain.service.PlaybackService
+import mu.KLogging
 
 class KalturaPlaybackService(private val kalturaClient: KalturaClient) : PlaybackService {
+    companion object : KLogging()
+
     override fun getVideosWithPlayback(videos: List<Video>): List<Video> {
         val referenceIds = videos.map { video -> video.videoId.referenceId }
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
@@ -31,11 +36,16 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
 
         val streamUrl = mediaEntries.first().streams.withFormat(StreamFormat.MPEG_DASH)
         val thumbnailUrl = mediaEntries.first().thumbnailUrl
-        
+
         return video.copy(videoPlayback = VideoPlayback(streamUrl = streamUrl, thumbnailUrl = thumbnailUrl))
     }
 
     override fun removePlayback(video: Video) {
-        kalturaClient.deleteMediaEntriesByReferenceId(video.videoId.referenceId)
+        try {
+            kalturaClient.deleteMediaEntriesByReferenceId(video.videoId.referenceId)
+        } catch (ex: KalturaClientApiException) {
+            logger.error { "Failed to delete video from Kaltura: $ex" }
+            throw VideoPlaybackNotDeleted()
+        }
     }
 }

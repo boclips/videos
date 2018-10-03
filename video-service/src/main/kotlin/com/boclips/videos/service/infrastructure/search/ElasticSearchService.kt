@@ -71,7 +71,7 @@ class ElasticSearchService(
     }
 
     override fun removeFromSearch(videoId: VideoId) {
-        client.delete(DeleteRequest("videos", "_doc", videoId.videoId))
+        client.delete(DeleteRequest("videos", "video", videoId.videoId))
     }
 
     override fun isIndexed(videoId: VideoId): Boolean {
