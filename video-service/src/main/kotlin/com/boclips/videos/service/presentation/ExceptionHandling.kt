@@ -11,13 +11,17 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ControllerAdvice(basePackageClasses = [VideoController::class])
 class ExceptionHandling {
+    companion object : KLogging()
+
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Provided query is invalid")
     @ExceptionHandler(QueryValidationException::class)
-    fun handleIOException() {
+    fun handleIOException(ex: QueryValidationException) {
+        logger.error { "Provided query is invalid $ex" }
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The requested video does not exist")
     @ExceptionHandler(VideoNotFoundException::class)
-    fun handleVideoNotFoundException() {
+    fun handleVideoNotFoundException(ex: VideoNotFoundException) {
+        logger.error { "Video not found $ex" }
     }
 }
