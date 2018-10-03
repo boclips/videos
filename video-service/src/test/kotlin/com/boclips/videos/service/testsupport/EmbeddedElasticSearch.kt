@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.videos.service.config.PropertiesElasticSearch
+import com.boclips.videos.service.infrastructure.search.ElasticSearchService
 import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.http.HttpHost
@@ -87,7 +88,7 @@ class EmbeddedElasticSearch(
             val document = objectMapper.writeValueAsString(video)
 
             RestHighLevelClient(RestClient.builder(HttpHost(propertiesElasticSearch.host, propertiesElasticSearch.port))).use { client ->
-                val indexRequest = IndexRequest("videos", "video", "${video.id}")
+                val indexRequest = IndexRequest(ElasticSearchService.ES_INDEX, ElasticSearchService.ES_TYPE, "${video.id}")
                         .source(document, XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)
                 client.index(indexRequest)

@@ -31,7 +31,8 @@ class ElasticSearchService(
         propertiesElasticSearch: PropertiesElasticSearch
 ) : SearchService {
     companion object {
-        private const val ES_TYPE = "video"
+        const val ES_TYPE = "video"
+        const val ES_INDEX = "videos"
     }
 
     private val client: RestHighLevelClient
@@ -67,7 +68,7 @@ class ElasticSearchService(
                 .windowSize(100)
                 .setScoreMode(QueryRescoreMode.Total)
 
-        val searchRequest = SearchRequest(arrayOf("videos"),
+        val searchRequest = SearchRequest(arrayOf(ES_INDEX),
                 SearchSourceBuilder().query(findMatchesQuery).addRescorer(rescorer)
         )
 
@@ -75,11 +76,11 @@ class ElasticSearchService(
     }
 
     override fun removeFromSearch(videoId: VideoId) {
-        client.delete(DeleteRequest("videos", ES_TYPE, videoId.videoId))
+        client.delete(DeleteRequest(ES_INDEX, ES_TYPE, videoId.videoId))
     }
 
     override fun isIndexed(videoId: VideoId): Boolean {
-        val get = client.get(GetRequest("videos", ES_TYPE, videoId.videoId))
+        val get = client.get(GetRequest(ES_INDEX, ES_TYPE, videoId.videoId))
         return get.isExists
     }
 
