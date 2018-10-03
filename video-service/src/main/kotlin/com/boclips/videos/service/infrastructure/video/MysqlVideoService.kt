@@ -10,9 +10,7 @@ import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalTime
 import java.util.*
 
 
@@ -34,13 +32,13 @@ class MysqlVideoService(
 
     override fun findVideosBy(videoIds: List<VideoId>): List<Video> {
         val allFoundVideos = findAllById(videoIds.map { videoId -> videoId.videoId.toLong() })
-        logger.info { "Found ${videoIds.size} videos for ids ${videoIds}" }
+        logger.info { "Found ${videoIds.size} videos for ids $videoIds" }
         return allFoundVideos.map { videoEntity -> convertToVideo(videoEntity) }
     }
 
     override fun findVideoBy(videoId: VideoId): Video {
         val videoOptional = findById(videoId.videoId.toLong())
-        logger.info { "Found ${videoOptional.map { 1 }.orElse(0)} video for id ${videoId}" }
+        logger.info { "Found ${videoOptional.map { 1 }.orElse(0)} video for id $videoId" }
         val videoEntity = videoOptional.orElseThrow { VideoNotFoundException() }
 
         return convertToVideo(videoEntity)
@@ -59,10 +57,6 @@ class MysqlVideoService(
         return Video(
                 videoId = VideoId(videoId = videoEntity.id.toString(), referenceId = videoEntity.reference_id),
                 title = videoEntity.title!!,
-                duration = Duration.between(
-                        LocalTime.MIN,
-                        LocalTime.parse(videoEntity.duration!!)
-                ),
                 description = videoEntity.description!!,
                 releasedOn = LocalDate.parse(videoEntity.date!!),
                 contentProvider = videoEntity.source!!,

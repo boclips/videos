@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 
 class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
 
@@ -25,6 +26,9 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
         assertThat(videosWithPlayback).hasSize(1)
         assertThat(videosWithPlayback[0].videoPlayback).isNotNull()
         assertThat(videosWithPlayback[0].isPlayable()).isTrue()
+        assertThat(videosWithPlayback[0].videoPlayback!!.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
+        assertThat(videosWithPlayback[0].videoPlayback!!.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
+        assertThat(videosWithPlayback[0].videoPlayback!!.duration).isEqualTo(Duration.parse("PT1M"))
     }
 
     @Test

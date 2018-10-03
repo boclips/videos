@@ -19,11 +19,17 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
 
         return videos.map { video ->
-            val mediaEntry: MutableList<MediaEntry> = mediaEntries[video.videoId.referenceId]
+            val mediaEntries: MutableList<MediaEntry> = mediaEntries[video.videoId.referenceId]
                     ?: throw VideoPlaybackNotFound()
 
-            val streamUrl = mediaEntry.first().streams.withFormat(StreamFormat.MPEG_DASH)
-            video.copy(videoPlayback = VideoPlayback(streamUrl = streamUrl, thumbnailUrl = mediaEntry.first().thumbnailUrl))
+            val mediaEntry = mediaEntries.first()
+            val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
+            val videoPlayback = VideoPlayback(
+                    streamUrl = streamUrl,
+                    thumbnailUrl = mediaEntry.thumbnailUrl,
+                    duration = mediaEntry.duration
+            )
+            video.copy(videoPlayback = videoPlayback)
         }
     }
 
@@ -34,10 +40,14 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
 
         if (mediaEntries.isEmpty()) throw VideoPlaybackNotFound()
 
-        val streamUrl = mediaEntries.first().streams.withFormat(StreamFormat.MPEG_DASH)
-        val thumbnailUrl = mediaEntries.first().thumbnailUrl
+        val mediaEntry = mediaEntries.first()
+        val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
+        val thumbnailUrl = mediaEntry.thumbnailUrl
 
-        return video.copy(videoPlayback = VideoPlayback(streamUrl = streamUrl, thumbnailUrl = thumbnailUrl))
+        return video.copy(videoPlayback = VideoPlayback(streamUrl = streamUrl,
+                thumbnailUrl = thumbnailUrl,
+                duration = mediaEntry.duration)
+        )
     }
 
     override fun removePlayback(video: Video) {

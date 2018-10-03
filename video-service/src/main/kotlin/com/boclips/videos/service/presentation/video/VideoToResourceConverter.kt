@@ -19,13 +19,13 @@ class VideoToResourceConverter {
                 title = video.title,
                 description = video.description,
                 contentProvider = video.contentProvider,
-                releasedOn = video.releasedOn,
-                duration = video.duration)
+                releasedOn = video.releasedOn)
 
         if (video.isPlayable()) {
             return basicVideo.copy(
                     streamUrl = video.videoPlayback!!.streamUrl,
-                    thumbnailUrl = video.videoPlayback!!.thumbnailUrl
+                    thumbnailUrl = video.videoPlayback.thumbnailUrl,
+                    duration = video.videoPlayback.duration
             )
         }
 

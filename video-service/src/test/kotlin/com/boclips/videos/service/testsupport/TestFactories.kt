@@ -64,7 +64,6 @@ object TestFactories {
                 videoId = VideoId(videoId = videoId, referenceId = referenceId),
                 title = "title",
                 description = "description",
-                duration = Duration.ofMinutes(2),
                 releasedOn = LocalDate.parse("2018-01-01"),
                 videoPlayback = videoPlayback,
                 contentProvider = "AP"
