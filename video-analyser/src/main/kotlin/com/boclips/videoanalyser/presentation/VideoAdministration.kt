@@ -45,7 +45,7 @@ class VideoAdministration(
     @ShellMethod("Wipe all videos from Kaltura")
     fun removeAllVideosFromKaltura() {
         say("Collecting all videos...")
-        val allVideos = kalturaMediaService.getReadyMediaEntries()
+        val allVideos = kalturaMediaService.getReadyMediaEntries() + kalturaMediaService.getFaultyMediaEntries()
         say("We found ${allVideos.size} entries which are going to be deleted.")
         return if (askYesNo("Do you want to remove ${allVideos.size} videos? This cannot be undone.")) {
             say("Removing Kaltura videos, hold on tight \uD83D\uDCA3")
