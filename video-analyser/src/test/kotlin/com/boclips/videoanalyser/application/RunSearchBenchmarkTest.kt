@@ -46,7 +46,7 @@ class RunSearchBenchmarkTest {
 
     private val datasetFileContent = """
         QUERY,VIDEO
-        linear equations,http://boclips.com/video/2352831
+        linear equations,2352831
     """.trimIndent()
 
 }

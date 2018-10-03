@@ -9,7 +9,7 @@ import java.io.FileInputStream
 class RunSearchBenchmark(private val searchBenchmarkService: SearchBenchmarkService) {
     fun runSearchBenchmark(filename: String): String {
         val expectations = FileInputStream(filename).use { input ->
-            ExpectationsCsvReader().read(input).map { it.toSearchExpectation() }
+            ExpectationsCsvReader().read(input).mapNotNull { it.toSearchExpectation() }
         }
         return searchBenchmarkService.benchmark(expectations).toString()
     }

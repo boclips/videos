@@ -15,8 +15,8 @@ class ExpectationsCsvReaderTest {
     }
 
     private val csvContent = """
-        QUERY,VIDEO
-        linear equations,http://boclips.com/video/2352831
-        Enzyme,https://boclips.com/video/2538137
+        QUERY,VIDEO,COLLECTION
+        linear equations,http://boclips.com/video/2352831,
+        Enzyme,https://boclips.com/video/2538137,
     """.trimIndent()
 }
