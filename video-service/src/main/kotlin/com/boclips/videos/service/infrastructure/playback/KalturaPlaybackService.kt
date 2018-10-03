@@ -19,7 +19,8 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
 
         return videos.map { video ->
-            val mediaEntries: MutableList<MediaEntry> = mediaEntries[video.videoId.referenceId]
+            val id = video.videoId.referenceId ?: video.videoId.videoId
+            val mediaEntries: MutableList<MediaEntry> = mediaEntries[id]
                     ?: throw VideoPlaybackNotFound()
 
             val mediaEntry = mediaEntries.first()
