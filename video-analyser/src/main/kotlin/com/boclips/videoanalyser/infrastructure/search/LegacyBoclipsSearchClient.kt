@@ -14,6 +14,10 @@ class LegacyBoclipsSearchClient(
         legacySearchProperties: LegacySearchProperties
 ) : SearchClient {
 
+    override fun serviceName(): String {
+        return "boclips.com"
+    }
+
     val restTemplate = legacySearchProperties.validate().let {
         restTemplateBuilder
                 .rootUri(legacySearchProperties.baseUrl)

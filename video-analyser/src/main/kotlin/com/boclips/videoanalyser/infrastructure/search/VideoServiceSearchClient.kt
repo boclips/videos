@@ -14,6 +14,10 @@ class VideoServiceSearchClient(
         videoServiceSearchProperties: VideoServiceSearchProperties
 ) : SearchClient {
 
+    override fun serviceName(): String {
+        return "video-service"
+    }
+
     val restTemplate = videoServiceSearchProperties.validate().let {
         restTemplateBuilder
                 .rootUri(videoServiceSearchProperties.baseUrl)
