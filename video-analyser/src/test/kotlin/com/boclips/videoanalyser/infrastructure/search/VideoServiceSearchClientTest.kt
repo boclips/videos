@@ -4,15 +4,16 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.springframework.boot.web.client.RestTemplateBuilder
 
-class LegacyBoclipsSearchClientTest {
+class VideoServiceSearchClientTest {
 
     @Test
     fun searchTop10_propertiesNotValid_throws() {
         assertThatThrownBy {
-            LegacyBoclipsSearchClient(
+            VideoServiceSearchClient(
                     RestTemplateBuilder(),
-                    LegacySearchProperties()
-            ).searchTop10("math")
+                    VideoServiceSearchProperties()
+            )
         }
     }
+
 }

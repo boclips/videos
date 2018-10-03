@@ -1,6 +1,5 @@
 package com.boclips.videoanalyser.infrastructure.search
 
-import com.boclips.videoanalyser.infrastructure.search.LegacySearchProperties
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
