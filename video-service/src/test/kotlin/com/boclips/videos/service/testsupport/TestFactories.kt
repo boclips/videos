@@ -59,7 +59,7 @@ object TestFactories {
             searchId = searchId
     )
 
-    fun createVideo(videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String = "ref-id-1"): Video {
+    fun createVideo(videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String? = "ref-id-1"): Video {
         return Video(
                 videoId = VideoId(videoId = videoId, referenceId = referenceId),
                 title = "title",

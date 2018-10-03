@@ -15,7 +15,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
     companion object : KLogging()
 
     override fun getVideosWithPlayback(videos: List<Video>): List<Video> {
-        val referenceIds = videos.map { video -> video.videoId.referenceId }
+        val referenceIds = videos.map { video -> video.videoId.referenceId ?: video.videoId.videoId }
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
 
         return videos.map { video ->
@@ -34,9 +34,9 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
     }
 
     override fun getVideoWithPlayback(video: Video): Video {
-        val referenceId = video.videoId.referenceId ?: throw VideoPlaybackNotFound()
+        val id = video.videoId.referenceId ?: video.videoId.videoId
 
-        val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(referenceId)
+        val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(id)
 
         if (mediaEntries.isEmpty()) throw VideoPlaybackNotFound()
 

@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.exceptions.QueryValidationException
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.presentation.video.VideoController
+import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
