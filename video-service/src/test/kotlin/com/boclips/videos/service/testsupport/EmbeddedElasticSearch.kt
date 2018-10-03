@@ -87,7 +87,7 @@ class EmbeddedElasticSearch(
             val document = objectMapper.writeValueAsString(video)
 
             RestHighLevelClient(RestClient.builder(HttpHost(propertiesElasticSearch.host, propertiesElasticSearch.port))).use { client ->
-                val indexRequest = IndexRequest("videos", "_doc", "${video.id}")
+                val indexRequest = IndexRequest("videos", "video", "${video.id}")
                         .source(document, XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)
                 client.index(indexRequest)
