@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.video
+package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.authenticateAsTeacher

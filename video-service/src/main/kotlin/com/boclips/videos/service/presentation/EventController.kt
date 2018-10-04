@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.event
+package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent

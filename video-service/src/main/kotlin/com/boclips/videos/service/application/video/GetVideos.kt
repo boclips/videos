@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.RequestId
 import com.boclips.videos.service.presentation.video.SearchResource
-import com.boclips.videos.service.presentation.video.VideoController
+import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.hateoas.Resource

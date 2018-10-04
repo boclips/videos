@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.event
+package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.event.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
