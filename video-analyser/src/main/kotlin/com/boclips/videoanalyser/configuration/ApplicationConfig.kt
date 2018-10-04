@@ -9,6 +9,8 @@ import com.boclips.videoanalyser.infrastructure.BoclipsVideoRepository
 import com.boclips.videoanalyser.infrastructure.kaltura.PagedKalturaMediaService
 import com.boclips.videoanalyser.infrastructure.kaltura.PaginationOrchestrator
 import com.boclips.videoanalyser.infrastructure.kaltura.client.KalturaMediaClient
+import com.boclips.videoanalyser.infrastructure.search.LegacyBoclipsSearchClient
+import com.boclips.videoanalyser.infrastructure.search.VideoServiceSearchClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.retry.annotation.EnableRetry
@@ -28,8 +30,8 @@ class ApplicationConfig {
     }
 
     @Bean
-    fun searchBenchmarkService(searchClient: SearchClient): SearchBenchmarkService {
-        return SearchBenchmarkService(searchClient)
+    fun searchBenchmarkService(legacyBoclipsSearchClient: LegacyBoclipsSearchClient, videoServiceSearchClient: VideoServiceSearchClient): SearchBenchmarkService {
+        return SearchBenchmarkService(legacyBoclipsSearchClient, videoServiceSearchClient)
     }
 
     @Bean

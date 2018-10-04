@@ -3,11 +3,9 @@ package com.boclips.videoanalyser.infrastructure.search
 import com.boclips.videoanalyser.domain.service.search.SearchClient
 import com.jayway.jsonpath.JsonPath
 import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import org.springframework.web.client.getForObject
 
-@Primary
 @Component
 class VideoServiceSearchClient(
         restTemplateBuilder: RestTemplateBuilder,

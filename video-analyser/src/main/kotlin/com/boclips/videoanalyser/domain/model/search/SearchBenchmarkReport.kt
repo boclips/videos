@@ -1,3 +1,3 @@
 package com.boclips.videoanalyser.domain.model.search
 
-data class SearchBenchmarkReport(val total: Int, val hits: Int)
+data class SearchBenchmarkReportItem(val expectation: SearchExpectation, val legacySearchHit: Boolean, val videoServiceHit: Boolean)

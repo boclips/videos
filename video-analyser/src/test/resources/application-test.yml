@@ -22,3 +22,9 @@ spring:
 logging:
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+
+klient:
+  partnerId: partner-id
+  userId: user-id
+  secret: secret

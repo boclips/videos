@@ -1,18 +1,28 @@
 package com.boclips.videoanalyser.domain.service.search
 
-import com.boclips.videoanalyser.domain.model.search.SearchBenchmarkReport
+import com.boclips.videoanalyser.domain.model.search.SearchBenchmarkReportItem
 import com.boclips.videoanalyser.domain.model.search.SearchExpectation
+import com.boclips.videoanalyser.infrastructure.search.LegacyBoclipsSearchClient
+import com.boclips.videoanalyser.infrastructure.search.VideoServiceSearchClient
 
-class SearchBenchmarkService(private val searchClient: SearchClient) {
+class SearchBenchmarkService(
+        private val legacySearchClient: LegacyBoclipsSearchClient,
+        private val videoServiceSearchClient: VideoServiceSearchClient
+) {
+    fun benchmark(expectations: Iterable<SearchExpectation>): List<SearchBenchmarkReportItem> {
+        return expectations.map { expectation ->
 
-    fun benchmark(expectations: Iterable<SearchExpectation>): SearchBenchmarkReport {
-        return expectations.fold(SearchBenchmarkReport(0, 0)) { report, expectation ->
-            val hit = searchClient.searchTop10(expectation.query).contains(expectation.videoId)
-            println("${if (hit) "HIT: " else "MISS:"} query='${expectation.query}' video=${expectation.videoId}")
-            report.copy(
-                    total = report.total + 1,
-                    hits = report.hits + if (hit) 1 else 0
+            SearchBenchmarkReportItem(
+                    expectation = expectation,
+                    legacySearchHit = check(expectation, legacySearchClient),
+                    videoServiceHit = check(expectation, videoServiceSearchClient)
             )
+        }
+    }
+
+    private fun check(expectation: SearchExpectation, searchClient: SearchClient): Boolean {
+        return searchClient.searchTop10(expectation.query).contains(expectation.videoId).apply {
+            println("[${searchClient.serviceName()}] ${if (this) "HIT: " else "MISS:"} query='${expectation.query}' video=${expectation.videoId}")
         }
     }
 

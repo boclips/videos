@@ -9,8 +9,11 @@ import org.springframework.shell.standard.ShellOption
 class SearchBenchmark(private val runSearchBenchmark: RunSearchBenchmark) {
 
     @ShellMethod("Search benchmark")
-    fun searchBenchmark(@ShellOption(help = "Please specify search-query/video dataset file name ") filename: String) {
-        println(runSearchBenchmark.runSearchBenchmark(filename))
+    fun searchBenchmark(
+            @ShellOption(help = "Please specify search-query/video dataset file name ") expectationsFilename: String,
+            @ShellOption(help = "Please specify output report file name ") outputFilename: String
+    ) {
+        runSearchBenchmark.execute(expectationsFilename, outputFilename)
     }
 
 }
