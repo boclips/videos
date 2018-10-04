@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.infrastructure.event.RequestId
 import com.boclips.videos.service.presentation.video.SearchResource
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -16,7 +15,6 @@ import org.springframework.hateoas.Resource
 class GetVideos(
         private val videoService: VideoService,
         private val playbackService: PlaybackService,
-        private val requestId: RequestId,
         private val videoToResourceConverter: VideoToResourceConverter
 ) {
     fun get(videoId: String): VideoResource {
@@ -35,7 +33,6 @@ class GetVideos(
         val videoResources = videoToResourceConverter.convert(playableVideos)
                 .map { x -> Resource(x, VideoController.getVideoLink(x.id, "self")) }
 
-        // TODO: Discuss requestID
-        return SearchResource(searchId = requestId.id ?: "", query = query, videos = videoResources)
+        return SearchResource(searchId = "", query = query, videos = videoResources)
     }
 }

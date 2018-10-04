@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
+import com.boclips.videos.service.infrastructure.search.event.SearchLogging
 import com.boclips.videos.service.presentation.video.SearchResource
 import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.Resource
@@ -23,6 +24,7 @@ class VideoController(
     }
 
     @GetMapping("/search")
+    @SearchLogging
     fun search(@RequestParam("query") query: String?): Resource<SearchResource> {
         val results = getVideos.get(query)
 

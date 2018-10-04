@@ -13,7 +13,6 @@ import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.RequestId
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackService
 import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
 import com.boclips.videos.service.infrastructure.search.ElasticSearchService
@@ -22,11 +21,8 @@ import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
-import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.web.context.WebApplicationContext
 
 
 @Configuration
@@ -34,13 +30,11 @@ class BeanConfig(val objectMapper: ObjectMapper) {
     @Bean
     fun getVideos(searchService: SearchService,
                   videoService: VideoService,
-                  requestId: RequestId,
                   playbackService: PlaybackService) =
             GetVideos(
                     videoService = videoService,
                     videoToResourceConverter = VideoToResourceConverter(),
-                    playbackService = playbackService,
-                    requestId = requestId
+                    playbackService = playbackService
             )
 
     @Bean
@@ -73,14 +67,9 @@ class BeanConfig(val objectMapper: ObjectMapper) {
                     mongoTemplate = mongoTemplate)
 
     @Bean
-    fun searchService(propertiesElasticSearch: PropertiesElasticSearch,
-                      eventService: EventService,
-                      kalturaClient: KalturaClient,
-                      requestId: RequestId): SearchService {
+    fun searchService(propertiesElasticSearch: PropertiesElasticSearch, kalturaClient: KalturaClient): SearchService {
         return ElasticSearchService(
                 elasticSearchResultConverter = searchHitConverter(),
-                eventService = eventService,
-                requestId = requestId,
                 propertiesElasticSearch = propertiesElasticSearch)
     }
 
@@ -109,12 +98,6 @@ class BeanConfig(val objectMapper: ObjectMapper) {
             .userId(propertiesKaltura.userId)
             .secret(propertiesKaltura.secret)
             .build())
-
-    @Bean
-    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-    fun requestId(): RequestId {
-        return RequestId()
-    }
 
     @Bean
     fun getLatestInteractions(eventService: EventService): GetLatestInteractions {

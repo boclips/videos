@@ -3,9 +3,6 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.videos.service.config.PropertiesElasticSearch
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.service.SearchService
-import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.RequestId
-import com.boclips.videos.service.infrastructure.event.SearchEvent
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -21,13 +18,9 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
-import java.time.ZonedDateTime
-import java.util.*
 
 class ElasticSearchService(
         private val elasticSearchResultConverter: ElasticSearchResultConverter,
-        private val eventService: EventService,
-        private val requestId: RequestId,
         propertiesElasticSearch: PropertiesElasticSearch
 ) : SearchService {
     companion object {
@@ -48,11 +41,7 @@ class ElasticSearchService(
     }
 
     override fun search(query: String): List<VideoId> {
-        val elasticSearchVideos = searchElasticSearch(query)
-        requestId.id = UUID.randomUUID().toString()
-        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), requestId.id!!, query, elasticSearchVideos.size))
-
-        return elasticSearchVideos.map { x -> VideoId(x.id) }
+        return searchElasticSearch(query).map { VideoId(it.id) }
     }
 
     private fun searchElasticSearch(query: String): List<ElasticSearchVideo> {

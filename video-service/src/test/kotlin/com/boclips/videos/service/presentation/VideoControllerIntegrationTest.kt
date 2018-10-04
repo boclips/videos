@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
@@ -96,35 +95,31 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().`is`(200))
     }
 
-    @Ignore
-    // TODO to discuss with Jacek
-    inner class RequestIdIntegrationTest {
-        @Test
-        fun `searchId is unique`() {
-            val searchId1 = extractSearchId()
-            val searchId2 = extractSearchId()
+    @Test
+    fun `searchId is unique`() {
+        val searchId1 = extractSearchId()
+        val searchId2 = extractSearchId()
 
-            assertThat(searchId1).isNotBlank()
-            assertThat(searchId1).isNotEqualTo(searchId2)
-        }
+        assertThat(searchId1).isNotBlank()
+        assertThat(searchId1).isNotEqualTo(searchId2)
+    }
 
-        @Test
-        fun `contains a request id`() {
-            mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
-                    .andExpect(status().isOk)
-                    .andExpect(jsonPath("$.searchId", not(isEmptyOrNullString())))
-        }
+    @Test
+    fun `contains a request id`() {
+        mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.searchId", not(isEmptyOrNullString())))
+    }
 
 
-        private fun extractSearchId(): String {
-            val content = mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
-                    .andExpect(status().isOk)
-                    .andReturn()
-                    .response
-                    .contentAsString
+    private fun extractSearchId(): String {
+        val content = mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
+                .andExpect(status().isOk)
+                .andReturn()
+                .response
+                .contentAsString
 
-            return ObjectMapper().readValue(content, Map::class.java)["searchId"].toString()
-        }
+        return ObjectMapper().readValue(content, Map::class.java)["searchId"].toString()
     }
 
 }
