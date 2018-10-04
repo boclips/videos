@@ -1,9 +1,9 @@
 package com.boclips.videoanalyser.domain.service.search
 
 import com.boclips.videoanalyser.domain.model.search.SearchExpectation
-import com.boclips.videoanalyser.domain.service.search.SearchBenchmarkService
 import com.boclips.videoanalyser.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.loadFixture
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -22,11 +22,18 @@ class SearchBenchmarkServiceIntegrationTest : AbstractSpringIntegrationTest() {
                         .withHeader("Content-Type", "application/json")
                         .withBody(loadFixture("legacy-solr-response.json"))))
 
+        wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/videos/search?query=enzyme"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(loadFixture("video-service-search-response.json"))))
+
         val searchExpectation = SearchExpectation("enzyme", "2499583")
 
-        val (total, hits) = searchBenchmarkService.benchmark(listOf(searchExpectation))
+        val (item) = searchBenchmarkService.benchmark(listOf(searchExpectation))
 
-        assertThat(total).isEqualTo(1)
-        assertThat(hits).isEqualTo(1)
+        assertThat(item.expectation).isEqualTo(searchExpectation)
+        assertThat(item.legacySearchHit).isEqualTo(true)
+        assertThat(item.videoServiceHit).isEqualTo(false)
     }
 }
