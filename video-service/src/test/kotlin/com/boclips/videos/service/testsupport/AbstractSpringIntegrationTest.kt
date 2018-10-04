@@ -57,7 +57,7 @@ abstract class AbstractSpringIntegrationTest {
                   date: String = "2018-01-01",
                   duration: String = "00:10:00",
                   contentProvider: String = "AP",
-                  referenceId: String = "ref-id-1") {
+                  referenceId: String? = "ref-id-1") {
         jdbcTemplate.update("""
             INSERT INTO metadata_orig (
                 id,
@@ -73,10 +73,10 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun mediaEntry(id: String): MediaEntry? {
+    fun mediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {
         return MediaEntry.builder()
                 .id(id)
-                .referenceId("ref-id-$id")
+                .referenceId(referenceId)
                 .streams(StreamUrls("https://stream/[FORMAT]/video-$id.mp4"))
                 .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
                 .duration(Duration.ofMinutes(1))
