@@ -6,10 +6,6 @@ import com.boclips.videos.service.domain.service.SearchService
 class FakeSearchService : SearchService {
     private lateinit var searchIndex: MutableSet<VideoId>
 
-    init {
-        this.reset()
-    }
-
     override fun removeFromSearch(videoId: VideoId) {
         searchIndex.minusAssign(videoId)
     }
@@ -23,8 +19,12 @@ class FakeSearchService : SearchService {
         return searchIndex.contains(videoId)
     }
 
-    fun reset() {
-        this.searchIndex = mutableSetOf(VideoId(videoId = "123", referenceId = "ref-id-1"))
+    fun clear() {
+        this.searchIndex = mutableSetOf()
+    }
+
+    fun addToIndex(videoId: VideoId) {
+        this.searchIndex.add(videoId)
     }
 
 }

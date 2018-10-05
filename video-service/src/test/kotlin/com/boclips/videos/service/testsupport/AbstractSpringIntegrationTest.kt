@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
+import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.testsupport.fakes.FakeSearchService
 import org.junit.Before
@@ -46,7 +47,8 @@ abstract class AbstractSpringIntegrationTest {
 
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
-        fakeSearchService.reset()
+        fakeSearchService.clear()
+        fakeSearchService.addToIndex(VideoId(videoId = "123", referenceId = "ref-id-1"))
 
         fakeKalturaClient.addMediaEntry(mediaEntry("1"))
         fakeKalturaClient.addMediaEntry(mediaEntry("2"))

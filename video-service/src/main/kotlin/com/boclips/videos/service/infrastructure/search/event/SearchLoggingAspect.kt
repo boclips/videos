@@ -29,7 +29,7 @@ class SearchLoggingAspect(
             value = "com.boclips.videos.service.infrastructure.search.event.SearchLoggingPointcuts.searchLoggingAnnotation()"
     )
     fun doAccessCheck(proceedingJoinPoint: ProceedingJoinPoint): Any? {
-        val result = proceedingJoinPoint.proceed() as ResponseEntity<Resources<Resource<VideoResource>>>
+        val result = proceedingJoinPoint.proceed() as ResponseEntity<Resources<*>>
         val query = proceedingJoinPoint.args[0].toString()
 
         return searchLogger.logSearch(result.body!!, getCurrentHttpRequest(), query)
@@ -52,7 +52,7 @@ class SearchLogger(
         const val X_CORRELATION_ID = "X-Correlation-ID"
     }
 
-    fun logSearch(response: Resources<Resource<VideoResource>>, currentRequest: HttpServletRequest?, query: String): ResponseEntity<Resources<Resource<VideoResource>>> {
+    fun logSearch(response: Resources<*>, currentRequest: HttpServletRequest?, query: String): ResponseEntity<Resources<*>> {
         val correlationId = currentRequest?.getHeader(X_CORRELATION_ID) ?: UUID.randomUUID().toString()
 
         eventService.saveEvent(SearchEvent(timestamp = ZonedDateTime.now(), correlationId = correlationId, query = query, resultsReturned = response.content.size))

@@ -3,8 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.authenticateAsTeacher
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,6 +39,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
+    }
+
+    @Test
+    fun `returns empty videos array when nothing matches`() {
+        fakeSearchService.clear()
+
+        mockMvc.perform(get("/v1/videos/search?query=whatdohorseseat").authenticateAsTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
     }
 
     @Test
