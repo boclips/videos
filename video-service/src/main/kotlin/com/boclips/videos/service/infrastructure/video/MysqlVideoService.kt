@@ -19,10 +19,10 @@ class MysqlVideoService(
         private val playbackVideo: PlaybackService,
         private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : VideoService {
-    private val SELECT_QUERY = "SELECT * FROM metadata_orig WHERE id IN (:ids)"
-    private val DELETE_QUERY = "DELETE FROM metadata_orig WHERE id IN (:ids)"
-
-    companion object : KLogging()
+    companion object : KLogging() {
+        private val DELETE_QUERY = "DELETE FROM metadata_orig WHERE id IN (:ids)"
+        private val SELECT_QUERY = "SELECT * FROM metadata_orig WHERE id IN (:ids)"
+    }
 
     override fun findVideosBy(query: VideoSearchQuery): List<Video> {
         val videoIds = searchService.search(query.text)
@@ -68,6 +68,7 @@ class MysqlVideoService(
         val parameters = MapSqlParameterSource()
         parameters.addValue("ids", ids)
 
+        logger.info { "looking up ids: $ids " }
         return jdbcTemplate.query(SELECT_QUERY, parameters, rowMapper)
     }
 

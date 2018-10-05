@@ -87,6 +87,13 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `find no videos because there are none`() {
+        val videos = videoService.findVideosBy(VideoSearchQuery(text = "this is a query not returning any search results"))
+
+        assertThat(videos).hasSize(0)
+    }
+
+    @Test
     fun `remove a video`() {
         saveVideo(123, "Some title", "test description 3")
 

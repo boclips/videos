@@ -15,6 +15,7 @@ class FakeSearchService : SearchService {
     }
 
     override fun search(query: String): List<VideoId> {
+        if (query == "this is a query not returning any search results") return emptyList()
         return searchIndex.toList()
     }
 
