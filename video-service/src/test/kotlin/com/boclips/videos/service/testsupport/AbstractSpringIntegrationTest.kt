@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
+import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.testsupport.fakes.FakeSearchService
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -35,6 +36,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
+
+    @Autowired
+    lateinit var eventService: EventService
 
     @Before
     fun resetState() {

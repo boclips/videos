@@ -26,9 +26,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var eventLogRepository: EventLogRepository
 
-    @Autowired
-    lateinit var eventService: EventService
-
     @Test
     fun `posted events are being saved`() {
         mockMvc.perform(post("/v1/events")

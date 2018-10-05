@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.hamcrest.Matchers.startsWith
@@ -14,9 +13,6 @@ class InteractionControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var eventService: EventService
 
     @Test
     fun `status is 200 when there are events`() {

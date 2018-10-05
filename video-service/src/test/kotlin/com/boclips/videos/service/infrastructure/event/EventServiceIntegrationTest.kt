@@ -10,9 +10,6 @@ import java.time.ZonedDateTime
 class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var eventService: EventService
-
-    @Autowired
     lateinit var eventLogRepository: EventLogRepository
 
     @Test

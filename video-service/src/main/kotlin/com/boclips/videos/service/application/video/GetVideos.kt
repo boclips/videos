@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.presentation.video.SearchResource
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -24,15 +23,14 @@ class GetVideos(
         return videoToResourceConverter.convert(videoWithPlayback)
     }
 
-    fun get(query: String?): SearchResource {
+    fun get(query: String?): List<Resource<VideoResource>> {
         query ?: throw QueryValidationException()
 
         val videosWithoutPlayback = videoService.findVideosBy(VideoSearchQuery(text = query))
         val playableVideos = playbackService.getVideosWithPlayback(videosWithoutPlayback)
 
-        val videoResources = videoToResourceConverter.convert(playableVideos)
-                .map { x -> Resource(x, VideoController.getVideoLink(x.id, "self")) }
-
-        return SearchResource(searchId = "", query = query, videos = videoResources)
+        return videoToResourceConverter.convert(playableVideos).map { videoResource: VideoResource ->
+            Resource(videoResource, VideoController.getVideoLink(videoResource.id, "self"))
+        }
     }
 }

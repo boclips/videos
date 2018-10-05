@@ -2,9 +2,9 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.authenticateAsTeacher
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.equalTo
 import org.junit.Before
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +31,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 200 videos with text query`() {
         mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.query", equalTo("powerful")))
                 .andExpect(jsonPath("$.videos[0].id", equalTo("123")))
                 .andExpect(jsonPath("$.videos[0].title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.videos[0].description", equalTo("test description 3")))
@@ -99,7 +98,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/search?query=powerful").header("X-Correlation-ID", "correlation-id").authenticateAsTeacher())
                 .andExpect(status().isOk)
                 .andExpect(header().string("X-Correlation-ID", "correlation-id"))
-                .andExpect(jsonPath("$.searchId", `is`("correlation-id")))
+    }
+
+    @Test
+    fun `records search events`() {
+        mockMvc.perform(get("/v1/videos/search?query=bugs").header("X-Correlation-ID", "correlation-id").authenticateAsTeacher())
+                .andExpect(status().isOk)
+
+        val searchEvent = eventService.latestInteractions().last()
+        assertThat(searchEvent.description).startsWith("Search for 'bugs'")
     }
 
 }

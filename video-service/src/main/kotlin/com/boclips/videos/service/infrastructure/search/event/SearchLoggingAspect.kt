@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.search.event
 
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.SearchEvent
-import com.boclips.videos.service.presentation.video.SearchResource
+import com.boclips.videos.service.presentation.video.VideoResource
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -28,9 +28,10 @@ class SearchLoggingAspect(
             value = "com.boclips.videos.service.infrastructure.search.event.SearchLoggingPointcuts.searchLoggingAnnotation()"
     )
     fun doAccessCheck(proceedingJoinPoint: ProceedingJoinPoint): Any? {
-        val result = proceedingJoinPoint.proceed() as ResponseEntity<Resource<SearchResource>>
+        val result = proceedingJoinPoint.proceed() as ResponseEntity<List<Resource<VideoResource>>>
+        val query = proceedingJoinPoint.args[0].toString()
 
-        return searchLogger.logSearch(result.body!!, getCurrentHttpRequest())
+        return searchLogger.logSearch(result.body!!, getCurrentHttpRequest(), query)
     }
 
     fun getCurrentHttpRequest(): HttpServletRequest? {
@@ -40,7 +41,6 @@ class SearchLoggingAspect(
         }
         return null
     }
-
 }
 
 @Component
@@ -48,16 +48,18 @@ class SearchLogger(
         private val eventService: EventService
 ) {
 
-    fun logSearch(response: Resource<SearchResource>, currentRequest: HttpServletRequest?): ResponseEntity<Resource<SearchResource>> {
-        val correlationId = currentRequest?.getHeader("X-Correlation-ID") ?: UUID.randomUUID().toString()
+    companion object {
+        const val X_CORRELATION_ID = "X-Correlation-ID"
+    }
 
-        eventService.saveEvent(SearchEvent(timestamp = ZonedDateTime.now(), correlationId = correlationId, query = response.content.query, resultsReturned = response.content.videos.size))
+    fun logSearch(response: List<Resource<VideoResource>>, currentRequest: HttpServletRequest?, query: String): ResponseEntity<List<Resource<VideoResource>>> {
+        val correlationId = currentRequest?.getHeader(X_CORRELATION_ID) ?: UUID.randomUUID().toString()
 
-        val resource = Resource(response.content.copy(searchId = correlationId))
+        eventService.saveEvent(SearchEvent(timestamp = ZonedDateTime.now(), correlationId = correlationId, query = query, resultsReturned = response.size))
 
         val headers = HttpHeaders()
-        headers["X-Correlation-ID"] = correlationId
-        return ResponseEntity(resource, headers, HttpStatus.OK)
+        headers[X_CORRELATION_ID] = correlationId
+        return ResponseEntity(response, headers, HttpStatus.OK)
     }
 
 }
