@@ -65,10 +65,13 @@ class MysqlVideoService(
     }
 
     private fun findAllById(ids: List<Long>): List<VideoEntity> {
+        if(ids.isEmpty()) {
+            return emptyList()
+        }
+
         val parameters = MapSqlParameterSource()
         parameters.addValue("ids", ids)
 
-        logger.info { "looking up ids: $ids " }
         return jdbcTemplate.query(SELECT_QUERY, parameters, rowMapper)
     }
 

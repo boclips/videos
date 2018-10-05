@@ -20,3 +20,7 @@ event:
     lookbackHours:
       search: 1
       playback: 1
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
