@@ -31,15 +31,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 200 videos with text query`() {
         mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.videos[0].id", equalTo("123")))
-                .andExpect(jsonPath("$.videos[0].title", equalTo("powerful video about elephants")))
-                .andExpect(jsonPath("$.videos[0].description", equalTo("test description 3")))
-                .andExpect(jsonPath("$.videos[0].releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$.videos[0].duration", equalTo("PT1M")))
-                .andExpect(jsonPath("$.videos[0].contentProvider", equalTo("cp")))
-                .andExpect(jsonPath("$.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
-                .andExpect(jsonPath("$.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
-                .andExpect(jsonPath("$.videos[0]._links.self.href", containsString("/videos/123")))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("123")))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
+                .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
+                .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
+                .andExpect(jsonPath("$._embedded.videos[0].duration", equalTo("PT1M")))
+                .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp")))
+                .andExpect(jsonPath("$._embedded.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
     }
 
     @Test

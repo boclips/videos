@@ -7,6 +7,7 @@ import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.springframework.hateoas.Resources
 import org.springframework.mock.web.MockHttpServletRequest
 import java.time.ZonedDateTime
 
@@ -25,7 +26,7 @@ class SearchLoggerTest {
         val currentRequest = MockHttpServletRequest()
         currentRequest.addHeader(SearchLogger.X_CORRELATION_ID, "correlation id")
 
-        val finalResource = searchLogger.logSearch(listOf(), currentRequest, "some query")
+        val finalResource = searchLogger.logSearch(Resources(emptyList()), currentRequest, "some query")
 
         assertThat(finalResource.headers["X-Correlation-ID"]).containsExactly("correlation id")
     }
@@ -35,7 +36,7 @@ class SearchLoggerTest {
         val currentRequest = MockHttpServletRequest()
         currentRequest.addHeader(SearchLogger.X_CORRELATION_ID, "correlation id")
 
-        searchLogger.logSearch(listOf(), currentRequest, "some query")
+        searchLogger.logSearch(Resources(emptyList()), currentRequest, "some query")
 
         verify(eventService).saveEvent<SearchEventData>(com.nhaarman.mockito_kotlin.check { event ->
             assertThat(event.timestamp).isAfter(ZonedDateTime.now().minusMinutes(1))
@@ -49,7 +50,7 @@ class SearchLoggerTest {
     fun `generates UUID when correlation id header is missing`() {
         val currentRequest = MockHttpServletRequest()
 
-        searchLogger.logSearch(listOf(), currentRequest, "some query")
+        searchLogger.logSearch(Resources(emptyList()), currentRequest, "some query")
 
         verify(eventService).saveEvent<SearchEventData>(com.nhaarman.mockito_kotlin.check { event ->
             assertThat(event.data.searchId).isNotBlank()

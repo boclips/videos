@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.infrastructure.search.event.SearchLogging
 import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.Resource
+import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
@@ -26,10 +27,10 @@ class VideoController(
 
     @GetMapping("/search")
     @SearchLogging
-    fun search(@RequestParam("query") query: String?): ResponseEntity<List<Resource<VideoResource>>> {
+    fun search(@RequestParam("query") query: String?): ResponseEntity<Resources<Resource<VideoResource>>> {
         val results = getVideos.get(query)
 
-        return ResponseEntity(results, HttpStatus.OK)
+        return ResponseEntity(Resources(results), HttpStatus.OK)
     }
 
     @GetMapping("/{id}")

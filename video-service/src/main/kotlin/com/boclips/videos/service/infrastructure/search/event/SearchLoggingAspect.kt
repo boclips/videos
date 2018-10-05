@@ -7,6 +7,7 @@ import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.springframework.hateoas.Resource
+import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,7 +29,7 @@ class SearchLoggingAspect(
             value = "com.boclips.videos.service.infrastructure.search.event.SearchLoggingPointcuts.searchLoggingAnnotation()"
     )
     fun doAccessCheck(proceedingJoinPoint: ProceedingJoinPoint): Any? {
-        val result = proceedingJoinPoint.proceed() as ResponseEntity<List<Resource<VideoResource>>>
+        val result = proceedingJoinPoint.proceed() as ResponseEntity<Resources<Resource<VideoResource>>>
         val query = proceedingJoinPoint.args[0].toString()
 
         return searchLogger.logSearch(result.body!!, getCurrentHttpRequest(), query)
@@ -47,15 +48,14 @@ class SearchLoggingAspect(
 class SearchLogger(
         private val eventService: EventService
 ) {
-
     companion object {
         const val X_CORRELATION_ID = "X-Correlation-ID"
     }
 
-    fun logSearch(response: List<Resource<VideoResource>>, currentRequest: HttpServletRequest?, query: String): ResponseEntity<List<Resource<VideoResource>>> {
+    fun logSearch(response: Resources<Resource<VideoResource>>, currentRequest: HttpServletRequest?, query: String): ResponseEntity<Resources<Resource<VideoResource>>> {
         val correlationId = currentRequest?.getHeader(X_CORRELATION_ID) ?: UUID.randomUUID().toString()
 
-        eventService.saveEvent(SearchEvent(timestamp = ZonedDateTime.now(), correlationId = correlationId, query = query, resultsReturned = response.size))
+        eventService.saveEvent(SearchEvent(timestamp = ZonedDateTime.now(), correlationId = correlationId, query = query, resultsReturned = response.content.size))
 
         val headers = HttpHeaders()
         headers[X_CORRELATION_ID] = correlationId
