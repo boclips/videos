@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.infrastructure.event.SearchEvent
 import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
-import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -36,7 +35,7 @@ object TestFactories {
             resultsReturned: Int = 10
     ) = SearchEvent(
             timestamp = timestamp,
-            searchId = searchId,
+            correlationId = searchId,
             query = query,
             resultsReturned = resultsReturned
     )

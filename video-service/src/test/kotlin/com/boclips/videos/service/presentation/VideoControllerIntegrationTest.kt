@@ -10,8 +10,7 @@ import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -96,30 +95,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `searchId is unique`() {
-        val searchId1 = extractSearchId()
-        val searchId2 = extractSearchId()
-
-        assertThat(searchId1).isNotBlank()
-        assertThat(searchId1).isNotEqualTo(searchId2)
-    }
-
-    @Test
-    fun `contains a request id`() {
-        mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
+    fun `returns correlation id`() {
+        mockMvc.perform(get("/v1/videos/search?query=powerful").header("X-Correlation-ID", "correlation-id").authenticateAsTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.searchId", not(isEmptyOrNullString())))
-    }
-
-
-    private fun extractSearchId(): String {
-        val content = mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
-                .andExpect(status().isOk)
-                .andReturn()
-                .response
-                .contentAsString
-
-        return ObjectMapper().readValue(content, Map::class.java)["searchId"].toString()
+                .andExpect(header().string("X-Correlation-ID", "correlation-id"))
+                .andExpect(jsonPath("$.searchId", `is`("correlation-id")))
     }
 
 }

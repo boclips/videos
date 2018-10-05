@@ -20,7 +20,7 @@ class EventEntity(val type: String, val timestamp: LocalDateTime, val data: Map<
         return when (type) {
             "SEARCH" -> SearchEvent(
                     timestamp = timestamp,
-                    searchId = data["searchId"] as String,
+                    correlationId = data["searchId"] as String,
                     resultsReturned = data["resultsReturned"] as Int,
                     query = data["query"] as String
             )
