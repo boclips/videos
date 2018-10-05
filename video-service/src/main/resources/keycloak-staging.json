@@ -1,0 +1,8 @@
+{
+  "realm": "teachers",
+  "bearer-only": true,
+  "auth-server-url": "https://login.staging-boclips.com/auth",
+  "ssl-required": "external",
+  "resource": "video-service",
+  "confidential-port": 0
+}
