@@ -2,10 +2,9 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.event.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
-import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.authenticateAsTeacher
+import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
@@ -29,7 +28,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `posted events are being saved`() {
         mockMvc.perform(post("/v1/events")
-                .authenticateAsTeacher()
+                .asTeacher()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{
                     "playerId": "123",

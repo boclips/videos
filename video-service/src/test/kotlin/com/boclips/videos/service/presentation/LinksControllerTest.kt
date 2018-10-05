@@ -18,7 +18,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `GET returns links`() {
         mockMvc.perform(get("/v1"))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._links.user.href", endsWith("/user")))
                 .andExpect(jsonPath("$._links.search.href", containsString("/videos/search?query=")))
                 .andExpect(jsonPath("$._links.search.templated", equalTo(true)))
                 .andExpect(jsonPath("$._links.video.href", containsString("/videos/")))

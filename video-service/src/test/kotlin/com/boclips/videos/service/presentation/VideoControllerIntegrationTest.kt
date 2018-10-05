@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.authenticateAsTeacher
+import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Before
@@ -28,7 +28,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 200 videos with text query`() {
-        mockMvc.perform(get("/v1/videos/search?query=powerful").authenticateAsTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=powerful").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("123")))
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
@@ -45,7 +45,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns empty videos array when nothing matches`() {
         fakeSearchService.clear()
 
-        mockMvc.perform(get("/v1/videos/search?query=whatdohorseseat").authenticateAsTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=whatdohorseseat").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
     }
@@ -57,20 +57,20 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 401 for anonymous search request`() {
+    fun `returns 403 for anonymous search request`() {
         mockMvc.perform(get("/v1/videos/search"))
-                .andExpect(status().isUnauthorized)
+                .andExpect(status().isForbidden)
     }
 
     @Test
     fun `returns 400 for invalid search request`() {
-        mockMvc.perform(get("/v1/videos/search").authenticateAsTeacher())
+        mockMvc.perform(get("/v1/videos/search").asTeacher())
                 .andExpect(status().`is`(400))
     }
 
     @Test
     fun `returns 200 for valid video`() {
-        mockMvc.perform(get("/v1/videos/123").authenticateAsTeacher())
+        mockMvc.perform(get("/v1/videos/123").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.id", equalTo("123")))
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
@@ -84,33 +84,33 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 401 for anonymous video request`() {
+    fun `returns 403 for anonymous video request`() {
         mockMvc.perform(get("/v1/videos/123"))
-                .andExpect(status().isUnauthorized)
+                .andExpect(status().isForbidden)
     }
 
     @Test
     fun `returns 404 for inexistent video`() {
-        mockMvc.perform(get("/v1/videos/9999").authenticateAsTeacher())
+        mockMvc.perform(get("/v1/videos/9999").asTeacher())
                 .andExpect(status().`is`(404))
     }
 
     @Test
     fun `returns 200 when video is deleted`() {
-        mockMvc.perform(delete("/v1/videos/123").authenticateAsTeacher())
+        mockMvc.perform(delete("/v1/videos/123").asTeacher())
                 .andExpect(status().`is`(200))
     }
 
     @Test
     fun `returns correlation id`() {
-        mockMvc.perform(get("/v1/videos/search?query=powerful").header("X-Correlation-ID", "correlation-id").authenticateAsTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=powerful").header("X-Correlation-ID", "correlation-id").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(header().string("X-Correlation-ID", "correlation-id"))
     }
 
     @Test
     fun `records search events`() {
-        mockMvc.perform(get("/v1/videos/search?query=bugs").header("X-Correlation-ID", "correlation-id").authenticateAsTeacher())
+        mockMvc.perform(get("/v1/videos/search?query=bugs").header("X-Correlation-ID", "correlation-id").asTeacher())
                 .andExpect(status().isOk)
 
         val searchEvent = eventService.latestInteractions().last()

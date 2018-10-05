@@ -16,11 +16,11 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
 
     override fun getVideosWithPlayback(videos: List<Video>): List<Video> {
         val referenceIds = videos.map { video -> video.videoId.referenceId ?: video.videoId.videoId }
-        val mediaEntries = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
+        val mediaEntriesById = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
 
         return videos.map { video ->
             val id = video.videoId.referenceId ?: video.videoId.videoId
-            val mediaEntries: MutableList<MediaEntry> = mediaEntries[id]
+            val mediaEntries: MutableList<MediaEntry> = mediaEntriesById[id]
                     ?: throw VideoPlaybackNotFound()
 
             val mediaEntry = mediaEntries.first()

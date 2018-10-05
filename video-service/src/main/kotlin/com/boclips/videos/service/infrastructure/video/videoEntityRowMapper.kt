@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import java.sql.ResultSet
 
-val rowMapper = { resultSet: ResultSet, i: Int ->
+val rowMapper = { resultSet: ResultSet, _: Int ->
     VideoEntity(
             id = resultSet.getLong("id"),
             title = resultSet.getString("title"),
