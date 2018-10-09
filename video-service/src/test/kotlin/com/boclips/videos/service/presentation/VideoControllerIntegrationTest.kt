@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
@@ -96,8 +97,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 200 when video is deleted`() {
+    fun `teachers cannot delete videos`() {
         mockMvc.perform(delete("/v1/videos/123").asTeacher())
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `returns 200 when video is deleted`() {
+        mockMvc.perform(delete("/v1/videos/123").asOperator())
                 .andExpect(status().`is`(200))
     }
 

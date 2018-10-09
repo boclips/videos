@@ -38,6 +38,7 @@ class VideoIngestorHttpSecurityConfigurer : HttpSecurityConfigurer {
                 .antMatchers("/v1/interactions").permitAll()
                 .antMatchers(HttpMethod.GET, "/v1/events/status").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/v1/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/v1/videos/*").hasRole("REMOVE_VIDEOS")
                 .anyRequest().hasRole("TEACHER")
     }
 }
