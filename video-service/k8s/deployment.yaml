@@ -36,10 +36,10 @@ spec:
             name: video-service
         resources:
           requests:
-            cpu: "700m"
+            cpu: "1000m"
             memory: "500Mi"
           limits:
-            cpu: "700m"
+            cpu: "1000m"
             memory: "2Gi"
 
         readinessProbe:
