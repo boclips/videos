@@ -62,12 +62,12 @@ dependencies {
     compile('com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6')
     compile('io.github.microutils:kotlin-logging:1.4.9')
     compile('mysql:mysql-connector-java')
+    compile('org.flywaydb:flyway-core')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
     testCompile('pl.allegro.tech:embedded-elasticsearch:2.7.0')
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
     testCompile('com.h2database:h2')
-    testCompile('org.flywaydb:flyway-core')
     testCompile('com.nhaarman:mockito-kotlin:1.5.0')
 }
