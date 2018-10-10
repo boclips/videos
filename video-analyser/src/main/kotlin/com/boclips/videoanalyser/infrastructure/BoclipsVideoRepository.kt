@@ -15,24 +15,14 @@ class BoclipsVideoRepository(private val jdbcTemplate: NamedParameterJdbcTemplat
         private const val FIELDS = "id, reference_id, title, source, unique_id, duration, description, date"
     }
 
-    override fun getVideoMetadata(ids: Collection<String>): Set<BoclipsVideo> {
-        if (ids.isEmpty()) {
+    override fun getVideoMetadataByReferenceIds(referenceIds: Collection<String>): Set<BoclipsVideo> {
+        if (referenceIds.isEmpty()) {
             return emptySet()
         }
 
-        val numericIds = ids.filter { it.toIntOrNull() != null }
-        val output = mutableSetOf<BoclipsVideo>()
-        if (numericIds.isNotEmpty()) {
-            output += jdbcTemplate.query(
-                    "SELECT $FIELDS FROM metadata_orig where id in (:ids) and reference_id is null",
-                    mapOf("ids" to numericIds),
-                    this::mapResultsToBoclipsVideos)
-                    .toSet()
-        }
-
-        return output + jdbcTemplate.query(
+        return jdbcTemplate.query(
                 "SELECT $FIELDS FROM metadata_orig where reference_id in (:ids)",
-                mapOf("ids" to ids),
+                mapOf("ids" to referenceIds),
                 this::mapResultsToBoclipsVideos)
                 .toSet()
     }
@@ -59,11 +49,10 @@ class BoclipsVideoRepository(private val jdbcTemplate: NamedParameterJdbcTemplat
 
 
     private fun mapResultsToBoclipsVideos(resultSet: ResultSet, index: Int): BoclipsVideo {
-        val referenceId = resultSet.getString("reference_id")
 
         return BoclipsVideo(
                 id = resultSet.getInt("id"),
-                referenceId = referenceId,
+                referenceId = resultSet.getString("reference_id"),
                 title = resultSet.getString("title"),
                 duration = resultSet.getString("duration"),
                 description = resultSet.getString("description"),

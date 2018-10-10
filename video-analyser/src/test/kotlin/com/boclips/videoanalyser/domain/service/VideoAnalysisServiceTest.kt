@@ -28,22 +28,22 @@ class VideoAnalysisServiceTest {
     @Before
     fun setUp() {
         whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf(
-                TestFactory.kalturaVideo(referenceId = "2"),
-                TestFactory.kalturaVideo(referenceId = "3"),
-                TestFactory.kalturaVideo(referenceId = "4")))
+                TestFactory.kalturaVideo(referenceId = "r2"),
+                TestFactory.kalturaVideo(referenceId = "r3"),
+                TestFactory.kalturaVideo(referenceId = "r4")))
         whenever(kalturaMediaService.getPendingMediaEntries()).thenReturn(setOf(
-                TestFactory.kalturaVideo(referenceId = "5")))
-        whenever(boclipsVideoService.getVideoMetadata(any())).thenAnswer { invocation ->
+                TestFactory.kalturaVideo(referenceId = "r5")))
+        whenever(boclipsVideoService.getVideoMetadataByReferenceIds(any())).thenAnswer { invocation ->
             val set: Collection<String> = invocation.arguments[0] as Collection<String>
-            set.map { BoclipsVideo(id = it.toInt()) }.toSet()
+            set.map { BoclipsVideo(id = it.replace("r", "").toInt(), referenceId = it) }.toSet()
         }
     }
 
     @Test
     fun getFaultyVideosFromKaltura() {
         whenever(kalturaMediaService.getFaultyMediaEntries()).thenReturn(setOf(
-                TestFactory.kalturaVideo(referenceId = "2"),
-                TestFactory.kalturaVideo(referenceId = "3")))
+                TestFactory.kalturaVideo(referenceId = "r2"),
+                TestFactory.kalturaVideo(referenceId = "r3")))
 
         val faultyVideosFromKaltura = videoAnalysisService.getFaultyVideosFromKaltura()
 
@@ -53,10 +53,10 @@ class VideoAnalysisServiceTest {
     @Test
     fun getNonErrorVideosFromKaltura() {
         whenever(kalturaMediaService.getReadyMediaEntries()).thenReturn(setOf(
-                TestFactory.kalturaVideo(referenceId = "2")))
+                TestFactory.kalturaVideo(referenceId = "r2")))
 
         whenever(kalturaMediaService.getPendingMediaEntries()).thenReturn(setOf(
-                TestFactory.kalturaVideo(referenceId = "1")))
+                TestFactory.kalturaVideo(referenceId = "r1")))
 
         assertThat(videoAnalysisService.getNonErrorVideosFromKaltura().map { it.id }).contains(1, 2)
     }
@@ -87,7 +87,7 @@ class VideoAnalysisServiceTest {
                 TestFactory.boclipsVideo(id = 1),
                 TestFactory.boclipsVideo(id = 2)))
 
-        assertThat(videoAnalysisService.getRemovableKalturaVideos().map { it.referenceId }).containsExactly("3", "4")
+        assertThat(videoAnalysisService.getRemovableKalturaVideos().map { it.referenceId }).containsExactly("r3", "r4")
     }
 
     @Test
@@ -98,6 +98,6 @@ class VideoAnalysisServiceTest {
         ))
 
         assertThat(videoAnalysisService.getPlayableVideos().map { it.boclipsVideo.id }).containsExactly(2)
-        assertThat(videoAnalysisService.getPlayableVideos().map { it.kalturaVideo.referenceId }).containsExactly("2")
+        assertThat(videoAnalysisService.getPlayableVideos().map { it.kalturaVideo.referenceId }).containsExactly("r2")
     }
 }

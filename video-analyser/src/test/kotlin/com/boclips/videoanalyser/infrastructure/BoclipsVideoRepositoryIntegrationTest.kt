@@ -18,8 +18,8 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getAllIds() {
-        metadataTestRepository.insert(id = "1", title = "great title", contentProvider = "Bloomie")
-        metadataTestRepository.insert(id = "2")
+        metadataTestRepository.insert(id = "1", referenceId = "r1", title = "great title", contentProvider = "Bloomie")
+        metadataTestRepository.insert(id = "2", referenceId = "r2")
 
         assertThat(boclipsVideoRepository.getAllVideos().first().id).isEqualTo(1)
         assertThat(boclipsVideoRepository.getAllVideos().first().title).isEqualTo("great title")
@@ -30,42 +30,14 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun countAllVideos() {
         assertThat(boclipsVideoRepository.countAllVideos()).isEqualTo(0)
 
-        metadataTestRepository.insert(id = "1")
-        metadataTestRepository.insert(id = "2")
+        metadataTestRepository.insert(id = "1", referenceId = "r1")
+        metadataTestRepository.insert(id = "2", referenceId = "r2")
 
         assertThat(boclipsVideoRepository.countAllVideos()).isEqualTo(2)
     }
 
     @Test
-    fun getVideoMetadata_whenNoReferenceId() {
-        metadataTestRepository.insert(
-                id = "1",
-                title = "great title",
-                contentProvider = "Bloomie",
-                contentProviderId = "b1",
-                description = "desc",
-                duration = "01:02:03",
-                date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay()
-        )
-        metadataTestRepository.insert(id = "2", title = null, contentProvider = null, contentProviderId = null)
-        metadataTestRepository.insert(id = "3", title = null, contentProvider = null, contentProviderId = null)
-
-        assertThat(boclipsVideoRepository.getVideoMetadata(setOf("1", "2"))).containsExactly(
-                BoclipsVideo(
-                        id = 1,
-                        title = "great title",
-                        contentProvider = "Bloomie",
-                        contentProviderId = "b1",
-                        duration = "01:02:03",
-                        date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay(),
-                        description = "desc"
-                ),
-                BoclipsVideo(id = 2)
-        )
-    }
-
-    @Test
-    fun getVideoMetadata_whenReferenceIdPresent() {
+    fun getVideoMetadata() {
         metadataTestRepository.insert(
                 id = "1",
                 referenceId = "reference-id-1",
@@ -77,7 +49,7 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 date = LocalDate.of(2018, Month.JUNE, 10).atStartOfDay()
         )
 
-        assertThat(boclipsVideoRepository.getVideoMetadata(setOf("reference-id-1"))).containsExactly(
+        assertThat(boclipsVideoRepository.getVideoMetadataByReferenceIds(setOf("reference-id-1"))).containsExactly(
                 BoclipsVideo(
                         id = 1,
                         referenceId = "reference-id-1",
@@ -93,11 +65,11 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun deleteVideos() {
-        metadataTestRepository.insert(id = "1", title = "great title", contentProvider = "Bloomie")
-        metadataTestRepository.insert(id = "2")
-        metadataTestRepository.insert(id = "3")
+        metadataTestRepository.insert(id = "1", referenceId = "r1", title = "great title", contentProvider = "Bloomie")
+        metadataTestRepository.insert(id = "2", referenceId = "r2")
+        metadataTestRepository.insert(id = "3", referenceId = "r3")
 
-        boclipsVideoRepository.deleteVideos(setOf(BoclipsVideo(id = 1), BoclipsVideo(id = 3)))
+        boclipsVideoRepository.deleteVideos(setOf(BoclipsVideo(id = 1, referenceId = "r1"), BoclipsVideo(id = 3, referenceId = "r3")))
 
         assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly(2)
     }
@@ -105,10 +77,10 @@ class BoclipsVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun deleteVideos_whenBigBatch() {
         (1..150).forEach {
-            metadataTestRepository.insert(id = "$it")
+            metadataTestRepository.insert(id = "$it", referenceId = "r$it")
         }
 
-        boclipsVideoRepository.deleteVideos((1..100).map { BoclipsVideo(id = it) }.toSet())
+        boclipsVideoRepository.deleteVideos((1..100).map { BoclipsVideo(id = it, referenceId = "r$it") }.toSet())
 
         assertThat(boclipsVideoRepository.getAllVideos().map { it.id }).containsExactly(*((101..150).map { it }.toTypedArray()))
     }

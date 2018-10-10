@@ -682,7 +682,7 @@ CREATE TABLE IF NOT EXISTS metadata_orig
   `alt_source` varchar(45) DEFAULT NULL,
   `restrictions` mediumtext,
   `type_id` int(11) NOT NULL DEFAULT '0',
-  `reference_id` varchar(45) DEFAULT NULL,
+  `reference_id` varchar(45) NOT NULL,
 	constraint metadata_orig_id
 		unique (id),
 	constraint fk_type_id

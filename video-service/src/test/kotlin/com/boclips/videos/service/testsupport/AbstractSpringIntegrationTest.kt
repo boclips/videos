@@ -58,12 +58,13 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun saveVideo(videoId: Long,
+                  referenceId: String? = null,
                   title: String = "Some title!",
                   description: String = "Some description!",
                   date: String = "2018-01-01",
                   duration: String = "00:10:00",
-                  contentProvider: String = "AP",
-                  referenceId: String? = "ref-id-1") {
+                  contentProvider: String = "AP"
+    ) {
         jdbcTemplate.update("""
             INSERT INTO metadata_orig (
                 id,
@@ -75,7 +76,7 @@ abstract class AbstractSpringIntegrationTest {
                 reference_id
             ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, duration, referenceId
+                videoId, contentProvider, title, description, date, duration, referenceId ?: "ref-id-$videoId"
         )
     }
 

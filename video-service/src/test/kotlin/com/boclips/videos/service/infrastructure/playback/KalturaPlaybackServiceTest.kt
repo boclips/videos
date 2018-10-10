@@ -49,15 +49,6 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns playable video and can handle videos without reference id`() {
-        val videoWithoutReferenceId = createVideo(videoId = "ref-id-1", referenceId = null)
-        val videoWithPlayback = kalturaPlaybackService.getVideoWithPlayback(videoWithoutReferenceId)
-
-        assertThat(videoWithPlayback.videoPlayback).isNotNull()
-        assertThat(videoWithPlayback.isPlayable()).isTrue()
-    }
-
-    @Test
     fun `removes the playback information`() {
         kalturaClient.addMediaEntry(MediaEntry.builder()
                 .id("something")

@@ -20,9 +20,8 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getUnplayableVideos() {
-        metadataTestRepository.insert(id = "10", title = "some unplayable video")
-        metadataTestRepository.insert(referenceId = "20", title = "another unplayable video")
-        metadataTestRepository.insert(id = "1", title = "some playable video")
+        metadataTestRepository.insert(id = "10", referenceId = "r10", title = "some unplayable video")
+        metadataTestRepository.insert(id = "20", referenceId = "r20", title = "some playable video")
 
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -33,13 +32,13 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val unplayableVideos = videoAnalysisService.getUnplayableVideos()
 
         assertThat(unplayableVideos).hasSize(2)
-        assertThat(unplayableVideos.map { it.kalturaReferenceId() }).contains("10", "20")
+        assertThat(unplayableVideos.map { it.referenceId }).contains("r10", "r20")
     }
 
     @Test
     fun getPlayableVideos() {
-        metadataTestRepository.insert(id = "1", title = "some playable video")
-        metadataTestRepository.insert(id = "27", referenceId = "2", title = "some playable video")
+        metadataTestRepository.insert(id = "1", referenceId = "r1", title = "some playable video")
+        metadataTestRepository.insert(id = "2", referenceId = "r2", title = "another playable video")
 
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -50,8 +49,8 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val playableVideos = videoAnalysisService.getPlayableVideos()
 
         assertThat(playableVideos).hasSize(2)
-        assertThat(playableVideos.map { it.boclipsVideo.kalturaReferenceId() }).contains("1", "2")
-        assertThat(playableVideos.map { it.kalturaVideo.referenceId }).contains("1", "2")
+        assertThat(playableVideos.map { it.boclipsVideo.referenceId }).contains("r1", "r2")
+        assertThat(playableVideos.map { it.kalturaVideo.referenceId }).contains("r1", "r2")
     }
 
     @Test
@@ -65,7 +64,7 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val removableVideos = videoAnalysisService.getRemovableKalturaVideos()
 
         assertThat(removableVideos).hasSize(2)
-        assertThat(removableVideos.map { it.referenceId }).contains("1", "2")
+        assertThat(removableVideos.map { it.referenceId }).contains("r1", "r2")
     }
 
     @Test

@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 class MetadataTestRepository(val jdbcTemplate: NamedParameterJdbcTemplate) {
 
     fun insert(
-            id: String? = null,
-            referenceId: String? = null,
+            id: String,
+            referenceId: String,
             title: String? = "some title",
             contentProvider: String? = "some cp",
             contentProviderId: String? = "some cp id",

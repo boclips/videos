@@ -8,6 +8,7 @@ class TestFactory {
     companion object {
         fun boclipsVideo(
                 id: Int = Math.random().toInt(),
+                referenceId: String? = null,
                 contentProviderId: String? = null,
                 contentProvider: String? = "Bloomie",
                 title: String? = "Some great title",
@@ -16,6 +17,7 @@ class TestFactory {
         ): BoclipsVideo {
             return BoclipsVideo(
                     id = id,
+                    referenceId = referenceId ?: "r$id",
                     title = title,
                     contentProvider = contentProvider,
                     contentProviderId = contentProviderId,

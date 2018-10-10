@@ -15,25 +15,14 @@ class GetVideosTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `getting a single video returns the video with playback information if present`() {
-        saveVideo(videoId = 123)
+        saveVideo(videoId = 1)
 
-        val video = getVideos.get("123")
+        val video = getVideos.get("1")
 
         assertThat(video).isNotNull
-        assertThat(video.id).isEqualTo("123")
+        assertThat(video.id).isEqualTo("1")
         assertThat(video.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
         assertThat(video.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
-    }
-
-    @Test
-    fun `getting a single video without reference id returns the video with playback information`() {
-        fakeKalturaClient.addMediaEntry(mediaEntry(referenceId = "123"))
-        saveVideo(videoId = 123, referenceId = null)
-
-        val video = getVideos.get("123")
-
-        assertThat(video).isNotNull
-        assertThat(video.id).isEqualTo("123")
     }
 
     @Test

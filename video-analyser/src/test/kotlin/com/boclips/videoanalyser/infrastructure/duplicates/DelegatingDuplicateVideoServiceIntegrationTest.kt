@@ -18,9 +18,9 @@ class DelegatingDuplicateVideoServiceIntegrationTest : AbstractSpringIntegration
 
     @Test
     fun getDuplicateVideos() {
-        metadataTestRepository.insert(id = "1", title = "great title", contentProvider = "Bloomie")
-        metadataTestRepository.insert(id = "2", contentProviderId = "1", contentProvider = "cp")
-        metadataTestRepository.insert(id = "3", contentProviderId = "1", contentProvider = "cp")
+        metadataTestRepository.insert(id = "1", referenceId = "r1", title = "great title", contentProvider = "Bloomie")
+        metadataTestRepository.insert(id = "2", referenceId = "r2", contentProviderId = "1", contentProvider = "cp")
+        metadataTestRepository.insert(id = "3", referenceId = "r3", contentProviderId = "1", contentProvider = "cp")
 
         val duplicates = subject.getDuplicates()
 

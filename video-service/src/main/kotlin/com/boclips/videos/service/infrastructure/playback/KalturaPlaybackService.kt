@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.domain.service.PlaybackService
 import mu.KLogging
+import java.lang.IllegalArgumentException
 
 class KalturaPlaybackService(private val kalturaClient: KalturaClient) : PlaybackService {
     companion object : KLogging()
@@ -35,7 +36,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
     }
 
     override fun getVideoWithPlayback(video: Video): Video {
-        val id = video.videoId.referenceId ?: video.videoId.videoId
+        val id = video.videoId.referenceId ?: throw IllegalArgumentException("ReferenceId needed to get playback")
 
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(id)
 
