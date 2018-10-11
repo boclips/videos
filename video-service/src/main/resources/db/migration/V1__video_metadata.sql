@@ -22,6 +22,6 @@ create table if not exists metadata_orig
   alt_source     varchar(45)     null,
   reference_id   varchar(45)     not null,
   restrictions   mediumtext      null,
-  type_id        int default '0' not null,
+  type_id        int default '0' not null
 );
 
