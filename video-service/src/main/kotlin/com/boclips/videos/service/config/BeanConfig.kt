@@ -2,31 +2,31 @@ package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.KalturaClientConfig
+import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.infrastructure.elastic.ElasticSearchConfig
+import com.boclips.search.service.infrastructure.elastic.ElasticSearchService
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.domain.service.PlaybackService
-import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackService
-import com.boclips.videos.service.infrastructure.search.ElasticSearchResultConverter
-import com.boclips.videos.service.infrastructure.search.ElasticSearchService
 import com.boclips.videos.service.infrastructure.video.MysqlVideoService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 
 @Configuration
-class BeanConfig(val objectMapper: ObjectMapper) {
+class BeanConfig {
     @Bean
     fun getVideos(searchService: SearchService,
                   videoService: VideoService,
@@ -67,10 +67,14 @@ class BeanConfig(val objectMapper: ObjectMapper) {
                     mongoTemplate = mongoTemplate)
 
     @Bean
+    @Profile("!fake-search")
     fun searchService(propertiesElasticSearch: PropertiesElasticSearch, kalturaClient: KalturaClient): SearchService {
-        return ElasticSearchService(
-                elasticSearchResultConverter = searchHitConverter(),
-                propertiesElasticSearch = propertiesElasticSearch)
+        return ElasticSearchService(ElasticSearchConfig(
+                host = propertiesElasticSearch.host,
+                port = propertiesElasticSearch.port,
+                username = propertiesElasticSearch.username,
+                password = propertiesElasticSearch.password
+        ))
     }
 
     @Bean
@@ -86,11 +90,6 @@ class BeanConfig(val objectMapper: ObjectMapper) {
                 eventService = eventService
         )
     }
-
-    @Bean
-    fun searchHitConverter() = ElasticSearchResultConverter(
-            objectMapper = objectMapper
-    )
 
     @Bean
     fun kalturaClient(propertiesKaltura: PropertiesKaltura): KalturaClient = KalturaClient.create(KalturaClientConfig.builder()

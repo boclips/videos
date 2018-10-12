@@ -3,7 +3,7 @@ package com.boclips.videos.service.infrastructure.video
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.service.SearchService
+import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -104,6 +104,6 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
         assertThatThrownBy { videoService.findVideoBy(VideoId(videoId = "123")) }
                 .isInstanceOf(VideoNotFoundException::class.java)
 
-        assertThat(searchService.isIndexed(videoIdToBeDeleted)).isFalse()
+        assertThat(searchService.search("Some title")).isEmpty()
     }
 }

@@ -1,16 +1,13 @@
-package com.boclips.videos.service.infrastructure.search
+package com.boclips.search.service.infrastructure.elastic
 
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
-import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.junit.jupiter.api.Test
 
-class ElasticSearchResultConverterTest : AbstractSpringIntegrationTest() {
+class ElasticSearchResultConverterTest {
 
-    @Autowired
-    lateinit var elasticSearchResultConverter: ElasticSearchResultConverter
+    private val elasticSearchResultConverter = ElasticSearchResultConverter()
 
     @Test
     fun `convert search hit`() {
@@ -33,9 +30,7 @@ class ElasticSearchResultConverterTest : AbstractSpringIntegrationTest() {
                 id = "14",
                 referenceId = "ref-id-14",
                 title = "The title",
-                description = "The description",
-                source = "TeD",
-                date = "2014-05-13"
+                description = "The description"
         ))
     }
 

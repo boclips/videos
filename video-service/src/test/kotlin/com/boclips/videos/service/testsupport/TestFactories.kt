@@ -5,28 +5,11 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.infrastructure.event.SearchEvent
-import com.boclips.videos.service.infrastructure.search.ElasticSearchVideo
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 object TestFactories {
-
-    fun createElasticSearchVideos(
-            id: String = "video-id",
-            referenceId: String = "ref-id",
-            title: String = "video-title",
-            source: String = "video-source",
-            date: String = "2018-01-02",
-            description: String = "video-description"
-    ) = ElasticSearchVideo(
-            id = id,
-            referenceId = referenceId,
-            title = title,
-            source = source,
-            date = date,
-            description = description
-    )
 
     fun createSearchEvent(
             timestamp: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),

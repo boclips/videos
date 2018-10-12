@@ -44,8 +44,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns empty videos array when nothing matches`() {
-        fakeSearchService.clear()
-
         mockMvc.perform(get("/v1/videos/search?query=whatdohorseseat").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))

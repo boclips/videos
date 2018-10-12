@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
-import com.boclips.videos.service.domain.service.SearchService
+import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -25,7 +25,7 @@ class MysqlVideoService(
     }
 
     override fun findVideosBy(query: VideoSearchQuery): List<Video> {
-        val videoIds = searchService.search(query.text)
+        val videoIds = searchService.search(query.text).map { VideoId(videoId = it) }
         logger.info { "Found ${videoIds.size} videos for query ${query.text}" }
         return findVideosBy(videoIds)
     }
@@ -45,7 +45,7 @@ class MysqlVideoService(
     }
 
     override fun removeVideo(video: Video) {
-        searchService.removeFromSearch(video.videoId)
+        searchService.removeFromSearch(video.videoId.videoId)
         logger.info { "Removed video ${video.videoId} from search index" }
         deleteById(video.videoId.videoId.toLong())
         logger.info { "Removed video ${video.videoId} from video repository" }

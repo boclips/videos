@@ -1,47 +1,72 @@
-package com.boclips.videos.service.infrastructure.search
+package com.boclips.search.service.infrastructure.elastic
 
-import com.boclips.videos.service.config.PropertiesElasticSearch
-import com.boclips.videos.service.domain.model.VideoId
-import com.boclips.videos.service.domain.service.SearchService
+import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.SearchableVideoMetadata
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.delete.DeleteRequest
-import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
+import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
-class ElasticSearchService(
-        private val elasticSearchResultConverter: ElasticSearchResultConverter,
-        propertiesElasticSearch: PropertiesElasticSearch
-) : SearchService {
+data class ElasticSearchConfig(
+        val scheme: String = "https",
+        val host: String,
+        val port: Int,
+        val username: String,
+        val password: String
+)
+
+class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
+
+    override fun upsert(video: SearchableVideoMetadata) {
+
+        val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
+                id = video.id,
+                referenceId = video.referenceId,
+                title = video.title,
+                description = video.description
+        ))
+
+        RestHighLevelClient(RestClient.builder(HttpHost(config.host, config.port))).use { client ->
+            val indexRequest = IndexRequest(ES_INDEX, ES_TYPE, video.id)
+                    .source(document, XContentType.JSON)
+                    .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)
+            client.index(indexRequest)
+        }
+    }
+
     companion object {
         const val ES_TYPE = "video"
         const val ES_INDEX = "videos"
     }
 
+    private val elasticSearchResultConverter = ElasticSearchResultConverter()
     private val client: RestHighLevelClient
 
     init {
         val credentialsProvider = BasicCredentialsProvider()
-        credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(propertiesElasticSearch.username, propertiesElasticSearch.password))
+        credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(config.username, config.password))
 
-        val builder = RestClient.builder(HttpHost(propertiesElasticSearch.host, propertiesElasticSearch.port, propertiesElasticSearch.scheme)).setHttpClientConfigCallback { httpClientBuilder ->
+        val builder = RestClient.builder(HttpHost(config.host, config.port, config.scheme)).setHttpClientConfigCallback { httpClientBuilder ->
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
         }
         client = RestHighLevelClient(builder)
     }
 
-    override fun search(query: String): List<VideoId> {
-        return searchElasticSearch(query).map { VideoId(it.id) }
+    override fun search(query: String): List<String> {
+        return searchElasticSearch(query).map { it.id }
     }
 
     private fun searchElasticSearch(query: String): List<ElasticSearchVideo> {
@@ -64,13 +89,9 @@ class ElasticSearchService(
         return client.search(searchRequest).hits.hits.map(elasticSearchResultConverter::convert)
     }
 
-    override fun removeFromSearch(videoId: VideoId) {
-        client.delete(DeleteRequest(ES_INDEX, ES_TYPE, videoId.videoId))
+    override fun removeFromSearch(videoId: String) {
+        val request = DeleteRequest(ES_INDEX, ES_TYPE, videoId)
+        request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
+        client.delete(request)
     }
-
-    override fun isIndexed(videoId: VideoId): Boolean {
-        val get = client.get(GetRequest(ES_INDEX, ES_TYPE, videoId.videoId))
-        return get.isExists
-    }
-
 }

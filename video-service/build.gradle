@@ -44,6 +44,8 @@ allprojects {
 
 
 dependencies {
+    compile project (':search-service')
+
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-hateoas')
@@ -52,13 +54,11 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-jdbc')
     compile('org.springframework.boot:spring-boot-starter-aop')
 
-    compile('com.github.knowledgemotion:boclips-spring-security:0.3.0')
+    compile('com.github.knowledgemotion:boclips-spring-security:0.2.0')
     compile("com.github.knowledgemotion:kaltura-client:0.36.0")
 
     compile('org.jetbrains.kotlin:kotlin-stdlib-jdk8')
     compile('org.jetbrains.kotlin:kotlin-reflect')
-    compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:6.3.2')
-    compile('org.elasticsearch:elasticsearch:6.3.2')
     compile('com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6')
     compile('io.github.microutils:kotlin-logging:1.4.9')
     compile('mysql:mysql-connector-java')
@@ -66,7 +66,6 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
-    testCompile('pl.allegro.tech:embedded-elasticsearch:2.7.0')
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
     testCompile('com.h2database:h2')
     testCompile('com.nhaarman:mockito-kotlin:1.5.0')

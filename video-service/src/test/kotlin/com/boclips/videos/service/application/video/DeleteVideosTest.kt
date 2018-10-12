@@ -38,7 +38,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
         deleteVideos.delete("123")
 
         assertThat(fakeSearchService.search("irrelevant query"))
-                .doesNotContain(VideoId(videoId = "123"))
+                .doesNotContain("123")
     }
 
     @Test

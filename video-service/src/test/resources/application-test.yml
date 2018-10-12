@@ -3,13 +3,6 @@ boclips:
     username: teacher
     password: test
 
-elasticsearch:
-  scheme: http
-  host: localhost
-  port: 9350
-  username:
-  password:
-
 klient:
   partnerId: no-partner-id
   userId: no-user-id

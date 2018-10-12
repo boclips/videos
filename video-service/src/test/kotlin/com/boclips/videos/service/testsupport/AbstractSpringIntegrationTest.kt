@@ -3,9 +3,9 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
-import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.search.service.domain.SearchableVideoMetadata
+import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.testsupport.fakes.FakeSearchService
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,7 +33,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var jdbcTemplate: JdbcTemplate
 
     @Autowired
-    lateinit var fakeSearchService: FakeSearchService
+    lateinit var fakeSearchService: InMemorySearchService
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -48,7 +48,6 @@ abstract class AbstractSpringIntegrationTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
         fakeSearchService.clear()
-        fakeSearchService.addToIndex(VideoId(videoId = "123", referenceId = "ref-id-1"))
 
         fakeKalturaClient.addMediaEntry(mediaEntry("1"))
         fakeKalturaClient.addMediaEntry(mediaEntry("2"))
@@ -78,6 +77,8 @@ abstract class AbstractSpringIntegrationTest {
             """,
                 videoId, contentProvider, title, description, date, duration, referenceId ?: "ref-id-$videoId"
         )
+
+        fakeSearchService.upsert(SearchableVideoMetadata(id = videoId.toString(), title = title, description = description, referenceId = referenceId ?: ""))
     }
 
     fun mediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {
