@@ -1,3 +1,7 @@
+plugins {
+    id 'com.adarshr.test-logger' version '1.2.0'
+}
+
 buildscript {
     ext {
         kotlinVersion = '1.2.61'
