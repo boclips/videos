@@ -2,11 +2,12 @@
 
 set -eu
 
+export GRADLE_USER_HOME="$(pwd)/.gradle"
+
 cwd="$(cd "$(dirname $0)" && pwd)"
-export GRADLE_USER_HOME="${cwd}/search-service/.gradle"
 
 (
-cd source/video-service
+cd source
 ./gradlew clean test --rerun-tasks
 )
 
