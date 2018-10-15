@@ -1,4 +1,5 @@
 rootProject.name = 'videos'
+
 include 'search-service'
 include 'video-service'
 include 'video-analyser'

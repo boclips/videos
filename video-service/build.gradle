@@ -69,13 +69,10 @@ dependencies {
     compile('mysql:mysql-connector-java')
     compile('org.flywaydb:flyway-core')
 
-
-    compile("org.elasticsearch:elasticsearch:6.3.2")
-    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:6.3.2")
-
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
     testCompile('com.h2database:h2')
     testCompile('com.nhaarman:mockito-kotlin:1.5.0')
 }
+
