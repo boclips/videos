@@ -22,8 +22,8 @@ def junitVersion = "5.3.1"
 dependencies {
     compile("com.fasterxml.jackson.core:jackson-databind:2.9.6")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
-    compile("org.elasticsearch:elasticsearch:${['elasticsearch.version']}")
-    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:${['elasticsearch.version']}")
+    compile("org.elasticsearch:elasticsearch:6.4.2")
+    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:6.4.2")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
