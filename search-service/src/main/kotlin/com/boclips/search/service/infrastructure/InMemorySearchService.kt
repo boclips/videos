@@ -4,12 +4,14 @@ import com.boclips.search.service.domain.SearchService
 import com.boclips.search.service.domain.SearchableVideoMetadata
 
 class InMemorySearchService : SearchService {
-    private val index = mutableMapOf<String, String>()
-
-    override fun upsert(video: SearchableVideoMetadata) {
-        val searchableText = listOf(video.title, video.description).joinToString(separator = "\n")
-        index[video.id] = searchableText
+    override fun createIndex(videos: List<SearchableVideoMetadata>) {
+        index.clear()
+        videos.forEach { video ->
+            insert(video)
+        }
     }
+
+    private val index = mutableMapOf<String, String>()
 
     override fun search(query: String): List<String> {
         return index
@@ -21,7 +23,7 @@ class InMemorySearchService : SearchService {
         index.remove(videoId)
     }
 
-    fun clear() {
-        index.clear()
+    private fun insert(video: SearchableVideoMetadata) {
+        index[video.id] = listOf(video.title, video.description).joinToString(separator = "\n")
     }
 }

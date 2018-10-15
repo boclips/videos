@@ -47,8 +47,6 @@ abstract class AbstractSpringIntegrationTest {
 
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
-        fakeSearchService.clear()
-
         fakeKalturaClient.addMediaEntry(mediaEntry("1"))
         fakeKalturaClient.addMediaEntry(mediaEntry("2"))
         fakeKalturaClient.addMediaEntry(mediaEntry("3"))
@@ -78,7 +76,11 @@ abstract class AbstractSpringIntegrationTest {
                 videoId, contentProvider, title, description, date, duration, referenceId ?: "ref-id-$videoId"
         )
 
-        fakeSearchService.upsert(SearchableVideoMetadata(id = videoId.toString(), title = title, description = description, referenceId = referenceId ?: ""))
+        fakeSearchService.createIndex(listOf(
+                SearchableVideoMetadata(id = videoId.toString(),
+                        title = title,
+                        description = description,
+                        referenceId = referenceId ?: "")))
     }
 
     fun mediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {

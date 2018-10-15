@@ -6,10 +6,13 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.support.WriteRequest
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
@@ -29,30 +32,20 @@ data class ElasticSearchConfig(
 )
 
 class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
-
-    override fun upsert(video: SearchableVideoMetadata) {
-
-        val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
-                id = video.id,
-                referenceId = video.referenceId,
-                title = video.title,
-                description = video.description
-        ))
-
-        RestHighLevelClient(RestClient.builder(HttpHost(config.host, config.port))).use { client ->
-            val indexRequest = IndexRequest(ES_INDEX, ES_TYPE, video.id)
-                    .source(document, XContentType.JSON)
-                    .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)
-            client.index(indexRequest)
-        }
-    }
-
     companion object {
         const val ES_TYPE = "video"
         const val ES_INDEX = "videos"
     }
 
+    override fun createIndex(videos: List<SearchableVideoMetadata>) {
+        clearIndex()
+        videos.forEach { video ->
+            insert(video)
+        }
+    }
+
     private val elasticSearchResultConverter = ElasticSearchResultConverter()
+
     private val client: RestHighLevelClient
 
     init {
@@ -92,6 +85,30 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
     override fun removeFromSearch(videoId: String) {
         val request = DeleteRequest(ES_INDEX, ES_TYPE, videoId)
         request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-        client.delete(request)
+        client.delete(request, RequestOptions.DEFAULT)
     }
+
+    private fun insert(video: SearchableVideoMetadata) {
+        val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
+                id = video.id,
+                referenceId = video.referenceId,
+                title = video.title,
+                description = video.description
+        ))
+
+        RestHighLevelClient(RestClient.builder(HttpHost(config.host, config.port))).use { client ->
+            val indexRequest = IndexRequest(ES_INDEX, ES_TYPE, video.id)
+                    .source(document, XContentType.JSON)
+                    .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)
+            client.index(indexRequest)
+        }
+    }
+
+    private fun clearIndex() {
+        if (existsIndex(ES_INDEX)) {
+            client.indices().delete(DeleteIndexRequest(ES_INDEX), RequestOptions.DEFAULT)
+        }
+    }
+
+    private fun existsIndex(index: String) = client.indices().exists(GetIndexRequest().indices(index), RequestOptions.DEFAULT)
 }
