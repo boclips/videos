@@ -3,7 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
-import com.boclips.search.service.domain.SearchableVideoMetadata
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.infrastructure.event.EventService
 import org.junit.Before
@@ -77,10 +77,10 @@ abstract class AbstractSpringIntegrationTest {
         )
 
         fakeSearchService.createIndex(listOf(
-                SearchableVideoMetadata(id = videoId.toString(),
+                VideoMetadata(id = videoId.toString(),
                         title = title,
-                        description = description,
-                        referenceId = referenceId ?: "")))
+                        description = description
+                )))
     }
 
     fun mediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {

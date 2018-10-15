@@ -1,8 +1,7 @@
 package com.boclips.search.service.domain
 
-class SearchableVideoMetadata(
+class VideoMetadata(
         val id: String,
         val title: String,
-        val description: String,
-        val referenceId: String
+        val description: String
 )

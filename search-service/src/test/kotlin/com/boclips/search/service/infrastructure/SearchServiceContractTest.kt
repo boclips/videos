@@ -1,7 +1,6 @@
 package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.SearchService
-import com.boclips.search.service.infrastructure.elastic.ElasticSearchService
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat

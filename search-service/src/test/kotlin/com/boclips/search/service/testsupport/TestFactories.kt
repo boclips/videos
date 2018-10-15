@@ -1,17 +1,15 @@
 package com.boclips.search.service.testsupport
 
-import com.boclips.search.service.domain.SearchableVideoMetadata
+import com.boclips.search.service.domain.VideoMetadata
 
 object SearchableVideoMetadataFactory {
     fun create(
             id: String,
             title: String = "",
-            description: String = "",
-            referenceId: String = ""
-    ) = SearchableVideoMetadata(
+            description: String = ""
+    ) = VideoMetadata(
             id = id,
             title = title,
-            description = description,
-            referenceId = referenceId
+            description = description
     )
 }

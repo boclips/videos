@@ -1,10 +1,10 @@
 package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.SearchService
-import com.boclips.search.service.domain.SearchableVideoMetadata
+import com.boclips.search.service.domain.VideoMetadata
 
 class InMemorySearchService : SearchService {
-    override fun createIndex(videos: List<SearchableVideoMetadata>) {
+    override fun createIndex(videos: List<VideoMetadata>) {
         index.clear()
         videos.forEach { video ->
             insert(video)
@@ -23,7 +23,7 @@ class InMemorySearchService : SearchService {
         index.remove(videoId)
     }
 
-    private fun insert(video: SearchableVideoMetadata) {
+    private fun insert(video: VideoMetadata) {
         index[video.id] = listOf(video.title, video.description).joinToString(separator = "\n")
     }
 }

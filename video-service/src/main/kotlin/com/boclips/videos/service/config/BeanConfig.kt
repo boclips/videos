@@ -3,8 +3,8 @@ package com.boclips.videos.service.config
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.search.service.domain.SearchService
-import com.boclips.search.service.infrastructure.elastic.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.elastic.ElasticSearchService
+import com.boclips.search.service.infrastructure.ElasticSearchConfig
+import com.boclips.search.service.infrastructure.ElasticSearchService
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions

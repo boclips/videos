@@ -1,4 +1,4 @@
-package com.boclips.search.service.infrastructure.elastic
+package com.boclips.search.service.infrastructure
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -12,7 +12,6 @@ object ElasticObjectMapper {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         objectMapper.registerModule(KotlinModule())
     }
-
 
     fun get(): ObjectMapper {
         return objectMapper

@@ -1,13 +1,12 @@
 package com.boclips.search.service.testsupport
 
-import com.boclips.search.service.infrastructure.elastic.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.elastic.ElasticSearchService.Companion.ES_INDEX
+import com.boclips.search.service.infrastructure.ElasticSearchConfig
+import com.boclips.search.service.infrastructure.ElasticSearchService.Companion.ES_INDEX
 import org.apache.http.HttpHost
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic
 import pl.allegro.tech.embeddedelasticsearch.PopularProperties
@@ -18,7 +17,6 @@ const val port = 9350
 abstract class EmbeddedElasticSearchIntegrationTest {
 
     companion object {
-
         val CONFIG = ElasticSearchConfig(
                 scheme = "http",
                 host = "localhost",
@@ -27,9 +25,7 @@ abstract class EmbeddedElasticSearchIntegrationTest {
                 password = ""
         )
 
-        @BeforeAll
-        @JvmStatic
-        internal fun startUp() {
+        init {
             EmbeddedElastic.builder()
                     .withElasticVersion("6.3.2")
                     .withSetting(PopularProperties.HTTP_PORT, port)
@@ -37,7 +33,6 @@ abstract class EmbeddedElasticSearchIntegrationTest {
                     .build()
                     .start()
         }
-
     }
 
     @BeforeEach

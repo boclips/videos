@@ -1,11 +1,13 @@
-package com.boclips.search.service.infrastructure.elastic
+package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.SearchService
-import com.boclips.search.service.domain.SearchableVideoMetadata
+import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest
 import org.elasticsearch.action.delete.DeleteRequest
@@ -23,29 +25,13 @@ import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
-data class ElasticSearchConfig(
-        val scheme: String = "https",
-        val host: String,
-        val port: Int,
-        val username: String,
-        val password: String
-)
-
 class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
     companion object {
         const val ES_TYPE = "video"
         const val ES_INDEX = "videos"
     }
 
-    override fun createIndex(videos: List<SearchableVideoMetadata>) {
-        clearIndex()
-        videos.forEach { video ->
-            insert(video)
-        }
-    }
-
     private val elasticSearchResultConverter = ElasticSearchResultConverter()
-
     private val client: RestHighLevelClient
 
     init {
@@ -58,8 +44,22 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         client = RestHighLevelClient(builder)
     }
 
+    override fun createIndex(videos: List<VideoMetadata>) {
+        deleteIndex()
+        configureIndex()
+        videos.forEach { video ->
+            insert(video)
+        }
+    }
+
     override fun search(query: String): List<String> {
         return searchElasticSearch(query).map { it.id }
+    }
+
+    override fun removeFromSearch(videoId: String) {
+        val request = DeleteRequest(ES_INDEX, ES_TYPE, videoId)
+        request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
+        client.delete(request, RequestOptions.DEFAULT)
     }
 
     private fun searchElasticSearch(query: String): List<ElasticSearchVideo> {
@@ -68,7 +68,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.AUTO)
 
-        val rescoreQuery = QueryBuilders.multiMatchQuery(query, "title.shingles", "description.shingles")
+        val rescoreQuery = QueryBuilders.multiMatchQuery(query, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
 
         val rescorer = QueryRescorerBuilder(rescoreQuery)
@@ -82,16 +82,9 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         return client.search(searchRequest).hits.hits.map(elasticSearchResultConverter::convert)
     }
 
-    override fun removeFromSearch(videoId: String) {
-        val request = DeleteRequest(ES_INDEX, ES_TYPE, videoId)
-        request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-        client.delete(request, RequestOptions.DEFAULT)
-    }
-
-    private fun insert(video: SearchableVideoMetadata) {
+    private fun insert(video: VideoMetadata) {
         val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
                 id = video.id,
-                referenceId = video.referenceId,
                 title = video.title,
                 description = video.description
         ))
@@ -104,7 +97,16 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         }
     }
 
-    private fun clearIndex() {
+    private fun configureIndex() {
+        val indexConfiguration = IndexConfiguration()
+        val createIndexRequest = CreateIndexRequest(ES_INDEX)
+                .settings(indexConfiguration.generateIndexSettings())
+                .mapping("video", indexConfiguration.generateVideoMapping())
+
+        client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
+    }
+
+    private fun deleteIndex() {
         if (existsIndex(ES_INDEX)) {
             client.indices().delete(DeleteIndexRequest(ES_INDEX), RequestOptions.DEFAULT)
         }

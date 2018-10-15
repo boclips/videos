@@ -1,4 +1,4 @@
-package com.boclips.search.service.infrastructure.elastic
+package com.boclips.search.service.infrastructure
 
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
@@ -14,7 +14,6 @@ class ElasticSearchResultConverterTest {
         val searchHit = SearchHit(14).sourceRef(BytesArray("""
             {
                 "id": "14",
-                "reference_id": "ref-id-14",
                 "title": "The title",
                 "description": "The description",
                 "source": "TeD",
@@ -28,7 +27,6 @@ class ElasticSearchResultConverterTest {
 
         assertThat(video).isEqualTo(ElasticSearchVideo(
                 id = "14",
-                referenceId = "ref-id-14",
                 title = "The title",
                 description = "The description"
         ))
