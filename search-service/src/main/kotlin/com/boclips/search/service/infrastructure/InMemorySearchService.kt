@@ -8,18 +8,17 @@ class InMemorySearchService : SearchService {
 
     override fun upsert(video: SearchableVideoMetadata) {
         val searchableText = listOf(video.title, video.description).joinToString(separator = "\n")
-        index[searchableText] = video.id
+        index[video.id] = searchableText
     }
 
     override fun search(query: String): List<String> {
         return index
-                .filter { text -> text.key.contains(query, ignoreCase = true) }
-                .map { it.value }
+                .filter { text -> text.value.contains(query, ignoreCase = true) }
+                .map { it.key }
     }
 
     override fun removeFromSearch(videoId: String) {
-        val key = index.entries.find { it.value == videoId }!!.key
-        index.remove(key)
+        index.remove(videoId)
     }
 
     fun clear() {
