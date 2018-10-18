@@ -19,7 +19,8 @@ class ElasticSearchResultConverterTest {
                 "source": "TeD",
                 "price_category": "expensive",
                 "date": "2014-05-13",
-                "duration": "02:01:20"
+                "duration": "02:01:20",
+                "keywords": ["k1","k2"]
             }
         """.trimIndent()))
 
@@ -28,7 +29,8 @@ class ElasticSearchResultConverterTest {
         assertThat(video).isEqualTo(ElasticSearchVideo(
                 id = "14",
                 title = "The title",
-                description = "The description"
+                description = "The description",
+                keywords = listOf("k1", "k2")
         ))
     }
 

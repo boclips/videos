@@ -36,7 +36,7 @@ abstract class EmbeddedElasticSearchIntegrationTest {
     }
 
     @BeforeEach
-    internal fun setUp() {
+    internal fun deleteIndex() {
         RestHighLevelClient(RestClient.builder(HttpHost("localhost", port))).use { client ->
             if (client.indices().exists(GetIndexRequest().indices(ES_INDEX))) {
                 client.indices().delete(DeleteIndexRequest(ES_INDEX))

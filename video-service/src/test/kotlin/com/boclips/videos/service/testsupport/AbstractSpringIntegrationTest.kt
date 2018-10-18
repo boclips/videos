@@ -79,7 +79,8 @@ abstract class AbstractSpringIntegrationTest {
         fakeSearchService.createIndex(listOf(
                 VideoMetadata(id = videoId.toString(),
                         title = title,
-                        description = description
+                        description = description,
+                        keywords = emptyList()
                 )))
     }
 

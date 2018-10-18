@@ -86,7 +86,8 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
                 id = video.id,
                 title = video.title,
-                description = video.description
+                description = video.description,
+                keywords = video.keywords
         ))
 
         RestHighLevelClient(RestClient.builder(HttpHost(config.host, config.port))).use { client ->

@@ -6,10 +6,12 @@ object SearchableVideoMetadataFactory {
     fun create(
             id: String,
             title: String = "",
-            description: String = ""
+            description: String = "",
+            keywords: List<String> = emptyList()
     ) = VideoMetadata(
             id = id,
             title = title,
-            description = description
+            description = description,
+            keywords = keywords
     )
 }

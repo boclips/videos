@@ -37,9 +37,15 @@ class IndexConfiguration {
                         FIELD_DESCRIPTOR_SHINGLES to mapOf("type" to "text", "analyzer" to "shingle_analyzer")
                 )
         )
+        val keywordField = mapOf(
+                "type" to "text",
+                "analyzer" to "english",
+                "position_increment_gap" to 100
+        )
         return mapOf("properties" to mapOf(
                 "title" to freeTextField,
-                "description" to freeTextField
+                "description" to freeTextField,
+                "keywords" to keywordField
         ))
     }
 
