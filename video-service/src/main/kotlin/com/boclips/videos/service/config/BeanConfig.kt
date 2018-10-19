@@ -10,6 +10,7 @@ import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
+import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
@@ -101,5 +102,10 @@ class BeanConfig {
     @Bean
     fun getLatestInteractions(eventService: EventService): GetLatestInteractions {
         return GetLatestInteractions(eventService = eventService)
+    }
+
+    @Bean
+    fun rebuildSearchIndex(videoService: VideoService): RebuildSearchIndex {
+        return RebuildSearchIndex(videoService)
     }
 }

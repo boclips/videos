@@ -27,6 +27,12 @@ class WebSecurityConfig  {
     }
 }
 
+object UserRoles {
+    const val TEACHER = "TEACHER"
+    const val REMOVE_VIDEOS = "REMOVE_VIDEOS"
+    const val REMOVE_SEARCH_INDEX = "REMOVE_SEARCH_INDEX"
+}
+
 @Component
 class VideoIngestorHttpSecurityConfigurer : HttpSecurityConfigurer {
     override fun configure(http: HttpSecurity) {
@@ -38,8 +44,9 @@ class VideoIngestorHttpSecurityConfigurer : HttpSecurityConfigurer {
                 .antMatchers("/v1/interactions").permitAll()
                 .antMatchers(HttpMethod.GET, "/v1/events/status").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/v1/**").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/v1/videos/*").hasRole("REMOVE_VIDEOS")
-                .anyRequest().hasRole("TEACHER")
+                .antMatchers(HttpMethod.DELETE, "/v1/videos/*").hasRole(UserRoles.REMOVE_VIDEOS)
+                .antMatchers(HttpMethod.POST, "/v1/videos/rebuildSearchIndex").hasRole(UserRoles.REMOVE_SEARCH_INDEX)
+                .anyRequest().hasRole(UserRoles.TEACHER)
     }
 }
 

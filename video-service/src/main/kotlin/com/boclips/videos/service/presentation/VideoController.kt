@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
+import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.infrastructure.search.event.SearchLogging
 import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.Resource
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v1/videos")
 class VideoController(
         private val getVideos: GetVideos,
-        private val deleteVideos: DeleteVideos
+        private val deleteVideos: DeleteVideos,
+        private val rebuildSearchIndex: RebuildSearchIndex
 ) {
     companion object {
         fun searchLink() = linkTo(methodOn(VideoController::class.java).search(null)).withRel("search")
@@ -42,5 +44,11 @@ class VideoController(
     @DeleteMapping("/{id}")
     fun deleteVideo(@PathVariable("id") id: String?) {
         deleteVideos.delete(id)
+    }
+
+    @PostMapping("/rebuildSearchIndex")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun rebuildSearchIndex() {
+        rebuildSearchIndex.execute()
     }
 }

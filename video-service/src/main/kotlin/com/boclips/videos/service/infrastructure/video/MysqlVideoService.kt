@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.search.service.domain.SearchService
-import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
@@ -113,12 +112,3 @@ class MysqlVideoService(
     }
 }
 
-object VideoMetadataRowMapper {
-    fun mapRow(row: ResultSet): VideoMetadata {
-        val id = row.getLong("id")
-        val title = row.getString("title")
-        val description = row.getString("description")
-        val keywords = row.getString("keywords")
-        return VideoMetadata(id = id.toString(), title = title, description = description, keywords = keywords.split(','))
-    }
-}

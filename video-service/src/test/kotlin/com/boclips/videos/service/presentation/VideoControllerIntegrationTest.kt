@@ -122,5 +122,17 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(searchEvent.description).startsWith("Search for 'bugs'")
     }
 
+    @Test
+    fun `rebuildSearchIndex returns 403 when user is not allowed to reindex`() {
+        mockMvc.perform(post("/v1/videos/rebuildSearchIndex").asTeacher())
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `rebuildSearchIndex returns 202 accepted when user is allowed to reindex`() {
+        mockMvc.perform(post("/v1/videos/rebuildSearchIndex").asOperator())
+                .andExpect(status().isAccepted)
+    }
+
 }
 
