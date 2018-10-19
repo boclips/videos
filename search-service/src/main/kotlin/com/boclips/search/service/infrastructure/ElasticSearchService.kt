@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure
 import com.boclips.search.service.domain.SearchService
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
+import mu.KLogging
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -10,6 +11,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest
+import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
@@ -18,6 +20,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
+import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
@@ -26,7 +29,7 @@ import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
 class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
-    companion object {
+    companion object : KLogging() {
         const val ES_TYPE = "video"
         const val ES_INDEX = "videos"
     }
@@ -44,12 +47,9 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         client = RestHighLevelClient(builder)
     }
 
-    override fun createIndex(videos: List<VideoMetadata>) {
+    override fun resetIndex() {
         deleteIndex()
         configureIndex()
-        videos.forEach { video ->
-            insert(video)
-        }
     }
 
     override fun search(query: String): List<String> {
@@ -79,10 +79,35 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
                 SearchSourceBuilder().query(findMatchesQuery).addRescorer(rescorer)
         )
 
-        return client.search(searchRequest).hits.hits.map(elasticSearchResultConverter::convert)
+        return client.search(searchRequest, RequestOptions.DEFAULT).hits.hits.map(elasticSearchResultConverter::convert)
     }
 
-    private fun insert(video: VideoMetadata) {
+    override fun upsert(videos: Sequence<VideoMetadata>) {
+        val batchSize = 2000
+        videos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEach(this::upsertBatch)
+    }
+
+    private fun upsertBatch(videos: List<VideoMetadata>) {
+        logger.info { "Indexing ${videos.size} video(s)" }
+
+        val request = videos
+                .map(this::indexRequest)
+                .fold(BulkRequest()) { bulkRequest, indexRequest ->
+                    bulkRequest.add(indexRequest)
+                }
+
+        request.timeout(TimeValue.timeValueMinutes(2))
+        request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
+
+        val result = client.bulk(request, RequestOptions.DEFAULT)
+
+        if(result.hasFailures()) {
+            throw Error("Batch indexing failed: ${result.buildFailureMessage()}")
+        }
+        logger.info { "Successfully indexed ${result.items.size} video(s)" }
+    }
+
+    private fun indexRequest(video: VideoMetadata): IndexRequest {
         val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
                 id = video.id,
                 title = video.title,
@@ -90,12 +115,8 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
                 keywords = video.keywords
         ))
 
-        RestHighLevelClient(RestClient.builder(HttpHost(config.host, config.port))).use { client ->
-            val indexRequest = IndexRequest(ES_INDEX, ES_TYPE, video.id)
-                    .source(document, XContentType.JSON)
-                    .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL)
-            client.index(indexRequest)
-        }
+        return IndexRequest(ES_INDEX, ES_TYPE, video.id)
+                .source(document, XContentType.JSON)
     }
 
     private fun configureIndex() {
@@ -108,10 +129,10 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
     }
 
     private fun deleteIndex() {
-        if (existsIndex(ES_INDEX)) {
+        if (indexExists(ES_INDEX)) {
             client.indices().delete(DeleteIndexRequest(ES_INDEX), RequestOptions.DEFAULT)
         }
     }
 
-    private fun existsIndex(index: String) = client.indices().exists(GetIndexRequest().indices(index), RequestOptions.DEFAULT)
+    private fun indexExists(index: String) = client.indices().exists(GetIndexRequest().indices(index), RequestOptions.DEFAULT)
 }

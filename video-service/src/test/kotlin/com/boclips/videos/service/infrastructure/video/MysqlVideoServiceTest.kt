@@ -106,4 +106,19 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(searchService.search("Some title")).isEmpty()
     }
+
+
+    @Test
+    fun `rebuild search index`() {
+        saveVideo(videoId = 1, title = "first")
+        saveVideo(videoId = 2, title = "second")
+        searchService.removeFromSearch("1")
+
+        assertThat(videoService.findVideosBy(VideoSearchQuery(text = "first"))).isEmpty()
+
+        videoService.rebuildSearchIndex()
+
+        assertThat(videoService.findVideosBy(VideoSearchQuery(text = "first"))).isNotEmpty
+        assertThat(videoService.findVideosBy(VideoSearchQuery(text = "second"))).isNotEmpty
+    }
 }

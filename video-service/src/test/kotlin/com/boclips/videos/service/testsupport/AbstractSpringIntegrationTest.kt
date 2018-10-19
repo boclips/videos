@@ -60,7 +60,8 @@ abstract class AbstractSpringIntegrationTest {
                   description: String = "Some description!",
                   date: String = "2018-01-01",
                   duration: String = "00:10:00",
-                  contentProvider: String = "AP"
+                  contentProvider: String = "AP",
+                  keywords: List<String> = emptyList()
     ) {
         jdbcTemplate.update("""
             INSERT INTO metadata_orig (
@@ -70,18 +71,21 @@ abstract class AbstractSpringIntegrationTest {
                 description,
                 date,
                 duration,
-                reference_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                reference_id,
+                keywords
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, duration, referenceId ?: "ref-id-$videoId"
+                videoId, contentProvider, title, description, date, duration, referenceId
+                ?: "ref-id-$videoId", keywords.joinToString(separator = ",")
         )
 
-        fakeSearchService.createIndex(listOf(
-                VideoMetadata(id = videoId.toString(),
-                        title = title,
-                        description = description,
-                        keywords = emptyList()
-                )))
+        fakeSearchService.resetIndex()
+        fakeSearchService.upsert(VideoMetadata(
+                id = videoId.toString(),
+                title = title,
+                description = description,
+                keywords = emptyList()
+        ))
     }
 
     fun mediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {

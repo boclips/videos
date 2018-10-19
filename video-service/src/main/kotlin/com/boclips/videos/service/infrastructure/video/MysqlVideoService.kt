@@ -1,18 +1,20 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
-import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
+import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import java.sql.ResultSet
 import java.time.LocalDate
 import java.util.*
-
 
 class MysqlVideoService(
         private val searchService: SearchService,
@@ -20,6 +22,7 @@ class MysqlVideoService(
         private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : VideoService {
     companion object : KLogging() {
+
         private val DELETE_QUERY = "DELETE FROM metadata_orig WHERE id IN (:ids)"
         private val SELECT_QUERY = "SELECT * FROM metadata_orig WHERE id IN (:ids)"
     }
@@ -65,7 +68,7 @@ class MysqlVideoService(
     }
 
     private fun findAllById(ids: List<Long>): List<VideoEntity> {
-        if(ids.isEmpty()) {
+        if (ids.isEmpty()) {
             return emptyList()
         }
 
@@ -92,5 +95,30 @@ class MysqlVideoService(
         parameters.addValue("ids", videoId)
 
         jdbcTemplate.update(DELETE_QUERY, parameters)
+    }
+
+    override fun rebuildSearchIndex() {
+
+        searchService.resetIndex()
+
+        jdbcTemplate.query("select * from metadata_orig", VideoMetadataIterator())
+    }
+
+    inner class VideoMetadataIterator : ResultSetExtractor<Unit> {
+        override fun extractData(resultSet: ResultSet) {
+            searchService.upsert(generateSequence {
+                if(resultSet.next()) VideoMetadataRowMapper.mapRow(resultSet) else null
+            })
+        }
+    }
+}
+
+object VideoMetadataRowMapper {
+    fun mapRow(row: ResultSet): VideoMetadata {
+        val id = row.getLong("id")
+        val title = row.getString("title")
+        val description = row.getString("description")
+        val keywords = row.getString("keywords")
+        return VideoMetadata(id = id.toString(), title = title, description = description, keywords = keywords.split(','))
     }
 }

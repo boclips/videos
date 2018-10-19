@@ -1,10 +1,9 @@
 package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.infrastructure.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.ElasticSearchService.Companion.ES_INDEX
 import org.apache.http.HttpHost
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest
+import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.junit.jupiter.api.BeforeEach
@@ -36,11 +35,9 @@ abstract class EmbeddedElasticSearchIntegrationTest {
     }
 
     @BeforeEach
-    internal fun deleteIndex() {
+    internal fun purgeIndexes() {
         RestHighLevelClient(RestClient.builder(HttpHost("localhost", port))).use { client ->
-            if (client.indices().exists(GetIndexRequest().indices(ES_INDEX))) {
-                client.indices().delete(DeleteIndexRequest(ES_INDEX))
-            }
+            client.indices().delete(DeleteIndexRequest("*"), RequestOptions.DEFAULT)
         }
     }
 }

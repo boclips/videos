@@ -14,11 +14,12 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     @BeforeEach
     internal fun setUp() {
         searchService = ElasticSearchService(CONFIG)
+        searchService.resetIndex()
     }
 
     @Test
     fun `can deal with mispelled queries`() {
-        searchService.createIndex(listOf(
+        searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated.")
         ))
@@ -30,7 +31,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
     @Test
     fun `boosts documents where words appear in sequence in title`() {
-        searchService.createIndex(listOf(
+        searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
                 SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
@@ -43,7 +44,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
     @Test
     fun `boosts documents where words appear in sequence in description`() {
-        searchService.createIndex(listOf(
+        searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
                 SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
                 SearchableVideoMetadataFactory.create(id = "3", description = "banana apple candy")
@@ -56,7 +57,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
     @Test
     fun `boosts documents where there is a keyword match`() {
-        searchService.createIndex(listOf(
+        searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", keywords = listOf("cat")),
                 SearchableVideoMetadataFactory.create(id = "2", keywords = listOf("dog"))
         ))
@@ -68,7 +69,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
     @Test
     fun `takes stopwords into account for queries like "I have a dream"`() {
-        searchService.createIndex(listOf(
+        searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "dream clouds dream sweet"),
                 SearchableVideoMetadataFactory.create(id = "2", description = "i have a dream")
         ))
@@ -80,7 +81,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
     @Test
     fun `can match word stems eg "it's raining" will match "rain"`() {
-        searchService.createIndex(listOf(
+        searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "it's raining today")
         ))
 

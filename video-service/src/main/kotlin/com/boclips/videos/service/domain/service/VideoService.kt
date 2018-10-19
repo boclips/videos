@@ -9,4 +9,5 @@ interface VideoService {
     fun findVideosBy(videoIds: List<VideoId>): List<Video>
     fun findVideoBy(videoId: VideoId): Video
     fun removeVideo(video: Video)
+    fun rebuildSearchIndex()
 }
