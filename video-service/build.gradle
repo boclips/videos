@@ -63,7 +63,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
 
-    compile('com.github.knowledgemotion:boclips-spring-security:0.2.0')
+    compile('com.github.knowledgemotion:boclips-spring-security:0.7.0')
     compile("com.github.knowledgemotion:kaltura-client:0.36.0")
 
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
