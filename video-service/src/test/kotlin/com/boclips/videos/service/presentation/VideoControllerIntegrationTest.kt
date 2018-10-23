@@ -83,9 +83,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 403 for anonymous video request`() {
+    fun `returns 200 for anonymous video request`() {
         mockMvc.perform(get("/v1/videos/123"))
-                .andExpect(status().isForbidden)
+                .andExpect(status().isOk)
     }
 
     @Test
