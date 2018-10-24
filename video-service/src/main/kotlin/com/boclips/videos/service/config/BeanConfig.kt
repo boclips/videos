@@ -25,6 +25,11 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import java.util.concurrent.Executors
+import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
+import org.springframework.core.task.TaskExecutor
+
+
 
 
 @Configuration
@@ -47,13 +52,11 @@ class BeanConfig {
     @Bean
     fun videoService(searchService: SearchService,
                      jdbcTemplate: NamedParameterJdbcTemplate,
-                     playbackService: PlaybackService,
-                     teacherContentFilter: TeacherContentFilter): VideoService {
+                     playbackService: PlaybackService): VideoService {
         return MysqlVideoService(
                 searchService = searchService,
                 jdbcTemplate = jdbcTemplate,
-                playbackVideo = playbackService,
-                teacherContentFilter = teacherContentFilter
+                playbackVideo = playbackService
         )
     }
 
@@ -109,12 +112,18 @@ class BeanConfig {
     }
 
     @Bean
-    fun rebuildSearchIndex(videoService: VideoService): RebuildSearchIndex {
-        return RebuildSearchIndex(videoService)
+    fun rebuildSearchIndex(videoService: VideoService, searchService: SearchService, teacherContentFilter: TeacherContentFilter): RebuildSearchIndex {
+        return RebuildSearchIndex(videoService = videoService, searchService = searchService, teacherContentFilter = teacherContentFilter)
     }
 
     @Bean
     fun teacherContentFilter(): TeacherContentFilter {
         return TeacherContentFilter()
+    }
+
+    @Bean
+    fun taskExecutor(): TaskExecutor {
+        return ConcurrentTaskExecutor(
+                Executors.newFixedThreadPool(3))
     }
 }

@@ -18,8 +18,7 @@ import java.util.*
 class MysqlVideoService(
         private val searchService: SearchService,
         private val playbackVideo: PlaybackService,
-        private val jdbcTemplate: NamedParameterJdbcTemplate,
-        private val teacherContentFilter: TeacherContentFilter
+        private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : VideoService {
     companion object : KLogging() {
 
@@ -86,22 +85,11 @@ class MysqlVideoService(
         jdbcTemplate.update(DELETE_QUERY, parameters)
     }
 
-    override fun rebuildSearchIndex() {
-        searchService.resetIndex()
-        fullScan { videos ->
-            val videosToIndex = videos
-                    .filter { video -> teacherContentFilter.showInTeacherProduct(video) }
-                    .map { video -> VideoMetadataConverter.convert(video) }
-            searchService.upsert(videosToIndex)
-        }
-    }
-
-    private fun fullScan(consumer: (videos: Sequence<Video>) -> Unit) {
+    override fun findAllVideos(consumer: (videos: Sequence<Video>) -> Unit) {
         jdbcTemplate.query("select * from metadata_orig", StreamingVideoResultExtractor(consumer))
     }
 
     inner class StreamingVideoResultExtractor(val consumer: (videos: Sequence<Video>) -> Unit) : ResultSetExtractor<Unit> {
-
         override fun extractData(resultSet: ResultSet) {
             val entities = generateSequence {
                 if (resultSet.next()) rowMapper(resultSet, -1) else null

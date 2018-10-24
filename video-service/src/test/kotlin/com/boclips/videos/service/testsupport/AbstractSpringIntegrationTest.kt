@@ -23,7 +23,6 @@ import java.time.Duration
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test", "fake-kaltura", "fake-search")
-@Transactional
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
