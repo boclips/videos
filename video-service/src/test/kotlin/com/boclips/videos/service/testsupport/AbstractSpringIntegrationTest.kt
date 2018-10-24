@@ -61,6 +61,7 @@ abstract class AbstractSpringIntegrationTest {
                   date: String = "2018-01-01",
                   duration: String = "00:10:00",
                   contentProvider: String = "AP",
+                  typeId: Int = 3,
                   keywords: List<String> = emptyList()
     ) {
         jdbcTemplate.update("""
@@ -72,11 +73,12 @@ abstract class AbstractSpringIntegrationTest {
                 date,
                 duration,
                 reference_id,
-                keywords
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                keywords,
+                type_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
                 videoId, contentProvider, title, description, date, duration, referenceId
-                ?: "ref-id-$videoId", keywords.joinToString(separator = ",")
+                ?: "ref-id-$videoId", keywords.joinToString(separator = ","), typeId
         )
 
         fakeSearchService.resetIndex()

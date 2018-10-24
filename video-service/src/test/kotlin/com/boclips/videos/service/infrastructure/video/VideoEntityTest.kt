@@ -31,4 +31,9 @@ class VideoEntityTest {
         }
                 .hasMessage("Unknown type_id: 12")
     }
+
+    @Test
+    fun `toVideo returns a video with correct keywords`() {
+        assertThat(TestFactories.createVideoEntity(keywords = "k1, k2").toVideo().keywords).containsExactly("k1", "k2")
+    }
 }

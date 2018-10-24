@@ -38,7 +38,8 @@ class VideoEntity(
                 releasedOn = LocalDate.parse(date!!),
                 contentProvider = source!!,
                 videoPlayback = null,
-                type = getVideoType()
+                type = getVideoType(),
+                keywords = keywords?.split(",")?.map { it.trim() }.orEmpty()
         )
 
     }

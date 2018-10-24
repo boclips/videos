@@ -6,6 +6,7 @@ data class Video(
         val videoId: VideoId,
         val title: String,
         val description: String,
+        val keywords: List<String>,
         val releasedOn: LocalDate,
         val contentProvider: String,
         val videoPlayback: VideoPlayback?,

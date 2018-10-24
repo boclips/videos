@@ -109,9 +109,10 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
 
     @Test
-    fun `rebuild search index`() {
+    fun `rebuild search index creates an index with videos filtered for teachers`() {
         saveVideo(videoId = 1, title = "first")
-        saveVideo(videoId = 2, title = "second")
+        saveVideo(videoId = 2, title = "stock", typeId = 2)
+        saveVideo(videoId = 3, title = "third")
         searchService.removeFromSearch("1")
 
         assertThat(videoService.findVideosBy(VideoSearchQuery(text = "first"))).isEmpty()
@@ -119,6 +120,7 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
         videoService.rebuildSearchIndex()
 
         assertThat(videoService.findVideosBy(VideoSearchQuery(text = "first"))).isNotEmpty
-        assertThat(videoService.findVideosBy(VideoSearchQuery(text = "second"))).isNotEmpty
+        assertThat(videoService.findVideosBy(VideoSearchQuery(text = "stock"))).isEmpty()
+        assertThat(videoService.findVideosBy(VideoSearchQuery(text = "third"))).isNotEmpty
     }
 }

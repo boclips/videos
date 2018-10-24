@@ -3,23 +3,23 @@ package com.boclips.videos.service.infrastructure.video
 import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.VideoType
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
+import com.boclips.videos.service.domain.service.TeacherContentFilter
 import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.sql.ResultSet
-import java.time.LocalDate
 import java.util.*
 
 class MysqlVideoService(
         private val searchService: SearchService,
         private val playbackVideo: PlaybackService,
-        private val jdbcTemplate: NamedParameterJdbcTemplate
+        private val jdbcTemplate: NamedParameterJdbcTemplate,
+        private val teacherContentFilter: TeacherContentFilter
 ) : VideoService {
     companion object : KLogging() {
 
@@ -87,18 +87,27 @@ class MysqlVideoService(
     }
 
     override fun rebuildSearchIndex() {
-
         searchService.resetIndex()
-
-        jdbcTemplate.query("select * from metadata_orig", VideoMetadataIterator())
+        fullScan { videos ->
+            val videosToIndex = videos
+                    .filter { video -> teacherContentFilter.showInTeacherProduct(video) }
+                    .map { video -> VideoMetadataConverter.convert(video) }
+            searchService.upsert(videosToIndex)
+        }
     }
 
-    inner class VideoMetadataIterator : ResultSetExtractor<Unit> {
+    private fun fullScan(consumer: (videos: Sequence<Video>) -> Unit) {
+        jdbcTemplate.query("select * from metadata_orig", StreamingVideoResultExtractor(consumer))
+    }
+
+    inner class StreamingVideoResultExtractor(val consumer: (videos: Sequence<Video>) -> Unit) : ResultSetExtractor<Unit> {
+
         override fun extractData(resultSet: ResultSet) {
-            searchService.upsert(generateSequence {
-                if(resultSet.next()) VideoMetadataRowMapper.mapRow(resultSet) else null
-            })
+            val entities = generateSequence {
+                if (resultSet.next()) rowMapper(resultSet, -1) else null
+            }
+
+            consumer(entities.map { videoEntity -> videoEntity.toVideo() })
         }
     }
 }
-

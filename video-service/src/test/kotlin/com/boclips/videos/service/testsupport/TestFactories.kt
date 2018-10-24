@@ -43,7 +43,15 @@ object TestFactories {
             searchId = searchId
     )
 
-    fun createVideo(title: String = "title", description: String = "description", videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String? = "ref-id-1", type: VideoType = VideoType.INSTRUCTIONAL_CLIPS): Video {
+    fun createVideo(
+            title: String = "title",
+            description: String = "description",
+            videoPlayback: VideoPlayback? = null,
+            videoId: String = "123",
+            referenceId: String? = "ref-id-1",
+            type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
+            keywords: List<String> = listOf("keyword")
+    ): Video {
         return Video(
                 videoId = VideoId(videoId = videoId, referenceId = referenceId),
                 title = title,
@@ -51,11 +59,12 @@ object TestFactories {
                 releasedOn = LocalDate.parse("2018-01-01"),
                 videoPlayback = videoPlayback,
                 contentProvider = "AP",
-                type = type
+                type = type,
+                keywords = keywords
         )
     }
 
-    fun createVideoEntity(typeId: Int = 1): VideoEntity {
+    fun createVideoEntity(typeId: Int = 1, keywords: String = "k1,k2,k3"): VideoEntity {
         return VideoEntity(
                 id = 123,
                 source = "source",
@@ -64,7 +73,7 @@ object TestFactories {
                 description = "description",
                 date = "2014-08-13",
                 duration = "duration",
-                keywords = "keywords",
+                keywords = keywords,
                 price_category = "price_category",
                 sounds = "sounds",
                 color = "color",

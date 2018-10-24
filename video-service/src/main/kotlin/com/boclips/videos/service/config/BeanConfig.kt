@@ -12,6 +12,7 @@ import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.domain.service.PlaybackService
+import com.boclips.videos.service.domain.service.TeacherContentFilter
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
@@ -46,11 +47,14 @@ class BeanConfig {
     @Bean
     fun videoService(searchService: SearchService,
                      jdbcTemplate: NamedParameterJdbcTemplate,
-                     playbackService: PlaybackService): VideoService {
+                     playbackService: PlaybackService,
+                     teacherContentFilter: TeacherContentFilter): VideoService {
         return MysqlVideoService(
                 searchService = searchService,
                 jdbcTemplate = jdbcTemplate,
-                playbackVideo = playbackService)
+                playbackVideo = playbackService,
+                teacherContentFilter = teacherContentFilter
+        )
     }
 
     @Bean
@@ -107,5 +111,10 @@ class BeanConfig {
     @Bean
     fun rebuildSearchIndex(videoService: VideoService): RebuildSearchIndex {
         return RebuildSearchIndex(videoService)
+    }
+
+    @Bean
+    fun teacherContentFilter(): TeacherContentFilter {
+        return TeacherContentFilter()
     }
 }
