@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.video
 import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.application.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoType
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
@@ -35,7 +36,7 @@ class MysqlVideoService(
     override fun findVideosBy(videoIds: List<VideoId>): List<Video> {
         val allFoundVideos = findAllById(videoIds.map { videoId -> videoId.videoId.toLong() })
         logger.info { "Found ${videoIds.size} videos for ids $videoIds" }
-        return allFoundVideos.map { videoEntity -> convertToVideo(videoEntity) }
+        return allFoundVideos.map { it.toVideo() }
     }
 
     override fun findVideoBy(videoId: VideoId): Video {
@@ -43,7 +44,7 @@ class MysqlVideoService(
         logger.info { "Found ${videoOptional.map { 1 }.orElse(0)} video for id $videoId" }
         val videoEntity = videoOptional.orElseThrow { VideoNotFoundException() }
 
-        return convertToVideo(videoEntity)
+        return videoEntity.toVideo()
     }
 
     override fun removeVideo(video: Video) {
@@ -53,17 +54,6 @@ class MysqlVideoService(
         logger.info { "Removed video ${video.videoId} from video repository" }
         playbackVideo.removePlayback(video)
         logger.info { "Removed video ${video.videoId} from video host" }
-    }
-
-    private fun convertToVideo(videoEntity: VideoEntity): Video {
-        return Video(
-                videoId = VideoId(videoId = videoEntity.id.toString(), referenceId = videoEntity.reference_id),
-                title = videoEntity.title!!,
-                description = videoEntity.description!!,
-                releasedOn = LocalDate.parse(videoEntity.date!!),
-                contentProvider = videoEntity.source!!,
-                videoPlayback = null
-        )
     }
 
     private fun findAllById(ids: List<Long>): List<VideoEntity> {

@@ -23,7 +23,7 @@ val rowMapper = { resultSet: ResultSet, _: Int ->
             alternative_id = resultSet.getString("alternative_id"),
             alt_source = resultSet.getString("alt_source"),
             restrictions = resultSet.getString("restrictions"),
-            type_id = resultSet.getString("type_id"),
+            type_id = resultSet.getInt("type_id"),
             reference_id = resultSet.getString("reference_id")
     )
 }

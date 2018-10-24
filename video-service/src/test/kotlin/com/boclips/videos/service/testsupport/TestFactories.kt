@@ -4,7 +4,9 @@ import com.boclips.videos.service.application.event.PlaybackEvent
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoPlayback
+import com.boclips.videos.service.domain.model.VideoType
 import com.boclips.videos.service.infrastructure.event.SearchEvent
+import com.boclips.videos.service.infrastructure.video.VideoEntity
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -41,14 +43,41 @@ object TestFactories {
             searchId = searchId
     )
 
-    fun createVideo(videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String? = "ref-id-1"): Video {
+    fun createVideo(videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String? = "ref-id-1", type: VideoType = VideoType.INSTRUCTIONAL_CLIPS): Video {
         return Video(
                 videoId = VideoId(videoId = videoId, referenceId = referenceId),
                 title = "title",
                 description = "description",
                 releasedOn = LocalDate.parse("2018-01-01"),
                 videoPlayback = videoPlayback,
-                contentProvider = "AP"
+                contentProvider = "AP",
+                type = type
+        )
+    }
+
+    fun createVideoEntity(typeId: Int = 1): VideoEntity {
+        return VideoEntity(
+                id = 123,
+                source = "source",
+                namespace = "namespace",
+                title = "title",
+                description = "description",
+                date = "2014-08-13",
+                duration = "duration",
+                keywords = "keywords",
+                price_category = "price_category",
+                sounds = "sounds",
+                color = "color",
+                location = "location",
+                country = "country",
+                state = "state",
+                city = "city",
+                region = "region",
+                alternative_id = "alternative_id",
+                alt_source = "alt_source",
+                restrictions = "restrictions",
+                type_id = typeId,
+                reference_id = "reference_id"
         )
     }
 

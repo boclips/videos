@@ -8,7 +8,8 @@ data class Video(
         val description: String,
         val releasedOn: LocalDate,
         val contentProvider: String,
-        val videoPlayback: VideoPlayback?
+        val videoPlayback: VideoPlayback?,
+        val type: VideoType
 ) {
     fun isPlayable(): Boolean {
         return videoPlayback !== null
