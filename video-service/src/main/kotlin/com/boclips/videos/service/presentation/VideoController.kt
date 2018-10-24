@@ -23,7 +23,6 @@ class VideoController(
     companion object {
         fun searchLink() = linkTo(methodOn(VideoController::class.java).search(null)).withRel("search")
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
-        fun deleteVideoLink(id: String? = null, rel: String = "delete") = linkTo(methodOn(VideoController::class.java).deleteVideo(id)).withRel(rel)
     }
 
     @GetMapping("/search")
