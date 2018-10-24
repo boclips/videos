@@ -43,11 +43,11 @@ object TestFactories {
             searchId = searchId
     )
 
-    fun createVideo(videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String? = "ref-id-1", type: VideoType = VideoType.INSTRUCTIONAL_CLIPS): Video {
+    fun createVideo(title: String = "title", description: String = "description", videoPlayback: VideoPlayback? = null, videoId: String = "123", referenceId: String? = "ref-id-1", type: VideoType = VideoType.INSTRUCTIONAL_CLIPS): Video {
         return Video(
                 videoId = VideoId(videoId = videoId, referenceId = referenceId),
-                title = "title",
-                description = "description",
+                title = title,
+                description = description,
                 releasedOn = LocalDate.parse("2018-01-01"),
                 videoPlayback = videoPlayback,
                 contentProvider = "AP",
