@@ -1,6 +1,10 @@
 package com.boclips.videos.service.infrastructure.event
 
+import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -87,6 +91,16 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(interactions).hasSize(2)
     }
 
+    @Test
+    fun `returns no search results events`() {
+        saveNoSearchResultsEvent()
+        savePlaybackEvent(ZonedDateTime.now(), "e01")
+
+        val events = eventService.getNoSearchResultsEvents()
+
+        assertThat(events).hasSize(1)
+    }
+
     private fun savePlaybackEvent(timestamp: ZonedDateTime, searchId: String?) {
         eventService.saveEvent(PlaybackEvent(
                 playerId = "player-id",
@@ -97,6 +111,10 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 videoDurationSeconds = 50,
                 videoId = "video-id"
         ))
+    }
+
+    private fun saveNoSearchResultsEvent() {
+        eventService.saveEvent(TestFactories.createNoSearchResultsEvent())
     }
 
     private fun saveSearchEvent(timestamp: ZonedDateTime) {

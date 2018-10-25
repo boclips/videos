@@ -1,11 +1,13 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.videos.service.infrastructure.event.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.domain.model.VideoType
-import com.boclips.videos.service.infrastructure.event.SearchEvent
+import com.boclips.videos.service.infrastructure.event.types.Event
+import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
+import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import com.boclips.videos.service.infrastructure.video.VideoEntity
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -42,6 +44,18 @@ object TestFactories {
             captureTime = captureTime,
             searchId = searchId
     )
+
+    fun createNoSearchResultsEvent(
+            captureTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)
+    ): Event<*> {
+        return NoSearchResultsEvent(
+                name = "name",
+                query = "query",
+                email = "email",
+                description = "description",
+                captureTime = captureTime
+        )
+    }
 
     fun createVideo(
             title: String = "title",

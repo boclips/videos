@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.event
+package com.boclips.videos.service.infrastructure.event.types
 
 import java.time.ZonedDateTime
 
@@ -15,7 +15,7 @@ class NoSearchResultsEvent(
         query: String?,
         description: String?,
         captureTime: ZonedDateTime
-) : Event<NoSearchResultsEventData>("NO_RESULTS_FOUND", captureTime, NoSearchResultsEventData(
+) : Event<NoSearchResultsEventData>(EventType.NO_SEARCH_RESULTS.name, captureTime, NoSearchResultsEventData(
         name = name,
         email = email,
         query = query,

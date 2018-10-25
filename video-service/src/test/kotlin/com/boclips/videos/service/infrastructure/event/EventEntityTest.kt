@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.event
 
+import com.boclips.videos.service.infrastructure.event.types.EventEntity
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -35,6 +36,15 @@ class EventEntityTest {
         val entity = EventEntity.fromEvent(playbackEvent)
 
         assertThat(entity.toEvent()).isEqualToComparingFieldByField(playbackEvent)
+    }
+
+    @Test
+    fun `NoSearchResultsEvent conversion`() {
+        val noSearchResultsEvent = TestFactories.createNoSearchResultsEvent()
+
+        val entity = EventEntity.fromEvent(noSearchResultsEvent)
+
+        assertThat(entity.toEvent()).isEqualToComparingFieldByField(noSearchResultsEvent)
     }
 
 }

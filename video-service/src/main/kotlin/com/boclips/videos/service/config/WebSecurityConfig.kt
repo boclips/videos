@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Profile("!test")
 @Configuration
 @EnableBoclipsSecurity
-class WebSecurityConfig  {
+class WebSecurityConfig {
 
     @Bean
     fun corsConfigurer(): WebMvcConfigurer {
@@ -31,6 +31,7 @@ object UserRoles {
     const val TEACHER = "TEACHER"
     const val REMOVE_VIDEOS = "REMOVE_VIDEOS"
     const val REBUILD_SEARCH_INDEX = "REBUILD_SEARCH_INDEX"
+    const val REPORTING = "REPORTING"
 }
 
 @Component
@@ -43,6 +44,7 @@ class VideoIngestorHttpSecurityConfigurer : HttpSecurityConfigurer {
                 .antMatchers("/v1/").permitAll()
                 .antMatchers("/v1/interactions").permitAll()
                 .antMatchers(HttpMethod.GET, "/v1/events/status").permitAll()
+                .antMatchers(HttpMethod.GET, "/v1/events/**").hasRole(UserRoles.REPORTING)
                 .antMatchers(HttpMethod.OPTIONS, "/v1/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/v1/videos/*").hasRole(UserRoles.REMOVE_VIDEOS)
                 .antMatchers(HttpMethod.POST, "/v1/videos/rebuildSearchIndex").hasRole(UserRoles.REBUILD_SEARCH_INDEX)

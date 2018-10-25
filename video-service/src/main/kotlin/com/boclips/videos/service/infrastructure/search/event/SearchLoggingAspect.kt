@@ -1,12 +1,10 @@
 package com.boclips.videos.service.infrastructure.search.event
 
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.SearchEvent
-import com.boclips.videos.service.presentation.video.VideoResource
+import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

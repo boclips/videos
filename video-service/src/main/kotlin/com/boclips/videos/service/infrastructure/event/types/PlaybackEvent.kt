@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.event
+package com.boclips.videos.service.infrastructure.event.types
 
 import java.time.ZonedDateTime
 
@@ -19,7 +19,7 @@ class PlaybackEvent(
         videoDurationSeconds: Long,
         captureTime: ZonedDateTime,
         searchId: String?
-) : Event<PlaybackEventData>("PLAYBACK", captureTime, PlaybackEventData(
+) : Event<PlaybackEventData>(EventType.PLAYBACK.name, captureTime, PlaybackEventData(
         playerId = playerId,
         videoId = videoId,
         segmentStartSeconds = segmentStartSeconds,

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.event.analysis
 
-import com.boclips.videos.service.infrastructure.event.PlaybackEvent
-import com.boclips.videos.service.infrastructure.event.SearchEvent
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 
 data class RelatedEvents(val searches: List<SearchAndPlayback>, val standalonePlaybacks: List<PlaybackEvent>)
 

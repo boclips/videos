@@ -1,9 +1,10 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.infrastructure.event.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
-import com.boclips.videos.service.infrastructure.event.SearchEvent
+import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asReporter
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -49,23 +51,28 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `posted no search result events are being saved`() {
+    fun `post and retrieve no search results`() {
         mockMvc.perform(post("/v1/events/no-search-results")
                 .asTeacher()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{
-                    "name": "Hans Muster",
-                    "query" : "animal",
-                    "email" : "hans@muster.com",
-                    "description" : "description"
-                    }""".trimMargin())
-        )
+                        "name": "Hans Muster",
+                        "query" : "animal",
+                        "email" : "hans@muster.com",
+                        "description" : "description"
+                        }""".trimMargin()))
                 .andExpect(status().isCreated)
 
-        assertThat(eventLogRepository.count()).isEqualTo(1)
-        assertThat(eventLogRepository.findAll().first().timestamp).isNotNull()
-        assertThat(eventLogRepository.findAll().first().type).isNotNull()
-        assertThat(eventLogRepository.findAll().first().data).isNotNull()
+        mockMvc.perform(get("/v1/events/no-search-results")
+                .asReporter())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded[*]", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.events[0].createdAt").exists())
+                .andExpect(jsonPath("$._embedded.events[0].name").exists())
+                .andExpect(jsonPath("$._embedded.events[0].email").exists())
+                .andExpect(jsonPath("$._embedded.events[0].query").exists())
+                .andExpect(jsonPath("$._embedded.events[0].description").exists())
+                .andExpect(jsonPath("$._embedded.events[0].type").doesNotExist())
     }
 
     @Test
@@ -96,6 +103,5 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.latestPlaybackInSearch", isEmptyOrNullString()))
                 .andExpect(jsonPath("$.latestPlaybackStandalone", isEmptyOrNullString()))
     }
-
 
 }

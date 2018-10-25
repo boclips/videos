@@ -9,3 +9,6 @@ fun MockHttpServletRequestBuilder.asTeacher() =
 
 fun MockHttpServletRequestBuilder.asOperator() =
         this.with(SecurityMockMvcRequestPostProcessors.user("operator").roles(UserRoles.REMOVE_VIDEOS, UserRoles.REBUILD_SEARCH_INDEX))
+
+fun MockHttpServletRequestBuilder.asReporter() =
+        this.with(SecurityMockMvcRequestPostProcessors.user("reporter").roles(UserRoles.REPORTING))

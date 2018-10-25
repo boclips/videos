@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.event
 
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.NoSearchResultsEvent
-import com.boclips.videos.service.infrastructure.event.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import java.time.ZonedDateTime

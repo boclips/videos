@@ -6,9 +6,11 @@ import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromPlaybackEvents
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromSearchAndPlaybackEvents
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.sortRecursively
+import com.boclips.videos.service.infrastructure.event.types.*
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
+import org.springframework.data.mongodb.core.aggregation.MatchOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Component
@@ -34,7 +36,7 @@ class EventService(
         private val eventLogRepository: EventLogRepository,
         private val eventMonitoringConfig: EventMonitoringConfig,
         private val mongoTemplate: MongoTemplate
-        ) {
+) {
     fun <T> saveEvent(event: Event<T>) {
         eventLogRepository.insert(EventEntity.fromEvent(event))
     }
@@ -42,12 +44,14 @@ class EventService(
     fun status(): EventsStatus {
         val utcNow = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC)
 
-        val mostRecentSearch = mostRecentEventByType(typeEquals("SEARCH"))
-        val mostRecentPlaybackInSearch = mostRecentEventByType(typeEquals("PLAYBACK").andOperator(searchIdSpecified()))
-        val mostRecentPlaybackStandalone = mostRecentEventByType(typeEquals("PLAYBACK").andOperator(searchIdNotSpecified()))
+        val mostRecentSearch = mostRecentEventByType(typeEquals(EventType.SEARCH.name))
+        val mostRecentPlaybackInSearch = mostRecentEventByType(typeEquals(EventType.PLAYBACK.name).andOperator(searchIdSpecified()))
+        val mostRecentPlaybackStandalone = mostRecentEventByType(typeEquals(EventType.PLAYBACK.name).andOperator(searchIdNotSpecified()))
 
-        val recentSearchExists = mostRecentSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.search)) ?: false
-        val recentPlaybackExists = mostRecentPlaybackInSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.playback)) ?: false
+        val recentSearchExists = mostRecentSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.search))
+                ?: false
+        val recentPlaybackExists = mostRecentPlaybackInSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.playback))
+                ?: false
 
         val healthy = recentSearchExists && recentPlaybackExists
 
@@ -60,7 +64,7 @@ class EventService(
     }
 
     fun latestInteractions(): List<Interaction> {
-        val events = eventLogRepository.findAll().map { it.toEvent() }
+        val events = getAllEvents()
 
         val (allSearchEvents, allPlaybackEvents) = GroupEventsByType.groupByType(events)
 
@@ -71,6 +75,14 @@ class EventService(
         return sortRecursively(interactions)
     }
 
+    fun getNoSearchResultsEvents(): List<NoSearchResultsEvent> {
+        return getAllEvents()
+                .filter { event -> event.type.equals(EventType.NO_SEARCH_RESULTS.name) } as List<NoSearchResultsEvent>
+    }
+
+    private fun getAllEvents() = eventLogRepository.findAll()
+            .map { it.toEvent() }
+
     private fun mostRecentEventByType(criteria: Criteria): ZonedDateTime? {
         val filterByType = Aggregation.match(criteria)
         val findMax = Aggregation.project("type").andExpression("max(timestamp)").`as`("timestamp")
@@ -80,7 +92,7 @@ class EventService(
                 findMax
         )), "event-log", MaxTimestampAggregationResult::class.java).mappedResults
 
-        return if(result.isEmpty()) null else result[0].timestamp.atZone(ZoneOffset.UTC)
+        return if (result.isEmpty()) null else result[0].timestamp.atZone(ZoneOffset.UTC)
     }
 
     private fun typeEquals(type: String) = Criteria("type").isEqualTo(type)
@@ -88,8 +100,6 @@ class EventService(
     private fun searchIdSpecified() = Criteria("data.searchId").ne(null)
 
     private fun searchIdNotSpecified() = Criteria("data.searchId").`is`(null)
-
-
 }
 
 data class MaxTimestampAggregationResult(val timestamp: LocalDateTime)
