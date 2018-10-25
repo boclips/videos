@@ -7,11 +7,13 @@ object SearchableVideoMetadataFactory {
             id: String,
             title: String = "",
             description: String = "",
+            contentProvider: String = "",
             keywords: List<String> = emptyList()
     ) = VideoMetadata(
             id = id,
             title = title,
             description = description,
+            contentProvider = contentProvider,
             keywords = keywords
     )
 }

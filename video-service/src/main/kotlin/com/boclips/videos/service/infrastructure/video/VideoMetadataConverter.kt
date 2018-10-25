@@ -5,10 +5,12 @@ import com.boclips.videos.service.domain.model.Video
 
 object VideoMetadataConverter {
     fun convert(video: Video): VideoMetadata {
-        val id = video.videoId.videoId.toLong()
-        val title = video.title
-        val description = video.description
-        val keywords = video.keywords
-        return VideoMetadata(id = id.toString(), title = title, description = description, keywords = keywords)
+        return VideoMetadata(
+                id = video.videoId.videoId,
+                title = video.title,
+                contentProvider = video.contentProvider,
+                description = video.description,
+                keywords = video.keywords
+        )
     }
 }

@@ -68,6 +68,18 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
+    fun `boosts documents where there is a content partner match`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", contentProvider = "Mr Bean"),
+                SearchableVideoMetadataFactory.create(id = "2", contentProvider = "TED Talks")
+        ))
+
+        val results = searchService.search("ted talk")
+
+        assertThat(results.first()).isEqualTo("2")
+    }
+
+    @Test
     fun `takes stopwords into account for queries like "I have a dream"`() {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "dream clouds dream sweet"),

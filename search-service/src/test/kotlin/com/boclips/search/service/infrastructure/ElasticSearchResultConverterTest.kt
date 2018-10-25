@@ -16,7 +16,7 @@ class ElasticSearchResultConverterTest {
                 "id": "14",
                 "title": "The title",
                 "description": "The description",
-                "source": "TeD",
+                "contentProvider": "TED Talks",
                 "price_category": "expensive",
                 "date": "2014-05-13",
                 "duration": "02:01:20",
@@ -30,6 +30,7 @@ class ElasticSearchResultConverterTest {
                 id = "14",
                 title = "The title",
                 description = "The description",
+                contentProvider = "TED Talks",
                 keywords = listOf("k1", "k2")
         ))
     }

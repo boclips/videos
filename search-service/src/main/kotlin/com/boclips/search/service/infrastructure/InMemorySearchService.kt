@@ -23,7 +23,7 @@ class InMemorySearchService : SearchService {
 
     override fun upsert(videos: Sequence<VideoMetadata>) {
         videos.forEach { video ->
-            index[video.id] = listOf(video.title, video.description).joinToString(separator = "\n")
+            index[video.id] = listOf(video.title, video.description, video.contentProvider).joinToString(separator = "\n")
         }
     }
 }

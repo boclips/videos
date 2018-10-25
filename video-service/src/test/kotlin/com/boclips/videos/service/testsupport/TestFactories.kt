@@ -46,6 +46,7 @@ object TestFactories {
     fun createVideo(
             title: String = "title",
             description: String = "description",
+            contentProvider: String = "AP",
             videoPlayback: VideoPlayback? = null,
             videoId: String = "123",
             referenceId: String? = "ref-id-1",
@@ -58,7 +59,7 @@ object TestFactories {
                 description = description,
                 releasedOn = LocalDate.parse("2018-01-01"),
                 videoPlayback = videoPlayback,
-                contentProvider = "AP",
+                contentProvider = contentProvider,
                 type = type,
                 keywords = keywords
         )

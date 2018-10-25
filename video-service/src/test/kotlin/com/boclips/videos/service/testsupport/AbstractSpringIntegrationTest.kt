@@ -85,6 +85,7 @@ abstract class AbstractSpringIntegrationTest {
                 id = videoId.toString(),
                 title = title,
                 description = description,
+                contentProvider = contentProvider,
                 keywords = emptyList()
         ))
     }

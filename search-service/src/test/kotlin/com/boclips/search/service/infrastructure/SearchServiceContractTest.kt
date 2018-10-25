@@ -38,16 +38,16 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds a video matching metadata`(searchService: SearchService) {
-
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
-                SearchableVideoMetadataFactory.create(id = "3", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated.")
+                SearchableVideoMetadataFactory.create(id = "3", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated."),
+                SearchableVideoMetadataFactory.create(id = "4", title = "Who are you, really?", contentProvider = "Gentleman Ben")
         ))
 
         val result = searchService.search("gentleman")
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result).containsExactlyInAnyOrder("1", "2", "4")
     }
 
     @ParameterizedTest

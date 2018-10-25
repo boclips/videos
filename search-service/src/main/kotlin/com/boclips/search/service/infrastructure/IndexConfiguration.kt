@@ -45,6 +45,7 @@ class IndexConfiguration {
         return mapOf("properties" to mapOf(
                 "title" to freeTextField,
                 "description" to freeTextField,
+                "contentProvider" to freeTextField,
                 "keywords" to keywordField
         ))
     }

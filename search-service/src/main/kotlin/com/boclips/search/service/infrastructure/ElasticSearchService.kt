@@ -63,7 +63,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
     }
 
     private fun searchElasticSearch(query: String): List<ElasticSearchVideo> {
-        val findMatchesQuery = QueryBuilders.multiMatchQuery(query, "title", "title.std", "description", "description.std", "keywords")
+        val findMatchesQuery = QueryBuilders.multiMatchQuery(query, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.AUTO)
@@ -112,6 +112,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
                 id = video.id,
                 title = video.title,
                 description = video.description,
+                contentProvider = video.contentProvider,
                 keywords = video.keywords
         ))
 
