@@ -126,12 +126,15 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
                 .settings(indexConfiguration.generateIndexSettings())
                 .mapping("video", indexConfiguration.generateVideoMapping())
 
+        logger.info("Creating index $ES_INDEX")
         client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
     }
 
     private fun deleteIndex() {
         if (indexExists(ES_INDEX)) {
+            logger.info("Deleting index $ES_INDEX")
             client.indices().delete(DeleteIndexRequest(ES_INDEX), RequestOptions.DEFAULT)
+            logger.info("Index $ES_INDEX deleted")
         }
     }
 
