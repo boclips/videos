@@ -3,7 +3,8 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.infrastructure.event.EventsStatus
-import com.boclips.videos.service.application.event.CreatePlaybackEventCommand
+import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
+import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,21 +17,26 @@ class EventController(
         private val checkEventsStatus: CheckEventsStatus
 ) {
     companion object {
-        fun createEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logEvent(null)).withRel("createEvent")
+        fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logPlaybackEvent(null)).withRel("createEvent")
+        fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)).withRel("createNoSearchResultsEvent")
     }
 
     @PostMapping
-    fun logEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?): ResponseEntity<Void> {
-        createEvent.execute(playbackEvent)
+    fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?): ResponseEntity<Void> {
+        createEvent.createPlaybackEvent(playbackEvent)
+        return ResponseEntity(HttpStatus.CREATED)
+    }
+
+    @PostMapping("/no-search-results")
+    fun logNoSearchResultsEvent(@RequestBody noSearchResultsEvent: CreateNoSearchResultsEventCommand?): ResponseEntity<Void> {
+        createEvent.createNoSearchResultsEvent(noSearchResultsEvent)
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @GetMapping("/status")
     fun status(): ResponseEntity<EventsStatus> {
-
         val status = checkEventsStatus.execute()
-
-        val code = if(status.healthy) HttpStatus.OK else HttpStatus.SERVICE_UNAVAILABLE
+        val code = if (status.healthy) HttpStatus.OK else HttpStatus.SERVICE_UNAVAILABLE
 
         return ResponseEntity(status, code)
     }

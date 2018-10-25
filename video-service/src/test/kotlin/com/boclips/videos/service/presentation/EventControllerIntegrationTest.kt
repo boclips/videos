@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.event.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -26,7 +26,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var eventLogRepository: EventLogRepository
 
     @Test
-    fun `posted events are being saved`() {
+    fun `posted playback events are being saved`() {
         mockMvc.perform(post("/v1/events")
                 .asTeacher()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -43,6 +43,29 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isCreated)
 
         assertThat(eventLogRepository.count()).isEqualTo(1)
+        assertThat(eventLogRepository.findAll().first().timestamp).isNotNull()
+        assertThat(eventLogRepository.findAll().first().type).isNotNull()
+        assertThat(eventLogRepository.findAll().first().data).isNotNull()
+    }
+
+    @Test
+    fun `posted no search result events are being saved`() {
+        mockMvc.perform(post("/v1/events/no-search-results")
+                .asTeacher()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{
+                    "name": "Hans Muster",
+                    "query" : "animal",
+                    "email" : "hans@muster.com",
+                    "description" : "description"
+                    }""".trimMargin())
+        )
+                .andExpect(status().isCreated)
+
+        assertThat(eventLogRepository.count()).isEqualTo(1)
+        assertThat(eventLogRepository.findAll().first().timestamp).isNotNull()
+        assertThat(eventLogRepository.findAll().first().type).isNotNull()
+        assertThat(eventLogRepository.findAll().first().data).isNotNull()
     }
 
     @Test

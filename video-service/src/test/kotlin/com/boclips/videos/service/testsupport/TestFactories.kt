@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.videos.service.application.event.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.PlaybackEvent
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoPlayback

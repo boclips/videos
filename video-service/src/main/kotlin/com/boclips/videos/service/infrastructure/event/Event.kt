@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.event
 
-import com.boclips.videos.service.application.event.PlaybackEvent
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.data.mongodb.core.mapping.Document

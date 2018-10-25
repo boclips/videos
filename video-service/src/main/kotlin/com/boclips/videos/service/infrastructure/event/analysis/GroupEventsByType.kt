@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.event.analysis
 
-import com.boclips.videos.service.application.event.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.Event
 import com.boclips.videos.service.infrastructure.event.SearchEvent
 

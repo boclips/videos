@@ -1,8 +1,9 @@
 package com.boclips.videos.service.application
 
 import com.boclips.videos.service.application.event.CreateEvent
-import com.boclips.videos.service.application.event.CreatePlaybackEventCommand
+import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
@@ -20,6 +21,13 @@ class CreateEventTest {
             searchId = "search-id"
     )
 
+    val noResultsEvent = CreateNoSearchResultsEventCommand(
+            name = "Hans",
+            email = "hi@there.com",
+            description = "none",
+            query = "animal"
+    )
+
     lateinit var createEvent: CreateEvent
 
     @Before
@@ -30,47 +38,16 @@ class CreateEventTest {
 
     @Test
     fun `validates a valid playback event`() {
-        assertThatCode { createEvent.execute(playbackEvent) }.doesNotThrowAnyException()
+        assertThatCode { createEvent.createPlaybackEvent(playbackEvent) }.doesNotThrowAnyException()
+    }
+
+    @Test
+    fun `validates a valid no results event`() {
+        assertThatCode { createEvent.createNoSearchResultsEvent(noResultsEvent) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `handles null object`() {
-        assertThatThrownBy { createEvent.execute(null) }
-    }
-
-    @Test
-    fun `validates player identifier`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerId = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(playerId = "")) }
-    }
-
-    @Test
-    fun `validates video identifier`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoId = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoId = "")) }
-    }
-
-    @Test
-    fun `validates segmentStartSeconds`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(segmentStartSeconds = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(segmentStartSeconds = -1)) }
-    }
-
-    @Test
-    fun `validates segmentEndSeconds`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(segmentEndSeconds = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(segmentEndSeconds = -1)) }
-    }
-
-    @Test
-    fun `validates videoDurationSeconds`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoDurationSeconds = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(videoDurationSeconds = -1)) }
-    }
-
-    @Test
-    fun `validates captureTime`() {
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(captureTime = null)) }
-        assertThatThrownBy { createEvent.execute(playbackEvent.copy(captureTime = "not a valid date-time")) }
+        assertThatThrownBy { createEvent.createPlaybackEvent(null) }
     }
 }
