@@ -19,13 +19,12 @@ import java.util.*
 class MysqlVideoService(
         private val searchService: SearchService,
         private val playbackVideo: PlaybackService,
-        private val jdbcTemplate: NamedParameterJdbcTemplate,
-        private val plainJdbcTemplate: JdbcTemplate
+        private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : VideoService {
     companion object : KLogging() {
-
         private val DELETE_QUERY = "DELETE FROM metadata_orig WHERE id IN (:ids)"
         private val SELECT_QUERY = "SELECT * FROM metadata_orig WHERE id IN (:ids)"
+        private val SELECT_ALL_VIDEOS_QUERY = "SELECT * FROM metadata_orig"
     }
 
     override fun findVideosBy(query: VideoSearchQuery): List<Video> {
@@ -88,8 +87,7 @@ class MysqlVideoService(
     }
 
     override fun findAllVideos(consumer: (videos: Sequence<Video>) -> Unit) {
-        plainJdbcTemplate.fetchSize = 1000
-        plainJdbcTemplate.query("select * from metadata_orig", StreamingVideoResultExtractor(consumer))
+        jdbcTemplate.query(SELECT_ALL_VIDEOS_QUERY, StreamingVideoResultExtractor(consumer))
     }
 
     inner class StreamingVideoResultExtractor(val consumer: (videos: Sequence<Video>) -> Unit) : ResultSetExtractor<Unit> {

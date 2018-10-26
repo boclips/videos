@@ -51,12 +51,10 @@ class BeanConfig {
     @Bean
     fun videoService(searchService: SearchService,
                      jdbcTemplate: NamedParameterJdbcTemplate,
-                     plainJdbcTemplate: JdbcTemplate,
                      playbackService: PlaybackService): VideoService {
         return MysqlVideoService(
                 searchService = searchService,
                 jdbcTemplate = jdbcTemplate,
-                plainJdbcTemplate = plainJdbcTemplate,
                 playbackVideo = playbackService
         )
     }
@@ -126,5 +124,12 @@ class BeanConfig {
     fun taskExecutor(): TaskExecutor {
         return ConcurrentTaskExecutor(
                 Executors.newFixedThreadPool(3))
+    }
+
+    @Bean
+    @Profile("!test")
+    fun namedJdbcTemplate(jdbcTemplate: JdbcTemplate): NamedParameterJdbcTemplate {
+        jdbcTemplate.fetchSize = Int.MIN_VALUE
+        return NamedParameterJdbcTemplate(jdbcTemplate)
     }
 }
