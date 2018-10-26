@@ -22,14 +22,19 @@ open class RebuildSearchIndex(
         searchService.resetIndex()
 
         logger.info("Requesting videos")
-        videoService.findAllVideos { videos ->
-            logger.info("Starting to read videos")
-            val videosToIndex = videos
-                    .filter { video -> teacherContentFilter.showInTeacherProduct(video) }
-                    .map { video -> VideoMetadataConverter.convert(video) }
-            logger.info("Passing videos to the search service")
-            searchService.upsert(videosToIndex)
+        try {
+            videoService.findAllVideos { videos ->
+                logger.info("Starting to read videos")
+                val videosToIndex = videos
+                        .filter { video -> teacherContentFilter.showInTeacherProduct(video) }
+                        .map { video -> VideoMetadataConverter.convert(video) }
+                logger.info("Passing videos to the search service")
+                searchService.upsert(videosToIndex)
+            }
+        } catch (e: Exception) {
+            logger.error("Error reindexing", e)
         }
+
         logger.info("Full reindex done")
         return CompletableFuture.completedFuture(null)
     }

@@ -84,11 +84,11 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
 
     override fun upsert(videos: Sequence<VideoMetadata>) {
         val batchSize = 2000
-        videos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEach(this::upsertBatch)
+        videos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEachIndexed(this::upsertBatch)
     }
 
-    private fun upsertBatch(videos: List<VideoMetadata>) {
-        logger.info { "Indexing ${videos.size} video(s)" }
+    private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>) {
+        logger.info { "[Batch $batchIndex] Indexing ${videos.size} video(s)" }
 
         val request = videos
                 .map(this::indexRequest)
@@ -104,7 +104,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         if(result.hasFailures()) {
             throw Error("Batch indexing failed: ${result.buildFailureMessage()}")
         }
-        logger.info { "Successfully indexed ${result.items.size} video(s)" }
+        logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} video(s)" }
     }
 
     private fun indexRequest(video: VideoMetadata): IndexRequest {
