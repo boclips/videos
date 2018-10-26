@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.TeacherContentFilter
 import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -18,7 +19,8 @@ import java.util.*
 class MysqlVideoService(
         private val searchService: SearchService,
         private val playbackVideo: PlaybackService,
-        private val jdbcTemplate: NamedParameterJdbcTemplate
+        private val jdbcTemplate: NamedParameterJdbcTemplate,
+        private val plainJdbcTemplate: JdbcTemplate
 ) : VideoService {
     companion object : KLogging() {
 
@@ -86,7 +88,8 @@ class MysqlVideoService(
     }
 
     override fun findAllVideos(consumer: (videos: Sequence<Video>) -> Unit) {
-        jdbcTemplate.query("select * from metadata_orig", StreamingVideoResultExtractor(consumer))
+        plainJdbcTemplate.fetchSize = 1000
+        plainJdbcTemplate.query("select * from metadata_orig", StreamingVideoResultExtractor(consumer))
     }
 
     inner class StreamingVideoResultExtractor(val consumer: (videos: Sequence<Video>) -> Unit) : ResultSetExtractor<Unit> {

@@ -28,8 +28,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.util.concurrent.Executors
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
 import org.springframework.core.task.TaskExecutor
-
-
+import org.springframework.jdbc.core.JdbcTemplate
 
 
 @Configuration
@@ -52,10 +51,12 @@ class BeanConfig {
     @Bean
     fun videoService(searchService: SearchService,
                      jdbcTemplate: NamedParameterJdbcTemplate,
+                     plainJdbcTemplate: JdbcTemplate,
                      playbackService: PlaybackService): VideoService {
         return MysqlVideoService(
                 searchService = searchService,
                 jdbcTemplate = jdbcTemplate,
+                plainJdbcTemplate = plainJdbcTemplate,
                 playbackVideo = playbackService
         )
     }
