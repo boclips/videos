@@ -5,9 +5,12 @@ import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEven
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
+import mu.KLogging
 import java.time.ZonedDateTime
 
 class CreateEvent(private val eventService: EventService) {
+    companion object : KLogging()
+
     fun createPlaybackEvent(event: CreatePlaybackEventCommand?) {
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
@@ -18,7 +21,7 @@ class CreateEvent(private val eventService: EventService) {
                 segmentStartSeconds = event.segmentStartSeconds!!,
                 segmentEndSeconds = event.segmentEndSeconds!!,
                 videoDurationSeconds = event.videoDurationSeconds!!,
-                captureTime = ZonedDateTime.now(),
+                captureTime = extractZonedDateTime(event),
                 searchId = event.searchId
         ))
     }
@@ -34,5 +37,14 @@ class CreateEvent(private val eventService: EventService) {
                 description = event.description,
                 captureTime = ZonedDateTime.now()
         ))
+    }
+
+    private fun extractZonedDateTime(event: CreatePlaybackEventCommand): ZonedDateTime {
+        return try {
+            ZonedDateTime.parse(event.captureTime)
+        } catch (ex: Exception) {
+            logger.warn { "Failed parsing capture time provided by client using current timestamp instead." }
+            ZonedDateTime.now()
+        }
     }
 }
