@@ -16,6 +16,7 @@ class EmailClient(
     fun send(email: NoResultsEmail) {
         try {
             mailer.sendMail(createEmail(email), true)
+            logger.info { "Successfully sent email" }
         } catch (ex: Exception) {
             logger.error { "Failed sending out email: $ex" }
         }
