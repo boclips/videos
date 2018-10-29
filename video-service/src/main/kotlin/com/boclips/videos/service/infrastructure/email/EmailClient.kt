@@ -27,7 +27,7 @@ class EmailClient(
 
         return EmailBuilder
                 .startingBlank()
-                .to("productteam@boclips.com")
+                .to("logging@boclips.com")
                 .from("noreply@boclips.com")
                 .withSubject("$activeProfile: No search result event logged")
                 .withPlainText(email.toPlainText())
