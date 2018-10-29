@@ -27,7 +27,7 @@ class EventController(
         fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)).withRel("createNoSearchResultsEvent")
     }
 
-    @PostMapping
+    @PostMapping("/playback")
     fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?): ResponseEntity<Void> {
         createEvent.createPlaybackEvent(playbackEvent)
         return ResponseEntity(HttpStatus.CREATED)

@@ -22,7 +22,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.search.templated", equalTo(true)))
                 .andExpect(jsonPath("$._links.video.href", containsString("/videos/")))
                 .andExpect(jsonPath("$._links.video.templated", equalTo(true)))
-                .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/events")))
+                .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/events/playback")))
                 .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href", endsWith("/events/no-search-results")))
     }
 }

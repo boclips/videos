@@ -29,7 +29,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `posted playback events are being saved`() {
-        mockMvc.perform(post("/v1/events")
+        mockMvc.perform(post("/v1/events/playback")
                 .asTeacher()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{
