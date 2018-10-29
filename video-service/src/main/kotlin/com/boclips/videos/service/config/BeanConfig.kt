@@ -14,21 +14,26 @@ import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.TeacherContentFilter
 import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackService
 import com.boclips.videos.service.infrastructure.video.MysqlVideoService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
+import org.simplejavamail.mailer.Mailer
+import org.simplejavamail.mailer.MailerBuilder
+import org.simplejavamail.mailer.config.TransportStrategy
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import java.util.concurrent.Executors
-import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
+import org.springframework.core.env.Environment
 import org.springframework.core.task.TaskExecutor
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
+import java.util.concurrent.Executors
 
 
 @Configuration
@@ -85,9 +90,10 @@ class BeanConfig {
     }
 
     @Bean
-    fun createEvent(eventService: EventService): CreateEvent {
+    fun createEvent(eventService: EventService, emailClient: EmailClient): CreateEvent {
         return CreateEvent(
-                eventService = eventService
+                eventService = eventService,
+                emailClient = emailClient
         )
     }
 
@@ -131,5 +137,19 @@ class BeanConfig {
     fun namedJdbcTemplate(jdbcTemplate: JdbcTemplate): NamedParameterJdbcTemplate {
         jdbcTemplate.fetchSize = Int.MIN_VALUE
         return NamedParameterJdbcTemplate(jdbcTemplate)
+    }
+
+    @Bean
+    fun emailClient(mailer: Mailer, environment: Environment): EmailClient {
+        return EmailClient(mailer, environment)
+    }
+
+    @Bean
+    fun simpleJavaMailer(emailProperties: PropertiesEmail): Mailer {
+        return MailerBuilder
+                .withSMTPServer(emailProperties.host, emailProperties.port, emailProperties.username, emailProperties.password)
+                .withTransportStrategy(TransportStrategy.SMTP_TLS)
+                .clearEmailAddressCriteria()
+                .buildMailer()
     }
 }

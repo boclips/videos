@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.event
 
+import com.boclips.videos.service.infrastructure.email.EmailClient
+import com.boclips.videos.service.infrastructure.email.NoResultsEmail
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
@@ -8,7 +10,10 @@ import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import mu.KLogging
 import java.time.ZonedDateTime
 
-class CreateEvent(private val eventService: EventService) {
+class CreateEvent(
+        private val eventService: EventService,
+        private val emailClient: EmailClient
+) {
     companion object : KLogging()
 
     fun createPlaybackEvent(event: CreatePlaybackEventCommand?) {
@@ -36,6 +41,13 @@ class CreateEvent(private val eventService: EventService) {
                 query = event.query!!,
                 description = event.description,
                 captureTime = ZonedDateTime.now()
+        ))
+
+        emailClient.send(NoResultsEmail(
+                name = event.name,
+                email = event.email,
+                query = event.query,
+                description = event.description
         ))
     }
 
