@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+password=$1
+
+if [ -z $password ]
+then
+    echo "Usage: $0 PASSWORD"
+    exit 1
+fi
+
+echo "CREATE USER 'videoservice'@'%' IDENTIFIED BY '$password';"
+echo 'GRANT ALL ON `bo-production`.* TO `videoservice`@`%`;'
