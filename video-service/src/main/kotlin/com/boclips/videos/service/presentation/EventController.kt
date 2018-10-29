@@ -23,7 +23,7 @@ class EventController(
         private val getLatestInteractions: GetLatestInteractions
 ) {
     companion object {
-        fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logPlaybackEvent(null)).withRel("createEvent")
+        fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logPlaybackEvent(null)).withRel("createPlaybackEvent")
         fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)).withRel("createNoSearchResultsEvent")
     }
 
