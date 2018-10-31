@@ -5,7 +5,7 @@ A tool to help us manage videos in our databases and Kaltura.
 ## Setup
 
 ```
-./setup-secrets.sh <your lastpass username>
+./setup-secrets.sh
 ```
 
 This will download the secret staging and production configuration.  
