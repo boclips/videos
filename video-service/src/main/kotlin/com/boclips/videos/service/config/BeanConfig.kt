@@ -82,6 +82,7 @@ class BeanConfig {
     @Profile("!fake-search")
     fun searchService(propertiesElasticSearch: PropertiesElasticSearch, kalturaClient: KalturaClient): SearchService {
         return ElasticSearchService(ElasticSearchConfig(
+                scheme = propertiesElasticSearch.scheme,
                 host = propertiesElasticSearch.host,
                 port = propertiesElasticSearch.port,
                 username = propertiesElasticSearch.username,
