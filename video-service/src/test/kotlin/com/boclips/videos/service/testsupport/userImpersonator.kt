@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.videos.service.config.UserRoles
+import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 

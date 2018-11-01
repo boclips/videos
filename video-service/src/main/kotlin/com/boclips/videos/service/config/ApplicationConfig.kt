@@ -3,14 +3,13 @@ package com.boclips.videos.service.config
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.search.service.domain.SearchService
-import com.boclips.search.service.infrastructure.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.ElasticSearchService
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.config.properties.KalturaProperties
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.TeacherContentFilter
 import com.boclips.videos.service.domain.service.VideoService
@@ -33,7 +32,7 @@ import java.util.concurrent.Executors
 
 
 @Configuration
-class BeanConfig {
+class ApplicationConfig {
     @Bean
     fun getVideos(searchService: SearchService,
                   videoService: VideoService,
@@ -75,18 +74,6 @@ class BeanConfig {
                     mongoTemplate = mongoTemplate)
 
     @Bean
-    @Profile("!fake-search")
-    fun searchService(propertiesElasticSearch: PropertiesElasticSearch, kalturaClient: KalturaClient): SearchService {
-        return ElasticSearchService(ElasticSearchConfig(
-                scheme = propertiesElasticSearch.scheme,
-                host = propertiesElasticSearch.host,
-                port = propertiesElasticSearch.port,
-                username = propertiesElasticSearch.username,
-                password = propertiesElasticSearch.password
-        ))
-    }
-
-    @Bean
     fun createEvent(eventService: EventService, emailClient: EmailClient): CreateEvent {
         return CreateEvent(
                 eventService = eventService,
@@ -100,13 +87,6 @@ class BeanConfig {
                 eventService = eventService
         )
     }
-
-    @Bean
-    fun kalturaClient(propertiesKaltura: PropertiesKaltura): KalturaClient = KalturaClient.create(KalturaClientConfig.builder()
-            .partnerId(propertiesKaltura.partnerId)
-            .userId(propertiesKaltura.userId)
-            .secret(propertiesKaltura.secret)
-            .build())
 
     @Bean
     fun getLatestInteractions(eventService: EventService): GetLatestInteractions {
@@ -130,12 +110,5 @@ class BeanConfig {
     fun taskExecutor(): TaskExecutor {
         return ConcurrentTaskExecutor(
                 Executors.newFixedThreadPool(3))
-    }
-
-    @Bean
-    @Profile("!test")
-    fun namedJdbcTemplate(jdbcTemplate: JdbcTemplate): NamedParameterJdbcTemplate {
-        jdbcTemplate.fetchSize = Int.MIN_VALUE
-        return NamedParameterJdbcTemplate(jdbcTemplate)
     }
 }

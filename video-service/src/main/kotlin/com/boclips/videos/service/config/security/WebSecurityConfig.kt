@@ -1,41 +1,13 @@
-package com.boclips.videos.service.config
+package com.boclips.videos.service.config.security
 
-import com.boclips.security.EnableBoclipsSecurity
 import com.boclips.security.HttpSecurityConfigurer
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.stereotype.Component
-import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-
-@Profile("!test")
-@Configuration
-@EnableBoclipsSecurity
-class WebSecurityConfig {
-
-    @Bean
-    fun corsConfigurer(): WebMvcConfigurer {
-        return object : WebMvcConfigurer {
-            override fun addCorsMappings(registry: CorsRegistry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:8080")
-            }
-        }
-    }
-}
-
-object UserRoles {
-    const val TEACHER = "TEACHER"
-    const val REMOVE_VIDEOS = "REMOVE_VIDEOS"
-    const val REBUILD_SEARCH_INDEX = "REBUILD_SEARCH_INDEX"
-    const val REPORTING = "REPORTING"
-}
 
 @Component
-class VideoIngestorHttpSecurityConfigurer : HttpSecurityConfigurer {
+class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
     override fun configure(http: HttpSecurity) {
         http
                 .authorizeRequests()
