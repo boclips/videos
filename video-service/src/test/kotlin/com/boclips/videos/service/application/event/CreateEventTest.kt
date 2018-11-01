@@ -1,8 +1,6 @@
-package com.boclips.videos.service.application
+package com.boclips.videos.service.application.event
 
-import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.infrastructure.email.EmailClient
-import com.boclips.videos.service.infrastructure.email.NoResultsEmail
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand

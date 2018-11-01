@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.event.analysis
 
-import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.EventType
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 
 object GroupEventsByType {

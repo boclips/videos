@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.event.analysis
 
-import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.analysis.DurationFormatter.formatSeconds
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import java.time.ZonedDateTime
 import kotlin.math.max
 

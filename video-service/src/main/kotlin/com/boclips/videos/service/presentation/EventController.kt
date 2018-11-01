@@ -4,9 +4,8 @@ import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.infrastructure.event.EventsStatus
-import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
-import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
+import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.NoSearchResultsEventResource
 import com.boclips.videos.service.presentation.event.convertToResource
 import org.springframework.hateoas.Resources

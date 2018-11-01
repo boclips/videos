@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.service.filters
 
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoType
@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.VideoType
 class TeacherContentFilter {
 
     fun showInTeacherProduct(video: Video): Boolean {
-        if(video.type != VideoType.STOCK) {
+        if (video.type != VideoType.STOCK) {
             return true
         }
 

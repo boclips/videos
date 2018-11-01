@@ -1,6 +1,7 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.service.filters
 
 import com.boclips.videos.service.domain.model.VideoType
+import com.boclips.videos.service.domain.service.filters.TeacherContentFilter
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

@@ -6,11 +6,13 @@ import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromPlaybackEvents
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromSearchAndPlaybackEvents
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.sortRecursively
-import com.boclips.videos.service.infrastructure.event.types.*
+import com.boclips.videos.service.infrastructure.event.types.Event
+import com.boclips.videos.service.infrastructure.event.types.EventEntity
+import com.boclips.videos.service.infrastructure.event.types.EventType
+import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
-import org.springframework.data.mongodb.core.aggregation.MatchOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Component

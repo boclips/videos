@@ -20,9 +20,9 @@ class MysqlVideoService(
         private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : VideoService {
     companion object : KLogging() {
-        private val DELETE_QUERY = "DELETE FROM metadata_orig WHERE id IN (:ids)"
-        private val SELECT_QUERY = "SELECT * FROM metadata_orig WHERE id IN (:ids)"
-        private val SELECT_ALL_VIDEOS_QUERY = "SELECT * FROM metadata_orig"
+        private const val DELETE_QUERY = "DELETE FROM metadata_orig WHERE id IN (:ids)"
+        private const val SELECT_QUERY = "SELECT * FROM metadata_orig WHERE id IN (:ids)"
+        private const val SELECT_ALL_VIDEOS_QUERY = "SELECT * FROM metadata_orig"
     }
 
     override fun findVideosBy(query: VideoSearchQuery): List<Video> {

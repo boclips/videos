@@ -45,7 +45,7 @@ class VideoEntity(
     }
 
     private fun getVideoType(): VideoType {
-        return when(type_id) {
+        return when (type_id) {
             0 -> VideoType.OTHER
             1 -> VideoType.NEWS
             2 -> VideoType.STOCK

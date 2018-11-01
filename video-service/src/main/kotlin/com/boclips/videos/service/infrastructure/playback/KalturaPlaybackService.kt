@@ -10,7 +10,6 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.domain.service.PlaybackService
 import mu.KLogging
-import java.lang.IllegalArgumentException
 
 class KalturaPlaybackService(private val kalturaClient: KalturaClient) : PlaybackService {
     companion object : KLogging()
