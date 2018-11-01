@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.search.event
+package com.boclips.videos.service.infrastructure.logging
 
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
@@ -10,7 +10,7 @@ class SearchLoggingPointcuts {
     fun inVideoService() {
     }
 
-    @Pointcut("@annotation(com.boclips.videos.service.infrastructure.search.event.SearchLogging)")
+    @Pointcut("@annotation(com.boclips.videos.service.infrastructure.logging.SearchLogging)")
     fun annotatedWithSearchLogging() {
 
     }

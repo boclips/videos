@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.search.event
+package com.boclips.videos.service.infrastructure.logging
 
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
@@ -22,9 +22,8 @@ import javax.servlet.http.HttpServletRequest
 class SearchLoggingAspect(
         val searchLogger: SearchLogger
 ) {
-
     @Around(
-            value = "com.boclips.videos.service.infrastructure.search.event.SearchLoggingPointcuts.searchLoggingAnnotation()"
+            value = "com.boclips.videos.service.infrastructure.logging.SearchLoggingPointcuts.searchLoggingAnnotation()"
     )
     fun doAccessCheck(proceedingJoinPoint: ProceedingJoinPoint): Any? {
         val result = proceedingJoinPoint.proceed() as ResponseEntity<Resources<*>>

@@ -1,7 +1,8 @@
-package com.boclips.videos.service.infrastructure.search.event
+package com.boclips.videos.service.infrastructure.logging
 
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.types.SearchEventData
+import com.boclips.videos.service.infrastructure.logging.SearchLogger
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify

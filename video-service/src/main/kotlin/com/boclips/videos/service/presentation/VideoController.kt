@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.application.video.RebuildSearchIndex
-import com.boclips.videos.service.infrastructure.search.event.SearchLogging
+import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
