@@ -4,8 +4,8 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamFormat
-import com.boclips.videos.service.application.exceptions.VideoPlaybackNotDeleted
-import com.boclips.videos.service.application.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotDeleted
+import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.domain.service.PlaybackService

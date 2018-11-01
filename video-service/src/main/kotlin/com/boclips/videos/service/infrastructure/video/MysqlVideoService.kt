@@ -1,15 +1,13 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.search.service.domain.SearchService
-import com.boclips.videos.service.application.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
-import com.boclips.videos.service.domain.service.TeacherContentFilter
 import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.service.VideoService
 

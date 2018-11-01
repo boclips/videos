@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.exceptions.QueryValidationException
-import com.boclips.videos.service.application.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.QueryValidationException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.exceptions.QueryValidationException
+import com.boclips.videos.service.application.video.exceptions.QueryValidationException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery

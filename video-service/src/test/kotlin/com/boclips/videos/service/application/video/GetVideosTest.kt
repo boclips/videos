@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.exceptions.VideoNotFoundException
-import com.boclips.videos.service.application.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

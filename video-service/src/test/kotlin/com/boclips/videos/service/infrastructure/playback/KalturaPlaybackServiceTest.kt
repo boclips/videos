@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
-import com.boclips.videos.service.application.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat

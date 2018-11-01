@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.videos.service.application.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.search.service.domain.SearchService
