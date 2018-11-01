@@ -41,7 +41,6 @@ class VideoEntity(
                 type = getVideoType(),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty()
         )
-
     }
 
     private fun getVideoType(): VideoType {

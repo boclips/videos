@@ -2,7 +2,6 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.http.KalturaClientApiException
-import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotDeleted
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
@@ -18,25 +17,35 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
         val referenceIds = videos.map { video -> video.videoId.referenceId ?: video.videoId.videoId }
         val mediaEntriesById = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
 
-        return videos.map { video ->
-            val id = video.videoId.referenceId ?: video.videoId.videoId
-            val mediaEntries: MutableList<MediaEntry> = mediaEntriesById[id]
-                    ?: throw VideoPlaybackNotFound()
+        return videos
+                .asSequence()
+                .filter { video ->
+                    val id = video.videoId.referenceId ?: video.videoId.videoId
+                    if (mediaEntriesById[id] == null) {
+                        logger.warn { "Omitted video $id due to lack of video playback information" }
+                        false
+                    } else {
+                        true
+                    }
+                }
+                .map { video ->
+                    val id = video.videoId.referenceId ?: video.videoId.videoId
+                    val mediaEntry = mediaEntriesById[id]!!.first()
 
-            val mediaEntry = mediaEntries.first()
-            val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
-            val videoPlayback = VideoPlayback(
-                    streamUrl = streamUrl,
-                    thumbnailUrl = mediaEntry.thumbnailUrl,
-                    duration = mediaEntry.duration
-            )
-            video.copy(videoPlayback = videoPlayback)
-        }
+                    val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
+                    val videoPlayback = VideoPlayback(
+                            streamUrl = streamUrl,
+                            thumbnailUrl = mediaEntry.thumbnailUrl,
+                            duration = mediaEntry.duration
+                    )
+                    video.copy(videoPlayback = videoPlayback)
+                }
+                .toList()
+
     }
 
     override fun getVideoWithPlayback(video: Video): Video {
         val id = video.videoId.referenceId ?: throw IllegalArgumentException("ReferenceId needed to get playback")
-
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(id)
 
         if (mediaEntries.isEmpty()) throw VideoPlaybackNotFound()
@@ -44,12 +53,11 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
         val mediaEntry = mediaEntries.first()
         val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
         val thumbnailUrl = mediaEntry.thumbnailUrl
+        val videoPlayback = VideoPlayback(streamUrl = streamUrl,
+                thumbnailUrl = thumbnailUrl,
+                duration = mediaEntry.duration)
 
-        return video
-                .copy(videoPlayback = VideoPlayback(streamUrl = streamUrl,
-                        thumbnailUrl = thumbnailUrl,
-                        duration = mediaEntry.duration)
-                )
+        return video.copy(videoPlayback = videoPlayback)
     }
 
     override fun removePlayback(video: Video) {
