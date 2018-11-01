@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.VideoType
 class TeacherContentFilter {
 
     fun showInTeacherProduct(video: Video): Boolean {
-
         if(video.type != VideoType.STOCK) {
             return true
         }

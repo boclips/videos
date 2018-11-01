@@ -21,13 +21,9 @@ import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackService
 import com.boclips.videos.service.infrastructure.video.MysqlVideoService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
-import org.simplejavamail.mailer.Mailer
-import org.simplejavamail.mailer.MailerBuilder
-import org.simplejavamail.mailer.config.TransportStrategy
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.core.env.Environment
 import org.springframework.core.task.TaskExecutor
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.JdbcTemplate
@@ -118,8 +114,11 @@ class BeanConfig {
     }
 
     @Bean
-    fun rebuildSearchIndex(videoService: VideoService, searchService: SearchService, teacherContentFilter: TeacherContentFilter): RebuildSearchIndex {
-        return RebuildSearchIndex(videoService = videoService, searchService = searchService, teacherContentFilter = teacherContentFilter)
+    fun rebuildSearchIndex(videoService: VideoService, searchService: com.boclips.search.service.domain.SearchService, teacherContentFilter: TeacherContentFilter): RebuildSearchIndex {
+        return RebuildSearchIndex(
+                videoService = videoService,
+                searchService = searchService,
+                teacherContentFilter = teacherContentFilter)
     }
 
     @Bean
@@ -138,19 +137,5 @@ class BeanConfig {
     fun namedJdbcTemplate(jdbcTemplate: JdbcTemplate): NamedParameterJdbcTemplate {
         jdbcTemplate.fetchSize = Int.MIN_VALUE
         return NamedParameterJdbcTemplate(jdbcTemplate)
-    }
-
-    @Bean
-    fun emailClient(mailer: Mailer, environment: Environment): EmailClient {
-        return EmailClient(mailer, environment)
-    }
-
-    @Bean
-    fun simpleJavaMailer(emailProperties: PropertiesEmail): Mailer {
-        return MailerBuilder
-                .withSMTPServer(emailProperties.host, emailProperties.port, emailProperties.username, emailProperties.password)
-                .withTransportStrategy(TransportStrategy.SMTP_TLS)
-                .clearEmailAddressCriteria()
-                .buildMailer()
     }
 }
