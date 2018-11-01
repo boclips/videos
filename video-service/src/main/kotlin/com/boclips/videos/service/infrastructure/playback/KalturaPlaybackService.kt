@@ -45,10 +45,11 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
         val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
         val thumbnailUrl = mediaEntry.thumbnailUrl
 
-        return video.copy(videoPlayback = VideoPlayback(streamUrl = streamUrl,
-                thumbnailUrl = thumbnailUrl,
-                duration = mediaEntry.duration)
-        )
+        return video
+                .copy(videoPlayback = VideoPlayback(streamUrl = streamUrl,
+                        thumbnailUrl = thumbnailUrl,
+                        duration = mediaEntry.duration)
+                )
     }
 
     override fun removePlayback(video: Video) {

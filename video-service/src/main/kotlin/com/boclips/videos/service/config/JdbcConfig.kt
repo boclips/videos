@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 @Configuration
-class DataConfig {
+class JdbcConfig {
     @Bean
     @Profile("!test")
     fun namedJdbcTemplate(jdbcTemplate: JdbcTemplate): NamedParameterJdbcTemplate {
