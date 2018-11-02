@@ -17,7 +17,7 @@ class WebSecurityConfig {
             registry.addMapping("/**")
                     .allowedMethods("GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS")
                     .allowedOrigins(
-                            "http://localhost:8080",
+                            "http://localhost:8081",
                             "https://educators.staging-boclips.com",
                             "https://educators.testing-boclips.com",
                             "https://educators.boclips.com"
