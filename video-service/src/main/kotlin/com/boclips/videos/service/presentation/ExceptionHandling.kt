@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.application.event.InvalidEventException
 import com.boclips.videos.service.application.video.exceptions.QueryValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import mu.KLogging
@@ -22,5 +23,11 @@ class ExceptionHandling {
     @ExceptionHandler(VideoNotFoundException::class)
     fun handleVideoNotFoundException(ex: VideoNotFoundException) {
         logger.error { "Video not found $ex" }
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No or malformed event data was presented")
+    @ExceptionHandler(InvalidEventException::class)
+    fun handleInvalidEventException(ex: InvalidEventException) {
+        logger.error { "Event data malformed or invalid: $ex" }
     }
 }

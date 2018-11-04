@@ -9,7 +9,8 @@ import org.junit.Before
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -50,18 +51,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 200 for OPTIONS requests`() {
-        mockMvc.perform(options("/v1/videos"))
-                .andExpect(status().isOk)
-    }
-
-    @Test
-    fun `returns 403 for anonymous search request`() {
-        mockMvc.perform(get("/v1/videos"))
-                .andExpect(status().isForbidden)
-    }
-
-    @Test
     fun `returns 400 for invalid search request`() {
         mockMvc.perform(get("/v1/videos").asTeacher())
                 .andExpect(status().`is`(400))
@@ -83,21 +72,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 200 for anonymous video request`() {
-        mockMvc.perform(get("/v1/videos/123"))
-                .andExpect(status().isOk)
-    }
-
-    @Test
     fun `returns 404 for inexistent video`() {
         mockMvc.perform(get("/v1/videos/9999").asTeacher())
                 .andExpect(status().`is`(404))
-    }
-
-    @Test
-    fun `teachers cannot delete videos`() {
-        mockMvc.perform(delete("/v1/videos/123").asTeacher())
-                .andExpect(status().isForbidden)
     }
 
     @Test
