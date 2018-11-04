@@ -16,14 +16,14 @@ class GetVideos(
         private val playbackService: PlaybackService,
         private val videoToResourceConverter: VideoToResourceConverter
 ) {
-    fun get(videoId: String): VideoResource {
+    fun execute(videoId: String): VideoResource {
         val videoWithoutPlayback = videoService.findVideoBy(VideoId(videoId = videoId))
         val videoWithPlayback: Video = playbackService.getVideoWithPlayback(videoWithoutPlayback)
 
         return videoToResourceConverter.convert(videoWithPlayback)
     }
 
-    fun get(query: String?): List<Resource<VideoResource>> {
+    fun execute(query: String?): List<Resource<VideoResource>> {
         query ?: throw QueryValidationException()
 
         val videosWithoutPlayback = videoService.findVideosBy(VideoSearchQuery(text = query))

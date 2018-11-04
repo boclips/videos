@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.service.VideoService
 class DeleteVideos(
         private val videoService: VideoService
 ) {
-    fun delete(id: String?) {
+    fun execute(id: String?) {
         if (id == null || id.isBlank()) {
             throw VideoNotFoundException()
         }

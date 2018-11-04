@@ -17,7 +17,7 @@ class GetVideosTest : AbstractSpringIntegrationTest() {
     fun `getting a single video returns the video with playback information if present`() {
         saveVideo(videoId = 1)
 
-        val video = getVideos.get("1")
+        val video = getVideos.execute("1")
 
         assertThat(video).isNotNull
         assertThat(video.id).isEqualTo("1")
@@ -29,12 +29,12 @@ class GetVideosTest : AbstractSpringIntegrationTest() {
     fun `getting a single video throws if no playback information if present`() {
         saveVideo(videoId = 123, referenceId = "1111")
 
-        assertThatThrownBy { getVideos.get("123") }.isInstanceOf(VideoPlaybackNotFound::class.java)
+        assertThatThrownBy { getVideos.execute("123") }.isInstanceOf(VideoPlaybackNotFound::class.java)
     }
 
     @Test
     fun `getting a single video that does not exist throws`() {
-        assertThatThrownBy { getVideos.get("123") }.isInstanceOf(VideoNotFoundException::class.java)
+        assertThatThrownBy { getVideos.execute("123") }.isInstanceOf(VideoNotFoundException::class.java)
     }
 
 }

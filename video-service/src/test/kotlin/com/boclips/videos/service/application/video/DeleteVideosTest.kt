@@ -25,7 +25,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
     fun `requesting deletion of an existing video deletes the video from MySQL`() {
         saveVideo(videoId = 123)
 
-        deleteVideos.delete("123")
+        deleteVideos.execute("123")
 
         assertThatThrownBy { videoService.findVideoBy(VideoId(videoId = "123")) }
                 .isInstanceOf(VideoNotFoundException::class.java)
@@ -35,7 +35,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
     fun `requesting deletion removes the video from searches`() {
         saveVideo(videoId = 123)
 
-        deleteVideos.delete("123")
+        deleteVideos.execute("123")
 
         assertThat(fakeSearchService.search("irrelevant query"))
                 .doesNotContain("123")
@@ -47,20 +47,20 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
         kalturaClient.createMediaEntry("ref-123")
         assertThat(kalturaClient.getMediaEntriesByReferenceId("ref-123")).isNotEmpty()
 
-        deleteVideos.delete("123")
+        deleteVideos.execute("123")
 
         assertThat(kalturaClient.getMediaEntriesByReferenceId("ref-123")).isEmpty()
     }
 
     @Test
     fun `requesting deletion with blank video ID throws an exception`() {
-        assertThatThrownBy { deleteVideos.delete("   ") }
+        assertThatThrownBy { deleteVideos.execute("   ") }
                 .isInstanceOf(VideoNotFoundException::class.java)
     }
 
     @Test
     fun `requesting deletion with null video ID throws an exception`() {
-        assertThatThrownBy { deleteVideos.delete(null) }
+        assertThatThrownBy { deleteVideos.execute(null) }
                 .isInstanceOf(VideoNotFoundException::class.java)
     }
 }

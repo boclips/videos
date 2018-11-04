@@ -45,7 +45,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
     }
 
     override fun getVideoWithPlayback(video: Video): Video {
-        val id = video.videoId.referenceId ?: throw IllegalArgumentException("ReferenceId needed to get playback")
+        val id = video.videoId.referenceId ?: throw IllegalArgumentException("ReferenceId needed to execute playback")
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(id)
 
         if (mediaEntries.isEmpty()) throw VideoPlaybackNotFound()
@@ -64,7 +64,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
         try {
             kalturaClient.deleteMediaEntriesByReferenceId(video.videoId.referenceId)
         } catch (ex: KalturaClientApiException) {
-            logger.error { "Failed to delete video from Kaltura: $ex" }
+            logger.error { "Failed to execute video from Kaltura: $ex" }
             throw VideoPlaybackNotDeleted()
         }
     }
