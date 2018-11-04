@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v1/videos")
 class VideoController(
         private val getVideos: GetVideos,
-        private val deleteVideos: DeleteVideos,
-        private val rebuildSearchIndex: RebuildSearchIndex
+        private val deleteVideos: DeleteVideos
 ) {
     companion object {
         fun searchLink() = linkTo(methodOn(VideoController::class.java).search(null)).withRel("search")
@@ -44,11 +43,5 @@ class VideoController(
     @DeleteMapping("/{id}")
     fun deleteVideo(@PathVariable("id") id: String?) {
         deleteVideos.delete(id)
-    }
-
-    @PostMapping("/rebuildSearchIndex")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    fun rebuildSearchIndex() {
-        rebuildSearchIndex.execute()
     }
 }
