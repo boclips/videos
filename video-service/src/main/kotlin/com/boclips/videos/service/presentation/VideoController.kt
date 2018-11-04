@@ -26,7 +26,7 @@ class VideoController(
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
     }
 
-    @GetMapping("/search")
+    @GetMapping
     @SearchLogging
     fun search(@RequestParam("query") query: String?): ResponseEntity<Resources<*>> {
         val results = getVideos.get(query).let(HateoasEmptyCollection::fixIfEmptyCollection)

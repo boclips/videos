@@ -8,10 +8,8 @@ import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
-import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import java.sql.ResultSet
 import java.util.*
 
 class MysqlVideoService(
