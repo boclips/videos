@@ -86,13 +86,4 @@ class MysqlVideoService(
         jdbcTemplate.query(SELECT_ALL_VIDEOS_QUERY, StreamingVideoResultExtractor(consumer))
     }
 
-    inner class StreamingVideoResultExtractor(val consumer: (videos: Sequence<Video>) -> Unit) : ResultSetExtractor<Unit> {
-        override fun extractData(resultSet: ResultSet) {
-            val entities = generateSequence {
-                if (resultSet.next()) rowMapper(resultSet, -1) else null
-            }
-
-            consumer(entities.map { videoEntity -> videoEntity.toVideo() })
-        }
-    }
 }
