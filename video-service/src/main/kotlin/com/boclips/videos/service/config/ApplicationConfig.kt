@@ -4,6 +4,7 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
+import com.boclips.videos.service.application.event.GetEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
@@ -75,6 +76,11 @@ class ApplicationConfig {
                 eventService = eventService,
                 emailClient = emailClient
         )
+    }
+
+    @Bean
+    fun getEvent(eventService: EventService): GetEvent {
+        return GetEvent(eventService = eventService)
     }
 
     @Bean

@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
+import com.boclips.videos.service.application.event.GetEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.infrastructure.event.EventsStatus
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 class EventController(
         private val createEvent: CreateEvent,
         private val checkEventsStatus: CheckEventsStatus,
-        private val getLatestInteractions: GetLatestInteractions
+        private val getEvent: GetEvent
 ) {
     companion object {
         fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logPlaybackEvent(null)).withRel("createPlaybackEvent")
@@ -28,19 +29,19 @@ class EventController(
 
     @PostMapping("/playback")
     fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?): ResponseEntity<Void> {
-        createEvent.createPlaybackEvent(playbackEvent)
+        createEvent.execute(playbackEvent)
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @PostMapping("/no-search-results")
     fun logNoSearchResultsEvent(@RequestBody noSearchResultsEvent: CreateNoSearchResultsEventCommand?): ResponseEntity<Void> {
-        createEvent.createNoSearchResultsEvent(noSearchResultsEvent)
+        createEvent.execute(noSearchResultsEvent)
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @GetMapping("/no-search-results")
     fun getNoSearchResultsEvent(): ResponseEntity<Resources<NoSearchResultsEventResource>> {
-        val events = getLatestInteractions.getAllNoSearchResultEvents()
+        val events = getEvent.execute()
                 .map { convertToResource(it) }
 
         return ResponseEntity(Resources(events), HttpStatus.OK)

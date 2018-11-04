@@ -7,7 +7,6 @@ import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThatCode
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -43,32 +42,27 @@ class CreateEventTest {
 
     @Test
     fun `validates a valid playback event`() {
-        assertThatCode { createEvent.createPlaybackEvent(playbackEvent) }.doesNotThrowAnyException()
+        assertThatCode { createEvent.execute(playbackEvent) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `validates a valid no results event`() {
-        assertThatCode { createEvent.createNoSearchResultsEvent(noResultsEvent) }.doesNotThrowAnyException()
+        assertThatCode { createEvent.execute(noResultsEvent) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `handles well formed capture time`() {
-        assertThatCode { createEvent.createPlaybackEvent(playbackEvent) }.doesNotThrowAnyException()
+        assertThatCode { createEvent.execute(playbackEvent) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `handles badly formed capture time`() {
-        assertThatCode { createEvent.createPlaybackEvent(playbackEvent.copy(captureTime = "abc")) }.doesNotThrowAnyException()
-    }
-
-    @Test
-    fun `handles null object`() {
-        assertThatThrownBy { createEvent.createPlaybackEvent(null) }
+        assertThatCode { createEvent.execute(playbackEvent.copy(captureTime = "abc")) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `sends email to log no search results event`() {
-        createEvent.createNoSearchResultsEvent(noResultsEvent)
+        createEvent.execute(noResultsEvent)
 
         verify(emailClient).send(any())
     }
