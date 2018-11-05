@@ -18,7 +18,7 @@ class EmailClient(
             mailer.sendMail(createEmail(email), true)
             logger.info { "Successfully sent email" }
         } catch (ex: Exception) {
-            logger.error { "Failed sending out email: $ex" }
+            logger.error { "Failed sending email: $ex" }
         }
     }
 
@@ -33,6 +33,5 @@ class EmailClient(
                 .withPlainText(email.toPlainText())
                 .withReplyTo("noreply", "noreply@boclips.com")
                 .buildEmail()
-
     }
 }
