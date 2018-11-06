@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model
 
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import java.time.LocalDate
 
 data class Video(

@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.playback
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
@@ -26,9 +27,11 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
         assertThat(videosWithPlayback).hasSize(1)
         assertThat(videosWithPlayback[0].videoPlayback).isNotNull()
         assertThat(videosWithPlayback[0].isPlayable()).isTrue()
-        assertThat(videosWithPlayback[0].videoPlayback!!.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
-        assertThat(videosWithPlayback[0].videoPlayback!!.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
-        assertThat(videosWithPlayback[0].videoPlayback!!.duration).isEqualTo(Duration.parse("PT1M"))
+
+        val videoPlayback = videosWithPlayback[0].videoPlayback!! as StreamPlayback
+        assertThat(videoPlayback.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
+        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
+        assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
     }
 
     @Test

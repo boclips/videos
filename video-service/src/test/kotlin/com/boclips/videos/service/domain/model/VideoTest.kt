@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model
 
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -8,14 +9,14 @@ import java.time.Duration
 class VideoTest {
 
     @Test
-    fun `is not playable when there is no stream information`() {
+    fun `is not playable when there is no playback information`() {
         assertThat(createVideo(videoPlayback = null).isPlayable()).isFalse()
     }
 
     @Test
-    fun `is playable when there is stream information`() {
+    fun `is playable when there is playback information`() {
         val video = createVideo(
-                videoPlayback = VideoPlayback(
+                videoPlayback = StreamPlayback(
                         streamUrl = "x",
                         thumbnailUrl = "x",
                         duration = Duration.ofMinutes(2)

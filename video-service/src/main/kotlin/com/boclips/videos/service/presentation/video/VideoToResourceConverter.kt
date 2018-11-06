@@ -1,6 +1,10 @@
 package com.boclips.videos.service.presentation.video
 
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
+import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 
 class VideoToResourceConverter {
     fun convert(video: Video): VideoResource {
@@ -22,11 +26,17 @@ class VideoToResourceConverter {
                 releasedOn = video.releasedOn)
 
         if (video.isPlayable()) {
-            return basicVideo.copy(
-                    streamUrl = video.videoPlayback!!.streamUrl,
-                    thumbnailUrl = video.videoPlayback.thumbnailUrl,
-                    duration = video.videoPlayback.duration
-            )
+            val playback = video.videoPlayback!!
+
+            val playbackResource = when (playback) {
+                is StreamPlayback -> StreamPlaybackResource(streamUrl = playback.streamUrl)
+                is YoutubePlayback -> YoutubePlaybackResource(youtubeId = playback.youtubeId)
+                else -> throw Exception()
+            }
+            playbackResource.thumbnailUrl = video.videoPlayback.thumbnailUrl
+            playbackResource.duration = video.videoPlayback.duration
+
+            return basicVideo.copy(playback = playbackResource)
         }
 
         return basicVideo

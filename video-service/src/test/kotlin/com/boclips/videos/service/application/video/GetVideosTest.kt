@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -21,8 +22,10 @@ class GetVideosTest : AbstractSpringIntegrationTest() {
 
         assertThat(video).isNotNull
         assertThat(video.id).isEqualTo("1")
-        assertThat(video.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
-        assertThat(video.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
+
+        val streamPlaybackResource = video.playback as StreamPlaybackResource
+        assertThat(streamPlaybackResource.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
+        assertThat(streamPlaybackResource.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
     }
 
     @Test

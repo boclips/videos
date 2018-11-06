@@ -3,7 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
-import com.boclips.videos.service.domain.model.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.VideoType
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent

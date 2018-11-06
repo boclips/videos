@@ -36,10 +36,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$._embedded.videos[0].duration", equalTo("PT1M")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp")))
-                .andExpect(jsonPath("$._embedded.videos[0].streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
-                .andExpect(jsonPath("$._embedded.videos[0].thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT1M")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
     }
 
@@ -64,10 +64,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$.duration", equalTo("PT1M")))
                 .andExpect(jsonPath("$.contentProvider", equalTo("cp")))
-                .andExpect(jsonPath("$.streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
-                .andExpect(jsonPath("$.thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT1M")))
+                .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
+                .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/123")))
     }
 

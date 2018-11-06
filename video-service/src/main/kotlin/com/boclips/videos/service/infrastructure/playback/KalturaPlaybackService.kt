@@ -5,8 +5,8 @@ import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotDeleted
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.VideoPlayback
 import com.boclips.videos.service.domain.service.PlaybackService
 import mu.KLogging
 
@@ -33,7 +33,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
                     val mediaEntry = mediaEntriesById[id]!!.first()
 
                     val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
-                    val videoPlayback = VideoPlayback(
+                    val videoPlayback = StreamPlayback(
                             streamUrl = streamUrl,
                             thumbnailUrl = mediaEntry.thumbnailUrl,
                             duration = mediaEntry.duration
@@ -53,7 +53,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
         val mediaEntry = mediaEntries.first()
         val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
         val thumbnailUrl = mediaEntry.thumbnailUrl
-        val videoPlayback = VideoPlayback(streamUrl = streamUrl,
+        val videoPlayback = StreamPlayback(streamUrl = streamUrl,
                 thumbnailUrl = thumbnailUrl,
                 duration = mediaEntry.duration)
 
