@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
@@ -19,7 +19,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Before
     fun setUp() {
         saveVideo(videoId = 123,
-                playbackId = PlaybackId(playbackId = "ref-id-1", playbackProvider = PlaybackProvider.KALTURA),
+                playbackId = PlaybackId(playbackId = "ref-id-1", playbackProviderType = PlaybackProviderType.KALTURA),
                 title = "powerful video about elephants",
                 description = "test description 3",
                 date = "2018-02-11",

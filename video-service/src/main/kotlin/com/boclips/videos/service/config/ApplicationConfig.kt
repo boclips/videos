@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.domain.service.filters.TeacherContentFilter
@@ -16,7 +17,7 @@ import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackService
+import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.context.annotation.Bean
@@ -48,17 +49,22 @@ class ApplicationConfig {
     @Bean
     fun videoService(searchService: SearchService,
                      jdbcTemplate: NamedParameterJdbcTemplate,
-                     playbackService: PlaybackService): VideoService {
+                     playbackProvider: PlaybackProvider): VideoService {
         return MysqlVideoService(
                 searchService = searchService,
                 jdbcTemplate = jdbcTemplate,
-                playbackVideo = playbackService
+                playbackVideo = playbackProvider
         )
     }
 
     @Bean
-    fun playbackService(kalturaClient: KalturaClient): PlaybackService {
-        return KalturaPlaybackService(kalturaClient = kalturaClient)
+    fun playbackService(kalturaPlaybackProvider: PlaybackProvider): PlaybackService {
+        return PlaybackService(kalturaPlaybackProvider = kalturaPlaybackProvider)
+    }
+
+    @Bean
+    fun kalturaPlaybackProvider(kalturaClient: KalturaClient): PlaybackProvider {
+        return KalturaPlaybackProvider(kalturaClient = kalturaClient)
     }
 
     @Bean

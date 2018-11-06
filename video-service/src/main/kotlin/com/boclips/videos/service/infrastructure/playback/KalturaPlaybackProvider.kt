@@ -5,12 +5,12 @@ import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotDeleted
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.service.PlaybackService
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.service.PlaybackProvider
 import mu.KLogging
 
-class KalturaPlaybackService(private val kalturaClient: KalturaClient) : PlaybackService {
+class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : PlaybackProvider {
     companion object : KLogging()
 
     override fun getVideosWithPlayback(videos: List<Video>): List<Video> {
@@ -42,22 +42,6 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
                 }
                 .toList()
 
-    }
-
-    override fun getVideoWithPlayback(video: Video): Video {
-        val id = video.playbackId.playbackId
-        val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(id)
-
-        if (mediaEntries.isEmpty()) throw VideoPlaybackNotFound()
-
-        val mediaEntry = mediaEntries.first()
-        val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
-        val thumbnailUrl = mediaEntry.thumbnailUrl
-        val videoPlayback = StreamPlayback(streamUrl = streamUrl,
-                thumbnailUrl = thumbnailUrl,
-                duration = mediaEntry.duration)
-
-        return video.copy(videoPlayback = videoPlayback)
     }
 
     override fun removePlayback(video: Video) {

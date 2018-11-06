@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.service.PlaybackService
+import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.VideoService
 import mu.KLogging
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -14,7 +14,7 @@ import java.util.*
 
 class MysqlVideoService(
         private val searchService: SearchService,
-        private val playbackVideo: PlaybackService,
+        private val playbackVideo: PlaybackProvider,
         private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : VideoService {
     companion object : KLogging() {

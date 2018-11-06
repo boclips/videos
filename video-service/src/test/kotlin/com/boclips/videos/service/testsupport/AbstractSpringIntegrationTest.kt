@@ -1,13 +1,12 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.kalturaclient.TestKalturaClient
-import com.boclips.kalturaclient.media.MediaEntry
-import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.jdbc.JdbcTestUtils
-import java.time.Duration
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -47,15 +45,15 @@ abstract class AbstractSpringIntegrationTest {
 
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
-        fakeKalturaClient.addMediaEntry(mediaEntry("1"))
-        fakeKalturaClient.addMediaEntry(mediaEntry("2"))
-        fakeKalturaClient.addMediaEntry(mediaEntry("3"))
-        fakeKalturaClient.addMediaEntry(mediaEntry("4"))
-        fakeKalturaClient.addMediaEntry(mediaEntry("5"))
+        fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
+        fakeKalturaClient.addMediaEntry(createMediaEntry("2"))
+        fakeKalturaClient.addMediaEntry(createMediaEntry("3"))
+        fakeKalturaClient.addMediaEntry(createMediaEntry("4"))
+        fakeKalturaClient.addMediaEntry(createMediaEntry("5"))
     }
 
     fun saveVideo(videoId: Long,
-                  playbackId: PlaybackId = PlaybackId(playbackProvider = PlaybackProvider.KALTURA, playbackId = "ref-id-$videoId"),
+                  playbackId: PlaybackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-$videoId"),
                   title: String = "Some title!",
                   description: String = "Some description!",
                   date: String = "2018-01-01",
@@ -79,7 +77,7 @@ abstract class AbstractSpringIntegrationTest {
                 playback_provider
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, duration, playbackId.playbackId, keywords.joinToString(separator = ","), typeId, playbackId.playbackId, playbackId.playbackProvider.name
+                videoId, contentProvider, title, description, date, duration, playbackId.playbackId, keywords.joinToString(separator = ","), typeId, playbackId.playbackId, playbackId.playbackProviderType.name
         )
 
         fakeSearchService.resetIndex()
@@ -92,13 +90,5 @@ abstract class AbstractSpringIntegrationTest {
         ))
     }
 
-    fun mediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {
-        return MediaEntry.builder()
-                .id(id)
-                .referenceId(referenceId)
-                .streams(StreamUrls("https://stream/[FORMAT]/video-$id.mp4"))
-                .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
-                .duration(Duration.ofMinutes(1))
-                .build()
-    }
+
 }

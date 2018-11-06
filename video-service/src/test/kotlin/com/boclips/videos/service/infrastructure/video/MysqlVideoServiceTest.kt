@@ -60,7 +60,7 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(video.videoId.videoId).isEqualTo("123")
         assertThat(video.playbackId.playbackId).isNotNull()
-        assertThat(video.playbackId.playbackProvider).isNotNull()
+        assertThat(video.playbackId.playbackProviderType).isNotNull()
         assertThat(video.videoPlayback).isNull()
         assertThat(video.description).isNotEmpty()
         assertThat(video.title).isNotEmpty()

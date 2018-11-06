@@ -2,27 +2,25 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
-import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
+class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var kalturaPlaybackService: KalturaPlaybackService
+    lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
 
     @Autowired
     lateinit var kalturaClient: TestKalturaClient
 
     @Test
     fun `returns playable videos`() {
-        val videosWithPlayback = kalturaPlaybackService.getVideosWithPlayback(listOf(createVideo()))
+        val videosWithPlayback = kalturaPlaybackProvider.getVideosWithPlayback(listOf(createVideo()))
 
         assertThat(videosWithPlayback).hasSize(1)
         assertThat(videosWithPlayback[0].videoPlayback).isNotNull()
@@ -36,7 +34,7 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns only playable videos`() {
-        val videosWithPlayback = kalturaPlaybackService.getVideosWithPlayback(
+        val videosWithPlayback = kalturaPlaybackProvider.getVideosWithPlayback(
                 listOf(
                         createVideo(playbackId = "ref-id-1"),
                         createVideo(playbackId = "ref-id-100")
@@ -49,14 +47,6 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns playable video`() {
-        val videoWithPlayback = kalturaPlaybackService.getVideoWithPlayback(createVideo())
-
-        assertThat(videoWithPlayback.videoPlayback).isNotNull()
-        assertThat(videoWithPlayback.isPlayable()).isTrue()
-    }
-
-    @Test
     fun `removes the playback information`() {
         kalturaClient.addMediaEntry(MediaEntry.builder()
                 .id("something")
@@ -64,10 +54,9 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
                 .build())
 
         val video = createVideo(playbackId = "ref-123")
-        kalturaPlaybackService.removePlayback(video)
+        kalturaPlaybackProvider.removePlayback(video)
 
-        assertThatThrownBy { kalturaPlaybackService.getVideoWithPlayback(video) }
-                .isInstanceOf(VideoPlaybackNotFound::class.java)
+        assertThat(kalturaPlaybackProvider.getVideosWithPlayback(listOf(video))).isEmpty()
     }
 
 }

@@ -1,16 +1,19 @@
 package com.boclips.videos.service.testsupport
 
+import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import com.boclips.videos.service.infrastructure.video.VideoEntity
+import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -71,7 +74,7 @@ object TestFactories {
     ): Video {
         return Video(
                 videoId = VideoId(videoId = videoId),
-                playbackId = PlaybackId(playbackProvider = PlaybackProvider.KALTURA, playbackId = playbackId!!),
+                playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = playbackId!!),
                 title = title,
                 description = description,
                 keywords = keywords,
@@ -108,6 +111,16 @@ object TestFactories {
                 playback_provider = playbackProvider,
                 playback_id = playbackId
         )
+    }
+
+    fun createMediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {
+        return MediaEntry.builder()
+                .id(id)
+                .referenceId(referenceId)
+                .streams(StreamUrls("https://stream/[FORMAT]/video-$id.mp4"))
+                .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
+                .duration(Duration.ofMinutes(1))
+                .build()
     }
 
 }
