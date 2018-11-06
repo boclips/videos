@@ -3,6 +3,8 @@ package com.boclips.videos.service.infrastructure.video
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoType
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProvider
 import org.springframework.data.annotation.Id
 import java.time.LocalDate
 
@@ -27,12 +29,15 @@ class VideoEntity(
         var alt_source: String? = null,
         var restrictions: String? = null,
         var type_id: Int? = null,
-        var reference_id: String? = null
+        var reference_id: String? = null,
+        var playback_provider: String? = null,
+        var playback_id: String? = null
 ) {
 
     fun toVideo(): Video {
         return Video(
-                videoId = VideoId(videoId = id.toString(), referenceId = reference_id),
+                videoId = VideoId(videoId = id.toString()),
+                playbackId = PlaybackId(playbackProvider = PlaybackProvider.valueOf(playback_provider!!), playbackId = playback_id!!),
                 title = title!!,
                 description = description!!,
                 releasedOn = LocalDate.parse(date!!),

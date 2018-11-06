@@ -5,6 +5,8 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProvider
 import com.boclips.videos.service.infrastructure.event.EventService
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -16,7 +18,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.jdbc.JdbcTestUtils
-import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 
 @RunWith(SpringRunner::class)
@@ -54,7 +55,7 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun saveVideo(videoId: Long,
-                  referenceId: String? = null,
+                  playbackId: PlaybackId = PlaybackId(playbackProvider = PlaybackProvider.KALTURA, playbackId = "ref-id-$videoId"),
                   title: String = "Some title!",
                   description: String = "Some description!",
                   date: String = "2018-01-01",
@@ -73,11 +74,12 @@ abstract class AbstractSpringIntegrationTest {
                 duration,
                 reference_id,
                 keywords,
-                type_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                type_id,
+                playback_id,
+                playback_provider
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, duration, referenceId
-                ?: "ref-id-$videoId", keywords.joinToString(separator = ","), typeId
+                videoId, contentProvider, title, description, date, duration, playbackId.playbackId, keywords.joinToString(separator = ","), typeId, playbackId.playbackId, playbackId.playbackProvider.name
         )
 
         fakeSearchService.resetIndex()

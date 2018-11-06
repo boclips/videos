@@ -24,6 +24,8 @@ val rowMapper = { resultSet: ResultSet, _: Int ->
             alt_source = resultSet.getString("alt_source"),
             restrictions = resultSet.getString("restrictions"),
             type_id = resultSet.getInt("type_id"),
-            reference_id = resultSet.getString("reference_id")
+            reference_id = resultSet.getString("reference_id"),
+            playback_provider = resultSet.getString("playback_provider"),
+            playback_id = resultSet.getString("playback_id")
     )
 }

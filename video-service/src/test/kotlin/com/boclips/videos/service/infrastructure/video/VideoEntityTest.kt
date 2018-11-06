@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.VideoType
+import com.boclips.videos.service.domain.model.playback.PlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -30,6 +31,22 @@ class VideoEntityTest {
             TestFactories.createVideoEntity(typeId = 12).toVideo()
         }
                 .hasMessage("Unknown type_id: 12")
+    }
+
+    @Test
+    fun `toVideo extracts playback provider and playback id for youtube videos`() {
+        val video = TestFactories.createVideoEntity(playbackProvider = "YOUTUBE", playbackId = "y123").toVideo()
+
+        assertThat(video.playbackId.playbackId).isEqualTo("y123")
+        assertThat(video.playbackId.playbackProvider).isEqualTo(PlaybackProvider.YOUTUBE)
+    }
+
+    @Test
+    fun `toVideo extracts playback provider and playback id for kaltura videos`() {
+        val video = TestFactories.createVideoEntity(playbackProvider = "KALTURA", playbackId = "k123").toVideo()
+
+        assertThat(video.playbackId.playbackId).isEqualTo("k123")
+        assertThat(video.playbackId.playbackProvider).isEqualTo(PlaybackProvider.KALTURA)
     }
 
     @Test

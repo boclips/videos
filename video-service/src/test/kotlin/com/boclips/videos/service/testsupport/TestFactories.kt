@@ -1,12 +1,14 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
-import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.VideoType
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import com.boclips.videos.service.infrastructure.video.VideoEntity
 import java.time.LocalDate
@@ -63,23 +65,24 @@ object TestFactories {
             contentProvider: String = "AP",
             videoPlayback: VideoPlayback? = null,
             videoId: String = "123",
-            referenceId: String? = "ref-id-1",
+            playbackId: String? = "ref-id-1",
             type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
             keywords: List<String> = listOf("keyword")
     ): Video {
         return Video(
-                videoId = VideoId(videoId = videoId, referenceId = referenceId),
+                videoId = VideoId(videoId = videoId),
+                playbackId = PlaybackId(playbackProvider = PlaybackProvider.KALTURA, playbackId = playbackId!!),
                 title = title,
                 description = description,
+                keywords = keywords,
                 releasedOn = LocalDate.parse("2018-01-01"),
-                videoPlayback = videoPlayback,
                 contentProvider = contentProvider,
-                type = type,
-                keywords = keywords
+                videoPlayback = videoPlayback,
+                type = type
         )
     }
 
-    fun createVideoEntity(typeId: Int = 1, keywords: String = "k1,k2,k3"): VideoEntity {
+    fun createVideoEntity(typeId: Int = 1, keywords: String = "k1,k2,k3", playbackId: String = "12312413-123123-123-123", playbackProvider: String = "KALTURA"): VideoEntity {
         return VideoEntity(
                 id = 123,
                 source = "source",
@@ -101,7 +104,9 @@ object TestFactories {
                 alt_source = "alt_source",
                 restrictions = "restrictions",
                 type_id = typeId,
-                reference_id = "reference_id"
+                reference_id = "reference_id",
+                playback_provider = playbackProvider,
+                playback_id = playbackId
         )
     }
 

@@ -14,13 +14,13 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
     companion object : KLogging()
 
     override fun getVideosWithPlayback(videos: List<Video>): List<Video> {
-        val referenceIds = videos.map { video -> video.videoId.referenceId ?: video.videoId.videoId }
+        val referenceIds = videos.map { video -> video.playbackId.playbackId }
         val mediaEntriesById = kalturaClient.getMediaEntriesByReferenceIds(referenceIds)
 
         return videos
                 .asSequence()
                 .filter { video ->
-                    val id = video.videoId.referenceId ?: video.videoId.videoId
+                    val id = video.playbackId.playbackId
                     if (mediaEntriesById[id] == null) {
                         logger.warn { "Omitted video $id due to lack of video playback information" }
                         false
@@ -29,7 +29,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
                     }
                 }
                 .map { video ->
-                    val id = video.videoId.referenceId ?: video.videoId.videoId
+                    val id = video.playbackId.playbackId
                     val mediaEntry = mediaEntriesById[id]!!.first()
 
                     val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
@@ -45,7 +45,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
     }
 
     override fun getVideoWithPlayback(video: Video): Video {
-        val id = video.videoId.referenceId ?: throw IllegalArgumentException("ReferenceId needed to execute playback")
+        val id = video.playbackId.playbackId
         val mediaEntries = kalturaClient.getMediaEntriesByReferenceId(id)
 
         if (mediaEntries.isEmpty()) throw VideoPlaybackNotFound()
@@ -62,7 +62,7 @@ class KalturaPlaybackService(private val kalturaClient: KalturaClient) : Playbac
 
     override fun removePlayback(video: Video) {
         try {
-            kalturaClient.deleteMediaEntriesByReferenceId(video.videoId.referenceId)
+            kalturaClient.deleteMediaEntriesByReferenceId(video.playbackId.playbackId)
         } catch (ex: KalturaClientApiException) {
             logger.error { "Failed to execute video from Kaltura: $ex" }
             throw VideoPlaybackNotDeleted()

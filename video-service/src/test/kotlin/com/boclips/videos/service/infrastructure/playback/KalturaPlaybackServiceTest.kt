@@ -35,11 +35,11 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns only playable videos and can handle videos without reference id`() {
+    fun `returns only playable videos`() {
         val videosWithPlayback = kalturaPlaybackService.getVideosWithPlayback(
                 listOf(
-                        createVideo(videoId = "ref-id-1", referenceId = null),
-                        createVideo(videoId = "ref-id-100", referenceId = null)
+                        createVideo(playbackId = "ref-id-1"),
+                        createVideo(playbackId = "ref-id-100")
                 )
         )
 
@@ -63,7 +63,7 @@ class KalturaPlaybackServiceTest : AbstractSpringIntegrationTest() {
                 .referenceId("ref-123")
                 .build())
 
-        val video = createVideo(referenceId = "ref-123")
+        val video = createVideo(playbackId = "ref-123")
         kalturaPlaybackService.removePlayback(video)
 
         assertThatThrownBy { kalturaPlaybackService.getVideoWithPlayback(video) }

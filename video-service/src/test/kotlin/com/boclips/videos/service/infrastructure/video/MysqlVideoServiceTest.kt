@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -21,9 +21,9 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find multiple videos by video ids`() {
-        saveVideo(123, "Some title", "test description 3")
-        saveVideo(124, "Some title", "test description 3")
-        saveVideo(125, "Some title", "test description 3")
+        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
+        saveVideo(videoId = 124, title = "Some title", description = "test description 3")
+        saveVideo(videoId = 125, title = "Some title", description = "test description 3")
 
         val videos = videoService.findVideosBy(listOf(VideoId(videoId = "123"), VideoId(videoId = "124"), VideoId(videoId = "125")))
 
@@ -32,8 +32,8 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find multiple videos and does not throw when one video can't be found`() {
-        saveVideo(123, "Some title", "test description 3")
-        saveVideo(124, "Some title", "test description 3")
+        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
+        saveVideo(videoId = 124, title = "Some title", description = "test description 3")
 
         val videos = videoService.findVideosBy(listOf(VideoId(videoId = "123"), VideoId(videoId = "124"), VideoId(videoId = "125")))
 
@@ -42,7 +42,7 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find single video by video id`() {
-        saveVideo(123, "Some title", "test description 3")
+        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
 
         val videoId = VideoId(videoId = "123")
         val video = videoService.findVideoBy(videoId)
@@ -53,13 +53,14 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns a Video without playback information`() {
-        saveVideo(123, "Some title", "test description 3")
+        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
 
         val videoId = VideoId(videoId = "123")
         val video = videoService.findVideoBy(videoId)
 
         assertThat(video.videoId.videoId).isEqualTo("123")
-        assertThat(video.videoId.referenceId).isNotNull()
+        assertThat(video.playbackId.playbackId).isNotNull()
+        assertThat(video.playbackId.playbackProvider).isNotNull()
         assertThat(video.videoPlayback).isNull()
         assertThat(video.description).isNotEmpty()
         assertThat(video.title).isNotEmpty()
@@ -78,7 +79,7 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find videos with search query`() {
-        saveVideo(123, "Some title", "test description 3")
+        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
 
         val videos = videoService.findVideosBy(VideoSearchQuery(text = "test"))
 
@@ -95,7 +96,7 @@ class MysqlVideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `remove a video`() {
-        saveVideo(123, "Some title", "test description 3")
+        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
 
         val videoIdToBeDeleted = VideoId(videoId = "123")
         val videoToBeDeleted = videoService.findVideoBy(videoIdToBeDeleted)

@@ -3,6 +3,8 @@ package com.boclips.videos.service.application.video
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProvider
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -43,7 +45,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `requesting deletion removes the video from kaltura`() {
-        saveVideo(videoId = 123, referenceId = "ref-123")
+        saveVideo(videoId = 123, playbackId = PlaybackId(playbackId = "ref-123", playbackProvider = PlaybackProvider.KALTURA))
         kalturaClient.createMediaEntry("ref-123")
         assertThat(kalturaClient.getMediaEntriesByReferenceId("ref-123")).isNotEmpty()
 
