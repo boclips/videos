@@ -2,6 +2,8 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -36,8 +38,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `returns only playable videos`() {
         val videosWithPlayback = kalturaPlaybackProvider.getVideosWithPlayback(
                 listOf(
-                        createVideo(playbackId = "ref-id-1"),
-                        createVideo(playbackId = "ref-id-100")
+                        createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1")),
+                        createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-100"))
                 )
         )
 
@@ -53,7 +55,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
                 .referenceId("ref-123")
                 .build())
 
-        val video = createVideo(playbackId = "ref-123")
+        val video = createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-123"))
         kalturaPlaybackProvider.removePlayback(video)
 
         assertThat(kalturaPlaybackProvider.getVideosWithPlayback(listOf(video))).isEmpty()

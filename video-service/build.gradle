@@ -31,12 +31,14 @@ apply plugin: 'org.springframework.boot'
 group = 'com.boclips'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
         jvmTarget = "1.8"
     }
 }
+
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
@@ -53,6 +55,24 @@ allprojects {
 
 test {
     useJUnitPlatform()
+}
+
+sourceSets {
+    youtubeContractTest {
+        kotlin {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir 'src/test_youtube_contract/kotlin'
+        }
+        resources.srcDir file('src/test_youtube_contract/resources')
+    }
+}
+
+compileYoutubeContractTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
 }
 
 def junitVersion = "5.3.1"
@@ -78,6 +98,7 @@ dependencies {
     compile("mysql:mysql-connector-java:${mysqlConnectorJavaVersion}")
     compile("org.flywaydb:flyway-core:${flywayVersion}")
     compile('org.simplejavamail:simple-java-mail:5.0.8')
+    compile('com.google.apis:google-api-services-youtube:v3-rev206-1.25.0')
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
         exclude module: ['junit', 'mockito-core']
@@ -89,5 +110,21 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    testCompile 'org.yaml:snakeyaml:1.23'
+
+    youtubeContractTestCompile sourceSets.main.output
+
+    youtubeContractTestCompile configurations.compile
+    youtubeContractTestCompile configurations.testCompile
+
+    youtubeContractTestRuntime configurations.runtime
+    youtubeContractTestRuntime configurations.testRuntime
+}
+
+task testYoutubeContract(type: Test) {
+    testClassesDirs = sourceSets.youtubeContractTest.output.classesDirs
+    classpath = sourceSets.youtubeContractTest.runtimeClasspath
+
+    useJUnitPlatform()
 }
 

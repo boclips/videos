@@ -2,6 +2,8 @@ package com.boclips.videos.service.domain.service
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
@@ -25,7 +27,7 @@ class PlaybackServiceTest {
 
     @Test
     fun `returns playable video`() {
-        val videoWithPlayback = playbackService.getVideoWithPlayback(TestFactories.createVideo(playbackId = "ref-id-1"))
+        val videoWithPlayback = playbackService.getVideoWithPlayback(TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1")))
 
         assertThat(videoWithPlayback.videoPlayback).isNotNull()
         assertThat(videoWithPlayback.isPlayable()).isTrue()
@@ -33,7 +35,7 @@ class PlaybackServiceTest {
 
     @Test
     fun `removes a video`() {
-        val video = TestFactories.createVideo(playbackId = "ref-id-1")
+        val video = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1"))
         playbackService.removePlayback(video)
 
         assertThatThrownBy {

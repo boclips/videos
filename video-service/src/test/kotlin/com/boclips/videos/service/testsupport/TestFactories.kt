@@ -68,13 +68,13 @@ object TestFactories {
             contentProvider: String = "AP",
             videoPlayback: VideoPlayback? = null,
             videoId: String = "123",
-            playbackId: String? = "ref-id-1",
+            playbackId: PlaybackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1"),
             type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
             keywords: List<String> = listOf("keyword")
     ): Video {
         return Video(
                 videoId = VideoId(videoId = videoId),
-                playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = playbackId!!),
+                playbackId = playbackId,
                 title = title,
                 description = description,
                 keywords = keywords,
