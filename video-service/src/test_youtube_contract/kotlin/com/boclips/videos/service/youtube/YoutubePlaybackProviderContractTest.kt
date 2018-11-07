@@ -1,12 +1,9 @@
 package com.boclips.videos.service.youtube
 
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -37,13 +34,11 @@ class YoutubePlaybackProviderContractTest {
     @ArgumentsSource(PlaybackProviderArgumentProvider::class)
     internal fun `getVideosWithPlayback adds youtube playback information`(playbackProvider: PlaybackProvider) {
 
-        val video = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.YOUTUBE, playbackId = "4IYDb6K5UF8"))
+        val youtubePlayback = playbackProvider.retrievePlayback(listOf("4IYDb6K5UF8"))["4IYDb6K5UF8"]!!
 
-        val videoWithPlayback = playbackProvider.getVideosWithPlayback(listOf(video)).first()
+        assertThat(youtubePlayback).isInstanceOf(YoutubePlayback::class.java)
 
-        assertThat(videoWithPlayback.videoPlayback).isInstanceOf(YoutubePlayback::class.java)
-
-        val videoPlayback = videoWithPlayback.videoPlayback as YoutubePlayback
+        val videoPlayback = youtubePlayback as YoutubePlayback
 
         assertThat(videoPlayback.youtubeId).isEqualTo("4IYDb6K5UF8")
         assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://i.ytimg.com/vi/4IYDb6K5UF8/hqdefault.jpg")

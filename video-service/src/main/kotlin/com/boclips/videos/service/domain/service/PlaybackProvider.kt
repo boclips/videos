@@ -1,8 +1,8 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 
 interface PlaybackProvider {
-    fun getVideosWithPlayback(videos: List<Video>): List<Video>
-    fun removePlayback(video: Video)
+    fun retrievePlayback(videoIds: List<String>): Map<String, VideoPlayback>
+    fun removePlayback(videoId: String)
 }

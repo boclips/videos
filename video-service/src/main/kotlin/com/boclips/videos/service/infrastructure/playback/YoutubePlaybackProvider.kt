@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.playback
 
-import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
@@ -12,25 +11,12 @@ import java.time.Duration
 class YoutubePlaybackProvider(
         private val youtubeApiKey: String
 ) : PlaybackProvider {
-    override fun removePlayback(video: Video) {
-    }
-
-    override fun getVideosWithPlayback(videos: List<Video>): List<Video> {
-        val playbackInfoByYoutubeId = fetchPlaybackInfo(videos.map { video -> video.playbackId.playbackId })
-
-        return videos.map { video ->
-            video.copy(videoPlayback = playbackInfoByYoutubeId[video.playbackId.playbackId])
-        }
-    }
-
-    private fun fetchPlaybackInfo(youtubeIds: List<String>): Map<String, YoutubePlayback> {
+    override fun retrievePlayback(videoIds: List<String>): Map<String, YoutubePlayback> {
         val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
                 .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
                 .build()
-
         val videosListByIdRequest = youtube.videos().list("snippet,contentDetails")
-        videosListByIdRequest.id = youtubeIds.joinToString(separator = ",")
-
+        videosListByIdRequest.id = videoIds.joinToString(separator = ",")
         val response = videosListByIdRequest.execute()
         return response.items.map { item ->
             (item.id to YoutubePlayback(
@@ -40,4 +26,8 @@ class YoutubePlaybackProvider(
             ))
         }.toMap()
     }
+
+    override fun removePlayback(videoId: String) {
+    }
+
 }

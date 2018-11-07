@@ -48,7 +48,7 @@ class MysqlVideoService(
         logger.info { "Removed video ${video.videoId} from search index" }
         deleteById(video.videoId.videoId.toLong())
         logger.info { "Removed video ${video.videoId} from video repository" }
-        playbackVideo.removePlayback(video)
+        playbackVideo.removePlayback(video.playbackId.playbackId)
         logger.info { "Removed video ${video.videoId} from video host" }
     }
 

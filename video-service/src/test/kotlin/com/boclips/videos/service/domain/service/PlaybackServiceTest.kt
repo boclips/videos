@@ -26,11 +26,27 @@ class PlaybackServiceTest {
     }
 
     @Test
-    fun `returns playable video`() {
+    fun `getVideoWithPlayback returns a video with playback`() {
         val videoWithPlayback = playbackService.getVideoWithPlayback(TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1")))
 
         assertThat(videoWithPlayback.videoPlayback).isNotNull()
         assertThat(videoWithPlayback.isPlayable()).isTrue()
+    }
+
+    @Test
+    fun `getVideoWithPlayback throws an exception when playback not found`() {
+        val video = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-100"))
+
+        assertThatThrownBy {
+            playbackService.getVideoWithPlayback(video)
+        }.isInstanceOf(VideoPlaybackNotFound::class.java)
+    }
+
+    @Test
+    fun `getVideosWithPlayback skips an item when playback not found`() {
+        val video = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-100"))
+
+        assertThat(playbackService.getVideosWithPlayback(listOf(video))).isEmpty()
     }
 
     @Test

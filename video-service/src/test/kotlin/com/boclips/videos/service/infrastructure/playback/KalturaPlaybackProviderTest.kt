@@ -2,11 +2,8 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,13 +19,12 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns playable videos`() {
-        val videosWithPlayback = kalturaPlaybackProvider.getVideosWithPlayback(listOf(createVideo()))
+        val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf("ref-id-1"))
 
-        assertThat(videosWithPlayback).hasSize(1)
-        assertThat(videosWithPlayback[0].videoPlayback).isNotNull()
-        assertThat(videosWithPlayback[0].isPlayable()).isTrue()
+        assertThat(playbackById).hasSize(1)
+        assertThat(playbackById["ref-id-1"]).isNotNull
 
-        val videoPlayback = videosWithPlayback[0].videoPlayback!! as StreamPlayback
+        val videoPlayback = playbackById["ref-id-1"] as StreamPlayback
         assertThat(videoPlayback.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
         assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
         assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
@@ -36,16 +32,13 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns only playable videos`() {
-        val videosWithPlayback = kalturaPlaybackProvider.getVideosWithPlayback(
-                listOf(
-                        createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1")),
-                        createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-100"))
-                )
+        val videosWithPlayback = kalturaPlaybackProvider.retrievePlayback(
+                listOf("ref-id-1", "ref-id-100")
         )
 
         assertThat(videosWithPlayback).hasSize(1)
-        assertThat(videosWithPlayback[0].videoPlayback).isNotNull()
-        assertThat(videosWithPlayback[0].isPlayable()).isTrue()
+        assertThat(videosWithPlayback["ref-id-1"]).isNotNull
+        assertThat(videosWithPlayback["ref-id-100"]).isNull()
     }
 
     @Test
@@ -55,10 +48,9 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
                 .referenceId("ref-123")
                 .build())
 
-        val video = createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-123"))
-        kalturaPlaybackProvider.removePlayback(video)
+        kalturaPlaybackProvider.removePlayback("ref-id-123")
 
-        assertThat(kalturaPlaybackProvider.getVideosWithPlayback(listOf(video))).isEmpty()
+        assertThat(kalturaPlaybackProvider.retrievePlayback(listOf("ref-id-123"))).isEmpty()
     }
 
 }
