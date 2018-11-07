@@ -51,6 +51,11 @@ allprojects {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
+def junitVersion = "5.3.1"
 
 dependencies {
     compile project (':search-service')
@@ -74,10 +79,15 @@ dependencies {
     compile("org.flywaydb:flyway-core:${flywayVersion}")
     compile('org.simplejavamail:simple-java-mail:5.0.8')
 
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+        exclude module: ['junit', 'mockito-core']
+    }
     testCompile("org.springframework.security:spring-security-test:${springVersion}")
     testCompile("de.flapdoodle.embed:de.flapdoodle.embed.mongo:${flapdoodleVersion}")
     testCompile("com.h2database:h2:${h2Version}")
     testCompile("com.nhaarman:mockito-kotlin:1.5.0")
+    testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")
 }
 
