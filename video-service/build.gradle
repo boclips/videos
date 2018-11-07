@@ -82,6 +82,8 @@ task testYoutubeContract(type: Test) {
     useJUnitPlatform()
 }
 
+test.finalizedBy(testYoutubeContract)
+
 def junitVersion = "5.3.1"
 
 dependencies {
