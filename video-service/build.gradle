@@ -32,6 +32,17 @@ group = 'com.boclips'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
+sourceSets {
+    youtubeContractTest {
+        kotlin {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir 'src/test_youtube_contract/kotlin'
+        }
+        resources.srcDir file('src/test_youtube_contract/resources')
+    }
+}
+
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
@@ -40,6 +51,13 @@ compileKotlin {
 }
 
 compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
+compileYoutubeContractTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
         jvmTarget = "1.8"
@@ -57,28 +75,17 @@ test {
     useJUnitPlatform()
 }
 
-sourceSets {
-    youtubeContractTest {
-        kotlin {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir 'src/test_youtube_contract/kotlin'
-        }
-        resources.srcDir file('src/test_youtube_contract/resources')
-    }
-}
+task testYoutubeContract(type: Test) {
+    testClassesDirs = sourceSets.youtubeContractTest.output.classesDirs
+    classpath = sourceSets.youtubeContractTest.runtimeClasspath
 
-compileYoutubeContractTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
-    }
+    useJUnitPlatform()
 }
 
 def junitVersion = "5.3.1"
 
 dependencies {
-    compile project (':search-service')
+    compile project(':search-service')
 
     compile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
@@ -110,7 +117,7 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-    testCompile 'org.yaml:snakeyaml:1.23'
+    testCompile('org.yaml:snakeyaml:1.23')
 
     youtubeContractTestCompile sourceSets.main.output
 
@@ -120,11 +127,3 @@ dependencies {
     youtubeContractTestRuntime configurations.runtime
     youtubeContractTestRuntime configurations.testRuntime
 }
-
-task testYoutubeContract(type: Test) {
-    testClassesDirs = sourceSets.youtubeContractTest.output.classesDirs
-    classpath = sourceSets.youtubeContractTest.runtimeClasspath
-
-    useJUnitPlatform()
-}
-
