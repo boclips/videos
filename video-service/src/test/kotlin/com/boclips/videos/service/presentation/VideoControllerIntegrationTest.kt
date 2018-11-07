@@ -7,8 +7,8 @@ import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
@@ -19,7 +19,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    @Before
+    @BeforeEach
     fun setUp() {
         saveVideo(videoId = 123,
                 playbackId = PlaybackId(playbackId = "ref-id-1", playbackProviderType = PlaybackProviderType.KALTURA),

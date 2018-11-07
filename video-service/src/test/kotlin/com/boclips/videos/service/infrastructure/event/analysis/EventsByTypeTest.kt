@@ -3,7 +3,7 @@ package com.boclips.videos.service.infrastructure.event.analysis
 import com.boclips.videos.service.infrastructure.event.analysis.GroupEventsByType.groupByType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class GroupEventsByTypeTest {
 

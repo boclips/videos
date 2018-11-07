@@ -8,7 +8,7 @@ import com.boclips.videos.service.presentation.video.playback.StreamPlaybackReso
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class GetVideosTest : AbstractSpringIntegrationTest() {

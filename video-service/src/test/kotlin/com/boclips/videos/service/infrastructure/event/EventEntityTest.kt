@@ -3,7 +3,7 @@ package com.boclips.videos.service.infrastructure.event
 import com.boclips.videos.service.infrastructure.event.types.EventEntity
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime

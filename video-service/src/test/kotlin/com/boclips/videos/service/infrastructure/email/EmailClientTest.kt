@@ -2,8 +2,8 @@ package com.boclips.videos.service.infrastructure.email
 
 import com.nhaarman.mockito_kotlin.any
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
 import org.simplejavamail.email.Email
@@ -15,7 +15,7 @@ class EmailClientTest {
     private lateinit var mailerMock: Mailer
     private lateinit var emailService: EmailClient
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mailerMock = Mockito.mock(Mailer::class.java)
         emailService = EmailClient(mailerMock, mockEnvironment())

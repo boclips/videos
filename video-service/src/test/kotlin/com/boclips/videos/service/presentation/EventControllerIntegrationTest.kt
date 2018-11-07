@@ -1,14 +1,14 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
+import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asReporter
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc

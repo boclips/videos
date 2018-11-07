@@ -1,8 +1,7 @@
 package com.boclips.videos.service.infrastructure.event.analysis
 
-import com.boclips.videos.service.infrastructure.event.analysis.DurationFormatter
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 
 class DurationFormatterTest {

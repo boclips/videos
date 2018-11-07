@@ -11,5 +11,6 @@ interface VideoService {
     fun findVideosBy(videoIds: List<VideoId>): List<Video>
     @Throws(VideoNotFoundException::class)
     fun findVideoBy(videoId: VideoId): Video
+
     fun removeVideo(video: Video)
 }

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.email
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class NoResultsEmailTest {
     @Test

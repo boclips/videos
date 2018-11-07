@@ -4,7 +4,6 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotDeleted
-import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.service.PlaybackProvider

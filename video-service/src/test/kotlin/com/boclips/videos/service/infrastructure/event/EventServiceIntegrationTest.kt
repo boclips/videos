@@ -1,12 +1,11 @@
 package com.boclips.videos.service.infrastructure.event
 
-import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.ZonedDateTime
 

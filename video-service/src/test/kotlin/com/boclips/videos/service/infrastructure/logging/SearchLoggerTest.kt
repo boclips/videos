@@ -2,13 +2,12 @@ package com.boclips.videos.service.infrastructure.logging
 
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.types.SearchEventData
-import com.boclips.videos.service.infrastructure.logging.SearchLogger
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.mock.web.MockHttpServletRequest
@@ -21,7 +20,7 @@ class SearchLoggerTest {
     lateinit var eventService: EventService
     lateinit var searchLogger: SearchLogger
 
-    @Before
+    @BeforeEach
     fun setUp() {
         eventService = mock()
         searchLogger = SearchLogger(eventService)

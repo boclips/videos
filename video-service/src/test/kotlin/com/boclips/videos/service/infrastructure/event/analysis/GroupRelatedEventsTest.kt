@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.event.analysis
 
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 
 class GroupRelatedEventsTest {
@@ -20,6 +20,7 @@ class GroupRelatedEventsTest {
         assertThat(groupes.searches.first().searchEvent).isEqualTo(searchEvent)
         assertThat(groupes.searches.first().playbackEvents).isEqualTo(listOf(playbackEvent))
     }
+
     @Test
     fun `does not attach playback event to search when searchId is null`() {
 
@@ -33,6 +34,7 @@ class GroupRelatedEventsTest {
         assertThat(groupes.searches.first().searchEvent).isEqualTo(searchEvent)
         assertThat(groupes.searches.first().playbackEvents).isEmpty()
     }
+
     @Test
     fun `ignores playback event when searchId exists but does not match any search event`() {
 

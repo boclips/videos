@@ -9,13 +9,13 @@ import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class PlaybackServiceTest {
     lateinit var playbackService: PlaybackService
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val kalturaClient = TestKalturaClient()
         kalturaClient.addMediaEntry(createMediaEntry(referenceId = "ref-id-1"))

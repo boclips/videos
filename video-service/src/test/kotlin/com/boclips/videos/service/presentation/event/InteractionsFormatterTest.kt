@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation.event
 
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.time.ZoneOffset
 import java.time.ZonedDateTime

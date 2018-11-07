@@ -7,8 +7,8 @@ import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThatCode
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 
 class CreateEventTest {
@@ -32,7 +32,7 @@ class CreateEventTest {
     lateinit var createEvent: CreateEvent
     lateinit var emailClient: EmailClient
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val eventService = mock(EventService::class.java)
         emailClient = mock(EmailClient::class.java)

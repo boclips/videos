@@ -7,19 +7,19 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
-import org.junit.Before
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.jdbc.JdbcTestUtils
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
+@ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test", "fake-kaltura", "fake-search")
 abstract class AbstractSpringIntegrationTest {
@@ -39,7 +39,7 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var eventService: EventService
 
-    @Before
+    @BeforeEach
     fun resetState() {
         repos.forEach { it.deleteAll() }
 
