@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import mu.KLogging
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

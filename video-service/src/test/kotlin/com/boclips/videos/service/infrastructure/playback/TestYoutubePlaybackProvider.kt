@@ -8,7 +8,12 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
     private val playbackById = mutableMapOf<String, YoutubePlayback>()
 
     override fun retrievePlayback(videoIds: List<String>): Map<String, YoutubePlayback> {
-        return videoIds.map { id -> (id to playbackById[id]!!) }.toMap()
+        return videoIds
+                .mapNotNull map@{ id ->
+                    val youtubePlayback = playbackById[id] ?: return@map null
+                    (id to youtubePlayback)
+                }
+                .toMap()
     }
 
     override fun removePlayback(videoId: String) {

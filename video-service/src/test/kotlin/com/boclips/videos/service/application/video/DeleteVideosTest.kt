@@ -47,7 +47,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
     fun `requesting deletion removes the video from kaltura`() {
         saveVideo(videoId = 123, playbackId = PlaybackId(playbackId = "ref-123", playbackProviderType = PlaybackProviderType.KALTURA))
         kalturaClient.createMediaEntry("ref-123")
-        assertThat(kalturaClient.getMediaEntriesByReferenceId("ref-123")).isNotEmpty()
+        assertThat(kalturaClient.getMediaEntriesByReferenceId("ref-123")).isNotEmpty
 
         deleteVideos.execute("123")
 

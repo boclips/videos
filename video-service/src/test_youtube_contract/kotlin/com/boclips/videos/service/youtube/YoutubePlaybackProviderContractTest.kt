@@ -16,6 +16,38 @@ import java.time.Duration
 import java.util.stream.Stream
 
 
+class YoutubePlaybackProviderContractTest {
+    @ParameterizedTest
+    @ArgumentsSource(PlaybackProviderArgumentProvider::class)
+    fun `retrievePlayback adds youtube playback information`(playbackProvider: PlaybackProvider) {
+        val youtubePlayback = playbackProvider.retrievePlayback(listOf("4IYDb6K5UF8"))["4IYDb6K5UF8"]!!
+
+        assertThat(youtubePlayback).isInstanceOf(YoutubePlayback::class.java)
+
+        val videoPlayback = youtubePlayback as YoutubePlayback
+
+        assertThat(videoPlayback.youtubeId).isEqualTo("4IYDb6K5UF8")
+        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://i.ytimg.com/vi/4IYDb6K5UF8/hqdefault.jpg")
+        assertThat(videoPlayback.duration).isEqualTo(Duration.ofMinutes(1).plusSeconds(59))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(PlaybackProviderArgumentProvider::class)
+    fun `retrievePlayback can deal with empty requests`(playbackProvider: PlaybackProvider) {
+        val youtubePlayback = playbackProvider.retrievePlayback(emptyList())
+
+        assertThat(youtubePlayback).isEmpty()
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(PlaybackProviderArgumentProvider::class)
+    fun `retrievePlayback can omits videos which cannot be located`(playbackProvider: PlaybackProvider) {
+        val youtubePlayback = playbackProvider.retrievePlayback(listOf("1239123jkdsfajkadsfasdf"))
+
+        assertThat(youtubePlayback).isEmpty()
+    }
+}
+
 class PlaybackProviderArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
         val testYoutubePlaybackProvider = TestYoutubePlaybackProvider()
@@ -26,23 +58,6 @@ class PlaybackProviderArgumentProvider : ArgumentsProvider {
                 testYoutubePlaybackProvider,
                 realYoutubePlaybackProvider
         ).map { playbackProvider -> Arguments.of(playbackProvider) }
-    }
-}
-
-class YoutubePlaybackProviderContractTest {
-    @ParameterizedTest
-    @ArgumentsSource(PlaybackProviderArgumentProvider::class)
-    internal fun `getVideosWithPlayback adds youtube playback information`(playbackProvider: PlaybackProvider) {
-
-        val youtubePlayback = playbackProvider.retrievePlayback(listOf("4IYDb6K5UF8"))["4IYDb6K5UF8"]!!
-
-        assertThat(youtubePlayback).isInstanceOf(YoutubePlayback::class.java)
-
-        val videoPlayback = youtubePlayback as YoutubePlayback
-
-        assertThat(videoPlayback.youtubeId).isEqualTo("4IYDb6K5UF8")
-        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://i.ytimg.com/vi/4IYDb6K5UF8/hqdefault.jpg")
-        assertThat(videoPlayback.duration).isEqualTo(Duration.ofMinutes(1).plusSeconds(59))
     }
 }
 

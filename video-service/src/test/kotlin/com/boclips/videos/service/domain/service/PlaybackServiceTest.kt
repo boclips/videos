@@ -5,12 +5,14 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
+import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.Duration
 
 class PlaybackServiceTest {
     lateinit var playbackService: PlaybackService
@@ -21,8 +23,10 @@ class PlaybackServiceTest {
         kalturaClient.addMediaEntry(createMediaEntry(referenceId = "ref-id-1"))
 
         val kalturaPlaybackProvider = KalturaPlaybackProvider(kalturaClient)
+        val youtubePlaybackProvider = TestYoutubePlaybackProvider()
+        youtubePlaybackProvider.addVideo("yt-123", "thumbnail", Duration.ZERO)
 
-        playbackService = PlaybackService(kalturaPlaybackProvider)
+        playbackService = PlaybackService(kalturaPlaybackProvider, youtubePlaybackProvider)
     }
 
     @Test
@@ -47,6 +51,14 @@ class PlaybackServiceTest {
         val video = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-100"))
 
         assertThat(playbackService.getVideosWithPlayback(listOf(video))).isEmpty()
+    }
+
+    @Test
+    fun `getVideosWithPlayback populates Playback information from Youtube and Kaltura`() {
+        val kalturaVideo = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1"))
+        val youtubeVideo = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.YOUTUBE, playbackId = "yt-123"))
+
+        assertThat(playbackService.getVideosWithPlayback(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
     }
 
     @Test

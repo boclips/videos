@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideos
 import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.PlaybackService
 import com.boclips.videos.service.domain.service.VideoService
@@ -18,10 +19,12 @@ import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
+import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.task.TaskExecutor
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -49,22 +52,28 @@ class ApplicationConfig {
     @Bean
     fun videoService(searchService: SearchService,
                      jdbcTemplate: NamedParameterJdbcTemplate,
-                     playbackProvider: PlaybackProvider): VideoService {
+                     kalturaPlaybackProvider: PlaybackProvider): VideoService {
         return MysqlVideoService(
                 searchService = searchService,
                 jdbcTemplate = jdbcTemplate,
-                playbackVideo = playbackProvider
+                playbackVideo = kalturaPlaybackProvider
         )
     }
 
     @Bean
-    fun playbackService(kalturaPlaybackProvider: PlaybackProvider): PlaybackService {
-        return PlaybackService(kalturaPlaybackProvider = kalturaPlaybackProvider)
+    fun playbackService(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider): PlaybackService {
+        return PlaybackService(kalturaPlaybackProvider = kalturaPlaybackProvider, youtubePlaybackProvider = youtubePlaybackProvider)
     }
 
     @Bean
     fun kalturaPlaybackProvider(kalturaClient: KalturaClient): PlaybackProvider {
         return KalturaPlaybackProvider(kalturaClient = kalturaClient)
+    }
+
+    @Bean
+    @Profile("!fakes")
+    fun youtubePlaybackProvider(youtubeProperties: YoutubeProperties): PlaybackProvider {
+        return YoutubePlaybackProvider(youtubeProperties.apiKey)
     }
 
     @Bean

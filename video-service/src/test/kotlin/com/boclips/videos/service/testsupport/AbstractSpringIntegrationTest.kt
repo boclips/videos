@@ -6,6 +6,7 @@ import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -17,11 +18,12 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.jdbc.JdbcTestUtils
+import java.time.Duration
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test", "fake-kaltura", "fake-search")
+@ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube")
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
@@ -37,6 +39,9 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var fakeKalturaClient: TestKalturaClient
 
     @Autowired
+    lateinit var fakeYoutubePlaybackProvider: TestYoutubePlaybackProvider
+
+    @Autowired
     lateinit var eventService: EventService
 
     @BeforeEach
@@ -50,6 +55,8 @@ abstract class AbstractSpringIntegrationTest {
         fakeKalturaClient.addMediaEntry(createMediaEntry("3"))
         fakeKalturaClient.addMediaEntry(createMediaEntry("4"))
         fakeKalturaClient.addMediaEntry(createMediaEntry("5"))
+
+        fakeYoutubePlaybackProvider.addVideo("yt-1", "http://some/thumbnail.terry", Duration.ofMinutes(3))
     }
 
     fun saveVideo(videoId: Long,
