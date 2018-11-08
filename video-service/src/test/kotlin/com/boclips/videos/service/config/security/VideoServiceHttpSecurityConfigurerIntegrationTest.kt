@@ -72,13 +72,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `get videos as different users`() {
-        saveVideo(videoId = 123,
-                playbackId = PlaybackId(playbackId = "ref-id-1", playbackProviderType = PlaybackProviderType.KALTURA),
-                title = "powerful video about elephants",
-                description = "test description 3",
-                date = "2018-02-11",
-                duration = "00:01:00",
-                contentProvider = "cp")
+        saveVideo(videoId = 123)
 
         mockMvc.perform(get("/v1/videos?query=test"))
                 .andExpect(status().isForbidden)
@@ -101,13 +95,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `remove videos requires a special role`() {
-        saveVideo(videoId = 123,
-                playbackId = PlaybackId(playbackId = "ref-id-1", playbackProviderType = PlaybackProviderType.KALTURA),
-                title = "powerful video about elephants",
-                description = "test description 3",
-                date = "2018-02-11",
-                duration = "00:01:00",
-                contentProvider = "cp")
+        saveVideo(videoId = 123)
 
         mockMvc.perform(delete("/v1/videos/123"))
                 .andExpect(status().isForbidden)

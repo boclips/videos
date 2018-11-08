@@ -11,18 +11,11 @@ import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.hateoas.Resource
 
-class GetVideos(
+class GetVideosByQuery(
         private val videoService: VideoService,
         private val playbackService: PlaybackService,
         private val videoToResourceConverter: VideoToResourceConverter
 ) {
-    fun execute(videoId: String): VideoResource {
-        val videoWithoutPlayback = videoService.findVideoBy(VideoId(videoId = videoId))
-        val videoWithPlayback: Video = playbackService.getVideoWithPlayback(videoWithoutPlayback)
-
-        return videoToResourceConverter.convert(videoWithPlayback)
-    }
-
     fun execute(query: String?): List<Resource<VideoResource>> {
         query ?: throw QueryValidationException()
 

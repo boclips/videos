@@ -12,9 +12,7 @@ class VideoToResourceConverter {
     }
 
     fun convert(videos: List<Video>): List<VideoResource> {
-        return videos.map { video ->
-            convert(video)
-        }
+        return videos.map(this::toResource)
     }
 
     private fun toResource(video: Video): VideoResource {
@@ -29,8 +27,8 @@ class VideoToResourceConverter {
             val playback = video.videoPlayback!!
 
             val playbackResource = when (playback) {
-                is StreamPlayback -> StreamPlaybackResource(streamUrl = playback.streamUrl)
-                is YoutubePlayback -> YoutubePlaybackResource(youtubeId = playback.youtubeId)
+                is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.streamUrl)
+                is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE", youtubeId = playback.youtubeId)
                 else -> throw Exception()
             }
             playbackResource.thumbnailUrl = video.videoPlayback.thumbnailUrl

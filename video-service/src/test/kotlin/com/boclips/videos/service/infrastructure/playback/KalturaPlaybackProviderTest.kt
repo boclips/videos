@@ -4,6 +4,7 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +20,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns playable videos`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
+
         val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf("ref-id-1"))
 
         assertThat(playbackById).hasSize(1)
@@ -32,6 +35,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns only playable videos`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
+
         val videosWithPlayback = kalturaPlaybackProvider.retrievePlayback(
                 listOf("ref-id-1", "ref-id-100")
         )

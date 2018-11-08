@@ -5,9 +5,7 @@ import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoType
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
@@ -113,14 +111,22 @@ object TestFactories {
         )
     }
 
-    fun createMediaEntry(id: String = "1", referenceId: String = "ref-id-$id"): MediaEntry? {
+    fun createMediaEntry(id: String = "1", referenceId: String = "ref-id-$id", duration: Duration = Duration.ofMinutes(1)): MediaEntry? {
         return MediaEntry.builder()
                 .id(id)
                 .referenceId(referenceId)
                 .streams(StreamUrls("https://stream/[FORMAT]/video-$id.mp4"))
                 .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
-                .duration(Duration.ofMinutes(1))
+                .duration(duration)
                 .build()
+    }
+
+    fun createKalturaPlayback(): StreamPlayback {
+        return StreamPlayback(streamUrl = "kaltura-stream", thumbnailUrl = "kaltura-thumbnail", duration = Duration.ofSeconds(11))
+    }
+
+    fun createYoutubePlayback(): YoutubePlayback {
+        return YoutubePlayback(youtubeId = "youtube-id", thumbnailUrl = "youtube-thumbnail", duration = Duration.ofSeconds(21))
     }
 
 }

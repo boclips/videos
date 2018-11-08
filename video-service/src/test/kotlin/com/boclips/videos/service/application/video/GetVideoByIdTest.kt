@@ -11,35 +11,37 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class GetVideosTest : AbstractSpringIntegrationTest() {
+class GetVideoByIdTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var getVideos: GetVideos
+    lateinit var getVideoById: GetVideoById
 
     @Test
-    fun `getting a single video returns the video with playback information if present`() {
+    fun `video with playback information returned if present`() {
         saveVideo(videoId = 1)
 
-        val video = getVideos.execute("1")
+        val video = getVideoById.execute("1")
 
         assertThat(video).isNotNull
         assertThat(video.id).isEqualTo("1")
 
         val streamPlaybackResource = video.playback as StreamPlaybackResource
-        assertThat(streamPlaybackResource.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
-        assertThat(streamPlaybackResource.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
+        assertThat(streamPlaybackResource.streamUrl).isEqualTo("https://stream/mpegdash/video-entry-1.mp4")
+        assertThat(streamPlaybackResource.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-1.mp4")
     }
 
     @Test
-    fun `getting a single video throws if no playback information if present`() {
+    fun `throws if no playback information if present`() {
         saveVideo(videoId = 123, playbackId = PlaybackId(playbackId = "1111", playbackProviderType = PlaybackProviderType.KALTURA))
 
-        assertThatThrownBy { getVideos.execute("123") }.isInstanceOf(VideoPlaybackNotFound::class.java)
+        fakeKalturaClient.clear()
+
+        assertThatThrownBy { getVideoById.execute("123") }.isInstanceOf(VideoPlaybackNotFound::class.java)
     }
 
     @Test
-    fun `getting a single video that does not exist throws`() {
-        assertThatThrownBy { getVideos.execute("123") }.isInstanceOf(VideoNotFoundException::class.java)
+    fun `throws if a video does not exist throws`() {
+        assertThatThrownBy { getVideoById.execute("123") }.isInstanceOf(VideoNotFoundException::class.java)
     }
 
 }

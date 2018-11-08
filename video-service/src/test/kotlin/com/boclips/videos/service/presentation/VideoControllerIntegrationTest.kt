@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.time.Duration
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -26,12 +27,22 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 title = "powerful video about elephants",
                 description = "test description 3",
                 date = "2018-02-11",
-                duration = "00:01:00",
-                contentProvider = "cp")
+                duration = Duration.ofSeconds(23),
+                contentProvider = "cp"
+        )
+
+        saveVideo(videoId = 124,
+                playbackId = PlaybackId(playbackId = "yt-id-124", playbackProviderType = PlaybackProviderType.YOUTUBE),
+                title = "elaphants took out jobs",
+                description = "it's a video from youtube",
+                date = "2017-02-11",
+                duration = Duration.ofSeconds(56),
+                contentProvider = "cp2"
+        )
     }
 
     @Test
-    fun `returns 200 videos with text query`() {
+    fun `returns Kaltura videos when query matches`() {
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("123")))
@@ -39,10 +50,27 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp")))
-                .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT1M")))
-                .andExpect(jsonPath("$._embedded.videos[0].playback.streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
-                .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.streamUrl", equalTo("https://stream/mpegdash/video-entry-123.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
+    }
+
+    @Test
+    fun `returns Youtube videos when query matches`() {
+        mockMvc.perform(get("/v1/videos?query=jobs").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("124")))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elaphants took out jobs")))
+                .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a video from youtube")))
+                .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2017-02-11")))
+                .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp2")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("YOUTUBE")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT56S")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.youtubeId", equalTo("yt-id-124")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://youtube.com/thumb/yt-id-124.png")))
+                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/124")))
     }
 
     @Test
@@ -67,9 +95,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$.contentProvider", equalTo("cp")))
-                .andExpect(jsonPath("$.playback.duration", equalTo("PT1M")))
-                .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/mpegdash/video-1.mp4")))
-                .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-1.mp4")))
+                .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
+                .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/mpegdash/video-entry-123.mp4")))
+                .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/123")))
     }
 

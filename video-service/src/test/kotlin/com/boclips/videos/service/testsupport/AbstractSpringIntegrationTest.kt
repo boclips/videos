@@ -5,6 +5,8 @@ import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
@@ -50,21 +52,17 @@ abstract class AbstractSpringIntegrationTest {
 
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
-        fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
-        fakeKalturaClient.addMediaEntry(createMediaEntry("2"))
-        fakeKalturaClient.addMediaEntry(createMediaEntry("3"))
-        fakeKalturaClient.addMediaEntry(createMediaEntry("4"))
-        fakeKalturaClient.addMediaEntry(createMediaEntry("5"))
-
-        fakeYoutubePlaybackProvider.addVideo("yt-1", "http://some/thumbnail.terry", Duration.ofMinutes(3))
+        fakeSearchService.resetIndex()
+        fakeYoutubePlaybackProvider.clear()
+        fakeKalturaClient.clear()
     }
 
     fun saveVideo(videoId: Long,
-                  playbackId: PlaybackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-$videoId"),
+                  playbackId: PlaybackId = PlaybackId(playbackProviderType = KALTURA, playbackId = "ref-id-$videoId"),
                   title: String = "Some title!",
                   description: String = "Some description!",
                   date: String = "2018-01-01",
-                  duration: String = "00:10:00",
+                  duration: Duration = Duration.ofSeconds(10),
                   contentProvider: String = "AP",
                   typeId: Int = 3,
                   keywords: List<String> = emptyList()
@@ -84,10 +82,9 @@ abstract class AbstractSpringIntegrationTest {
                 playback_provider
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, duration, playbackId.playbackId, keywords.joinToString(separator = ","), typeId, playbackId.playbackId, playbackId.playbackProviderType.name
+                videoId, contentProvider, title, description, date, "00:00:00", playbackId.playbackId, keywords.joinToString(separator = ","), typeId, playbackId.playbackId, playbackId.playbackProviderType.name
         )
 
-        fakeSearchService.resetIndex()
         fakeSearchService.upsert(VideoMetadata(
                 id = videoId.toString(),
                 title = title,
@@ -95,6 +92,11 @@ abstract class AbstractSpringIntegrationTest {
                 contentProvider = contentProvider,
                 keywords = emptyList()
         ))
+
+        when(playbackId.playbackProviderType) {
+            KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.playbackId, duration = duration))
+            YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(playbackId.playbackId, "https://youtube.com/thumb/${playbackId.playbackId}.png", duration = duration)
+        }
     }
 
 

@@ -1,7 +1,8 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.video.DeleteVideos
-import com.boclips.videos.service.application.video.GetVideos
+import com.boclips.videos.service.application.video.GetVideoById
+import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/videos")
 class VideoController(
-        private val getVideos: GetVideos,
+        private val getVideoById: GetVideoById,
+        private val getVideosByQuery: GetVideosByQuery,
         private val deleteVideos: DeleteVideos
 ) {
     companion object {
@@ -27,14 +29,14 @@ class VideoController(
     @GetMapping
     @SearchLogging
     fun search(@RequestParam("query") query: String?): ResponseEntity<Resources<*>> {
-        val results = getVideos.execute(query).let(HateoasEmptyCollection::fixIfEmptyCollection)
+        val results = getVideosByQuery.execute(query).let(HateoasEmptyCollection::fixIfEmptyCollection)
 
         return ResponseEntity(Resources(results), HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {
-        val video = getVideos.execute(id!!)
+        val video = getVideoById.execute(id!!)
 
         return Resource(video, getVideoLink(video.id, "self"))
     }

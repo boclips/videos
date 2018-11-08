@@ -23,4 +23,8 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
         playbackById[youtubeId] = YoutubePlayback(youtubeId, thumbnailUrl, duration)
         return this
     }
+
+    fun clear() {
+        playbackById.clear()
+    }
 }

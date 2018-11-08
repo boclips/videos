@@ -7,7 +7,8 @@ import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.application.video.DeleteVideos
-import com.boclips.videos.service.application.video.GetVideos
+import com.boclips.videos.service.application.video.GetVideoById
+import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.service.PlaybackProvider
@@ -35,10 +36,20 @@ import java.util.concurrent.Executors
 @Configuration
 class ApplicationConfig {
     @Bean
-    fun getVideos(searchService: SearchService,
+    fun getVideoById(searchService: SearchService,
                   videoService: VideoService,
                   playbackService: PlaybackService) =
-            GetVideos(
+            GetVideoById(
+                    videoService = videoService,
+                    videoToResourceConverter = VideoToResourceConverter(),
+                    playbackService = playbackService
+            )
+
+    @Bean
+    fun getVideosByQuery(searchService: SearchService,
+                  videoService: VideoService,
+                  playbackService: PlaybackService) =
+            GetVideosByQuery(
                     videoService = videoService,
                     videoToResourceConverter = VideoToResourceConverter(),
                     playbackService = playbackService
