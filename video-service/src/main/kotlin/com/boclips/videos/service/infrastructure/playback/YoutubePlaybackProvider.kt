@@ -8,13 +8,17 @@ import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeRequestInitializer
 import java.time.Duration
 
-class YoutubePlaybackProvider(
-        private val youtubeApiKey: String
-) : PlaybackProvider {
+class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
+
+    private val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
+            .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
+            .build()
+
     override fun retrievePlayback(videoIds: List<String>): Map<String, YoutubePlayback> {
-        val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
-                .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
-                .build()
+        if(videoIds.isEmpty()) {
+            return emptyMap()
+        }
+
         val videosListByIdRequest = youtube.videos().list("snippet,contentDetails")
         videosListByIdRequest.id = videoIds.joinToString(separator = ",")
         val response = videosListByIdRequest.execute()
