@@ -98,7 +98,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
 
     compile('com.github.knowledgemotion:boclips-spring-security:0.8.0')
-    compile("com.github.knowledgemotion:kaltura-client:0.36.0")
+    compile("com.github.knowledgemotion:kaltura-client:0.38.0")
 
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
