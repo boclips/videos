@@ -30,20 +30,11 @@ class PlaybackServiceTest {
     }
 
     @Test
-    fun `getVideoWithPlayback returns a video with playback`() {
-        val videoWithPlayback = playbackService.getVideoWithPlayback(TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1")))
+    fun `getVideosWithPlayback returns videos with playback`() {
+        val videoWithPlayback = playbackService.getVideosWithPlayback(listOf(TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1"))))
 
-        assertThat(videoWithPlayback.videoPlayback).isNotNull()
-        assertThat(videoWithPlayback.isPlayable()).isTrue()
-    }
-
-    @Test
-    fun `getVideoWithPlayback throws an exception when playback not found`() {
-        val video = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-100"))
-
-        assertThatThrownBy {
-            playbackService.getVideoWithPlayback(video)
-        }.isInstanceOf(VideoPlaybackNotFound::class.java)
+        assertThat(videoWithPlayback.first().videoPlayback).isNotNull
+        assertThat(videoWithPlayback.first().isPlayable()).isTrue()
     }
 
     @Test
@@ -66,9 +57,7 @@ class PlaybackServiceTest {
         val video = TestFactories.createVideo(playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1"))
         playbackService.removePlayback(video)
 
-        assertThatThrownBy {
-            playbackService.getVideoWithPlayback(video)
-        }.isInstanceOf(VideoPlaybackNotFound::class.java)
+        assertThat(playbackService.getVideosWithPlayback(listOf(video))).isEmpty()
     }
 
 }

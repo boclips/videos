@@ -29,17 +29,22 @@ class VideoController(
     @GetMapping
     @SearchLogging
     fun search(@RequestParam("query") query: String?): ResponseEntity<Resources<*>> {
-        val results = getVideosByQuery.execute(query).let(HateoasEmptyCollection::fixIfEmptyCollection)
+        val results = getVideosByQuery.execute(query)
+                .map(this::videoToResource)
+                .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
         return ResponseEntity(Resources(results), HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
     fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {
-        val video = getVideoById.execute(id!!)
+        val video = getVideoById.execute(id)
 
-        return Resource(video, getVideoLink(video.id, "self"))
+        return videoToResource(video)
     }
+
+    private fun videoToResource(videoResource: VideoResource) =
+            Resource(videoResource, getVideoLink(videoResource.id, "self"))
 
     @DeleteMapping("/{id}")
     fun deleteVideo(@PathVariable("id") id: String?) {

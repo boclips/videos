@@ -13,6 +13,7 @@ import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.PlaybackService
+import com.boclips.videos.service.domain.service.VideoRepository
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.domain.service.filters.TeacherContentFilter
 import com.boclips.videos.service.infrastructure.email.EmailClient
@@ -21,7 +22,7 @@ import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
-import com.boclips.videos.service.infrastructure.video.MysqlVideoService
+import com.boclips.videos.service.infrastructure.video.MysqlVideoRepository
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -36,23 +37,19 @@ import java.util.concurrent.Executors
 @Configuration
 class ApplicationConfig {
     @Bean
-    fun getVideoById(searchService: SearchService,
-                  videoService: VideoService,
-                  playbackService: PlaybackService) =
+    fun getVideoById(searchService: SearchService, videoService: VideoService) =
             GetVideoById(
                     videoService = videoService,
-                    videoToResourceConverter = VideoToResourceConverter(),
-                    playbackService = playbackService
+                    videoToResourceConverter = VideoToResourceConverter()
             )
 
     @Bean
     fun getVideosByQuery(searchService: SearchService,
-                  videoService: VideoService,
-                  playbackService: PlaybackService) =
+                         videoService: VideoService,
+                         playbackService: PlaybackService) =
             GetVideosByQuery(
                     videoService = videoService,
-                    videoToResourceConverter = VideoToResourceConverter(),
-                    playbackService = playbackService
+                    videoToResourceConverter = VideoToResourceConverter()
             )
 
     @Bean
@@ -61,14 +58,21 @@ class ApplicationConfig {
     }
 
     @Bean
-    fun videoService(searchService: SearchService,
-                     jdbcTemplate: NamedParameterJdbcTemplate,
-                     kalturaPlaybackProvider: PlaybackProvider): VideoService {
-        return MysqlVideoService(
+    fun videoService(
+            videoRepository: VideoRepository,
+            searchService: SearchService,
+            playbackService: PlaybackService
+    ): VideoService {
+        return VideoService(
+                videoRepository = videoRepository,
                 searchService = searchService,
-                jdbcTemplate = jdbcTemplate,
-                playbackVideo = kalturaPlaybackProvider
+                playbackService = playbackService
         )
+    }
+
+    @Bean
+    fun videoRepository(jdbcTemplate: NamedParameterJdbcTemplate): VideoRepository {
+        return MysqlVideoRepository(jdbcTemplate)
     }
 
     @Bean
@@ -122,11 +126,12 @@ class ApplicationConfig {
     }
 
     @Bean
-    fun rebuildSearchIndex(videoService: VideoService, searchService: com.boclips.search.service.domain.SearchService, teacherContentFilter: TeacherContentFilter): RebuildSearchIndex {
+    fun rebuildSearchIndex(videoRepository: VideoRepository, searchService: com.boclips.search.service.domain.SearchService, teacherContentFilter: TeacherContentFilter): RebuildSearchIndex {
         return RebuildSearchIndex(
-                videoService = videoService,
+                videoRepository = videoRepository,
                 searchService = searchService,
-                teacherContentFilter = teacherContentFilter)
+                teacherContentFilter = teacherContentFilter
+        )
     }
 
     @Bean

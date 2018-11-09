@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 
@@ -18,11 +17,6 @@ class PlaybackService(val kalturaPlaybackProvider: PlaybackProvider, val youtube
 
             video.copy(videoPlayback = videoPlayback)
         }
-    }
-
-    fun getVideoWithPlayback(video: Video): Video {
-        val videosWithPlayback = getVideosWithPlayback(listOf(video))
-        return videosWithPlayback.firstOrNull() ?: throw VideoPlaybackNotFound()
     }
 
     fun removePlayback(video: Video) {
