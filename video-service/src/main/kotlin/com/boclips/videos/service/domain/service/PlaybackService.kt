@@ -1,25 +1,29 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 
 class PlaybackService(val kalturaPlaybackProvider: PlaybackProvider, val youtubePlaybackProvider: PlaybackProvider) {
 
-    fun getVideosWithPlayback(videos: List<Video>): List<Video> {
-        val kalturaPlaybackById = kalturaPlaybackProvider.retrievePlayback(videos.filter { video -> video.playbackId.playbackProviderType == PlaybackProviderType.KALTURA }.map { video -> video.playbackId.playbackId })
-        val youtubePlaybackById = youtubePlaybackProvider.retrievePlayback(videos.filter { video -> video.playbackId.playbackProviderType == PlaybackProviderType.YOUTUBE }.map { video -> video.playbackId.playbackId })
+    fun getPlaybacks(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback> {
+        val kalturaPlaybackById = kalturaPlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.KALTURA }.map { playbackId -> playbackId.value })
+        val youtubePlaybackById = youtubePlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.YOUTUBE }.map { playbackId -> playbackId.value })
 
-        return videos.mapNotNull { video ->
-            val videoPlayback = when(video.playbackId.playbackProviderType) {
-                PlaybackProviderType.KALTURA -> kalturaPlaybackById[video.playbackId.playbackId]
-                PlaybackProviderType.YOUTUBE -> youtubePlaybackById[video.playbackId.playbackId]
-            }  ?: return@mapNotNull null
-
-            video.copy(videoPlayback = videoPlayback)
-        }
+        return playbackIds.mapNotNull { playbackId ->
+            val playback = when (playbackId.type) {
+                PlaybackProviderType.KALTURA -> kalturaPlaybackById[playbackId.value]
+                PlaybackProviderType.YOUTUBE -> youtubePlaybackById[playbackId.value]
+            } ?: return@mapNotNull null
+            (playbackId to playback)
+        }.toMap()
     }
 
-    fun removePlayback(video: Video) {
-        kalturaPlaybackProvider.removePlayback(video.playbackId.playbackId)
+    fun getPlayback(playbackId: PlaybackId): VideoPlayback? {
+        return getPlaybacks(listOf(playbackId)).values.firstOrNull()
+    }
+
+    fun removePlayback(playbackId: PlaybackId) {
+        kalturaPlaybackProvider.removePlayback(playbackId.value)
     }
 }

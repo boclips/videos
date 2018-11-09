@@ -4,7 +4,6 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.infrastructure.event.EventService
@@ -58,7 +57,7 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun saveVideo(videoId: Long,
-                  playbackId: PlaybackId = PlaybackId(playbackProviderType = KALTURA, playbackId = "ref-id-$videoId"),
+                  playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-$videoId"),
                   title: String = "Some title!",
                   description: String = "Some description!",
                   date: String = "2018-01-01",
@@ -82,7 +81,7 @@ abstract class AbstractSpringIntegrationTest {
                 playback_provider
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, "00:00:00", playbackId.playbackId, keywords.joinToString(separator = ","), typeId, playbackId.playbackId, playbackId.playbackProviderType.name
+                videoId, contentProvider, title, description, date, "00:00:00", playbackId.value, keywords.joinToString(separator = ","), typeId, playbackId.value, playbackId.type.name
         )
 
         fakeSearchService.upsert(VideoMetadata(
@@ -93,9 +92,9 @@ abstract class AbstractSpringIntegrationTest {
                 keywords = emptyList()
         ))
 
-        when(playbackId.playbackProviderType) {
-            KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.playbackId, duration = duration))
-            YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(playbackId.playbackId, "https://youtube.com/thumb/${playbackId.playbackId}.png", duration = duration)
+        when(playbackId.type) {
+            KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.value, duration = duration))
+            YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(playbackId.value, "https://youtube.com/thumb/${playbackId.value}.png", duration = duration)
         }
     }
 

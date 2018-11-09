@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoDetails
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoType
 import com.boclips.videos.service.domain.model.playback.*
@@ -61,24 +62,27 @@ object TestFactories {
     }
 
     fun createVideo(
+            videoDetails: VideoDetails = createVideoDetails(),
+            videoPlayback: VideoPlayback = createKalturaPlayback()
+    ) = Video(details = videoDetails, playback = videoPlayback)
+
+    fun createVideoDetails(
             title: String = "title",
             description: String = "description",
             contentProvider: String = "AP",
-            videoPlayback: VideoPlayback? = null,
             videoId: String = "123",
-            playbackId: PlaybackId = PlaybackId(playbackProviderType = PlaybackProviderType.KALTURA, playbackId = "ref-id-1"),
+            playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
             type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
             keywords: List<String> = listOf("keyword")
-    ): Video {
-        return Video(
-                videoId = VideoId(videoId = videoId),
+    ): VideoDetails {
+        return VideoDetails(
+                videoId = VideoId(value = videoId),
                 playbackId = playbackId,
                 title = title,
                 description = description,
                 keywords = keywords,
                 releasedOn = LocalDate.parse("2018-01-01"),
                 contentProvider = contentProvider,
-                videoPlayback = videoPlayback,
                 type = type
         )
     }

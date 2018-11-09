@@ -12,7 +12,7 @@ class GetVideoById(
 ) {
     fun execute(videoId: String?): VideoResource {
         videoId ?: throw QueryValidationException()
-        return videoService.findVideoBy(VideoId(videoId = videoId!!))
+        return videoService.findVideoBy(VideoId(value = videoId!!))
                 .let(videoToResourceConverter::convert)
     }
 }

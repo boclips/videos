@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoDetails
 import com.boclips.videos.service.domain.model.VideoId
 import com.boclips.videos.service.domain.model.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -34,15 +34,14 @@ class VideoEntity(
         var playback_id: String? = null
 ) {
 
-    fun toVideo(): Video {
-        return Video(
-                videoId = VideoId(videoId = id.toString()),
-                playbackId = PlaybackId(playbackProviderType = PlaybackProviderType.valueOf(playback_provider!!), playbackId = playback_id!!),
+    fun toVideoDetails(): VideoDetails {
+        return VideoDetails(
+                videoId = VideoId(value = id.toString()),
+                playbackId = PlaybackId(type = PlaybackProviderType.valueOf(playback_provider!!), value = playback_id!!),
                 title = title!!,
                 description = description!!,
                 releasedOn = LocalDate.parse(date!!),
                 contentProvider = source!!,
-                videoPlayback = null,
                 type = getVideoType(),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty()
         )

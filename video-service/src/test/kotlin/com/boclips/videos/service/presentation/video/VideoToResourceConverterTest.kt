@@ -3,23 +3,30 @@ package com.boclips.videos.service.presentation.video
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.TestFactories.createVideo
+import com.boclips.videos.service.testsupport.TestFactories.createVideoDetails
+import com.boclips.videos.service.testsupport.TestFactories.createYoutubePlayback
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
 
 internal class VideoToResourceConverterTest {
 
-    val youtubeVideo = TestFactories.createVideo(
-            title = "Do what you love on youtube",
-            description = "Best bottle slogan",
-            contentProvider = "JacekWork",
-            videoPlayback = TestFactories.createYoutubePlayback()
+    val youtubeVideo = createVideo(
+            videoDetails = createVideoDetails(
+                    title = "Do what you love on youtube",
+                    description = "Best bottle slogan",
+                    contentProvider = "JacekWork"
+            ),
+            videoPlayback = createYoutubePlayback()
     )
 
-    val kalturaVideo = TestFactories.createVideo(
-            title = "Do what you love",
-            description = "Best bottle slogan",
-            contentProvider = "WeWork",
+    val kalturaVideo = createVideo(
+            videoDetails = createVideoDetails(
+                    title = "Do what you love",
+                    description = "Best bottle slogan",
+                    contentProvider = "WeWork"
+            ),
             videoPlayback = TestFactories.createKalturaPlayback()
     )
 

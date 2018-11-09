@@ -9,31 +9,39 @@ import com.boclips.videos.service.domain.model.VideoSearchQuery
 import mu.KLogging
 
 class VideoService(
-        private val videoRepository: VideoRepository,
+        private val videoLibrary: VideoLibrary,
         private val searchService: SearchService,
         private val playbackService: PlaybackService
 ) {
     companion object : KLogging()
 
     fun findVideosBy(query: VideoSearchQuery): List<Video> {
-        val videoIds = searchService.search(query.text).map { VideoId(videoId = it) }
-        logger.info { "Found ${videoIds.size} videos for query ${query.text}" }
-        return videoRepository.findVideosBy(videoIds)
-                .let(playbackService::getVideosWithPlayback)
+        val videoIds = searchService.search(query.text).map { VideoId(value = it) }
+        val allVideoDetails = videoLibrary.findVideosBy(videoIds)
+        val videoPlaybacks = playbackService.getPlaybacks(allVideoDetails.map { it.playbackId })
+        if(videoIds.size != videoPlaybacks.size) {
+            logger.warn { "Found ${videoIds.size} videos with ${videoPlaybacks.size} playbacks for query ${query.text}" }
+        }
+
+        return allVideoDetails.mapNotNull { videoDetails ->
+            val videoPlayback = videoPlaybacks[videoDetails.playbackId] ?: return@mapNotNull null
+            Video(videoDetails, videoPlayback)
+        }
     }
 
     @Throws(VideoNotFoundException::class, VideoPlaybackNotFound::class)
     fun findVideoBy(videoId: VideoId): Video {
-        val video = videoRepository.findVideosBy(listOf(videoId)).firstOrNull() ?: throw VideoNotFoundException()
-        return playbackService.getVideosWithPlayback(listOf(video)).firstOrNull() ?: throw VideoPlaybackNotFound()
+        val videoDetails = videoLibrary.findVideosBy(listOf(videoId)).firstOrNull() ?: throw VideoNotFoundException()
+        val videoPlayback = playbackService.getPlayback(videoDetails.playbackId) ?: throw VideoPlaybackNotFound()
+        return Video(videoDetails, videoPlayback)
     }
 
     fun removeVideo(video: Video) {
-        searchService.removeFromSearch(video.videoId.videoId)
-        logger.info { "Removed video ${video.videoId} from search index" }
-        videoRepository.deleteVideoById(video.videoId)
-        logger.info { "Removed video ${video.videoId} from video repository" }
-        playbackService.removePlayback(video)
-        logger.info { "Removed video ${video.videoId} from video host" }
+        searchService.removeFromSearch(video.details.videoId.value)
+        logger.info { "Removed video ${video.details.videoId} from search index" }
+        videoLibrary.deleteVideoBy(video.details.videoId)
+        logger.info { "Removed video ${video.details.videoId} from video repository" }
+        playbackService.removePlayback(video.details.playbackId)
+        logger.info { "Removed video ${video.details.videoId} from video host" }
     }
 }

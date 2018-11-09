@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model
 
 class VideoId(
-        val videoId: String
+        val value: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -9,17 +9,17 @@ class VideoId(
 
         other as VideoId
 
-        if (videoId != other.videoId) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return videoId.hashCode()
+        return value.hashCode()
     }
 
     override fun toString(): String {
-        return "[id = ${this.videoId}]"
+        return "[id = ${this.value}]"
     }
 
 }

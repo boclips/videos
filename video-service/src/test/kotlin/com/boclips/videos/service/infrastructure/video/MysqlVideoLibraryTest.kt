@@ -6,10 +6,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class MysqlVideoRepositoryTest : AbstractSpringIntegrationTest() {
+class MysqlVideoLibraryTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var videoRepository: MysqlVideoRepository
+    lateinit var videoRepository: MysqlVideoLibrary
 
     @Test
     fun `findVideosBy can find multiple videos by video ids`() {
@@ -17,7 +17,7 @@ class MysqlVideoRepositoryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")
         saveVideo(videoId = 125, title = "Some title", description = "test description 3")
 
-        val videos = videoRepository.findVideosBy(listOf(VideoId(videoId = "123"), VideoId(videoId = "124"), VideoId(videoId = "125")))
+        val videos = videoRepository.findVideosBy(listOf(VideoId(value = "123"), VideoId(value = "124"), VideoId(value = "125")))
 
         assertThat(videos).hasSize(3)
     }
@@ -27,41 +27,38 @@ class MysqlVideoRepositoryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")
 
-        val videos = videoRepository.findVideosBy(listOf(VideoId(videoId = "123"), VideoId(videoId = "124"), VideoId(videoId = "125")))
+        val videos = videoRepository.findVideosBy(listOf(VideoId(value = "123"), VideoId(value = "124"), VideoId(value = "125")))
 
         assertThat(videos).hasSize(2)
     }
 
     @Test
-    fun `findVideoBy returns a Video without playback information`() {
+    fun `findVideoBy returns video details`() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
 
-        val videoId = VideoId(videoId = "123")
+        val videoId = VideoId(value = "123")
         val video = videoRepository.findVideoBy(videoId)!!
 
-        assertThat(video.videoId.videoId).isEqualTo("123")
-        assertThat(video.playbackId.playbackId).isNotNull()
-        assertThat(video.playbackId.playbackProviderType).isNotNull()
-        assertThat(video.videoPlayback).isNull()
+        assertThat(video.videoId.value).isEqualTo("123")
+        assertThat(video.playbackId.value).isNotNull()
+        assertThat(video.playbackId.type).isNotNull()
         assertThat(video.description).isNotEmpty()
         assertThat(video.title).isNotEmpty()
         assertThat(video.contentProvider).isNotEmpty()
         assertThat(video.releasedOn).isNotNull()
-
-        assertThat(video.isPlayable()).isFalse()
     }
 
     @Test
     fun `findVideoBy returns null when video does not exist`() {
-        assertThat(videoRepository.findVideoBy(VideoId(videoId = "999"))).isNull()
+        assertThat(videoRepository.findVideoBy(VideoId(value = "999"))).isNull()
     }
 
     @Test
     fun `video cannot be retrieved after it has been removed`() {
         val videoId = VideoId("123")
-        saveVideo(videoId = videoId.videoId.toLong(), title = "Some title", description = "test description 3")
+        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
 
-        videoRepository.deleteVideoById(videoId)
+        videoRepository.deleteVideoBy(videoId)
 
         assertThat(videoRepository.findVideosBy(listOf(videoId))).isEmpty()
     }

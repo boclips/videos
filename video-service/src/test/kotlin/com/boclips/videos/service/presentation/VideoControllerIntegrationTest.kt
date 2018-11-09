@@ -23,7 +23,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @BeforeEach
     fun setUp() {
         saveVideo(videoId = 123,
-                playbackId = PlaybackId(playbackId = "ref-id-1", playbackProviderType = PlaybackProviderType.KALTURA),
+                playbackId = PlaybackId(value = "ref-id-1", type = PlaybackProviderType.KALTURA),
                 title = "powerful video about elephants",
                 description = "test description 3",
                 date = "2018-02-11",
@@ -32,7 +32,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         saveVideo(videoId = 124,
-                playbackId = PlaybackId(playbackId = "yt-id-124", playbackProviderType = PlaybackProviderType.YOUTUBE),
+                playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
                 title = "elaphants took out jobs",
                 description = "it's a video from youtube",
                 date = "2017-02-11",

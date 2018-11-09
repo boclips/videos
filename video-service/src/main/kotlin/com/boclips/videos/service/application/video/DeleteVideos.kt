@@ -11,7 +11,7 @@ class DeleteVideos(
         if (id == null || id.isBlank()) {
             throw VideoNotFoundException()
         }
-        val video = videoService.findVideoBy(VideoId(videoId = id))
+        val video = videoService.findVideoBy(VideoId(value = id))
         videoService.removeVideo(video)
     }
 }

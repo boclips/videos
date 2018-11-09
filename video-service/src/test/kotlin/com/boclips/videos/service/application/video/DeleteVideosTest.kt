@@ -22,7 +22,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos.execute("123")
 
-        assertThatThrownBy { videoService.findVideoBy(VideoId(videoId = "123")) }
+        assertThatThrownBy { videoService.findVideoBy(VideoId(value = "123")) }
                 .isInstanceOf(VideoNotFoundException::class.java)
     }
 

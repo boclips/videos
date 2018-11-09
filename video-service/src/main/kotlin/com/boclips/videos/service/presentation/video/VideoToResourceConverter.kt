@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation.video
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 
@@ -16,27 +17,25 @@ class VideoToResourceConverter {
     }
 
     private fun toResource(video: Video): VideoResource {
-        val basicVideo = VideoResource(
-                id = video.videoId.videoId,
-                title = video.title,
-                description = video.description,
-                contentProvider = video.contentProvider,
-                releasedOn = video.releasedOn)
+        return VideoResource(
+                id = video.details.videoId.value,
+                title = video.details.title,
+                description = video.details.description,
+                contentProvider = video.details.contentProvider,
+                releasedOn = video.details.releasedOn,
+                playback = getPlayback(video)
+        )
+    }
 
-        if (video.isPlayable()) {
-            val playback = video.videoPlayback!!
-
-            val playbackResource = when (playback) {
-                is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.streamUrl)
-                is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE", youtubeId = playback.youtubeId)
-                else -> throw Exception()
-            }
-            playbackResource.thumbnailUrl = video.videoPlayback.thumbnailUrl
-            playbackResource.duration = video.videoPlayback.duration
-
-            return basicVideo.copy(playback = playbackResource)
+    private fun getPlayback(video: Video): PlaybackResource {
+        val playback = video.playback
+        val playbackResource = when (playback) {
+            is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.streamUrl)
+            is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE", youtubeId = playback.youtubeId)
+            else -> throw Exception()
         }
-
-        return basicVideo
+        playbackResource.thumbnailUrl = video.playback.thumbnailUrl
+        playbackResource.duration = video.playback.duration
+        return playbackResource
     }
 }

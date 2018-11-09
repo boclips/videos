@@ -1,16 +1,17 @@
 package com.boclips.videos.service.domain.service.filters
 
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoDetails
 import com.boclips.videos.service.domain.model.VideoType
 
 class TeacherContentFilter {
 
-    fun showInTeacherProduct(video: Video): Boolean {
-        if (video.type != VideoType.STOCK) {
+    fun showInTeacherProduct(videoDetails: VideoDetails): Boolean {
+        if (videoDetails.type != VideoType.STOCK) {
             return true
         }
 
-        val lowercaseTextFragments = listOf(video.title, video.description).map { it.toLowerCase() }
+        val lowercaseTextFragments = listOf(videoDetails.title, videoDetails.description).map { it.toLowerCase() }
         val lowercaseText = lowercaseTextFragments.joinToString("\n")
         val bagOfWords = lowercaseTextFragments.flatMap { it.split(" ") }.toSet()
 

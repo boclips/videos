@@ -10,7 +10,7 @@ class VideoMetadataConverterTest {
 
     @Test
     fun convert() {
-        val video = TestFactories.createVideo(
+        val video = TestFactories.createVideoDetails(
                 videoId = "123",
                 title = "video title",
                 description = "video description",
