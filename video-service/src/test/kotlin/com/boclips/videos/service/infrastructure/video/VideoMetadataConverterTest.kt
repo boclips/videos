@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 
 
 class VideoMetadataConverterTest {
-
     @Test
     fun convert() {
         val video = TestFactories.createVideoAsset(

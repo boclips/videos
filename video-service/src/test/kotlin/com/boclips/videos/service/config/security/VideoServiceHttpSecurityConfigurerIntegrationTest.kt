@@ -1,7 +1,5 @@
 package com.boclips.videos.service.config.security
 
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asReporter

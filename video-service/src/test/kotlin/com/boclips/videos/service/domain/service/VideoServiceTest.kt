@@ -40,7 +40,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `retrieve video by id`() {
+    fun `look up video by id`() {
         saveVideo(videoId = 1)
 
         val video = videoService.getVideo(AssetId("1"))
@@ -50,7 +50,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `retrieve video by id throws if no playback information if present`() {
+    fun `look up video by id throws if no playback information if present`() {
         saveVideo(videoId = 123, playbackId = PlaybackId(value = "1111", type = PlaybackProviderType.KALTURA))
 
         fakeKalturaClient.clear()
@@ -59,7 +59,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `retrieve video by id throws if video does not exist`() {
+    fun `look up by id throws if video does not exist`() {
         Assertions.assertThatThrownBy { videoService.getVideo(AssetId("123")) }.isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 }

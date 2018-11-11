@@ -1,3 +1,7 @@
 package com.boclips.videos.service.application.video.exceptions
 
-class VideoPlaybackNotFound : BoclipsException()
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class VideoPlaybackNotFound : VideoServiceException()

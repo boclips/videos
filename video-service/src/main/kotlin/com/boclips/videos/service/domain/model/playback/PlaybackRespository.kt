@@ -2,9 +2,11 @@ package com.boclips.videos.service.domain.model.playback
 
 import com.boclips.videos.service.domain.service.PlaybackProvider
 
-class PlaybackRespository(val kalturaPlaybackProvider: PlaybackProvider, val youtubePlaybackProvider: PlaybackProvider) {
+class PlaybackRespository(
+        val kalturaPlaybackProvider: PlaybackProvider,
+        val youtubePlaybackProvider: PlaybackProvider) {
 
-    fun getPlaybacks(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback> {
+    fun find(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback> {
         val kalturaPlaybackById = kalturaPlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.KALTURA })
         val youtubePlaybackById = youtubePlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.YOUTUBE })
 
@@ -17,11 +19,11 @@ class PlaybackRespository(val kalturaPlaybackProvider: PlaybackProvider, val you
         }.toMap()
     }
 
-    fun getPlayback(playbackId: PlaybackId): VideoPlayback? {
-        return getPlaybacks(listOf(playbackId)).values.firstOrNull()
+    fun find(playbackId: PlaybackId): VideoPlayback? {
+        return find(listOf(playbackId)).values.firstOrNull()
     }
 
-    fun removePlayback(playbackId: PlaybackId) {
+    fun remove(playbackId: PlaybackId) {
         kalturaPlaybackProvider.removePlayback(playbackId)
     }
 }

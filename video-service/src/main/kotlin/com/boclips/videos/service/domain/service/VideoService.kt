@@ -20,7 +20,7 @@ class VideoService(
     fun search(query: VideoSearchQuery): List<Video> {
         val videoIds = searchService.search(query.text).map { AssetId(value = it) }
         val allVideoAssets = videoAssetRepository.findAll(videoIds)
-        val videoPlaybacks = playbackRespository.getPlaybacks(allVideoAssets.map { it.playbackId })
+        val videoPlaybacks = playbackRespository.find(allVideoAssets.map { it.playbackId })
         if (videoIds.size != videoPlaybacks.size) {
             logger.warn { "Found ${videoIds.size} videos with ${videoPlaybacks.size} playbacks for query ${query.text}" }
         }
@@ -34,10 +34,10 @@ class VideoService(
     @Throws(VideoAssetNotFoundException::class, VideoPlaybackNotFound::class)
     fun getVideo(assetId: AssetId): Video {
         val videoAsset = videoAssetRepository
-                .findAll(listOf(assetId)).firstOrNull() ?: throw VideoAssetNotFoundException()
+                .find(assetId) ?: throw VideoAssetNotFoundException()
 
         val videoPlayback = playbackRespository
-                .getPlayback(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
+                .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
 
         return Video(videoAsset, videoPlayback)
     }

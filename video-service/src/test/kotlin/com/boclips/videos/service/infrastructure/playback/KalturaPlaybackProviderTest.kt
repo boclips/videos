@@ -18,7 +18,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     lateinit var kalturaClient: TestKalturaClient
 
     @Test
-    fun `returns playable videos`() {
+    fun `returns streaming information for videos`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
 
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
@@ -34,7 +34,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns only playable videos`() {
+    fun `returns only videos with streaming information, omits the others`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
         val existingPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         val inexistantPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")

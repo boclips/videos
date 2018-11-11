@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.model
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -28,32 +28,37 @@ class PlaybackRespositoryTest {
     }
 
     @Test
-    fun `getPlaybacks returns playback`() {
+    fun `finds streams for multiple videos`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
-        val videoWithPlayback = playbackRespository.getPlaybacks(listOf(playbackId))
+
+        val videoWithPlayback = playbackRespository.find(listOf(playbackId))
 
         assertThat(videoWithPlayback[playbackId]).isNotNull
     }
 
     @Test
-    fun `getPlaybacks skips an item when playback not found`() {
-        assertThat(playbackRespository.getPlaybacks(listOf(PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")))).isEmpty()
+    fun `skips when streams are not found for video`() {
+        assertThat(playbackRespository.find(listOf(PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")))).isEmpty()
     }
 
     @Test
-    fun `getPlaybacks populates Playback information from Youtube and Kaltura`() {
+    fun `finds streams for Kaltura and Youtube`() {
         val kalturaVideo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
 
-        assertThat(playbackRespository.getPlaybacks(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
+        assertThat(playbackRespository.find(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
     }
 
     @Test
-    fun `removes a video`() {
+    fun `removes a a video for Kaltura, does nothing for youtube`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
-        playbackRespository.removePlayback(playbackId)
+        val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
 
-        assertThat(playbackRespository.getPlaybacks(listOf(playbackId))).isEmpty()
+        playbackRespository.remove(playbackId)
+        playbackRespository.remove(youtubeVideo)
+
+        assertThat(playbackRespository.find(listOf(playbackId))).isEmpty()
+        assertThat(playbackRespository.find(listOf(youtubeVideo))).isNotNull
     }
 
 }

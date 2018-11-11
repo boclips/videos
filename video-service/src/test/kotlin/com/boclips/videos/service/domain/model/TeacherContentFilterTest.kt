@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service.ContentFilterssisInTeacherProduct
 
-import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.ContentFilters
+import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -57,6 +57,4 @@ class TeacherContentFilterTest {
         assertThat(ContentFilters.isInTeacherProduct(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation red carpet"))).isFalse()
         assertThat(ContentFilters.isInTeacherProduct(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation red colour carpet"))).isTrue()
     }
-
-
 }

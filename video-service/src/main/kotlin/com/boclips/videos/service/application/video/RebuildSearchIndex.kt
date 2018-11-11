@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.SearchService
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.ContentFilters
+import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.VideoMetadataConverter
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
@@ -17,7 +17,6 @@ open class RebuildSearchIndex(
     @Async
     open fun execute(): CompletableFuture<Unit> {
         logger.info("Starting a full reindex")
-
         searchService.resetIndex()
 
         logger.info("Requesting videos")

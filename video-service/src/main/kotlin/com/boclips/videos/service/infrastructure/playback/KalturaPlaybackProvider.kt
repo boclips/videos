@@ -3,10 +3,9 @@ package com.boclips.videos.service.infrastructure.playback
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.streams.StreamFormat
-import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotDeleted
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.service.PlaybackProvider
 import mu.KLogging
 
 class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : PlaybackProvider {
@@ -49,7 +48,6 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : Playba
             kalturaClient.deleteMediaEntriesByReferenceId(playbackId.value)
         } catch (ex: KalturaClientApiException) {
             logger.error { "Failed to execute asset from Kaltura: $ex" }
-            throw VideoPlaybackNotDeleted()
         }
     }
 }

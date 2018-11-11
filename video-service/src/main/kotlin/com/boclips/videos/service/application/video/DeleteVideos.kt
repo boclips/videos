@@ -23,8 +23,8 @@ class DeleteVideos(
         removeVideo(videoAsset)
     }
 
-    private fun removeVideo(video: VideoAsset) {
-        val assetIdToBeDeleted = video.assetId
+    private fun removeVideo(videoAsset: VideoAsset) {
+        val assetIdToBeDeleted = videoAsset.assetId
 
         searchService.removeFromSearch(assetIdToBeDeleted.value)
         VideoService.logger.info { "Removed asset $assetIdToBeDeleted from search index" }
@@ -32,7 +32,7 @@ class DeleteVideos(
         videoAssetRepository.delete(assetIdToBeDeleted)
         VideoService.logger.info { "Removed asset $assetIdToBeDeleted from asset repository" }
 
-        playbackRepository.removePlayback(video.playbackId)
+        playbackRepository.remove(videoAsset.playbackId)
         VideoService.logger.info { "Removed asset $assetIdToBeDeleted from asset host" }
     }
 }

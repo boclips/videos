@@ -26,7 +26,5 @@ class ContentFilters {
             }
         }
     }
-
-
 }
 

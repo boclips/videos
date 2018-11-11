@@ -12,8 +12,8 @@ import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
@@ -93,40 +93,6 @@ class ApplicationContext {
     @Profile("!fakes")
     fun youtubePlaybackProvider(youtubeProperties: YoutubeProperties): PlaybackProvider {
         return YoutubePlaybackProvider(youtubeProperties.apiKey)
-    }
-
-    @Bean
-    fun eventService(eventLogRepository: EventLogRepository,
-                     eventMonitoringConfig: EventMonitoringConfig,
-                     mongoTemplate: MongoTemplate) =
-            EventService(
-                    eventLogRepository = eventLogRepository,
-                    eventMonitoringConfig = eventMonitoringConfig,
-                    mongoTemplate = mongoTemplate)
-
-    @Bean
-    fun createEvent(eventService: EventService, emailClient: EmailClient): CreateEvent {
-        return CreateEvent(
-                eventService = eventService,
-                emailClient = emailClient
-        )
-    }
-
-    @Bean
-    fun getEvent(eventService: EventService): GetEvent {
-        return GetEvent(eventService = eventService)
-    }
-
-    @Bean
-    fun checkEventsStatus(eventService: EventService): CheckEventsStatus {
-        return CheckEventsStatus(
-                eventService = eventService
-        )
-    }
-
-    @Bean
-    fun getLatestInteractions(eventService: EventService): GetLatestInteractions {
-        return GetLatestInteractions(eventService = eventService)
     }
 
     @Bean

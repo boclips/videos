@@ -8,8 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 
 @Configuration
-class TestConfig {
-
+class TestApplicationContext {
     @Bean
     @Primary
     fun testNamedJdbcTemplate(jdbcTemplate: JdbcTemplate): NamedParameterJdbcTemplate {
