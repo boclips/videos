@@ -11,18 +11,17 @@ import com.boclips.videos.service.application.video.GetVideoById
 import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.config.properties.YoutubeProperties
-import com.boclips.videos.service.domain.service.PlaybackProvider
-import com.boclips.videos.service.domain.service.PlaybackService
-import com.boclips.videos.service.domain.service.VideoLibrary
+import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.playback.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackRespository
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.domain.service.filters.TeacherContentFilter
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
-import com.boclips.videos.service.infrastructure.video.MysqlVideoLibrary
+import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -35,7 +34,7 @@ import java.util.concurrent.Executors
 
 
 @Configuration
-class ApplicationConfig {
+class ApplicationContext {
     @Bean
     fun getVideoById(searchService: SearchService, videoService: VideoService) =
             GetVideoById(
@@ -46,38 +45,43 @@ class ApplicationConfig {
     @Bean
     fun getVideosByQuery(searchService: SearchService,
                          videoService: VideoService,
-                         playbackService: PlaybackService) =
+                         playbackRespository: PlaybackRespository) =
             GetVideosByQuery(
                     videoService = videoService,
                     videoToResourceConverter = VideoToResourceConverter()
             )
 
     @Bean
-    fun deleteVideos(videoService: VideoService): DeleteVideos {
-        return DeleteVideos(videoService)
+    fun deleteVideos(playbackRespository: PlaybackRespository,
+                     searchService: SearchService,
+                     videoAssetRepository: VideoAssetRepository
+    ): DeleteVideos {
+        return DeleteVideos(videoAssetRepository = videoAssetRepository,
+                searchService = searchService,
+                playbackRepository = playbackRespository)
     }
 
     @Bean
     fun videoService(
-            videoLibrary: VideoLibrary,
+            videoAssetRepository: VideoAssetRepository,
             searchService: SearchService,
-            playbackService: PlaybackService
+            playbackRespository: PlaybackRespository
     ): VideoService {
         return VideoService(
-                videoLibrary = videoLibrary,
+                videoAssetRepository = videoAssetRepository,
                 searchService = searchService,
-                playbackService = playbackService
+                playbackRespository = playbackRespository
         )
     }
 
     @Bean
-    fun videoRepository(jdbcTemplate: NamedParameterJdbcTemplate): VideoLibrary {
-        return MysqlVideoLibrary(jdbcTemplate)
+    fun videoRepository(jdbcTemplate: NamedParameterJdbcTemplate): VideoAssetRepository {
+        return MysqlVideoAssetRepository(jdbcTemplate)
     }
 
     @Bean
-    fun playbackService(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider): PlaybackService {
-        return PlaybackService(kalturaPlaybackProvider = kalturaPlaybackProvider, youtubePlaybackProvider = youtubePlaybackProvider)
+    fun playbackService(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider): PlaybackRespository {
+        return PlaybackRespository(kalturaPlaybackProvider = kalturaPlaybackProvider, youtubePlaybackProvider = youtubePlaybackProvider)
     }
 
     @Bean
@@ -126,17 +130,13 @@ class ApplicationConfig {
     }
 
     @Bean
-    fun rebuildSearchIndex(videoLibrary: VideoLibrary, searchService: com.boclips.search.service.domain.SearchService, teacherContentFilter: TeacherContentFilter): RebuildSearchIndex {
+    fun rebuildSearchIndex(videoAssetRepository: VideoAssetRepository,
+                           searchService: com.boclips.search.service.domain.SearchService
+    ): RebuildSearchIndex {
         return RebuildSearchIndex(
-                videoLibrary = videoLibrary,
-                searchService = searchService,
-                teacherContentFilter = teacherContentFilter
+                videoAssetRepository = videoAssetRepository,
+                searchService = searchService
         )
-    }
-
-    @Bean
-    fun teacherContentFilter(): TeacherContentFilter {
-        return TeacherContentFilter()
     }
 
     @Bean

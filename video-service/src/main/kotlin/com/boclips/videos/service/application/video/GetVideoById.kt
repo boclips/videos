@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.QueryValidationException
-import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -12,7 +12,8 @@ class GetVideoById(
 ) {
     fun execute(videoId: String?): VideoResource {
         videoId ?: throw QueryValidationException()
-        return videoService.findVideoBy(VideoId(value = videoId!!))
+
+        return videoService.getVideo(AssetId(value = videoId))
                 .let(videoToResourceConverter::convert)
     }
 }

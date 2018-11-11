@@ -1,10 +1,6 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.model.playback
 
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.VideoPlayback
-
-class PlaybackService(val kalturaPlaybackProvider: PlaybackProvider, val youtubePlaybackProvider: PlaybackProvider) {
+class PlaybackRespository(val kalturaPlaybackProvider: PlaybackProvider, val youtubePlaybackProvider: PlaybackProvider) {
 
     fun getPlaybacks(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback> {
         val kalturaPlaybackById = kalturaPlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.KALTURA }.map { playbackId -> playbackId.value })

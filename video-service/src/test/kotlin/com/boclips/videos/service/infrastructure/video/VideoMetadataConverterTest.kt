@@ -10,10 +10,10 @@ class VideoMetadataConverterTest {
 
     @Test
     fun convert() {
-        val video = TestFactories.createVideoDetails(
+        val video = TestFactories.createVideoAsset(
                 videoId = "123",
-                title = "video title",
-                description = "video description",
+                title = "asset title",
+                description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1")
         )
@@ -22,8 +22,8 @@ class VideoMetadataConverterTest {
 
         assertThat(videoMetadata).isEqualTo(VideoMetadata(
                 id = "123",
-                title = "video title",
-                description = "video description",
+                title = "asset title",
+                description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1")
         ))

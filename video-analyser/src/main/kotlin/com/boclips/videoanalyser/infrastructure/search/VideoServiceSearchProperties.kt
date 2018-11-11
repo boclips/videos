@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component
-@ConfigurationProperties(prefix = "video-service")
+@ConfigurationProperties(prefix = "asset-service")
 data class VideoServiceSearchProperties(var baseUrl: String = "", var username: String = "", var password: String = "") {
 
     fun validate(): VideoServiceSearchProperties {

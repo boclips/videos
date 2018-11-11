@@ -30,7 +30,7 @@ import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
 class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
     companion object : KLogging() {
-        const val ES_TYPE = "video"
+        const val ES_TYPE = "asset"
         const val ES_INDEX = "videos"
     }
 
@@ -88,7 +88,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
     }
 
     private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>) {
-        logger.info { "[Batch $batchIndex] Indexing ${videos.size} video(s)" }
+        logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }
 
         val request = videos
                 .map(this::indexRequest)
@@ -104,7 +104,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         if(result.hasFailures()) {
             throw Error("Batch indexing failed: ${result.buildFailureMessage()}")
         }
-        logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} video(s)" }
+        logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} asset(s)" }
     }
 
     private fun indexRequest(video: VideoMetadata): IndexRequest {
@@ -124,7 +124,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         val indexConfiguration = IndexConfiguration()
         val createIndexRequest = CreateIndexRequest(ES_INDEX)
                 .settings(indexConfiguration.generateIndexSettings())
-                .mapping("video", indexConfiguration.generateVideoMapping())
+                .mapping("asset", indexConfiguration.generateVideoMapping())
 
         logger.info("Creating index $ES_INDEX")
         client.indices().create(createIndexRequest, RequestOptions.DEFAULT)

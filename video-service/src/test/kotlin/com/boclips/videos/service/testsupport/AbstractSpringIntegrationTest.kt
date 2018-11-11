@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.junit.jupiter.api.BeforeEach
@@ -41,6 +42,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var fakeYoutubePlaybackProvider: TestYoutubePlaybackProvider
+
+    @Autowired
+    lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
 
     @Autowired
     lateinit var eventService: EventService

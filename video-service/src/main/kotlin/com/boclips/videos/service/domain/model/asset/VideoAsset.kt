@@ -1,10 +1,10 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.model.asset
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import java.time.LocalDate
 
-data class VideoDetails(
-        val videoId: VideoId,
+data class VideoAsset(
+        val assetId: AssetId,
         val playbackId: PlaybackId,
         val title: String,
         val description: String,

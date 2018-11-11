@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Configuration
-class SearchConfig {
+class SearchContext {
     @Bean
     @Profile("!fake-search")
     fun searchService(elasticSearchProperties: ElasticSearchProperties, kalturaClient: KalturaClient): SearchService {

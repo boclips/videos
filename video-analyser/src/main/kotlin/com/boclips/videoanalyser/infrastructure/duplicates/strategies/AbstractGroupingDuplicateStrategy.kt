@@ -4,7 +4,7 @@ import com.boclips.videoanalyser.domain.model.BoclipsVideo
 import com.boclips.videoanalyser.domain.model.DuplicateVideo
 
 /**
- * Detects duplicates grouping using a supplied key given a specific video
+ * Detects duplicates grouping using a supplied key given a specific asset
  */
 abstract class AbstractGroupingDuplicateStrategy : DuplicateStrategy {
 

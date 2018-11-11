@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.service
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.PlaybackRespository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
@@ -11,8 +12,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 
-class PlaybackServiceTest {
-    lateinit var playbackService: PlaybackService
+class PlaybackRespositoryTest {
+    lateinit var playbackRespository: PlaybackRespository
 
     @BeforeEach
     fun setUp() {
@@ -23,20 +24,20 @@ class PlaybackServiceTest {
         val youtubePlaybackProvider = TestYoutubePlaybackProvider()
         youtubePlaybackProvider.addVideo("yt-123", "thumbnail", Duration.ZERO)
 
-        playbackService = PlaybackService(kalturaPlaybackProvider, youtubePlaybackProvider)
+        playbackRespository = PlaybackRespository(kalturaPlaybackProvider, youtubePlaybackProvider)
     }
 
     @Test
     fun `getPlaybacks returns playback`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
-        val videoWithPlayback = playbackService.getPlaybacks(listOf(playbackId))
+        val videoWithPlayback = playbackRespository.getPlaybacks(listOf(playbackId))
 
         assertThat(videoWithPlayback[playbackId]).isNotNull
     }
 
     @Test
     fun `getPlaybacks skips an item when playback not found`() {
-        assertThat(playbackService.getPlaybacks(listOf(PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")))).isEmpty()
+        assertThat(playbackRespository.getPlaybacks(listOf(PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")))).isEmpty()
     }
 
     @Test
@@ -44,15 +45,15 @@ class PlaybackServiceTest {
         val kalturaVideo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
 
-        assertThat(playbackService.getPlaybacks(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
+        assertThat(playbackRespository.getPlaybacks(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
     }
 
     @Test
     fun `removes a video`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
-        playbackService.removePlayback(playbackId)
+        playbackRespository.removePlayback(playbackId)
 
-        assertThat(playbackService.getPlaybacks(listOf(playbackId))).isEmpty()
+        assertThat(playbackRespository.getPlaybacks(listOf(playbackId))).isEmpty()
     }
 
 }

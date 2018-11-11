@@ -3,9 +3,9 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.VideoDetails
-import com.boclips.videos.service.domain.model.VideoId
-import com.boclips.videos.service.domain.model.VideoType
+import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
@@ -33,7 +33,7 @@ object TestFactories {
 
     fun createPlaybackEvent(
             playerId: String = "player-id",
-            videoId: String = "video-id",
+            videoId: String = "asset-id",
             segmentStartSeconds: Long = 0,
             segmentEndSeconds: Long = 30,
             videoDurationSeconds: Long = 60,
@@ -62,11 +62,11 @@ object TestFactories {
     }
 
     fun createVideo(
-            videoDetails: VideoDetails = createVideoDetails(),
+            videoAsset: VideoAsset = createVideoAsset(),
             videoPlayback: VideoPlayback = createKalturaPlayback()
-    ) = Video(details = videoDetails, playback = videoPlayback)
+    ) = Video(asset = videoAsset, playback = videoPlayback)
 
-    fun createVideoDetails(
+    fun createVideoAsset(
             title: String = "title",
             description: String = "description",
             contentProvider: String = "AP",
@@ -74,9 +74,9 @@ object TestFactories {
             playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
             type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
             keywords: List<String> = listOf("keyword")
-    ): VideoDetails {
-        return VideoDetails(
-                videoId = VideoId(value = videoId),
+    ): VideoAsset {
+        return VideoAsset(
+                assetId = AssetId(value = videoId),
                 playbackId = playbackId,
                 title = title,
                 description = description,
@@ -119,7 +119,7 @@ object TestFactories {
         return MediaEntry.builder()
                 .id(id)
                 .referenceId(referenceId)
-                .streams(StreamUrls("https://stream/[FORMAT]/video-$id.mp4"))
+                .streams(StreamUrls("https://stream/[FORMAT]/asset-$id.mp4"))
                 .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
                 .duration(duration)
                 .build()

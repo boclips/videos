@@ -4,7 +4,7 @@ import com.boclips.videos.service.presentation.video.playback.StreamPlaybackReso
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
-import com.boclips.videos.service.testsupport.TestFactories.createVideoDetails
+import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
 import com.boclips.videos.service.testsupport.TestFactories.createYoutubePlayback
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,7 +13,7 @@ import java.time.Duration
 internal class VideoToResourceConverterTest {
 
     val youtubeVideo = createVideo(
-            videoDetails = createVideoDetails(
+            videoAsset = createVideoAsset(
                     title = "Do what you love on youtube",
                     description = "Best bottle slogan",
                     contentProvider = "JacekWork"
@@ -22,7 +22,7 @@ internal class VideoToResourceConverterTest {
     )
 
     val kalturaVideo = createVideo(
-            videoDetails = createVideoDetails(
+            videoAsset = createVideoAsset(
                     title = "Do what you love",
                     description = "Best bottle slogan",
                     contentProvider = "WeWork"

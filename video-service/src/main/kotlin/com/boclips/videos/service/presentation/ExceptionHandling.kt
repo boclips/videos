@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.event.InvalidEventException
 import com.boclips.videos.service.application.video.exceptions.QueryValidationException
-import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -19,9 +19,9 @@ class ExceptionHandling {
         logger.error { "Provided query is invalid $ex" }
     }
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The requested video does not exist")
-    @ExceptionHandler(VideoNotFoundException::class)
-    fun handleVideoNotFoundException(ex: VideoNotFoundException) {
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The requested asset does not exist")
+    @ExceptionHandler(VideoAssetNotFoundException::class)
+    fun handleVideoNotFoundException(ex: VideoAssetNotFoundException) {
         logger.error { "Video not found $ex" }
     }
 

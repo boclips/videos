@@ -18,11 +18,11 @@ class VideoToResourceConverter {
 
     private fun toResource(video: Video): VideoResource {
         return VideoResource(
-                id = video.details.videoId.value,
-                title = video.details.title,
-                description = video.details.description,
-                contentProvider = video.details.contentProvider,
-                releasedOn = video.details.releasedOn,
+                id = video.asset.assetId.value,
+                title = video.asset.title,
+                description = video.asset.description,
+                contentProvider = video.asset.contentProvider,
+                releasedOn = video.asset.releasedOn,
                 playback = getPlayback(video)
         )
     }

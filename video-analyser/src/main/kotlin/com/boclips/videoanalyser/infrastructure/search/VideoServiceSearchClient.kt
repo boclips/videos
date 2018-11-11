@@ -13,7 +13,7 @@ class VideoServiceSearchClient(
 ) : SearchClient {
 
     override fun serviceName(): String {
-        return "video-service"
+        return "asset-service"
     }
 
     val restTemplate = videoServiceSearchProperties.validate().let {

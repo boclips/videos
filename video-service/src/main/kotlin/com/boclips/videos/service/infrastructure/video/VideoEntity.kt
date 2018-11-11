@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.videos.service.domain.model.VideoDetails
-import com.boclips.videos.service.domain.model.VideoId
-import com.boclips.videos.service.domain.model.VideoType
+import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.springframework.data.annotation.Id
@@ -34,9 +34,9 @@ class VideoEntity(
         var playback_id: String? = null
 ) {
 
-    fun toVideoDetails(): VideoDetails {
-        return VideoDetails(
-                videoId = VideoId(value = id.toString()),
+    fun toVideoAsset(): VideoAsset {
+        return VideoAsset(
+                assetId = AssetId(value = id.toString()),
                 playbackId = PlaybackId(type = PlaybackProviderType.valueOf(playback_provider!!), value = playback_id!!),
                 title = title!!,
                 description = description!!,

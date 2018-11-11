@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.model.asset
 
 enum class VideoType {
     OTHER,

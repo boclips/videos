@@ -24,7 +24,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun setUp() {
         saveVideo(videoId = 123,
                 playbackId = PlaybackId(value = "ref-id-1", type = PlaybackProviderType.KALTURA),
-                title = "powerful video about elephants",
+                title = "powerful asset about elephants",
                 description = "test description 3",
                 date = "2018-02-11",
                 duration = Duration.ofSeconds(23),
@@ -34,7 +34,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 124,
                 playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
                 title = "elaphants took out jobs",
-                description = "it's a video from youtube",
+                description = "it's a asset from youtube",
                 date = "2017-02-11",
                 duration = Duration.ofSeconds(56),
                 contentProvider = "cp2"
@@ -46,12 +46,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("123")))
-                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful asset about elephants")))
                 .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
-                .andExpect(jsonPath("$._embedded.videos[0].playback.streamUrl", equalTo("https://stream/mpegdash/video-entry-123.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.streamUrl", equalTo("https://stream/mpegdash/asset-entry-123.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
@@ -63,7 +63,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("124")))
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elaphants took out jobs")))
-                .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a video from youtube")))
+                .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a asset from youtube")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2017-02-11")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentProvider", equalTo("cp2")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("YOUTUBE")))
@@ -91,13 +91,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/123").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.id", equalTo("123")))
-                .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
+                .andExpect(jsonPath("$.title", equalTo("powerful asset about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$.contentProvider", equalTo("cp")))
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
                 .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-                .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/mpegdash/video-entry-123.mp4")))
+                .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/mpegdash/asset-entry-123.mp4")))
                 .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/123")))
     }

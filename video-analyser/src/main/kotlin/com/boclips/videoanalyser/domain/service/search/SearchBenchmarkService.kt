@@ -22,7 +22,7 @@ class SearchBenchmarkService(
 
     private fun check(expectation: SearchExpectation, searchClient: SearchClient): Boolean {
         return searchClient.searchTop10(expectation.query).contains(expectation.videoId).apply {
-            println("[${searchClient.serviceName()}] ${if (this) "HIT: " else "MISS:"} query='${expectation.query}' video=${expectation.videoId}")
+            println("[${searchClient.serviceName()}] ${if (this) "HIT: " else "MISS:"} query='${expectation.query}' asset=${expectation.videoId}")
         }
     }
 

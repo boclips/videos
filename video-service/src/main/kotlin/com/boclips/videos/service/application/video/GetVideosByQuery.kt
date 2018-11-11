@@ -13,7 +13,7 @@ class GetVideosByQuery(
     fun execute(query: String?): List<VideoResource> {
         query ?: throw QueryValidationException()
 
-        return videoService.findVideosBy(VideoSearchQuery(text = query))
+        return videoService.search(VideoSearchQuery(text = query))
                 .let(videoToResourceConverter::convert)
     }
 }

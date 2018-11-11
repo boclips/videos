@@ -13,9 +13,6 @@ import java.time.Duration
 class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
-
-    @Autowired
     lateinit var kalturaClient: TestKalturaClient
 
     @Test
@@ -28,7 +25,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(playbackById["ref-id-1"]).isNotNull
 
         val videoPlayback = playbackById["ref-id-1"] as StreamPlayback
-        assertThat(videoPlayback.streamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
+        assertThat(videoPlayback.streamUrl).isEqualTo("https://stream/mpegdash/asset-1.mp4")
         assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
         assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
     }

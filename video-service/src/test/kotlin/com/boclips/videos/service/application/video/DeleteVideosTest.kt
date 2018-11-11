@@ -1,9 +1,10 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,19 +23,50 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos.execute("123")
 
-        assertThatThrownBy { videoService.findVideoBy(VideoId(value = "123")) }
-                .isInstanceOf(VideoNotFoundException::class.java)
+        assertThatThrownBy { videoService.getVideo(AssetId(value = "123")) }
+                .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test
     fun `requesting deletion with blank video ID throws an exception`() {
         assertThatThrownBy { deleteVideos.execute("   ") }
-                .isInstanceOf(VideoNotFoundException::class.java)
+                .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test
     fun `requesting deletion with null video ID throws an exception`() {
         assertThatThrownBy { deleteVideos.execute(null) }
-                .isInstanceOf(VideoNotFoundException::class.java)
+                .isInstanceOf(VideoAssetNotFoundException::class.java)
+    }
+
+    @Test
+    fun `remove deletes a video from repository`() {
+        val videoId = AssetId(value = "123")
+        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
+
+        deleteVideos.execute("123")
+
+        assertThatThrownBy { videoService.getVideo(AssetId(value = "123")) }
+                .isInstanceOf(VideoAssetNotFoundException::class.java)
+    }
+
+    @Test
+    fun `remove deletes a video from search service`() {
+        val videoId = AssetId(value = "123")
+        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
+
+        deleteVideos.execute("123")
+
+        assertThat(fakeSearchService.search("Some title")).isEmpty()
+    }
+
+    @Test
+    fun `remove deletes a video from Kaltura`() {
+        val videoId = AssetId(value = "123")
+        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
+
+        deleteVideos.execute("123")
+
+        assertThat(kalturaPlaybackProvider.retrievePlayback(listOf("ref-id-123"))).isEmpty()
     }
 }

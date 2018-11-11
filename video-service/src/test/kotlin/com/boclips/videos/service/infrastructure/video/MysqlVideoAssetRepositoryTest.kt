@@ -1,15 +1,15 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.videos.service.domain.model.VideoId
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class MysqlVideoLibraryTest : AbstractSpringIntegrationTest() {
+class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var videoRepository: MysqlVideoLibrary
+    lateinit var videoRepository: MysqlVideoAssetRepository
 
     @Test
     fun `findVideosBy can find multiple videos by video ids`() {
@@ -17,7 +17,7 @@ class MysqlVideoLibraryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")
         saveVideo(videoId = 125, title = "Some title", description = "test description 3")
 
-        val videos = videoRepository.findVideosBy(listOf(VideoId(value = "123"), VideoId(value = "124"), VideoId(value = "125")))
+        val videos = videoRepository.findAll(listOf(AssetId(value = "123"), AssetId(value = "124"), AssetId(value = "125")))
 
         assertThat(videos).hasSize(3)
     }
@@ -27,7 +27,7 @@ class MysqlVideoLibraryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")
 
-        val videos = videoRepository.findVideosBy(listOf(VideoId(value = "123"), VideoId(value = "124"), VideoId(value = "125")))
+        val videos = videoRepository.findAll(listOf(AssetId(value = "123"), AssetId(value = "124"), AssetId(value = "125")))
 
         assertThat(videos).hasSize(2)
     }
@@ -36,10 +36,10 @@ class MysqlVideoLibraryTest : AbstractSpringIntegrationTest() {
     fun `findVideoBy returns video details`() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
 
-        val videoId = VideoId(value = "123")
-        val video = videoRepository.findVideoBy(videoId)!!
+        val videoId = AssetId(value = "123")
+        val video = videoRepository.find(videoId)!!
 
-        assertThat(video.videoId.value).isEqualTo("123")
+        assertThat(video.assetId.value).isEqualTo("123")
         assertThat(video.playbackId.value).isNotNull()
         assertThat(video.playbackId.type).isNotNull()
         assertThat(video.description).isNotEmpty()
@@ -50,16 +50,16 @@ class MysqlVideoLibraryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `findVideoBy returns null when video does not exist`() {
-        assertThat(videoRepository.findVideoBy(VideoId(value = "999"))).isNull()
+        assertThat(videoRepository.find(AssetId(value = "999"))).isNull()
     }
 
     @Test
     fun `video cannot be retrieved after it has been removed`() {
-        val videoId = VideoId("123")
+        val videoId = AssetId("123")
         saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
 
-        videoRepository.deleteVideoBy(videoId)
+        videoRepository.delete(videoId)
 
-        assertThat(videoRepository.findVideosBy(listOf(videoId))).isEmpty()
+        assertThat(videoRepository.findAll(listOf(videoId))).isEmpty()
     }
 }

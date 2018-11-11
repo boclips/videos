@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class KalturaConfig {
+class KalturaContext {
     @Bean
     fun kalturaClient(kalturaProperties: KalturaProperties): KalturaClient = KalturaClient.create(KalturaClientConfig.builder()
             .partnerId(kalturaProperties.partnerId)

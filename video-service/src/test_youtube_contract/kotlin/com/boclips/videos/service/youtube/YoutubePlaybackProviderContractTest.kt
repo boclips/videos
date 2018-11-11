@@ -1,7 +1,7 @@
 package com.boclips.videos.service.youtube
 
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
-import com.boclips.videos.service.domain.service.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import org.assertj.core.api.Assertions.assertThat

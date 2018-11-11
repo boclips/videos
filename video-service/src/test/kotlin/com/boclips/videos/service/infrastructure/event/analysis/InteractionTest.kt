@@ -43,7 +43,7 @@ class InteractionTest {
         assertThat(interactions.first().timestamp).isEqualTo(now.minusMinutes(1))
         assertThat(interactions.first().description).isEqualTo("Search for 'boston' (10 results).")
         assertThat(interactions.first().related).hasSize(1)
-        assertThat(interactions.first().related.first().description).isEqualTo("Watch 30s of video-id (duration 1m 0s).")
+        assertThat(interactions.first().related.first().description).isEqualTo("Watch 30s of asset-id (duration 1m 0s).")
     }
 
     @Test

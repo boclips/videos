@@ -18,13 +18,13 @@ class SearchExpectationCsvTest {
     @Test
     fun `toSearchExpectation throws if query is blank`() {
         val searchExpectation = SearchExpectationCsv(" ", "2352831")
-        assertThatThrownBy { searchExpectation.toSearchExpectation() }.hasMessage("Empty query for video 2352831")
+        assertThatThrownBy { searchExpectation.toSearchExpectation() }.hasMessage("Empty query for asset 2352831")
     }
 
     @Test
     fun `toSearchExpectation throws if video id contains not-numeric characters`() {
         val searchExpectation = SearchExpectationCsv("linear equations", "235 2831")
-        assertThatThrownBy { searchExpectation.toSearchExpectation() }.hasMessage("Invalid video id: '235 2831'")
+        assertThatThrownBy { searchExpectation.toSearchExpectation() }.hasMessage("Invalid asset id: '235 2831'")
     }
 
     @Test

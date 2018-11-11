@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: video-service
+  name: asset-service
   labels:
-    app: video-service
+    app: asset-service
 spec:
   replicas: ${REPLICAS}
   selector:
     matchLabels:
-      app: video-service
+      app: asset-service
   template:
     metadata:
       labels:
-        app: video-service
+        app: asset-service
     spec:
       affinity:
         nodeAffinity:
@@ -25,15 +25,15 @@ spec:
       $TOLERATE_NONCRITICAL_EXCEPT_PRODUCTION
 
       containers:
-      - name: video-service
-        image: eu.gcr.io/boclips-prod/boclips/video-service:${VERSION}
+      - name: asset-service
+        image: eu.gcr.io/boclips-prod/boclips/asset-service:${VERSION}
         ports:
         - name: http
           containerPort: 8080
           protocol: TCP
         envFrom:
         - secretRef:
-            name: video-service
+            name: asset-service
         resources:
           requests:
             cpu: "1000m"

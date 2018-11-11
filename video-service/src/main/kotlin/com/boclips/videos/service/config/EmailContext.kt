@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 
 @Configuration
-class EmailConfig {
+class EmailContext {
     @Bean
     fun emailClient(mailer: Mailer, environment: Environment): EmailClient {
         return EmailClient(mailer, environment)

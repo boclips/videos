@@ -17,7 +17,7 @@ class SearchBenchmarkReportConverterTest {
 
         val csv = SearchBenchmarkReportConverter.convert(listOf(item))
 
-        assertThat(csv).isEqualTo("Query,Video,boclips.com,video-service\n" +
+        assertThat(csv).isEqualTo("Query,Video,boclips.com,asset-service\n" +
                 "\"the meaning of life\",1234,true,false\n")
     }
 }

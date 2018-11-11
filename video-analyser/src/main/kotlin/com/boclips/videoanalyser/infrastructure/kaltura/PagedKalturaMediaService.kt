@@ -49,10 +49,10 @@ class PagedKalturaMediaService(
         videos.forEach {
             try {
                 kalturaClient.deleteMediaEntriesByReferenceId(it.referenceId)
-                logger.info { "Deleted video ${it.referenceId}" }
+                logger.info { "Deleted asset ${it.referenceId}" }
                 successfulDeletions.add(it)
             } catch (ex: KalturaClientApiException) {
-                logger.warn { "Failed to delete video $it" }
+                logger.warn { "Failed to delete asset $it" }
             }
         }
         return successfulDeletions

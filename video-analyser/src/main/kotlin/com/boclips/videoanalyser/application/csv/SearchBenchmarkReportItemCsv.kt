@@ -9,6 +9,6 @@ data class SearchBenchmarkReportItemCsv(
     var video: String? = null,
     @JsonProperty(value = "boclips.com")
     var legacySearchHit: String? = null,
-    @JsonProperty(value = "video-service")
+    @JsonProperty(value = "asset-service")
     var videoServiceHit: String? = null
 )

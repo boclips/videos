@@ -85,7 +85,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,
                 videoDurationSeconds = 50,
-                videoId = "video-id"
+                videoId = "asset-id"
         ))
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/events/status"))
                 .andExpect(status().isOk)

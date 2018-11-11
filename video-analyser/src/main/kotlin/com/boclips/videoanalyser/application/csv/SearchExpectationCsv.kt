@@ -14,10 +14,10 @@ data class SearchExpectationCsv(@JsonProperty(value = "QUERY") val query: String
             return null
         }
         if(query.isBlank()) {
-            throw IllegalStateException("Empty query for video $video")
+            throw IllegalStateException("Empty query for asset $video")
         }
 
-        val match = regex.matchEntire(video) ?: throw IllegalStateException("Invalid video id: '$video'")
+        val match = regex.matchEntire(video) ?: throw IllegalStateException("Invalid asset id: '$video'")
         val videoId = match.groupValues[1]
 
         return SearchExpectation(query.trim(), videoId)

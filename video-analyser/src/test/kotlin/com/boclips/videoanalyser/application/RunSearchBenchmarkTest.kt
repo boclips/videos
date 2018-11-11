@@ -58,7 +58,7 @@ class RunSearchBenchmarkTest {
 
         RunSearchBenchmark(searchBenchmarkService).execute(inputDatasetFile.absolutePath, outputReportFile.absolutePath)
 
-        assertThat(outputReportFile.readText()).startsWith("Query,Video,boclips.com,video-service\ndogs")
+        assertThat(outputReportFile.readText()).startsWith("Query,Video,boclips.com,asset-service\ndogs")
     }
 
 }

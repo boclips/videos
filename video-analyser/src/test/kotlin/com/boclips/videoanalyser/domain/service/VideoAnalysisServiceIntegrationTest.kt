@@ -20,8 +20,8 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getUnplayableVideos() {
-        metadataTestRepository.insert(id = "10", referenceId = "r10", title = "some unplayable video")
-        metadataTestRepository.insert(id = "20", referenceId = "r20", title = "some playable video")
+        metadataTestRepository.insert(id = "10", referenceId = "r10", title = "some unplayable asset")
+        metadataTestRepository.insert(id = "20", referenceId = "r20", title = "some playable asset")
 
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
@@ -37,8 +37,8 @@ class VideoAnalysisServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getPlayableVideos() {
-        metadataTestRepository.insert(id = "1", referenceId = "r1", title = "some playable video")
-        metadataTestRepository.insert(id = "2", referenceId = "r2", title = "another playable video")
+        metadataTestRepository.insert(id = "1", referenceId = "r1", title = "some playable asset")
+        metadataTestRepository.insert(id = "2", referenceId = "r2", title = "another playable asset")
 
         wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api_v3/service/media/action/list"))
                 .willReturn(WireMock.aResponse()
