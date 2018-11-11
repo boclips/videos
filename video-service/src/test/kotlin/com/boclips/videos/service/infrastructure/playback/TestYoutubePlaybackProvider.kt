@@ -1,14 +1,16 @@
 package com.boclips.videos.service.infrastructure.playback
 
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.service.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
-import com.boclips.videos.service.domain.model.playback.PlaybackProvider
 import java.time.Duration
 
 class TestYoutubePlaybackProvider : PlaybackProvider {
-    private val playbackById = mutableMapOf<String, YoutubePlayback>()
+    private val playbackById = mutableMapOf<PlaybackId, YoutubePlayback>()
 
-    override fun retrievePlayback(videoIds: List<String>): Map<String, YoutubePlayback> {
-        return videoIds
+    override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
+        return playbackIds
                 .mapNotNull map@{ id ->
                     val youtubePlayback = playbackById[id] ?: return@map null
                     (id to youtubePlayback)
@@ -16,11 +18,18 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
                 .toMap()
     }
 
-    override fun removePlayback(videoId: String) {
+    override fun removePlayback(playbackId: PlaybackId) {
     }
 
     fun addVideo(youtubeId: String, thumbnailUrl: String, duration: Duration): TestYoutubePlaybackProvider {
-        playbackById[youtubeId] = YoutubePlayback(youtubeId, thumbnailUrl, duration)
+        val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = youtubeId)
+
+        playbackById[playbackId] = YoutubePlayback(
+                playbackId = playbackId,
+                youtubeId = youtubeId,
+                thumbnailUrl = thumbnailUrl,
+                duration = duration)
+
         return this
     }
 

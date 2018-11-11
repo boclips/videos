@@ -1,6 +1,8 @@
 package com.boclips.videos.service.infrastructure.playback
 
-import com.boclips.videos.service.domain.model.playback.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.service.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -14,16 +16,19 @@ class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
             .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
             .build()
 
-    override fun retrievePlayback(videoIds: List<String>): Map<String, YoutubePlayback> {
-        if (videoIds.isEmpty()) {
+    override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
+        if (playbackIds.isEmpty()) {
             return emptyMap()
         }
 
         val videosListByIdRequest = youtube.videos().list("snippet,contentDetails")
-        videosListByIdRequest.id = videoIds.joinToString(separator = ",")
+        videosListByIdRequest.id = playbackIds.map { playbackId -> playbackId.value }.joinToString(separator = ",")
+
         val response = videosListByIdRequest.execute()
         return response.items.map { item ->
-            (item.id to YoutubePlayback(
+            val playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, item.id)
+            (playbackId to YoutubePlayback(
+                    playbackId = playbackId,
                     youtubeId = item.id,
                     thumbnailUrl = item.snippet.thumbnails.high.url,
                     duration = Duration.parse(item.contentDetails.duration)
@@ -31,7 +36,7 @@ class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
         }.toMap()
     }
 
-    override fun removePlayback(videoId: String) {
+    override fun removePlayback(videoId: PlaybackId) {
     }
 
 }

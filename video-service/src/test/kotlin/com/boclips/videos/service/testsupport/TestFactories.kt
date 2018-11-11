@@ -3,8 +3,8 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.types.Event
@@ -126,11 +126,20 @@ object TestFactories {
     }
 
     fun createKalturaPlayback(): StreamPlayback {
-        return StreamPlayback(streamUrl = "kaltura-stream", thumbnailUrl = "kaltura-thumbnail", duration = Duration.ofSeconds(11))
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "555")
+        return StreamPlayback(playbackId = playbackId,
+                streamUrl = "kaltura-stream",
+                thumbnailUrl = "kaltura-thumbnail",
+                duration = Duration.ofSeconds(11))
     }
 
     fun createYoutubePlayback(): YoutubePlayback {
-        return YoutubePlayback(youtubeId = "youtube-id", thumbnailUrl = "youtube-thumbnail", duration = Duration.ofSeconds(21))
+        val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "444")
+        return YoutubePlayback(
+                playbackId = playbackId,
+                youtubeId = "youtube-id",
+                thumbnailUrl = "youtube-thumbnail",
+                duration = Duration.ofSeconds(21))
     }
 
 }

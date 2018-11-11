@@ -2,6 +2,8 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -67,6 +69,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos.execute("123")
 
-        assertThat(kalturaPlaybackProvider.retrievePlayback(listOf("ref-id-123"))).isEmpty()
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
+        assertThat(kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))).isEmpty()
     }
 }

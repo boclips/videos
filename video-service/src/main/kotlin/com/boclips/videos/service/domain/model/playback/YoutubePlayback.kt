@@ -3,7 +3,8 @@ package com.boclips.videos.service.domain.model.playback
 import java.time.Duration
 
 class YoutubePlayback(
-        val youtubeId: String,
+        playbackId: PlaybackId,
         thumbnailUrl: String,
-        duration: Duration
-) : VideoPlayback(thumbnailUrl, duration)
+        duration: Duration,
+        val youtubeId: String
+) : VideoPlayback(playbackId, thumbnailUrl, duration)

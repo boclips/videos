@@ -3,7 +3,8 @@ package com.boclips.videos.service.domain.model.playback
 import java.time.Duration
 
 class StreamPlayback(
-        val streamUrl: String,
+        playbackId: PlaybackId,
         thumbnailUrl: String,
-        duration: Duration
-) : VideoPlayback(thumbnailUrl, duration)
+        duration: Duration,
+        val streamUrl: String
+) : VideoPlayback(playbackId = playbackId, thumbnailUrl = thumbnailUrl, duration = duration)

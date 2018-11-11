@@ -12,7 +12,7 @@ import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackProvider
+import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.email.EmailClient
