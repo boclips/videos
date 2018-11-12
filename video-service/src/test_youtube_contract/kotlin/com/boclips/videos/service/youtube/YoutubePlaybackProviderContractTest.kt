@@ -1,5 +1,7 @@
 package com.boclips.videos.service.youtube
 
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
@@ -20,7 +22,8 @@ class YoutubePlaybackProviderContractTest {
     @ParameterizedTest
     @ArgumentsSource(PlaybackProviderArgumentProvider::class)
     fun `retrievePlayback adds youtube playback information`(playbackProvider: PlaybackProvider) {
-        val youtubePlayback = playbackProvider.retrievePlayback(listOf("4IYDb6K5UF8"))["4IYDb6K5UF8"]!!
+        val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "4IYDb6K5UF8")
+        val youtubePlayback = playbackProvider.retrievePlayback(listOf(playbackId))[playbackId]!!
 
         assertThat(youtubePlayback).isInstanceOf(YoutubePlayback::class.java)
 
@@ -42,7 +45,8 @@ class YoutubePlaybackProviderContractTest {
     @ParameterizedTest
     @ArgumentsSource(PlaybackProviderArgumentProvider::class)
     fun `retrievePlayback can omits videos which cannot be located`(playbackProvider: PlaybackProvider) {
-        val youtubePlayback = playbackProvider.retrievePlayback(listOf("1239123jkdsfajkadsfasdf"))
+        val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "1239123jkdsfajkadsfasdf")
+        val youtubePlayback = playbackProvider.retrievePlayback(listOf(playbackId))
 
         assertThat(youtubePlayback).isEmpty()
     }
