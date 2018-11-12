@@ -2,22 +2,22 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: asset-service
+  name: video-service
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-  - host: asset-service.${DOMAIN}
+  - host: video-service.${DOMAIN}
     http:
       paths:
       - path: /
         backend:
-          serviceName: asset-service
+          serviceName: video-service
           servicePort: http
   - host: educators.${DOMAIN}
     http:
       paths:
       - path: /v1
         backend:
-          serviceName: asset-service
+          serviceName: video-service
           servicePort: http

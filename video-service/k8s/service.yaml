@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: asset-service
+  name: video-service
   labels:
-    app: asset-service
+    app: video-service
 spec:
   type: ClusterIP
   ports:
@@ -13,4 +13,4 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: asset-service
+    app: video-service
