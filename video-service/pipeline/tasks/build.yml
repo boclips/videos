@@ -21,4 +21,4 @@ caches:
   - path: .gradle/
 
 run:
-  path: source/asset-service/pipeline/scripts/build.sh
+  path: source/video-service/pipeline/scripts/build.sh
