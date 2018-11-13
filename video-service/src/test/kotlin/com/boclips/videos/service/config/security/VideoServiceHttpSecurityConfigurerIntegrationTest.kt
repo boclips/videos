@@ -69,25 +69,30 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
-    fun `get videos as different users`() {
+    fun `get video does not require special roles`() {
+        saveVideo(videoId = 123)
+
+        mockMvc.perform(get("/v1/videos/123"))
+                .andExpect(status().is2xxSuccessful)
+
+        mockMvc.perform(get("/v1/videos/123").asReporter())
+                .andExpect(status().is2xxSuccessful)
+
+        mockMvc.perform(get("/v1/videos/123").asTeacher())
+                .andExpect(status().is2xxSuccessful)
+    }
+
+    @Test
+    fun `only teachers can get videos`() {
         saveVideo(videoId = 123)
 
         mockMvc.perform(get("/v1/videos?query=test"))
                 .andExpect(status().isForbidden)
 
-        mockMvc.perform(get("/v1/videos/123"))
-                .andExpect(status().isForbidden)
-
         mockMvc.perform(get("/v1/videos?query=test").asReporter())
                 .andExpect(status().isForbidden)
 
-        mockMvc.perform(get("/v1/videos/123").asReporter())
-                .andExpect(status().isForbidden)
-
         mockMvc.perform(get("/v1/videos?query=test").asTeacher())
-                .andExpect(status().is2xxSuccessful)
-
-        mockMvc.perform(get("/v1/videos/123").asTeacher())
                 .andExpect(status().is2xxSuccessful)
     }
 
