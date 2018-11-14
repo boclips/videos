@@ -15,13 +15,7 @@ spec:
       labels:
         app: video-service
     spec:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 10
-            preference:
-              matchExpressions: [{key: priority, operator: In, values: [noncritical]}]
-
+      $REQUIRE_NONCRITICAL_EXCEPT_PRODUCTION
       $TOLERATE_NONCRITICAL_EXCEPT_PRODUCTION
 
       containers:
