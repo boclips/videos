@@ -53,6 +53,38 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `paginates results`(searchService: SearchService) {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
+                SearchableVideoMetadataFactory.create(id = "3", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated."),
+                SearchableVideoMetadataFactory.create(id = "4", title = "Who are you, really?", contentProvider = "Gentleman Ben")
+        ))
+
+        val page1 = searchService.search(PaginatedSearchRequest(query = "gentleman", startIndex = 0, windowSize = 2))
+        val page2 = searchService.search(PaginatedSearchRequest(query = "gentleman", startIndex = 2, windowSize = 2))
+
+        assertThat(page1).hasSize(2)
+        assertThat(page2).hasSize(1)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `counts all videos matching metadata`(searchService: SearchService) {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
+                SearchableVideoMetadataFactory.create(id = "3", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated."),
+                SearchableVideoMetadataFactory.create(id = "4", title = "Who are you, really?", contentProvider = "Gentleman Ben")
+        ))
+
+        val result = searchService.count(query = "gentleman")
+
+        assertThat(result).isEqualTo(3)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `removed videos are not searchable`(searchService: SearchService) {
         searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing")))
 

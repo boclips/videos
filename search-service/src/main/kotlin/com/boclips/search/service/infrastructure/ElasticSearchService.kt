@@ -93,8 +93,8 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         val elasticSearchRequest = SearchRequest(arrayOf(ES_INDEX),
                 SearchSourceBuilder()
                         .query(findMatchesQuery)
-                        .from(searchRequest.pageIndex)
-                        .size(searchRequest.pageSize)
+                        .from(searchRequest.startIndex)
+                        .size(searchRequest.windowSize)
                         .addRescorer(rescorer)
         )
 

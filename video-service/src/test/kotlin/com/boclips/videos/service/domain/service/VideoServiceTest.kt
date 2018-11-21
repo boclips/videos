@@ -21,7 +21,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `retrieve videos by query returns Kaltura videos`() {
         saveVideo(videoId = 1, title = "a kaltura asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"))
 
-        val videos = videoService.search(VideoSearchQuery("kaltura"))
+        val videos = videoService.search(VideoSearchQuery("kaltura", 0, 10))
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().asset.title).isEqualTo("a kaltura asset")
@@ -32,7 +32,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `retrieve videos by query returns Youtube videos`() {
         saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val videos = videoService.search(VideoSearchQuery("youtube"))
+        val videos = videoService.search(VideoSearchQuery("youtube", 0, 10))
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().asset.title).isEqualTo("a youtube asset")
@@ -40,10 +40,19 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `count videos`() {
+        saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
+
+        val size = videoService.count(VideoSearchQuery("youtube", 0, 10))
+
+        assertThat(size).isEqualTo(1)
+    }
+
+    @Test
     fun `look up video by id`() {
         saveVideo(videoId = 1)
 
-        val video = videoService.getVideo(AssetId("1"))
+        val video = videoService.get(AssetId("1"))
 
         assertThat(video).isNotNull
         assertThat(video.playback!!.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-1.mp4")
@@ -55,11 +64,11 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         fakeKalturaClient.clear()
 
-        Assertions.assertThatThrownBy { videoService.getVideo(AssetId("123")) }.isInstanceOf(VideoPlaybackNotFound::class.java)
+        Assertions.assertThatThrownBy { videoService.get(AssetId("123")) }.isInstanceOf(VideoPlaybackNotFound::class.java)
     }
 
     @Test
     fun `look up by id throws if video does not exist`() {
-        Assertions.assertThatThrownBy { videoService.getVideo(AssetId("123")) }.isInstanceOf(VideoAssetNotFoundException::class.java)
+        Assertions.assertThatThrownBy { videoService.get(AssetId("123")) }.isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 }

@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.VideoResource
+import com.boclips.videos.service.presentation.video.VideosResource
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
@@ -22,14 +23,15 @@ class VideoController(
         private val deleteVideos: DeleteVideos
 ) {
     companion object {
-        fun searchLink() = linkTo(methodOn(VideoController::class.java).search(null)).withRel("search")
+        fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null)).withRel("search")
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
     }
 
     @GetMapping
     @SearchLogging
     fun search(@RequestParam("query") query: String?): ResponseEntity<Resources<*>> {
-        val results = getVideosByQuery.execute(query)
+        val results = getVideosByQuery.execute(query, 0, 10)
+                .videos
                 .map(this::videoToResource)
                 .let(HateoasEmptyCollection::fixIfEmptyCollection)
 

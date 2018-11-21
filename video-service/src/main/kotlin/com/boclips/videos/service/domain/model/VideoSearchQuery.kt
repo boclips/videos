@@ -1,3 +1,3 @@
 package com.boclips.videos.service.domain.model
 
-class VideoSearchQuery(val text: String)
+class VideoSearchQuery(val text: String, val pageIndex: Int, val pageSize: Int)

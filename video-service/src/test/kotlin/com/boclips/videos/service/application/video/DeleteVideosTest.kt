@@ -26,7 +26,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos.execute("123")
 
-        assertThatThrownBy { videoService.getVideo(AssetId(value = "123")) }
+        assertThatThrownBy { videoService.get(AssetId(value = "123")) }
                 .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
@@ -49,7 +49,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos.execute("123")
 
-        assertThatThrownBy { videoService.getVideo(AssetId(value = "123")) }
+        assertThatThrownBy { videoService.get(AssetId(value = "123")) }
                 .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
