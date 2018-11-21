@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.SearchService
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -24,7 +25,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated.")
         ))
 
-        val results = searchService.search("gentelman")
+        val results = searchService.search(PaginatedSearchRequest(query = "gentelman"))
 
         assertThat(results).containsExactly("1")
     }
@@ -37,7 +38,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
         ))
 
-        val results = searchService.search("Apple banana candy")
+        val results = searchService.search(PaginatedSearchRequest(query = "Apple banana candy"))
 
         assertThat(results.first()).isEqualTo("1")
     }
@@ -50,7 +51,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "3", description = "banana apple candy")
         ))
 
-        val results = searchService.search("Apple banana candy")
+        val results = searchService.search(PaginatedSearchRequest(query = "Apple banana candy"))
 
         assertThat(results.first()).isEqualTo("1")
     }
@@ -62,7 +63,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", keywords = listOf("dog"))
         ))
 
-        val results = searchService.search("dogs")
+        val results = searchService.search(PaginatedSearchRequest(query = "dogs"))
 
         assertThat(results.first()).isEqualTo("2")
     }
@@ -74,7 +75,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", contentProvider = "TED Talks")
         ))
 
-        val results = searchService.search("ted talk")
+        val results = searchService.search(PaginatedSearchRequest(query = "ted talk"))
 
         assertThat(results.first()).isEqualTo("2")
     }
@@ -86,7 +87,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", description = "i have a dream")
         ))
 
-        val results = searchService.search("i have a dream")
+        val results = searchService.search(PaginatedSearchRequest(query = "i have a dream"))
 
         assertThat(results.first()).isEqualTo("2")
     }
@@ -97,9 +98,58 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "1", description = "it's raining today")
         ))
 
-        val results = searchService.search("rain")
+        val results = searchService.search(PaginatedSearchRequest(query = "rain"))
 
         assertThat(results.first()).isEqualTo("1")
     }
 
+    @Test
+    fun `counts search results`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
+                SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "5", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "6", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "7", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "8", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "9", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "10", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "11", description = "candy banana apple")
+        ))
+
+        val results = searchService.count("banana")
+
+        assertThat(results).isEqualTo(11)
+    }
+
+    @Test
+    fun `paginates search results`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
+                SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
+        ))
+
+        val results = searchService.search(PaginatedSearchRequest(query = "banana", pageIndex = 0, pageSize = 2))
+
+        assertThat(results.size).isEqualTo(2)
+    }
+
+    @Test
+    fun `can retrieve any page`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
+                SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
+        ))
+
+        val page1 = searchService.search(PaginatedSearchRequest(query = "banana", pageIndex = 0, pageSize = 2))
+        val page2 = searchService.search(PaginatedSearchRequest(query = "banana", pageIndex = 1, pageSize = 2))
+
+        assertThat(page1).doesNotContainSequence(page2)
+    }
 }

@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.SearchService
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -30,7 +31,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     fun `returns empty collection for empty result`(searchService: SearchService) {
         searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing")))
 
-        val result = searchService.search("query that matches nothing")
+        val result = searchService.search(PaginatedSearchRequest(query = "query that matches nothing"))
 
         assertThat(result).hasSize(0)
     }
@@ -45,7 +46,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(id = "4", title = "Who are you, really?", contentProvider = "Gentleman Ben")
         ))
 
-        val result = searchService.search("gentleman")
+        val result = searchService.search(PaginatedSearchRequest(query = "gentleman"))
 
         assertThat(result).containsExactlyInAnyOrder("1", "2", "4")
     }
@@ -57,7 +58,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         searchService.removeFromSearch("1")
 
-        assertThat(searchService.search("gentleman")).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(query = "gentleman")).isEmpty())
     }
 
     @ParameterizedTest
@@ -67,7 +68,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         searchService.resetIndex()
 
-        assertThat(searchService.search("boy")).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(query = "boy")).isEmpty())
     }
 
 }

@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.SearchService
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
@@ -24,17 +25,20 @@ import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
 class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
     companion object : KLogging() {
+
         const val ES_TYPE = "asset"
         const val ES_INDEX = "videos"
     }
 
     private val elasticSearchResultConverter = ElasticSearchResultConverter()
+
     private val client: RestHighLevelClient
 
     init {
@@ -52,8 +56,14 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         configureIndex()
     }
 
-    override fun search(query: String): List<String> {
-        return searchElasticSearch(query).map { it.id }
+    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
+        return searchElasticSearch(searchRequest)
+                .map(elasticSearchResultConverter::convert)
+                .map { it.id }
+    }
+
+    override fun count(query: String): Long {
+        return searchElasticSearch(PaginatedSearchRequest(query = query)).totalHits
     }
 
     override fun removeFromSearch(videoId: String) {
@@ -62,29 +72,33 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
         client.delete(request, RequestOptions.DEFAULT)
     }
 
-    private fun searchElasticSearch(query: String): List<ElasticSearchVideo> {
-        val findMatchesQuery = QueryBuilders.multiMatchQuery(query, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
+    override fun upsert(videos: Sequence<VideoMetadata>) {
+        val batchSize = 2000
+        videos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEachIndexed(this::upsertBatch)
+    }
+
+    private fun searchElasticSearch(searchRequest: PaginatedSearchRequest): SearchHits {
+        val findMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.AUTO)
 
-        val rescoreQuery = QueryBuilders.multiMatchQuery(query, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
+        val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
 
         val rescorer = QueryRescorerBuilder(rescoreQuery)
                 .windowSize(100)
                 .setScoreMode(QueryRescoreMode.Total)
 
-        val searchRequest = SearchRequest(arrayOf(ES_INDEX),
-                SearchSourceBuilder().query(findMatchesQuery).addRescorer(rescorer)
+        val elasticSearchRequest = SearchRequest(arrayOf(ES_INDEX),
+                SearchSourceBuilder()
+                        .query(findMatchesQuery)
+                        .from(searchRequest.pageIndex)
+                        .size(searchRequest.pageSize)
+                        .addRescorer(rescorer)
         )
 
-        return client.search(searchRequest, RequestOptions.DEFAULT).hits.hits.map(elasticSearchResultConverter::convert)
-    }
-
-    override fun upsert(videos: Sequence<VideoMetadata>) {
-        val batchSize = 2000
-        videos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEachIndexed(this::upsertBatch)
+        return client.search(elasticSearchRequest, RequestOptions.DEFAULT).hits
     }
 
     private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>) {
@@ -101,7 +115,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
 
         val result = client.bulk(request, RequestOptions.DEFAULT)
 
-        if(result.hasFailures()) {
+        if (result.hasFailures()) {
             throw Error("Batch indexing failed: ${result.buildFailureMessage()}")
         }
         logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} asset(s)" }

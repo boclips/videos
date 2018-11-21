@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service
 
+import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.SearchService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
@@ -18,7 +19,7 @@ class VideoService(
     companion object : KLogging()
 
     fun search(query: VideoSearchQuery): List<Video> {
-        val videoIds = searchService.search(query.text).map { AssetId(value = it) }
+        val videoIds = searchService.search(PaginatedSearchRequest(query = query.text)).map { AssetId(value = it) }
         val allVideoAssets = videoAssetRepository.findAll(videoIds)
         val videoPlaybacks = playbackRespository.find(allVideoAssets.map { it.playbackId })
         if (videoIds.size != videoPlaybacks.size) {

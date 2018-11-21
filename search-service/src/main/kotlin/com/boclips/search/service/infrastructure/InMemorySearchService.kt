@@ -1,19 +1,23 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.SearchService
 import com.boclips.search.service.domain.VideoMetadata
 
 class InMemorySearchService : SearchService {
+    private val index = mutableMapOf<String, String>()
+
+    override fun count(query: String): Long {
+       return index.size.toLong()
+    }
 
     override fun resetIndex() {
         index.clear()
     }
 
-    private val index = mutableMapOf<String, String>()
-
-    override fun search(query: String): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
         return index
-                .filter { text -> text.value.contains(query, ignoreCase = true) }
+                .filter { text -> text.value.contains(searchRequest.query, ignoreCase = true) }
                 .map { it.key }
     }
 
