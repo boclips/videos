@@ -26,6 +26,7 @@ class VideoController(
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
 
         const val DEFAULT_PAGE_SIZE = 100
+        const val MAX_PAGE_SIZE = 500
         const val DEFAULT_PAGE_INDEX = 0
     }
 

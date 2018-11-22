@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.presentation.VideoController.Companion.DEFAULT_PAGE_SIZE
+import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.presentation.video.VideosResource
 import mu.KLogging
@@ -47,7 +48,7 @@ class GetVideosByQuery(
     }
 
     private fun validatePageSize(pageSize: Int) {
-        if (pageSize > DEFAULT_PAGE_SIZE) throw IllegalArgumentException()
+        if (pageSize > MAX_PAGE_SIZE) throw IllegalArgumentException()
         if (pageSize <= 0) throw IllegalArgumentException()
     }
 }
