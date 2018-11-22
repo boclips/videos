@@ -8,8 +8,8 @@ import com.boclips.videos.service.presentation.video.playback.StreamPlaybackReso
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 
 class VideoToResourceConverter {
-    fun convert(videos: List<Video>, videoCount: Long): VideosResource {
-        return VideosResource(videos = videos.map(this::toResource), totalVideos = videoCount)
+    fun convert(videos: List<Video>): List<VideoResource> {
+        return videos.map { video -> convert(video) }
     }
 
     fun convert(video: Video): VideoResource {

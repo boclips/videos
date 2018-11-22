@@ -17,8 +17,9 @@ class GetVideosByQuery(
         const val DEFAULT_PAGE_INDEX = 0
     }
 
-    fun execute(query: String?, pageIndex: Int?, pageSize: Int?): VideosResource {
-        val (validPageSize, validPageNumber) = setDefaults(pageSize, pageIndex)
+    fun execute(query: String?, pageNumber: Int?, pageSize: Int?): VideosResource {
+        val validPageSize = pageSize ?: DEFAULT_PAGE_SIZE
+        val validPageNumber = pageNumber ?: DEFAULT_PAGE_INDEX
 
         query ?: throw QueryValidationException()
         if (validPageSize > DEFAULT_PAGE_SIZE) throw IllegalArgumentException()
@@ -26,17 +27,21 @@ class GetVideosByQuery(
         if (validPageNumber < 0) throw IllegalArgumentException()
 
         val videoSearchQuery = VideoSearchQuery(text = query, pageIndex = validPageNumber, pageSize = validPageSize)
-        val videoCount = videoService.count(videoSearchQuery)
+
+        val videoCount = videoService.count(videoSearchQuery = videoSearchQuery)
         logger.info { "Found $videoCount videos for query $videoSearchQuery" }
+
         val videos: List<Video> = videoService.search(videoSearchQuery)
         logger.info { "Return ${videos.size} results for query $videoSearchQuery" }
 
-        return videoToResourceConverter.convert(videos, videoCount)
+        val videoResources = videoToResourceConverter.convert(videos)
+
+        return VideosResource(
+                videos = videoResources,
+                totalVideos = videoCount,
+                pageNumber = validPageNumber,
+                pageSize = validPageSize
+        )
     }
 
-    private fun setDefaults(pageSize: Int?, pageIndex: Int?): Pair<Int, Int> {
-        val validPageSize = pageSize ?: DEFAULT_PAGE_SIZE
-        val validPageIndex = pageIndex ?: DEFAULT_PAGE_INDEX
-        return Pair(validPageSize, validPageIndex)
-    }
 }

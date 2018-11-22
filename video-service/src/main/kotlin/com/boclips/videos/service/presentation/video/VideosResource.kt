@@ -1,3 +1,8 @@
 package com.boclips.videos.service.presentation.video
 
-class VideosResource(val videos: List<VideoResource>, val totalVideos: Long)
+data class VideosResource(
+        val videos: List<VideoResource>,
+        val totalVideos: Long,
+        val pageNumber: Int,
+        val pageSize: Int
+)

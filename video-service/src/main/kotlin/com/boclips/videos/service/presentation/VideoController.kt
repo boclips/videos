@@ -6,8 +6,8 @@ import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.VideoResource
+import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
@@ -30,13 +30,25 @@ class VideoController(
     @SearchLogging
     fun search(@RequestParam("query") query: String?,
                @RequestParam("pageSize") pageSize: Int?,
-               @RequestParam("pageNumber") pageNumber: Int?): ResponseEntity<Resources<*>> {
-        val results = getVideosByQuery.execute(query = query, pageIndex = pageNumber, pageSize = pageSize)
+               @RequestParam("pageNumber") pageNumber: Int?): ResponseEntity<PagedResources<*>> {
+        val videosResource = getVideosByQuery.execute(query = query,
+                pageNumber = pageNumber,
+                pageSize = pageSize)
+
+        val videoResources = videosResource
                 .videos
                 .map(this::videoToResource)
                 .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
-        return ResponseEntity(Resources(results), HttpStatus.OK)
+        return ResponseEntity(
+                PagedResources(
+                        videoResources,
+                        PagedResources.PageMetadata(
+                                videosResource.pageSize.toLong(),
+                                videosResource.pageNumber.toLong(),
+                                videosResource.totalVideos
+                        )
+                ), HttpStatus.OK)
     }
 
     @GetMapping("/{id}")

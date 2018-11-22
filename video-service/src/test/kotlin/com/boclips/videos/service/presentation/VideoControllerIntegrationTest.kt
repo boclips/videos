@@ -6,6 +6,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,6 +56,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
+
+                .andExpect(jsonPath("$.page.size", Matchers.equalTo(100)))
+                .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(1)))
+                .andExpect(jsonPath("$.page.totalPages", Matchers.equalTo(1)))
+                .andExpect(jsonPath("$.page.number", Matchers.equalTo(0)))
+                .andExpect(jsonPath("$._links.prev").doesNotExist())
+                .andExpect(jsonPath("$._links.next").doesNotExist())
     }
 
     @Test

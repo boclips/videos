@@ -47,9 +47,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 3, title = "a another asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-123"))
         saveVideo(videoId = 4, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val result = getVideosByQuery.execute(query = "youtube", pageIndex = 1, pageSize = 2)
+        val result = getVideosByQuery.execute(query = "youtube", pageNumber = 1, pageSize = 2)
 
-        assertThat(result.totalVideos).isEqualTo(3)
         assertThat(result.videos).hasSize(1)
+        assertThat(result.totalVideos).isEqualTo(3)
+        assertThat(result.pageNumber).isEqualTo(1)
+        assertThat(result.pageSize).isEqualTo(2)
     }
 }

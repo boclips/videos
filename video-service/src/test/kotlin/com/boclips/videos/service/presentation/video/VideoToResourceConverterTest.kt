@@ -58,9 +58,9 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts heterogenous video lists`() {
-        val resultResource = VideoToResourceConverter().convert(listOf(youtubeVideo, kalturaVideo), 10)
+        val resultResource = VideoToResourceConverter()
+                .convert(videos = listOf(youtubeVideo, kalturaVideo))
 
-        assertThat(resultResource.videos.map { it.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
-        assertThat(resultResource.totalVideos).isEqualTo(10)
+        assertThat(resultResource.map { it.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
     }
 }
