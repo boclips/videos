@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.QueryValidationEx
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.presentation.VideoController.Companion.DEFAULT_PAGE_SIZE
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.presentation.video.VideosResource
 import mu.KLogging
@@ -12,36 +13,41 @@ class GetVideosByQuery(
         private val videoService: VideoService,
         private val videoToResourceConverter: VideoToResourceConverter
 ) {
-    companion object : KLogging() {
-        const val DEFAULT_PAGE_SIZE = 100
-        const val DEFAULT_PAGE_INDEX = 0
-    }
+    companion object : KLogging()
 
-    fun execute(query: String?, pageNumber: Int?, pageSize: Int?): VideosResource {
-        val validPageSize = pageSize ?: DEFAULT_PAGE_SIZE
-        val validPageNumber = pageNumber ?: DEFAULT_PAGE_INDEX
+    fun execute(query: String?, pageNumber: Int, pageSize: Int): VideosResource {
+        validateQuery(query)
+        validatePageSize(pageSize)
+        validatePageNumber(pageNumber)
 
-        query ?: throw QueryValidationException()
-        if (validPageSize > DEFAULT_PAGE_SIZE) throw IllegalArgumentException()
-        if (validPageSize <= 0) throw IllegalArgumentException()
-        if (validPageNumber < 0) throw IllegalArgumentException()
+        val videoSearchQuery = VideoSearchQuery(text = query!!, pageIndex = pageNumber, pageSize = pageSize)
 
-        val videoSearchQuery = VideoSearchQuery(text = query, pageIndex = validPageNumber, pageSize = validPageSize)
-
-        val videoCount = videoService.count(videoSearchQuery = videoSearchQuery)
-        logger.info { "Found $videoCount videos for query $videoSearchQuery" }
+        val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
+        logger.info { "Found $totalVideos videos for query $videoSearchQuery" }
 
         val videos: List<Video> = videoService.search(videoSearchQuery)
-        logger.info { "Return ${videos.size} results for query $videoSearchQuery" }
+        logger.info { "Return ${videos.size} out of $pageSize results for query $videoSearchQuery" }
 
         val videoResources = videoToResourceConverter.convert(videos)
 
         return VideosResource(
                 videos = videoResources,
-                totalVideos = videoCount,
-                pageNumber = validPageNumber,
-                pageSize = validPageSize
+                totalVideos = totalVideos,
+                pageNumber = pageNumber,
+                pageSize = pageSize
         )
     }
 
+    private fun validateQuery(query: String?) {
+        query ?: throw QueryValidationException()
+    }
+
+    private fun validatePageNumber(pageNumber: Int) {
+        if (pageNumber < 0) throw IllegalArgumentException()
+    }
+
+    private fun validatePageSize(pageSize: Int) {
+        if (pageSize > DEFAULT_PAGE_SIZE) throw IllegalArgumentException()
+        if (pageSize <= 0) throw IllegalArgumentException()
+    }
 }

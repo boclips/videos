@@ -24,7 +24,11 @@ class VideoController(
     companion object {
         fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null, null, null)).withRel("search")
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
+
+        const val DEFAULT_PAGE_SIZE = 100
+        const val DEFAULT_PAGE_INDEX = 0
     }
+
 
     @GetMapping
     @SearchLogging
@@ -32,8 +36,8 @@ class VideoController(
                @RequestParam("pageSize") pageSize: Int?,
                @RequestParam("pageNumber") pageNumber: Int?): ResponseEntity<PagedResources<*>> {
         val videosResource = getVideosByQuery.execute(query = query,
-                pageNumber = pageNumber,
-                pageSize = pageSize)
+                pageNumber = pageNumber ?: DEFAULT_PAGE_INDEX,
+                pageSize = pageSize ?: DEFAULT_PAGE_SIZE)
 
         val videoResources = videosResource
                 .videos
