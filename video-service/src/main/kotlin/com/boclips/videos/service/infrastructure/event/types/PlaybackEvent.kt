@@ -14,12 +14,13 @@ data class PlaybackEventData(
 class PlaybackEvent(
         playerId: String,
         videoId: String,
+        user: User,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
         videoDurationSeconds: Long,
         captureTime: ZonedDateTime,
         searchId: String?
-) : Event<PlaybackEventData>(EventType.PLAYBACK.name, captureTime, PlaybackEventData(
+) : Event<PlaybackEventData>(EventType.PLAYBACK.name, captureTime, user, PlaybackEventData(
         playerId = playerId,
         videoId = videoId,
         segmentStartSeconds = segmentStartSeconds,

@@ -24,5 +24,4 @@ class InteractionControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(content().string(startsWith(">  20")))
     }
 
-
 }

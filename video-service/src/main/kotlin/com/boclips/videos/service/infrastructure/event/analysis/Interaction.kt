@@ -2,10 +2,16 @@ package com.boclips.videos.service.infrastructure.event.analysis
 
 import com.boclips.videos.service.infrastructure.event.analysis.DurationFormatter.formatSeconds
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.types.User
 import java.time.ZonedDateTime
 import kotlin.math.max
 
-data class Interaction(val timestamp: ZonedDateTime, val description: String, val related: List<Interaction>) {
+
+data class Interaction(
+        val timestamp: ZonedDateTime,
+        val description: String,
+        val related: List<Interaction>,
+        val user: User) {
 
     companion object {
         fun fromPlaybackEvents(events: List<PlaybackEvent>): List<Interaction> {
@@ -22,7 +28,8 @@ data class Interaction(val timestamp: ZonedDateTime, val description: String, va
                         Interaction(
                                 timestamp = segments.first().timestamp,
                                 description = formatDescription(segments),
-                                related = emptyList()
+                                related = emptyList(),
+                                user = segments.first().user
                         )
                     }
         }
@@ -38,7 +45,8 @@ data class Interaction(val timestamp: ZonedDateTime, val description: String, va
             return Interaction(
                     timestamp = searchEvent.timestamp,
                     description = "Search for '${searchEvent.data.query}' (${searchEvent.data.resultsReturned} results).",
-                    related = playbackInteractions
+                    related = playbackInteractions,
+                    user = searchEvent.user
             )
         }
 

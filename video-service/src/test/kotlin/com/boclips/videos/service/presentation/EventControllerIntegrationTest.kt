@@ -3,18 +3,20 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
+import com.boclips.videos.service.infrastructure.event.types.User
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asReporter
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.ZonedDateTime
@@ -30,7 +32,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `posted playback events are being saved`() {
         mockMvc.perform(post("/v1/events/playback")
-                .asTeacher()
+                .asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{
                     "playerId": "123",
@@ -45,15 +47,17 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isCreated)
 
         assertThat(eventLogRepository.count()).isEqualTo(1)
-        assertThat(eventLogRepository.findAll().first().timestamp).isNotNull()
-        assertThat(eventLogRepository.findAll().first().type).isNotNull()
-        assertThat(eventLogRepository.findAll().first().data).isNotNull()
+        val event = eventLogRepository.findAll().first()
+        assertThat(event.timestamp).isNotNull()
+        assertThat(event.type).isNotNull()
+        assertThat(event.boclipsEmployee).isTrue()
+        assertThat(event.data).isNotNull()
     }
 
     @Test
     fun `post and retrieve no search results`() {
         mockMvc.perform(post("/v1/events/no-search-results")
-                .asTeacher()
+                .asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{
                         "name": "Hans Muster",
@@ -77,7 +81,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `status is 200 when there are events`() {
-        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), "search-id", "query", 10))
+        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), "search-id", User.anonymous(), "query", 10))
         eventService.saveEvent(PlaybackEvent(
                 playerId = "player-id",
                 captureTime = ZonedDateTime.now(),
@@ -85,9 +89,10 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,
                 videoDurationSeconds = 50,
-                videoId = "asset-id"
+                videoId = "asset-id",
+                user = User.anonymous()
         ))
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/events/status"))
+        mockMvc.perform(get("/v1/events/status"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.healthy", `is`(true)))
                 .andExpect(jsonPath("$.latestSearch", not(isEmptyOrNullString())))
@@ -96,7 +101,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `status is 500 when there are no events`() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/events/status"))
+        mockMvc.perform(get("/v1/events/status"))
                 .andExpect(status().isServiceUnavailable)
                 .andExpect(jsonPath("$.healthy", `is`(false)))
                 .andExpect(jsonPath("$.latestSearch", isEmptyOrNullString()))

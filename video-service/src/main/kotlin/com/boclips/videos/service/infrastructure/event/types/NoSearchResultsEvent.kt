@@ -12,10 +12,11 @@ data class NoSearchResultsEventData(
 class NoSearchResultsEvent(
         name: String?,
         email: String?,
+        user: User,
         query: String?,
         description: String?,
         captureTime: ZonedDateTime
-) : Event<NoSearchResultsEventData>(EventType.NO_SEARCH_RESULTS.name, captureTime, NoSearchResultsEventData(
+) : Event<NoSearchResultsEventData>(EventType.NO_SEARCH_RESULTS.name, captureTime, user, NoSearchResultsEventData(
         name = name,
         email = email,
         query = query,

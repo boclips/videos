@@ -2,9 +2,11 @@ package com.boclips.videos.service.infrastructure.logging
 
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.types.SearchEventData
+import com.boclips.videos.service.infrastructure.event.types.User
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
+import com.sun.security.auth.UserPrincipal
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,7 +33,7 @@ class SearchLoggerTest {
         val currentRequest = MockHttpServletRequest()
         currentRequest.addHeader(SearchLogger.X_CORRELATION_ID, "correlation id")
 
-        val finalResource = searchLogger.logSearch(emptyVideoList, currentRequest, "some query")
+        val finalResource = searchLogger.logSearch(emptyVideoList, currentRequest, mockPrincipal(), "some query")
 
         assertThat(finalResource.headers["X-Correlation-ID"]).containsExactly("correlation id")
     }
@@ -41,7 +43,7 @@ class SearchLoggerTest {
         val currentRequest = MockHttpServletRequest()
         currentRequest.addHeader(SearchLogger.X_CORRELATION_ID, "correlation id")
 
-        searchLogger.logSearch(emptyVideoList, currentRequest, "some query")
+        searchLogger.logSearch(emptyVideoList, currentRequest, mockPrincipal(), "some query")
 
         verify(eventService).saveEvent<SearchEventData>(com.nhaarman.mockito_kotlin.check { event ->
             assertThat(event.timestamp).isAfter(ZonedDateTime.now().minusMinutes(1))
@@ -55,10 +57,23 @@ class SearchLoggerTest {
     fun `generates UUID when correlation id header is missing`() {
         val currentRequest = MockHttpServletRequest()
 
-        searchLogger.logSearch(emptyVideoList, currentRequest, "some query")
+        searchLogger.logSearch(emptyVideoList, currentRequest, mockPrincipal(), "some query")
 
         verify(eventService).saveEvent<SearchEventData>(com.nhaarman.mockito_kotlin.check { event ->
             assertThat(event.data.searchId).isNotBlank()
         })
     }
+
+    @Test
+    fun `builds event with principal details`() {
+        val currentRequest = MockHttpServletRequest()
+
+        searchLogger.logSearch(emptyVideoList, currentRequest, User.fromEmail("teacher@boclips.com"), "some query")
+
+        verify(eventService).saveEvent<SearchEventData>(com.nhaarman.mockito_kotlin.check { event ->
+            assertThat(event.user.boclipsEmployee).isTrue()
+        })
+    }
+
+    fun mockPrincipal() = User.anonymous()
 }

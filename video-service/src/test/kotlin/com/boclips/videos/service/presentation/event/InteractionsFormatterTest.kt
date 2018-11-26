@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.event
 
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
+import com.boclips.videos.service.testsupport.TestFactories.createInteraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -13,10 +14,10 @@ class InteractionsFormatterTest {
     fun format() {
         val time = ZonedDateTime.of(2018, 2, 3, 10, 11, 12, 0, ZoneOffset.UTC)
         val interactions = listOf(
-                Interaction(timestamp = time, description = "root", related = listOf(
-                        Interaction(timestamp = time.plusHours(1), description = "nested", related = emptyList())
+                createInteraction(timestamp = time, description = "root", related = listOf(
+                        createInteraction(timestamp = time.plusHours(1), description = "nested", related = emptyList())
                 )),
-                Interaction(timestamp = time.plusHours(2), description = "another", related = emptyList())
+                createInteraction(timestamp = time.plusHours(2), description = "another", related = emptyList())
         )
 
         val formatted = InteractionsFormatter.format(interactions)

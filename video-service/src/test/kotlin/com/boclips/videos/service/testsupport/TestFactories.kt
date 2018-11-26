@@ -7,10 +7,8 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.*
-import com.boclips.videos.service.infrastructure.event.types.Event
-import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
-import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
-import com.boclips.videos.service.infrastructure.event.types.SearchEvent
+import com.boclips.videos.service.infrastructure.event.analysis.Interaction
+import com.boclips.videos.service.infrastructure.event.types.*
 import com.boclips.videos.service.infrastructure.video.VideoEntity
 import java.time.Duration
 import java.time.LocalDate
@@ -27,6 +25,7 @@ object TestFactories {
     ) = SearchEvent(
             timestamp = timestamp,
             correlationId = searchId,
+            user = User.anonymous(),
             query = query,
             resultsReturned = resultsReturned
     )
@@ -46,7 +45,8 @@ object TestFactories {
             segmentEndSeconds = segmentEndSeconds,
             videoDurationSeconds = videoDurationSeconds,
             captureTime = captureTime,
-            searchId = searchId
+            searchId = searchId,
+            user = User.anonymous()
     )
 
     fun createNoSearchResultsEvent(
@@ -57,7 +57,8 @@ object TestFactories {
                 query = "query",
                 email = "email",
                 description = "description",
-                captureTime = captureTime
+                captureTime = captureTime,
+                user = User.anonymous()
         )
     }
 
@@ -141,6 +142,18 @@ object TestFactories {
                 thumbnailUrl = "youtube-thumbnail",
                 duration = Duration.ofSeconds(21))
     }
+
+    fun createInteraction(
+            timestamp: ZonedDateTime = ZonedDateTime.now(),
+            description: String = "something cool",
+            related: List<Interaction> = emptyList(),
+            user: User = User.anonymous()
+    ) = Interaction(
+    timestamp = timestamp,
+    description = description,
+    related = related,
+    user = user
+    )
 
 }
 

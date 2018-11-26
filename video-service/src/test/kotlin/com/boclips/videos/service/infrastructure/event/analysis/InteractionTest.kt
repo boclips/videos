@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.event.analysis
 
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.sortRecursively
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.TestFactories.createInteraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
@@ -19,7 +20,7 @@ class InteractionTest {
         val interactions = Interaction.fromPlaybackEvents(listOf(event1, event2))
 
         assertThat(interactions).hasSize(1)
-        assertThat(interactions[0]).isEqualTo(Interaction(timestamp = now, description = "Watch 1m 0s of 123 (duration 1m 0s).", related = emptyList()))
+        assertThat(interactions[0]).isEqualTo(createInteraction(timestamp = now, description = "Watch 1m 0s of 123 (duration 1m 0s).", related = emptyList()))
     }
 
     @Test
@@ -48,9 +49,9 @@ class InteractionTest {
 
     @Test
     fun `sortRecursively orders at root level`() {
-        val firstInteraction = Interaction(timestamp = now.minusMinutes(2), description = "first", related = emptyList())
-        val secondInteraction = Interaction(timestamp = now.minusMinutes(1), description = "second", related = emptyList())
-        val thirdInteraction = Interaction(timestamp = now, description = "third", related = emptyList())
+        val firstInteraction = createInteraction(timestamp = now.minusMinutes(2), description = "first", related = emptyList())
+        val secondInteraction = createInteraction(timestamp = now.minusMinutes(1), description = "second", related = emptyList())
+        val thirdInteraction = createInteraction(timestamp = now, description = "third", related = emptyList())
 
         val sorted = sortRecursively(listOf(secondInteraction, firstInteraction, thirdInteraction))
 
@@ -59,22 +60,22 @@ class InteractionTest {
 
     @Test
     fun `sortRecursively orders nested interactions`() {
-        val firstInteraction = Interaction(timestamp = now.minusMinutes(2), description = "first", related = emptyList())
-        val secondInteraction = Interaction(timestamp = now.minusMinutes(1), description = "second", related = emptyList())
-        val thirdInteraction = Interaction(timestamp = now, description = "third", related = emptyList())
+        val firstInteraction = createInteraction(timestamp = now.minusMinutes(2), description = "first", related = emptyList())
+        val secondInteraction = createInteraction(timestamp = now.minusMinutes(1), description = "second", related = emptyList())
+        val thirdInteraction = createInteraction(timestamp = now, description = "third", related = emptyList())
 
         val related = listOf(secondInteraction, firstInteraction, thirdInteraction)
 
-        val sorted = sortRecursively(listOf(Interaction(timestamp = now, description = "root", related = related)))
+        val sorted = sortRecursively(listOf(createInteraction(timestamp = now, description = "root", related = related)))
 
         assertThat(sorted[0].related).containsExactly(firstInteraction, secondInteraction, thirdInteraction)
     }
 
     @Test
     fun `sortRecursively uses nested event max timestamp for sorting root level`() {
-        val related = Interaction(timestamp = now, description = "related", related = emptyList())
-        val rootInteraction = Interaction(timestamp = now.minusMinutes(2), description = "root", related = listOf(related))
-        val another = Interaction(timestamp = now.minusMinutes(1), description = "another", related = emptyList())
+        val related = createInteraction(timestamp = now, description = "related", related = emptyList())
+        val rootInteraction = createInteraction(timestamp = now.minusMinutes(2), description = "root", related = listOf(related))
+        val another = createInteraction(timestamp = now.minusMinutes(1), description = "another", related = emptyList())
 
         val sorted = sortRecursively(listOf(rootInteraction, another))
 

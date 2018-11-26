@@ -5,7 +5,10 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
 fun MockHttpServletRequestBuilder.asTeacher() =
-        this.with(SecurityMockMvcRequestPostProcessors.user("teacher").roles(UserRoles.TEACHER))
+        this.with(SecurityMockMvcRequestPostProcessors.user("teacher@gmail.com").roles(UserRoles.TEACHER))
+
+fun MockHttpServletRequestBuilder.asBoclipsEmployee() =
+        this.with(SecurityMockMvcRequestPostProcessors.user("teacher@boclips.com").roles(UserRoles.TEACHER))
 
 fun MockHttpServletRequestBuilder.asOperator() =
         this.with(SecurityMockMvcRequestPostProcessors.user("operator").roles(UserRoles.REMOVE_VIDEOS, UserRoles.REBUILD_SEARCH_INDEX))

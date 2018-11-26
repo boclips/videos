@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.event
 
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
 import com.boclips.videos.service.infrastructure.event.types.SearchEvent
+import com.boclips.videos.service.infrastructure.event.types.User
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -16,6 +17,13 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `searches are stored as analytics events`() {
+        saveSearchEvent(ZonedDateTime.now())
+
+        assertThat(eventLogRepository.count()).isEqualTo(1)
+    }
+
+    @Test
+    fun `searches include user insights`() {
         saveSearchEvent(ZonedDateTime.now())
 
         assertThat(eventLogRepository.count()).isEqualTo(1)
@@ -108,7 +116,8 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,
                 videoDurationSeconds = 50,
-                videoId = "video-id"
+                videoId = "video-id",
+                user = User.anonymous()
         ))
     }
 
@@ -117,6 +126,6 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun saveSearchEvent(timestamp: ZonedDateTime) {
-        eventService.saveEvent(SearchEvent(timestamp, "e01", "brownie", 9))
+        eventService.saveEvent(SearchEvent(timestamp, "e01", User.anonymous(), "brownie", 9))
     }
 }
