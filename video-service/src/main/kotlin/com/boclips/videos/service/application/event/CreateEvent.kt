@@ -1,11 +1,12 @@
 package com.boclips.videos.service.application.event
 
+import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.email.NoResultsEmail
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.UserExtractor
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
+import com.boclips.videos.service.infrastructure.event.types.User
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import mu.KLogging
@@ -24,7 +25,7 @@ class CreateEvent(
         eventService.saveEvent(PlaybackEvent(
                 playerId = event.playerId!!,
                 videoId = event.videoId!!,
-                user = UserExtractor.getCurrentUser(),
+                user = User.fromSecurityUser(UserExtractor.getCurrentUser()),
                 segmentStartSeconds = event.segmentStartSeconds!!,
                 segmentEndSeconds = event.segmentEndSeconds!!,
                 videoDurationSeconds = event.videoDurationSeconds!!,
@@ -40,7 +41,7 @@ class CreateEvent(
         eventService.saveEvent(NoSearchResultsEvent(
                 name = event.name,
                 email = event.email!!,
-                user = UserExtractor.getCurrentUser(),
+                user = User.fromSecurityUser(UserExtractor.getCurrentUser()),
                 query = event.query!!,
                 description = event.description,
                 captureTime = ZonedDateTime.now()

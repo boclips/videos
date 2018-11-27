@@ -12,8 +12,11 @@ data class User(
         val id: String
 ) {
     companion object {
-        fun fromEmail(email: String, id: String) = User(boclipsEmployee = email.endsWith("@boclips.com"), id = id)
         fun anonymous() = User(boclipsEmployee = false, id = "ANONYMOUS")
+        fun fromSecurityUser(user: com.boclips.security.utils.User) = User(
+                boclipsEmployee = user.boclipsEmployee,
+                id = user.id
+        )
     }
 }
 
