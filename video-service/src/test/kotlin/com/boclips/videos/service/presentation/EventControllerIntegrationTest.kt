@@ -50,7 +50,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val event = eventLogRepository.findAll().first()
         assertThat(event.timestamp).isNotNull()
         assertThat(event.type).isNotNull()
-        assertThat(event.boclipsEmployee).isTrue()
+        assertThat(event.user.boclipsEmployee).isTrue()
         assertThat(event.data).isNotNull()
     }
 

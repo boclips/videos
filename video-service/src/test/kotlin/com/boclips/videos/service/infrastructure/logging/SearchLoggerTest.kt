@@ -68,10 +68,11 @@ class SearchLoggerTest {
     fun `builds event with principal details`() {
         val currentRequest = MockHttpServletRequest()
 
-        searchLogger.logSearch(emptyVideoList, currentRequest, User.fromEmail("teacher@boclips.com"), "some query")
+        searchLogger.logSearch(emptyVideoList, currentRequest, User.fromEmail("teacher@boclips.com", "myid"), "some query")
 
         verify(eventService).saveEvent<SearchEventData>(com.nhaarman.mockito_kotlin.check { event ->
             assertThat(event.user.boclipsEmployee).isTrue()
+            assertThat(event.user.id).isEqualTo("myid")
         })
     }
 

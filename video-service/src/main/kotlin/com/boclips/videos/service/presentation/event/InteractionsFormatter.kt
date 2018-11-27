@@ -7,7 +7,7 @@ object InteractionsFormatter {
     fun format(interactions: List<Interaction>): String {
         return interactions.reversed()
                 .flatMap {
-                    listOf(">  ${format(it)} by ${format(it.user)}") +
+                    listOf(">  ${format(it)} by ${format(it.user)} ID: ${it.user.id}") +
                             it.related.map { "   ${format(it)}" }
                 }
                 .joinToString("\n")

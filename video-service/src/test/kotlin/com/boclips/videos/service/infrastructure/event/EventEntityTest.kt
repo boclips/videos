@@ -21,7 +21,7 @@ class EventEntityTest {
     }
 
     @Test
-    fun `SearchEvent conversion`() {
+    fun `SearchEvents can be round-tripped through Mongo`() {
         val searchEvent = TestFactories.createSearchEvent()
 
         val entity = EventEntity.fromEvent(searchEvent)
@@ -30,7 +30,7 @@ class EventEntityTest {
     }
 
     @Test
-    fun `PlaybackEvent conversion`() {
+    fun `PlaybackEvents can be round-tripped through Mongo`() {
         val playbackEvent = TestFactories.createPlaybackEvent()
 
         val entity = EventEntity.fromEvent(playbackEvent)
@@ -39,7 +39,7 @@ class EventEntityTest {
     }
 
     @Test
-    fun `NoSearchResultsEvent conversion`() {
+    fun `NoSearchResultsEvents can be round-tripped through Mongo`() {
         val noSearchResultsEvent = TestFactories.createNoSearchResultsEvent()
 
         val entity = EventEntity.fromEvent(noSearchResultsEvent)

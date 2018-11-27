@@ -8,11 +8,12 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 data class User(
-        val boclipsEmployee: Boolean
+        val boclipsEmployee: Boolean,
+        val id: String
 ) {
     companion object {
-        fun fromEmail(email: String) = User(boclipsEmployee = email.endsWith("@boclips.com"))
-        fun anonymous() = User(boclipsEmployee = false)
+        fun fromEmail(email: String, id: String) = User(boclipsEmployee = email.endsWith("@boclips.com"), id = id)
+        fun anonymous() = User(boclipsEmployee = false, id = "ANONYMOUS")
     }
 }
 
@@ -22,23 +23,29 @@ open class Event<TData>(
         val user: User,
         val data: TData)
 
+
+data class UserValueType(
+        val boclipsEmployee: Boolean,
+        val id: String
+)
+
 @Document(collection = "event-log")
 class EventEntity(
         val type: String,
         val timestamp: LocalDateTime,
-        val boclipsEmployee: Boolean = true,
+        val user: UserValueType = UserValueType(true, "ANONYMOUS-TRACKED-BEFORE-REGISTERING-USERS"),
         val data: Map<String, Any?>
 ) {
 
     fun toEvent(): Event<*> {
         val timestamp = timestamp.atZone(ZoneOffset.UTC)
-        val user = User(boclipsEmployee = boclipsEmployee)
+        val convertedUser = User(boclipsEmployee = user.boclipsEmployee, id = user.id)
 
         return when (type) {
             EventType.SEARCH.name -> SearchEvent(
                     timestamp = timestamp,
                     correlationId = data["searchId"] as String,
-                    user = user,
+                    user = convertedUser,
                     resultsReturned = data["resultsReturned"] as Int,
                     query = data["query"] as String
             )
@@ -46,7 +53,7 @@ class EventEntity(
                     playerId = data["playerId"] as String,
                     searchId = data["searchId"] as String?,
                     captureTime = timestamp,
-                    user = user,
+                    user = convertedUser,
                     videoId = data["videoId"] as String,
                     segmentStartSeconds = data["segmentStartSeconds"] as Long,
                     segmentEndSeconds = data["segmentEndSeconds"] as Long,
@@ -56,7 +63,7 @@ class EventEntity(
                     name = data["name"] as String?,
                     email = data["email"] as String,
                     captureTime = timestamp,
-                    user = user,
+                    user = convertedUser,
                     query = data["query"] as String,
                     description = data["description"] as String?
             )
@@ -68,7 +75,10 @@ class EventEntity(
         fun fromEvent(event: Event<*>): EventEntity {
             return EventEntity(
                     type = event.type,
-                    boclipsEmployee = event.user.boclipsEmployee,
+                    user = UserValueType(
+                            boclipsEmployee = event.user.boclipsEmployee,
+                            id = event.user.id
+                    ),
                     timestamp = event.timestamp.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime(),
                     data = ObjectMapper().convertValue(event.data, object : TypeReference<Map<String, Any?>>() {})
             )

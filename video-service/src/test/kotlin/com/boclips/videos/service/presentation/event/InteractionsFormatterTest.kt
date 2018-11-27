@@ -13,17 +13,17 @@ class InteractionsFormatterTest {
     fun format() {
         val time = ZonedDateTime.of(2018, 2, 3, 10, 11, 12, 0, ZoneOffset.UTC)
         val interactions = listOf(
-                createInteraction(timestamp = time, description = "root", user = User(false), related = listOf(
+                createInteraction(timestamp = time, description = "root", user = User.fromEmail("iwork@skewl", "teacher-internal-id"), related = listOf(
                         createInteraction(timestamp = time.plusHours(1), description = "nested", related = emptyList())
                 )),
-                createInteraction(timestamp = time.plusHours(2), description = "another", user = User(true), related = emptyList())
+                createInteraction(timestamp = time.plusHours(2), description = "another", user = User.fromEmail("iwork@boclips.com", "employee-internal-id"), related = emptyList())
         )
 
         val formatted = InteractionsFormatter.format(interactions)
 
         assertThat(formatted).isEqualTo(
-                """>  2018-02-03T12:11:12Z another by Boclips employee
-                  |>  2018-02-03T10:11:12Z root by teacher
+                """>  2018-02-03T12:11:12Z another by Boclips employee ID: employee-internal-id
+                  |>  2018-02-03T10:11:12Z root by teacher ID: teacher-internal-id
                   |   2018-02-03T11:11:12Z nested
                 """.trimMargin())
     }
