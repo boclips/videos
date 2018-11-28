@@ -5,6 +5,7 @@ metadata:
   name: video-service
   labels:
     app: video-service
+    minikube: "true"
 spec:
   replicas: ${REPLICAS}
   selector:
