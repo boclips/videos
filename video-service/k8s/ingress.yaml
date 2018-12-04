@@ -16,10 +16,3 @@ spec:
         backend:
           serviceName: video-service
           servicePort: http
-  - host: educators.${DOMAIN}
-    http:
-      paths:
-      - path: /v1
-        backend:
-          serviceName: video-service
-          servicePort: http
