@@ -15,3 +15,6 @@ fun MockHttpServletRequestBuilder.asOperator() =
 
 fun MockHttpServletRequestBuilder.asReporter() =
         this.with(SecurityMockMvcRequestPostProcessors.user("reporter").roles(UserRoles.REPORTING))
+
+fun MockHttpServletRequestBuilder.asIngestor() =
+        this.with(SecurityMockMvcRequestPostProcessors.user("ingestor").roles(UserRoles.INSERT_VIDEOS))

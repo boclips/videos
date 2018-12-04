@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.asset
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
+import java.time.Duration
 import java.time.LocalDate
 
 data class VideoAsset(
@@ -11,5 +12,8 @@ data class VideoAsset(
         val keywords: List<String>,
         val releasedOn: LocalDate,
         val contentProvider: String,
-        val type: VideoType
+        val contentProviderId: String,
+        val type: VideoType,
+        val duration: Duration,
+        val legalRestrictions: String
 )

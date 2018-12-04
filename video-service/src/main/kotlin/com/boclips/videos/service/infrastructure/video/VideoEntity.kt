@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.springframework.data.annotation.Id
+import java.time.Duration
 import java.time.LocalDate
 
 class VideoEntity(
@@ -28,6 +29,7 @@ class VideoEntity(
         var alternative_id: String? = null,
         var alt_source: String? = null,
         var restrictions: String? = null,
+        var unique_id: String? = null,
         var type_id: Int? = null,
         var reference_id: String? = null,
         var playback_provider: String? = null,
@@ -42,27 +44,12 @@ class VideoEntity(
                 description = description!!,
                 releasedOn = LocalDate.parse(date!!),
                 contentProvider = source!!,
-                type = getVideoType(),
-                keywords = keywords?.split(",")?.map { it.trim() }.orEmpty()
+                contentProviderId =  unique_id!!,
+                type = VideoType.fromId(type_id!!),
+                keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
+                duration = DurationParser.parse(duration),
+                legalRestrictions = restrictions.orEmpty()
         )
-    }
-
-    private fun getVideoType(): VideoType {
-        return when (type_id) {
-            0 -> VideoType.OTHER
-            1 -> VideoType.NEWS
-            2 -> VideoType.STOCK
-            3 -> VideoType.INSTRUCTIONAL_CLIPS
-            4 -> VideoType.TV_CLIPS
-            5 -> VideoType.NEWS_PACKAGE
-            6 -> VideoType.UGC_NEWS
-            7 -> VideoType.VR_360_STOCK
-            8 -> VideoType.VR_360_IMMERSIVE
-            9 -> VideoType.SHORT_PROGRAMME
-            10 -> VideoType.TED_TALKS
-            11 -> VideoType.TED_ED
-            else -> throw IllegalStateException("Unknown type_id: $type_id")
-        }
     }
 
 }

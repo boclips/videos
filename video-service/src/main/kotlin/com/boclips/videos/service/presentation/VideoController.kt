@@ -1,15 +1,18 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideoById
 import com.boclips.videos.service.application.video.GetVideosByQuery
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
+import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,7 +22,8 @@ import org.springframework.web.bind.annotation.*
 class VideoController(
         private val getVideoById: GetVideoById,
         private val getVideosByQuery: GetVideosByQuery,
-        private val deleteVideos: DeleteVideos
+        private val deleteVideos: DeleteVideos,
+        private val createVideo: CreateVideo
 ) {
     companion object {
         fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null, null, null)).withRel("search")
@@ -66,6 +70,16 @@ class VideoController(
     @DeleteMapping("/{id}")
     fun deleteVideo(@PathVariable("id") id: String?) {
         deleteVideos.execute(id)
+    }
+
+    @PostMapping
+    fun createVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Void> {
+
+        val assetId = createVideo.execute(createVideoRequest)
+
+        val headers = HttpHeaders()
+        headers.set(HttpHeaders.LOCATION, getVideoLink(assetId.value, "self").href)
+        return ResponseEntity(headers, HttpStatus.CREATED)
     }
 
     private fun videoToResource(videoResource: VideoResource) =

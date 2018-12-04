@@ -6,10 +6,7 @@ import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetEvent
 import com.boclips.videos.service.application.event.GetLatestInteractions
-import com.boclips.videos.service.application.video.DeleteVideos
-import com.boclips.videos.service.application.video.GetVideoById
-import com.boclips.videos.service.application.video.GetVideosByQuery
-import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
@@ -50,6 +47,11 @@ class ApplicationContext {
                     videoService = videoService,
                     videoToResourceConverter = VideoToResourceConverter()
             )
+
+    @Bean
+    fun createVideo(videoAssetRepository: VideoAssetRepository): CreateVideo {
+        return CreateVideo(videoAssetRepository)
+    }
 
     @Bean
     fun deleteVideos(playbackRespository: PlaybackRespository,

@@ -5,4 +5,5 @@ interface VideoAssetRepository {
     fun findAll(assetIds: List<AssetId>): List<VideoAsset>
     fun streamAll(consumer: (videos: Sequence<VideoAsset>) -> Unit)
     fun delete(assetId: AssetId)
+    fun create(videoAsset: VideoAsset): VideoAsset
 }

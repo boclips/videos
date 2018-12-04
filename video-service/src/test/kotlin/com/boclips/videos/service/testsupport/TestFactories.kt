@@ -84,11 +84,14 @@ object TestFactories {
                 keywords = keywords,
                 releasedOn = LocalDate.parse("2018-01-01"),
                 contentProvider = contentProvider,
-                type = type
+                contentProviderId = "cp-id-$videoId",
+                type = type,
+                duration = Duration.ZERO,
+                legalRestrictions = ""
         )
     }
 
-    fun createVideoEntity(typeId: Int = 1, keywords: String = "k1,k2,k3", playbackId: String = "12312413-123123-123-123", playbackProvider: String = "KALTURA"): VideoEntity {
+    fun createVideoEntity(typeId: Int = 1, keywords: String = "k1,k2,k3", playbackId: String = "12312413-123123-123-123", playbackProvider: String = "KALTURA", duration: String = "00:00:00", restrictions: String? = null, uniqueId: String = "unique-id"): VideoEntity {
         return VideoEntity(
                 id = 123,
                 source = "source",
@@ -96,7 +99,7 @@ object TestFactories {
                 title = "title",
                 description = "description",
                 date = "2014-08-13",
-                duration = "duration",
+                duration = duration,
                 keywords = keywords,
                 price_category = "price_category",
                 sounds = "sounds",
@@ -108,11 +111,12 @@ object TestFactories {
                 region = "region",
                 alternative_id = "alternative_id",
                 alt_source = "alt_source",
-                restrictions = "restrictions",
+                restrictions = restrictions,
                 type_id = typeId,
                 reference_id = "reference_id",
                 playback_provider = playbackProvider,
-                playback_id = playbackId
+                playback_id = playbackId,
+                unique_id = uniqueId
         )
     }
 

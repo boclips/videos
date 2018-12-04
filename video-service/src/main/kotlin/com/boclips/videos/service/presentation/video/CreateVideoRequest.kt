@@ -1,0 +1,18 @@
+package com.boclips.videos.service.presentation.video
+
+import java.time.Duration
+import java.time.LocalDate
+
+data class CreateVideoRequest(
+        val provider: String? = null,
+        val providerVideoId: String? = null,
+        val title: String? = null,
+        val description: String? = null,
+        val releasedOn: LocalDate? = null,
+        val duration: Duration? = null,
+        val legalRestrictions: String? = null,
+        val keywords: List<String>? = null,
+        val contentType: String? = null,
+        val playbackId: String? = null,
+        val playbackProvider: String? = null
+)

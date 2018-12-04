@@ -1,7 +1,9 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,5 +63,12 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         videoRepository.delete(videoId)
 
         assertThat(videoRepository.findAll(listOf(videoId))).isEmpty()
+    }
+
+    @Test
+    fun `createVideo inserts a video`() {
+        val videoAsset = videoRepository.create(TestFactories.createVideoAsset(videoId = ""))
+        assertThat(videoAsset.assetId.value).isNotBlank()
+        assertThat(videoRepository.findAll(listOf(videoAsset.assetId))).isNotEmpty
     }
 }

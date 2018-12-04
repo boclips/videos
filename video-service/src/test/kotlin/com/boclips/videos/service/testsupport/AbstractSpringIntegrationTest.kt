@@ -82,10 +82,11 @@ abstract class AbstractSpringIntegrationTest {
                 keywords,
                 type_id,
                 playback_id,
-                playback_provider
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                playback_provider,
+                unique_id,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, "00:00:00", playbackId.value, keywords.joinToString(separator = ","), typeId, playbackId.value, playbackId.type.name
+                videoId, contentProvider, title, description, date, "00:00:00", playbackId.value, keywords.joinToString(separator = ","), typeId, playbackId.value, playbackId.type.name, "provider-id-$videoId"
         )
 
         fakeSearchService.upsert(VideoMetadata(

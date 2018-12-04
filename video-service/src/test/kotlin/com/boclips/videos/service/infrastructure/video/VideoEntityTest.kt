@@ -4,8 +4,8 @@ import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import java.time.Duration
 
 class VideoEntityTest {
 
@@ -23,14 +23,6 @@ class VideoEntityTest {
         assertThat(TestFactories.createVideoEntity(typeId = 9).toVideoAsset().type).isEqualTo(VideoType.SHORT_PROGRAMME)
         assertThat(TestFactories.createVideoEntity(typeId = 10).toVideoAsset().type).isEqualTo(VideoType.TED_TALKS)
         assertThat(TestFactories.createVideoEntity(typeId = 11).toVideoAsset().type).isEqualTo(VideoType.TED_ED)
-    }
-
-    @Test
-    fun `toVideo throws an exception when type id is unknown`() {
-        assertThatThrownBy {
-            TestFactories.createVideoEntity(typeId = 12).toVideoAsset()
-        }
-                .hasMessage("Unknown type_id: 12")
     }
 
     @Test
@@ -52,5 +44,21 @@ class VideoEntityTest {
     @Test
     fun `toVideo returns a video with correct keywords`() {
         assertThat(TestFactories.createVideoEntity(keywords = "k1, k2").toVideoAsset().keywords).containsExactly("k1", "k2")
+    }
+
+    @Test
+    fun `toVideo returns a video with correct duration`() {
+        assertThat(TestFactories.createVideoEntity(duration = "01:02:03").toVideoAsset().duration).isEqualTo(Duration.ofHours(1).plusMinutes(2).plusSeconds(3))
+    }
+
+    @Test
+    fun `toVideo returns a video with zero duration when duration is misformatted`() {
+        assertThat(TestFactories.createVideoEntity(duration = "bunny").toVideoAsset().duration).isEqualTo(Duration.ZERO)
+    }
+
+    @Test
+    fun `toVideo returns a video with empty restrictions when not specified`() {
+        assertThat(TestFactories.createVideoEntity(restrictions = null).toVideoAsset().legalRestrictions).isBlank()
+        assertThat(TestFactories.createVideoEntity(restrictions = "US only").toVideoAsset().legalRestrictions).isEqualTo("US only")
     }
 }

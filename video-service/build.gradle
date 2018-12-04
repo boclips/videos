@@ -110,6 +110,7 @@ dependencies {
     compile('com.google.apis:google-api-services-youtube:v3-rev206-1.25.0')
     compile('io.springfox:springfox-swagger2:2.9.2')
     compile('io.springfox:springfox-swagger-ui:2.9.2')
+    compile('org.apache.commons:commons-lang3:3.7')
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
         exclude module: ['junit', 'mockito-core']

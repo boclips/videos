@@ -2,19 +2,16 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asOperator
-import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 
@@ -139,5 +136,42 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(searchEvent.description).startsWith("Search for 'bugs'")
         assertThat(searchEvent.user.boclipsEmployee).isTrue()
     }
+
+    @Test
+    fun `create new video`() {
+
+        fakeKalturaClient.addMediaEntry(TestFactories.createMediaEntry(id = "entry-$123", referenceId = "abc1", duration = Duration.ofMinutes(1)))
+
+        val content = """
+            {
+                "provider": "AP",
+                "providerVideoId": "1",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "contentType": "INSTRUCTIONAL_CLIPS",
+                "playbackId": "abc1",
+                "playbackProvider": "KALTURA"
+            }
+        """.trimIndent()
+
+        val createdResourceUrl = mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isCreated)
+                .andReturn().response.getHeader("Location")
+
+        mockMvc.perform(get(createdResourceUrl!!).asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.title", equalTo("AP title")))
+    }
+
+    @Test
+    fun `teachers cannot create videos`() {
+        mockMvc.perform(post("/v1/videos").asTeacher().contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isForbidden)
+    }
+
 }
 
