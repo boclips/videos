@@ -19,6 +19,7 @@ import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
+import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -50,7 +51,7 @@ class ApplicationContext {
 
     @Bean
     fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById): CreateVideo {
-        return CreateVideo(videoAssetRepository, getVideoById)
+        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter())
     }
 
     @Bean

@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
 import com.boclips.videos.service.infrastructure.video.VideoEntity
+import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -153,10 +154,36 @@ object TestFactories {
             related: List<Interaction> = emptyList(),
             user: User = User.anonymous()
     ) = Interaction(
-    timestamp = timestamp,
-    description = description,
-    related = related,
-    user = user
+            timestamp = timestamp,
+            description = description,
+            related = related,
+            user = user
+    )
+
+    fun createCreateVideoRequest(
+            provider: String? = "AP",
+            providerVideoId: String? = "AP-1",
+            title: String? = "an AP video",
+            description: String? = "an AP video about penguins",
+            releasedOn: LocalDate? = LocalDate.now(),
+            duration: Duration? = Duration.ofSeconds(12),
+            legalRestrictions: String? = "None",
+            keywords: List<String>? = listOf("k1", "k2"),
+            contentType: String? = "NEWS",
+            playbackId: String? = "123",
+            playbackProvider: String? = "KALTURA"
+    ) = CreateVideoRequest(
+            provider = provider,
+            providerVideoId = providerVideoId,
+            title = title,
+            description = description,
+            releasedOn = releasedOn,
+            duration = duration,
+            legalRestrictions = legalRestrictions,
+            keywords = keywords,
+            contentType = contentType,
+            playbackId = playbackId,
+            playbackProvider = playbackProvider
     )
 
 }
