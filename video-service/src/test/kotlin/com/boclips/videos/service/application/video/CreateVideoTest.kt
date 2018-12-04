@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -23,7 +24,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
 
-        val assetId = createVideo.execute(CreateVideoRequest(
+        val resource = createVideo.execute(CreateVideoRequest(
                 provider = "Bloomberg",
                 providerVideoId = "123",
                 title = "Bloomberg title",
@@ -37,7 +38,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
                 playbackProvider = "KALTURA"
         ))
 
-        assertThat(videoService.get(assetId)).isNotNull
+        assertThat(videoService.get(AssetId(resource.id!!))).isNotNull
     }
 
 }

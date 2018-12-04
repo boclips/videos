@@ -49,8 +49,8 @@ class ApplicationContext {
             )
 
     @Bean
-    fun createVideo(videoAssetRepository: VideoAssetRepository): CreateVideo {
-        return CreateVideo(videoAssetRepository)
+    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById): CreateVideo {
+        return CreateVideo(videoAssetRepository, getVideoById)
     }
 
     @Bean

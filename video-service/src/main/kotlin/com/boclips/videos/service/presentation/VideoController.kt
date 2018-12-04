@@ -75,10 +75,10 @@ class VideoController(
     @PostMapping
     fun createVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Void> {
 
-        val assetId = createVideo.execute(createVideoRequest)
+        val resource = createVideo.execute(createVideoRequest)
 
         val headers = HttpHeaders()
-        headers.set(HttpHeaders.LOCATION, getVideoLink(assetId.value, "self").href)
+        headers.set(HttpHeaders.LOCATION, getVideoLink(resource.id, "self").href)
         return ResponseEntity(headers, HttpStatus.CREATED)
     }
 
