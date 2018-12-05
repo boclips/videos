@@ -173,5 +173,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isForbidden)
     }
 
+    @Test
+    fun `return BAD_REQUEST when content is invalid`() {
+        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest)
+    }
+
 }
 
