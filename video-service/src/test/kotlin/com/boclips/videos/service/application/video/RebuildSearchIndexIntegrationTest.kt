@@ -16,15 +16,11 @@ class RebuildSearchIndexIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoService: VideoService
 
     @Test
-    fun `execute rebuilds search index creates an index with videos filtered for teachers`() {
-        saveVideo(videoId = 1, title = "first")
-        saveVideo(videoId = 2, title = "stock", typeId = 2)
-        saveVideo(videoId = 3, title = "third")
+    fun `execute rebuilds search index`() {
+        saveVideo(videoId = 1, title = "video")
 
         rebuildSearchIndex.execute().get()
 
-        assertThat(videoService.search(VideoSearchQuery(text = "first", pageIndex = 0, pageSize = 10))).isNotEmpty
-        assertThat(videoService.search(VideoSearchQuery(text = "stock", pageIndex = 0, pageSize = 10))).isEmpty()
-        assertThat(videoService.search(VideoSearchQuery(text = "third", pageIndex = 0, pageSize = 10))).isNotEmpty
+        assertThat(videoService.search(VideoSearchQuery(text = "video", pageIndex = 0, pageSize = 10))).isNotEmpty
     }
 }

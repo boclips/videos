@@ -89,13 +89,13 @@ abstract class AbstractSpringIntegrationTest {
                 videoId, contentProvider, title, description, date, "00:00:00", playbackId.value, keywords.joinToString(separator = ","), typeId, playbackId.value, playbackId.type.name, "provider-id-$videoId"
         )
 
-        fakeSearchService.upsert(VideoMetadata(
+        fakeSearchService.upsert(sequenceOf(VideoMetadata(
                 id = videoId.toString(),
                 title = title,
                 description = description,
                 contentProvider = contentProvider,
                 keywords = emptyList()
-        ))
+        )))
 
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.value, duration = duration))

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport.fakes
 
-import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class SearchFakeConfiguration {
     @Bean
-    fun fakeSearchService(): SearchService {
+    fun fakeVideoMetadataSearchService(): GenericSearchService<VideoMetadata> {
         return InMemorySearchService()
     }
 }

@@ -1,21 +1,15 @@
 package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.search.service.domain.SearchService
-import com.boclips.videos.service.application.event.CheckEventsStatus
-import com.boclips.videos.service.application.event.CreateEvent
-import com.boclips.videos.service.application.event.GetEvent
-import com.boclips.videos.service.application.event.GetLatestInteractions
+import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.config.properties.YoutubeProperties
+import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
 import com.boclips.videos.service.domain.service.PlaybackProvider
+import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.infrastructure.email.EmailClient
-import com.boclips.videos.service.infrastructure.event.EventLogRepository
-import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
-import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
@@ -25,7 +19,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.core.task.TaskExecutor
-import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
 import java.util.concurrent.Executors
@@ -50,8 +43,8 @@ class ApplicationContext {
             )
 
     @Bean
-    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById): CreateVideo {
-        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter())
+    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById, searchService: SearchService): CreateVideo {
+        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter(), searchService)
     }
 
     @Bean
@@ -100,7 +93,7 @@ class ApplicationContext {
 
     @Bean
     fun rebuildSearchIndex(videoAssetRepository: VideoAssetRepository,
-                           searchService: com.boclips.search.service.domain.SearchService
+                           searchService: SearchService
     ): RebuildSearchIndex {
         return RebuildSearchIndex(
                 videoAssetRepository = videoAssetRepository,

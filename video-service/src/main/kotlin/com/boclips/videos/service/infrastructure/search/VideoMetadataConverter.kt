@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.domain.model.asset.VideoAsset

@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
@@ -30,7 +30,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
-class ElasticSearchService(val config: ElasticSearchConfig) : SearchService {
+class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService<VideoMetadata> {
     companion object : KLogging() {
 
         const val ES_TYPE = "asset"

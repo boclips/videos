@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

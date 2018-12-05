@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.Video

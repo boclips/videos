@@ -1,7 +1,8 @@
 package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -28,7 +29,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `returns empty collection for empty result`(searchService: SearchService) {
+    fun `returns empty collection for empty result`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing")))
 
         val result = searchService.search(PaginatedSearchRequest(query = "query that matches nothing"))
@@ -38,7 +39,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `finds a video matching metadata`(searchService: SearchService) {
+    fun `finds a video matching metadata`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
@@ -53,7 +54,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `paginates results`(searchService: SearchService) {
+    fun `paginates results`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
@@ -70,7 +71,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `counts all videos matching metadata`(searchService: SearchService) {
+    fun `counts all videos matching metadata`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
@@ -85,7 +86,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `removed videos are not searchable`(searchService: SearchService) {
+    fun `removed videos are not searchable`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing")))
 
         searchService.removeFromSearch("1")
@@ -95,7 +96,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `creates a new index and removes the outdated one`(searchService: SearchService) {
+    fun `creates a new index and removes the outdated one`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing")))
 
         searchService.resetIndex()

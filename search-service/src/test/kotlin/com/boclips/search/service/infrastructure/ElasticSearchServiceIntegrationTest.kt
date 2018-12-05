@@ -1,7 +1,8 @@
 package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
-    lateinit var searchService: SearchService
+    lateinit var searchService: GenericSearchService<VideoMetadata>
 
     @BeforeEach
     internal fun setUp() {
