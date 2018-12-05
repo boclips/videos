@@ -25,4 +25,11 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/events/playback")))
                 .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href", endsWith("/events/no-search-results")))
     }
+
+    @Test
+    fun `GET links uses proto headers`() {
+        mockMvc.perform(get("/v1").header("x-forwarded-proto", "https"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._links.search.href", startsWith("https")))
+    }
 }
