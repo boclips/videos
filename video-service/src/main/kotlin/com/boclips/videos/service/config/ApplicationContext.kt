@@ -1,10 +1,8 @@
 package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.config.properties.YoutubeProperties
-import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
 import com.boclips.videos.service.domain.service.PlaybackProvider
@@ -66,7 +64,7 @@ class ApplicationContext {
         return VideoService(
                 videoAssetRepository = videoAssetRepository,
                 searchService = searchService,
-                playbackRespository = playbackRespository
+                playbackRepository = playbackRespository
         )
     }
 

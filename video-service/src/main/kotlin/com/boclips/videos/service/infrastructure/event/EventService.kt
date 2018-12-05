@@ -10,29 +10,12 @@ import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.EventEntity
 import com.boclips.videos.service.infrastructure.event.types.EventType
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.isEqualTo
-import org.springframework.stereotype.Component
-import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-
-@Component
-data class LookbackHours(var search: Long = 24, var playback: Long = 24)
-
-@Component
-@ConfigurationProperties(prefix = "event.monitoring")
-data class EventMonitoringConfig(val lookbackHours: LookbackHours)
-
-data class EventsStatus(
-        val healthy: Boolean,
-        val latestSearch: ZonedDateTime?,
-        val latestPlaybackInSearch: ZonedDateTime?,
-        val latestPlaybackStandalone: ZonedDateTime?
-)
 
 class EventService(
         private val eventLogRepository: EventLogRepository,
@@ -103,5 +86,3 @@ class EventService(
 
     private fun searchIdNotSpecified() = Criteria("data.searchId").`is`(null)
 }
-
-data class MaxTimestampAggregationResult(val timestamp: LocalDateTime)

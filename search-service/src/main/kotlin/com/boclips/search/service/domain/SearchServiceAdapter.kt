@@ -1,8 +1,6 @@
 package com.boclips.search.service.domain
 
 abstract class SearchServiceAdapter<T>(val inner: GenericSearchService<VideoMetadata>) : GenericSearchService<T> {
-
-
     override fun resetIndex() {
         inner.resetIndex()
     }
