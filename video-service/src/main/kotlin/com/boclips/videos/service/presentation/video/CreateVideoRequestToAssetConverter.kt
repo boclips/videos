@@ -17,8 +17,8 @@ class CreateVideoRequestToAssetConverter {
         validateObligatoryField("keywords", createVideoRequest.keywords)
         validateObligatoryField("duration", createVideoRequest.duration)
         validateObligatoryField("releasedOn", createVideoRequest.releasedOn)
-        validateObligatoryField("contentProvider", createVideoRequest.provider)
-        validateObligatoryField("contentProviderId", createVideoRequest.providerVideoId)
+        validateObligatoryField("contentPartnerId", createVideoRequest.provider)
+        validateObligatoryField("contentPartnerVideoId", createVideoRequest.providerVideoId)
         validateObligatoryField("content type", createVideoRequest.contentType)
         validateObligatoryField("restrictions", createVideoRequest.legalRestrictions)
 
@@ -29,8 +29,8 @@ class CreateVideoRequestToAssetConverter {
                 description = createVideoRequest.description!!,
                 keywords = createVideoRequest.keywords!!,
                 releasedOn = createVideoRequest.releasedOn!!,
-                contentProvider = createVideoRequest.provider!!,
-                contentProviderId = createVideoRequest.providerVideoId!!,
+                contentPartnerId = createVideoRequest.provider!!,
+                contentPartnerVideoId = createVideoRequest.providerVideoId!!,
                 type = VideoType.valueOf(createVideoRequest.contentType!!),
                 duration = createVideoRequest.duration!!,
                 legalRestrictions = createVideoRequest.legalRestrictions!!

@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.springframework.data.annotation.Id
-import java.time.Duration
 import java.time.LocalDate
 
 class VideoEntity(
@@ -43,8 +42,8 @@ class VideoEntity(
                 title = title!!,
                 description = description!!,
                 releasedOn = LocalDate.parse(date!!),
-                contentProvider = source!!,
-                contentProviderId =  unique_id!!,
+                contentPartnerId = source!!,
+                contentPartnerVideoId =  unique_id!!,
                 type = VideoType.fromId(type_id!!),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
                 duration = DurationParser.parse(duration),

@@ -6,4 +6,5 @@ interface VideoAssetRepository {
     fun streamAll(consumer: (videos: Sequence<VideoAsset>) -> Unit)
     fun delete(assetId: AssetId)
     fun create(videoAsset: VideoAsset): VideoAsset
+    fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
 }

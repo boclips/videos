@@ -67,6 +67,7 @@ abstract class AbstractSpringIntegrationTest {
                   date: String = "2018-01-01",
                   duration: Duration = Duration.ofSeconds(10),
                   contentProvider: String = "AP",
+                  contentProviderId: String = "provider-id-$videoId",
                   typeId: Int = 3,
                   keywords: List<String> = emptyList()
     ) {
@@ -86,7 +87,7 @@ abstract class AbstractSpringIntegrationTest {
                 unique_id,
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-                videoId, contentProvider, title, description, date, "00:00:00", playbackId.value, keywords.joinToString(separator = ","), typeId, playbackId.value, playbackId.type.name, "provider-id-$videoId"
+                videoId, contentProvider, title, description, date, "00:00:00", playbackId.value, keywords.joinToString(separator = ","), typeId, playbackId.value, playbackId.type.name, contentProviderId
         )
 
         fakeSearchService.upsert(sequenceOf(VideoMetadata(

@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -46,7 +45,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         assertThat(video.playbackId.type).isNotNull()
         assertThat(video.description).isNotEmpty()
         assertThat(video.title).isNotEmpty()
-        assertThat(video.contentProvider).isNotEmpty()
+        assertThat(video.contentPartnerId).isNotEmpty()
         assertThat(video.releasedOn).isNotNull()
     }
 
@@ -70,5 +69,14 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         val videoAsset = videoRepository.create(TestFactories.createVideoAsset(videoId = ""))
         assertThat(videoAsset.assetId.value).isNotBlank()
         assertThat(videoRepository.findAll(listOf(videoAsset.assetId))).isNotEmpty
+    }
+
+    @Test
+    fun `findByContentPartner checks both partner id and partner video id`() {
+        saveVideo(videoId = 123, contentProvider = "ted", contentProviderId = "abc")
+
+        assertThat(videoRepository.existsVideoFromContentPartner("ted", "abc")).isTrue()
+        assertThat(videoRepository.existsVideoFromContentPartner("teddy", "abc")).isFalse()
+        assertThat(videoRepository.existsVideoFromContentPartner("ted", "abcd")).isFalse()
     }
 }

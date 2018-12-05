@@ -36,7 +36,7 @@ internal class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
-        assertThat(videoResource.contentProvider).isEqualTo("WeWork")
+        assertThat(videoResource.contentPartner).isEqualTo("WeWork")
         assertThat(videoResource.playback!!.type).isEqualTo("STREAM")
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("kaltura-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
@@ -49,7 +49,7 @@ internal class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
-        assertThat(videoResource.contentProvider).isEqualTo("JacekWork")
+        assertThat(videoResource.contentPartner).isEqualTo("JacekWork")
         assertThat(videoResource.playback!!.type).isEqualTo("YOUTUBE")
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("youtube-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(21))

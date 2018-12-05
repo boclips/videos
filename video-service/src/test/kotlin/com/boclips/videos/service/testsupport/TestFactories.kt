@@ -84,8 +84,8 @@ object TestFactories {
                 description = description,
                 keywords = keywords,
                 releasedOn = LocalDate.parse("2018-01-01"),
-                contentProvider = contentProvider,
-                contentProviderId = "cp-id-$videoId",
+                contentPartnerId = contentProvider,
+                contentPartnerVideoId = "cp-id-$videoId",
                 type = type,
                 duration = Duration.ZERO,
                 legalRestrictions = ""

@@ -68,14 +68,14 @@ class CreateVideoRequestToAssetConverterTest {
     fun `throws when contentProvider is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(provider = null)) }
                 .isInstanceOf(InvalidCreateVideoRequestException::class.java)
-                .hasMessage("contentProvider cannot be null")
+                .hasMessage("contentPartnerId cannot be null")
     }
 
     @Test
     fun `throws when contentProviderId is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(providerVideoId = null)) }
                 .isInstanceOf(InvalidCreateVideoRequestException::class.java)
-                .hasMessage("contentProviderId cannot be null")
+                .hasMessage("contentPartnerVideoId cannot be null")
     }
 
     @Test

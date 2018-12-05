@@ -18,6 +18,7 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
         private const val SELECT_ALL_VIDEOS_QUERY = "SELECT * FROM metadata_orig"
         private const val CREATE_QUERY = """INSERT INTO metadata_orig (reference_id, source, unique_id, namespace, title, description, `date`, duration, keywords, restrictions, type_id, playback_id, playback_provider)
                         VALUES (:reference_id, :provider, :providerVideoId, :namespace, :title, :description, :releasedOn, :duration, :keywords, :legalRestrictions, :content_type, :playback_id, :playback_provider);"""
+        private const val COUNT_VIDEOS_WITH_CONTENT_PARTNER_ID_QUERY = "SELECT COUNT(1) FROM metadata_orig WHERE source = :contentPartnerId AND unique_id = :partnerVideoId"
     }
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
         if (assetIds.isEmpty()) {
@@ -28,7 +29,6 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
         logger.info { "Found ${assetIds.size} videos for assetIds $assetIds" }
         return videoEntities.map { it.toVideoAsset() }
     }
-
     override fun find(assetId: AssetId): VideoAsset? {
         return try {
             jdbcTemplate.queryForObject(SELECT_QUERY, MapSqlParameterSource("ids", assetId.value), rowMapper)!!.toVideoAsset()
@@ -47,9 +47,9 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
         val params = mutableMapOf<String, Any?>()
-        params["provider"] = videoAsset.contentProvider
-        params["providerVideoId"] = videoAsset.contentProviderId
-        params["namespace"] = generateNamespace(videoAsset.contentProvider, videoAsset.contentProviderId)
+        params["provider"] = videoAsset.contentPartnerId
+        params["providerVideoId"] = videoAsset.contentPartnerVideoId
+        params["namespace"] = generateNamespace(videoAsset.contentPartnerId, videoAsset.contentPartnerVideoId)
         params["title"] = videoAsset.title
         params["description"] = videoAsset.description
         params["releasedOn"] = videoAsset.releasedOn
@@ -68,5 +68,13 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
 
         logger.info { "Persisted video $id" }
         return find(AssetId(id.toString()))!!
+    }
+
+    override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
+        val params = mutableMapOf<String, Any?>()
+        params["contentPartnerId"] = contentPartnerId
+        params["partnerVideoId"] = partnerVideoId
+
+        return jdbcTemplate.queryForObject(COUNT_VIDEOS_WITH_CONTENT_PARTNER_ID_QUERY, MapSqlParameterSource(params), Integer::class.java)!! > 0
     }
 }

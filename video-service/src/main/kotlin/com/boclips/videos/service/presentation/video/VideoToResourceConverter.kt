@@ -21,7 +21,7 @@ class VideoToResourceConverter {
                 id = video.asset.assetId.value,
                 title = video.asset.title,
                 description = video.asset.description,
-                contentProvider = video.asset.contentProvider,
+                contentPartner = video.asset.contentPartnerId,
                 releasedOn = video.asset.releasedOn,
                 playback = getPlayback(video)
         )

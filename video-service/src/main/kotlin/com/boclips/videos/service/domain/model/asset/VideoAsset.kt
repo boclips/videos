@@ -11,8 +11,8 @@ data class VideoAsset(
         val description: String,
         val keywords: List<String>,
         val releasedOn: LocalDate,
-        val contentProvider: String,
-        val contentProviderId: String,
+        val contentPartnerId: String,
+        val contentPartnerVideoId: String,
         val type: VideoType,
         val duration: Duration,
         val legalRestrictions: String
