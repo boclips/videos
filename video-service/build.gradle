@@ -33,6 +33,22 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 sourceSets {
+    client {
+        kotlin {
+            srcDir 'src/client/kotlin'
+        }
+    }
+
+    client_test {
+        kotlin {
+            compileClasspath += client.output + main.output + test.output
+            runtimeClasspath += main.output + test.output
+
+            srcDir 'src/client_test/kotlin'
+        }
+        resources.srcDir file('src/client_test/resources')
+    }
+
     youtubeContractTest {
         kotlin {
             compileClasspath += main.output + test.output
@@ -64,9 +80,24 @@ compileYoutubeContractTestKotlin {
     }
 }
 
+compileClientKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
+compileClient_testKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
 allprojects {
     repositories {
         mavenCentral()
+        maven { url 'http://repo.spring.io/libs-release/' }
         maven { url 'https://jitpack.io' }
     }
 }
@@ -82,9 +113,26 @@ task testYoutubeContract(type: Test) {
     useJUnitPlatform()
 }
 
+task testClient(type: Test) {
+    testClassesDirs = sourceSets.client_test.output.classesDirs
+    classpath = sourceSets.client_test.runtimeClasspath
+
+    useJUnitPlatform()
+}
+
+task buildClient(type: Jar) {
+    from(sourceSets.client.output) {
+        include '**/*.class'
+    }
+    archiveName("video-service-client-${version}.jar")
+}
+
 test.finalizedBy(testYoutubeContract)
+test.finalizedBy(testClient)
 
 def junitVersion = "5.3.1"
+def jacksonVersion = "2.9.7"
+def jacksonKotlinVersion = "2.9.7"
 
 dependencies {
     compile project(':search-service')
@@ -102,7 +150,7 @@ dependencies {
 
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}")
     compile("io.github.microutils:kotlin-logging:1.4.9")
     compile("mysql:mysql-connector-java:${mysqlConnectorJavaVersion}")
     compile("org.flywaydb:flyway-core:${flywayVersion}")
@@ -131,4 +179,23 @@ dependencies {
 
     youtubeContractTestRuntime configurations.runtime
     youtubeContractTestRuntime configurations.testRuntime
+
+    clientCompile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    clientCompile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
+    clientCompile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}")
+    clientCompile('com.github.kittinunf.fuel:fuel:1.14.0')
+
+    testCompile("com.github.tomakehurst:wiremock:2.19.0")
+
+    client_testCompile sourceSets.main.output
+    client_testCompile sourceSets.test.output
+    client_testCompile sourceSets.client.output
+
+    client_testCompile configurations.compile
+    client_testCompile configurations.testCompile
+    client_testCompile configurations.clientCompile
+
+    client_testRuntime configurations.runtime
+    client_testRuntime configurations.testRuntime
+    client_testRuntime configurations.clientRuntime
 }
