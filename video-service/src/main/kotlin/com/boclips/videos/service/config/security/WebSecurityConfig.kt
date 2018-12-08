@@ -1,6 +1,9 @@
 package com.boclips.videos.service.config.security
 
+import com.boclips.security.EnableBoclipsSecurity
 import com.boclips.security.HttpSecurityConfigurer
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.stereotype.Component
@@ -8,6 +11,10 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
+@Profile("!test")
+@Configuration
+@EnableBoclipsSecurity
+class WebSecurityConfig
 
 @Component
 class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
