@@ -1,2 +1,3 @@
 install:
   - ./gradlew video-service:buildClient
+  - find . -name "*.jar"
