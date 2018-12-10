@@ -1,8 +1,9 @@
-package com.boclips.videos.service.testsupport
+package com.boclips.videos.service.client.testsupport
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.videos.service.VideoServiceApplication
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -22,10 +23,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.jdbc.JdbcTestUtils
 import java.time.Duration
 
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+        classes = [VideoServiceApplication::class]
+)
 @ExtendWith(SpringExtension::class)
-@AutoConfigureMockMvc
-@ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "fake-security")
+@ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "no-security")
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
@@ -40,15 +43,6 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
 
-    @Autowired
-    lateinit var fakeYoutubePlaybackProvider: TestYoutubePlaybackProvider
-
-    @Autowired
-    lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
-
-    @Autowired
-    lateinit var eventService: EventService
-
     @BeforeEach
     fun resetState() {
         repos.forEach { it.deleteAll() }
@@ -56,7 +50,6 @@ abstract class AbstractSpringIntegrationTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
         fakeSearchService.resetIndex()
-        fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
     }
 
@@ -100,7 +93,6 @@ abstract class AbstractSpringIntegrationTest {
 
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.value, duration = duration))
-            YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(playbackId.value, "https://youtube.com/thumb/${playbackId.value}.png", duration = duration)
         }
     }
 

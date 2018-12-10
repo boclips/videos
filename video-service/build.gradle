@@ -132,7 +132,6 @@ test.finalizedBy(testClient)
 
 def junitVersion = "5.3.1"
 def jacksonVersion = "2.9.7"
-def jacksonKotlinVersion = "2.9.7"
 
 dependencies {
     compile project(':search-service')
@@ -150,7 +149,7 @@ dependencies {
 
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
     compile("io.github.microutils:kotlin-logging:1.4.9")
     compile("mysql:mysql-connector-java:${mysqlConnectorJavaVersion}")
     compile("org.flywaydb:flyway-core:${flywayVersion}")
@@ -161,7 +160,7 @@ dependencies {
     compile('org.apache.commons:commons-lang3:3.7')
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
-        exclude module: ['junit', 'mockito-core']
+        exclude group: 'junit', module: 'junit'
     }
     testCompile("org.springframework.security:spring-security-test:${springVersion}")
     testCompile("de.flapdoodle.embed:de.flapdoodle.embed.mongo:${flapdoodleVersion}")
@@ -182,10 +181,14 @@ dependencies {
 
     clientCompile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     clientCompile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
-    clientCompile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}")
+    clientCompile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
+    clientCompile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}")
+
     clientCompile('com.github.kittinunf.fuel:fuel:1.14.0')
 
-    testCompile("com.github.tomakehurst:wiremock:2.19.0")
+    testCompile("com.github.tomakehurst:wiremock:2.19.0") {
+        exclude group: 'junit', module: 'junit'
+    }
 
     client_testCompile sourceSets.main.output
     client_testCompile sourceSets.test.output

@@ -139,7 +139,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create new video`() {
-
         fakeKalturaClient.addMediaEntry(TestFactories.createMediaEntry(id = "entry-$123", referenceId = "abc1", duration = Duration.ofMinutes(1)))
 
         val content = """
@@ -165,6 +164,28 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get(createdResourceUrl!!).asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.title", equalTo("AP title")))
+    }
+
+    @Test
+    fun `returns 400 when creating a video without an existing playback`() {
+        val content = """
+            {
+                "provider": "AP",
+                "providerVideoId": "1",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "contentType": "INSTRUCTIONAL_CLIPS",
+                "playbackId": "abc1",
+                "playbackProvider": "KALTURA"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest)
     }
 
     @Test

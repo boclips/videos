@@ -3,14 +3,14 @@ package com.boclips.videos.service.presentation.video
 import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class CreateVideoRequestToAssetConverterTest {
 
     lateinit var converter: CreateVideoRequestToAssetConverter
 
-    @Before
+    @BeforeEach
     fun setUp() {
         converter = CreateVideoRequestToAssetConverter()
     }
