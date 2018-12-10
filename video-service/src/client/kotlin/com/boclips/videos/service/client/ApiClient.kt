@@ -1,23 +1,21 @@
 package com.boclips.videos.service.client
 
-import com.boclips.videos.service.client.exceptions.ResourceNotFoundException
-import com.boclips.videos.service.client.http.HttpClient
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.kittinunf.fuel.Fuel
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.postForObject
 
 class ApiClient(private val baseUrl: String) : VideoServiceClient {
 
+    private val restTemplate = RestTemplate()
+
     override fun create(request: CreateVideoRequest) {
-        val mapper = ObjectMapper().findAndRegisterModules()
-        val body = mapper.writeValueAsString(request)
-        HttpClient.makeRequest(Fuel.post("$baseUrl/v1/videos").header("content-type" to "application/json").body(body))
+        restTemplate.postForObject<String>("$baseUrl/v1/videos", request)
     }
 
     override fun existsByContentPartnerInfo(contentPartnerId: String, contentPartnerVideoId: String) = try {
-        HttpClient.makeRequest(
-                Fuel.head("${this.baseUrl}/v1/content_partners/$contentPartnerId/partner_video_id/$contentPartnerVideoId")
-        ).statusCode == 200
-    } catch (e: ResourceNotFoundException) {
+        restTemplate.headForHeaders("$baseUrl/v1/content_partners/$contentPartnerId/partner_video_id/$contentPartnerVideoId")
+        true
+    } catch (e: HttpClientErrorException) {
         false
     }
 }
