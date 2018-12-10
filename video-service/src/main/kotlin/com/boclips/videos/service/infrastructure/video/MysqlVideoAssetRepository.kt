@@ -4,11 +4,11 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import mu.KLogging
+import org.apache.commons.lang3.time.DurationFormatUtils
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
-import org.apache.commons.lang3.time.DurationFormatUtils
 
 
 class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : VideoAssetRepository {
