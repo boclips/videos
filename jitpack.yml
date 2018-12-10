@@ -1,6 +1,2 @@
 install:
-  - ./gradlew video-service:buildClient
-  - echo "Available jars:"
-  - find . -name "*.jar"
-  - echo "------------"
-  - mvn install:install-file -Dfile=./video-service/build/libs/video-service-client-0.0.1-SNAPSHOT.jar -DgroupId=$GROUP -DartifactId=$ARTIFACT -Dversion=$VERSION -Dpackaging=jar
+  - ./build-artifacts
