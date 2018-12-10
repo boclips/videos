@@ -4,4 +4,4 @@ set -ex
 
 ./gradlew video-service:buildClient
 
-mvn install:install-file -Dfile=./video-service/build/libs/video-service-client-0.0.1-SNAPSHOT.jar -DgroupId=${GROUP} -DartifactId=${ARTIFACT} -Dversion=${VERSION} -Dpackaging=jar
+mvn install:install-file -Dfile=./video-service/build/libs/video-service-client-0.0.1-SNAPSHOT.jar -DgroupId=${GROUP} -DartifactId=video-service-client -Dversion=${VERSION} -Dpackaging=jar
