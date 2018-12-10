@@ -1,2 +1,2 @@
 install:
-  - gradlew video-service:buildClient
+  - ./gradlew video-service:buildClient
