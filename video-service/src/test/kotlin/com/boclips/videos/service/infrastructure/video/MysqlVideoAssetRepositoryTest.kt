@@ -13,14 +13,15 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: MysqlVideoAssetRepository
 
     @Test
-    fun `findVideosBy can find multiple videos by video ids`() {
+    fun `order is preserved between query and results`() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")
         saveVideo(videoId = 125, title = "Some title", description = "test description 3")
 
-        val videos = videoRepository.findAll(listOf(AssetId(value = "123"), AssetId(value = "124"), AssetId(value = "125")))
+        val videos = videoRepository.findAll(listOf(AssetId(value = "124"), AssetId(value = "125"), AssetId(value = "123")))
 
-        assertThat(videos).hasSize(3)
+        assertThat(videos.map{it.assetId.value})
+                .isEqualTo(listOf("124", "125", "123"))
     }
 
     @Test

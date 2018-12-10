@@ -20,15 +20,22 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
                         VALUES (:reference_id, :provider, :providerVideoId, :namespace, :title, :description, :releasedOn, :duration, :keywords, :legalRestrictions, :content_type, :playback_id, :playback_provider);"""
         private const val COUNT_VIDEOS_WITH_CONTENT_PARTNER_ID_QUERY = "SELECT COUNT(1) FROM metadata_orig WHERE source = :contentPartnerId AND unique_id = :partnerVideoId"
     }
+
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
         if (assetIds.isEmpty()) {
             return emptyList()
         }
 
-        val videoEntities = jdbcTemplate.query(SELECT_QUERY, MapSqlParameterSource("ids", assetIds.map { it.value }), rowMapper)
+        val videoEntities = jdbcTemplate.query(
+                SELECT_QUERY + " ORDER BY ${sqlOrderIds(assetIds)}",
+                MapSqlParameterSource("ids", assetIds.map { it.value }),
+                rowMapper
+        )
+
         logger.info { "Found ${assetIds.size} videos for assetIds $assetIds" }
         return videoEntities.map { it.toVideoAsset() }
     }
+
     override fun find(assetId: AssetId): VideoAsset? {
         return try {
             jdbcTemplate.queryForObject(SELECT_QUERY, MapSqlParameterSource("ids", assetId.value), rowMapper)!!.toVideoAsset()
@@ -77,4 +84,7 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
 
         return jdbcTemplate.queryForObject(COUNT_VIDEOS_WITH_CONTENT_PARTNER_ID_QUERY, MapSqlParameterSource(params), Integer::class.java)!! > 0
     }
+
+    private fun sqlOrderIds(assetIds: List<AssetId>) =
+            assetIds.map { "id='${it.value}' DESC" }.joinToString()
 }
