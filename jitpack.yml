@@ -2,3 +2,5 @@ install:
   - ./build-artifacts
 env:
   ARTIFACT: video-service-client
+before_install:
+  - export ARTIFACT=video-service-client
