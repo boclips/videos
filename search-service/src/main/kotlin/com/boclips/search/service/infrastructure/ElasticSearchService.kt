@@ -9,6 +9,10 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder
+import org.apache.lucene.queryparser.xml.builders.DisjunctionMaxQueryBuilder
+import org.apache.lucene.search.BooleanQuery
+import org.apache.lucene.search.DisjunctionMaxQuery
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest
@@ -83,6 +87,15 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.AUTO)
 
+        val findExactMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
+                .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+                .minimumShouldMatch("75%")
+
+        val allMatchesQuery = QueryBuilders
+                .boolQuery()
+                .should(findMatchesQuery)
+                .should(findExactMatchesQuery)
+
         val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
 
@@ -92,7 +105,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
         val elasticSearchRequest = SearchRequest(arrayOf(ES_INDEX),
                 SearchSourceBuilder()
-                        .query(findMatchesQuery)
+                        .query(allMatchesQuery)
                         .from(searchRequest.startIndex)
                         .size(searchRequest.windowSize)
                         .addRescorer(rescorer)
