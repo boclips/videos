@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -12,10 +13,13 @@ import javax.persistence.Column
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.OneToMany
+import javax.persistence.CascadeType
+import javax.persistence.FetchType
 
 @Entity(name = "metadata_orig")
 class VideoEntity(
-        @Id @GeneratedValue(strategy=GenerationType.IDENTITY) var id: Long? = null,
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
         var source: String? = null,
         var namespace: String? = null,
         var title: String? = null,
@@ -38,7 +42,8 @@ class VideoEntity(
         var type_id: Int? = null,
         var reference_id: String? = null,
         var playback_provider: String? = null,
-        var playback_id: String? = null
+        var playback_id: String? = null,
+        @OneToMany(mappedBy = "video", cascade = [CascadeType.ALL], fetch = FetchType.EAGER) var subjects: Set<VideoSubject> = emptySet()
 ) {
 
     companion object {
@@ -46,7 +51,7 @@ class VideoEntity(
                 id = videoAsset.assetId.value.toLongOrNull(),
                 namespace = generateNamespace(videoAsset.contentPartnerId, videoAsset.contentPartnerVideoId),
                 title = videoAsset.title,
-                description =  videoAsset.description,
+                description = videoAsset.description,
                 date = videoAsset.releasedOn.toString(),
                 duration = DurationFormatUtils.formatDuration(videoAsset.duration.toMillis(), "HH:mm:ss", true),
                 restrictions = videoAsset.legalRestrictions,
@@ -57,7 +62,11 @@ class VideoEntity(
                 playback_provider = videoAsset.playbackId.type.name,
                 source = videoAsset.contentPartnerId,
                 uniqueId = videoAsset.contentPartnerVideoId
-        )
+        ).apply {
+            subjects = videoAsset.subjects.map {
+                VideoSubject(subjectName = it.name, video = this)
+            }.toSet()
+        }
     }
 
     fun toVideoAsset(): VideoAsset {
@@ -68,12 +77,12 @@ class VideoEntity(
                 description = description!!,
                 releasedOn = LocalDate.parse(date!!),
                 contentPartnerId = source!!,
-                contentPartnerVideoId =  uniqueId!!,
+                contentPartnerVideoId = uniqueId!!,
                 type = VideoType.fromId(type_id!!),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
                 duration = DurationParser.parse(duration),
                 legalRestrictions = restrictions.orEmpty(),
-                subjects = emptySet()
+                subjects = subjects.map { Subject(name = it.subjectName!!) }.toSet()
         )
     }
 

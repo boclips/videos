@@ -22,15 +22,12 @@ interface VideoEntityRepository : CrudRepository<VideoEntity, Long> {
 }
 
 open class MysqlVideoAssetRepository(
-        private val videoSubjectRepository: VideoSubjectRepository,
         private val videoRepository: VideoEntityRepository
 ) : VideoAssetRepository {
     companion object : KLogging();
 
     override fun update(videoAsset: VideoAsset): VideoAsset {
         videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
-
-        videoSubjectRepository.saveAll(videoAsset.subjects.map { VideoSubject(videoId = videoAsset.assetId.value.toLong(), subjectName = it.name) })
         return videoAsset
     }
 
@@ -43,16 +40,10 @@ open class MysqlVideoAssetRepository(
 
         val videoEntities = findAllByIdWhilstRetainingOrder(videoIds)
 
-        val videoIdsToSubjects = getSubjectsByVideoIds(videoIds)
 
         logger.info { "Found ${videoEntities.size} videos for assetIds $assetIds" }
-        return videoEntities.map { it.toVideoAsset().copy(subjects = videoIdsToSubjects[it.id].orEmpty().toSet()) }
+        return videoEntities.map { it.toVideoAsset() }
     }
-
-    private fun getSubjectsByVideoIds(videoIds: List<String>): Map<Long, List<Subject>> =
-            videoSubjectRepository.findByVideoIdIn(videoIds.map { it.toLong() })
-                    .groupBy({ it.videoId!! }, { Subject(it.subjectName!!) })
-
 
     override fun find(assetId: AssetId): VideoAsset? {
         return findAll(listOf(assetId)).firstOrNull()
