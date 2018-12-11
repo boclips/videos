@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 internal class MockVideoServiceClientConfig {
 
     @Bean
-    fun videoServiceClient(): VideoServiceClient {
+    fun mockVideoServiceClient(): VideoServiceClient {
         return VideoServiceClient.getFakeClient()
     }
 }

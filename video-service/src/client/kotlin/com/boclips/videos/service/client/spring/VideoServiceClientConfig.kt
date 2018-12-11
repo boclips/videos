@@ -9,16 +9,16 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 internal class VideoServiceClientConfig {
 
-    @Value("\${videoService.baseUrl}")
+    @Value("\${video-service.base-url}")
     var baseUrl: String? = null
 
-    @Value("\${videoService.accessTokenUri}")
+    @Value("\${video-service.access-token-uri}")
     var accessTokenUri: String? = null
 
-    @Value("\${videoService.clientId}")
+    @Value("\${video-service.client-id}")
     var clientId: String? = null
 
-    @Value("\${videoService.clientSecret}")
+    @Value("\${video-service.client-secret}")
     var clientSecret: String? = null
 
     @Bean
