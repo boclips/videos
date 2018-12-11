@@ -1,11 +1,17 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
+import java.time.LocalDate
 
 class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
 
@@ -79,5 +85,53 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         assertThat(videoRepository.existsVideoFromContentPartner("ted", "abc")).isTrue()
         assertThat(videoRepository.existsVideoFromContentPartner("teddy", "abc")).isFalse()
         assertThat(videoRepository.existsVideoFromContentPartner("ted", "abcd")).isFalse()
+    }
+
+    @Test
+    fun `video assets have no subjects initially`() {
+        val videoAsset = videoRepository.create(TestFactories.createVideoAsset())
+
+        assertThat(videoAsset.subjects).isEmpty()
+    }
+
+    @Test
+    fun `update saves new video subjects`() {
+        val videoAsset = videoRepository.create(TestFactories.createVideoAsset()).copy(
+                subjects = setOf(Subject("maths"), Subject("physics"))
+        )
+
+        assertThat(videoRepository.update(videoAsset)).isEqualTo(videoAsset)
+        assertThat(videoRepository.find(videoAsset.assetId)).isEqualTo(videoAsset)
+        assertThat(videoRepository.findAll(listOf(videoAsset.assetId))).containsExactly(videoAsset)
+    }
+
+    @Test
+    fun `retrieving multiple videos will have correct subjects`() {
+        val videoAssetWithSubject = videoRepository.update(videoRepository.create(TestFactories.createVideoAsset()).copy(
+                subjects = setOf(Subject("maths"))
+        ))
+
+        val videoAssetWithoutSubject = videoRepository.create(TestFactories.createVideoAsset())
+
+        assertThat(videoRepository.findAll(listOf(videoAssetWithoutSubject.assetId, videoAssetWithSubject.assetId))).contains(videoAssetWithoutSubject)
+    }
+
+    @Test
+    fun `updated video assets persist`() {
+        val videoAsset = videoRepository.create(TestFactories.createVideoAsset()).copy(
+                title = "New Title",
+                description = "Hello friends",
+                playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, "new playback id"),
+                keywords = listOf("new", "keywords"),
+                releasedOn = LocalDate.parse("2019-01-01"),
+                contentPartnerId = "new content partner id",
+                contentPartnerVideoId = "new content partner video id",
+                type = VideoType.TED_TALKS,
+                duration = Duration.ofHours(1),
+                legalRestrictions = "new legal restrictions"
+        )
+
+        assertThat(videoRepository.update(videoAsset)).isEqualTo(videoAsset)
+        assertThat(videoRepository.find(videoAsset.assetId)).isEqualTo(videoAsset)
     }
 }

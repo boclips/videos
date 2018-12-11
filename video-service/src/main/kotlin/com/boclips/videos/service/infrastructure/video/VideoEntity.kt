@@ -47,7 +47,8 @@ class VideoEntity(
                 type = VideoType.fromId(type_id!!),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
                 duration = DurationParser.parse(duration),
-                legalRestrictions = restrictions.orEmpty()
+                legalRestrictions = restrictions.orEmpty(),
+                subjects = emptySet()
         )
     }
 

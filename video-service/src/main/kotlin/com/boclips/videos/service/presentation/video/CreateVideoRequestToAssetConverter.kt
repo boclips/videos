@@ -33,7 +33,8 @@ class CreateVideoRequestToAssetConverter {
                 contentPartnerVideoId = createVideoRequest.providerVideoId!!,
                 type = VideoType.valueOf(createVideoRequest.contentType!!),
                 duration = createVideoRequest.duration!!,
-                legalRestrictions = createVideoRequest.legalRestrictions!!
+                legalRestrictions = createVideoRequest.legalRestrictions!!,
+                subjects = emptySet()
         )
     }
 

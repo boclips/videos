@@ -15,5 +15,6 @@ data class VideoAsset(
         val contentPartnerVideoId: String,
         val type: VideoType,
         val duration: Duration,
-        val legalRestrictions: String
+        val legalRestrictions: String,
+        val subjects: Set<Subject>
 )

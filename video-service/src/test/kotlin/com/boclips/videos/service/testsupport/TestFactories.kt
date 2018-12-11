@@ -88,7 +88,8 @@ object TestFactories {
                 contentPartnerVideoId = "cp-id-$videoId",
                 type = type,
                 duration = Duration.ZERO,
-                legalRestrictions = ""
+                legalRestrictions = "",
+                subjects = emptySet()
         )
     }
 
