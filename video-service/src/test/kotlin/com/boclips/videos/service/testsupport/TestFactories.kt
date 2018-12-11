@@ -118,7 +118,7 @@ object TestFactories {
                 reference_id = "reference_id",
                 playback_provider = playbackProvider,
                 playback_id = playbackId,
-                unique_id = uniqueId
+                uniqueId = uniqueId
         )
     }
 

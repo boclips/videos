@@ -5,11 +5,17 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import org.springframework.data.annotation.Id
+import org.apache.commons.lang3.time.DurationFormatUtils
 import java.time.LocalDate
+import javax.persistence.Entity
+import javax.persistence.Column
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
+@Entity(name = "metadata_orig")
 class VideoEntity(
-        @Id var id: Long,
+        @Id @GeneratedValue(strategy=GenerationType.IDENTITY) var id: Long? = null,
         var source: String? = null,
         var namespace: String? = null,
         var title: String? = null,
@@ -28,12 +34,31 @@ class VideoEntity(
         var alternative_id: String? = null,
         var alt_source: String? = null,
         var restrictions: String? = null,
-        var unique_id: String? = null,
+        @Column(name = "unique_id") var uniqueId: String? = null,
         var type_id: Int? = null,
         var reference_id: String? = null,
         var playback_provider: String? = null,
         var playback_id: String? = null
 ) {
+
+    companion object {
+        fun fromVideoAsset(videoAsset: VideoAsset) = VideoEntity(
+                id = videoAsset.assetId.value.toLongOrNull(),
+                namespace = generateNamespace(videoAsset.contentPartnerId, videoAsset.contentPartnerVideoId),
+                title = videoAsset.title,
+                description =  videoAsset.description,
+                date = videoAsset.releasedOn.toString(),
+                duration = DurationFormatUtils.formatDuration(videoAsset.duration.toMillis(), "HH:mm:ss", true),
+                restrictions = videoAsset.legalRestrictions,
+                keywords = videoAsset.keywords.joinToString(),
+                type_id = videoAsset.type.id,
+                reference_id = videoAsset.playbackId.value,
+                playback_id = videoAsset.playbackId.value,
+                playback_provider = videoAsset.playbackId.type.name,
+                source = videoAsset.contentPartnerId,
+                uniqueId = videoAsset.contentPartnerVideoId
+        )
+    }
 
     fun toVideoAsset(): VideoAsset {
         return VideoAsset(
@@ -43,7 +68,7 @@ class VideoEntity(
                 description = description!!,
                 releasedOn = LocalDate.parse(date!!),
                 contentPartnerId = source!!,
-                contentPartnerVideoId =  unique_id!!,
+                contentPartnerVideoId =  uniqueId!!,
                 type = VideoType.fromId(type_id!!),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
                 duration = DurationParser.parse(duration),

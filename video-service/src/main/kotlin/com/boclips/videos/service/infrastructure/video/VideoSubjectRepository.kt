@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface VideoSubjectRepository : CrudRepository<VideoSubject, VideoSubject> {
+interface VideoSubjectRepository : CrudRepository<VideoSubject, VideoSubjectId> {
     fun findByVideoIdIn(videoIds: List<Long>): List<VideoSubject>
 }
