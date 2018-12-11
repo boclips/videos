@@ -11,12 +11,17 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.*
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.oauth2.client.OAuth2RestTemplate
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails
+import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails
+import org.springframework.web.client.getForObject
 import java.time.Duration
+import java.util.*
 import java.util.stream.Stream
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-abstract class VideoServiceClientContractTest : AbstractSpringIntegrationTest() {
+internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrationTest() {
 
     abstract fun getClient() : VideoServiceClient
 
@@ -37,14 +42,14 @@ abstract class VideoServiceClientContractTest : AbstractSpringIntegrationTest() 
 
 }
 
-class FakeVideoServiceClientContractTest: VideoServiceClientContractTest() {
-    val fakeClient = FakeClient()
+internal class FakeVideoServiceClientContractTest: VideoServiceClientContractTest() {
+    val fakeClient = VideoServiceClient.getFakeClient()
     override fun getClient() = fakeClient
 
 }
 
-class ApiVideoServiceClientContractTest: VideoServiceClientContractTest() {
-    val realClient = ApiClient("http://localhost:9876")
+internal class ApiVideoServiceClientContractTest: VideoServiceClientContractTest() {
+    val realClient = VideoServiceClient.getUnauthorisedApiClient("http://localhost:9876")
 
     @BeforeEach
     fun setUp() {

@@ -1,13 +1,15 @@
-package com.boclips.videos.service.client
+package com.boclips.videos.service.client.internal
 
+import com.boclips.videos.service.client.CreateVideoRequest
+import com.boclips.videos.service.client.VideoServiceClient
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
 
-class ApiClient(private val baseUrl: String) : VideoServiceClient {
-
-    private val restTemplate = RestTemplate()
-
+internal class ApiClient internal constructor(
+        private val baseUrl: String,
+        private val restTemplate: RestTemplate
+) : VideoServiceClient {
     override fun create(request: CreateVideoRequest) {
         restTemplate.postForObject<String>("$baseUrl/v1/videos", request)
     }
@@ -19,3 +21,4 @@ class ApiClient(private val baseUrl: String) : VideoServiceClient {
         false
     }
 }
+

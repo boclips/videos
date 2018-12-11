@@ -1,6 +1,9 @@
-package com.boclips.videos.service.client
+package com.boclips.videos.service.client.internal
 
-class FakeClient : VideoServiceClient {
+import com.boclips.videos.service.client.CreateVideoRequest
+import com.boclips.videos.service.client.VideoServiceClient
+
+internal class FakeClient : VideoServiceClient {
 
     private val videos: MutableList<CreateVideoRequest> = mutableListOf()
 
