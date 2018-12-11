@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
+import com.boclips.videos.service.infrastructure.video.VideoSubjectRepository
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.context.annotation.Bean
@@ -69,8 +70,8 @@ class ApplicationContext {
     }
 
     @Bean
-    fun videoRepository(jdbcTemplate: NamedParameterJdbcTemplate): VideoAssetRepository {
-        return MysqlVideoAssetRepository(jdbcTemplate)
+    fun videoRepository(jdbcTemplate: NamedParameterJdbcTemplate, videoSubjectRepository: VideoSubjectRepository): VideoAssetRepository {
+        return MysqlVideoAssetRepository(jdbcTemplate, videoSubjectRepository)
     }
 
     @Bean

@@ -11,7 +11,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 
 
-class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : VideoAssetRepository {
+class MysqlVideoAssetRepository(
+        private val jdbcTemplate: NamedParameterJdbcTemplate,
+        private val videoSubjectRepository: VideoSubjectRepository
+) : VideoAssetRepository {
     companion object : KLogging() {
 
         private const val DELETE_QUERY = "DELETE FROM metadata_orig WHERE id IN (:ids)"
@@ -21,17 +24,12 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
                         VALUES (:reference_id, :contentPartnerId, :contentPartnerVideoId, :namespace, :title, :description, :releasedOn, :duration, :keywords, :legalRestrictions, :content_type, :playback_id, :playback_provider);"""
         private const val COUNT_VIDEOS_WITH_CONTENT_PARTNER_ID_QUERY = "SELECT COUNT(1) FROM metadata_orig WHERE source = :contentPartnerId AND unique_id = :partnerVideoId"
         private const val UPDATE_VIDEO_QUERY = "UPDATE metadata_orig SET title = :title, description = :description, playback_id = :playback_id, keywords = :keywords, `date` = :releasedOn, source = :contentPartnerId, unique_id = :contentPartnerVideoId, type_id = :content_type, duration = :duration, restrictions = :legalRestrictions, playback_provider = :playback_provider WHERE id = :id"
-        private const val UPDATE_SUBJECTS_QUERY = "INSERT INTO video_subject(video_id, subject_name) values (:video_id, :subject_name)"
-        private const val SELECT_SUBJECT_QUERY = "SELECT * FROM video_subject WHERE video_id IN (:video_ids)"
     }
 
     override fun update(videoAsset: VideoAsset): VideoAsset {
         jdbcTemplate.update(UPDATE_VIDEO_QUERY, queryParamsForVideo(videoAsset))
 
-        videoAsset.subjects.map { it.name }.forEach { subject ->
-            jdbcTemplate.update(UPDATE_SUBJECTS_QUERY, mapOf("video_id" to videoAsset.assetId.value.toInt(), "subject_name" to subject))
-        }
-
+        videoSubjectRepository.saveAll(videoAsset.subjects.map { VideoSubject(videoAsset.assetId.value.toLong(), it.name) })
         return videoAsset
     }
 
@@ -53,9 +51,8 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
     }
 
     private fun getSubjectsByVideoIds(videoIds: List<String>): Map<Long, List<Subject>> =
-            jdbcTemplate.query(SELECT_SUBJECT_QUERY, mapOf("video_ids" to videoIds)) { resultSet, _ ->
-                resultSet.getLong("video_id") to Subject(resultSet.getString("subject_name"))
-            }.groupBy({ it.first }, { it.second })
+            videoSubjectRepository.findByVideoIdIn(videoIds.map { it.toLong() })
+                .groupBy({ it.videoId }, { Subject(it.subjectName) })
 
 
     override fun find(assetId: AssetId): VideoAsset? {
@@ -112,3 +109,4 @@ class MysqlVideoAssetRepository(private val jdbcTemplate: NamedParameterJdbcTemp
     private fun sqlOrderIds(assetIds: List<AssetId>) =
             assetIds.map { "id='${it.value}' DESC" }.joinToString()
 }
+
