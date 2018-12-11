@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.testsupport
 
 import com.boclips.videos.service.client.CreateVideoRequest
+import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.domain.model.asset.VideoType
 import java.time.Duration
 import java.time.LocalDate
@@ -18,7 +19,7 @@ object TestFactories {
             keywords: List<String> = listOf("k1", "k2"),
             contentType: String = VideoType.INSTRUCTIONAL_CLIPS.name,
             playbackId: String = "kaltura-id-789",
-            playbackProvider: String = "KALTURA"
+            playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA
     ): CreateVideoRequest {
         return CreateVideoRequest(
                 provider = contentProviderId,
