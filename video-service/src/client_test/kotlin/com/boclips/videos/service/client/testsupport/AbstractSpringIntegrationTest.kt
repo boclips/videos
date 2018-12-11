@@ -19,14 +19,15 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.jdbc.JdbcTestUtils
 import java.time.Duration
 
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-        classes = [VideoServiceApplication::class]
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
 )
+@ContextConfiguration(classes = [VideoServiceApplication::class])
 @ExtendWith(SpringExtension::class)
 @ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "no-security")
 abstract class AbstractSpringIntegrationTest {
