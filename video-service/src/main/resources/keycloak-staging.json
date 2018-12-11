@@ -4,5 +4,6 @@
   "auth-server-url": "https://login.staging-boclips.com/auth",
   "ssl-required": "external",
   "resource": "video-service",
-  "confidential-port": 0
+  "confidential-port": 0,
+  "use-resource-role-mappings" : true
 }
