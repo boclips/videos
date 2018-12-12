@@ -72,24 +72,10 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `createVideo returns a video with the assigned id`() {
+    fun `createVideo inserts a video`() {
         val videoAsset = videoRepository.create(TestFactories.createVideoAsset(videoId = ""))
         assertThat(videoAsset.assetId.value).isNotBlank()
-        assertThat(videoRepository.find(videoAsset.assetId)).isNotNull
-    }
-
-    @Test
-    fun `createVideo inserts a new video with provided metadata`() {
-        val videoId = videoRepository.create(TestFactories.createVideoAsset(
-                videoId = "",
-                title = "a new video title",
-                subjects = setOf(Subject("physics"))
-        )).assetId
-
-        val video = videoRepository.find(videoId)!!
-
-        assertThat(video.title).isEqualTo("a new video title")
-        assertThat(video.subjects).containsExactly(Subject("physics"))
+        assertThat(videoRepository.findAll(listOf(videoAsset.assetId))).isNotEmpty
     }
 
     @Test
@@ -131,7 +117,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `updated video assets persist all properties`() {
+    fun `updated video assets persist`() {
         val videoAsset = videoRepository.create(TestFactories.createVideoAsset()).copy(
                 title = "New Title",
                 description = "Hello friends",
