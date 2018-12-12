@@ -4,6 +4,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 class SubjectRepositoryTest : AbstractSpringIntegrationTest() {
@@ -54,5 +55,33 @@ class SubjectRepositoryTest : AbstractSpringIntegrationTest() {
         val subjects = subjectRepository.findByVideoIds(listOf(videoId))
 
         assertThat(subjects).containsExactly(VideoSubjectEntity(videoId = videoId, subjectName = "Physics"))
+    }
+
+    @Test
+    fun `setSubjectForVideo throws when subject name is empty`() {
+        assertThrows<IllegalStateException> {
+            subjectRepository.setSubjectsForVideo(videoId, listOf("", "", ""))
+        }
+    }
+
+    @Test
+    fun `add throws when videoId is null`() {
+        assertThrows<IllegalStateException> {
+            subjectRepository.add(listOf(VideoSubjectEntity(videoId = null, subjectName = "Maths")))
+        }
+    }
+
+    @Test
+    fun `add throws when subjectName is null`() {
+        assertThrows<IllegalStateException> {
+            subjectRepository.add(listOf(VideoSubjectEntity(videoId = videoId, subjectName = null)))
+        }
+    }
+
+    @Test
+    fun `add throws when subjectName is empty`() {
+        assertThrows<IllegalStateException> {
+            subjectRepository.add(listOf(VideoSubjectEntity(videoId = videoId, subjectName = "")))
+        }
     }
 }
