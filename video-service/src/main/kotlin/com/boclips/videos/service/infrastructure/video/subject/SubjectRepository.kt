@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 class SubjectRepository(val crudRepository: SubjectCrudRepository) {
     fun findByVideoIds(videoIds: List<Long>): List<VideoSubjectEntity> = crudRepository.findByVideoIdIn(videoIds)
 
-    fun create(subjects: List<VideoSubjectEntity>) {
+    fun add(subjects: List<VideoSubjectEntity>) {
         crudRepository.saveAll(subjects)
     }
 
