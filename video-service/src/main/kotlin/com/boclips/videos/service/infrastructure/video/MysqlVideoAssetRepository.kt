@@ -4,22 +4,10 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
+import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectRepository
 import mu.KLogging
-import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.CrudRepository
-import org.springframework.stereotype.Repository
-import java.util.stream.Stream
 import javax.transaction.Transactional
-
-@Repository
-interface VideoEntityRepository : CrudRepository<VideoEntity, Long> {
-    fun countBySourceAndUniqueId(contentPartnerId: String, partnerVideoId: String): Int
-
-    @Query("select * from metadata_orig", nativeQuery = true)
-    fun readAll(): Stream<VideoEntity>
-
-    fun findAllByIdIn(ids: List<Long>): List<VideoEntity>
-}
 
 open class MysqlVideoAssetRepository(
         private val videoSubjectRepository: VideoSubjectRepository,
@@ -27,32 +15,18 @@ open class MysqlVideoAssetRepository(
 ) : VideoAssetRepository {
     companion object : KLogging();
 
-    override fun update(videoAsset: VideoAsset): VideoAsset {
-        videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
-
-        videoSubjectRepository.saveAll(videoAsset.subjects.map { VideoSubject(videoId = videoAsset.assetId.value.toLong(), subjectName = it.name) })
-        return videoAsset
-    }
-
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
         if (assetIds.isEmpty()) {
             return emptyList()
         }
 
         val videoIds = assetIds.map { it.value }
-
         val videoEntities = findAllByIdWhilstRetainingOrder(videoIds)
-
         val videoIdsToSubjects = getSubjectsByVideoIds(videoIds)
 
         logger.info { "Found ${videoEntities.size} videos for assetIds $assetIds" }
         return videoEntities.map { it.toVideoAsset().copy(subjects = videoIdsToSubjects[it.id].orEmpty().toSet()) }
     }
-
-    private fun getSubjectsByVideoIds(videoIds: List<String>): Map<Long, List<Subject>> =
-            videoSubjectRepository.findByVideoIdIn(videoIds.map { it.toLong() })
-                    .groupBy({ it.videoId!! }, { Subject(it.subjectName!!) })
-
 
     override fun find(assetId: AssetId): VideoAsset? {
         return findAll(listOf(assetId)).firstOrNull()
@@ -65,15 +39,30 @@ open class MysqlVideoAssetRepository(
         }
     }
 
-    override fun delete(assetId: AssetId) {
-        videoRepository.deleteById(assetId.value.toLong())
+    override fun create(videoAsset: VideoAsset): VideoAsset {
+        val videoEntity = VideoEntity.fromVideoAsset(videoAsset)
+
+        val savedVideoEntity = videoRepository.save(videoEntity)
+
+        val subjects = videoAsset.subjects.map { subject -> VideoSubjectEntity(savedVideoEntity.id, subject.name) }
+        videoSubjectRepository.create(subjects)
+
+        logger.info { "Persisted video ${savedVideoEntity.id}" }
+        return savedVideoEntity.toVideoAsset()
     }
 
-    override fun create(videoAsset: VideoAsset): VideoAsset {
-        val entity = videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
+    override fun update(videoAsset: VideoAsset): VideoAsset {
+        videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
 
-        logger.info { "Persisted video ${entity.id}" }
-        return entity.toVideoAsset()
+        val videoId = videoAsset.assetId.value.toLong()
+        val newSubjectNames = videoAsset.subjects.map { subject ->  subject.name }
+        videoSubjectRepository.setSubjectsForVideo(videoId, newSubjectNames)
+
+        return videoAsset
+    }
+
+    override fun delete(assetId: AssetId) {
+        videoRepository.deleteById(assetId.value.toLong())
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
@@ -86,4 +75,8 @@ open class MysqlVideoAssetRepository(
             .let { indexById ->
                 videoRepository.findAllByIdIn(videoIds.map { it.toLong() }).sortedBy { indexById[it.id] }
             }
+
+    private fun getSubjectsByVideoIds(videoIds: List<String>): Map<Long, List<Subject>> =
+            videoSubjectRepository.findByVideoIdIn(videoIds.map { it.toLong() })
+                    .groupBy({ it.videoId!! }, { Subject(it.subjectName!!) })
 }

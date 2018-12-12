@@ -23,3 +23,7 @@ email:
   port: 466
   username: avron
   password: Champagn3
+
+logging:
+  level:
+    org.hibernate.SQL: TRACE
