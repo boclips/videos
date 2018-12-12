@@ -1,9 +1,6 @@
 package com.boclips.videos.service.config.security
 
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.asOperator
-import com.boclips.videos.service.testsupport.asReporter
-import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.*
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -53,19 +50,19 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     @Test
     fun `everybody can access event status`() {
         mockMvc.perform(get("/v1/events/status"))
-                .andExpect(status().`is`(isNot401Or403()))
+                .andExpect(status().`is`(not401Or403()))
     }
 
     @Test
     fun `reporters can access event types`() {
         mockMvc.perform(get("/v1/events/no-search-results").asReporter())
-                .andExpect(status().`is`(isNot401Or403()))
+                .andExpect(status().`is`(not401Or403()))
         mockMvc.perform(get("/v1/events/status").asReporter())
-                .andExpect(status().`is`(isNot401Or403()))
+                .andExpect(status().`is`(not401Or403()))
         mockMvc.perform(post("/v1/events/playback").asReporter())
-                .andExpect(status().`is`(isNot401Or403()))
+                .andExpect(status().`is`(not401Or403()))
         mockMvc.perform(post("/v1/events/no-search-results").asReporter())
-                .andExpect(status().`is`(isNot401Or403()))
+                .andExpect(status().`is`(not401Or403()))
     }
 
     @Test
@@ -114,6 +111,46 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
+    fun `insert videos requires a special role`() {
+        saveVideo(videoId = 123)
+
+        mockMvc.perform(post("/v1/videos"))
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/videos").asTeacher())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/videos").asReporter())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/videos").asOperator())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/videos").asIngestor())
+                .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
+    fun `probe video existence requires a special role`() {
+        saveVideo(videoId = 123)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666"))
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asTeacher())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asReporter())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asOperator())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asIngestor())
+                .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
     fun `only people with dedicated role can rebuild search index`() {
         mockMvc.perform(post("/v1/admin/actions/rebuild_search_index").asTeacher())
                 .andExpect(status().isForbidden)
@@ -123,7 +160,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 }
 
-private fun isNot401Or403(): Matcher<Int> {
+private fun not401Or403(): Matcher<Int> {
     return object : BaseMatcher<Int>() {
         override fun matches(item: Any?): Boolean {
             val statusActually = item as Int

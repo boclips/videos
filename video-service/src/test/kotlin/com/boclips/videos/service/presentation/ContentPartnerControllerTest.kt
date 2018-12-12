@@ -17,13 +17,13 @@ class ContentPartnerControllerTest : AbstractSpringIntegrationTest() {
     fun `video lookup by provider id returns 200 when asset exists`() {
         saveVideo(100L, contentProvider = "ted", contentProviderId = "abc")
 
-        mockMvc.perform(head("/v1/content_partners/ted/partner_video_id/abc").asIngestor())
+        mockMvc.perform(head("/v1/content-partners/ted/videos/abc").asIngestor())
                 .andExpect(status().isOk)
     }
 
     @Test
     fun `video lookup by provider id returns 404 when asset does not exist`() {
-        mockMvc.perform(head("/v1/content_partners/ted/partner_video_id/xyz").asIngestor())
+        mockMvc.perform(head("/v1/content-partners/ted/videos/xyz").asIngestor())
                 .andExpect(status().isNotFound)
     }
 }
