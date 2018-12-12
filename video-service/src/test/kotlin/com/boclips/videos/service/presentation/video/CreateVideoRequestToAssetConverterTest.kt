@@ -91,4 +91,11 @@ class CreateVideoRequestToAssetConverterTest {
                 .isInstanceOf(InvalidCreateVideoRequestException::class.java)
                 .hasMessage("restrictions cannot be null")
     }
+
+    @Test
+    fun `throws when subjects is null`() {
+        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(subjects = null)) }
+                .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+                .hasMessage("subjects cannot be null")
+    }
 }

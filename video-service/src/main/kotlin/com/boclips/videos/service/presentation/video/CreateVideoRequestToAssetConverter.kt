@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -21,6 +22,7 @@ class CreateVideoRequestToAssetConverter {
         validateObligatoryField("contentPartnerVideoId", createVideoRequest.providerVideoId)
         validateObligatoryField("content type", createVideoRequest.contentType)
         validateObligatoryField("restrictions", createVideoRequest.legalRestrictions)
+        validateObligatoryField("subjects", createVideoRequest.subjects)
 
         return VideoAsset(
                 assetId = AssetId(""),
@@ -34,7 +36,7 @@ class CreateVideoRequestToAssetConverter {
                 type = VideoType.valueOf(createVideoRequest.contentType!!),
                 duration = createVideoRequest.duration!!,
                 legalRestrictions = createVideoRequest.legalRestrictions!!,
-                subjects = emptySet()
+                subjects = createVideoRequest.subjects!!.map{ Subject(it) }.toSet()
         )
     }
 

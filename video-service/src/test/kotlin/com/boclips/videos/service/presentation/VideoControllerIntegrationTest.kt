@@ -153,7 +153,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "keywords": ["k1", "k2"],
                 "contentType": "INSTRUCTIONAL_CLIPS",
                 "playbackId": "abc1",
-                "playbackProvider": "KALTURA"
+                "playbackProvider": "KALTURA",
+                "subjects": ["Maths"]
             }
         """.trimIndent()
 
@@ -164,6 +165,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get(createdResourceUrl!!).asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.title", equalTo("AP title")))
+                .andExpect(jsonPath("$.subjects", equalTo(listOf("Maths"))))
     }
 
     @Test

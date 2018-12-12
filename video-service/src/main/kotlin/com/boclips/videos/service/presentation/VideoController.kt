@@ -46,7 +46,7 @@ class VideoController(
 
         val videoResources = videosResource
                 .videos
-                .map(this::videoToResource)
+                .map(this::wrapResourceWithHateoas)
                 .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
         return ResponseEntity(
@@ -62,9 +62,9 @@ class VideoController(
 
     @GetMapping("/{id}")
     fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {
-        val video = getVideoById.execute(id)
+        val videoResource = getVideoById.execute(id)
 
-        return videoToResource(video)
+        return wrapResourceWithHateoas(videoResource)
     }
 
     @DeleteMapping("/{id}")
@@ -74,7 +74,6 @@ class VideoController(
 
     @PostMapping
     fun createVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Void> {
-
         val resource = createVideo.execute(createVideoRequest)
 
         val headers = HttpHeaders()
@@ -82,6 +81,6 @@ class VideoController(
         return ResponseEntity(headers, HttpStatus.CREATED)
     }
 
-    private fun videoToResource(videoResource: VideoResource) =
+    private fun wrapResourceWithHateoas(videoResource: VideoResource) =
             Resource(videoResource, getVideoLink(videoResource.id, "self"))
 }

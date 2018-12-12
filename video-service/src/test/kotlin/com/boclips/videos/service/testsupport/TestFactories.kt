@@ -174,7 +174,8 @@ object TestFactories {
             keywords: List<String>? = listOf("k1", "k2"),
             contentType: String? = "NEWS",
             playbackId: String? = "123",
-            playbackProvider: String? = "KALTURA"
+            playbackProvider: String? = "KALTURA",
+            subjects: Set<String>? = emptySet()
     ) = CreateVideoRequest(
             provider = provider,
             providerVideoId = providerVideoId,
@@ -186,7 +187,8 @@ object TestFactories {
             keywords = keywords,
             contentType = contentType,
             playbackId = playbackId,
-            playbackProvider = playbackProvider
+            playbackProvider = playbackProvider,
+            subjects = subjects
     )
 
 }
