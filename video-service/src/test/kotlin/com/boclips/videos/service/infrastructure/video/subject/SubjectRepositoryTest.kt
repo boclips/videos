@@ -5,16 +5,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class VideoSubjectRepositoryTest : AbstractSpringIntegrationTest() {
+class SubjectRepositoryTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var subjectRepository: VideoSubjectRepository
+    lateinit var subjectRepository: SubjectRepository
 
     @Test
     fun `add new subjects`() {
         saveVideo(videoId = 1)
         subjectRepository.create(listOf(VideoSubjectEntity(videoId = 1, subjectName = "Maths")))
 
-        val subjects = subjectRepository.findByVideoIdIn(listOf(1))
+        val subjects = subjectRepository.findByVideoIds(listOf(1))
 
         assertThat(subjects).hasSize(1)
     }
@@ -25,7 +25,7 @@ class VideoSubjectRepositoryTest : AbstractSpringIntegrationTest() {
         subjectRepository.create(listOf(VideoSubjectEntity(videoId = 1, subjectName = "Maths")))
         subjectRepository.setSubjectsForVideo(1, listOf("Maths"))
 
-        val subjects = subjectRepository.findByVideoIdIn(listOf(1))
+        val subjects = subjectRepository.findByVideoIds(listOf(1))
 
         assertThat(subjects).hasSize(1)
     }
@@ -37,7 +37,7 @@ class VideoSubjectRepositoryTest : AbstractSpringIntegrationTest() {
         subjectRepository.create(listOf(VideoSubjectEntity(videoId = 1, subjectName = "Maths"), VideoSubjectEntity(videoId = 1, subjectName = "Physics")))
         subjectRepository.setSubjectsForVideo(1, listOf("Physics"))
 
-        val subjects = subjectRepository.findByVideoIdIn(listOf(1))
+        val subjects = subjectRepository.findByVideoIds(listOf(1))
 
         assertThat(subjects).containsExactly(VideoSubjectEntity(videoId = 1, subjectName = "Physics"))
     }

@@ -13,7 +13,7 @@ object InteractionsFormatter {
                 .joinToString("\n")
     }
 
-    private fun format(user: User) = if( user.boclipsEmployee ) "Boclips employee" else "teacher"
+    private fun format(user: User) = if (user.boclipsEmployee) "Boclips employee" else "teacher"
 
     private fun format(interaction: Interaction): String {
         return "${interaction.timestamp} ${interaction.description}"

@@ -4,7 +4,6 @@ import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEvent
 import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
-import com.boclips.videos.service.infrastructure.event.types.SearchEventData
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.testsupport.setSecurityContext
@@ -19,7 +18,6 @@ import org.mockito.Mockito.mock
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextImpl
-import org.springframework.security.test.context.TestSecurityContextHolder
 
 class CreateEventTest {
     val playbackEvent = CreatePlaybackEventCommand(

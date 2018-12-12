@@ -7,15 +7,11 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.apache.commons.lang3.time.DurationFormatUtils
 import java.time.LocalDate
-import javax.persistence.Entity
-import javax.persistence.Column
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity(name = "metadata_orig")
 class VideoEntity(
-        @Id @GeneratedValue(strategy=GenerationType.IDENTITY) var id: Long? = null,
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long? = null,
         var source: String? = null,
         var namespace: String? = null,
         var title: String? = null,
@@ -46,7 +42,7 @@ class VideoEntity(
                 id = videoAsset.assetId.value.toLongOrNull(),
                 namespace = generateNamespace(videoAsset.contentPartnerId, videoAsset.contentPartnerVideoId),
                 title = videoAsset.title,
-                description =  videoAsset.description,
+                description = videoAsset.description,
                 date = videoAsset.releasedOn.toString(),
                 duration = DurationFormatUtils.formatDuration(videoAsset.duration.toMillis(), "HH:mm:ss", true),
                 restrictions = videoAsset.legalRestrictions,
@@ -68,7 +64,7 @@ class VideoEntity(
                 description = description!!,
                 releasedOn = LocalDate.parse(date!!),
                 contentPartnerId = source!!,
-                contentPartnerVideoId =  uniqueId!!,
+                contentPartnerVideoId = uniqueId!!,
                 type = VideoType.fromId(type_id!!),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
                 duration = DurationParser.parse(duration),

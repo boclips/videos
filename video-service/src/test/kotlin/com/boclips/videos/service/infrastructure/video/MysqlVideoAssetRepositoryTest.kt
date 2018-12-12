@@ -5,8 +5,7 @@ import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectCrudRepository
-import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectRepository
+import com.boclips.videos.service.infrastructure.video.subject.SubjectCrudRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +20,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: MysqlVideoAssetRepository
 
     @Autowired
-    lateinit var videoServiceCrudRepository: VideoSubjectCrudRepository
+    lateinit var serviceCrudRepository: SubjectCrudRepository
 
     @Test
     fun `order is preserved between query and results`() {
@@ -184,7 +183,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(videoRepository.find(savedVideoAsset.assetId)).isNull()
 
-        val subjectsOfDeletedAsset = videoServiceCrudRepository.findAll()
+        val subjectsOfDeletedAsset = serviceCrudRepository.findAll()
         assertThat(subjectsOfDeletedAsset).isEmpty()
     }
 }

@@ -5,5 +5,5 @@
   "ssl-required": "external",
   "resource": "video-service",
   "confidential-port": 0,
-  "use-resource-role-mappings" : true
+  "use-resource-role-mappings": true
 }

@@ -6,7 +6,6 @@ import com.boclips.videos.service.infrastructure.event.types.User
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import com.sun.security.auth.UserPrincipal
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

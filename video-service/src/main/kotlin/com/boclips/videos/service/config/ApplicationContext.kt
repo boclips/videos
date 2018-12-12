@@ -12,14 +12,13 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.VideoEntityRepository
-import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectRepository
+import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.core.task.TaskExecutor
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
 import java.util.concurrent.Executors
 
@@ -72,10 +71,10 @@ class ApplicationContext {
 
     @Bean
     fun videoRepository(
-            videoSubjectRepository: VideoSubjectRepository,
+            subjectRepository: SubjectRepository,
             videoEntityRepository: VideoEntityRepository
     ): VideoAssetRepository {
-        return MysqlVideoAssetRepository(videoSubjectRepository, videoEntityRepository)
+        return MysqlVideoAssetRepository(subjectRepository, videoEntityRepository)
     }
 
     @Bean

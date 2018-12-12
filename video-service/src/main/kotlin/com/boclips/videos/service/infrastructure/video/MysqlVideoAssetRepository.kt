@@ -5,12 +5,12 @@ import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
-import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectRepository
+import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import mu.KLogging
 import javax.transaction.Transactional
 
 open class MysqlVideoAssetRepository(
-        private val videoSubjectRepository: VideoSubjectRepository,
+        private val subjectRepository: SubjectRepository,
         private val videoRepository: VideoEntityRepository
 ) : VideoAssetRepository {
     companion object : KLogging();
@@ -45,7 +45,7 @@ open class MysqlVideoAssetRepository(
         val savedVideoEntity = videoRepository.save(videoEntity)
 
         val subjects = videoAsset.subjects.map { subject -> VideoSubjectEntity(savedVideoEntity.id, subject.name) }
-        videoSubjectRepository.create(subjects)
+        subjectRepository.create(subjects)
 
         logger.info { "Persisted video ${savedVideoEntity.id}" }
         return savedVideoEntity.toVideoAsset()
@@ -56,7 +56,7 @@ open class MysqlVideoAssetRepository(
 
         val videoId = videoAsset.assetId.value.toLong()
         val newSubjectNames = videoAsset.subjects.map { subject ->  subject.name }
-        videoSubjectRepository.setSubjectsForVideo(videoId, newSubjectNames)
+        subjectRepository.setSubjectsForVideo(videoId, newSubjectNames)
 
         return videoAsset
     }
@@ -77,6 +77,6 @@ open class MysqlVideoAssetRepository(
             }
 
     private fun getSubjectsByVideoIds(videoIds: List<String>): Map<Long, List<Subject>> =
-            videoSubjectRepository.findByVideoIdIn(videoIds.map { it.toLong() })
+            subjectRepository.findByVideoIds(videoIds.map { it.toLong() })
                     .groupBy({ it.videoId!! }, { Subject(it.subjectName!!) })
 }
