@@ -12,7 +12,7 @@ interface VideoServiceClient {
     fun existsByContentPartnerInfo(contentPartnerId: String, contentPartnerVideoId: String): Boolean
 
     companion object {
-        fun getFakeClient() : VideoServiceClient {
+        fun getFakeClient() : FakeClient {
             return FakeClient()
         }
 

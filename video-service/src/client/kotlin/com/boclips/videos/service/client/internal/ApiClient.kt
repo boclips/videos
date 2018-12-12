@@ -4,14 +4,13 @@ import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.VideoServiceClient
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.postForObject
 
 internal class ApiClient internal constructor(
         private val baseUrl: String,
         private val restTemplate: RestTemplate
 ) : VideoServiceClient {
     override fun create(request: CreateVideoRequest) {
-        restTemplate.postForObject<String>("$baseUrl/v1/videos", request)
+        restTemplate.postForObject("$baseUrl/v1/videos", request, String::class.java)
     }
 
     override fun existsByContentPartnerInfo(contentPartnerId: String, contentPartnerVideoId: String) = try {

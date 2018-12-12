@@ -3,7 +3,7 @@ package com.boclips.videos.service.client.internal
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.VideoServiceClient
 
-internal class FakeClient : VideoServiceClient {
+class FakeClient : VideoServiceClient {
 
     private val videos: MutableList<CreateVideoRequest> = mutableListOf()
 
@@ -14,4 +14,10 @@ internal class FakeClient : VideoServiceClient {
     override fun existsByContentPartnerInfo(contentPartnerId: String, contentPartnerVideoId: String): Boolean {
         return videos.any { it.provider == contentPartnerId && it.providerVideoId == contentPartnerVideoId }
     }
+
+    fun clear() {
+        videos.clear()
+    }
+
+    fun getAllVideoRequests() = videos
 }
