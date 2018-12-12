@@ -4,8 +4,8 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
+import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
 import mu.KLogging
 import javax.transaction.Transactional
 
@@ -55,7 +55,7 @@ open class MysqlVideoAssetRepository(
         videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
 
         val videoId = videoAsset.assetId.value.toLong()
-        val newSubjectNames = videoAsset.subjects.map { subject ->  subject.name }
+        val newSubjectNames = videoAsset.subjects.map { subject -> subject.name }
         subjectRepository.setSubjectsForVideo(videoId, newSubjectNames)
 
         return videoAsset

@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
-import com.boclips.videos.service.infrastructure.video.convertPageToIndex
+import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
 class VideoService(

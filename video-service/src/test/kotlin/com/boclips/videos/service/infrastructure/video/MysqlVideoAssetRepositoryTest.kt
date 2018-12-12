@@ -17,7 +17,7 @@ import java.time.LocalDate
 class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var videoRepository: MysqlVideoAssetRepository
+    lateinit var mysqlVideoRepository: MysqlVideoAssetRepository
 
     @Autowired
     lateinit var serviceCrudRepository: SubjectCrudRepository
@@ -28,7 +28,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")
         saveVideo(videoId = 125, title = "Some title", description = "test description 3")
 
-        val videos = videoRepository.findAll(listOf(AssetId(value = "124"), AssetId(value = "125"), AssetId(value = "123")))
+        val videos = mysqlVideoRepository.findAll(listOf(AssetId(value = "124"), AssetId(value = "125"), AssetId(value = "123")))
 
         assertThat(videos.map { it.assetId.value })
                 .isEqualTo(listOf("124", "125", "123"))
@@ -39,7 +39,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")
 
-        val videos = videoRepository.findAll(listOf(AssetId(value = "123"), AssetId(value = "124"), AssetId(value = "125")))
+        val videos = mysqlVideoRepository.findAll(listOf(AssetId(value = "123"), AssetId(value = "124"), AssetId(value = "125")))
 
         assertThat(videos).hasSize(2)
     }
@@ -49,7 +49,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
 
         val videoId = AssetId(value = "123")
-        val video = videoRepository.find(videoId)!!
+        val video = mysqlVideoRepository.find(videoId)!!
 
         assertThat(video.assetId.value).isEqualTo("123")
         assertThat(video.playbackId.value).isNotNull()
@@ -62,7 +62,7 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `findVideoBy returns null when video does not exist`() {
-        assertThat(videoRepository.find(AssetId(value = "999"))).isNull()
+        assertThat(mysqlVideoRepository.find(AssetId(value = "999"))).isNull()
     }
 
     @Test
@@ -70,16 +70,16 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
         val videoId = AssetId("123")
         saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
 
-        videoRepository.delete(videoId)
+        mysqlVideoRepository.delete(videoId)
 
-        assertThat(videoRepository.findAll(listOf(videoId))).isEmpty()
+        assertThat(mysqlVideoRepository.findAll(listOf(videoId))).isEmpty()
     }
 
     @Test
     fun `createVideo inserts a video and assigns an id`() {
         val assetToBeSaved = TestFactories.createVideoAsset(videoId = "", subjects = setOf(Subject("Maths")))
 
-        val savedAsset = videoRepository.create(assetToBeSaved)
+        val savedAsset = mysqlVideoRepository.create(assetToBeSaved)
 
         assertThat(savedAsset.assetId.value).isNotBlank()
     }
@@ -88,9 +88,9 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
     fun `createVideo inserts a video including subjects`() {
         val assetToBeSaved = TestFactories.createVideoAsset(videoId = "", subjects = setOf(Subject("Maths")))
 
-        val savedAsset = videoRepository.create(assetToBeSaved)
+        val savedAsset = mysqlVideoRepository.create(assetToBeSaved)
 
-        val persistedVideoAsset = videoRepository.find(savedAsset.assetId)!!
+        val persistedVideoAsset = mysqlVideoRepository.find(savedAsset.assetId)!!
         assertThat(persistedVideoAsset.subjects).hasSize(1)
     }
 
@@ -98,45 +98,45 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
     fun `findByContentPartner checks both partner id and partner video id`() {
         saveVideo(videoId = 123, contentProvider = "ted", contentProviderId = "abc")
 
-        assertThat(videoRepository.existsVideoFromContentPartner("ted", "abc")).isTrue()
-        assertThat(videoRepository.existsVideoFromContentPartner("teddy", "abc")).isFalse()
-        assertThat(videoRepository.existsVideoFromContentPartner("ted", "abcd")).isFalse()
+        assertThat(mysqlVideoRepository.existsVideoFromContentPartner("ted", "abc")).isTrue()
+        assertThat(mysqlVideoRepository.existsVideoFromContentPartner("teddy", "abc")).isFalse()
+        assertThat(mysqlVideoRepository.existsVideoFromContentPartner("ted", "abcd")).isFalse()
     }
 
     @Test
     fun `video assets have no subjects initially`() {
-        val videoAsset = videoRepository.create(TestFactories.createVideoAsset())
+        val videoAsset = mysqlVideoRepository.create(TestFactories.createVideoAsset())
 
         assertThat(videoAsset.subjects).isEmpty()
     }
 
     @Test
     fun `update saves new video subjects`() {
-        val videoAsset = videoRepository.create(TestFactories.createVideoAsset()).copy(
+        val videoAsset = mysqlVideoRepository.create(TestFactories.createVideoAsset()).copy(
                 subjects = setOf(Subject("maths"), Subject("physics"))
         )
 
-        assertThat(videoRepository.update(videoAsset)).isEqualTo(videoAsset)
+        assertThat(mysqlVideoRepository.update(videoAsset)).isEqualTo(videoAsset)
 
-        assertThat(videoRepository.find(videoAsset.assetId)).isEqualTo(videoAsset)
-        assertThat(videoRepository.findAll(listOf(videoAsset.assetId))).containsExactly(videoAsset)
-        assertThat(videoRepository.find(videoAsset.assetId)!!.subjects).hasSize(2)
+        assertThat(mysqlVideoRepository.find(videoAsset.assetId)).isEqualTo(videoAsset)
+        assertThat(mysqlVideoRepository.findAll(listOf(videoAsset.assetId))).containsExactly(videoAsset)
+        assertThat(mysqlVideoRepository.find(videoAsset.assetId)!!.subjects).hasSize(2)
     }
 
     @Test
     fun `retrieving multiple videos will have correct subjects`() {
-        val videoAssetWithSubject = videoRepository.update(videoRepository.create(TestFactories.createVideoAsset()).copy(
+        val videoAssetWithSubject = mysqlVideoRepository.update(mysqlVideoRepository.create(TestFactories.createVideoAsset()).copy(
                 subjects = setOf(Subject("maths"))
         ))
 
-        val videoAssetWithoutSubject = videoRepository.create(TestFactories.createVideoAsset())
+        val videoAssetWithoutSubject = mysqlVideoRepository.create(TestFactories.createVideoAsset())
 
-        assertThat(videoRepository.findAll(listOf(videoAssetWithoutSubject.assetId, videoAssetWithSubject.assetId))).contains(videoAssetWithoutSubject)
+        assertThat(mysqlVideoRepository.findAll(listOf(videoAssetWithoutSubject.assetId, videoAssetWithSubject.assetId))).contains(videoAssetWithoutSubject)
     }
 
     @Test
     fun `changes of existing video are persisted`() {
-        val createdVideoAsset = videoRepository.create(TestFactories.createVideoAsset())
+        val createdVideoAsset = mysqlVideoRepository.create(TestFactories.createVideoAsset())
 
         val updatedAsset = createdVideoAsset.copy(
                 title = "New Title",
@@ -152,15 +152,15 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
                 subjects = emptySet()
         )
 
-        videoRepository.update(updatedAsset)
+        mysqlVideoRepository.update(updatedAsset)
 
-        val savedVideo = videoRepository.find(updatedAsset.assetId)
+        val savedVideo = mysqlVideoRepository.find(updatedAsset.assetId)
         assertThat(savedVideo).isEqualTo(updatedAsset)
     }
 
     @Test
     fun `video asset with changed subjects is persisted`() {
-        val videoAsset = videoRepository.create(TestFactories.createVideoAsset(
+        val videoAsset = mysqlVideoRepository.create(TestFactories.createVideoAsset(
                 videoId = "",
                 subjects = setOf(Subject("physics"), Subject("maths"))
         ))
@@ -169,19 +169,19 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
                 subjects = setOf(Subject("physics"))
         )
 
-        videoRepository.update(videoAssetWithRemovedSubjects)
+        mysqlVideoRepository.update(videoAssetWithRemovedSubjects)
 
-        assertThat(videoRepository.find(videoAssetWithRemovedSubjects.assetId)!!.subjects).containsExactly(Subject("physics"))
+        assertThat(mysqlVideoRepository.find(videoAssetWithRemovedSubjects.assetId)!!.subjects).containsExactly(Subject("physics"))
     }
 
     @Test
     fun `delete asset deletes all associates information`() {
         val toBeSavedVideoAsset = TestFactories.createVideoAsset(subjects = setOf(Subject("physics"), Subject("maths")))
-        val savedVideoAsset = videoRepository.create(toBeSavedVideoAsset)
+        val savedVideoAsset = mysqlVideoRepository.create(toBeSavedVideoAsset)
 
-        videoRepository.delete(savedVideoAsset.assetId)
+        mysqlVideoRepository.delete(savedVideoAsset.assetId)
 
-        assertThat(videoRepository.find(savedVideoAsset.assetId)).isNull()
+        assertThat(mysqlVideoRepository.find(savedVideoAsset.assetId)).isNull()
 
         val subjectsOfDeletedAsset = serviceCrudRepository.findAll()
         assertThat(subjectsOfDeletedAsset).isEmpty()

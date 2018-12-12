@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.videos.service.infrastructure.convertPageToIndex
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
