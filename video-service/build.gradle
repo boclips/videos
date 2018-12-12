@@ -133,6 +133,11 @@ task buildClient(type: Jar) {
     archiveName("video-service-client-${version}.jar")
 }
 
+task sourcesJarClient(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.client.allSource
+}
+
 test.finalizedBy(testYoutubeContract)
 test.finalizedBy(testClient)
 
