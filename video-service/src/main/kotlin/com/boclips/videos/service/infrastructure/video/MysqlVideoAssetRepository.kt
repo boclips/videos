@@ -41,28 +41,29 @@ open class MysqlVideoAssetRepository(
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
         val videoEntity = VideoEntity.fromVideoAsset(videoAsset)
-
         val savedVideoEntity = videoRepository.save(videoEntity)
 
         val subjects = videoAsset.subjects.map { subject -> VideoSubjectEntity(savedVideoEntity.id, subject.name) }
-        subjectRepository.create(subjects)
+        subjectRepository.add(subjects)
 
-        logger.info { "Persisted video ${savedVideoEntity.id}" }
+        logger.info { "Created video ${savedVideoEntity.id}" }
         return savedVideoEntity.toVideoAsset()
     }
 
     override fun update(videoAsset: VideoAsset): VideoAsset {
-        videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
+        val savedVideoEntity = videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
 
         val videoId = videoAsset.assetId.value.toLong()
         val newSubjectNames = videoAsset.subjects.map { subject -> subject.name }
         subjectRepository.setSubjectsForVideo(videoId, newSubjectNames)
 
+        logger.info { "Updated video ${savedVideoEntity.id}" }
         return videoAsset
     }
 
     override fun delete(assetId: AssetId) {
         videoRepository.deleteById(assetId.value.toLong())
+        logger.info { "Deleted video $assetId" }
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
