@@ -12,9 +12,6 @@ import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
 import com.boclips.videos.service.infrastructure.video.VideoEntity
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
-import com.boclips.videos.service.presentation.video.VideoResource
-import com.boclips.videos.service.presentation.video.playback.PlaybackResource
-import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -139,7 +136,7 @@ object TestFactories {
 
     fun createKalturaPlayback(): StreamPlayback {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "555")
-        return StreamPlayback(playbackId = playbackId,
+        return StreamPlayback(id = playbackId,
                 streamUrl = "kaltura-stream",
                 thumbnailUrl = "kaltura-thumbnail",
                 duration = Duration.ofSeconds(11))
@@ -148,7 +145,7 @@ object TestFactories {
     fun createYoutubePlayback(): YoutubePlayback {
         val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "444")
         return YoutubePlayback(
-                playbackId = playbackId,
+                id = playbackId,
                 thumbnailUrl = "youtube-thumbnail",
                 duration = Duration.ofSeconds(21))
     }

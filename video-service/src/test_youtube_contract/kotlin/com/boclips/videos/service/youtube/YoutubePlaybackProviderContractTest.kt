@@ -29,7 +29,7 @@ class YoutubePlaybackProviderContractTest {
 
         val videoPlayback = youtubePlayback as YoutubePlayback
 
-        assertThat(videoPlayback.youtubeId).isEqualTo("4IYDb6K5UF8")
+        assertThat(videoPlayback.id).isEqualTo("4IYDb6K5UF8")
         assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://i.ytimg.com/vi/4IYDb6K5UF8/hqdefault.jpg")
         assertThat(videoPlayback.duration).isEqualTo(Duration.ofMinutes(1).plusSeconds(59))
     }

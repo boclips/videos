@@ -32,7 +32,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : Playba
 
                     val streamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH)
                     val videoPlayback = StreamPlayback(
-                            playbackId = id,
+                            id = id,
                             streamUrl = streamUrl,
                             thumbnailUrl = mediaEntry.thumbnailUrl,
                             duration = mediaEntry.duration

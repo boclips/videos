@@ -25,7 +25,7 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
         val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = youtubeId)
 
         playbackById[playbackId] = YoutubePlayback(
-                playbackId = playbackId,
+                id = playbackId,
                 thumbnailUrl = thumbnailUrl,
                 duration = duration)
 

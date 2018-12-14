@@ -35,7 +35,7 @@ class VideoToResourceConverter {
             is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE")
             else -> throw Exception()
         }
-        playbackResource.id = video.playback.playbackId.value
+        playbackResource.id = video.playback.id.value
         playbackResource.thumbnailUrl = video.playback.thumbnailUrl
         playbackResource.duration = video.playback.duration
         return playbackResource
