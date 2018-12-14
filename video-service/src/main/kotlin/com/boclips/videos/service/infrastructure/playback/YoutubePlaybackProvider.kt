@@ -29,7 +29,6 @@ class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
             val playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, item.id)
             (playbackId to YoutubePlayback(
                     playbackId = playbackId,
-                    youtubeId = item.id,
                     thumbnailUrl = item.snippet.thumbnails.high.url,
                     duration = Duration.parse(item.contentDetails.duration)
             ))

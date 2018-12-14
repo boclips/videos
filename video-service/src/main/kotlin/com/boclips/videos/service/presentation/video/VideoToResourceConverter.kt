@@ -24,7 +24,7 @@ class VideoToResourceConverter {
                 contentPartner = video.asset.contentPartnerId,
                 releasedOn = video.asset.releasedOn,
                 playback = getPlayback(video),
-                subjects = video.asset.subjects.map{ it.name }.toSet()
+                subjects = video.asset.subjects.map { it.name }.toSet()
         )
     }
 
@@ -32,9 +32,10 @@ class VideoToResourceConverter {
         val playback = video.playback
         val playbackResource = when (playback) {
             is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.streamUrl)
-            is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE", youtubeId = playback.youtubeId)
+            is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE")
             else -> throw Exception()
         }
+        playbackResource.id = video.playback.playbackId.value
         playbackResource.thumbnailUrl = video.playback.thumbnailUrl
         playbackResource.duration = video.playback.duration
         return playbackResource

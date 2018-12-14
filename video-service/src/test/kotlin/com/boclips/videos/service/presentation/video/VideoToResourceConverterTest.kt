@@ -2,7 +2,6 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
-import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
@@ -44,6 +43,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.type).isEqualTo("STREAM")
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("kaltura-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
+        assertThat(videoResource.playback!!.id).isEqualTo("555")
         assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("kaltura-stream")
     }
 
@@ -58,7 +58,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.type).isEqualTo("YOUTUBE")
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("youtube-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(21))
-        assertThat((videoResource.playback!! as YoutubePlaybackResource).youtubeId).isEqualTo("youtube-id")
+        assertThat(videoResource.playback!!.id).isEqualTo("444")
     }
 
     @Test

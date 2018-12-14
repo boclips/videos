@@ -149,7 +149,6 @@ object TestFactories {
         val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "444")
         return YoutubePlayback(
                 playbackId = playbackId,
-                youtubeId = "youtube-id",
                 thumbnailUrl = "youtube-thumbnail",
                 duration = Duration.ofSeconds(21))
     }

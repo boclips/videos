@@ -26,7 +26,6 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
 
         playbackById[playbackId] = YoutubePlayback(
                 playbackId = playbackId,
-                youtubeId = youtubeId,
                 thumbnailUrl = thumbnailUrl,
                 duration = duration)
 

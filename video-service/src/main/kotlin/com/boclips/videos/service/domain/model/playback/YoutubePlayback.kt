@@ -5,6 +5,5 @@ import java.time.Duration
 class YoutubePlayback(
         playbackId: PlaybackId,
         thumbnailUrl: String,
-        duration: Duration,
-        val youtubeId: String
+        duration: Duration
 ) : VideoPlayback(playbackId, thumbnailUrl, duration)
