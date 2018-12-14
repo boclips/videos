@@ -22,20 +22,20 @@ object TestFactories {
             playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA,
             subjects: Set<String> = emptySet()
     ): CreateVideoRequest {
-        return CreateVideoRequest(
-                provider = contentProviderId,
-                providerVideoId = contentProviderVideoId,
-                title = title,
-                description = description,
-                releasedOn = releasedOn,
-                duration = duration,
-                legalRestrictions = legalRestrictions,
-                keywords = keywords,
-                contentType = contentType,
-                playbackId = playbackId,
-                playbackProvider = playbackProvider,
-                subjects = subjects
-        )
+        return CreateVideoRequest.builder()
+                .provider(contentProviderId)
+                .providerVideoId(contentProviderVideoId)
+                .title(title)
+                .description(description)
+                .releasedOn(releasedOn)
+                .duration(duration)
+                .legalRestrictions(legalRestrictions)
+                .keywords(keywords)
+                .contentType(contentType)
+                .playbackId(playbackId)
+                .playbackProvider(playbackProvider)
+                .subjects(subjects)
+                .build()
     }
 
 }

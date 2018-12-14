@@ -49,7 +49,7 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
     fun `tag videos with subjects throws when video doesn't exist`() {
         val id = getClient().create(TestFactories.createCreateVideoRequest(contentProviderId = "ted", contentProviderVideoId = "123", playbackId = "ref-id-123"))
 
-        val nonExistingId = id.copy(uri = URI(id.uri.toString() + "111"))
+        val nonExistingId = VideoId(URI(id.uri.toString() + "111"))
 
         assertThrows<VideoNotFoundException> {
             getClient().setSubjects(nonExistingId, setOf("maths"))
@@ -58,13 +58,13 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
-    val fakeClient = VideoServiceClientFactory.getFakeClient()
+    val fakeClient = VideoServiceClient.getFakeClient()
     override fun getClient() = fakeClient
 
 }
 
 internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTest() {
-    val realClient = VideoServiceClientFactory.getUnauthorisedApiClient("http://localhost:9876")
+    val realClient = VideoServiceClient.getUnauthorisedApiClient("http://localhost:9876")
 
     @BeforeEach
     fun setUp() {
