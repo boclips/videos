@@ -37,6 +37,19 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `non-existing ids are skipped`() {
+        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
+
+        val videos = mysqlVideoRepository.findAll(listOf(
+                AssetId(value = "9999"),
+                AssetId(value = "123"),
+                AssetId(value = "not-a-number"))
+        )
+
+        assertThat(videos.map { it.assetId.value }).containsExactly("123")
+    }
+
+    @Test
     fun `findVideosBy does not throw when one video can't be found`() {
         saveVideo(videoId = 123, title = "Some title", description = "test description 3")
         saveVideo(videoId = 124, title = "Some title", description = "test description 3")

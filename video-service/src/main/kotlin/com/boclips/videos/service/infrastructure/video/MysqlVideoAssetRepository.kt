@@ -21,7 +21,7 @@ open class MysqlVideoAssetRepository(
             return emptyList()
         }
 
-        val videoIds = assetIds.map { it.value }
+        val videoIds = assetIds.mapNotNull { it.value.toLongOrNull() }
         val videoEntities = findAllByIdWhilstRetainingOrder(videoIds)
         val videoIdsToSubjects = getSubjectsByVideoIds(videoIds)
 
@@ -30,10 +30,6 @@ open class MysqlVideoAssetRepository(
     }
 
     override fun find(assetId: AssetId): VideoAsset? {
-        if (!assetId.value.all { it.isDigit() }) {
-            return null
-        }
-
         return findAll(listOf(assetId)).firstOrNull()
     }
 
@@ -79,14 +75,14 @@ open class MysqlVideoAssetRepository(
         return videoRepository.countBySourceAndUniqueId(contentPartnerId, partnerVideoId) > 0
     }
 
-    private fun findAllByIdWhilstRetainingOrder(videoIds: List<String>): List<VideoEntity> = videoIds
-            .mapIndexed { index, id -> id.toLong() to index }
+    private fun findAllByIdWhilstRetainingOrder(videoIds: List<Long>): List<VideoEntity> = videoIds
+            .mapIndexed { index, id -> id to index }
             .toMap()
             .let { indexById ->
-                videoRepository.findAllByIdIn(videoIds.map { it.toLong() }).sortedBy { indexById[it.id] }
+                videoRepository.findAllByIdIn(videoIds).sortedBy { indexById[it.id] }
             }
 
-    private fun getSubjectsByVideoIds(videoIds: List<String>): Map<Long, List<Subject>> =
-            subjectRepository.findByVideoIds(videoIds.map { it.toLong() })
+    private fun getSubjectsByVideoIds(videoIds: List<Long>): Map<Long, List<Subject>> =
+            subjectRepository.findByVideoIds(videoIds)
                     .groupBy({ it.videoId!! }, { Subject(it.subjectName!!) })
 }
