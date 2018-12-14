@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import java.time.Duration
 import java.time.LocalDate
 
+
 data class VideoAsset(
         val assetId: AssetId,
         val playbackId: PlaybackId,

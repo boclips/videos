@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundException
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
 import mu.KLogging
@@ -29,6 +30,10 @@ open class MysqlVideoAssetRepository(
     }
 
     override fun find(assetId: AssetId): VideoAsset? {
+        if (!assetId.value.all { it.isDigit() }) {
+            return null
+        }
+
         return findAll(listOf(assetId)).firstOrNull()
     }
 
@@ -51,6 +56,10 @@ open class MysqlVideoAssetRepository(
     }
 
     override fun update(videoAsset: VideoAsset): VideoAsset {
+        if (find(videoAsset.assetId) == null) {
+            throw ResourceNotFoundException()
+        }
+
         val savedVideoEntity = videoRepository.save(VideoEntity.fromVideoAsset(videoAsset))
 
         val videoId = videoAsset.assetId.value.toLong()

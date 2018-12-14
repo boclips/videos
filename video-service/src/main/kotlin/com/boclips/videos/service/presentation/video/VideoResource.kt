@@ -12,5 +12,5 @@ data class VideoResource(
         val releasedOn: LocalDate? = null,
         val contentPartner: String? = null,
         val playback: PlaybackResource? = null,
-        val subjects: Set<String> = emptySet()
+        val subjects: Set<String>? = null
 )

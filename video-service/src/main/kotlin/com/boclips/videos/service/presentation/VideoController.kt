@@ -1,13 +1,12 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideos
-import com.boclips.videos.service.application.video.GetVideoById
-import com.boclips.videos.service.application.video.GetVideosByQuery
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
+import com.boclips.videos.service.presentation.VideoController.Companion.getVideoLink
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
@@ -23,7 +22,8 @@ class VideoController(
         private val getVideoById: GetVideoById,
         private val getVideosByQuery: GetVideosByQuery,
         private val deleteVideos: DeleteVideos,
-        private val createVideo: CreateVideo
+        private val createVideo: CreateVideo,
+        private val patchVideo: PatchVideo
 ) {
     companion object {
         fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null, null, null)).withRel("search")
@@ -79,6 +79,12 @@ class VideoController(
         val headers = HttpHeaders()
         headers.set(HttpHeaders.LOCATION, getVideoLink(resource.id, "self").href)
         return ResponseEntity(headers, HttpStatus.CREATED)
+    }
+
+    @PatchMapping("/{id}")
+    fun patchVideo(@PathVariable("id") id: String?, @RequestBody patchVideoRequest: VideoResource): ResponseEntity<Void> {
+        patchVideo.execute(id, patchVideoRequest)
+        return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
     private fun wrapResourceWithHateoas(videoResource: VideoResource) =

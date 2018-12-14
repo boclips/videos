@@ -5,11 +5,13 @@ import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundException
 import com.boclips.videos.service.infrastructure.video.subject.SubjectCrudRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.time.LocalDate
@@ -185,5 +187,20 @@ class MysqlVideoAssetRepositoryTest : AbstractSpringIntegrationTest() {
 
         val subjectsOfDeletedAsset = serviceCrudRepository.findAll()
         assertThat(subjectsOfDeletedAsset).isEmpty()
+    }
+
+    @Test
+    fun `updating a video with a non number id throws an exception`() {
+        assertThrows<ResourceNotFoundException> {
+            mysqlVideoRepository.update(TestFactories.createVideoAsset(videoId = "this is not a number"))
+        }
+
+    }
+
+    @Test
+    fun `updating a video that does not exist throws an exception`() {
+        assertThrows<ResourceNotFoundException> {
+            mysqlVideoRepository.update(TestFactories.createVideoAsset())
+        }
     }
 }

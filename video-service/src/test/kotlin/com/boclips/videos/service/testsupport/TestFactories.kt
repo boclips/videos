@@ -12,6 +12,9 @@ import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
 import com.boclips.videos.service.infrastructure.video.VideoEntity
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
+import com.boclips.videos.service.presentation.video.VideoResource
+import com.boclips.videos.service.presentation.video.playback.PlaybackResource
+import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -190,6 +193,5 @@ object TestFactories {
             playbackProvider = playbackProvider,
             subjects = subjects
     )
-
 }
 

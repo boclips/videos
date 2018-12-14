@@ -47,6 +47,11 @@ class ApplicationContext {
     }
 
     @Bean
+    fun patchVideo(videoService: VideoService): PatchVideo {
+        return PatchVideo(videoService)
+    }
+
+    @Bean
     fun deleteVideos(playbackRespository: PlaybackRespository,
                      searchService: SearchService,
                      videoAssetRepository: VideoAssetRepository

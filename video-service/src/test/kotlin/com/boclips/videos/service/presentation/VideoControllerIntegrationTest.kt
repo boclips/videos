@@ -109,7 +109,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 404 for inexistent video`() {
+    fun `returns 404 for nonexistent video`() {
         mockMvc.perform(get("/v1/videos/9999").asTeacher())
                 .andExpect(status().`is`(404))
     }
@@ -202,5 +202,59 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isBadRequest)
     }
 
+    @Test
+    fun `subject classifier can add subjects to an existing video with no subjects`() {
+        val mathsPatch = """{ "subjects": ["Maths", "Physics"] }"""
+
+        mockMvc.perform(patch("/v1/videos/123").asSubjectClassifier()
+                .contentType(MediaType.APPLICATION_JSON).content(mathsPatch))
+                .andExpect(status().is2xxSuccessful)
+
+        mockMvc.perform(get("/v1/videos/123").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.subjects", equalTo(listOf("Maths", "Physics"))))
+                .andExpect(jsonPath("$.title", equalTo("powerful asset about elephants")))
+                .andExpect(jsonPath("$.description", equalTo("test description 3")))
+    }
+
+    @Test
+    fun `subject classifier can replace subjects`() {
+        mockMvc.perform(patch("/v1/videos/123").asSubjectClassifier()
+                .contentType(MediaType.APPLICATION_JSON).content("""{ "subjects": ["Maths"] }"""))
+                .andExpect(status().is2xxSuccessful)
+
+        mockMvc.perform(patch("/v1/videos/123").asSubjectClassifier()
+                .contentType(MediaType.APPLICATION_JSON).content("""{ "subjects": ["Physics"] }"""))
+                .andExpect(status().is2xxSuccessful)
+
+        mockMvc.perform(get("/v1/videos/123").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.subjects", equalTo(listOf("Physics"))))
+    }
+
+    @Test
+    fun `other roles are not authorised to add data to a video`() {
+        mockMvc.perform(patch("/v1/videos/99999").asTeacher()
+                .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `it's an error to add data to a nonexistent video with a well-formed ID`() {
+        val mathsPatch = """{ "subjects": ["Maths"] }"""
+
+        mockMvc.perform(patch("/v1/videos/99999").asSubjectClassifier()
+                .contentType(MediaType.APPLICATION_JSON).content(mathsPatch))
+                .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `it's an error to add data for a malformed video ID`() {
+        val mathsPatch = """{ "subjects": ["Maths"] }"""
+
+        mockMvc.perform(patch("/v1/videos/not-a-string").asSubjectClassifier()
+                .contentType(MediaType.APPLICATION_JSON).content(mathsPatch))
+                .andExpect(status().isNotFound)
+    }
 }
 

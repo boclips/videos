@@ -3,7 +3,9 @@ package com.boclips.videos.service.domain.service
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.VideoUpdateCommand
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoAssetUpdate
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
@@ -51,6 +53,13 @@ class VideoService(
                 .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
 
         return Video(videoAsset, videoPlayback)
+    }
+
+    fun update(assetId: AssetId, updateCommand: VideoUpdateCommand) : Video {
+        val video = get(assetId)
+        val updatedVideo = updateCommand.update(video)
+        val savedVideoAsset = videoAssetRepository.update(updatedVideo.asset)
+        return updatedVideo.copy(asset = savedVideoAsset)
     }
 }
 

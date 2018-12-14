@@ -2,8 +2,11 @@ package com.boclips.videos.service.domain.service
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.VideoAssetUpdate
 import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.model.VideoSubjectsUpdate
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -70,5 +73,16 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `look up by id throws if video does not exist`() {
         Assertions.assertThatThrownBy { videoService.get(AssetId("123")) }.isInstanceOf(VideoAssetNotFoundException::class.java)
+    }
+
+    @Test
+    fun `update video asset`() {
+        saveVideo(videoId = 123)
+
+        val assetId = AssetId("123")
+        val video = videoService.update(assetId,VideoSubjectsUpdate(setOf(Subject("Maths"))))
+
+        assertThat(video.asset.subjects).containsExactly(Subject("Maths"))
+        assertThat(videoService.get(assetId).asset.subjects).containsExactly(Subject("Maths"))
     }
 }
