@@ -1,12 +1,15 @@
 package com.boclips.videos.service.client
 
+import com.boclips.videos.service.client.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
+import java.net.URI
 import java.time.Duration
 
 
@@ -40,6 +43,17 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
 
         val video = getClient().get(id)
         assertThat(video.subjects).containsExactly("maths", "physics")
+    }
+
+    @Test
+    fun `tag videos with subjects throws when video doesn't exist`() {
+        val id = getClient().create(TestFactories.createCreateVideoRequest(contentProviderId = "ted", contentProviderVideoId = "123", playbackId = "ref-id-123"))
+
+        val nonExistingId = id.copy(uri = URI(id.uri.toString()+"111"))
+
+        assertThrows<VideoNotFoundException> {
+            getClient().setSubjects(nonExistingId, setOf("maths"))
+        }
     }
 }
 

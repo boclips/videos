@@ -3,6 +3,7 @@ package com.boclips.videos.service.client.internal
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.VideoId
 import com.boclips.videos.service.client.VideoServiceClient
+import com.boclips.videos.service.client.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.spring.Video
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
@@ -31,7 +32,14 @@ internal class ApiClient internal constructor(
 
     override fun setSubjects(id: VideoId, subjects: Set<String>) {
         val body = mapOf("subjects" to subjects)
-        restTemplate.postForObject(id.uri, body, String::class.java)
+        try {
+            restTemplate.postForObject(id.uri, body, String::class.java)
+        } catch (e: HttpClientErrorException) {
+            when (e.statusCode) {
+                HttpStatus.NOT_FOUND -> throw VideoNotFoundException(id)
+                else -> throw Exception(e)
+            }
+        }
     }
 
     override fun get(id: VideoId): Video {
