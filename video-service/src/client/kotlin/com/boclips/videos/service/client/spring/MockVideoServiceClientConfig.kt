@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.spring
 
 import com.boclips.videos.service.client.VideoServiceClient
+import com.boclips.videos.service.client.VideoServiceClientFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -9,6 +10,6 @@ internal class MockVideoServiceClientConfig {
 
     @Bean
     fun mockVideoServiceClient(): VideoServiceClient {
-        return VideoServiceClient.getFakeClient()
+        return VideoServiceClientFactory.getFakeClient()
     }
 }

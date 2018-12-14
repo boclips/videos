@@ -13,12 +13,16 @@ interface VideoServiceClient {
     fun existsByContentPartnerInfo(contentPartnerId: String, contentPartnerVideoId: String): Boolean
     fun setSubjects(id: VideoId, subjects: Set<String>)
     fun get(id: VideoId) : Video
+}
 
+class VideoServiceClientFactory {
     companion object {
+        @JvmStatic
         fun getFakeClient() : FakeClient {
             return FakeClient()
         }
 
+        @JvmStatic
         fun getApiClient(baseUrl: String, serviceCredentials: ServiceCredentials) : VideoServiceClient {
             val restTemplate = OAuth2RestTemplate( ClientCredentialsResourceDetails().apply {
                 accessTokenUri = serviceCredentials.accessTokenUri
@@ -28,6 +32,7 @@ interface VideoServiceClient {
             return ApiClient(baseUrl, restTemplate)
         }
 
+        @JvmStatic
         fun getUnauthorisedApiClient(baseUrl: String) : VideoServiceClient {
             return ApiClient(baseUrl, RestTemplate())
         }
