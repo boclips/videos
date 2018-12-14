@@ -16,8 +16,12 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
     abstract fun getClient(): VideoServiceClient
 
     @Test
-    fun `create a video`() {
-        getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
+    fun `create a video gives a unique id`() {
+        val id1 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
+        val id2 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
+
+        assertThat(id1.uri.toString()).contains("/videos/")
+        assertThat(id1.uri.toString()).isNotEqualTo(id2.uri.toString())
     }
 
     @Test
@@ -28,6 +32,15 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
         assertThat(getClient().existsByContentPartnerInfo("ted", "124")).isFalse()
     }
 
+    @Test
+    fun `tag videos with subjects`() {
+        val id = getClient().create(TestFactories.createCreateVideoRequest(contentProviderId = "ted", contentProviderVideoId = "123", playbackId = "ref-id-123"))
+
+        getClient().setSubjects(id, setOf("maths", "physics"))
+
+        val video = getClient().get(id)
+        assertThat(video.subjects).containsExactly("maths", "physics")
+    }
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {

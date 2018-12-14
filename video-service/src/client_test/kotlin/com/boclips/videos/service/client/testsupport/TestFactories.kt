@@ -19,7 +19,8 @@ object TestFactories {
             keywords: List<String> = listOf("k1", "k2"),
             contentType: String = VideoType.INSTRUCTIONAL_CLIPS.name,
             playbackId: String = "kaltura-id-789",
-            playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA
+            playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA,
+            subjects: Set<String> = emptySet()
     ): CreateVideoRequest {
         return CreateVideoRequest(
                 provider = contentProviderId,
@@ -32,7 +33,8 @@ object TestFactories {
                 keywords = keywords,
                 contentType = contentType,
                 playbackId = playbackId,
-                playbackProvider = playbackProvider
+                playbackProvider = playbackProvider,
+                subjects = subjects
         )
     }
 

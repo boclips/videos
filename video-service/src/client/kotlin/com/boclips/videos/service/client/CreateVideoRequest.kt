@@ -14,5 +14,6 @@ data class CreateVideoRequest(
         val keywords: List<String>,
         val contentType: String,
         val playbackId: String,
-        val playbackProvider: PlaybackProvider
+        val playbackProvider: PlaybackProvider,
+        val subjects: Set<String>
 )

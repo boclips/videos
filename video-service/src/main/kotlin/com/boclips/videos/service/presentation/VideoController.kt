@@ -81,7 +81,7 @@ class VideoController(
         return ResponseEntity(headers, HttpStatus.CREATED)
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     fun patchVideo(@PathVariable("id") id: String?, @RequestBody patchVideoRequest: VideoResource): ResponseEntity<Void> {
         patchVideo.execute(id, patchVideoRequest)
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
