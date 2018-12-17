@@ -19,6 +19,15 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
     abstract fun getClient(): VideoServiceClient
 
     @Test
+    fun `get VideoId for raw identifier`() {
+        val rawId = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")).uri.toString().split('/').last()
+
+        val id = getClient().rawIdToVideoId(rawId)
+
+        assertThat(id.uri.toString()).matches("https?://.*/videos/$rawId")
+    }
+
+    @Test
     fun `create a video gives a unique id`() {
         val id1 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
         val id2 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))

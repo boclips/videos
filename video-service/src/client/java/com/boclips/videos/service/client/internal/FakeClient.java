@@ -9,19 +9,15 @@ import lombok.SneakyThrows;
 import lombok.val;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class FakeClient implements VideoServiceClient {
 
     private Map<VideoId, Video> videos = new HashMap<>();
 
     @Override
-    @SneakyThrows
     public VideoId create(CreateVideoRequest request) {
-        val videoId = new VideoId(new URI(String.format("https://blah.com/videos/%s", UUID.randomUUID())));
+        val videoId = rawIdToVideoId(nextId());
         val video = Video.builder()
                 .videoId(videoId)
                 .subjects(request.getSubjects())
@@ -51,5 +47,15 @@ public class FakeClient implements VideoServiceClient {
     @Override
     public Video get(VideoId id) {
         return videos.get(id);
+    }
+
+    @Override
+    @SneakyThrows
+    public VideoId rawIdToVideoId(String rawId) {
+        return new VideoId(new URI(String.format("%s/%s", "https://fake-video-service.com/videos", rawId)));
+    }
+
+    private String nextId() {
+        return UUID.randomUUID().toString();
     }
 }

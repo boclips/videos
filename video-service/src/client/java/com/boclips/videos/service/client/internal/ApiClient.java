@@ -4,11 +4,16 @@ import com.boclips.videos.service.client.CreateVideoRequest;
 import com.boclips.videos.service.client.VideoId;
 import com.boclips.videos.service.client.VideoServiceClient;
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
+import com.boclips.videos.service.client.internal.resources.Link;
+import com.boclips.videos.service.client.internal.resources.LinksResource;
+import com.boclips.videos.service.client.internal.resources.VideoResource;
 import com.boclips.videos.service.client.spring.Video;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,6 +24,8 @@ public class ApiClient implements VideoServiceClient {
     private final String baseUrl;
 
     private final RestTemplate restTemplate;
+
+    private Link linkTemplate = null;
 
     public ApiClient(String baseUrl, RestTemplate restTemplate) {
         this.baseUrl = baseUrl;
@@ -64,5 +71,19 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public Video get(VideoId id) {
         return restTemplate.getForObject(id.getUri(), VideoResource.class).toVideo();
+    }
+
+    @Override
+    @SneakyThrows
+    public VideoId rawIdToVideoId(String rawId) {
+        if(linkTemplate == null) {
+            val linksUrl = String.format("%s/v1", baseUrl);
+            val links = restTemplate.getForObject(linksUrl, LinksResource.class);
+            linkTemplate = links.get_links().getVideo();
+        }
+        val params = new HashMap<String, Object>();
+        params.put("id", rawId);
+        Link videoLink = linkTemplate.interpolate(params);
+        return new VideoId(videoLink.toUri());
     }
 }

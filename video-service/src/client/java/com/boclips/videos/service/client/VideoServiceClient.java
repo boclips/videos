@@ -36,4 +36,6 @@ public interface VideoServiceClient {
     static VideoServiceClient getUnauthorisedApiClient(String baseUrl) {
         return new ApiClient(baseUrl, new RestTemplate());
     }
+
+    VideoId rawIdToVideoId(String rawId);
 }
