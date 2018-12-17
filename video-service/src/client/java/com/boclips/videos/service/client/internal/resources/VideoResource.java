@@ -3,10 +3,12 @@ package com.boclips.videos.service.client.internal.resources;
 import com.boclips.videos.service.client.VideoId;
 import com.boclips.videos.service.client.spring.Video;
 import lombok.Data;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.util.Set;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VideoResource {
     private VideoLinks _links = null;
     private Set<String> subjects = null;
