@@ -58,4 +58,8 @@ public class FakeClient implements VideoServiceClient {
     private String nextId() {
         return UUID.randomUUID().toString();
     }
+
+    public List<Video> getAllVideos() {
+        return new ArrayList<>(videos.values());
+    }
 }

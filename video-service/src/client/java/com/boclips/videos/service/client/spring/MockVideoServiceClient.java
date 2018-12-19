@@ -10,4 +10,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import(MockVideoServiceClientConfig.class)
-@interface MockVideoServiceClient {}
+public @interface MockVideoServiceClient {}
