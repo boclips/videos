@@ -65,4 +65,9 @@ public class FakeClient implements VideoServiceClient {
     public List<CreateVideoRequest> getAllVideoRequests() {
         return createRequests;
     }
+
+    public void clear() {
+        createRequests.clear();
+        videos.clear();
+    }
 }
