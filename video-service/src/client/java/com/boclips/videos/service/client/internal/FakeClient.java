@@ -13,6 +13,8 @@ import java.util.*;
 
 public class FakeClient implements VideoServiceClient {
 
+    private List<CreateVideoRequest> createRequests = new ArrayList<>();
+
     private Map<VideoId, Video> videos = new HashMap<>();
 
     @Override
@@ -25,6 +27,7 @@ public class FakeClient implements VideoServiceClient {
                 .contentPartnerVideoId(request.getProviderVideoId())
                 .build();
         videos.put(videoId, video);
+        createRequests.add(request);
         return videoId;
     }
 
@@ -59,7 +62,7 @@ public class FakeClient implements VideoServiceClient {
         return UUID.randomUUID().toString();
     }
 
-    public List<Video> getAllVideos() {
-        return new ArrayList<>(videos.values());
+    public List<CreateVideoRequest> getAllVideoRequests() {
+        return createRequests;
     }
 }
