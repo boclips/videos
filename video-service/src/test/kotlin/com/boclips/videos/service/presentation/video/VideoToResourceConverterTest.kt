@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -17,7 +18,8 @@ internal class VideoToResourceConverterTest {
                     title = "Do what you love on youtube",
                     description = "Best bottle slogan",
                     contentProvider = "JacekWork",
-                    subjects = setOf(Subject("Biology"))
+                    subjects = setOf(Subject("Biology")),
+                    type = VideoType.OTHER
             ),
             videoPlayback = createYoutubePlayback()
     )
@@ -27,7 +29,8 @@ internal class VideoToResourceConverterTest {
                     title = "Do what you love",
                     description = "Best bottle slogan",
                     contentProvider = "WeWork",
-                    subjects = setOf(Subject("Maths"))
+                    subjects = setOf(Subject("Maths")),
+                    type = VideoType.TED_TALKS
             ),
             videoPlayback = TestFactories.createKalturaPlayback()
     )
@@ -40,6 +43,8 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
         assertThat(videoResource.contentPartner).isEqualTo("WeWork")
         assertThat(videoResource.subjects).containsExactly("Maths")
+        assertThat(videoResource.type!!.id).isEqualTo(10)
+        assertThat(videoResource.type!!.name).isEqualTo("TED Talks")
         assertThat(videoResource.playback!!.type).isEqualTo("STREAM")
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("kaltura-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
@@ -55,6 +60,8 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
         assertThat(videoResource.contentPartner).isEqualTo("JacekWork")
         assertThat(videoResource.subjects).containsExactly("Biology")
+        assertThat(videoResource.type!!.id).isEqualTo(0)
+        assertThat(videoResource.type!!.name).isEqualTo("Other")
         assertThat(videoResource.playback!!.type).isEqualTo("YOUTUBE")
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("youtube-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(21))

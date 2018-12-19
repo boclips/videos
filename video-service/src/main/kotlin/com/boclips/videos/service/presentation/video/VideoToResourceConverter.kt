@@ -24,7 +24,8 @@ class VideoToResourceConverter {
                 contentPartner = video.asset.contentPartnerId,
                 releasedOn = video.asset.releasedOn,
                 playback = getPlayback(video),
-                subjects = video.asset.subjects.map { it.name }.toSet()
+                subjects = video.asset.subjects.map { it.name }.toSet(),
+                type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title)
         )
     }
 
