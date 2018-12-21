@@ -13,26 +13,28 @@ import java.time.Duration
 
 internal class VideoToResourceConverterTest {
 
-    val youtubeVideo = createVideo(
-            videoAsset = createVideoAsset(
-                    title = "Do what you love on youtube",
-                    description = "Best bottle slogan",
-                    contentProvider = "JacekWork",
-                    subjects = setOf(Subject("Biology")),
-                    type = VideoType.OTHER
-            ),
-            videoPlayback = createYoutubePlayback()
-    )
-
     val kalturaVideo = createVideo(
             videoAsset = createVideoAsset(
                     title = "Do what you love",
                     description = "Best bottle slogan",
                     contentProvider = "WeWork",
+                    contentPartnerVideoId = "111",
                     subjects = setOf(Subject("Maths")),
                     type = VideoType.TED_TALKS
             ),
             videoPlayback = TestFactories.createKalturaPlayback()
+    )
+
+    val youtubeVideo = createVideo(
+            videoAsset = createVideoAsset(
+                    title = "Do what you love on youtube",
+                    description = "Best bottle slogan",
+                    contentProvider = "JacekWork",
+                    contentPartnerVideoId = "222",
+                    subjects = setOf(Subject("Biology")),
+                    type = VideoType.OTHER
+            ),
+            videoPlayback = createYoutubePlayback()
     )
 
     @Test
@@ -42,6 +44,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
         assertThat(videoResource.contentPartner).isEqualTo("WeWork")
+        assertThat(videoResource.contentPartnerVideoId).isEqualTo("111")
         assertThat(videoResource.subjects).containsExactly("Maths")
         assertThat(videoResource.type!!.id).isEqualTo(10)
         assertThat(videoResource.type!!.name).isEqualTo("TED Talks")
@@ -59,6 +62,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
         assertThat(videoResource.contentPartner).isEqualTo("JacekWork")
+        assertThat(videoResource.contentPartnerVideoId).isEqualTo("222")
         assertThat(videoResource.subjects).containsExactly("Biology")
         assertThat(videoResource.type!!.id).isEqualTo(0)
         assertThat(videoResource.type!!.name).isEqualTo("Other")

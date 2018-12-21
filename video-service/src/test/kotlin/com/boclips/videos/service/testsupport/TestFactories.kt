@@ -70,10 +70,11 @@ object TestFactories {
     ) = Video(asset = videoAsset, playback = videoPlayback)
 
     fun createVideoAsset(
+            videoId: String = "123",
             title: String = "title",
             description: String = "description",
             contentProvider: String = "AP",
-            videoId: String = "123",
+            contentPartnerVideoId: String = "cp-id-$videoId",
             playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
             type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
             keywords: List<String> = listOf("keyword"),
@@ -87,7 +88,7 @@ object TestFactories {
                 keywords = keywords,
                 releasedOn = LocalDate.parse("2018-01-01"),
                 contentPartnerId = contentProvider,
-                contentPartnerVideoId = "cp-id-$videoId",
+                contentPartnerVideoId = contentPartnerVideoId,
                 type = type,
                 duration = Duration.ZERO,
                 legalRestrictions = "",

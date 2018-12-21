@@ -22,6 +22,7 @@ class VideoToResourceConverter {
                 title = video.asset.title,
                 description = video.asset.description,
                 contentPartner = video.asset.contentPartnerId,
+                contentPartnerVideoId = video.asset.contentPartnerVideoId,
                 releasedOn = video.asset.releasedOn,
                 playback = getPlayback(video),
                 subjects = video.asset.subjects.map { it.name }.toSet(),

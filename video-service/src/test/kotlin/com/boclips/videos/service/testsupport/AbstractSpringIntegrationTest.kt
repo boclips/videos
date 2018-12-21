@@ -67,7 +67,7 @@ abstract class AbstractSpringIntegrationTest {
                   date: String = "2018-01-01",
                   duration: Duration = Duration.ofSeconds(10),
                   contentProvider: String = "AP",
-                  contentProviderId: String = "provider-id-$videoId",
+                  contentProviderId: String = "content-partner-video-id-$videoId",
                   typeId: Int = 3,
                   keywords: List<String> = emptyList()
     ) {

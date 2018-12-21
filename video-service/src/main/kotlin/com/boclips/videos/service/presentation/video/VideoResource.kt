@@ -11,6 +11,7 @@ data class VideoResource(
         val description: String? = null,
         val releasedOn: LocalDate? = null,
         val contentPartner: String? = null,
+        val contentPartnerVideoId: String? = null,
         val playback: PlaybackResource? = null,
         val subjects: Set<String>? = null,
         val type: VideoTypeResource? = null

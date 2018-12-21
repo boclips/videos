@@ -102,6 +102,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
+                .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-123")))
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
                 .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
