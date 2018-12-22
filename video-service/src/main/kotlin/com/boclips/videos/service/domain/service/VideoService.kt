@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.Query
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoUpdateCommand
@@ -22,7 +23,7 @@ class VideoService(
 
     fun search(query: VideoSearchQuery): List<Video> {
         val searchRequest = PaginatedSearchRequest(
-                query = query.text,
+                query = Query.parse(query.text),
                 startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
                 windowSize = query.pageSize
         )
@@ -42,7 +43,7 @@ class VideoService(
     }
 
     fun count(videoSearchQuery: VideoSearchQuery): Long {
-        return searchService.count(videoSearchQuery.text)
+        return searchService.count(Query.parse(videoSearchQuery.text))
     }
 
     fun get(assetId: AssetId): Video {

@@ -2,27 +2,26 @@ package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.VideoMetadata
 
 class InMemorySearchService : GenericSearchService<VideoMetadata> {
     private val index = mutableMapOf<String, String>()
 
-    override fun count(query: String): Long {
-        return index
-                .filter { text -> text.value.contains(query, ignoreCase = true) }
-                .size.toLong()
-    }
+    override fun count(query: Query): Long = idsMatching(query).size.toLong()
 
-    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
-        val videos = index
-                .filter { text -> text.value.contains(searchRequest.query, ignoreCase = true) }
+    override fun search(searchRequest: PaginatedSearchRequest): List<String> = idsMatching(searchRequest.query)
+            .drop(searchRequest.startIndex)
+            .take(searchRequest.windowSize)
 
-        val from = searchRequest.startIndex
-        val to = Math.min(searchRequest.startIndex + searchRequest.windowSize, videos.size)
-
-        return videos
-                .map { it.key }
-                .subList(from, to)
+    private fun idsMatching(query: Query): List<String> {
+        val (phrase, ids) = query
+        return when {
+            ids != null -> ids
+            else -> index
+                    .filter { text -> text.value.contains(phrase!!, ignoreCase = true) }
+                    .map { video -> video.key }
+        }
     }
 
     override fun removeFromSearch(videoId: String) {

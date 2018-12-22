@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -52,7 +53,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "dance"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("dance")))
 
         assertThat(results.size).isEqualTo(3)
         assertThat(results.last()).isEqualTo("2")
@@ -65,7 +66,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated.")
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "gentelman"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("gentelman")))
 
         assertThat(results).containsExactly("1")
     }
@@ -78,7 +79,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "Apple banana candy"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("Apple banana candy")))
 
         assertThat(results.first()).isEqualTo("1")
     }
@@ -91,7 +92,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "3", description = "banana apple candy")
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "Apple banana candy"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("Apple banana candy")))
 
         assertThat(results.first()).isEqualTo("1")
     }
@@ -103,7 +104,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", keywords = listOf("dog"))
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "dogs"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("dogs")))
 
         assertThat(results.first()).isEqualTo("2")
     }
@@ -115,7 +116,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", contentProvider = "TED Talks")
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "ted talk"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("ted talk")))
 
         assertThat(results.first()).isEqualTo("2")
     }
@@ -127,7 +128,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "2", description = "i have a dream")
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "i have a dream"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("i have a dream")))
 
         assertThat(results.first()).isEqualTo("2")
     }
@@ -138,7 +139,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "1", description = "it's raining today")
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "rain"))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("rain")))
 
         assertThat(results.first()).isEqualTo("1")
     }
@@ -159,7 +160,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "11", description = "candy banana apple")
         ))
 
-        val results = searchService.count("banana")
+        val results = searchService.count(Query("banana"))
 
         assertThat(results).isEqualTo(11)
     }
@@ -173,7 +174,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = "banana", startIndex = 0, windowSize = 2))
+        val results = searchService.search(PaginatedSearchRequest(query = Query("banana"), startIndex = 0, windowSize = 2))
 
         assertThat(results.size).isEqualTo(2)
     }
@@ -187,9 +188,9 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                 SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
         ))
 
-        val page1 = searchService.search(PaginatedSearchRequest(query = "banana", startIndex = 0, windowSize = 2))
-        val page2 = searchService.search(PaginatedSearchRequest(query = "banana", startIndex = 2, windowSize = 2))
-        val page3 = searchService.search(PaginatedSearchRequest(query = "banana", startIndex = 4, windowSize = 2))
+        val page1 = searchService.search(PaginatedSearchRequest(query = Query("banana"), startIndex = 0, windowSize = 2))
+        val page2 = searchService.search(PaginatedSearchRequest(query = Query("banana"), startIndex = 2, windowSize = 2))
+        val page3 = searchService.search(PaginatedSearchRequest(query = Query("banana"), startIndex = 4, windowSize = 2))
 
         assertThat(page1).doesNotContainAnyElementsOf(page2)
         assertThat(page1).hasSize(2)

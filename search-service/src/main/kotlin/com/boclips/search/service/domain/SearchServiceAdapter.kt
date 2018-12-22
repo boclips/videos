@@ -1,6 +1,6 @@
 package com.boclips.search.service.domain
 
-abstract class SearchServiceAdapter<T>(val inner: GenericSearchService<VideoMetadata>) : GenericSearchService<T> {
+abstract class SearchServiceAdapter<T>(private val inner: GenericSearchService<VideoMetadata>) : GenericSearchService<T> {
     override fun resetIndex() {
         inner.resetIndex()
     }
@@ -13,7 +13,7 @@ abstract class SearchServiceAdapter<T>(val inner: GenericSearchService<VideoMeta
         return inner.search(searchRequest)
     }
 
-    override fun count(query: String): Long {
+    override fun count(query: Query): Long {
        return inner.count(query)
     }
 

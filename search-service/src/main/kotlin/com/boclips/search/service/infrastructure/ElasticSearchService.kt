@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
@@ -61,12 +62,22 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     }
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {
+        if(searchRequest.query.ids != null) {
+            return searchRequest.query.ids
+                    .drop(searchRequest.startIndex)
+                    .take(searchRequest.windowSize)
+        }
+
         return searchElasticSearch(searchRequest)
                 .map(elasticSearchResultConverter::convert)
                 .map { it.id }
     }
 
-    override fun count(query: String): Long {
+    override fun count(query: Query): Long {
+        if(query.ids != null) {
+            return query.ids.size.toLong()
+        }
+
         return searchElasticSearch(PaginatedSearchRequest(query = query)).totalHits
     }
 
@@ -82,12 +93,12 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     }
 
     private fun searchElasticSearch(searchRequest: PaginatedSearchRequest): SearchHits {
-        val findMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
+        val findMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.AUTO)
 
-        val findExactMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
+        val findExactMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
 
@@ -96,7 +107,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .should(findMatchesQuery)
                 .should(findExactMatchesQuery)
 
-        val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
+        val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
 
         val rescorer = QueryRescorerBuilder(rescoreQuery)

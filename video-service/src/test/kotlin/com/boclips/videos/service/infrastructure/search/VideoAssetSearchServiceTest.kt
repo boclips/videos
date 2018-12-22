@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.Query
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -20,7 +21,7 @@ class VideoAssetSearchServiceTest : AbstractSpringIntegrationTest() {
 
         searchService.upsert(sequenceOf(videoNews, videoStock))
 
-        assertThat(searchService.search(PaginatedSearchRequest(query = "news", startIndex = 0, windowSize = 10))).isNotEmpty
-        assertThat(searchService.search(PaginatedSearchRequest(query = "stock", startIndex = 0, windowSize = 10))).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(query = Query("news"), startIndex = 0, windowSize = 10))).isNotEmpty
+        assertThat(searchService.search(PaginatedSearchRequest(query = Query("stock"), startIndex = 0, windowSize = 10))).isEmpty()
     }
 }

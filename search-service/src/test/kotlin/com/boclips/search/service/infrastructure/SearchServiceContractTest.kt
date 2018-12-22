@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -32,7 +33,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     fun `returns empty collection for empty result`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing")))
 
-        val result = searchService.search(PaginatedSearchRequest(query = "query that matches nothing"))
+        val result = searchService.search(PaginatedSearchRequest(query = Query("query that matches nothing")))
 
         assertThat(result).hasSize(0)
     }
@@ -47,7 +48,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(id = "4", title = "Who are you, really?", contentProvider = "Gentleman Ben")
         ))
 
-        val result = searchService.search(PaginatedSearchRequest(query = "gentleman"))
+        val result = searchService.search(PaginatedSearchRequest(query = Query("gentleman")))
 
         assertThat(result).containsExactlyInAnyOrder("1", "2", "4")
     }
@@ -62,8 +63,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(id = "4", title = "Who are you, really?", contentProvider = "Gentleman Ben")
         ))
 
-        val page1 = searchService.search(PaginatedSearchRequest(query = "gentleman", startIndex = 0, windowSize = 2))
-        val page2 = searchService.search(PaginatedSearchRequest(query = "gentleman", startIndex = 2, windowSize = 2))
+        val page1 = searchService.search(PaginatedSearchRequest(query = Query("gentleman"), startIndex = 0, windowSize = 2))
+        val page2 = searchService.search(PaginatedSearchRequest(query = Query("gentleman"), startIndex = 2, windowSize = 2))
 
         assertThat(page1).hasSize(2)
         assertThat(page2).hasSize(1)
@@ -79,7 +80,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(id = "4", title = "Who are you, really?", contentProvider = "Gentleman Ben")
         ))
 
-        val result = searchService.count(query = "gentleman")
+        val result = searchService.count(query = Query("gentleman"))
 
         assertThat(result).isEqualTo(3)
     }
@@ -91,7 +92,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         searchService.removeFromSearch("1")
 
-        assertThat(searchService.search(PaginatedSearchRequest(query = "gentleman")).isEmpty())
+        assertThat(searchService.search(PaginatedSearchRequest(query = Query("gentleman"))).isEmpty())
     }
 
     @ParameterizedTest
@@ -101,7 +102,18 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         searchService.resetIndex()
 
-        assertThat(searchService.search(PaginatedSearchRequest(query = "boy")).isEmpty())
+        assertThat(searchService.search(PaginatedSearchRequest(query = Query("boy"))).isEmpty())
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns ids without lookup for id queries`(searchService: GenericSearchService<VideoMetadata>) {
+        searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing")))
+
+        val query = Query.parse("id:1,2,3,4")
+        assertThat(searchService.count(query)).isEqualTo(4)
+        val searchResults = searchService.search(PaginatedSearchRequest(query = query, startIndex = 1, windowSize = 2))
+        assertThat(searchResults).containsExactly("2", "3")
     }
 
 }

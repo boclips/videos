@@ -31,7 +31,7 @@ class SearchServiceAdapterTest {
     fun `upsert one video makes an insert`() {
         searchService.upsert(sequenceOf("hello"))
 
-        val result = searchService.search(PaginatedSearchRequest("hello", 0, 1)).first()
+        val result = searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1)).first()
 
         assertThat(result).isEqualTo("H")
     }
@@ -40,7 +40,7 @@ class SearchServiceAdapterTest {
     fun `upsert many videos makes an insert`() {
         searchService.upsert(sequenceOf("one", "two"))
 
-        val result = searchService.search(PaginatedSearchRequest("two", 0, 1)).first()
+        val result = searchService.search(PaginatedSearchRequest(Query("two"), 0, 1)).first()
 
         assertThat(result).isEqualTo("T")
     }
@@ -50,14 +50,14 @@ class SearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.resetIndex()
 
-        assertThat(searchService.search(PaginatedSearchRequest("hello", 0, 1))).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1))).isEmpty()
     }
 
     @Test
     fun `count returns document count`() {
         searchService.upsert(sequenceOf("one", "two one"))
 
-        assertThat(searchService.count("one")).isEqualTo(2)
+        assertThat(searchService.count(Query("one"))).isEqualTo(2)
     }
 
     @Test
@@ -65,7 +65,7 @@ class SearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.removeFromSearch("H")
 
-        assertThat(searchService.search(PaginatedSearchRequest("hello", 0, 1))).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1))).isEmpty()
 
     }
 }
