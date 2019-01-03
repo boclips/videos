@@ -88,6 +88,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns results when searching by id`() {
+        mockMvc.perform(get("/v1/videos?query=id:123,-1").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("123")))
+
+                .andExpect(jsonPath("$.page.size", Matchers.equalTo(100)))
+                .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(1)))
+                .andExpect(jsonPath("$.page.totalPages", Matchers.equalTo(1)))
+                .andExpect(jsonPath("$.page.number", Matchers.equalTo(0)))
+    }
+
+    @Test
     fun `returns 400 for invalid search request`() {
         mockMvc.perform(get("/v1/videos").asTeacher())
                 .andExpect(status().`is`(400))

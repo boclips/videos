@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
@@ -10,10 +10,6 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder
-import org.apache.lucene.queryparser.xml.builders.DisjunctionMaxQueryBuilder
-import org.apache.lucene.search.BooleanQuery
-import org.apache.lucene.search.DisjunctionMaxQuery
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest
@@ -28,6 +24,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
@@ -62,22 +59,12 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     }
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {
-        if(searchRequest.query.ids != null) {
-            return searchRequest.query.ids
-                    .drop(searchRequest.startIndex)
-                    .take(searchRequest.windowSize)
-        }
-
         return searchElasticSearch(searchRequest)
                 .map(elasticSearchResultConverter::convert)
                 .map { it.id }
     }
 
     override fun count(query: Query): Long {
-        if(query.ids != null) {
-            return query.ids.size.toLong()
-        }
-
         return searchElasticSearch(PaginatedSearchRequest(query = query)).totalHits
     }
 
@@ -93,6 +80,15 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     }
 
     private fun searchElasticSearch(searchRequest: PaginatedSearchRequest): SearchHits {
+        val request = if (isIdLookup(searchRequest)) {
+            buildIdLookupRequest(searchRequest)
+        } else {
+            buildFuzzyRequest(searchRequest)
+        }
+        return client.search(request, RequestOptions.DEFAULT).hits
+    }
+
+    private fun buildFuzzyRequest(searchRequest: PaginatedSearchRequest): SearchRequest {
         val findMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
@@ -114,16 +110,28 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .windowSize(100)
                 .setScoreMode(QueryRescoreMode.Total)
 
-        val elasticSearchRequest = SearchRequest(arrayOf(ES_INDEX),
+        return SearchRequest(arrayOf(ES_INDEX),
                 SearchSourceBuilder()
                         .query(allMatchesQuery)
                         .from(searchRequest.startIndex)
                         .size(searchRequest.windowSize)
-                        .addRescorer(rescorer)
-        )
-
-        return client.search(elasticSearchRequest, RequestOptions.DEFAULT).hits
+                        .addRescorer(rescorer))
     }
+
+    private fun buildIdLookupRequest(searchRequest: PaginatedSearchRequest): SearchRequest {
+        val findMatchesById = QueryBuilders.idsQuery().addIds(*(searchRequest.query.ids!!.toTypedArray()))
+        val query = QueryBuilders.boolQuery().should(findMatchesById)
+
+        return SearchRequest(arrayOf(ES_INDEX),
+                SearchSourceBuilder()
+                        .query(query)
+                        .from(searchRequest.startIndex)
+                        .size(searchRequest.windowSize))
+
+    }
+
+    private fun isIdLookup(searchRequest: PaginatedSearchRequest) =
+            searchRequest.query.ids?.isNotEmpty() == true
 
     private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>) {
         logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }

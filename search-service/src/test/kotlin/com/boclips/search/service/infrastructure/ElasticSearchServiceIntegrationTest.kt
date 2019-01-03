@@ -145,7 +145,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `counts search results`() {
+    fun `counts search results for phrase queries`() {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
                 SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
@@ -163,6 +163,19 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
         val results = searchService.count(Query("banana"))
 
         assertThat(results).isEqualTo(11)
+    }
+
+    @Test
+    fun `counts search results for IDs queries`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
+        ))
+
+        val results = searchService.count(Query(ids = listOf("2", "5")))
+
+        assertThat(results).isEqualTo(1)
     }
 
     @Test
@@ -196,5 +209,18 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
         assertThat(page1).hasSize(2)
         assertThat(page2).hasSize(2)
         assertThat(page3).hasSize(0)
+    }
+
+    @Test
+    fun `returns exact matches for IDs search query`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
+        ))
+
+        val results = searchService.search(PaginatedSearchRequest(query = Query(ids = listOf("2", "5"))))
+
+        assertThat(results).containsExactly("2")
     }
 }

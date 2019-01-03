@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.VideoMetadata
 
@@ -17,11 +17,10 @@ class InMemorySearchService : GenericSearchService<VideoMetadata> {
     private fun idsMatching(query: Query): List<String> {
         val (phrase, ids) = query
         return when {
-            ids != null -> ids
+            ids != null -> index.filter { ids.contains(it.key) }
             else -> index
                     .filter { text -> text.value.contains(phrase!!, ignoreCase = true) }
-                    .map { video -> video.key }
-        }
+        }.map { video -> video.key }
     }
 
     override fun removeFromSearch(videoId: String) {
