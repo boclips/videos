@@ -32,7 +32,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         saveVideo(videoId = 124,
                 playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
-                title = "elaphants took out jobs",
+                title = "elephants took out jobs",
                 description = "it's a asset from youtube",
                 date = "2017-02-11",
                 duration = Duration.ofSeconds(56),
@@ -65,11 +65,21 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `filters out non educational results when filter param set`() {
+        val excludedVideoId = 999L
+        saveNonEducationalVideo(videoId = excludedVideoId, title = "Non educational video about elephants")
+
+        mockMvc.perform(get("/v1/videos?query=elephant&use_case=classroom").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
+    }
+
+    @Test
     fun `returns Youtube videos when query matches`() {
         mockMvc.perform(get("/v1/videos?query=jobs").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("124")))
-                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elaphants took out jobs")))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants took out jobs")))
                 .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a asset from youtube")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2017-02-11")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp2")))

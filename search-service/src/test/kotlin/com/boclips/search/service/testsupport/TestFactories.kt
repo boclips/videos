@@ -14,6 +14,7 @@ object SearchableVideoMetadataFactory {
             title = title,
             description = description,
             contentProvider = contentProvider,
-            keywords = keywords
+            keywords = keywords,
+            isEducational = true
     )
 }

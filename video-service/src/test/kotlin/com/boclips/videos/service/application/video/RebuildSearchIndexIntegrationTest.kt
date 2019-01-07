@@ -21,6 +21,6 @@ class RebuildSearchIndexIntegrationTest : AbstractSpringIntegrationTest() {
 
         rebuildSearchIndex.execute().get()
 
-        assertThat(videoService.search(VideoSearchQuery(text = "video", pageIndex = 0, pageSize = 10))).isNotEmpty
+        assertThat(videoService.search(VideoSearchQuery(text = "video", filters = emptyList(), pageIndex = 0, pageSize = 10))).isNotEmpty
     }
 }

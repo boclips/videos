@@ -12,7 +12,8 @@ class TestSearchService(inner: GenericSearchService<VideoMetadata>) : SearchServ
                 title = document,
                 description = "",
                 contentProvider = "",
-                keywords = emptyList()
+                keywords = emptyList(),
+                isEducational = true
         )
     }
 }

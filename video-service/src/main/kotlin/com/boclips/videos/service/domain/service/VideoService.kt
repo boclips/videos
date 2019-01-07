@@ -1,13 +1,12 @@
 package com.boclips.videos.service.domain.service
 
+import com.boclips.search.service.domain.Filter
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.VideoUpdateCommand
-import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.VideoAssetUpdate
-import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.model.*
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
@@ -22,8 +21,12 @@ class VideoService(
     companion object : KLogging()
 
     fun search(query: VideoSearchQuery): List<Video> {
+        val filters = query.filters.map { when (it) {
+            VideoSearchQueryFilter.EDUCATIONAL -> Filter(VideoMetadata::isEducational, true)
+        }}
+
         val searchRequest = PaginatedSearchRequest(
-                query = Query.parse(query.text),
+                query = Query.parse(query.text).withFilters(filters),
                 startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
                 windowSize = query.pageSize
         )

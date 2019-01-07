@@ -103,6 +103,9 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .should(findMatchesQuery)
                 .should(findExactMatchesQuery)
 
+        val allMatchesFilteredQuery = searchRequest.query.filters
+                .fold(allMatchesQuery) { query, filter -> query.filter(QueryBuilders.termQuery(filter.field, filter.value)) }
+
         val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
 
@@ -112,7 +115,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
         return SearchRequest(arrayOf(ES_INDEX),
                 SearchSourceBuilder()
-                        .query(allMatchesQuery)
+                        .query(allMatchesFilteredQuery)
                         .from(searchRequest.startIndex)
                         .size(searchRequest.windowSize)
                         .addRescorer(rescorer))

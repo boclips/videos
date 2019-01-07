@@ -2,7 +2,6 @@ package com.boclips.videos.service.domain.service
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.VideoAssetUpdate
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.VideoSubjectsUpdate
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -24,7 +23,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `retrieve videos by query returns Kaltura videos`() {
         saveVideo(videoId = 1, title = "a kaltura asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"))
 
-        val videos = videoService.search(VideoSearchQuery("kaltura", 0, 10))
+        val videos = videoService.search(VideoSearchQuery(text = "kaltura", filters = emptyList(), pageIndex = 0, pageSize = 10))
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().asset.title).isEqualTo("a kaltura asset")
@@ -35,7 +34,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `retrieve videos by query returns Youtube videos`() {
         saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val videos = videoService.search(VideoSearchQuery("youtube", 0, 10))
+        val videos = videoService.search(VideoSearchQuery(text = "youtube", filters = emptyList(), pageIndex = 0, pageSize = 10))
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().asset.title).isEqualTo("a youtube asset")
@@ -46,7 +45,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `count videos`() {
         saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val size = videoService.count(VideoSearchQuery("youtube", 0, 10))
+        val size = videoService.count(VideoSearchQuery(text = "youtube", filters = emptyList(), pageIndex = 0, pageSize = 10))
 
         assertThat(size).isEqualTo(1)
     }

@@ -16,27 +16,32 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws exception when query is null`() {
-        assertThatThrownBy { getVideosByQuery.execute(null, 0, 2) }.isInstanceOf(QueryValidationException::class.java)
+        assertThatThrownBy { getVideosByQuery.execute(
+                query = null,
+                useCase = null,
+                pageNumber = 0,
+                pageSize = 2
+        ) }.isInstanceOf(QueryValidationException::class.java)
     }
 
     @Test
     fun `throws when page size too big`() {
         assertThatThrownBy {
-            getVideosByQuery.execute("query", 0, 1000)
+            getVideosByQuery.execute(query = "query", useCase = null, pageNumber = 0, pageSize = 1000)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun `throws when page size is too small`() {
         assertThatThrownBy {
-            getVideosByQuery.execute("query", 0, 0)
+            getVideosByQuery.execute(query = "query", useCase = null, pageNumber = 0, pageSize = 0)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun `throws page index is smaller than 0`() {
         assertThatThrownBy {
-            getVideosByQuery.execute("query", -1, 0)
+            getVideosByQuery.execute(query = "query", useCase = null, pageNumber = -1, pageSize = 0)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -47,7 +52,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 3, title = "a another asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-123"))
         saveVideo(videoId = 4, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val result = getVideosByQuery.execute(query = "youtube", pageNumber = 1, pageSize = 2)
+        val result = getVideosByQuery.execute(query = "youtube", useCase = null, pageNumber = 1, pageSize = 2)
 
         assertThat(result.videos).hasSize(1)
         assertThat(result.totalVideos).isEqualTo(3)

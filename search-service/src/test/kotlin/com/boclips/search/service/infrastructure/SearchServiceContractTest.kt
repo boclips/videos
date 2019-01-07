@@ -1,9 +1,6 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.GenericSearchService
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.*
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -51,6 +48,19 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = searchService.search(PaginatedSearchRequest(query = Query("gentleman")))
 
         assertThat(result).containsExactlyInAnyOrder("1", "2", "4")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `filters videos`(searchService: GenericSearchService<VideoMetadata>) {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing", contentProvider = "ted"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Beer", contentProvider = "tod")
+        ))
+
+        val result = searchService.search(PaginatedSearchRequest(query = Query("gentleman", filters = listOf(Filter(VideoMetadata::contentProvider, "ted")))))
+
+        assertThat(result).containsExactly("1")
     }
 
     @ParameterizedTest

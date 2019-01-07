@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.videos.service.application.video.exceptions.QueryValidationException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.model.VideoSearchQueryFilter
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -15,12 +16,17 @@ class GetVideosByQuery(
 ) {
     companion object : KLogging()
 
-    fun execute(query: String?, pageNumber: Int, pageSize: Int): VideosResource {
+    fun execute(query: String?, useCase: String?, pageNumber: Int, pageSize: Int): VideosResource {
         validateQuery(query)
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
-        val videoSearchQuery = VideoSearchQuery(text = query!!, pageIndex = pageNumber, pageSize = pageSize)
+        val filters = when(useCase) {
+            "classroom" -> listOf(VideoSearchQueryFilter.EDUCATIONAL)
+            else -> emptyList()
+        }
+
+        val videoSearchQuery = VideoSearchQuery(text = query!!, pageIndex = pageNumber, pageSize = pageSize, filters = filters)
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
         logger.info { "Found $totalVideos videos for query $videoSearchQuery" }

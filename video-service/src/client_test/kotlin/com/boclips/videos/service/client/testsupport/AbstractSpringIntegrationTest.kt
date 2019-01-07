@@ -89,7 +89,8 @@ abstract class AbstractSpringIntegrationTest {
                 title = title,
                 description = description,
                 contentProvider = contentProvider,
-                keywords = emptyList()
+                keywords = emptyList(),
+                isEducational = true
         )))
 
         when (playbackId.type) {

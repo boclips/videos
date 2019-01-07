@@ -1,6 +1,15 @@
 package com.boclips.search.service.domain
 
-data class Query(val phrase: String? = null, val ids: List<String>? = null) {
+import kotlin.reflect.KProperty1
+
+class Filter private constructor(val field: String, val value: Any) {
+
+    companion object {
+        operator fun <T : Any> invoke(field: KProperty1<VideoMetadata, T>, value: T) = Filter(field.name, value)
+    }
+}
+
+data class Query(val phrase: String? = null, val ids: List<String>? = null, val filters: List<Filter> = emptyList()) {
 
     companion object {
 
@@ -14,5 +23,8 @@ data class Query(val phrase: String? = null, val ids: List<String>? = null) {
             }
             return Query(phrase = query)
         }
+
     }
+
+    fun withFilters(filters: List<Filter>) = copy(filters = filters)
 }

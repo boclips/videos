@@ -37,7 +37,12 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
             createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234"))
         }
 
-        assertThat(videoService.count(VideoSearchQuery("the latest Bloomberg video", 0, 0))).isEqualTo(0)
+        assertThat(videoService.count(VideoSearchQuery(
+                text = "the latest Bloomberg video",
+                filters = emptyList(),
+                pageIndex = 0,
+                pageSize = 0
+        ))).isEqualTo(0)
     }
 
     @Test
@@ -46,7 +51,12 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
 
-        assertThat(videoService.search(VideoSearchQuery("the latest bloomberg", 0, 1)).first().asset.title).isEqualTo("the latest Bloomberg video")
+        assertThat(videoService.search(VideoSearchQuery(
+                text = "the latest bloomberg",
+                filters = emptyList(),
+                pageIndex = 0,
+                pageSize = 1
+        )).first().asset.title).isEqualTo("the latest Bloomberg video")
     }
 
     @Test
