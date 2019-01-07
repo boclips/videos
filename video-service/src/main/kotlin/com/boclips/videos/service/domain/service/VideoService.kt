@@ -1,12 +1,11 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.search.service.domain.Filter
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.*
+import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.model.VideoUpdateCommand
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
@@ -21,12 +20,8 @@ class VideoService(
     companion object : KLogging()
 
     fun search(query: VideoSearchQuery): List<Video> {
-        val filters = query.filters.map { when (it) {
-            VideoSearchQueryFilter.EDUCATIONAL -> Filter(VideoMetadata::isEducational, true)
-        }}
-
         val searchRequest = PaginatedSearchRequest(
-                query = Query.parse(query.text).withFilters(filters),
+                query = query.toSearchQuery(),
                 startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
                 windowSize = query.pageSize
         )
@@ -46,12 +41,7 @@ class VideoService(
     }
 
     fun count(videoSearchQuery: VideoSearchQuery): Long {
-        val filters = videoSearchQuery.filters.map { when (it) {
-            VideoSearchQueryFilter.EDUCATIONAL -> Filter(VideoMetadata::isEducational, true)
-        }}
-
-        val query: Query = Query.parse(videoSearchQuery.text).withFilters(filters)
-        return searchService.count(query)
+        return searchService.count(videoSearchQuery.toSearchQuery())
     }
 
     fun get(assetId: AssetId): Video {
@@ -64,7 +54,7 @@ class VideoService(
         return Video(videoAsset, videoPlayback)
     }
 
-    fun update(assetId: AssetId, updateCommand: VideoUpdateCommand) : Video {
+    fun update(assetId: AssetId, updateCommand: VideoUpdateCommand): Video {
         val video = get(assetId)
         val updatedVideo = updateCommand.update(video)
         val savedVideoAsset = videoAssetRepository.update(updatedVideo.asset)
