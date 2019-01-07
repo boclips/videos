@@ -135,7 +135,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     fun `returns existing ids`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing")))
 
-        val query = Query.parse("id:1,2,3,4")
+        val query = Query(ids = listOf("1", "2", "3", "4"))
         assertThat(searchService.count(query)).isEqualTo(1)
 
         val searchResults = searchService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 2))
