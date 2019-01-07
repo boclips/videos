@@ -246,6 +246,20 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
+    fun `can retrieve educational videos that matches query`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "random isNews", isEducational = false),
+                SearchableVideoMetadataFactory.create(id = "9", description = "candy banana apple", isEducational = true),
+                SearchableVideoMetadataFactory.create(id = "10", description = "candy banana apple", isEducational = false)
+        ))
+
+        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::isEducational, true)))))
+
+        assertThat(results).containsExactly("9")
+    }
+
+
+    @Test
     fun `can count for just news results`() {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),

@@ -183,7 +183,8 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 description = video.description,
                 contentProvider = video.contentProvider,
                 keywords = video.keywords,
-                isNews = video.isNews
+                isNews = video.isNews,
+                isEducational = video.isEducational
         ))
 
         return IndexRequest(ES_INDEX, ES_TYPE, video.id)

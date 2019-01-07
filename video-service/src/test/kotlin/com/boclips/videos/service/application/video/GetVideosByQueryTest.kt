@@ -16,12 +16,14 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws exception when query is null`() {
-        assertThatThrownBy { getVideosByQuery.execute(
-                query = null,
-                useCase = null,
-                pageNumber = 0,
-                pageSize = 2
-        ) }.isInstanceOf(QueryValidationException::class.java)
+        assertThatThrownBy {
+            getVideosByQuery.execute(
+                    query = null,
+                    useCase = null,
+                    pageNumber = 0,
+                    pageSize = 2
+            )
+        }.isInstanceOf(QueryValidationException::class.java)
     }
 
     @Test
@@ -58,5 +60,16 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         assertThat(result.totalVideos).isEqualTo(3)
         assertThat(result.pageNumber).isEqualTo(1)
         assertThat(result.pageSize).isEqualTo(2)
+    }
+
+    @Test
+    fun `always filters educational content when usecase is classroom`() {
+        saveVideo(videoId = 123, title = "banana", isEducational = true)
+        saveVideo(videoId = 124, title = "banana", isEducational = false)
+
+        val videos = getVideosByQuery.execute(query = "banana", useCase = "classroom", pageNumber = 0, pageSize = 2)
+
+        assertThat(videos.videos).hasSize(1)
+        assertThat(videos.videos.first().id).isEqualTo("123")
     }
 }

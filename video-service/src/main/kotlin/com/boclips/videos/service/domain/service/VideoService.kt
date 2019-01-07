@@ -46,7 +46,12 @@ class VideoService(
     }
 
     fun count(videoSearchQuery: VideoSearchQuery): Long {
-        return searchService.count(Query.parse(videoSearchQuery.text))
+        val filters = videoSearchQuery.filters.map { when (it) {
+            VideoSearchQueryFilter.EDUCATIONAL -> Filter(VideoMetadata::isEducational, true)
+        }}
+
+        val query: Query = Query.parse(videoSearchQuery.text).withFilters(filters)
+        return searchService.count(query)
     }
 
     fun get(assetId: AssetId): Video {
