@@ -282,4 +282,17 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         assertThat(results).containsExactly("3")
     }
+
+    @Test
+    fun `searching with no filters returns news and non-news`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "banana", isNews = false),
+                SearchableVideoMetadataFactory.create(id = "9", description = "candy banana apple", isNews = true),
+                SearchableVideoMetadataFactory.create(id = "10", description = "candy banana apple", isNews = false)
+        ))
+
+        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana")))
+
+        assertThat(results).hasSize(3)
+    }
 }
