@@ -8,18 +8,18 @@ import org.junit.jupiter.api.Test
 class TestSearchService(inner: GenericSearchService<VideoMetadata>) : SearchServiceAdapter<String>(inner) {
     override fun convert(document: String): VideoMetadata {
         return VideoMetadata(
-                id = document.substring(0,1).toUpperCase(),
+                id = document.substring(0, 1).toUpperCase(),
                 title = document,
                 description = "",
                 contentProvider = "",
                 keywords = emptyList(),
+                typeId = 2,
                 isEducational = true
         )
     }
 }
 
 class SearchServiceAdapterTest {
-
     lateinit var searchService: TestSearchService
 
     @BeforeEach

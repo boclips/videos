@@ -20,7 +20,8 @@ class ElasticSearchResultConverterTest {
                 "price_category": "expensive",
                 "date": "2014-05-13",
                 "duration": "02:01:20",
-                "keywords": ["k1","k2"]
+                "keywords": ["k1","k2"],
+                "typeId": 10
             }
         """.trimIndent()))
 
@@ -31,7 +32,8 @@ class ElasticSearchResultConverterTest {
                 title = "The title",
                 description = "The description",
                 contentProvider = "TED Talks",
-                keywords = listOf("k1", "k2")
+                keywords = listOf("k1", "k2"),
+                typeId = 10
         ))
     }
 

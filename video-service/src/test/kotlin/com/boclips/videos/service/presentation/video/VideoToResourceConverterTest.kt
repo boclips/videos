@@ -19,8 +19,8 @@ internal class VideoToResourceConverterTest {
                     description = "Best bottle slogan",
                     contentProvider = "WeWork",
                     contentPartnerVideoId = "111",
-                    subjects = setOf(Subject("Maths")),
-                    type = VideoType.TED_TALKS
+                    type = VideoType.TED_TALKS,
+                    subjects = setOf(Subject("Maths"))
             ),
             videoPlayback = TestFactories.createKalturaPlayback()
     )
@@ -31,8 +31,8 @@ internal class VideoToResourceConverterTest {
                     description = "Best bottle slogan",
                     contentProvider = "JacekWork",
                     contentPartnerVideoId = "222",
-                    subjects = setOf(Subject("Biology")),
-                    type = VideoType.OTHER
+                    type = VideoType.OTHER,
+                    subjects = setOf(Subject("Biology"))
             ),
             videoPlayback = createYoutubePlayback()
     )

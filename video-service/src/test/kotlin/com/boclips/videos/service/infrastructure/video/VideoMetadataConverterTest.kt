@@ -16,7 +16,8 @@ class VideoMetadataConverterTest {
                 title = "asset title",
                 description = "asset description",
                 contentProvider = "content partner",
-                keywords = listOf("k1")
+                keywords = listOf("k1"),
+                type = VideoType.VR_360_STOCK
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -27,6 +28,7 @@ class VideoMetadataConverterTest {
                 description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1"),
+                typeId = 7,
                 isEducational = true
         ))
     }

@@ -15,12 +15,17 @@ class InMemorySearchService : GenericSearchService<VideoMetadata> {
     private fun idsMatching(query: Query): List<String> {
         val (phrase, ids) = query
         return when {
-            ids != null -> index.filter { ids.contains(it.key) }
+            !ids.isEmpty() -> index.filter { ids.contains(it.key) }
+                    .map { video -> video.key }
             else -> index
-                    .filterValues { video -> textOf(video).contains(phrase!!, ignoreCase = true) }
+                    .filter { entry ->
+                        entry.value.title.contains(phrase!!, ignoreCase = true)
+                                || entry.value.description.contains(phrase, ignoreCase = true)
+                                || entry.value.contentProvider.contains(phrase, ignoreCase = true)
+                    }
+                    .filterValues(filter(query.filters))
+                    .map { video -> video.key }
         }
-                .filterValues(filter(query.filters))
-                .map { video -> video.key }
     }
 
     private fun filter(filters: List<Filter>) = { video: VideoMetadata -> filters.all(this.filter(video)) }
@@ -39,8 +44,6 @@ class InMemorySearchService : GenericSearchService<VideoMetadata> {
             index[video.id] = video.copy()
         }
     }
-
-    private fun textOf(video: VideoMetadata) = listOf(video.title, video.description, video.contentProvider).joinToString(separator = "\n")
 
     override fun resetIndex() {
         index.clear()

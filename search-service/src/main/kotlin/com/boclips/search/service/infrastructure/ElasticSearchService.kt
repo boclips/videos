@@ -89,22 +89,43 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     }
 
     private fun buildFuzzyRequest(searchRequest: PaginatedSearchRequest): SearchRequest {
-        val findMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
+        val findMatchesQuery = QueryBuilders
+                .multiMatchQuery(
+                        searchRequest.query.phrase,
+                        ElasticSearchVideo.TITLE,
+                        "${ElasticSearchVideo.TITLE}.std",
+                        ElasticSearchVideo.DESCRIPTION,
+                        "${ElasticSearchVideo.DESCRIPTION}.std",
+                        ElasticSearchVideo.CONTENT_PROVIDER,
+                        ElasticSearchVideo.KEYWORDS
+                )
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.AUTO)
 
-        val findExactMatchesQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title", "title.std", "description", "description.std", "contentProvider", "keywords")
+        val findExactMatchesQuery = QueryBuilders
+                .multiMatchQuery(
+                        searchRequest.query.phrase,
+                        ElasticSearchVideo.TITLE,
+                        "${ElasticSearchVideo.TITLE}.std",
+                        ElasticSearchVideo.DESCRIPTION,
+                        "${ElasticSearchVideo.DESCRIPTION}.std",
+                        ElasticSearchVideo.CONTENT_PROVIDER,
+                        ElasticSearchVideo.KEYWORDS
+                )
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
 
+        val filterQuery = searchRequest.query.filters
+                .fold(QueryBuilders.boolQuery()) { query, filter -> query.filter(QueryBuilders.termQuery(filter.field, filter.value)) }
+
+        val findMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findMatchesQuery).must(filterQuery)
+        val findExactMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findExactMatchesQuery).must(filterQuery)
+
         val allMatchesQuery = QueryBuilders
                 .boolQuery()
-                .should(findMatchesQuery)
-                .should(findExactMatchesQuery)
-
-        val allMatchesFilteredQuery = searchRequest.query.filters
-                .fold(allMatchesQuery) { query, filter -> query.filter(QueryBuilders.termQuery(filter.field, filter.value)) }
+                .should(findMatchesQueryWithFilters)
+                .should(findExactMatchesQueryWithFilters)
 
         val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
@@ -115,7 +136,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
         return SearchRequest(arrayOf(ES_INDEX),
                 SearchSourceBuilder()
-                        .query(allMatchesFilteredQuery)
+                        .query(allMatchesQuery)
                         .from(searchRequest.startIndex)
                         .size(searchRequest.windowSize)
                         .addRescorer(rescorer))
@@ -162,7 +183,8 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 title = video.title,
                 description = video.description,
                 contentProvider = video.contentProvider,
-                keywords = video.keywords
+                keywords = video.keywords,
+                typeId = video.typeId
         ))
 
         return IndexRequest(ES_INDEX, ES_TYPE, video.id)

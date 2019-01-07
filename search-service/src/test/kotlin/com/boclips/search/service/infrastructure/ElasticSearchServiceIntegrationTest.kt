@@ -1,9 +1,6 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.GenericSearchService
-import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.*
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -72,7 +69,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `boosts documents where words appear in sequence in title`() {
+    fun `document relevance is higher when words appear in sequence in title`() {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
@@ -85,7 +82,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `boosts documents where words appear in sequence in description`() {
+    fun `document relevance is higher when words appear in sequence in description`() {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
                 SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
@@ -106,7 +103,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         val results = searchService.search(PaginatedSearchRequest(query = Query("dogs")))
 
-        assertThat(results.first()).isEqualTo("2")
+        assertThat(results).containsExactly("2")
     }
 
     @Test
@@ -118,7 +115,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         val results = searchService.search(PaginatedSearchRequest(query = Query("ted talk")))
 
-        assertThat(results.first()).isEqualTo("2")
+        assertThat(results).containsExactly("2")
     }
 
     @Test
@@ -130,7 +127,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         val results = searchService.search(PaginatedSearchRequest(query = Query("i have a dream")))
 
-        assertThat(results.first()).isEqualTo("2")
+        assertThat(results).containsExactly("2")
     }
 
     @Test
@@ -141,7 +138,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         val results = searchService.search(PaginatedSearchRequest(query = Query("rain")))
 
-        assertThat(results.first()).isEqualTo("1")
+        assertThat(results).containsExactly("1")
     }
 
     @Test
@@ -222,5 +219,41 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
         val results = searchService.search(PaginatedSearchRequest(query = Query(ids = listOf("2", "5"))))
 
         assertThat(results).containsExactly("2")
+    }
+
+    @Test
+    fun `can retrieve just news`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", typeId = 1)
+        ))
+
+        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::typeId, 1)))))
+
+        assertThat(results).containsExactly("4")
+    }
+
+    @Test
+    fun `can retrieve news that matches query`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "random news", typeId = 1),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", typeId = 1)
+        ))
+
+        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::typeId, 1)))))
+
+        assertThat(results).containsExactly("4")
+    }
+
+    @Test
+    fun `can count for just news results`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", typeId = 1)
+        ))
+
+        val results = searchService.count(Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::typeId, 1))))
+
+        assertThat(results).isEqualTo(1)
     }
 }

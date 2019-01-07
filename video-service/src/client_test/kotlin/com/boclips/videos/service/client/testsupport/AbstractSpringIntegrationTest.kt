@@ -4,17 +4,13 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.VideoServiceApplication
+import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
-import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
-import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.jdbc.core.JdbcTemplate
@@ -90,6 +86,7 @@ abstract class AbstractSpringIntegrationTest {
                 description = description,
                 contentProvider = contentProvider,
                 keywords = emptyList(),
+                typeId = VideoType.INSTRUCTIONAL_CLIPS.id,
                 isEducational = true
         )))
 

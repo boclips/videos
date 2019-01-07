@@ -12,7 +12,8 @@ object VideoMetadataConverter {
                 contentProvider = video.contentPartnerId,
                 description = video.description,
                 keywords = video.keywords,
-                isEducational = !ContentEnrichers.isNonEducationalStock(video)
+                isEducational = !ContentEnrichers.isNonEducationalStock(video),
+                typeId = video.type.id
         )
     }
 }
