@@ -22,6 +22,10 @@ class ContentEnrichers {
                 else -> true
             }
         }
+
+        fun isNews(videoAsset: VideoAsset): Boolean {
+            return videoAsset.type == VideoType.NEWS
+        }
     }
 }
 

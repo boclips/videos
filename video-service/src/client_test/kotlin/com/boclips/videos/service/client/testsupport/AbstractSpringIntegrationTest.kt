@@ -86,7 +86,7 @@ abstract class AbstractSpringIntegrationTest {
                 description = description,
                 contentProvider = contentProvider,
                 keywords = emptyList(),
-                typeId = VideoType.INSTRUCTIONAL_CLIPS.id,
+                isNews = VideoType.INSTRUCTIONAL_CLIPS.id,
                 isEducational = true
         )))
 

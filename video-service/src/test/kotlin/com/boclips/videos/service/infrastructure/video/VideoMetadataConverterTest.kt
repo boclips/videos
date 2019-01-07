@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test
 
 class VideoMetadataConverterTest {
     @Test
-    fun convert() {
+    fun `convert instructional video`() {
         val video = TestFactories.createVideoAsset(
                 videoId = "123",
                 title = "asset title",
                 description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1"),
-                type = VideoType.VR_360_STOCK
+                type = VideoType.INSTRUCTIONAL_CLIPS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -28,9 +28,20 @@ class VideoMetadataConverterTest {
                 description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1"),
-                typeId = 7,
+                isNews = false,
                 isEducational = true
         ))
+    }
+
+    @Test
+    fun `convert news video`() {
+        val video = TestFactories.createVideoAsset(
+                type = VideoType.NEWS
+        )
+
+        val videoMetadata = VideoMetadataConverter.convert(video)
+
+        assertThat(videoMetadata.isNews).isTrue()
     }
 
     @Test

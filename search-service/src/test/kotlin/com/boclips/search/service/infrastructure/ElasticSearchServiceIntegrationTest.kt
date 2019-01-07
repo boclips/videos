@@ -225,10 +225,10 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     fun `can retrieve just news`() {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
-                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", typeId = 1)
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", isNews = true)
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::typeId, 1)))))
+        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::isNews, true)))))
 
         assertThat(results).containsExactly("4")
     }
@@ -236,11 +236,11 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     @Test
     fun `can retrieve news that matches query`() {
         searchService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "3", description = "random news", typeId = 1),
-                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", typeId = 1)
+                SearchableVideoMetadataFactory.create(id = "3", description = "random isNews", isNews = true),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", isNews = true)
         ))
 
-        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::typeId, 1)))))
+        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::isNews, true)))))
 
         assertThat(results).containsExactly("4")
     }
@@ -249,11 +249,23 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     fun `can count for just news results`() {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
-                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", typeId = 1)
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", isNews = true)
         ))
 
-        val results = searchService.count(Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::typeId, 1))))
+        val results = searchService.count(Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::isNews, true))))
 
         assertThat(results).isEqualTo(1)
+    }
+
+    @Test
+    fun `can retrieve only non-news that matches query`() {
+        searchService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "some random banana isNews"),
+                SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple", isNews = true)
+        ))
+
+        val results = searchService.search(PaginatedSearchRequest(query = Query(phrase = "banana", filters = listOf(Filter(VideoMetadata::isNews, false)))))
+
+        assertThat(results).containsExactly("3")
     }
 }

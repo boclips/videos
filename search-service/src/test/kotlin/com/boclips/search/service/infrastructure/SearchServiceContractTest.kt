@@ -54,19 +54,19 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds news videos`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", typeId = 1),
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", isNews = true),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer Trump", description = "Behave like a gentleman, cane like a sponge"),
-                SearchableVideoMetadataFactory.create(id = "4", title = "Trump to attack UK", contentProvider = "BBC", typeId = 1)
+                SearchableVideoMetadataFactory.create(id = "4", title = "Trump to attack UK", contentProvider = "BBC", isNews = true)
         ))
 
-        val result = searchService.search(PaginatedSearchRequest(query = Query("Trump", filters = listOf(Filter(VideoMetadata::typeId, 1)))))
+        val result = searchService.search(PaginatedSearchRequest(query = Query("Trump", filters = listOf(Filter(VideoMetadata::isNews, true)))))
 
         assertThat(result).containsExactlyInAnyOrder("4")
     }
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `filters videos`(searchService: GenericSearchService<VideoMetadata>) {
+    fun `filters videos by content providers`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing", contentProvider = "ted"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", contentProvider = "tod"),

@@ -9,14 +9,14 @@ object SearchableVideoMetadataFactory {
             description: String = "",
             contentProvider: String = "",
             keywords: List<String> = emptyList(),
-            typeId: Int = 2
+            isNews: Boolean = false
     ) = VideoMetadata(
             id = id,
             title = title,
             description = description,
             contentProvider = contentProvider,
             keywords = keywords,
-            typeId = typeId,
+            isNews = isNews,
             isEducational = true
     )
 }

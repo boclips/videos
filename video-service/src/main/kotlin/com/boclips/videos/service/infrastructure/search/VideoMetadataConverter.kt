@@ -13,7 +13,7 @@ object VideoMetadataConverter {
                 description = video.description,
                 keywords = video.keywords,
                 isEducational = !ContentEnrichers.isNonEducationalStock(video),
-                typeId = video.type.id
+                isNews = ContentEnrichers.isNews(video)
         )
     }
 }

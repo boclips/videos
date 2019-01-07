@@ -24,7 +24,6 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
-import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
@@ -184,7 +183,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 description = video.description,
                 contentProvider = video.contentProvider,
                 keywords = video.keywords,
-                typeId = video.typeId
+                isNews = video.isNews
         ))
 
         return IndexRequest(ES_INDEX, ES_TYPE, video.id)
