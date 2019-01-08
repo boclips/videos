@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -16,6 +17,7 @@ class RebuildSearchIndexIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoService: VideoService
 
     @Test
+    @Disabled
     fun `execute rebuilds search index`() {
         saveVideo(videoId = 1, title = "video")
 
