@@ -36,9 +36,10 @@ open class MysqlVideoAssetRepository(
     @Transactional
     override fun streamAll(consumer: (videos: Sequence<VideoAsset>) -> Unit) {
         videoRepository.readAll().use { stream ->
-            consumer(stream.iterator().asSequence().map { it.toVideoAsset() })
+            consumer(stream.iterator().asSequence().mapNotNull(this::convertToVideoAssetOrNull))
         }
     }
+
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
         val videoEntity = VideoEntity.fromVideoAsset(videoAsset)
@@ -85,4 +86,13 @@ open class MysqlVideoAssetRepository(
     private fun getSubjectsByVideoIds(videoIds: List<Long>): Map<Long, List<Subject>> =
             subjectRepository.findByVideoIds(videoIds)
                     .groupBy({ it.videoId!! }, { Subject(it.subjectName!!) })
+
+    private fun convertToVideoAssetOrNull(it: VideoEntity): VideoAsset? {
+        return try {
+            it.toVideoAsset()
+        } catch (e: Exception) {
+            logger.error(e) { "Could not convert video: ${it.id}" }
+            null
+        }
+    }
 }

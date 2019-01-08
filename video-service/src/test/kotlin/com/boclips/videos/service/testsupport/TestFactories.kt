@@ -96,12 +96,12 @@ object TestFactories {
         )
     }
 
-    fun createVideoEntity(typeId: Int = 1, keywords: String = "k1,k2,k3", playbackId: String = "12312413-123123-123-123", playbackProvider: String = "KALTURA", duration: String = "00:00:00", restrictions: String? = null, uniqueId: String = "unique-id"): VideoEntity {
+    fun createVideoEntity(title: String = "title", typeId: Int = 1, keywords: String = "k1,k2,k3", playbackId: String = "12312413-123123-123-123", playbackProvider: String = "KALTURA", duration: String = "00:00:00", restrictions: String? = null, uniqueId: String = "unique-id"): VideoEntity {
         return VideoEntity(
                 id = 123,
                 source = "source",
                 namespace = "namespace",
-                title = "title",
+                title = title,
                 description = "description",
                 date = "2014-08-13",
                 duration = duration,

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 
 class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
-    lateinit var searchService: GenericSearchService<VideoMetadata>
+    lateinit var searchService: ElasticSearchService
 
     @BeforeEach
     internal fun setUp() {
