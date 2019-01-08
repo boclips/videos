@@ -142,7 +142,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     }
 
     private fun buildIdLookupRequest(searchRequest: PaginatedSearchRequest): SearchRequest {
-        val findMatchesById = QueryBuilders.idsQuery().addIds(*(searchRequest.query.ids!!.toTypedArray()))
+        val findMatchesById = QueryBuilders.idsQuery().addIds(*(searchRequest.query.ids.toTypedArray()))
         val query = QueryBuilders.boolQuery().should(findMatchesById)
 
         return SearchRequest(arrayOf(ES_INDEX),
@@ -154,7 +154,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     }
 
     private fun isIdLookup(searchRequest: PaginatedSearchRequest) =
-            searchRequest.query.ids?.isNotEmpty() == true
+            searchRequest.query.ids.isNotEmpty() == true
 
     private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>) {
         logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }

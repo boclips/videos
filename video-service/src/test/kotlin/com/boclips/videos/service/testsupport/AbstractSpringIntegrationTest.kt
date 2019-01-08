@@ -3,7 +3,6 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
-import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -61,14 +60,6 @@ abstract class AbstractSpringIntegrationTest {
         fakeKalturaClient.clear()
     }
 
-    fun saveNonEducationalVideo(videoId: Long, title: String) = saveVideo(
-            videoId = videoId,
-            title = title,
-            description = "red carpet speech",
-            typeId = VideoType.STOCK.id,
-            isEducational = false
-    )
-
     fun saveVideo(videoId: Long,
                   playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-$videoId"),
                   title: String = "Some title!",
@@ -79,7 +70,8 @@ abstract class AbstractSpringIntegrationTest {
                   contentProviderId: String = "content-partner-video-id-$videoId",
                   typeId: Int = 3,
                   keywords: List<String> = emptyList(),
-                  isEducational: Boolean = true
+                  isEducational: Boolean = true,
+                  isNews: Boolean = false
     ) {
         jdbcTemplate.update("""
             INSERT INTO metadata_orig (
@@ -106,7 +98,7 @@ abstract class AbstractSpringIntegrationTest {
                 description = description,
                 contentProvider = contentProvider,
                 keywords = emptyList(),
-                isNews = false,
+                isNews = isNews,
                 isEducational = isEducational
         )))
 

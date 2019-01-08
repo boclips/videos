@@ -19,7 +19,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         assertThatThrownBy {
             getVideosByQuery.execute(
                     query = null,
-                    useCase = null,
+                    categories = emptyList(),
                     pageNumber = 0,
                     pageSize = 2
             )
@@ -29,21 +29,21 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws when page size too big`() {
         assertThatThrownBy {
-            getVideosByQuery.execute(query = "query", useCase = null, pageNumber = 0, pageSize = 1000)
+            getVideosByQuery.execute(query = "query", categories = emptyList(), pageNumber = 0, pageSize = 1000)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun `throws when page size is too small`() {
         assertThatThrownBy {
-            getVideosByQuery.execute(query = "query", useCase = null, pageNumber = 0, pageSize = 0)
+            getVideosByQuery.execute(query = "query", categories = emptyList(), pageNumber = 0, pageSize = 0)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun `throws page index is smaller than 0`() {
         assertThatThrownBy {
-            getVideosByQuery.execute(query = "query", useCase = null, pageNumber = -1, pageSize = 0)
+            getVideosByQuery.execute(query = "query", categories = emptyList(), pageNumber = -1, pageSize = 0)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -54,7 +54,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 3, title = "a another asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-123"))
         saveVideo(videoId = 4, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val result = getVideosByQuery.execute(query = "youtube", useCase = null, pageNumber = 1, pageSize = 2)
+        val result = getVideosByQuery.execute(query = "youtube", categories = emptyList(), pageNumber = 1, pageSize = 2)
 
         assertThat(result.videos).hasSize(1)
         assertThat(result.totalVideos).isEqualTo(3)
@@ -63,13 +63,37 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `always filters educational content when usecase is classroom`() {
+    fun `filters educational content when category is classroom`() {
         saveVideo(videoId = 123, title = "banana", isEducational = true)
         saveVideo(videoId = 124, title = "banana", isEducational = false)
 
-        val videos = getVideosByQuery.execute(query = "banana", useCase = "classroom", pageNumber = 0, pageSize = 2)
+        val videos = getVideosByQuery.execute(query = "banana", categories = listOf("classroom"), pageNumber = 0, pageSize = 2)
 
         assertThat(videos.videos).hasSize(1)
         assertThat(videos.videos.first().id).isEqualTo("123")
+    }
+
+    @Test
+    fun `shows only news when category is news`() {
+        saveVideo(videoId = 123, title = "banana", isNews = true)
+        saveVideo(videoId = 124, title = "banana", isNews = false)
+
+        val videos = getVideosByQuery.execute(query = "banana", categories = listOf("news"), pageNumber = 0, pageSize = 2)
+
+        assertThat(videos.videos).hasSize(1)
+        assertThat(videos.videos.first().id).isEqualTo("123")
+    }
+
+    @Test
+    fun `returns videos with multiple categories`() {
+        saveVideo(videoId = 123, title = "banana", isEducational = false, isNews = true)
+        saveVideo(videoId = 124, title = "banana", isEducational = false, isNews = false)
+        saveVideo(videoId = 125, title = "banana", isEducational = true, isNews = true)
+        saveVideo(videoId = 126, title = "banana", isEducational = true, isNews = false)
+
+        val videos = getVideosByQuery.execute(query = "banana", categories = listOf("news", "classroom"), pageNumber = 0, pageSize = 2)
+
+        assertThat(videos.videos).hasSize(1)
+        assertThat(videos.videos.map { it.id }).containsExactly("125")
     }
 }

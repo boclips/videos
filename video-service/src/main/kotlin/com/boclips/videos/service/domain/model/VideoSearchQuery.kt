@@ -4,10 +4,6 @@ import com.boclips.search.service.domain.Filter
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.VideoMetadata
 
-enum class VideoSearchQueryFilter {
-    EDUCATIONAL
-}
-
 class VideoSearchQuery(
         val text: String,
         val filters: List<VideoSearchQueryFilter>,
@@ -17,6 +13,7 @@ class VideoSearchQuery(
         val filters = this.filters.map {
             when (it) {
                 VideoSearchQueryFilter.EDUCATIONAL -> Filter(VideoMetadata::isEducational, true)
+                VideoSearchQueryFilter.NEWS -> Filter(VideoMetadata::isNews, true)
             }
         }
 

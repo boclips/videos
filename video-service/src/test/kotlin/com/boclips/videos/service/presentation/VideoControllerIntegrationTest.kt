@@ -22,7 +22,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @BeforeEach
     fun setUp() {
         saveVideo(videoId = 123,
-                playbackId = PlaybackId(value = "ref-id-1", type = PlaybackProviderType.KALTURA),
+                playbackId = PlaybackId(value = "ref-id-123", type = PlaybackProviderType.KALTURA),
                 title = "powerful asset about elephants",
                 description = "test description 3",
                 date = "2018-02-11",
@@ -67,11 +67,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `filters out non educational results when filter param set`() {
         val excludedVideoId = 999L
-        saveNonEducationalVideo(videoId = excludedVideoId, title = "Non educational video about elephants")
+        saveVideo(videoId = excludedVideoId, isEducational = false, title = "Non educational video about elephants")
 
         mockMvc.perform(get("/v1/videos?query=elephant&category=classroom").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
+    }
+
+    @Test
+    fun `can find videos by tags`() {
+        saveVideo(videoId = 1, isEducational = true, isNews = true, title = "ben poos elephants")
+        saveVideo(videoId = 2, isEducational = true, isNews = false, title = "Video about elephants")
+
+        mockMvc.perform(get("/v1/videos?query=elephants&category=news&category=classroom").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[*].id", hasItem("1")))
+                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem("2"))))
     }
 
     @Test
