@@ -2,11 +2,9 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
-import com.boclips.videos.service.presentation.VideoController.Companion.getVideoLink
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
@@ -38,11 +36,11 @@ class VideoController(
     @GetMapping
     @SearchLogging
     fun search(@RequestParam("query") query: String?,
-               @RequestParam(name = "use_case", required = false) useCase: String?,
+               @RequestParam(name = "category", required = false) categories: List<String>?,
                @RequestParam("size") size: Int?,
                @RequestParam("page") page: Int?): ResponseEntity<PagedResources<*>> {
         val videosResource = getVideosByQuery.execute(query = query,
-                useCase = useCase,
+                useCase = categories?.let { categories.first() },
                 pageNumber = page ?: DEFAULT_PAGE_INDEX,
                 pageSize = size ?: DEFAULT_PAGE_SIZE)
 

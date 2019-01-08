@@ -37,8 +37,9 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `use_case is optional in the search template`() {
+    fun `category parameter is not required by link template`() {
         val response = mockMvc.perform(get("/v1")).andReturn().response.contentAsString
+
         val searchUrlTemplate: String = JsonPath.parse(response).read("$._links.search.href")
         val searchUrl = UriTemplate(searchUrlTemplate).expand(mapOf(("query" to "phrase"), ("size" to 1), ("page" to 1)))
 

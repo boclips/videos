@@ -69,7 +69,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val excludedVideoId = 999L
         saveNonEducationalVideo(videoId = excludedVideoId, title = "Non educational video about elephants")
 
-        mockMvc.perform(get("/v1/videos?query=elephant&use_case=classroom").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephant&category=classroom").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
     }
