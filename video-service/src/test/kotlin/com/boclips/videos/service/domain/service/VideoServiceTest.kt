@@ -23,7 +23,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `retrieve videos by query returns Kaltura videos`() {
         saveVideo(videoId = 1, title = "a kaltura asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"))
 
-        val videos = videoService.search(VideoSearchQuery(text = "kaltura", filters = emptyList(), pageIndex = 0, pageSize = 10))
+        val videos = videoService.search(VideoSearchQuery(text = "kaltura", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 10, pageIndex = 0))
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().asset.title).isEqualTo("a kaltura asset")
@@ -34,7 +34,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `retrieve videos by query returns Youtube videos`() {
         saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val videos = videoService.search(VideoSearchQuery(text = "youtube", filters = emptyList(), pageIndex = 0, pageSize = 10))
+        val videos = videoService.search(VideoSearchQuery(text = "youtube", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 10, pageIndex = 0))
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().asset.title).isEqualTo("a youtube asset")
@@ -45,7 +45,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `count videos`() {
         saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
-        val size = videoService.count(VideoSearchQuery(text = "youtube", filters = emptyList(), pageIndex = 0, pageSize = 10))
+        val size = videoService.count(VideoSearchQuery(text = "youtube", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 10, pageIndex = 0))
 
         assertThat(size).isEqualTo(1)
     }

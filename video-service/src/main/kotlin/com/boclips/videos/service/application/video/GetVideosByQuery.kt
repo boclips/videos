@@ -15,7 +15,7 @@ class GetVideosByQuery(
 ) {
     companion object : KLogging()
 
-    fun execute(query: String?, includeTags: List<String>, pageNumber: Int, pageSize: Int): VideosResource {
+    fun execute(query: String?, includeTags: List<String>, excludeTags: List<String>, pageSize: Int, pageNumber: Int): VideosResource {
         validateQuery(query)
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -24,7 +24,8 @@ class GetVideosByQuery(
                 text = query!!,
                 pageIndex = pageNumber,
                 pageSize = pageSize,
-                filters = includeTags
+                includeTags = includeTags,
+                excludeTags = excludeTags
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)

@@ -28,6 +28,9 @@ class InMemorySearchService : GenericSearchService<VideoMetadata> {
                     .filter { entry ->
                         entry.value.tags.containsAll(query.includeTags)
                     }
+                    .filter { entry ->
+                        entry.value.tags.none { query.excludeTags.contains(it) }
+                    }
                     .map { video -> video.key }
         }
     }

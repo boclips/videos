@@ -7,7 +7,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `translate phrase query`() {
-        val searchQuery = VideoSearchQuery(text = "normal phrase", filters = emptyList(), pageIndex = 0, pageSize = 2)
+        val searchQuery = VideoSearchQuery(text = "normal phrase", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 2, pageIndex = 0)
                 .toSearchQuery()
 
         assertThat(searchQuery.phrase).isEqualTo("normal phrase")
@@ -15,7 +15,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `translate single id query`() {
-        val searchQuery = VideoSearchQuery(text = "id:11", filters = emptyList(), pageIndex = 0, pageSize = 2)
+        val searchQuery = VideoSearchQuery(text = "id:11", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 2, pageIndex = 0)
                 .toSearchQuery()
 
         assertThat(searchQuery.ids).containsExactly("11")
@@ -23,17 +23,25 @@ class VideoSearchQueryTest {
 
     @Test
     fun `translate multiple id query`() {
-        val searchQuery = VideoSearchQuery(text = "id:11,12,13", filters = emptyList(), pageIndex = 0, pageSize = 2)
+        val searchQuery = VideoSearchQuery(text = "id:11,12,13", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 2, pageIndex = 0)
                 .toSearchQuery()
 
         assertThat(searchQuery.ids).containsExactly("11", "12", "13")
     }
 
     @Test
-    fun `allows filtering by tag`() {
-        val searchQuery = VideoSearchQuery(text = "id:11,12,13", filters = listOf("classroom"), pageIndex = 0, pageSize = 2)
+    fun `allows filtering by presence of tag`() {
+        val searchQuery = VideoSearchQuery(text = "id:11,12,13", includeTags = listOf("classroom"), excludeTags = emptyList(), pageSize = 2, pageIndex = 0)
                 .toSearchQuery()
 
         assertThat(searchQuery.includeTags).contains("classroom")
+    }
+
+    @Test
+    fun `allows filtering by absence of tag`() {
+        val searchQuery = VideoSearchQuery(text = "id:11,12,13", includeTags = emptyList(), excludeTags = listOf("classroom"), pageSize = 2, pageIndex = 0)
+                .toSearchQuery()
+
+        assertThat(searchQuery.excludeTags).contains("classroom")
     }
 }

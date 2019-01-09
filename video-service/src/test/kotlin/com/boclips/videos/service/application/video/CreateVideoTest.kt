@@ -39,9 +39,10 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         assertThat(videoService.count(VideoSearchQuery(
                 text = "the latest Bloomberg video",
-                filters = emptyList(),
-                pageIndex = 0,
-                pageSize = 0
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 0,
+                pageIndex = 0
         ))).isEqualTo(0)
     }
 
@@ -53,9 +54,10 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         assertThat(videoService.search(VideoSearchQuery(
                 text = "the latest bloomberg",
-                filters = emptyList(),
-                pageIndex = 0,
-                pageSize = 1
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 1,
+                pageIndex = 0
         )).first().asset.title).isEqualTo("the latest Bloomberg video")
     }
 

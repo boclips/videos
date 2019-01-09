@@ -4,11 +4,12 @@ import com.boclips.search.service.domain.Query
 
 class VideoSearchQuery(
         val text: String,
-        val filters: List<String>,
-        val pageIndex: Int,
-        val pageSize: Int) {
+        val includeTags: List<String>,
+        val excludeTags: List<String>,
+        val pageSize: Int,
+        val pageIndex: Int) {
     fun toSearchQuery(): Query {
-        return parse(this.text).copy(includeTags = filters)
+        return parse(this.text).copy(includeTags = includeTags, excludeTags = excludeTags)
     }
 
     override fun toString(): String {

@@ -24,7 +24,7 @@ class VideoController(
         private val patchVideo: PatchVideo
 ) {
     companion object {
-        fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null, null, null, null)).withRel("search")
+        fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null, null, null, null, null)).withRel("search")
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
 
         const val DEFAULT_PAGE_SIZE = 100
@@ -36,12 +36,14 @@ class VideoController(
     @SearchLogging
     fun search(@RequestParam("query") query: String?,
                @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
+               @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
                @RequestParam("size") size: Int?,
                @RequestParam("page") page: Int?): ResponseEntity<PagedResources<*>> {
         val videosResource = getVideosByQuery.execute(query = query,
                 includeTags = includeTags?.let { includeTags } ?: emptyList(),
-                pageNumber = page ?: DEFAULT_PAGE_INDEX,
-                pageSize = size ?: DEFAULT_PAGE_SIZE)
+                excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
+                pageSize = size ?: DEFAULT_PAGE_SIZE,
+                pageNumber = page ?: DEFAULT_PAGE_INDEX)
 
         val videoResources = videosResource
                 .videos

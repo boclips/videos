@@ -65,11 +65,21 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `filters out non educational results when filter param set`() {
+    fun `filters out non classroom results when filter param set`() {
         val excludedVideoId = 999L
         saveVideo(videoId = excludedVideoId, title = "Non educational video about elephants")
 
         mockMvc.perform(get("/v1/videos?query=elephant&include_tag=classroom").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
+    }
+
+    @Test
+    fun `can exclude results for a particular tag`() {
+        val excludedVideoId = 999L
+        saveVideo(videoId = excludedVideoId, tags = listOf("news"), title = "Elephant news")
+
+        mockMvc.perform(get("/v1/videos?query=elephant&exclude_tag=news").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
     }
