@@ -30,8 +30,8 @@ class VideoSearchQueryTest {
     }
 
     @Test
-    fun `translate educational filters`() {
-        val searchQuery = VideoSearchQuery(text = "id:11,12,13", filters = listOf(VideoSearchQueryFilter.EDUCATIONAL), pageIndex = 0, pageSize = 2)
+    fun `allows filtering by tag`() {
+        val searchQuery = VideoSearchQuery(text = "id:11,12,13", filters = listOf("classroom"), pageIndex = 0, pageSize = 2)
                 .toSearchQuery()
 
         assertThat(searchQuery.includeTags).contains("classroom")

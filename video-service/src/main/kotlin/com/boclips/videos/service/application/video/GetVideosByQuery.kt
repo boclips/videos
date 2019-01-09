@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video
 import com.boclips.videos.service.application.video.exceptions.QueryValidationException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.model.VideoSearchQueryFilter
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -25,7 +24,7 @@ class GetVideosByQuery(
                 text = query!!,
                 pageIndex = pageNumber,
                 pageSize = pageSize,
-                filters = toFilters(includeTags)
+                filters = includeTags
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
@@ -42,17 +41,6 @@ class GetVideosByQuery(
                 pageNumber = pageNumber,
                 pageSize = pageSize
         )
-    }
-
-    private fun toFilters(tags: List<String>): List<VideoSearchQueryFilter> {
-        return tags.fold(emptyList()) { acc: List<VideoSearchQueryFilter>, tag: String ->
-            val categoryFilter = when (tag) {
-                "classroom" -> listOf(VideoSearchQueryFilter.EDUCATIONAL)
-                "news" -> listOf(VideoSearchQueryFilter.NEWS)
-                else -> emptyList()
-            }
-            acc + categoryFilter
-        }
     }
 
     private fun validateQuery(query: String?) {
