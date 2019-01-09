@@ -1,6 +1,5 @@
-package com.boclips.videos.service.domain.service.ContentFilterssisInTeacherProduct
+package com.boclips.videos.service.domain.model
 
-import com.boclips.videos.service.domain.model.ContentEnrichers
 import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
 import org.assertj.core.api.Assertions.assertThat
@@ -10,51 +9,51 @@ import org.junit.jupiter.api.Test
 class ContentEnrichersTest {
 
     @Test
-    fun `non stock content is marked as educational`() {
+    fun `non stock content is matched as classroom`() {
         val video = createVideoAsset(type = VideoType.INSTRUCTIONAL_CLIPS)
 
-        assertThat(ContentEnrichers.isNonEducationalStock(video)).isFalse()
+        assertThat(ContentEnrichers.isClassroom(video)).isTrue()
     }
 
     @Test
-    fun `stock content with the word "speech" is marked as educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "jfk state of union speech"))).isFalse()
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, description = "jfk state of union Speech"))).isFalse()
+    fun `stock content with the word "speech" is matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "jfk state of union speech"))).isTrue()
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, description = "jfk state of union Speech"))).isTrue()
     }
 
     @Test
-    fun `stock content without the word "speech" is not marked as educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "Family left speechless by bride's wedding dress"))).isTrue()
+    fun `stock content without the word "speech" is NOT matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "Family left speechless by bride's wedding dress"))).isFalse()
     }
 
     @Test
-    fun `stock content with the phrase "archive public information film" is marked as educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "Archive public information film: Woman throwing grain (to chickens)"))).isFalse()
+    fun `stock content with the phrase "archive public information film" is matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "Archive public information film: Woman throwing grain (to chickens)"))).isTrue()
     }
 
     @Test
-    fun `stock content containing words "biology" and "animation" is marked as educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "Animation explaining all about biology"))).isFalse()
+    fun `stock content containing words "biology" and "animation" is matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "Animation explaining all about biology"))).isTrue()
     }
 
     @Test
-    fun `stock content containing words "space" and "animation" is marked as educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "Animation explaining all about space"))).isFalse()
+    fun `stock content containing words "space" and "animation" is matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "Animation explaining all about space"))).isTrue()
     }
 
     @Test
-    fun `stock content containing the word "awards" is marked not educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation awards"))).isTrue()
+    fun `stock content containing the word "awards" is NOT matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation awards"))).isFalse()
     }
 
     @Test
-    fun `stock content containing the word "premiere" is marked not educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation premiere"))).isTrue()
+    fun `stock content containing the word "premiere" is NOT matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation premiere"))).isFalse()
     }
 
     @Test
-    fun `stock content containing the phrase "red carpet" is marked not educational`() {
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation red carpet"))).isTrue()
-        assertThat(ContentEnrichers.isNonEducationalStock(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation red colour carpet"))).isFalse()
+    fun `stock content containing the phrase "red carpet" is NOT matched as classroom`() {
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation red carpet"))).isFalse()
+        assertThat(ContentEnrichers.isClassroom(createVideoAsset(type = VideoType.STOCK, title = "speech archive public information film biology space animation red colour carpet"))).isTrue()
     }
 }
