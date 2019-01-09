@@ -7,8 +7,6 @@ image_resource:
     repository: boclipsconcourse/docker-java
     tag: '0.2.0'
 
-privileged: true
-
 inputs:
   - name: source
 
