@@ -6,6 +6,5 @@ data class VideoMetadata(
         val description: String,
         val contentProvider: String,
         val keywords: List<String>,
-        val isNews: Boolean,
-        val isEducational: Boolean
+        val tags: List<String>
 )

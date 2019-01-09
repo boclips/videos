@@ -9,11 +9,17 @@ object VideoMetadataConverter {
         return VideoMetadata(
                 id = video.assetId.value,
                 title = video.title,
-                contentProvider = video.contentPartnerId,
                 description = video.description,
+                contentProvider = video.contentPartnerId,
                 keywords = video.keywords,
-                isEducational = !ContentEnrichers.isNonEducationalStock(video),
-                isNews = ContentEnrichers.isNews(video)
+                tags = tagsFrom(video)
         )
+    }
+
+    private fun tagsFrom(video: VideoAsset): List<String> {
+        return listOf(
+                Pair("classroom", !ContentEnrichers.isNonEducationalStock(video)),
+                Pair("news", ContentEnrichers.isNews(video))
+        ).fold(emptyList()) { acc, pair -> if (pair.second) acc.plus(pair.first) else acc }
     }
 }

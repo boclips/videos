@@ -28,32 +28,54 @@ class VideoMetadataConverterTest {
                 description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1"),
-                isNews = false,
-                isEducational = true
+                tags = listOf("classroom")
         ))
     }
 
     @Test
-    fun `convert news video`() {
+    fun `tags classroom video`() {
+        val video = TestFactories.createVideoAsset(
+                type = VideoType.INSTRUCTIONAL_CLIPS
+        )
+
+        val videoMetadata = VideoMetadataConverter.convert(video)
+
+        assertThat(videoMetadata.tags).containsExactly("classroom")
+    }
+
+    @Test
+    fun `tags news video`() {
         val video = TestFactories.createVideoAsset(
                 type = VideoType.NEWS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
 
-        assertThat(videoMetadata.isNews).isTrue()
+        assertThat(videoMetadata.tags).contains("news")
     }
 
     @Test
-    fun `it flags non-educational videos`() {
+    fun `it can apply multiple tags`() {
+        val video = TestFactories.createVideoAsset(
+                type = VideoType.NEWS,
+                description = "biology animation"
+        )
+
+        val videoMetadata = VideoMetadataConverter.convert(video)
+
+        assertThat(videoMetadata.tags).containsExactly("classroom", "news")
+    }
+
+    @Test
+    fun `it doesn't tag videos without a match`() {
         val video = TestFactories.createVideoAsset(
                 videoId = "123",
-                title = "red carpet",
+                title = "garbage title",
                 type = VideoType.STOCK
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
 
-        assertThat(videoMetadata.isEducational).isEqualTo(false)
+        assertThat(videoMetadata.tags).isEmpty()
     }
 }

@@ -1,7 +1,9 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.*
-import kotlin.reflect.full.memberProperties
+import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.VideoMetadata
 
 class InMemorySearchService : GenericSearchService<VideoMetadata> {
     private val index = mutableMapOf<String, VideoMetadata>()
@@ -23,16 +25,11 @@ class InMemorySearchService : GenericSearchService<VideoMetadata> {
                                 || entry.value.description.contains(phrase, ignoreCase = true)
                                 || entry.value.contentProvider.contains(phrase, ignoreCase = true)
                     }
-                    .filterValues(filter(query.filters))
+                    .filter { entry ->
+                        entry.value.tags.containsAll(query.includeTags)
+                    }
                     .map { video -> video.key }
         }
-    }
-
-    private fun filter(filters: List<Filter>) = { video: VideoMetadata -> filters.all(this.filter(video)) }
-
-    private fun filter(video: VideoMetadata) = { filter: Filter ->
-        val property = VideoMetadata::class.memberProperties.find { it.name == filter.field }!!
-        property.get(video) == filter.value
     }
 
     override fun removeFromSearch(videoId: String) {

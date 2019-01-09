@@ -1,6 +1,9 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.*
+import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -54,28 +57,14 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds news videos`(searchService: GenericSearchService<VideoMetadata>) {
         searchService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", isNews = true),
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", tags = listOf("news")),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer Trump", description = "Behave like a gentleman, cane like a sponge"),
-                SearchableVideoMetadataFactory.create(id = "4", title = "Trump to attack UK", contentProvider = "BBC", isNews = true)
+                SearchableVideoMetadataFactory.create(id = "4", title = "Trump to attack UK", contentProvider = "BBC", tags = listOf("news"))
         ))
 
-        val result = searchService.search(PaginatedSearchRequest(query = Query("Trump", filters = listOf(Filter(VideoMetadata::isNews, true)))))
+        val result = searchService.search(PaginatedSearchRequest(query = Query("Trump", includeTags = listOf("news"))))
 
         assertThat(result).containsExactlyInAnyOrder("4")
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(SearchServiceProvider::class)
-    fun `filters videos by content providers`(searchService: GenericSearchService<VideoMetadata>) {
-        searchService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing", contentProvider = "ted"),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Beer", contentProvider = "tod"),
-                SearchableVideoMetadataFactory.create(id = "3", title = "Not a match", contentProvider = "ted")
-        ))
-
-        val result = searchService.search(PaginatedSearchRequest(query = Query("gentleman", filters = listOf(Filter(VideoMetadata::contentProvider, "ted")))))
-
-        assertThat(result).containsExactly("1")
     }
 
     @ParameterizedTest

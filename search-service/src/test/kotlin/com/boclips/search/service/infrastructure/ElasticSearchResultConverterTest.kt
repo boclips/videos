@@ -21,8 +21,7 @@ class ElasticSearchResultConverterTest {
                 "date": "2014-05-13",
                 "duration": "02:01:20",
                 "keywords": ["k1","k2"],
-                "isNews": true,
-                "isEducational": true
+                "tags": ["news", "classroom"]
             }
         """.trimIndent()))
 
@@ -34,8 +33,7 @@ class ElasticSearchResultConverterTest {
                 description = "The description",
                 contentProvider = "TED Talks",
                 keywords = listOf("k1", "k2"),
-                isNews = true,
-                isEducational = true
+                tags = listOf("news", "classroom")
         ))
     }
 

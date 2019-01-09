@@ -70,8 +70,7 @@ abstract class AbstractSpringIntegrationTest {
                   contentProviderId: String = "content-partner-video-id-$videoId",
                   typeId: Int = 3,
                   keywords: List<String> = emptyList(),
-                  isEducational: Boolean = true,
-                  isNews: Boolean = false
+                  tags: List<String> = emptyList()
     ) {
         jdbcTemplate.update("""
             INSERT INTO metadata_orig (
@@ -98,8 +97,7 @@ abstract class AbstractSpringIntegrationTest {
                 description = description,
                 contentProvider = contentProvider,
                 keywords = emptyList(),
-                isNews = isNews,
-                isEducational = isEducational
+                tags = tags
         )))
 
         when (playbackId.type) {

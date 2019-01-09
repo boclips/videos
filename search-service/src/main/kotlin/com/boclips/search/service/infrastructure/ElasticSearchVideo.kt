@@ -9,12 +9,8 @@ data class ElasticSearchVideo @JsonCreator constructor(
         @param:JsonProperty(DESCRIPTION) val description: String,
         @param:JsonProperty(CONTENT_PROVIDER) val contentProvider: String,
         @param:JsonProperty(KEYWORDS) val keywords: List<String>,
-        @param:JsonProperty(IS_NEWS)
-        @get:JsonProperty(IS_NEWS)
-        val isNews: Boolean,
-        @param:JsonProperty(IS_EDUCATIONAL)
-        @get:JsonProperty(IS_EDUCATIONAL)
-        val isEducational: Boolean
+        @param:JsonProperty(TAGS) val tags: List<String>
+
 ) {
     companion object {
         const val ID = "id"
@@ -22,7 +18,6 @@ data class ElasticSearchVideo @JsonCreator constructor(
         const val DESCRIPTION = "description"
         const val CONTENT_PROVIDER = "contentProvider"
         const val KEYWORDS = "keywords"
-        const val IS_NEWS = "isNews"
-        const val IS_EDUCATIONAL = "isEducational"
+        const val TAGS = "tags"
     }
 }

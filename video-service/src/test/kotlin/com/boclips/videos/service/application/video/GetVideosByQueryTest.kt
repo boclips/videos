@@ -64,8 +64,8 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `filters educational content when category is classroom`() {
-        saveVideo(videoId = 123, title = "banana", isEducational = true)
-        saveVideo(videoId = 124, title = "banana", isEducational = false)
+        saveVideo(videoId = 123, title = "banana", tags = listOf("classroom"))
+        saveVideo(videoId = 124, title = "banana")
 
         val videos = getVideosByQuery.execute(query = "banana", categories = listOf("classroom"), pageNumber = 0, pageSize = 2)
 
@@ -75,8 +75,8 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `shows only news when category is news`() {
-        saveVideo(videoId = 123, title = "banana", isNews = true)
-        saveVideo(videoId = 124, title = "banana", isNews = false)
+        saveVideo(videoId = 123, title = "banana", tags = listOf("news"))
+        saveVideo(videoId = 124, title = "banana")
 
         val videos = getVideosByQuery.execute(query = "banana", categories = listOf("news"), pageNumber = 0, pageSize = 2)
 
@@ -86,10 +86,10 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns videos with multiple categories`() {
-        saveVideo(videoId = 123, title = "banana", isEducational = false, isNews = true)
-        saveVideo(videoId = 124, title = "banana", isEducational = false, isNews = false)
-        saveVideo(videoId = 125, title = "banana", isEducational = true, isNews = true)
-        saveVideo(videoId = 126, title = "banana", isEducational = true, isNews = false)
+        saveVideo(videoId = 123, title = "banana", tags = listOf("news"))
+        saveVideo(videoId = 124, title = "banana")
+        saveVideo(videoId = 125, title = "banana", tags = listOf("classroom", "news"))
+        saveVideo(videoId = 126, title = "banana", tags = listOf("classroom"))
 
         val videos = getVideosByQuery.execute(query = "banana", categories = listOf("news", "classroom"), pageNumber = 0, pageSize = 2)
 

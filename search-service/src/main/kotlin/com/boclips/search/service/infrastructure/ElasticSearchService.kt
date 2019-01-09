@@ -115,16 +115,20 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
 
-        val filterQuery = searchRequest.query.filters
-                .fold(QueryBuilders.boolQuery()) { query, filter -> query.filter(QueryBuilders.termQuery(filter.field, filter.value)) }
+        val filters =
+                if (searchRequest.query.includeTags.isNotEmpty())
+                    QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.includeTags)
+                else
+                    QueryBuilders.boolQuery()
 
-        val findMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findMatchesQuery).must(filterQuery)
-        val findExactMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findExactMatchesQuery).must(filterQuery)
+        val findMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findMatchesQuery).filter(filters)
+        val findExactMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findExactMatchesQuery).filter(filters)
 
         val allMatchesQuery = QueryBuilders
                 .boolQuery()
                 .should(findMatchesQueryWithFilters)
                 .should(findExactMatchesQueryWithFilters)
+                .mustNot(QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.excludeTags))
 
         val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
@@ -183,8 +187,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 description = video.description,
                 contentProvider = video.contentProvider,
                 keywords = video.keywords,
-                isNews = video.isNews,
-                isEducational = video.isEducational
+                tags = video.tags
         ))
 
         return IndexRequest(ES_INDEX, ES_TYPE, video.id)

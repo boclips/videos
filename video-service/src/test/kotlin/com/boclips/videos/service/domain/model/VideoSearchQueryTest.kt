@@ -1,7 +1,5 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.search.service.domain.Filter
-import com.boclips.search.service.domain.VideoMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -36,6 +34,6 @@ class VideoSearchQueryTest {
         val searchQuery = VideoSearchQuery(text = "id:11,12,13", filters = listOf(VideoSearchQueryFilter.EDUCATIONAL), pageIndex = 0, pageSize = 2)
                 .toSearchQuery()
 
-        assertThat(searchQuery.filters).containsExactly(Filter.invoke(VideoMetadata::isEducational, true))
+        assertThat(searchQuery.includeTags).contains("classroom")
     }
 }

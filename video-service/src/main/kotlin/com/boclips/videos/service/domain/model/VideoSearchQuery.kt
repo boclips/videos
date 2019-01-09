@@ -1,8 +1,6 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.search.service.domain.Filter
 import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.VideoMetadata
 
 class VideoSearchQuery(
         val text: String,
@@ -10,14 +8,7 @@ class VideoSearchQuery(
         val pageIndex: Int,
         val pageSize: Int) {
     fun toSearchQuery(): Query {
-        val filters = this.filters.map {
-            when (it) {
-                VideoSearchQueryFilter.EDUCATIONAL -> Filter(VideoMetadata::isEducational, true)
-                VideoSearchQueryFilter.NEWS -> Filter(VideoMetadata::isNews, true)
-            }
-        }
-
-        return parse(this.text).copy(filters = filters)
+        return parse(this.text).copy(includeTags = filters.map { filter -> filter.type })
     }
 
     override fun toString(): String {

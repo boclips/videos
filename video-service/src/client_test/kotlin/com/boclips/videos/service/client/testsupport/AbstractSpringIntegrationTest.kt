@@ -4,7 +4,6 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.VideoServiceApplication
-import com.boclips.videos.service.domain.model.asset.VideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
@@ -86,8 +85,7 @@ abstract class AbstractSpringIntegrationTest {
                 description = description,
                 contentProvider = contentProvider,
                 keywords = emptyList(),
-                isNews = false,
-                isEducational = true
+                tags = listOf("classroom")
         )))
 
         when (playbackId.type) {

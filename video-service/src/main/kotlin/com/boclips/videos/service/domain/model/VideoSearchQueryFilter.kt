@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model
 
-enum class VideoSearchQueryFilter {
-    EDUCATIONAL,
-    NEWS
+enum class VideoSearchQueryFilter(val type: String) {
+    EDUCATIONAL("classroom"),
+    NEWS("news")
 }
