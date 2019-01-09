@@ -4,8 +4,10 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: java
-    tag: 'latest'
+    repository: boclipsconcourse/docker-java
+    tag: '0.2.0'
+
+privileged: true
 
 inputs:
   - name: source
