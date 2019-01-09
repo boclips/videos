@@ -1,9 +1,11 @@
 package com.boclips.videos.service.domain.model.asset
 
+typealias VideoAssetConsumer = (Sequence<VideoAsset>) -> Unit
+
 interface VideoAssetRepository {
     fun find(assetId: AssetId): VideoAsset?
     fun findAll(assetIds: List<AssetId>): List<VideoAsset>
-    fun streamAll(consumer: (videos: Sequence<VideoAsset>) -> Unit)
+    fun streamAll(consumer: VideoAssetConsumer)
     fun delete(assetId: AssetId)
     fun create(videoAsset: VideoAsset): VideoAsset
     fun update(videoAsset: VideoAsset): VideoAsset
