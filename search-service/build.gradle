@@ -17,6 +17,11 @@ test {
     useJUnitPlatform()
 }
 
+task testWithoutSolr(type: Test) {
+    useJUnitPlatform()
+    exclude '**/SolrIntegrationTest.class'
+}
+
 def junitVersion = "5.3.1"
 
 dependencies {

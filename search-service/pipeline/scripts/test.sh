@@ -8,6 +8,6 @@ cwd="$(cd "$(dirname $0)" && pwd)"
 
 (
 cd source
-./gradlew search-service:clean search-service:test --rerun-tasks --no-daemon
+./gradlew search-service:clean search-service:testWithoutSolr --rerun-tasks --no-daemon
 )
 
