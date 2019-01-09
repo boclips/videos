@@ -16,7 +16,7 @@ class GetVideosByQuery(
 ) {
     companion object : KLogging()
 
-    fun execute(query: String?, categories: List<String>, pageNumber: Int, pageSize: Int): VideosResource {
+    fun execute(query: String?, includeTags: List<String>, pageNumber: Int, pageSize: Int): VideosResource {
         validateQuery(query)
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -25,7 +25,7 @@ class GetVideosByQuery(
                 text = query!!,
                 pageIndex = pageNumber,
                 pageSize = pageSize,
-                filters = categoriesToFilters(categories)
+                filters = toFilters(includeTags)
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
@@ -44,9 +44,9 @@ class GetVideosByQuery(
         )
     }
 
-    private fun categoriesToFilters(categories: List<String>): List<VideoSearchQueryFilter> {
-        return categories.fold(emptyList()) { acc: List<VideoSearchQueryFilter>, category: String ->
-            val categoryFilter = when (category) {
+    private fun toFilters(tags: List<String>): List<VideoSearchQueryFilter> {
+        return tags.fold(emptyList()) { acc: List<VideoSearchQueryFilter>, tag: String ->
+            val categoryFilter = when (tag) {
                 "classroom" -> listOf(VideoSearchQueryFilter.EDUCATIONAL)
                 "news" -> listOf(VideoSearchQueryFilter.NEWS)
                 else -> emptyList()

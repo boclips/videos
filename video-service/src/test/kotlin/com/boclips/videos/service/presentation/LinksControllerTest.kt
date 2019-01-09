@@ -22,7 +22,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
-                .andExpect(jsonPath("$._links.search.href", containsString("{&category}")))
+                .andExpect(jsonPath("$._links.search.href", containsString("{&include_tag}")))
                 .andExpect(jsonPath("$._links.search.templated", equalTo(true)))
                 .andExpect(jsonPath("$._links.video.href", containsString("/videos/")))
                 .andExpect(jsonPath("$._links.video.templated", equalTo(true)))
@@ -38,7 +38,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `category parameter is not required by link template`() {
+    fun `optional parameters are not required by link template`() {
         val response = mockMvc.perform(get("/v1")).andReturn().response.contentAsString
 
         val searchUrlTemplate: String = JsonPath.parse(response).read("$._links.search.href")

@@ -35,11 +35,11 @@ class VideoController(
     @GetMapping
     @SearchLogging
     fun search(@RequestParam("query") query: String?,
-               @RequestParam(name = "category", required = false) categories: List<String>?,
+               @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
                @RequestParam("size") size: Int?,
                @RequestParam("page") page: Int?): ResponseEntity<PagedResources<*>> {
         val videosResource = getVideosByQuery.execute(query = query,
-                categories = categories?.let { categories } ?: emptyList(),
+                includeTags = includeTags?.let { includeTags } ?: emptyList(),
                 pageNumber = page ?: DEFAULT_PAGE_INDEX,
                 pageSize = size ?: DEFAULT_PAGE_SIZE)
 

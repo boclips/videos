@@ -69,7 +69,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val excludedVideoId = 999L
         saveVideo(videoId = excludedVideoId, title = "Non educational video about elephants")
 
-        mockMvc.perform(get("/v1/videos?query=elephant&category=classroom").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephant&include_tag=classroom").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
     }
@@ -79,7 +79,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         saveVideo(videoId = 1, tags = listOf("news", "classroom"), title = "ben poos elephants")
         saveVideo(videoId = 2, tags = listOf("classroom"), title = "Video about elephants")
 
-        mockMvc.perform(get("/v1/videos?query=elephants&category=news&category=classroom").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&include_tag=news&include_tag=classroom").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
                 .andExpect(jsonPath("$._embedded.videos[*].id", hasItem("1")))
