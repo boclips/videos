@@ -5,7 +5,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class TestSearchService(inner: GenericSearchService<VideoMetadata>) : SearchServiceAdapter<String>(inner) {
+class TestSearchService(query: GenericSearchService, admin: GenericSearchServiceAdmin<VideoMetadata>)
+    : SearchServiceAdapter<String>(query, admin) {
     override fun convert(document: String): VideoMetadata {
         return VideoMetadata(
                 id = document.substring(0, 1).toUpperCase(),
@@ -23,8 +24,8 @@ class SearchServiceAdapterTest {
 
     @BeforeEach
     internal fun setUp() {
-        val inner = InMemorySearchService()
-        searchService = TestSearchService(inner)
+        val inMemorySearchService = InMemorySearchService()
+        searchService = TestSearchService(inMemorySearchService, inMemorySearchService)
     }
 
     @Test

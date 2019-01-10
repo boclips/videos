@@ -14,7 +14,7 @@ class CreateVideo(
         private val videoAssetRepository: VideoAssetRepository,
         private val getVideoById: GetVideoById,
         private val createVideoRequestToAssetConverter: CreateVideoRequestToAssetConverter,
-        private val searchService: SearchService,
+        private val searchServiceAdmin: SearchService,
         private val playbackRepository: PlaybackRespository
 ) {
     fun execute(createRequest: CreateVideoRequest): VideoResource {
@@ -22,7 +22,7 @@ class CreateVideo(
         ensureVideoPlaybackExists(createRequest)
 
         val createdAsset = videoAssetRepository.create(assetToBeCreated)
-        searchService.upsert(sequenceOf(createdAsset))
+        searchServiceAdmin.upsert(sequenceOf(createdAsset))
         return getVideoById.execute(createdAsset.assetId.value)
     }
 

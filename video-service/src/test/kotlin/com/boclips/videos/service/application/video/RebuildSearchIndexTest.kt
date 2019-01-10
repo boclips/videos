@@ -17,7 +17,8 @@ class RebuildSearchIndexTest {
 
     @Test
     fun `execute rebuilds search index`() {
-        val searchService = VideoAssetSearchService(InMemorySearchService())
+        val inMemorySearchService = InMemorySearchService()
+        val searchService = VideoAssetSearchService(inMemorySearchService, inMemorySearchService)
         searchService.upsert(sequenceOf(TestFactories.createVideoAsset(videoId = "1")))
 
         val videoAssetRepository = mock<VideoAssetRepository> {

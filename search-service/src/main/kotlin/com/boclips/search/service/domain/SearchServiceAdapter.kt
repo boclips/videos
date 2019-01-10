@@ -1,24 +1,26 @@
 package com.boclips.search.service.domain
 
-abstract class SearchServiceAdapter<T>(private val inner: GenericSearchService<VideoMetadata>) : GenericSearchService<T> {
+abstract class SearchServiceAdapter<T>(
+        private val queryService: GenericSearchService,
+        private val adminService: GenericSearchServiceAdmin<VideoMetadata>) : GenericSearchService, GenericSearchServiceAdmin<T> {
     override fun resetIndex() {
-        inner.resetIndex()
+        adminService.resetIndex()
     }
 
     override fun upsert(videos: Sequence<T>) {
-        inner.upsert(videos.map(::convert))
+        adminService.upsert(videos.map(::convert))
     }
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {
-        return inner.search(searchRequest)
+        return queryService.search(searchRequest)
     }
 
     override fun count(query: Query): Long {
-       return inner.count(query)
+        return queryService.count(query)
     }
 
     override fun removeFromSearch(videoId: String) {
-        inner.removeFromSearch(videoId)
+        adminService.removeFromSearch(videoId)
     }
 
     abstract fun convert(document: T): VideoMetadata

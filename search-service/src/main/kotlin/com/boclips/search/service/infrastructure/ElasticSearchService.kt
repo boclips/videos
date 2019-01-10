@@ -3,27 +3,17 @@ package com.boclips.search.service.infrastructure
 import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest
-import org.elasticsearch.action.bulk.BulkRequest
-import org.elasticsearch.action.delete.DeleteRequest
-import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
-import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
-import org.elasticsearch.common.unit.TimeValue
-import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
@@ -31,7 +21,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
-class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService<VideoMetadata> {
+class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService {
     companion object : KLogging() {
 
         const val ES_TYPE = "asset"
@@ -52,11 +42,6 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         client = RestHighLevelClient(builder)
     }
 
-    override fun resetIndex() {
-        deleteIndex()
-        configureIndex()
-    }
-
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {
         return searchElasticSearch(searchRequest)
                 .map(elasticSearchResultConverter::convert)
@@ -65,17 +50,6 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
     override fun count(query: Query): Long {
         return searchElasticSearch(PaginatedSearchRequest(query = query)).totalHits
-    }
-
-    override fun removeFromSearch(videoId: String) {
-        val request = DeleteRequest(ES_INDEX, ES_TYPE, videoId)
-        request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-        client.delete(request, RequestOptions.DEFAULT)
-    }
-
-    override fun upsert(videos: Sequence<VideoMetadata>) {
-        val batchSize = 2000
-        videos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEachIndexed(this::upsertBatch)
     }
 
     private fun searchElasticSearch(searchRequest: PaginatedSearchRequest): SearchHits {
@@ -159,58 +133,4 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
     private fun isIdLookup(searchRequest: PaginatedSearchRequest) =
             searchRequest.query.ids.isNotEmpty() == true
-
-    private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>) {
-        logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }
-
-        val request = videos
-                .map(this::indexRequest)
-                .fold(BulkRequest()) { bulkRequest, indexRequest ->
-                    bulkRequest.add(indexRequest)
-                }
-
-        request.timeout(TimeValue.timeValueMinutes(2))
-        request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
-
-        val result = client.bulk(request, RequestOptions.DEFAULT)
-
-        if (result.hasFailures()) {
-            throw Error("Batch indexing failed: ${result.buildFailureMessage()}")
-        }
-        logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} asset(s)" }
-    }
-
-    private fun indexRequest(video: VideoMetadata): IndexRequest {
-        val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
-                id = video.id,
-                title = video.title,
-                description = video.description,
-                contentProvider = video.contentProvider,
-                keywords = video.keywords,
-                tags = video.tags
-        ))
-
-        return IndexRequest(ES_INDEX, ES_TYPE, video.id)
-                .source(document, XContentType.JSON)
-    }
-
-    private fun configureIndex() {
-        val indexConfiguration = IndexConfiguration()
-        val createIndexRequest = CreateIndexRequest(ES_INDEX)
-                .settings(indexConfiguration.generateIndexSettings())
-                .mapping("asset", indexConfiguration.generateVideoMapping())
-
-        logger.info("Creating index $ES_INDEX")
-        client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
-    }
-
-    private fun deleteIndex() {
-        if (indexExists(ES_INDEX)) {
-            logger.info("Deleting index $ES_INDEX")
-            client.indices().delete(DeleteIndexRequest(ES_INDEX), RequestOptions.DEFAULT)
-            logger.info("Index $ES_INDEX deleted")
-        }
-    }
-
-    private fun indexExists(index: String) = client.indices().exists(GetIndexRequest().indices(index), RequestOptions.DEFAULT)
 }

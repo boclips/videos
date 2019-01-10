@@ -1,11 +1,8 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.GenericSearchService
-import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.*
 
-class InMemorySearchService : GenericSearchService<VideoMetadata> {
+class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<VideoMetadata> {
     private val index = mutableMapOf<String, VideoMetadata>()
 
     override fun count(query: Query): Long = idsMatching(query).size.toLong()
