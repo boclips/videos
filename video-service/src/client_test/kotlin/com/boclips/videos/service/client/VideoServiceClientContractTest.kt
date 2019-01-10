@@ -28,12 +28,19 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
     }
 
     @Test
-    fun `create a video gives a unique id`() {
+    fun `create a kaltura video gives a unique id`() {
         val id1 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
         val id2 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
 
         assertThat(id1.uri.toString()).contains("/videos/")
         assertThat(id1.uri.toString()).isNotEqualTo(id2.uri.toString())
+    }
+
+    @Test
+    fun `create a youtube persists video`() {
+        val id1 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123", playbackProvider = PlaybackProvider.YOUTUBE))
+
+        assertThat(getClient().get(id1)).isNotNull
     }
 
     @Test
@@ -78,6 +85,7 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
     @BeforeEach
     fun setUp() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-123", referenceId = "ref-id-123", duration = Duration.ofMinutes(1)))
+        fakeYoutubePlaybackProvider.addVideo("ref-id-123", "http://my-little-pony.com", Duration.ZERO)
     }
 
     override fun getClient() = realClient

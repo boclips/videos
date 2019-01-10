@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.InvalidCreateVide
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -23,10 +24,19 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     lateinit var videoService: VideoService
 
     @Test
-    fun `requesting creation of an existing video creates the video`() {
+    fun `requesting creation of an existing kaltura video creates the video`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
 
         val resource = createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+
+        assertThat(videoService.get(AssetId(resource.id!!))).isNotNull
+    }
+
+    @Test
+    fun `requesting creation of an existing youtube video creates the video`() {
+        fakeYoutubePlaybackProvider.addVideo("8889", "thumbnail-url", duration = Duration.ZERO)
+
+        val resource = createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))
 
         assertThat(videoService.get(AssetId(resource.id!!))).isNotNull
     }
