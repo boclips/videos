@@ -5,7 +5,10 @@
 spring-shell.log
 
 ### IntelliJ IDEA ###
-.idea
+!/.idea
+/.idea/*
+!/.idea/dictionaries # Allow dictionaries to be shared
+
 *.iws
 *.iml
 *.ipr
