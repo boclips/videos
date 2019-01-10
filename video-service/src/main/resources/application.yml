@@ -8,3 +8,8 @@ spring:
 logging:
   level:
     com.boclips.kalturaclient: debug
+
+management:
+  health:
+    solr:
+      enabled: false
