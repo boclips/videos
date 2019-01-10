@@ -21,7 +21,6 @@ class CreateVideoRequestToAssetConverter {
         validateObligatoryField("contentPartnerId", createVideoRequest.provider)
         validateObligatoryField("contentPartnerVideoId", createVideoRequest.providerVideoId)
         validateObligatoryField("content type", createVideoRequest.contentType)
-        validateObligatoryField("restrictions", createVideoRequest.legalRestrictions)
         validateObligatoryField("subjects", createVideoRequest.subjects)
 
         return VideoAsset(
@@ -35,7 +34,7 @@ class CreateVideoRequestToAssetConverter {
                 contentPartnerVideoId = createVideoRequest.providerVideoId!!,
                 type = VideoType.valueOf(createVideoRequest.contentType!!),
                 duration = createVideoRequest.duration!!,
-                legalRestrictions = createVideoRequest.legalRestrictions!!,
+                legalRestrictions = createVideoRequest.legalRestrictions ?: "",
                 subjects = createVideoRequest.subjects!!.map{ Subject(it) }.toSet()
         )
     }

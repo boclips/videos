@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
 import com.boclips.videos.service.testsupport.TestFactories
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -86,10 +87,8 @@ class CreateVideoRequestToAssetConverterTest {
     }
 
     @Test
-    fun `throws when restrictions is null`() {
-        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(legalRestrictions = null)) }
-                .isInstanceOf(InvalidCreateVideoRequestException::class.java)
-                .hasMessage("restrictions cannot be null")
+    fun `empty string when restrictions is null`() {
+        assertThat(converter.convert(TestFactories.createCreateVideoRequest(legalRestrictions = null)).legalRestrictions).isEmpty()
     }
 
     @Test
