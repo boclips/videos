@@ -15,6 +15,7 @@ import com.boclips.videos.service.infrastructure.video.VideoEntityRepository
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
+import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -42,8 +43,8 @@ class ApplicationContext {
             )
 
     @Bean
-    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById, searchService: SearchService, playbackRepository: PlaybackRespository): CreateVideo {
-        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter(), searchService, playbackRepository)
+    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById, searchService: SearchService, playbackRepository: PlaybackRespository, videoCounter: Counter): CreateVideo {
+        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter(), searchService, playbackRepository, videoCounter)
     }
 
     @Bean

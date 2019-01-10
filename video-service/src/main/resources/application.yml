@@ -10,6 +10,17 @@ logging:
     com.boclips.kalturaclient: debug
 
 management:
+  endpoint:
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "info, health, prometheus"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
   health:
     solr:
       enabled: false

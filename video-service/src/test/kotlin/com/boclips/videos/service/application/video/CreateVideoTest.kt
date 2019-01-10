@@ -4,11 +4,11 @@ import com.boclips.videos.service.application.video.exceptions.InvalidCreateVide
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
+import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -22,6 +22,9 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoService: VideoService
+
+    @Autowired
+    lateinit var videoCounter: Counter
 
     @Test
     fun `requesting creation of an existing kaltura video creates the video`() {
@@ -76,5 +79,18 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         assertThrows<InvalidCreateVideoRequestException> {
             createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = null))
         }
+    }
+
+    @Test
+    fun `bumps video counter`() {
+        val videoCounterBefore = videoCounter.count()
+
+        fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
+
+        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+
+        val videoCounterAfter = videoCounter.count()
+
+        assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
     }
 }

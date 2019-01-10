@@ -19,6 +19,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                .antMatchers(HttpMethod.GET, "/actuator/prometheus").permitAll()
 
                 .antMatchers(HttpMethod.OPTIONS, "/v1/**").permitAll()
 

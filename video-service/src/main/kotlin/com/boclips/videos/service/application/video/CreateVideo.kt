@@ -9,13 +9,16 @@ import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoResource
+import io.micrometer.core.instrument.Counter
 
 class CreateVideo(
         private val videoAssetRepository: VideoAssetRepository,
         private val getVideoById: GetVideoById,
         private val createVideoRequestToAssetConverter: CreateVideoRequestToAssetConverter,
         private val searchServiceAdmin: SearchService,
-        private val playbackRepository: PlaybackRespository
+        private val playbackRepository: PlaybackRespository,
+        private val videoCounter: Counter
+
 ) {
     fun execute(createRequest: CreateVideoRequest): VideoResource {
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest)
@@ -23,6 +26,9 @@ class CreateVideo(
 
         val createdAsset = videoAssetRepository.create(assetToBeCreated)
         searchServiceAdmin.upsert(sequenceOf(createdAsset))
+
+        videoCounter.increment()
+
         return getVideoById.execute(createdAsset.assetId.value)
     }
 

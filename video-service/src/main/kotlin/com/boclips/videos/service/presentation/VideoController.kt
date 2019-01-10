@@ -5,7 +5,6 @@ import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
-import com.fasterxml.jackson.core.JsonEncoding
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
 import org.springframework.hateoas.PagedResources
@@ -16,7 +15,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.lang.RuntimeException
 
 @RestController
 @RequestMapping("/v1/videos")
