@@ -5,6 +5,9 @@ import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
+import com.fasterxml.jackson.core.JsonEncoding
+import com.fasterxml.jackson.databind.ObjectMapper
+import mu.KLogging
 import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
@@ -13,6 +16,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.lang.RuntimeException
 
 @RestController
 @RequestMapping("/v1/videos")
@@ -21,9 +25,10 @@ class VideoController(
         private val getVideosByQuery: GetVideosByQuery,
         private val deleteVideos: DeleteVideos,
         private val createVideo: CreateVideo,
-        private val patchVideo: PatchVideo
+        private val patchVideo: PatchVideo,
+        private val objectMapper: ObjectMapper
 ) {
-    companion object {
+    companion object : KLogging() {
         fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null, null, null, null, null)).withRel("search")
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
 
@@ -74,8 +79,14 @@ class VideoController(
     }
 
     @PostMapping
-    fun createVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Void> {
-        val resource = createVideo.execute(createVideoRequest)
+    fun createVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
+        val resource = try {
+            createVideo.execute(createVideoRequest)
+        } catch (e: Exception) {
+            val errorDetails = mapOf("error" to e.message, "processed request" to createVideoRequest)
+            logger.error(objectMapper.writeValueAsString(errorDetails))
+            return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)
+        }
 
         val headers = HttpHeaders()
         headers.set(HttpHeaders.LOCATION, getVideoLink(resource.id, "self").href)

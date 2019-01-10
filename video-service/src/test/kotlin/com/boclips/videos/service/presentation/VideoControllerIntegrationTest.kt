@@ -219,6 +219,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns a helpful error message when request is not valid`() {
+        val content = """
+            {
+                "provider": "AP"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.error", containsString("cannot be null")))
+    }
+
+    @Test
     fun `returns 400 when creating a video without an existing playback`() {
         val content = """
             {
