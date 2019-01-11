@@ -19,7 +19,7 @@ test {
 
 task testWithoutSolr(type: Test) {
     useJUnitPlatform()
-    exclude '**/SolrIntegrationTest.class'
+    exclude '**/SolrSearchServiceIntegrationTest.class'
 }
 
 def elasticSearchVersion = "6.5.4"
@@ -32,6 +32,7 @@ dependencies {
     compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticSearchVersion}")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("io.github.microutils:kotlin-logging:1.4.9")
+    compile('org.apache.solr:solr-solrj:5.5.5')
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")

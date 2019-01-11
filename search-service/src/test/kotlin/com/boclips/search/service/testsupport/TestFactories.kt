@@ -1,6 +1,10 @@
 package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
+import com.boclips.search.service.domain.legacy.LegacyVideoType
+import java.time.Duration
+import java.time.LocalDate
 
 object SearchableVideoMetadataFactory {
     fun create(
@@ -17,5 +21,29 @@ object SearchableVideoMetadataFactory {
             contentProvider = contentProvider,
             keywords = keywords,
             tags = tags
+    )
+}
+
+object LegacyVideoMetadataFactory {
+    fun create(
+            id: String,
+            title: String = "title",
+            description: String = "description",
+            keywords: List<String> = listOf("keyword"),
+            duration: Duration = Duration.ofSeconds(10),
+            contentPartnerName: String = "contentPartnerName",
+            contentPartnerVideoId: String = "contentPartnerVideoId",
+            videoType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+            releaseDate: LocalDate = LocalDate.now()
+    ) = LegacyVideoMetadata(
+            id = id,
+            title = title,
+            description = description,
+            keywords = keywords,
+            duration = duration,
+            contentPartnerName = contentPartnerName,
+            contentPartnerVideoId = contentPartnerVideoId,
+            videoType = videoType,
+            releaseDate = releaseDate
     )
 }
