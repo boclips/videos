@@ -2,6 +2,7 @@ package com.boclips.videos.service.client;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -11,16 +12,16 @@ import java.util.Set;
 @Builder
 @Data
 public class CreateVideoRequest {
-    private final String provider;
-    private final String providerVideoId;
-    private final String title;
-    private final String description;
-    private final LocalDate releasedOn;
-    private final Duration duration;
+    private final @NonNull String provider;
+    private final @NonNull String providerVideoId;
+    private final @NonNull String title;
+    private final @NonNull String description;
+    private final @NonNull LocalDate releasedOn;
+    private final @NonNull Duration duration;
     private final String legalRestrictions;
-    private final List<String> keywords;
-    private final String contentType;
-    private final String playbackId;
-    private final PlaybackProvider playbackProvider;
-    private final Set<String> subjects;
+    private final @NonNull List<String> keywords;
+    private final @NonNull String contentType;
+    private final @NonNull String playbackId;
+    private final @NonNull PlaybackProvider playbackProvider;
+    private final @NonNull Set<String> subjects;
 }
