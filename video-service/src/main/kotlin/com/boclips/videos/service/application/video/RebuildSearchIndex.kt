@@ -15,14 +15,8 @@ open class RebuildSearchIndex(
     @Async
     open fun execute(): CompletableFuture<Unit> {
         logger.info("Starting a full reindex")
-        searchService.resetIndex()
 
-        logger.info("Requesting videos")
-        try {
-            videoAssetRepository.streamAll(searchService::upsert)
-        } catch (e: Exception) {
-            logger.error("Error reindexing", e)
-        }
+        searchService.safeRebuildIndex(videoAssetRepository.streamAll())
 
         logger.info("Full reindex done")
         return CompletableFuture.completedFuture(null)

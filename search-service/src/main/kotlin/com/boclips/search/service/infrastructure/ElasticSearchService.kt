@@ -23,9 +23,7 @@ import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
 class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService {
-    companion object : KLogging() {
-        const val ES_TYPE = "asset"
-    }
+    companion object : KLogging();
 
     private val elasticSearchResultConverter = ElasticSearchResultConverter()
 

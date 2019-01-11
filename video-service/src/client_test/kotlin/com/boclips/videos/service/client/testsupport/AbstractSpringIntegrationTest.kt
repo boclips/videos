@@ -49,7 +49,7 @@ abstract class AbstractSpringIntegrationTest {
 
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
-        fakeSearchService.resetIndex()
+        fakeSearchService.safeRebuildIndex(emptySequence())
         fakeKalturaClient.clear()
     }
 

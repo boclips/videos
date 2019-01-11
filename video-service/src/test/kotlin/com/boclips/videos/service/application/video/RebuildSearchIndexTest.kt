@@ -3,11 +3,9 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.infrastructure.InMemorySearchService
-import com.boclips.videos.service.domain.model.asset.VideoAssetConsumer
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
@@ -23,14 +21,12 @@ class RebuildSearchIndexTest {
 
         val videoAssetRepository = mock<VideoAssetRepository> {
             on {
-                streamAll(any())
-            } doAnswer { invocation ->
-                val consumer: VideoAssetConsumer = invocation.getArgument(0)
-                consumer(sequenceOf(
+                streamAll()
+            } doAnswer {
+                sequenceOf(
                         TestFactories.createVideoAsset(videoId = "2"),
                         TestFactories.createVideoAsset(videoId = "3")
-                ))
-                null
+                )
             }
         }
 

@@ -47,9 +47,9 @@ class SearchServiceAdapterTest {
     }
 
     @Test
-    fun `resetIndex clears the index`() {
+    fun `safeRebuildIndex clears the index`() {
         searchService.upsert(sequenceOf("hello"))
-        searchService.resetIndex()
+        searchService.safeRebuildIndex(emptySequence())
 
         assertThat(searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1))).isEmpty()
     }

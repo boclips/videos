@@ -42,7 +42,8 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
         }
     }
 
-    override fun resetIndex() {
+    override fun safeRebuildIndex(videos: Sequence<VideoMetadata>) {
         index.clear()
+        upsert(videos)
     }
 }

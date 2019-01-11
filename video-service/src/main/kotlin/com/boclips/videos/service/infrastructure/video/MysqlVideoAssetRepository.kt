@@ -34,12 +34,9 @@ open class MysqlVideoAssetRepository(
     }
 
     @Transactional
-    override fun streamAll(consumer: (videos: Sequence<VideoAsset>) -> Unit) {
-        videoRepository.readAll().use { stream ->
-            consumer(stream.iterator().asSequence().mapNotNull(this::convertToVideoAssetOrNull))
-        }
+    override fun streamAll(): Sequence<VideoAsset> {
+        return videoRepository.readAll().iterator().asSequence().mapNotNull(this::convertToVideoAssetOrNull)
     }
-
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
         val videoEntity = VideoEntity.fromVideoAsset(videoAsset)

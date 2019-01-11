@@ -17,7 +17,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     internal fun setUp() {
         queryService = ElasticSearchService(CONFIG)
         adminService = ElasticSearchServiceAdmin(CONFIG)
-        adminService.resetIndex()
+        adminService.safeRebuildIndex(emptySequence())
     }
 
     @Test
