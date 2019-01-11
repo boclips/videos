@@ -12,7 +12,7 @@ data class CreateVideoRequest(
         val duration: Duration? = null,
         val legalRestrictions: String? = null,
         val keywords: List<String>? = null,
-        val contentType: String? = null,
+        val videoType: String? = null,
         val playbackId: String? = null,
         val playbackProvider: String? = null,
         val subjects: Set<String>? = emptySet()

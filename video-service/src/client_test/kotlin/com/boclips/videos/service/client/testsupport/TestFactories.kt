@@ -2,7 +2,7 @@ package com.boclips.videos.service.client.testsupport
 
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.client.VideoType
 import java.time.Duration
 import java.time.LocalDate
 
@@ -17,7 +17,7 @@ object TestFactories {
             duration: Duration = Duration.ofSeconds(10),
             legalRestrictions: String = "None",
             keywords: List<String> = listOf("k1", "k2"),
-            contentType: String = VideoType.INSTRUCTIONAL_CLIPS.name,
+            contentType: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
             playbackId: String = "kaltura-id-789",
             playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA,
             subjects: Set<String> = emptySet()
@@ -31,7 +31,7 @@ object TestFactories {
                 .duration(duration)
                 .legalRestrictions(legalRestrictions)
                 .keywords(keywords)
-                .contentType(contentType)
+                .videoType(contentType)
                 .playbackId(playbackId)
                 .playbackProvider(playbackProvider)
                 .subjects(subjects)

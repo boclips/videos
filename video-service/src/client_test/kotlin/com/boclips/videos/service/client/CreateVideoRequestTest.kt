@@ -22,7 +22,7 @@ class CreateVideoRequestTest {
                            duration: Duration = Duration.ofSeconds(123),
                            legalRestrictions: String? = "legal restrictions",
                            keywords: List<String> = emptyList(),
-                           contentType: String = "content type",
+                           contentType: VideoType = VideoType.NEWS,
                            playbackId: String = "playback id",
                            playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA,
                            subjects: Set<String> = emptySet()
@@ -36,7 +36,7 @@ class CreateVideoRequestTest {
                 .duration(duration)
                 .legalRestrictions(legalRestrictions)
                 .keywords(keywords)
-                .contentType(contentType)
+                .videoType(contentType)
                 .playbackId(playbackId)
                 .playbackProvider(playbackProvider)
                 .subjects(subjects)

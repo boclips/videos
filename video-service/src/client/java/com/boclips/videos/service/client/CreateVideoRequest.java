@@ -20,7 +20,7 @@ public class CreateVideoRequest {
     private final @NonNull Duration duration;
     private final String legalRestrictions;
     private final @NonNull List<String> keywords;
-    private final @NonNull String contentType;
+    private final @NonNull VideoType videoType;
     private final @NonNull String playbackId;
     private final @NonNull PlaybackProvider playbackProvider;
     private final @NonNull Set<String> subjects;

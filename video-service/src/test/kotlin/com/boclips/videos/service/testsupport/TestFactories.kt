@@ -185,7 +185,7 @@ object TestFactories {
             duration = duration,
             legalRestrictions = legalRestrictions,
             keywords = keywords,
-            contentType = contentType,
+            videoType = contentType,
             playbackId = playbackId,
             playbackProvider = playbackProvider,
             subjects = subjects

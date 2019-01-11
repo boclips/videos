@@ -201,7 +201,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "contentType": "INSTRUCTIONAL_CLIPS",
+                "videoType": "INSTRUCTIONAL_CLIPS",
                 "playbackId": "abc1",
                 "playbackProvider": "KALTURA",
                 "subjects": ["Maths"]
@@ -243,7 +243,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "contentType": "INSTRUCTIONAL_CLIPS",
+                "videoType": "INSTRUCTIONAL_CLIPS",
                 "playbackId": "abc1",
                 "playbackProvider": "KALTURA"
             }
