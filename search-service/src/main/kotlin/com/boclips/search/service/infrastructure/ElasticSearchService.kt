@@ -14,6 +14,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
+import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
@@ -74,11 +75,10 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.ZERO)
 
-        val filters =
-                if (searchRequest.query.includeTags.isNotEmpty())
-                    QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.includeTags)
-                else
-                    QueryBuilders.boolQuery()
+        val filters = searchRequest.query.includeTags
+                .fold(QueryBuilders.boolQuery()) { acc: BoolQueryBuilder, term: String ->
+                    acc.must(QueryBuilders.termQuery(ElasticSearchVideo.TAGS, term))
+                }
 
         val findMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findMatchesQuery).filter(filters)
 

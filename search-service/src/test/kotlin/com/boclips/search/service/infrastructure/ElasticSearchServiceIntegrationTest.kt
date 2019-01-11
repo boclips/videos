@@ -246,4 +246,15 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         assertThat(results).isEqualTo(1)
     }
+
+    @Test
+    fun `strictly match the include tags`() {
+        adminService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+        ))
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query(phrase = "banana", includeTags = listOf("classroom", "news"))))
+
+        assertThat(results).isEmpty()
+    }
 }
