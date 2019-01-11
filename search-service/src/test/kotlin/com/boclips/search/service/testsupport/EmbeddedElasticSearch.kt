@@ -26,7 +26,7 @@ abstract class EmbeddedElasticSearchIntegrationTest {
 
         init {
             EmbeddedElastic.builder()
-                    .withElasticVersion("6.3.2")
+                    .withElasticVersion(org.elasticsearch.Version.CURRENT.toString())
                     .withSetting(PopularProperties.HTTP_PORT, port)
                     .withStartTimeout(2, TimeUnit.MINUTES)
                     .build()
