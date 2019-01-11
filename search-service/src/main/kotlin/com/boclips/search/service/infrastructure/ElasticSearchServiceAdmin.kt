@@ -6,6 +6,8 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.action.admin.indices.alias.Alias
+import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest
@@ -32,13 +34,14 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         client = RestHighLevelClient(builder)
     }
 
+    @Deprecated("To be replaced with zero-downtime")
     override fun resetIndex() {
         deleteIndex()
         configureIndex()
     }
 
     override fun removeFromSearch(videoId: String) {
-        val request = DeleteRequest(ElasticSearchService.ES_INDEX, ElasticSearchService.ES_TYPE, videoId)
+        val request = DeleteRequest(ElasticSearchIndex.ES_INDEX, ElasticSearchService.ES_TYPE, videoId)
         request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
         client.delete(request, RequestOptions.DEFAULT)
     }
@@ -50,19 +53,20 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
 
     private fun configureIndex() {
         val indexConfiguration = IndexConfiguration()
-        val createIndexRequest = CreateIndexRequest(ElasticSearchService.ES_INDEX)
+        val createIndexRequest = CreateIndexRequest(ElasticSearchIndex.ES_INDEX)
                 .settings(indexConfiguration.generateIndexSettings())
+                .alias(Alias(ElasticSearchIndex.ES_INDEX_ALIAS))
                 .mapping("asset", indexConfiguration.generateVideoMapping())
 
-        ElasticSearchService.logger.info("Creating index ${ElasticSearchService.ES_INDEX}")
+        ElasticSearchService.logger.info("Creating index ${ElasticSearchIndex.ES_INDEX}")
         client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
     }
 
     private fun deleteIndex() {
-        if (indexExists(ElasticSearchService.ES_INDEX)) {
-            ElasticSearchService.logger.info("Deleting index ${ElasticSearchService.ES_INDEX}")
-            client.indices().delete(DeleteIndexRequest(ElasticSearchService.ES_INDEX), RequestOptions.DEFAULT)
-            ElasticSearchService.logger.info("Index ${ElasticSearchService.ES_INDEX} deleted")
+        if (indexExists(ElasticSearchIndex.ES_INDEX)) {
+            ElasticSearchService.logger.info("Deleting index ${ElasticSearchIndex.ES_INDEX}")
+            client.indices().delete(DeleteIndexRequest(ElasticSearchIndex.ES_INDEX), RequestOptions.DEFAULT)
+            ElasticSearchService.logger.info("Index ${ElasticSearchIndex.ES_INDEX} deleted")
         }
     }
 
@@ -96,7 +100,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
                 tags = video.tags
         ))
 
-        return IndexRequest(ElasticSearchService.ES_INDEX, ElasticSearchService.ES_TYPE, video.id)
+        return IndexRequest(ElasticSearchIndex.ES_INDEX, ElasticSearchService.ES_TYPE, video.id)
                 .source(document, XContentType.JSON)
     }
 

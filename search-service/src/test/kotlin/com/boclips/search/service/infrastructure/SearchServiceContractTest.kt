@@ -29,6 +29,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns empty collection for empty result`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing")))
 
         val result = queryService.search(PaginatedSearchRequest(query = Query("query that matches nothing")))
@@ -39,6 +40,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds a video matching metadata`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
@@ -54,6 +56,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds news videos`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", tags = listOf("news")),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer Trump", description = "Behave like a gentleman, cane like a sponge"),
@@ -68,6 +71,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `paginates results`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
@@ -85,6 +89,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `counts all videos matching metadata`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
                 SearchableVideoMetadataFactory.create(id = "2", title = "Beer", description = "Behave like a gentleman, cane like a sponge"),
@@ -100,6 +105,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `removed videos are not searchable`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing")))
 
         adminService.removeFromSearch("1")
@@ -110,6 +116,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and removes the outdated one`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing")))
 
         adminService.resetIndex()
@@ -120,6 +127,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns existing ids`(queryService: GenericSearchService, adminService: GenericSearchServiceAdmin<VideoMetadata>) {
+        adminService.resetIndex()
         adminService.upsert(sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing")))
 
         val query = Query(ids = listOf("1", "2", "3", "4"))

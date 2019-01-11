@@ -23,9 +23,7 @@ import org.elasticsearch.search.rescore.QueryRescorerBuilder
 
 class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService {
     companion object : KLogging() {
-
         const val ES_TYPE = "asset"
-        const val ES_INDEX = "videos"
     }
 
     private val elasticSearchResultConverter = ElasticSearchResultConverter()
@@ -111,7 +109,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .windowSize(100)
                 .setScoreMode(QueryRescoreMode.Total)
 
-        return SearchRequest(arrayOf(ES_INDEX),
+        return SearchRequest(arrayOf(ElasticSearchIndex.ES_INDEX_ALIAS),
                 SearchSourceBuilder()
                         .query(allMatchesQuery)
                         .from(searchRequest.startIndex)
@@ -123,7 +121,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         val findMatchesById = QueryBuilders.idsQuery().addIds(*(searchRequest.query.ids.toTypedArray()))
         val query = QueryBuilders.boolQuery().should(findMatchesById)
 
-        return SearchRequest(arrayOf(ES_INDEX),
+        return SearchRequest(arrayOf(ElasticSearchIndex.ES_INDEX_ALIAS),
                 SearchSourceBuilder()
                         .query(query)
                         .from(searchRequest.startIndex)
