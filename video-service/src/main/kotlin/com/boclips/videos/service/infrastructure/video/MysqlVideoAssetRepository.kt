@@ -33,7 +33,6 @@ open class MysqlVideoAssetRepository(
         return findAll(listOf(assetId)).firstOrNull()
     }
 
-    @Transactional
     override fun streamAll(): Sequence<VideoAsset> {
         return videoRepository.readAll().iterator().asSequence().mapNotNull(this::convertToVideoAssetOrNull)
     }
