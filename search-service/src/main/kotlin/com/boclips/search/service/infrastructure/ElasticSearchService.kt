@@ -72,7 +72,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 )
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
                 .minimumShouldMatch("75%")
-                .fuzziness(Fuzziness.AUTO)
+                .fuzziness(Fuzziness.ZERO)
 
         val findExactMatchesQuery = QueryBuilders
                 .multiMatchQuery(
@@ -129,6 +129,5 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
     }
 
-    private fun isIdLookup(searchRequest: PaginatedSearchRequest) =
-            searchRequest.query.ids.isNotEmpty() == true
+    private fun isIdLookup(searchRequest: PaginatedSearchRequest) = searchRequest.query.ids.isNotEmpty()
 }

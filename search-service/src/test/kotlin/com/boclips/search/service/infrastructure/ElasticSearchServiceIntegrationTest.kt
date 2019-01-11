@@ -21,57 +21,6 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `prefers documents with exact matches over fuzzy matches`() {
-        adminService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(
-                        id = "2",
-                        title = "Hugh Dancy & Claire Danes pose on the red carpet",
-                        description = "Hugh Dancy & Claire Danes pose on the red carpet"),
-                SearchableVideoMetadataFactory.create(
-                        id = "1",
-                        title = "Dancing:",
-                        description = """
-                            Will Old Time Dances wipe the floor with Modern Rhythms? says Beryl de Querton. Disclaimer:
-                             British Movietone is an historical collection. Any views and expressions within either the
-                             video or metadata of the collection are reproduced for historical accuracy and do not
-                             represent the opinions or editorial policies of the Associated Press.
-                             SHOTLIST: Elevated shot of the dance floor and couples dancing in old time style.
-                             """),
-                SearchableVideoMetadataFactory.create(
-                        id = "3",
-                        title = "DANCE FESTIVAL",
-                        description = """
-                            Disclaimer: British Movietone is an historical collection. Any views and expressions within
-                            either the video or metadata of the collection are reproduced for historical accuracy and do
-                            not represent the opinions or editorial policies of the Associated Press.
-                            SHOTLIST:
-                            GV and CU novices dancing. CU winners of novices with award (Mr Hope and Miss Cornwall). SCU
-                            formation dancing by Liverpool A Team. CU presentation to winners of formation. CU winners
-                            Liverpool A posing.
-                         """
-                )
-
-        ))
-
-        val results = queryService.search(PaginatedSearchRequest(query = Query("dance")))
-
-        assertThat(results.size).isEqualTo(3)
-        assertThat(results.last()).isEqualTo("2")
-    }
-
-    @Test
-    fun `can deal with mispelled queries`() {
-        adminService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Mixed-race couple playing piano with a dog", description = "Watch and get educated.")
-        ))
-
-        val results = queryService.search(PaginatedSearchRequest(query = Query("gentelman")))
-
-        assertThat(results).containsExactly("1")
-    }
-
-    @Test
     fun `document relevance is higher when words appear in sequence in title`() {
         adminService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
