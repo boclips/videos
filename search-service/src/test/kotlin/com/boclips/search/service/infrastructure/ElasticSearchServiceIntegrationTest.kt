@@ -47,9 +47,8 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `boosts documents where there is a keyword match`() {
+    fun `returns documents where there is a keyword match`() {
         adminService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", keywords = listOf("cat")),
                 SearchableVideoMetadataFactory.create(id = "2", keywords = listOf("dog"))
         ))
 
@@ -59,15 +58,28 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `boosts documents where there is a content partner match`() {
+    fun `returns documents where there is a content partner match`() {
         adminService.upsert(sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", contentProvider = "Mr Bean"),
                 SearchableVideoMetadataFactory.create(id = "2", contentProvider = "TED Talks")
         ))
 
         val results = queryService.search(PaginatedSearchRequest(query = Query("ted talk")))
 
         assertThat(results).containsExactly("2")
+    }
+
+    @Test
+    fun `content partner match is ranked higher than matches in other fields`() {
+        adminService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "TED-Ed"),
+                SearchableVideoMetadataFactory.create(id = "2", description = "TED-Ed"),
+                SearchableVideoMetadataFactory.create(id = "3", contentProvider = "TED-Ed"),
+                SearchableVideoMetadataFactory.create(id = "4", keywords = listOf("TED-Ed"))
+        ))
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("ted")))
+
+        assertThat(results.first()).isEqualTo("3")
     }
 
     @Test

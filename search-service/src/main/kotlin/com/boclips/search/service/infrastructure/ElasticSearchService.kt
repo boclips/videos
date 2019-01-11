@@ -84,6 +84,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
         val allMatchesQuery = QueryBuilders
                 .boolQuery()
+                .should(QueryBuilders.matchQuery(ElasticSearchVideo.CONTENT_PROVIDER, searchRequest.query.phrase))
                 .should(findMatchesQueryWithFilters)
                 .mustNot(QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.excludeTags))
 
