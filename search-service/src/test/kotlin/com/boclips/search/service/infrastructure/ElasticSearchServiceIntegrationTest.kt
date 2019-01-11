@@ -257,4 +257,26 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         assertThat(results).isEmpty()
     }
+
+    @Test
+    fun `match any exclude tag`() {
+        adminService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+        ))
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query(phrase = "banana", excludeTags = listOf("classroom", "news"))))
+
+        assertThat(results).isEmpty()
+    }
+
+    @Test
+    fun `having include and exclude as the same tag returns no results`() {
+        adminService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+        ))
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query(phrase = "banana", excludeTags = listOf("classroom"), includeTags = listOf("classroom"))))
+
+        assertThat(results).isEmpty()
+    }
 }
