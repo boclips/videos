@@ -47,5 +47,4 @@ class EventContext {
     fun getLatestInteractions(eventService: EventService): GetLatestInteractions {
         return GetLatestInteractions(eventService = eventService)
     }
-
 }
