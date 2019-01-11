@@ -74,19 +74,6 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 .minimumShouldMatch("75%")
                 .fuzziness(Fuzziness.ZERO)
 
-        val findExactMatchesQuery = QueryBuilders
-                .multiMatchQuery(
-                        searchRequest.query.phrase,
-                        ElasticSearchVideo.TITLE,
-                        "${ElasticSearchVideo.TITLE}.std",
-                        ElasticSearchVideo.DESCRIPTION,
-                        "${ElasticSearchVideo.DESCRIPTION}.std",
-                        ElasticSearchVideo.CONTENT_PROVIDER,
-                        ElasticSearchVideo.KEYWORDS
-                )
-                .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                .minimumShouldMatch("75%")
-
         val filters =
                 if (searchRequest.query.includeTags.isNotEmpty())
                     QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.includeTags)
@@ -94,12 +81,10 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                     QueryBuilders.boolQuery()
 
         val findMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findMatchesQuery).filter(filters)
-        val findExactMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findExactMatchesQuery).filter(filters)
 
         val allMatchesQuery = QueryBuilders
                 .boolQuery()
                 .should(findMatchesQueryWithFilters)
-                .should(findExactMatchesQueryWithFilters)
                 .mustNot(QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.excludeTags))
 
         val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
