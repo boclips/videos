@@ -78,13 +78,14 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                     acc.must(QueryBuilders.termQuery(ElasticSearchVideo.TAGS, term))
                 }
 
-        val findMatchesQueryWithFilters = QueryBuilders.boolQuery().must(findMatchesQuery).filter(filters)
-
         val allMatchesQuery = QueryBuilders
                 .boolQuery()
-                .should(QueryBuilders.matchQuery(ElasticSearchVideo.CONTENT_PROVIDER, searchRequest.query.phrase))
-                .should(findMatchesQueryWithFilters)
+                .must(findMatchesQuery)
+                .should(QueryBuilders.matchPhraseQuery(ElasticSearchVideo.TITLE, searchRequest.query.phrase))
+                .should(QueryBuilders.matchPhraseQuery(ElasticSearchVideo.DESCRIPTION, searchRequest.query.phrase))
+                .should(QueryBuilders.matchQuery(ElasticSearchVideo.CONTENT_PROVIDER, searchRequest.query.phrase).boost(2.0F))
                 .mustNot(QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.excludeTags))
+                .filter(filters)
 
         val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
                 .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)

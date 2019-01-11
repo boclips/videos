@@ -106,6 +106,21 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
+    fun `exact phrase matches are returned higher then other documents with matching words`() {
+        adminService.upsert(sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "Royal Australian Regiment and Operation Dalby - a heli-borne assault during Vietnam War, 16th February, 1967",
+                        description = "Royal Australian Regiment and Operation Dalby - a heli-borne assault during Vietnam War, 16th February, 1967. Helicopter fleet, POVs from helicopters."
+                ),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Napalm bombing during Vietnam War"),
+                SearchableVideoMetadataFactory.create(id = "3", title = "bombing during Vietnam War")
+        ))
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("Napalm bombing during Vietnam War")))
+
+        assertThat(results.first()).isEqualTo("2")
+    }
+
+    @Test
     fun `counts search results for phrase queries`() {
         adminService.upsert(sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
