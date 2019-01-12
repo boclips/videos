@@ -18,7 +18,6 @@ class CreateVideo(
         private val searchServiceAdmin: SearchService,
         private val playbackRepository: PlaybackRespository,
         private val videoCounter: Counter
-
 ) {
     fun execute(createRequest: CreateVideoRequest): VideoResource {
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest)
