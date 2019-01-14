@@ -2,12 +2,18 @@ package com.boclips.search.service.infrastructure.legacy
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
+import com.boclips.search.service.domain.legacy.SolrException
 import com.boclips.search.service.testsupport.LegacyVideoMetadataFactory
 import org.apache.solr.client.solrj.impl.HttpSolrClient
 import org.apache.solr.client.solrj.request.CoreAdminRequest
 import org.apache.solr.common.params.CoreAdminParams
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.testcontainers.containers.GenericContainer
 
 class KGenericContainer(imageName: String) : GenericContainer<KGenericContainer>(imageName)
@@ -22,42 +28,37 @@ class SolrSearchServiceIntegrationTest {
                 .withExposedPorts(containerPort)
                 .withLogConsumer { frame -> if (frame.bytes != null) print("SOLR: " + String(frame.bytes)) }
 
-        @BeforeAll
-        @JvmStatic
-        fun startSolr() {
-            solrServer.start()
-
-            while (!coreReady()) {
-                Thread.sleep(10)
-            }
-        }
-
-        private fun coreReady(): Boolean {
-            val client = HttpSolrClient("http://localhost:${getPort()}/solr")
-            val request = CoreAdminRequest()
-            request.setAction(CoreAdminParams.CoreAdminAction.STATUS)
-            val result = request.process(client)
-            return result.coreStatus.size() > 0
-        }
-
-        @AfterAll
-        @JvmStatic
-        fun tearDown() {
-            solrServer.stop()
-        }
 
         fun getPort(): Int {
             return solrServer.getMappedPort(containerPort)
         }
     }
 
-
-    lateinit var solrSearchService: SolrSearchService
-
     @BeforeEach
-    fun setUp() {
+    fun startSolr() {
+        solrServer.start()
+
+        while (!coreReady()) {
+            Thread.sleep(10)
+        }
+
         solrSearchService = SolrSearchService("localhost", getPort())
     }
+
+    private fun coreReady(): Boolean {
+        val client = HttpSolrClient("http://localhost:${getPort()}/solr")
+        val request = CoreAdminRequest()
+        request.setAction(CoreAdminParams.CoreAdminAction.STATUS)
+        val result = request.process(client)
+        return result.coreStatus.size() > 0
+    }
+
+    @AfterEach
+    fun tearDown() {
+        solrServer.stop()
+    }
+
+    lateinit var solrSearchService: SolrSearchService
 
     @Test
     fun `does not support searching by phrase`() {
@@ -74,5 +75,30 @@ class SolrSearchServiceIntegrationTest {
 
         val results = solrSearchService.search(PaginatedSearchRequest(Query(ids = listOf("1", "2", "5"))))
         assertThat(results).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @Test
+    fun `remove a video from the index`() {
+        solrSearchService.upsert(sequenceOf(LegacyVideoMetadataFactory.create(id = "10")))
+
+        solrSearchService.removeFromSearch(videoId = "10")
+
+        val results = solrSearchService.search(PaginatedSearchRequest(Query(ids = listOf("10"))))
+        assertThat(results).isEmpty()
+    }
+
+    @Test
+    fun `throws when video does not exist for deletion`() {
+        assertThatThrownBy { solrSearchService.removeFromSearch(videoId = "10") }
+                .isInstanceOf(SolrDocumentNotFound::class.java)
+                .hasMessage("Video 10 not found")
+    }
+
+    @Test
+    fun `throws when there is an error communicating with solr`() {
+        solrServer.stop()
+
+        assertThatThrownBy { solrSearchService.removeFromSearch(videoId = "10") }
+                .isInstanceOf(SolrException::class.java)
     }
 }

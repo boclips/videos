@@ -4,6 +4,8 @@ import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
+import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
+import com.boclips.search.service.domain.legacy.SolrException
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.impl.HttpSolrClient
 
@@ -33,6 +35,17 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
     }
 
     override fun removeFromSearch(videoId: String) {
-        throw UnsupportedOperationException("Not supported by SOLR search service")
+        fun <T> runAndThrow(f: () -> T): T =
+                try {
+                    f()
+                } catch (ex: Exception) {
+                    throw SolrException(ex)
+                }
+
+        runAndThrow { client.getById(videoId) } ?: throw SolrDocumentNotFound(videoId)
+        runAndThrow {
+            client.deleteById(videoId)
+            client.commit()
+        }
     }
 }
