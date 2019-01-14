@@ -6,10 +6,14 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.legacy.SolrException
+import mu.KLogging
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.impl.HttpSolrClient
 
 class SolrSearchService(host: String, port: Int) : LegacySearchService {
+    companion object : KLogging() {
+        private const val UPSERT_BATCH_SIZE = 2000
+    }
 
     override fun safeRebuildIndex(videos: Sequence<LegacyVideoMetadata>) {
         throw java.lang.UnsupportedOperationException("Not supported by SOLR search service")
@@ -18,8 +22,15 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
     val client = HttpSolrClient("http://$host:$port/solr/km")
 
     override fun upsert(videos: Sequence<LegacyVideoMetadata>) {
+        videos.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+                .forEachIndexed(this::upsertBatch)
+    }
+
+    private fun upsertBatch(batchIndex: Int, videos: List<LegacyVideoMetadata>) {
+        logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s) in Solr" }
         videos.map(LegacyVideoMetadataToSolrInputDocumentConverter::convert).forEach { client.add(it) }
         client.commit()
+        logger.info { "[Batch $batchIndex] Successfully indexed ${videos.size} asset(s) in Solr" }
     }
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {
@@ -47,5 +58,6 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
             client.deleteById(videoId)
             client.commit()
         }
+        logger.info { "Video $videoId removed from Solr" }
     }
 }
