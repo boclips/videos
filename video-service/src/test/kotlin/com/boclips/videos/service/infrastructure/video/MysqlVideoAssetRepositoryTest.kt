@@ -24,7 +24,8 @@ class MysqlVideoAssetRepositoryTest {
         }
 
         val repository = MysqlVideoAssetRepository(subjectRepository, videoEntityRepository)
-        val assets: List<VideoAsset> = repository.streamAll().toList()
+        var assets: List<VideoAsset> = emptyList()
+        repository.streamAll { assets = it.toList() }
 
         assertThat(assets.map { it.title }).containsExactly("this one is ok")
     }

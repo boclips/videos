@@ -8,7 +8,7 @@ import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundExce
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
 import mu.KLogging
-import javax.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 
 open class MysqlVideoAssetRepository(
         private val subjectRepository: SubjectRepository,
@@ -33,8 +33,11 @@ open class MysqlVideoAssetRepository(
         return findAll(listOf(assetId)).firstOrNull()
     }
 
-    override fun streamAll(): Sequence<VideoAsset> {
-        return videoRepository.readAll().iterator().asSequence().mapNotNull(this::convertToVideoAssetOrNull)
+    @Transactional(readOnly = true)
+    override fun streamAll(consumer: (Sequence<VideoAsset>) -> Unit) {
+        videoRepository.readAll().use { stream ->
+            consumer(stream.iterator().asSequence().mapNotNull(this::convertToVideoAssetOrNull))
+        }
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
