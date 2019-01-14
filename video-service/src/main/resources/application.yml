@@ -25,6 +25,7 @@ management:
     solr:
       enabled: false
 
-solr:
-  host: solr
-  port: 80
+legacy:
+  solr:
+    host: solr
+    port: 80
