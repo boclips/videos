@@ -3,6 +3,7 @@ package com.boclips.videos.service.client.internal;
 import com.boclips.videos.service.client.CreateVideoRequest;
 import com.boclips.videos.service.client.VideoId;
 import com.boclips.videos.service.client.VideoServiceClient;
+import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
 import com.boclips.videos.service.client.spring.Video;
 import lombok.SneakyThrows;
@@ -19,6 +20,9 @@ public class FakeClient implements VideoServiceClient {
 
     @Override
     public VideoId create(CreateVideoRequest request) {
+        if(existsByContentPartnerInfo(request.getProvider(), request.getProviderVideoId())) {
+            throw new VideoExistsException();
+        }
         val videoId = rawIdToVideoId(nextId());
         val video = Video.builder()
                 .videoId(videoId)

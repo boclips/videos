@@ -232,6 +232,35 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns a CONFLICT and a helpful error message when video already exists`() {
+        fakeKalturaClient.addMediaEntry(TestFactories.createMediaEntry(id = "entry-$123", referenceId = "abc1", duration = Duration.ofMinutes(1)))
+
+        val content = """
+            {
+                "provider": "AP",
+                "providerVideoId": "1",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "videoType": "INSTRUCTIONAL_CLIPS",
+                "playbackId": "abc1",
+                "playbackProvider": "KALTURA",
+                "subjects": ["Maths"]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isCreated)
+
+         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isConflict)
+                .andExpect(jsonPath("$.error", containsString("""video from provider "AP" and provider id "1" already exists""")))
+    }
+
+    @Test
     fun `returns 400 when creating a video without an existing playback`() {
         val content = """
             {

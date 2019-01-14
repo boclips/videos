@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -80,6 +81,9 @@ class VideoController(
     fun createVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
             createVideo.execute(createVideoRequest)
+        } catch (e: VideoAssetExists) {
+            val errorDetails = mapOf("error" to "video from provider \"${e.contentPartnerId}\" and provider id \"${e.contentPartnerVideoId}\" already exists")
+            return ResponseEntity(errorDetails, HttpStatus.CONFLICT)
         } catch (e: Exception) {
             val errorDetails = mapOf("error" to e.message, "processed request" to createVideoRequest)
             logger.error(objectMapper.writeValueAsString(errorDetails))

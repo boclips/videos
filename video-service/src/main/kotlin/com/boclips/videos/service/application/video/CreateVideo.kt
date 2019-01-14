@@ -1,6 +1,8 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -22,6 +24,7 @@ class CreateVideo(
     fun execute(createRequest: CreateVideoRequest): VideoResource {
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest)
         ensureVideoPlaybackExists(createRequest)
+        ensureVideoIsUnique(assetToBeCreated)
 
         val createdAsset = videoAssetRepository.create(assetToBeCreated)
         searchServiceAdmin.upsert(sequenceOf(createdAsset))
@@ -29,6 +32,12 @@ class CreateVideo(
         videoCounter.increment()
 
         return getVideoById.execute(createdAsset.assetId.value)
+    }
+
+    private fun ensureVideoIsUnique(asset: VideoAsset) {
+        if (videoAssetRepository.existsVideoFromContentPartner(asset.contentPartnerId, asset.contentPartnerVideoId)) {
+            throw VideoAssetExists(asset.contentPartnerId, asset.contentPartnerVideoId)
+        }
     }
 
     private fun ensureVideoPlaybackExists(createRequest: CreateVideoRequest) {

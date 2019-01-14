@@ -1,5 +1,6 @@
 package com.boclips.videos.service.client
 
+import com.boclips.videos.service.client.exceptions.VideoExistsException
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
@@ -29,11 +30,21 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
 
     @Test
     fun `create a kaltura video gives a unique id`() {
-        val id1 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
-        val id2 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123"))
+        val id1 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123", contentProviderId = "1"))
+        val id2 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123", contentProviderId = "2"))
 
         assertThat(id1.uri.toString()).contains("/videos/")
         assertThat(id1.uri.toString()).isNotEqualTo(id2.uri.toString())
+    }
+
+    @Test
+    fun `create an existing video throws VideoExistsException`() {
+        val aVideo = TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")
+        getClient().create(aVideo)
+
+        assertThrows<VideoExistsException> {
+            getClient().create(aVideo)
+        }
     }
 
     @Test

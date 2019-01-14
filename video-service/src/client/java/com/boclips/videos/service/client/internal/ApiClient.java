@@ -3,6 +3,7 @@ package com.boclips.videos.service.client.internal;
 import com.boclips.videos.service.client.CreateVideoRequest;
 import com.boclips.videos.service.client.VideoId;
 import com.boclips.videos.service.client.VideoServiceClient;
+import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
 import com.boclips.videos.service.client.internal.resources.Link;
 import com.boclips.videos.service.client.internal.resources.LinksResource;
@@ -13,10 +14,10 @@ import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Set;
 
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class ApiClient implements VideoServiceClient {
@@ -34,8 +35,15 @@ public class ApiClient implements VideoServiceClient {
 
     @Override
     public VideoId create(CreateVideoRequest request) {
-        val uri = restTemplate.postForLocation(String.format("%s/v1/videos", baseUrl), request, String.class);
-        return new VideoId(uri);
+        try {
+            val uri = restTemplate.postForLocation(String.format("%s/v1/videos", baseUrl), request, String.class);
+            return new VideoId(uri);
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode().equals(CONFLICT)) {
+                throw new VideoExistsException();
+            }
+            throw e;
+        }
     }
 
     @Override
@@ -76,7 +84,7 @@ public class ApiClient implements VideoServiceClient {
     @Override
     @SneakyThrows
     public VideoId rawIdToVideoId(String rawId) {
-        if(linkTemplate == null) {
+        if (linkTemplate == null) {
             val linksUrl = String.format("%s/v1", baseUrl);
             val links = restTemplate.getForObject(linksUrl, LinksResource.class);
             linkTemplate = links.get_links().getVideo();
