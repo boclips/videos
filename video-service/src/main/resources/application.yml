@@ -24,3 +24,7 @@ management:
   health:
     solr:
       enabled: false
+
+solr:
+  host: solr
+  port: 80

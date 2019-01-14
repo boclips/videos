@@ -1,6 +1,7 @@
 package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
@@ -43,8 +44,8 @@ class ApplicationContext {
             )
 
     @Bean
-    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById, searchService: SearchService, playbackRepository: PlaybackRespository, videoCounter: Counter): CreateVideo {
-        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter(), searchService, playbackRepository, videoCounter)
+    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById, searchService: SearchService, playbackRepository: PlaybackRespository, videoCounter: Counter, legacySearchService: LegacySearchService): CreateVideo {
+        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter(), searchService, playbackRepository, videoCounter, legacySearchService)
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
@@ -8,10 +9,15 @@ import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.verify
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.ArgumentMatchers.anyCollectionOf
+import org.mockito.ArgumentMatchers.anyListOf
+import org.mockito.verification.VerificationMode
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
@@ -25,6 +31,9 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoCounter: Counter
+
+    @Autowired
+    lateinit var legacySearchService: LegacySearchService
 
     @Test
     fun `requesting creation of an existing kaltura video creates the video`() {
@@ -72,6 +81,15 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
                 pageSize = 1,
                 pageIndex = 0
         )).first().asset.title).isEqualTo("the latest Bloomberg video")
+    }
+
+    @Test
+    fun `created video is made available in legacy search`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
+
+        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
+
+        verify(legacySearchService).upsert(any())
     }
 
     @Test

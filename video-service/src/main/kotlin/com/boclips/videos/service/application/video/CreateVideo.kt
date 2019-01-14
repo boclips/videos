@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.asset.VideoAsset
@@ -8,6 +9,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
 import com.boclips.videos.service.domain.service.SearchService
+import com.boclips.videos.service.domain.service.VideoAssetToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -19,7 +21,8 @@ class CreateVideo(
         private val createVideoRequestToAssetConverter: CreateVideoRequestToAssetConverter,
         private val searchServiceAdmin: SearchService,
         private val playbackRepository: PlaybackRespository,
-        private val videoCounter: Counter
+        private val videoCounter: Counter,
+        private val legacySearchService: LegacySearchService
 ) {
     fun execute(createRequest: CreateVideoRequest): VideoResource {
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest)
@@ -28,6 +31,7 @@ class CreateVideo(
 
         val createdAsset = videoAssetRepository.create(assetToBeCreated)
         searchServiceAdmin.upsert(sequenceOf(createdAsset))
+        legacySearchService.upsert(sequenceOf(VideoAssetToLegacyVideoMetadataConverter.convert(createdAsset)))
 
         videoCounter.increment()
 

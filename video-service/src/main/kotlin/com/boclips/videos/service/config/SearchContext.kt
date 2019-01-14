@@ -3,10 +3,13 @@ package com.boclips.videos.service.config
 import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.ElasticSearchConfig
 import com.boclips.search.service.infrastructure.ElasticSearchService
 import com.boclips.search.service.infrastructure.ElasticSearchServiceAdmin
+import com.boclips.search.service.infrastructure.legacy.SolrSearchService
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
+import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
 import org.springframework.context.annotation.Bean
@@ -19,6 +22,12 @@ class SearchContext {
     @Profile("!fake-search")
     fun videoMetadataSearchService(elasticSearchConfig: ElasticSearchConfig): GenericSearchService {
         return ElasticSearchService(elasticSearchConfig)
+    }
+
+    @Bean
+    @Profile("!fake-search")
+    fun legacySearchService(solrProperties: SolrProperties): LegacySearchService {
+        return SolrSearchService(host = solrProperties.host, port = solrProperties.port)
     }
 
     @Bean

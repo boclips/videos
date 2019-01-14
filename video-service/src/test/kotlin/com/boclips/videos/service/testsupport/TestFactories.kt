@@ -78,7 +78,9 @@ object TestFactories {
             playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
             type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
             keywords: List<String> = listOf("keyword"),
-            subjects: Set<Subject> = emptySet()
+            subjects: Set<Subject> = emptySet(),
+            releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
+            duration: Duration = Duration.ZERO
     ): VideoAsset {
         return VideoAsset(
                 assetId = AssetId(value = videoId),
@@ -86,11 +88,11 @@ object TestFactories {
                 title = title,
                 description = description,
                 keywords = keywords,
-                releasedOn = LocalDate.parse("2018-01-01"),
+                releasedOn = releasedOn,
                 contentPartnerId = contentProvider,
                 contentPartnerVideoId = contentPartnerVideoId,
                 type = type,
-                duration = Duration.ZERO,
+                duration = duration,
                 legalRestrictions = "",
                 subjects = subjects
         )
