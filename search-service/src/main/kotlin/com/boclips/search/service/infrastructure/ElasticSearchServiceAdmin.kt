@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.VideoMetadata
+import mu.KLogging
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
@@ -24,7 +25,7 @@ import org.elasticsearch.common.xcontent.XContentType
 class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearchServiceAdmin<VideoMetadata> {
     private val client: RestHighLevelClient
 
-    companion object {
+    companion object : KLogging() {
         private const val ES_TYPE = "asset"
         private const val UPSERT_BATCH_SIZE = 2000
     }
@@ -73,7 +74,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
                 .settings(indexConfiguration.generateIndexSettings())
                 .mapping("asset", indexConfiguration.generateVideoMapping())
 
-        ElasticSearchService.logger.info("Creating index $indexName")
+        logger.info("Creating index $indexName")
         client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
     }
 
@@ -89,22 +90,22 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         request.addAliasAction(removeAliases)
         request.addAliasAction(addAliases)
 
-        ElasticSearchService.logger.info("Switching alias ($alias) to index ($indexName)")
+        logger.info("Switching alias ($alias) to index ($indexName)")
         client.indices().updateAliases(request, RequestOptions.DEFAULT)
-        ElasticSearchService.logger.info("Switched alias ($alias) to index ($indexName)")
+        logger.info("Switched alias ($alias) to index ($indexName)")
     }
 
     private fun deleteIndex(indexName: String) {
         if (indexExists(indexName)) {
-            ElasticSearchService.logger.info("Deleting index $indexName")
+            logger.info("Deleting index $indexName")
             val deleteRequest = DeleteIndexRequest(indexName).indicesOptions(IndicesOptions.LENIENT_EXPAND_OPEN)
             client.indices().delete(deleteRequest, RequestOptions.DEFAULT)
-            ElasticSearchService.logger.info("Index $indexName deleted")
+            logger.info("Index $indexName deleted")
         }
     }
 
     private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>, indexName: String) {
-        ElasticSearchService.logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }
+        logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }
 
         val request = videos
                 .map { indexRequest(it, indexName) }
@@ -120,7 +121,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         if (result.hasFailures()) {
             throw Error("Batch indexing failed: ${result.buildFailureMessage()}")
         }
-        ElasticSearchService.logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} asset(s)" }
+        logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} asset(s)" }
     }
 
     private fun indexRequest(video: VideoMetadata, indexName: String): IndexRequest {
