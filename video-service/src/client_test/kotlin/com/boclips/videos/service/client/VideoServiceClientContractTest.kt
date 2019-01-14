@@ -1,5 +1,6 @@
 package com.boclips.videos.service.client
 
+import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.testsupport.AbstractSpringIntegrationTest
@@ -48,6 +49,15 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
     }
 
     @Test
+    fun `create an illegal video playback throws`() {
+        val aVideo = TestFactories.createCreateVideoRequest(playbackId = "illegal-video")
+
+        assertThrows<IllegalVideoRequestException> {
+            getClient().create(aVideo)
+        }
+    }
+
+    @Test
     fun `create a youtube persists video`() {
         val id1 = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123", playbackProvider = PlaybackProvider.YOUTUBE))
 
@@ -85,7 +95,9 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
-    val fakeClient = VideoServiceClient.getFakeClient()
+    val fakeClient = VideoServiceClient.getFakeClient().apply {
+        addIllegalPlaybackId("illegal-video")
+    }
     override fun getClient() = fakeClient
 
 }

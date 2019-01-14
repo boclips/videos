@@ -3,6 +3,7 @@ package com.boclips.videos.service.client.internal;
 import com.boclips.videos.service.client.CreateVideoRequest;
 import com.boclips.videos.service.client.VideoId;
 import com.boclips.videos.service.client.VideoServiceClient;
+import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
 import com.boclips.videos.service.client.internal.resources.Link;
@@ -17,8 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Set;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 public class ApiClient implements VideoServiceClient {
 
@@ -39,8 +39,10 @@ public class ApiClient implements VideoServiceClient {
             val uri = restTemplate.postForLocation(String.format("%s/v1/videos", baseUrl), request, String.class);
             return new VideoId(uri);
         } catch (HttpClientErrorException e) {
-            if(e.getStatusCode().equals(CONFLICT)) {
+            if (e.getStatusCode().equals(CONFLICT)) {
                 throw new VideoExistsException();
+            } else if (e.getStatusCode().equals(BAD_REQUEST)) {
+                throw new IllegalVideoRequestException();
             }
             throw e;
         }

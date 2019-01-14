@@ -3,6 +3,7 @@ package com.boclips.videos.service.client.internal;
 import com.boclips.videos.service.client.CreateVideoRequest;
 import com.boclips.videos.service.client.VideoId;
 import com.boclips.videos.service.client.VideoServiceClient;
+import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
 import com.boclips.videos.service.client.spring.Video;
@@ -15,14 +16,19 @@ import java.util.*;
 public class FakeClient implements VideoServiceClient {
 
     private List<CreateVideoRequest> createRequests = new ArrayList<>();
-
     private Map<VideoId, Video> videos = new HashMap<>();
+    private Set<String> illegalPlaybackIds = new HashSet<>();
 
     @Override
     public VideoId create(CreateVideoRequest request) {
-        if(existsByContentPartnerInfo(request.getProvider(), request.getProviderVideoId())) {
+        if (existsByContentPartnerInfo(request.getProvider(), request.getProviderVideoId())) {
             throw new VideoExistsException();
         }
+
+        if (illegalPlaybackIds.contains(request.getPlaybackId())) {
+            throw new IllegalVideoRequestException();
+        }
+
         val videoId = rawIdToVideoId(nextId());
         val video = Video.builder()
                 .videoId(videoId)
@@ -73,5 +79,10 @@ public class FakeClient implements VideoServiceClient {
     public void clear() {
         createRequests.clear();
         videos.clear();
+        illegalPlaybackIds.clear();
+    }
+
+    public void addIllegalPlaybackId(String playbackId) {
+        illegalPlaybackIds.add(playbackId);
     }
 }
