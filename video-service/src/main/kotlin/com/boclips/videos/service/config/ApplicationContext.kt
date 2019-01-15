@@ -111,6 +111,16 @@ class ApplicationContext {
     }
 
     @Bean
+    fun buildLegacySearchIndex(videoAssetRepository: VideoAssetRepository,
+                           legacySearchService: LegacySearchService
+    ): BuildLegacySearchIndex {
+        return BuildLegacySearchIndex(
+                videoAssetRepository = videoAssetRepository,
+                legacySearchService = legacySearchService
+        )
+    }
+
+    @Bean
     fun taskExecutor(): TaskExecutor {
         return ConcurrentTaskExecutor(
                 Executors.newFixedThreadPool(3))
