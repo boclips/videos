@@ -31,7 +31,9 @@ class CreateVideo(
 
         val createdAsset = videoAssetRepository.create(assetToBeCreated)
         searchServiceAdmin.upsert(sequenceOf(createdAsset))
-        legacySearchService.upsert(sequenceOf(VideoAssetToLegacyVideoMetadataConverter.convert(createdAsset)))
+        if(createRequest.playbackProvider != "YOUTUBE") {
+            legacySearchService.upsert(sequenceOf(VideoAssetToLegacyVideoMetadataConverter.convert(createdAsset)))
+        }
 
         videoCounter.increment()
 

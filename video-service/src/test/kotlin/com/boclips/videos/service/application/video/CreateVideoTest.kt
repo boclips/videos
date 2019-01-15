@@ -11,13 +11,11 @@ import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.verifyZeroInteractions
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.anyCollectionOf
-import org.mockito.ArgumentMatchers.anyListOf
-import org.mockito.verification.VerificationMode
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
@@ -110,5 +108,13 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         val videoCounterAfter = videoCounter.count()
 
         assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
+    }
+
+    @Test
+    fun `does not populate legacy search when youtube video is created`() {
+        fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
+        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video", playbackProvider = "YOUTUBE"))
+
+        verifyZeroInteractions(legacySearchService)
     }
 }
