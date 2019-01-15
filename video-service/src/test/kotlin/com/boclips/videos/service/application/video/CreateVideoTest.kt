@@ -113,7 +113,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     @Test
     fun `does not populate legacy search when youtube video is created`() {
         fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
-        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video", playbackProvider = "YOUTUBE"))
+        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest banana video", playbackProvider = "YOUTUBE"))
 
         verifyZeroInteractions(legacySearchService)
     }
