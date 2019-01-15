@@ -17,4 +17,9 @@ class AdminController(
     fun rebuildSearchIndex() {
         rebuildSearchIndex.execute()
     }
+
+    @PostMapping("/build_legacy_search_index")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun buildLegacySearchIndex() {
+    }
 }

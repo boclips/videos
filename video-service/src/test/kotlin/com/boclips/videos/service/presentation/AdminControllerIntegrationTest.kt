@@ -31,4 +31,16 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(MockMvcResultMatchers.status().isAccepted)
     }
 
+    @Test
+    fun `buildLegacySearchIndex returns 403 when user is not allowed to reindex`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/build_legacy_search_index").asTeacher())
+                .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
+    fun `buildLegacySearchIndex returns 202 accepted when user is allowed to reindex`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/build_legacy_search_index").asOperator())
+                .andExpect(MockMvcResultMatchers.status().isAccepted)
+    }
+
 }
