@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.service.VideoAssetToLegacyVideoMetadataConverter
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
@@ -19,7 +20,11 @@ open class BuildLegacySearchIndex(
 
         try {
             videoAssetRepository.streamAll { videos ->
-                legacySearchService.upsert(videos.map(VideoAssetToLegacyVideoMetadataConverter::convert))
+                legacySearchService.upsert(
+                        videos
+                                .filter { it.playbackId.type == PlaybackProviderType.KALTURA }
+                                .map(VideoAssetToLegacyVideoMetadataConverter::convert)
+                )
             }
         } catch (e: Exception) {
             logger.error("Error building legacy index", e)

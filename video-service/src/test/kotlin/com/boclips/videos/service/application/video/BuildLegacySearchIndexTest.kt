@@ -4,40 +4,71 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class BuildLegacySearchIndexTest {
 
+    lateinit var legacySearchService: LegacySearchService
+
+    @BeforeEach
+    internal fun setUp() {
+        legacySearchService = mock()
+    }
+
     @Test
     fun `execute builds search index`() {
-        val videoAssetRepository = mock<VideoAssetRepository> {
-            on {
-                streamAll(any())
-            } doAnswer { invocations ->
-                val consumer = invocations.getArgument(0) as (Sequence<VideoAsset>) -> Unit
-                consumer(sequenceOf(
-                        TestFactories.createVideoAsset(videoId = "1", title = "a title"),
-                        TestFactories.createVideoAsset(videoId = "2")
-                ))
-            }
-        }
-        val legacySearchService = mock<LegacySearchService>()
-
+        val videoAssetRepository = mockVideoAssetRepository(videos = sequenceOf(
+                TestFactories.createVideoAsset(videoId = "1", title = "a title"),
+                TestFactories.createVideoAsset(videoId = "2")
+        ))
         val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
 
         rebuildSearchIndex.execute()
 
+        val videos = getUpsertedVideos()
+        assertThat(videos).hasSize(2)
+        assertThat(videos.first().id).isEqualTo("1")
+        assertThat(videos.first().title).isEqualTo("a title")
+    }
+
+    @Test
+    fun `execute ignores youtube videos`() {
+        val videoAssetRepository = mockVideoAssetRepository(videos = sequenceOf(
+                TestFactories.createVideoAsset(videoId = "1", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "1"))
+        ))
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
+
+        rebuildSearchIndex.execute()
+
+        assertThat(getUpsertedVideos()).isEmpty()
+    }
+
+    private fun mockVideoAssetRepository(videos: Sequence<VideoAsset>): VideoAssetRepository {
+        return mock {
+            on {
+                streamAll(any())
+            } doAnswer { invocations ->
+                val consumer = invocations.getArgument(0) as (Sequence<VideoAsset>) -> Unit
+                consumer(videos)
+            }
+        }
+    }
+
+    fun getUpsertedVideos(): List<LegacyVideoMetadata> {
+        var upsertedVideos: List<LegacyVideoMetadata>? = null
+
         argumentCaptor<Sequence<LegacyVideoMetadata>>().apply {
             verify(legacySearchService).upsert(capture())
 
-            val videos = firstValue.toList()
-            assertThat(videos).hasSize(2)
-            assertThat(videos.first().id).isEqualTo("1")
-            assertThat(videos.first().title).isEqualTo("a title")
-
+            upsertedVideos = firstValue.toList()
         }
+
+        return upsertedVideos!!
     }
 }
