@@ -94,6 +94,7 @@ abstract class AbstractSpringIntegrationTest {
 
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.value, duration = duration))
+            else -> {}
         }
     }
 
