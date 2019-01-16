@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.SearchService
 import mu.KLogging
@@ -13,12 +14,12 @@ open class RebuildSearchIndex(
     companion object : KLogging()
 
     @Async
-    open fun execute(): CompletableFuture<Unit> {
+    open fun execute(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Starting a full reindex")
 
         try {
             videoAssetRepository.streamAll { videos ->
-                searchService.safeRebuildIndex(videos)
+                searchService.safeRebuildIndex(videos, notifier)
             }
         } catch (e: Exception) {
             logger.error("Error reindexing", e)

@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
+
 class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -26,9 +27,9 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `rebuildSearchIndex returns 202 accepted when user is allowed to reindex`() {
+    fun `rebuildSearchIndex returns 200 OK when user is allowed to reindex`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/rebuild_search_index").asOperator())
-                .andExpect(MockMvcResultMatchers.status().isAccepted)
+                .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
@@ -38,9 +39,9 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `buildLegacySearchIndex returns 202 accepted when user is allowed to reindex`() {
+    fun `buildLegacySearchIndex returns 200 OK when user is allowed to reindex`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/build_legacy_search_index").asOperator())
-                .andExpect(MockMvcResultMatchers.status().isAccepted)
+                .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
 }

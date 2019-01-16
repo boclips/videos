@@ -10,6 +10,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyZeroInteractions
 import io.micrometer.core.instrument.Counter
@@ -87,7 +88,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
 
-        verify(legacySearchService).upsert(any())
+        verify(legacySearchService).upsert(any(), anyOrNull())
     }
 
     @Test

@@ -32,10 +32,10 @@ class CreateVideo(
 
         val createdAsset = videoAssetRepository.create(assetToBeCreated)
 
-        searchServiceAdmin.upsert(sequenceOf(createdAsset))
+        searchServiceAdmin.upsert(sequenceOf(createdAsset), null)
 
         if (assetToBeCreated.playbackId.type == PlaybackProviderType.KALTURA) {
-            legacySearchService.upsert(sequenceOf(VideoAssetToLegacyVideoMetadataConverter.convert(createdAsset)))
+            legacySearchService.upsert(sequenceOf(VideoAssetToLegacyVideoMetadataConverter.convert(createdAsset)), null)
         }
 
         videoCounter.increment()

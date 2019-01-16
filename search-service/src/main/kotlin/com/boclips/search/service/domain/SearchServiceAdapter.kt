@@ -3,12 +3,12 @@ package com.boclips.search.service.domain
 abstract class SearchServiceAdapter<T>(
         private val queryService: GenericSearchService,
         private val adminService: GenericSearchServiceAdmin<VideoMetadata>) : GenericSearchService, GenericSearchServiceAdmin<T> {
-    override fun safeRebuildIndex(videos: Sequence<T>) {
-        adminService.safeRebuildIndex(videos.map(::convert))
+    override fun safeRebuildIndex(videos: Sequence<T>, notifier: ProgressNotifier?) {
+        adminService.safeRebuildIndex(videos.map(::convert), notifier)
     }
 
-    override fun upsert(videos: Sequence<T>) {
-        adminService.upsert(videos.map(::convert))
+    override fun upsert(videos: Sequence<T>, notifier: ProgressNotifier?) {
+        adminService.upsert(videos.map(::convert), notifier)
     }
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {

@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.legacy
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
@@ -15,15 +16,19 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
         private const val UPSERT_BATCH_SIZE = 2000
     }
 
-    override fun safeRebuildIndex(videos: Sequence<LegacyVideoMetadata>) {
+    override fun safeRebuildIndex(videos: Sequence<LegacyVideoMetadata>, notifier: ProgressNotifier?) {
         throw java.lang.UnsupportedOperationException("Not supported by SOLR search service")
     }
 
     val client = HttpSolrClient("http://$host:$port/solr/km")
 
-    override fun upsert(videos: Sequence<LegacyVideoMetadata>) {
+    override fun upsert(videos: Sequence<LegacyVideoMetadata>, notifier: ProgressNotifier?) {
         videos.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
-                .forEachIndexed(this::upsertBatch)
+                .forEachIndexed { batchIndex, videoBatch ->
+                    notifier?.send("Starting batch $batchIndex")
+                    this.upsertBatch(batchIndex, videoBatch)
+                }
+        notifier?.complete()
     }
 
     private fun upsertBatch(batchIndex: Int, videos: List<LegacyVideoMetadata>) {

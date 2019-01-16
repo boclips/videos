@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.KStubbing
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.mock

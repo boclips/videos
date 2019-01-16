@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -15,16 +16,16 @@ open class BuildLegacySearchIndex(
     companion object : KLogging()
 
     @Async
-    open fun execute(): CompletableFuture<Unit> {
+    open fun execute(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Building a legacy index")
 
         try {
             videoAssetRepository.streamAll { videos ->
-                legacySearchService.upsert(
-                        videos
-                                .filter { it.playbackId.type == PlaybackProviderType.KALTURA }
-                                .map(VideoAssetToLegacyVideoMetadataConverter::convert)
-                )
+                val videoAssets = videos
+                        .filter { it.playbackId.type == PlaybackProviderType.KALTURA }
+                        .map(VideoAssetToLegacyVideoMetadataConverter::convert)
+
+                legacySearchService.upsert(videoAssets, notifier)
             }
         } catch (e: Exception) {
             logger.error("Error building legacy index", e)

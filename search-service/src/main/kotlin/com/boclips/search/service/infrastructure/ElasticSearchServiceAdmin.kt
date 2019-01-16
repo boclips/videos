@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.VideoMetadata
 import mu.KLogging
 import org.apache.http.HttpHost
@@ -40,16 +41,23 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         client = RestHighLevelClient(builder)
     }
 
-    override fun safeRebuildIndex(videos: Sequence<VideoMetadata>) {
+    override fun safeRebuildIndex(videos: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
         val newIndexName = ElasticSearchIndex.generateIndexName()
 
+        notifier?.send("Creating index...")
         createIndex(newIndexName)
-        upsertToIndex(videos, newIndexName)
+
+        upsertToIndex(videos, newIndexName, notifier)
+
+        notifier?.send("Switching alias...")
         switchAliasToIndex(indexName = newIndexName, alias = ElasticSearchIndex.ES_INDEX_ALIAS)
 
+        notifier?.send("Deleting previous aliases...")
         val allVideoIndicesExceptNew = "${ElasticSearchIndex.ES_INDEX_WILDCARD},-$newIndexName"
         deleteIndex(allVideoIndicesExceptNew)
         deleteIndex(ElasticSearchIndex.ES_LEGACY_INDEX) // TODO: Remove once every env has been rebuilt once
+
+        notifier?.complete()
     }
 
     override fun removeFromSearch(videoId: String) {
@@ -58,12 +66,13 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         client.delete(request, RequestOptions.DEFAULT)
     }
 
-    override fun upsert(videos: Sequence<VideoMetadata>) {
+    override fun upsert(videos: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
         upsertToIndex(videos, ElasticSearchIndex.ES_INDEX_ALIAS)
     }
 
-    private fun upsertToIndex(videos: Sequence<VideoMetadata>, indexName: String) {
+    private fun upsertToIndex(videos: Sequence<VideoMetadata>, indexName: String, notifier: ProgressNotifier? = null) {
         videos.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true).forEachIndexed { idx, batch ->
+            notifier?.send("Starting upsert batch $idx")
             this.upsertBatch(idx, batch, indexName)
         }
     }

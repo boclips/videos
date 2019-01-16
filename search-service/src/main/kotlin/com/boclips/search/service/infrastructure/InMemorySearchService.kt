@@ -36,14 +36,14 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
         index.remove(videoId)
     }
 
-    override fun upsert(videos: Sequence<VideoMetadata>) {
+    override fun upsert(videos: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
         videos.forEach { video ->
             index[video.id] = video.copy()
         }
     }
 
-    override fun safeRebuildIndex(videos: Sequence<VideoMetadata>) {
+    override fun safeRebuildIndex(videos: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
         index.clear()
-        upsert(videos)
+        upsert(videos, notifier)
     }
 }
