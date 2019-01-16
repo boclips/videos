@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.search.service.domain.VideoMetadata
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +17,7 @@ class VideoMetadataConverterTest {
                 description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1"),
-                type = VideoType.INSTRUCTIONAL_CLIPS
+                type = LegacyVideoType.INSTRUCTIONAL_CLIPS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -35,7 +35,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `tags classroom video`() {
         val video = TestFactories.createVideoAsset(
-                type = VideoType.INSTRUCTIONAL_CLIPS
+                type = LegacyVideoType.INSTRUCTIONAL_CLIPS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -46,7 +46,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `tags news video`() {
         val video = TestFactories.createVideoAsset(
-                type = VideoType.NEWS
+                type = LegacyVideoType.NEWS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -57,7 +57,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `it can apply multiple tags`() {
         val video = TestFactories.createVideoAsset(
-                type = VideoType.NEWS,
+                type = LegacyVideoType.NEWS,
                 description = "biology animation"
         )
 
@@ -71,7 +71,7 @@ class VideoMetadataConverterTest {
         val video = TestFactories.createVideoAsset(
                 videoId = "123",
                 title = "garbage title",
-                type = VideoType.STOCK
+                type = LegacyVideoType.STOCK
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)

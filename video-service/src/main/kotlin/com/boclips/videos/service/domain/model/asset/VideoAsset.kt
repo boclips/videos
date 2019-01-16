@@ -14,7 +14,7 @@ data class VideoAsset(
         val releasedOn: LocalDate,
         val contentPartnerId: String,
         val contentPartnerVideoId: String,
-        val type: VideoType,
+        val type: LegacyVideoType,
         val duration: Duration,
         val legalRestrictions: String,
         val subjects: Set<Subject>

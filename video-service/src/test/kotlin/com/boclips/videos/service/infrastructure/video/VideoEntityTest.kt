@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -11,18 +11,18 @@ class VideoEntityTest {
 
     @Test
     fun `toVideo returns a video with a correct type`() {
-        assertThat(TestFactories.createVideoEntity(typeId = 0).toVideoAsset().type).isEqualTo(VideoType.OTHER)
-        assertThat(TestFactories.createVideoEntity(typeId = 1).toVideoAsset().type).isEqualTo(VideoType.NEWS)
-        assertThat(TestFactories.createVideoEntity(typeId = 2).toVideoAsset().type).isEqualTo(VideoType.STOCK)
-        assertThat(TestFactories.createVideoEntity(typeId = 3).toVideoAsset().type).isEqualTo(VideoType.INSTRUCTIONAL_CLIPS)
-        assertThat(TestFactories.createVideoEntity(typeId = 4).toVideoAsset().type).isEqualTo(VideoType.TV_CLIPS)
-        assertThat(TestFactories.createVideoEntity(typeId = 5).toVideoAsset().type).isEqualTo(VideoType.NEWS_PACKAGE)
-        assertThat(TestFactories.createVideoEntity(typeId = 6).toVideoAsset().type).isEqualTo(VideoType.UGC_NEWS)
-        assertThat(TestFactories.createVideoEntity(typeId = 7).toVideoAsset().type).isEqualTo(VideoType.VR_360_STOCK)
-        assertThat(TestFactories.createVideoEntity(typeId = 8).toVideoAsset().type).isEqualTo(VideoType.VR_360_IMMERSIVE)
-        assertThat(TestFactories.createVideoEntity(typeId = 9).toVideoAsset().type).isEqualTo(VideoType.SHORT_PROGRAMME)
-        assertThat(TestFactories.createVideoEntity(typeId = 10).toVideoAsset().type).isEqualTo(VideoType.TED_TALKS)
-        assertThat(TestFactories.createVideoEntity(typeId = 11).toVideoAsset().type).isEqualTo(VideoType.TED_ED)
+        assertThat(TestFactories.createVideoEntity(typeId = 0).toVideoAsset().type).isEqualTo(LegacyVideoType.OTHER)
+        assertThat(TestFactories.createVideoEntity(typeId = 1).toVideoAsset().type).isEqualTo(LegacyVideoType.NEWS)
+        assertThat(TestFactories.createVideoEntity(typeId = 2).toVideoAsset().type).isEqualTo(LegacyVideoType.STOCK)
+        assertThat(TestFactories.createVideoEntity(typeId = 3).toVideoAsset().type).isEqualTo(LegacyVideoType.INSTRUCTIONAL_CLIPS)
+        assertThat(TestFactories.createVideoEntity(typeId = 4).toVideoAsset().type).isEqualTo(LegacyVideoType.TV_CLIPS)
+        assertThat(TestFactories.createVideoEntity(typeId = 5).toVideoAsset().type).isEqualTo(LegacyVideoType.NEWS_PACKAGE)
+        assertThat(TestFactories.createVideoEntity(typeId = 6).toVideoAsset().type).isEqualTo(LegacyVideoType.UGC_NEWS)
+        assertThat(TestFactories.createVideoEntity(typeId = 7).toVideoAsset().type).isEqualTo(LegacyVideoType.VR_360_STOCK)
+        assertThat(TestFactories.createVideoEntity(typeId = 8).toVideoAsset().type).isEqualTo(LegacyVideoType.VR_360_IMMERSIVE)
+        assertThat(TestFactories.createVideoEntity(typeId = 9).toVideoAsset().type).isEqualTo(LegacyVideoType.SHORT_PROGRAMME)
+        assertThat(TestFactories.createVideoEntity(typeId = 10).toVideoAsset().type).isEqualTo(LegacyVideoType.TED_TALKS)
+        assertThat(TestFactories.createVideoEntity(typeId = 11).toVideoAsset().type).isEqualTo(LegacyVideoType.TED_ED)
     }
 
     @Test

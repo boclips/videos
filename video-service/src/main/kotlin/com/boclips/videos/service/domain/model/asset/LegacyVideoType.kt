@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.asset
 
-enum class VideoType(val id: Int, val title: String) {
+enum class LegacyVideoType(val id: Int, val title: String) {
     OTHER(0, "Other"),
     NEWS(1, "News"),
     STOCK(2, "Stock"),
@@ -15,9 +15,9 @@ enum class VideoType(val id: Int, val title: String) {
     TED_ED(11, "TED-Ed");
 
     companion object {
-        private val typeById = VideoType.values().map { it.id to it }.toMap()
+        private val typeById = LegacyVideoType.values().map { it.id to it }.toMap()
 
-        fun fromId(id: Int): VideoType {
+        fun fromId(id: Int): LegacyVideoType {
             return typeById[id] ?: throw IllegalArgumentException("The type id $id is invalid")
         }
     }

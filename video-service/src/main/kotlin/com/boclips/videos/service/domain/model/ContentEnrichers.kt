@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 
 class ContentEnrichers {
     companion object {
@@ -11,7 +11,7 @@ class ContentEnrichers {
             val bagOfWords = lowercaseTextFragments.flatMap { it.split(" ") }.toSet()
 
             return when {
-                videoAsset.type != VideoType.STOCK -> true
+                videoAsset.type != LegacyVideoType.STOCK -> true
                 bagOfWords.contains("awards") -> false
                 bagOfWords.contains("premiere") -> false
                 lowercaseText.contains("red carpet") -> false
@@ -24,7 +24,7 @@ class ContentEnrichers {
         }
 
         fun isNews(videoAsset: VideoAsset): Boolean {
-            return videoAsset.type == VideoType.NEWS
+            return videoAsset.type == LegacyVideoType.NEWS
         }
     }
 }

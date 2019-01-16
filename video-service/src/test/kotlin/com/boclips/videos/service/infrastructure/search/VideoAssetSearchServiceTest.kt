@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -16,8 +16,8 @@ class VideoAssetSearchServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `upsert inserts videos`() {
-        val videoNews = TestFactories.createVideoAsset(videoId = "123", title = "isNews", type = VideoType.NEWS)
-        val videoStock = TestFactories.createVideoAsset(videoId = "124", title = "stock", type = VideoType.STOCK)
+        val videoNews = TestFactories.createVideoAsset(videoId = "123", title = "isNews", type = LegacyVideoType.NEWS)
+        val videoStock = TestFactories.createVideoAsset(videoId = "124", title = "stock", type = LegacyVideoType.STOCK)
 
         searchService.upsert(sequenceOf(videoNews, videoStock))
 

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.asset.Subject
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -19,7 +19,7 @@ internal class VideoToResourceConverterTest {
                     description = "Best bottle slogan",
                     contentProvider = "WeWork",
                     contentPartnerVideoId = "111",
-                    type = VideoType.TED_TALKS,
+                    type = LegacyVideoType.TED_TALKS,
                     subjects = setOf(Subject("Maths"))
             ),
             videoPlayback = TestFactories.createKalturaPlayback()
@@ -31,7 +31,7 @@ internal class VideoToResourceConverterTest {
                     description = "Best bottle slogan",
                     contentProvider = "JacekWork",
                     contentPartnerVideoId = "222",
-                    type = VideoType.OTHER,
+                    type = LegacyVideoType.OTHER,
                     subjects = setOf(Subject("Biology"))
             ),
             videoPlayback = createYoutubePlayback()

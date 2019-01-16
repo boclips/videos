@@ -12,5 +12,5 @@ data class LegacyVideoMetadata(
         val contentPartnerName: String,
         val contentPartnerVideoId: String,
         val releaseDate: LocalDate,
-        val videoType: LegacyVideoType
+        val videoTypeTitle: String
 )

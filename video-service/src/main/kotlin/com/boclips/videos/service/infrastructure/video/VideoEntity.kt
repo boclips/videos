@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.apache.commons.lang3.time.DurationFormatUtils
@@ -65,7 +65,7 @@ class VideoEntity(
                 releasedOn = LocalDate.parse(date!!),
                 contentPartnerId = source!!,
                 contentPartnerVideoId = uniqueId!!,
-                type = VideoType.fromId(type_id!!),
+                type = LegacyVideoType.fromId(type_id!!),
                 keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
                 duration = DurationParser.parse(duration),
                 legalRestrictions = restrictions.orEmpty(),

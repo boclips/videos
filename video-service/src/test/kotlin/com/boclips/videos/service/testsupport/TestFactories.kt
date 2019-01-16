@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
@@ -76,7 +76,7 @@ object TestFactories {
             contentProvider: String = "AP",
             contentPartnerVideoId: String = "cp-id-$videoId",
             playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
-            type: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
+            type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
             keywords: List<String> = listOf("keyword"),
             subjects: Set<Subject> = emptySet(),
             releasedOn: LocalDate = LocalDate.parse("2018-01-01"),

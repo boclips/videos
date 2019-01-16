@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundException
@@ -161,7 +161,7 @@ class MysqlVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
                 releasedOn = LocalDate.parse("2019-01-01"),
                 contentPartnerId = "new content partner id",
                 contentPartnerVideoId = "new content partner video id",
-                type = VideoType.TED_TALKS,
+                type = LegacyVideoType.TED_TALKS,
                 duration = Duration.ofHours(1),
                 legalRestrictions = "new legal restrictions",
                 subjects = emptySet()

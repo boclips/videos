@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.InvalidCreateVide
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoType
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 
@@ -32,7 +32,7 @@ class CreateVideoRequestToAssetConverter {
                 releasedOn = createVideoRequest.releasedOn!!,
                 contentPartnerId = createVideoRequest.provider!!,
                 contentPartnerVideoId = createVideoRequest.providerVideoId!!,
-                type = VideoType.valueOf(createVideoRequest.videoType!!),
+                type = LegacyVideoType.valueOf(createVideoRequest.videoType!!),
                 duration = createVideoRequest.duration!!,
                 legalRestrictions = createVideoRequest.legalRestrictions ?: "",
                 subjects = createVideoRequest.subjects!!.map{ Subject(it) }.toSet()

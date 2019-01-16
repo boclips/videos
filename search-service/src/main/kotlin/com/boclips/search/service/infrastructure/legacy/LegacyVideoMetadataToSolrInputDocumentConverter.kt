@@ -19,7 +19,7 @@ object LegacyVideoMetadataToSolrInputDocumentConverter {
             addField("source", video.contentPartnerName)
             addField("unique_id", video.contentPartnerVideoId)
             addField("namespace", "${video.contentPartnerName}:${video.contentPartnerVideoId}")
-            addField("typename", video.videoType.displayName)
+            addField("typename", video.videoTypeTitle)
         }
     }
 }

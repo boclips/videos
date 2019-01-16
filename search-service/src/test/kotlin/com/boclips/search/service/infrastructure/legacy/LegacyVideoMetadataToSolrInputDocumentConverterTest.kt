@@ -1,6 +1,5 @@
 package com.boclips.search.service.infrastructure.legacy
 
-import com.boclips.search.service.domain.legacy.LegacyVideoType
 import com.boclips.search.service.testsupport.LegacyVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -65,7 +64,7 @@ class LegacyVideoMetadataToSolrInputDocumentConverterTest {
 
     @Test
     fun `videoType is mapped to the typename field`() {
-        val video = LegacyVideoMetadataFactory.create(id = "1", videoType = LegacyVideoType.TED_TALKS)
+        val video = LegacyVideoMetadataFactory.create(id = "1", videoType = "TED Talks")
         assertThat(LegacyVideoMetadataToSolrInputDocumentConverter.convert(video).getField("typename").value).isEqualTo("TED Talks")
     }
 }

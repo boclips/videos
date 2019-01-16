@@ -2,7 +2,6 @@ package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
-import com.boclips.search.service.domain.legacy.LegacyVideoType
 import java.time.Duration
 import java.time.LocalDate
 
@@ -33,7 +32,7 @@ object LegacyVideoMetadataFactory {
             duration: Duration = Duration.ofSeconds(10),
             contentPartnerName: String = "contentPartnerName",
             contentPartnerVideoId: String = "contentPartnerVideoId",
-            videoType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+            videoType: String = "Instructional Clips",
             releaseDate: LocalDate = LocalDate.now()
     ) = LegacyVideoMetadata(
             id = id,
@@ -43,7 +42,7 @@ object LegacyVideoMetadataFactory {
             duration = duration,
             contentPartnerName = contentPartnerName,
             contentPartnerVideoId = contentPartnerVideoId,
-            videoType = videoType,
+            videoTypeTitle = videoType,
             releaseDate = releaseDate
     )
 }

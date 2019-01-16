@@ -1,10 +1,7 @@
 package com.boclips.videos.service.domain.service
 
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
-import com.boclips.search.service.domain.legacy.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoType
-import org.bouncycastle.asn1.x500.style.RFC4519Style.description
 
 object VideoAssetToLegacyVideoMetadataConverter {
 
@@ -18,12 +15,7 @@ object VideoAssetToLegacyVideoMetadataConverter {
                 contentPartnerName = asset.contentPartnerId,
                 contentPartnerVideoId = asset.contentPartnerVideoId,
                 releaseDate = asset.releasedOn,
-                videoType = convertVideoType(asset.type)
+                videoTypeTitle = asset.type.title
         )
     }
-
-    fun convertVideoType(videoType: VideoType): LegacyVideoType {
-        return LegacyVideoType.valueOf(videoType.name)
-    }
-
 }
