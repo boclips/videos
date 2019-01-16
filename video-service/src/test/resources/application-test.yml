@@ -27,3 +27,6 @@ email:
 logging:
   level:
     org.hibernate.SQL: TRACE
+
+jdbc:
+  fetchSize: 100

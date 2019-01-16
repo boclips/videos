@@ -8,11 +8,7 @@ import kotlin.streams.asSequence
 
 typealias VideoEntitySequenceConsumer = (Sequence<VideoEntity>) -> Unit
 
-class VideoSequenceReader(private val fetchSize: Int = JDBC_MYSQL_STREAMING_HINT) {
-
-    companion object {
-        const val JDBC_MYSQL_STREAMING_HINT = Integer.MIN_VALUE
-    }
+class VideoSequenceReader(private val fetchSize: Int) {
 
     @Autowired
     lateinit var entityManagerFactory: EntityManagerFactory

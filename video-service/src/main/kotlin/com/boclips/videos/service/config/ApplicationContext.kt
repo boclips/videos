@@ -3,6 +3,7 @@ package com.boclips.videos.service.config
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.config.properties.JdbcProperties
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
@@ -87,8 +88,8 @@ class ApplicationContext {
     }
 
     @Bean
-    fun videoSequenceFactory(): VideoSequenceReader {
-        return VideoSequenceReader()
+    fun videoSequenceFactory(jdbcProperties: JdbcProperties): VideoSequenceReader {
+        return VideoSequenceReader(fetchSize = jdbcProperties.fetchSize)
     }
 
     @Bean
