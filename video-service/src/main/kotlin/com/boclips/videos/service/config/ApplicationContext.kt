@@ -13,6 +13,7 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.VideoEntityRepository
+import com.boclips.videos.service.infrastructure.video.VideoSequenceReader
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -79,9 +80,15 @@ class ApplicationContext {
     @Bean
     fun videoRepository(
             subjectRepository: SubjectRepository,
-            videoEntityRepository: VideoEntityRepository
+            videoEntityRepository: VideoEntityRepository,
+            videoSequenceReader: VideoSequenceReader
     ): VideoAssetRepository {
-        return MysqlVideoAssetRepository(subjectRepository, videoEntityRepository)
+        return MysqlVideoAssetRepository(subjectRepository, videoEntityRepository, videoSequenceReader)
+    }
+
+    @Bean
+    fun videoSequenceFactory(): VideoSequenceReader {
+        return VideoSequenceReader()
     }
 
     @Bean
