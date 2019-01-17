@@ -42,10 +42,12 @@ class AdminController(
     private fun asyncWithNotifier(handler: (ResponseEmitterProgressNotifier) -> CompletableFuture<Unit>): ResponseEntity<ResponseBodyEmitter> {
         val emitter = ResponseBodyEmitter()
         handler(ResponseEmitterProgressNotifier(emitter))
-                .thenApply {
-                    emitter.complete()
-                }.exceptionally { ex ->
-                    emitter.completeWithError(ex)
+                .handle { _, ex ->
+                    if (ex != null) {
+                        emitter.completeWithError(ex)
+                    } else {
+                        emitter.complete()
+                    }
                 }
 
         return ResponseEntity(emitter, HttpStatus.OK)
