@@ -34,6 +34,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
                 .antMatchers(HttpMethod.POST, "/v1/admin/actions/rebuild_search_index").hasRole(UserRoles.REBUILD_SEARCH_INDEX)
                 .antMatchers(HttpMethod.POST, "/v1/admin/actions/build_legacy_search_index").hasRole(UserRoles.REBUILD_SEARCH_INDEX)
 
+                .antMatchers(HttpMethod.POST, "/v1/e2e/actions/reset_all").hasRole(UserRoles.REMOVE_VIDEOS)
+
                 .antMatchers(HttpMethod.DELETE, "/v1/videos/*").hasRole(UserRoles.REMOVE_VIDEOS)
                 .antMatchers(HttpMethod.POST, "/v1/videos").hasRole(UserRoles.INSERT_VIDEOS)
                 .antMatchers(HttpMethod.POST, "/v1/videos/*").hasRole(UserRoles.UPDATE_VIDEOS)
