@@ -14,6 +14,7 @@ class LinksController {
             VideoController.getSearchLink(),
             VideoController.getVideoLink(),
             EventController.createPlaybackEventLink(),
-            EventController.createNoResultsEventLink()
+            EventController.createNoResultsEventLink(),
+            CollectionsController.getUserDefaultCollectionLink().withRel("userDefaultCollection")
     )
 }
