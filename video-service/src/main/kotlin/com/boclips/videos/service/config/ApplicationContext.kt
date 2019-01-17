@@ -2,14 +2,20 @@ package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
+import com.boclips.videos.service.application.collection.GetDefaultCollection
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.config.properties.JdbcProperties
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.infrastructure.collection.CollectionEntityRepository
+import com.boclips.videos.service.infrastructure.collection.MySqlCollectionService
+import com.boclips.videos.service.infrastructure.collection.VideoInCollectionEntityRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
@@ -79,6 +85,11 @@ class ApplicationContext {
     }
 
     @Bean
+    fun collectionService(collectionEntityRepository: CollectionEntityRepository, videoInCollectionEntityRepository: VideoInCollectionEntityRepository, videoService: VideoService): CollectionService {
+        return MySqlCollectionService(collectionEntityRepository, videoInCollectionEntityRepository, videoService)
+    }
+
+    @Bean
     fun videoRepository(
             subjectRepository: SubjectRepository,
             videoEntityRepository: VideoEntityRepository,
@@ -132,5 +143,15 @@ class ApplicationContext {
     fun taskExecutor(): TaskExecutor {
         return ConcurrentTaskExecutor(
                 Executors.newFixedThreadPool(3))
+    }
+
+    @Bean
+    fun getDefaultCollection(collectionService: CollectionService): GetDefaultCollection {
+        return GetDefaultCollection(collectionService, VideoToResourceConverter())
+    }
+
+    @Bean
+    fun addVideoToDefaultCollection(collectionService: CollectionService): AddVideoToDefaultCollection {
+        return AddVideoToDefaultCollection(collectionService)
     }
 }

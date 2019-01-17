@@ -4,9 +4,11 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
@@ -191,6 +193,18 @@ object TestFactories {
             playbackId = playbackId,
             playbackProvider = playbackProvider,
             subjects = subjects
+    )
+
+    fun createCollection(
+            id: CollectionId = CollectionId("collection-id"),
+            owner: String = "collection owner",
+            title: String = "collection title",
+            videos: List<Video> = listOf(createVideo())
+    ) = Collection(
+            id = id,
+            owner = owner,
+            title = title,
+            videos = videos
     )
 }
 

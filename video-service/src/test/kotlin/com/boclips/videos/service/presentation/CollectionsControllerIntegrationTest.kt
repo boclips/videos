@@ -45,9 +45,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections/default").asTeacher())
                 .andExpect(status().isOk)
-//                .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-//                .andExpect(jsonPath("$.videos[0].id", `is`(123)))
-//                .andExpect(jsonPath("$.videos[0].title", `is`("a video title")))
+                .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.videos[0].id", `is`("123")))
+                .andExpect(jsonPath("$.videos[0].title", `is`("a video title")))
     }
 }
 
