@@ -28,8 +28,11 @@ class VideoController(
         private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
-        fun getSearchLink() = linkTo(methodOn(VideoController::class.java).search(null, null, null, null, null)).withRel("search")
-        fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java).getVideo(id)).withRel(rel)
+        fun getSearchLink() = linkTo(methodOn(VideoController::class.java)
+                .search(null, null, null, null, null)).withRel("search")
+
+        fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java)
+                .getVideo(id)).withRel(rel)
 
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
