@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -15,10 +16,10 @@ class MySqlCollectionService(
         private val videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
         private val videoService: VideoService
 ) : CollectionService {
-    override fun create(owner: String): Collection {
+    override fun create(owner: UserId): Collection {
         val collectionEntity = collectionEntityRepository.save(CollectionEntity(
                 id = UUID.randomUUID().toString(),
-                owner = owner,
+                owner = owner.value,
                 title = ""
         ))
 
@@ -37,8 +38,8 @@ class MySqlCollectionService(
         return getByEntity(collectionEntity)
     }
 
-    override fun getByOwner(owner: String): List<Collection> {
-        return collectionEntityRepository.findByOwner(owner).map { getByEntity(it) }
+    override fun getByOwner(owner: UserId): List<Collection> {
+        return collectionEntityRepository.findByOwner(owner.value).map { getByEntity(it) }
     }
 
     private fun getByEntity(collectionEntity: CollectionEntity): Collection {
@@ -58,7 +59,7 @@ class MySqlCollectionService(
     private fun convert(collectionEntity: CollectionEntity): Collection {
         return Collection(
                 id = CollectionId(collectionEntity.id!!),
-                owner = collectionEntity.owner!!,
+                owner = UserId(value = collectionEntity.owner!!),
                 title = collectionEntity.title!!,
                 videos = emptyList()
         )

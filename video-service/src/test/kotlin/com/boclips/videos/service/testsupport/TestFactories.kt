@@ -2,6 +2,7 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.streams.StreamUrls
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
@@ -202,7 +203,7 @@ object TestFactories {
             videos: List<Video> = listOf(createVideo())
     ) = Collection(
             id = id,
-            owner = owner,
+            owner = UserId(value = owner),
             title = title,
             videos = videos
     )

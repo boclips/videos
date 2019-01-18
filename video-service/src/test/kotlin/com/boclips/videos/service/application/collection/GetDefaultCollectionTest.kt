@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -24,7 +25,7 @@ class GetDefaultCollectionTest {
     @Test
     fun `user does not have a collection`() {
         collectionService = mock {
-            on { getByOwner("me@me.com") } doReturn emptyList<Collection>()
+            on { getByOwner(UserId(value = "me@me.com")) } doReturn emptyList<Collection>()
         }
         val getDefaultCollection = GetDefaultCollection(collectionService, VideoToResourceConverter())
 
@@ -38,7 +39,7 @@ class GetDefaultCollectionTest {
     @Test
     fun `user has a collection`() {
         collectionService = mock {
-            on { getByOwner("me@me.com") } doReturn listOf(TestFactories.createCollection(
+            on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(TestFactories.createCollection(
                     owner = "me@me.com",
                     title = "collection title",
                     videos = listOf(createVideo())

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -23,17 +24,17 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create`() {
-        val collection = collectionService.create(owner = "user@gmail.com")
+        val collection = collectionService.create(owner = UserId(value = "user@gmail.com"))
 
         assertThat(collection.id.value).isNotBlank()
-        assertThat(collection.owner).isEqualTo("user@gmail.com")
+        assertThat(collection.owner).isEqualTo(UserId("user@gmail.com"))
         assertThat(collection.title).isBlank()
         assertThat(collection.videos).isEmpty()
     }
 
     @Test
     fun `retrieve by id`() {
-        val collectionId = collectionService.create(owner = "user@gmail.com").id
+        val collectionId = collectionService.create(owner = UserId(value = "user@gmail.com")).id
 
         val collection = collectionService.getById(collectionId)
 
@@ -44,20 +45,20 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retrieve by owner`() {
-        assertThat(collectionService.getByOwner(owner = "user@gmail.com")).hasSize(0)
+        assertThat(collectionService.getByOwner(owner = UserId(value = "user@gmail.com"))).hasSize(0)
 
-        collectionService.create(owner = "user@gmail.com")
-        collectionService.create(owner = "user@gmail.com")
-        collectionService.create(owner = "another-user@gmail.com")
+        collectionService.create(owner = UserId(value = "user@gmail.com"))
+        collectionService.create(owner = UserId(value = "user@gmail.com"))
+        collectionService.create(owner = UserId(value = "another-user@gmail.com"))
 
-        assertThat(collectionService.getByOwner(owner = "user@gmail.com")).hasSize(2)
+        assertThat(collectionService.getByOwner(owner = UserId(value = "user@gmail.com"))).hasSize(2)
     }
 
     @Test
     fun `add a video to collection`() {
         saveVideo(videoId = 10)
 
-        val collectionId = collectionService.create(owner = "user@gmail.com").id
+        val collectionId = collectionService.create(owner = UserId(value = "user@gmail.com")).id
 
         collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
 
@@ -70,7 +71,7 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun `add a video to collection ignored when video already there`() {
         saveVideo(videoId = 10)
 
-        val collectionId = collectionService.create(owner = "user@gmail.com").id
+        val collectionId = collectionService.create(owner = UserId(value = "user@gmail.com")).id
 
         collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
         collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
