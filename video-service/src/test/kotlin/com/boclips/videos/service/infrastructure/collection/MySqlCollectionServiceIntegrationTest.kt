@@ -61,4 +61,18 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(collection.videos).isNotEmpty
     }
+
+    @Test
+    fun `add a video to collection ignored when video already there`() {
+        saveVideo(videoId = 10)
+
+        val collectionId = collectionService.create(owner = "user@gmail.com").id
+
+        collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
+        collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
+
+        val collection = collectionService.getById(collectionId)
+
+        assertThat(collection.videos).hasSize(1)
+    }
 }

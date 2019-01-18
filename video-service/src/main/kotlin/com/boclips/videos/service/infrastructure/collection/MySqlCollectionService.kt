@@ -49,6 +49,9 @@ class MySqlCollectionService(
     }
 
     private fun addVideo(id: CollectionId, videoId: AssetId) {
+        if(videoInCollectionEntityRepository.existsByCollectionIdAndVideoId(collectionId = id.value, videoId = videoId.value)) {
+            return
+        }
         videoInCollectionEntityRepository.save(VideoInCollectionEntity(collectionId = id.value, videoId = videoId.value))
     }
 

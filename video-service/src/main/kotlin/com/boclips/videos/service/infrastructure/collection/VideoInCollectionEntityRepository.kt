@@ -6,4 +6,5 @@ import org.springframework.stereotype.Service
 @Service
 interface VideoInCollectionEntityRepository : CrudRepository<VideoInCollectionEntity, String> {
     fun findByCollectionId(collectionId: String): List<VideoInCollectionEntity>
+    fun existsByCollectionIdAndVideoId(collectionId: String, videoId: String): Boolean
 }
