@@ -11,11 +11,11 @@ import mu.KLogging
 class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : PlaybackProvider {
     companion object : KLogging()
 
-    override fun retrievePlayback(videoIds: List<PlaybackId>): Map<PlaybackId, StreamPlayback> {
-        val kalturaVideoIds = videoIds.map { playbackId -> playbackId.value }
+    override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, StreamPlayback> {
+        val kalturaVideoIds = playbackIds.map { playbackId -> playbackId.value }
         val mediaEntriesById = kalturaClient.getMediaEntriesByReferenceIds(kalturaVideoIds)
 
-        return videoIds
+        return playbackIds
                 .asSequence()
                 .filter { id ->
                     val kalturaVideoId = id.value

@@ -35,7 +35,7 @@ class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
         }.toMap()
     }
 
-    override fun removePlayback(videoId: PlaybackId) {
+    override fun removePlayback(playbackId: PlaybackId) {
     }
 
 }
