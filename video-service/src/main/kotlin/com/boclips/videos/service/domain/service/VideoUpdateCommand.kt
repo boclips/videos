@@ -1,5 +1,6 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.service
 
+import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 

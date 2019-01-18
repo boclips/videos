@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.domain.model.VideoSubjectsUpdate
-import com.boclips.videos.service.domain.model.VideoTitleUpdate
-import com.boclips.videos.service.domain.model.VideoUpdateCommand
+import com.boclips.videos.service.domain.service.VideoSubjectsUpdate
+import com.boclips.videos.service.domain.service.VideoTitleUpdate
+import com.boclips.videos.service.domain.service.VideoUpdateCommand
 import com.boclips.videos.service.domain.model.asset.Subject
 
 class VideoResourceToVideoUpdateConverter {

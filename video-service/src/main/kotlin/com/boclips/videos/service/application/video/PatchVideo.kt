@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.domain.model.VideoUpdateCommand
+import com.boclips.videos.service.domain.service.VideoUpdateCommand
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.presentation.video.VideoResource
