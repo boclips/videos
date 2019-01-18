@@ -26,6 +26,7 @@ class VideoToResourceConverter {
                 releasedOn = video.asset.releasedOn,
                 playback = getPlayback(video),
                 subjects = video.asset.subjects.map { it.name }.toSet(),
+                badges = getBadges(video),
                 type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title)
         )
     }
@@ -41,5 +42,12 @@ class VideoToResourceConverter {
         playbackResource.thumbnailUrl = video.playback.thumbnailUrl
         playbackResource.duration = video.playback.duration
         return playbackResource
+    }
+
+    private fun getBadges(video: Video): Set<String> {
+        return when (video.playback) {
+            is YoutubePlayback -> setOf(VideoBadge.YOUTUBE.id)
+            else -> setOf(VideoBadge.AD_FREE.id)
+        }
     }
 }

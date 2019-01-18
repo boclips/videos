@@ -55,6 +55,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
+                .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("ad-free"))))
 
                 .andExpect(jsonPath("$.page.size", Matchers.equalTo(100)))
                 .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(1)))
@@ -110,6 +111,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT56S")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://youtube.com/thumb/yt-id-124.png")))
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/124")))
+                .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("youtube"))))
     }
 
     @Test

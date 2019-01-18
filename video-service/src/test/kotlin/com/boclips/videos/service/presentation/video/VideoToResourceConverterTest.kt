@@ -53,6 +53,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(videoResource.playback!!.id).isEqualTo("555")
         assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("kaltura-stream")
+        assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
     }
 
     @Test
@@ -70,6 +71,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("youtube-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(21))
         assertThat(videoResource.playback!!.id).isEqualTo("444")
+        assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
     }
 
     @Test
