@@ -173,7 +173,7 @@ private fun not401Or403(): Matcher<Int> {
     return object : BaseMatcher<Int>() {
         override fun matches(item: Any?): Boolean {
             val statusActually = item as Int
-            return statusActually !== 403 && statusActually !== 401
+            return statusActually != 403 && statusActually != 401
         }
 
         override fun describeTo(description: Description?) {
