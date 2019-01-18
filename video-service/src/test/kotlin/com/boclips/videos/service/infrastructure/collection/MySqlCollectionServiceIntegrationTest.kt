@@ -24,6 +24,7 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `create`() {
         val collection = collectionService.create(owner = "user@gmail.com")
+
         assertThat(collection.id.value).isNotBlank()
         assertThat(collection.owner).isEqualTo("user@gmail.com")
         assertThat(collection.title).isBlank()
@@ -33,7 +34,9 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `retrieve by id`() {
         val collectionId = collectionService.create(owner = "user@gmail.com").id
+
         val collection = collectionService.getById(collectionId)
+
         assertThat(collection.id.value).isNotBlank()
         assertThat(collection.title).isBlank()
         assertThat(collection.videos).isEmpty()
@@ -45,6 +48,7 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         collectionService.create(owner = "user@gmail.com")
         collectionService.create(owner = "user@gmail.com")
+        collectionService.create(owner = "another-user@gmail.com")
 
         assertThat(collectionService.getByOwner(owner = "user@gmail.com")).hasSize(2)
     }

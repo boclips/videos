@@ -61,6 +61,18 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `look up videos by ids`() {
+        saveVideo(videoId = 1)
+        saveVideo(videoId = 2)
+        saveVideo(videoId = 3)
+
+        val video = videoService.get(listOf(AssetId("1"), AssetId("3")))
+
+        assertThat(video).hasSize(2)
+        assertThat(video.map { it.asset.assetId.value }).containsExactly("1", "3")
+    }
+
+    @Test
     fun `look up video by id throws if no playback information if present`() {
         saveVideo(videoId = 123, playbackId = PlaybackId(value = "1111", type = PlaybackProviderType.KALTURA))
 

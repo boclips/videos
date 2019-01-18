@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.VideoUpdateCommand
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
 import com.boclips.videos.service.infrastructure.convertPageToIndex
@@ -52,6 +53,10 @@ class VideoService(
                 .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
 
         return Video(videoAsset, videoPlayback)
+    }
+
+    fun get(assetIds: List<AssetId>): List<Video> {
+        return assetIds.mapNotNull { assetId -> this.get(assetId) }
     }
 
     fun update(assetId: AssetId, updateCommand: VideoUpdateCommand): Video {

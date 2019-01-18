@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -12,9 +11,9 @@ import com.boclips.videos.service.domain.service.VideoService
 import java.util.*
 
 class MySqlCollectionService(
-        val collectionEntityRepository: CollectionEntityRepository,
-        val videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
-        val videoService: VideoService
+        private val collectionEntityRepository: CollectionEntityRepository,
+        private val videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
+        private val videoService: VideoService
 ) : CollectionService {
     override fun create(owner: String): Collection {
         val collectionEntity = collectionEntityRepository.save(CollectionEntity(
@@ -27,7 +26,7 @@ class MySqlCollectionService(
     }
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
-        when(updateCommand) {
+        when (updateCommand) {
             is AddVideoToCollection -> addVideo(id, updateCommand.videoId)
             else -> throw Error("Not supported: $updateCommand")
         }
@@ -45,11 +44,12 @@ class MySqlCollectionService(
     private fun getByEntity(collectionEntity: CollectionEntity): Collection {
         val videoInCollectionEntities = videoInCollectionEntityRepository.findByCollectionId(collectionEntity.id!!)
         val assetIds = videoInCollectionEntities.map { AssetId(it.videoId!!) }
-        return convert(collectionEntity).copy(videos = fetchVideos(assetIds))
+        val videos = videoService.get(assetIds)
+        return convert(collectionEntity).copy(videos = videos)
     }
 
     private fun addVideo(id: CollectionId, videoId: AssetId) {
-        if(videoInCollectionEntityRepository.existsByCollectionIdAndVideoId(collectionId = id.value, videoId = videoId.value)) {
+        if (videoInCollectionEntityRepository.existsByCollectionIdAndVideoId(collectionId = id.value, videoId = videoId.value)) {
             return
         }
         videoInCollectionEntityRepository.save(VideoInCollectionEntity(collectionId = id.value, videoId = videoId.value))
@@ -62,10 +62,6 @@ class MySqlCollectionService(
                 title = collectionEntity.title!!,
                 videos = emptyList()
         )
-    }
-
-    private fun fetchVideos(ids: List<AssetId>): List<Video> {
-        return ids.map { videoService.get(it) }
     }
 
 }
