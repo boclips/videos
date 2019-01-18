@@ -33,7 +33,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `add video to default collection`() {
+    fun `add video to default collection and retrieve it`() {
         saveVideo(videoId = 123, title = "a video title")
 
         val addVideoLink = mockMvc.perform(get("/v1/collections/default").asTeacher())

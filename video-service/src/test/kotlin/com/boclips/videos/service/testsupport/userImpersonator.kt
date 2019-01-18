@@ -5,19 +5,31 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
 fun MockHttpServletRequestBuilder.asTeacher() =
-        this.with(SecurityMockMvcRequestPostProcessors.user("teacher@gmail.com").roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS))
+        this.with(SecurityMockMvcRequestPostProcessors
+                .user("teacher@gmail.com")
+                .roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS))
 
 fun MockHttpServletRequestBuilder.asBoclipsEmployee() =
-        this.with(SecurityMockMvcRequestPostProcessors.user("teacher@boclips.com").roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS))
+        this.with(SecurityMockMvcRequestPostProcessors
+                .user("teacher@boclips.com")
+                .roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS))
 
 fun MockHttpServletRequestBuilder.asOperator() =
-        this.with(SecurityMockMvcRequestPostProcessors.user("operator").roles(UserRoles.REMOVE_VIDEOS, UserRoles.REBUILD_SEARCH_INDEX))
+        this.with(SecurityMockMvcRequestPostProcessors
+                .user("operator")
+                .roles(UserRoles.REMOVE_VIDEOS, UserRoles.REBUILD_SEARCH_INDEX))
 
 fun MockHttpServletRequestBuilder.asReporter() =
-        this.with(SecurityMockMvcRequestPostProcessors.user("reporter").roles(UserRoles.VIEW_EVENTS, UserRoles.INSERT_EVENTS))
+        this.with(SecurityMockMvcRequestPostProcessors
+                .user("reporter")
+                .roles(UserRoles.VIEW_EVENTS, UserRoles.INSERT_EVENTS))
 
 fun MockHttpServletRequestBuilder.asIngestor() =
-        this.with(SecurityMockMvcRequestPostProcessors.user("ingestor").roles(UserRoles.INSERT_VIDEOS))
+        this.with(SecurityMockMvcRequestPostProcessors
+                .user("ingestor")
+                .roles(UserRoles.INSERT_VIDEOS))
 
 fun MockHttpServletRequestBuilder.asSubjectClassifier() =
-        this.with(SecurityMockMvcRequestPostProcessors.user("subjectClassifier").roles(UserRoles.UPDATE_VIDEOS))
+        this.with(SecurityMockMvcRequestPostProcessors
+                .user("subjectClassifier")
+                .roles(UserRoles.UPDATE_VIDEOS))

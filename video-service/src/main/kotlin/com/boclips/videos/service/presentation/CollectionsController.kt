@@ -26,7 +26,8 @@ class CollectionsController(
         val addVideoLink = linkTo(methodOn(CollectionsController::class.java)
                 .addVideo(null))
                 .withRel("addVideo")
-        return Resource(getDefaultCollection.execute(), selfLink, addVideoLink)
+        val collectionResource = getDefaultCollection.execute()
+        return Resource(collectionResource, selfLink, addVideoLink)
     }
 
     @PutMapping("/default/videos/{video_id}")
