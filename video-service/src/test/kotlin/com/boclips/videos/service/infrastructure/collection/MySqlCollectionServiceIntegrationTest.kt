@@ -55,6 +55,11 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `retrieve by owner when owner does not exist`() {
+        assertThat(collectionService.getByOwner(owner = UserId(value = "tod"))).hasSize(0)
+    }
+
+    @Test
     fun `add a video to collection`() {
         saveVideo(videoId = 10)
 

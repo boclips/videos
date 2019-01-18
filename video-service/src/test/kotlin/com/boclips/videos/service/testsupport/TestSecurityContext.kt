@@ -5,5 +5,10 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextImpl
 
 fun setSecurityContext(authenticatedUser: Any) {
-    SecurityContextHolder.setContext(SecurityContextImpl(TestingAuthenticationToken(authenticatedUser, null)))
+    SecurityContextHolder
+            .setContext(
+                    SecurityContextImpl(
+                            TestingAuthenticationToken(authenticatedUser, null)
+                    )
+            )
 }
