@@ -5,10 +5,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.AddVideoToCollection
-import com.boclips.videos.service.domain.service.CollectionService
-import com.boclips.videos.service.domain.service.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.domain.service.*
 import java.util.*
 
 class MySqlCollectionService(
@@ -29,6 +26,7 @@ class MySqlCollectionService(
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
         when (updateCommand) {
             is AddVideoToCollection -> addVideo(id, updateCommand.videoId)
+            is RemoveVideoFromCollection -> removeVideo(id, updateCommand.videoId)
             else -> throw Error("Not supported: $updateCommand")
         }
     }
@@ -54,6 +52,10 @@ class MySqlCollectionService(
             return
         }
         videoInCollectionEntityRepository.save(VideoInCollectionEntity(collectionId = id.value, videoId = videoId.value))
+    }
+
+    private fun removeVideo(id: CollectionId, videoId: AssetId) {
+        videoInCollectionEntityRepository.deleteByCollectionIdAndVideoId(collectionId = id.value, videoId = videoId.value)
     }
 
     private fun convert(collectionEntity: CollectionEntity): Collection {

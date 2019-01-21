@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
@@ -38,7 +37,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val addVideoLink = mockMvc.perform(get("/v1/collections/default").asTeacher())
                 .andReturn()
-                .extractVideoLink(videoId = "123")
+                .extractVideoAddLink(videoId = "123")
 
         mockMvc.perform(put(addVideoLink).asTeacher())
                 .andExpect(status().isNoContent)
@@ -49,9 +48,40 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.videos[0].id", `is`("123")))
                 .andExpect(jsonPath("$.videos[0].title", `is`("a video title")))
     }
+
+    @Test
+    fun `remove video from the default collection`() {
+        saveVideo(videoId = 123, title = "a video title")
+
+        val result = mockMvc.perform(get("/v1/collections/default").asTeacher())
+                .andReturn()
+
+
+        val addVideoLink = result.extractVideoAddLink(videoId = "123")
+        val removeVideoLink = result.extractVideoRemoveLink(videoId = "123")
+
+        mockMvc.perform(put(addVideoLink).asTeacher())
+                .andExpect(status().isNoContent)
+
+        mockMvc.perform(get("/v1/collections/default").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+
+        mockMvc.perform(delete(removeVideoLink).asTeacher())
+                .andExpect(status().isNoContent)
+
+        mockMvc.perform(get("/v1/collections/default").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
+    }
 }
 
-fun MvcResult.extractVideoLink(videoId: String): URI {
+fun MvcResult.extractVideoAddLink(videoId: String): URI {
     val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.addVideo.href")
+    return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
+}
+
+fun MvcResult.extractVideoRemoveLink(videoId: String): URI {
+    val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.removeVideo.href")
     return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
 }

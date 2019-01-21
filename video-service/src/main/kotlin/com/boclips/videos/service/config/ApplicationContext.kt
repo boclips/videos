@@ -4,6 +4,7 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
 import com.boclips.videos.service.application.collection.GetDefaultCollection
+import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultCollection
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.config.properties.JdbcProperties
 import com.boclips.videos.service.config.properties.YoutubeProperties
@@ -153,5 +154,10 @@ class ApplicationContext {
     @Bean
     fun addVideoToDefaultCollection(collectionService: CollectionService): AddVideoToDefaultCollection {
         return AddVideoToDefaultCollection(collectionService)
+    }
+
+    @Bean
+    fun removeVideoFromDefaultCollection(collectionService: CollectionService): RemoveVideoFromDefaultCollection {
+        return RemoveVideoFromDefaultCollection(collectionService)
     }
 }

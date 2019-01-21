@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.AddVideoToCollection
+import com.boclips.videos.service.domain.service.RemoveVideoFromCollection
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -24,7 +25,7 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create`() {
-        val collection = collectionService.create(owner = UserId(value = "user@gmail.com"))
+        val collection = createCollection(owner = UserId(value = "user@gmail.com"))
 
         assertThat(collection.id.value).isNotBlank()
         assertThat(collection.owner).isEqualTo(UserId("user@gmail.com"))
@@ -34,7 +35,7 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retrieve by id`() {
-        val collectionId = collectionService.create(owner = UserId(value = "user@gmail.com")).id
+        val collectionId = createCollection().id
 
         val collection = collectionService.getById(collectionId)
 
@@ -47,9 +48,9 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun `retrieve by owner`() {
         assertThat(collectionService.getByOwner(owner = UserId(value = "user@gmail.com"))).hasSize(0)
 
-        collectionService.create(owner = UserId(value = "user@gmail.com"))
-        collectionService.create(owner = UserId(value = "user@gmail.com"))
-        collectionService.create(owner = UserId(value = "another-user@gmail.com"))
+        createCollection(owner = UserId(value = "user@gmail.com"))
+        createCollection(owner = UserId(value = "user@gmail.com"))
+        createCollection(owner = UserId(value = "another-user@gmail.com"))
 
         assertThat(collectionService.getByOwner(owner = UserId(value = "user@gmail.com"))).hasSize(2)
     }
@@ -63,7 +64,7 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun `add a video to collection`() {
         saveVideo(videoId = 10)
 
-        val collectionId = collectionService.create(owner = UserId(value = "user@gmail.com")).id
+        val collectionId = createCollection().id
 
         collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
 
@@ -76,7 +77,7 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun `add a video to collection ignored when video already there`() {
         saveVideo(videoId = 10)
 
-        val collectionId = collectionService.create(owner = UserId(value = "user@gmail.com")).id
+        val collectionId = createCollection().id
 
         collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
         collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
@@ -85,4 +86,31 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(collection.videos).hasSize(1)
     }
+
+    @Test
+    fun `remove a video from collection`() {
+        saveVideo(videoId = 10)
+
+        val collectionId = createCollection().id
+
+        collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
+        collectionService.update(collectionId, RemoveVideoFromCollection(AssetId("10")))
+
+        val collection = collectionService.getById(collectionId)
+
+        assertThat(collection.videos).isEmpty()
+    }
+
+    @Test
+    fun `remove a video from collection ignored when video isn't present`() {
+        val collectionId = createCollection().id
+
+        collectionService.update(collectionId, RemoveVideoFromCollection(AssetId("10")))
+
+        val collection = collectionService.getById(collectionId)
+
+        assertThat(collection.videos).isEmpty()
+    }
+
+    private fun createCollection(owner: UserId =  UserId(value = "user@gmail.com")) = collectionService.create(owner = owner)
 }

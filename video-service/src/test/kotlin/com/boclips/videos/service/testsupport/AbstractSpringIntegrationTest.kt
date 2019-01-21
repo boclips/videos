@@ -53,7 +53,7 @@ abstract class AbstractSpringIntegrationTest {
     fun resetState() {
         repos.forEach { it.deleteAll() }
 
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig", "collection_video", "collection")
 
         fakeSearchService.safeRebuildIndex(emptySequence())
         fakeYoutubePlaybackProvider.clear()
