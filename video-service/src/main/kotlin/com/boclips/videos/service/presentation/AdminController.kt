@@ -12,11 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 import java.util.concurrent.CompletableFuture
-
+import java.util.concurrent.TimeUnit
 
 class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) : ProgressNotifier {
+    companion object : KLogging()
+
     override fun send(message: String) {
-        emitter.send(message.trimEnd() + "\n", MediaType.TEXT_PLAIN)
+        try {
+            emitter.send(message.trimEnd() + "\n", MediaType.TEXT_PLAIN)
+        } catch (e: IllegalStateException) {
+            logger.warn("Unable to update progress - ResponseBodyEmitter closed - ignoring")
+        }
     }
 }
 
@@ -40,7 +46,12 @@ class AdminController(
     }
 
     private fun asyncWithNotifier(handler: (ResponseEmitterProgressNotifier) -> CompletableFuture<Unit>): ResponseEntity<ResponseBodyEmitter> {
-        val emitter = ResponseBodyEmitter()
+        val emitter = ResponseBodyEmitter(TimeUnit.HOURS.toMillis(1))
+
+        emitter.onTimeout {
+            logger.warn("ResponseBodyEmitter timed out")
+        }
+
         handler(ResponseEmitterProgressNotifier(emitter))
                 .whenComplete { _, ex ->
                     if (ex != null) {
