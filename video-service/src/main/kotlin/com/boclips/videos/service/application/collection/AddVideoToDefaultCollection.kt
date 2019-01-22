@@ -5,21 +5,34 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.service.AddVideoToCollection
 import com.boclips.videos.service.domain.service.CollectionService
+import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.event.types.AddToCollectionEvent
+import com.boclips.videos.service.infrastructure.event.types.User
+import java.time.ZonedDateTime
 
 class AddVideoToDefaultCollection(
-        private val collectionService: CollectionService
+        private val collectionService: CollectionService,
+        private val eventService: EventService
 ) {
     fun execute(videoId: String?) {
         videoId ?: throw Exception("Video id cannot be null")
 
-        val user = UserExtractor.getCurrentUser().id
+        val user = UserExtractor.getCurrentUser()
+        val userId = user.id
 
-        if (collectionService.getByOwner(UserId(value = user)).isEmpty()) {
-            collectionService.create(UserId(value = user))
+        if (collectionService.getByOwner(UserId(value = userId)).isEmpty()) {
+            collectionService.create(UserId(value = userId))
         }
 
-        val collection = collectionService.getByOwner(UserId(value = user)).first()
+        val collection = collectionService.getByOwner(UserId(value = userId)).first()
 
         collectionService.update(collection.id, AddVideoToCollection(AssetId(videoId)))
+
+        eventService.saveEvent(AddToCollectionEvent(
+                timestamp = ZonedDateTime.now(),
+                user = User.fromSecurityUser(user),
+                collectionId = collection.id.value,
+                videoId = videoId
+        ))
     }
 }

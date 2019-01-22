@@ -17,6 +17,7 @@ import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.infrastructure.collection.CollectionEntityRepository
 import com.boclips.videos.service.infrastructure.collection.MySqlCollectionService
 import com.boclips.videos.service.infrastructure.collection.VideoInCollectionEntityRepository
+import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
@@ -152,12 +153,12 @@ class ApplicationContext {
     }
 
     @Bean
-    fun addVideoToDefaultCollection(collectionService: CollectionService): AddVideoToDefaultCollection {
-        return AddVideoToDefaultCollection(collectionService)
+    fun addVideoToDefaultCollection(collectionService: CollectionService, eventService: EventService): AddVideoToDefaultCollection {
+        return AddVideoToDefaultCollection(collectionService, eventService)
     }
 
     @Bean
-    fun removeVideoFromDefaultCollection(collectionService: CollectionService): RemoveVideoFromDefaultCollection {
-        return RemoveVideoFromDefaultCollection(collectionService)
+    fun removeVideoFromDefaultCollection(collectionService: CollectionService, eventService: EventService): RemoveVideoFromDefaultCollection {
+        return RemoveVideoFromDefaultCollection(collectionService, eventService)
     }
 }

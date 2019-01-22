@@ -18,15 +18,15 @@ class EventEntity(
         val timestamp = timestamp.atZone(ZoneOffset.UTC)
         val convertedUser = User(boclipsEmployee = user.boclipsEmployee, id = user.id)
 
-        return when (type) {
-            EventType.SEARCH.name -> SearchEvent(
+        return when (EventType.valueOf(type)) {
+            EventType.SEARCH -> SearchEvent(
                     timestamp = timestamp,
                     correlationId = data["searchId"] as String,
                     user = convertedUser,
                     resultsReturned = data["resultsReturned"] as Int,
                     query = data["query"] as String
             )
-            EventType.PLAYBACK.name -> PlaybackEvent(
+            EventType.PLAYBACK -> PlaybackEvent(
                     playerId = data["playerId"] as String,
                     searchId = data["searchId"] as String?,
                     captureTime = timestamp,
@@ -36,7 +36,7 @@ class EventEntity(
                     segmentEndSeconds = data["segmentEndSeconds"] as Long,
                     videoDurationSeconds = data["videoDurationSeconds"] as Long
             )
-            EventType.NO_SEARCH_RESULTS.name -> NoSearchResultsEvent(
+            EventType.NO_SEARCH_RESULTS -> NoSearchResultsEvent(
                     name = data["name"] as String?,
                     email = data["email"] as String,
                     captureTime = timestamp,
@@ -44,7 +44,18 @@ class EventEntity(
                     query = data["query"] as String,
                     description = data["description"] as String?
             )
-            else -> throw RuntimeException(type)
+            EventType.ADD_VIDEO_TO_COLLECTION -> AddToCollectionEvent(
+                    timestamp = timestamp,
+                    user = convertedUser,
+                    videoId = data["videoId"] as String,
+                    collectionId = data["collectionId"] as String
+            )
+            EventType.REMOVE_VIDEO_FROM_COLLECTION -> RemoveFromCollectionEvent(
+                    timestamp = timestamp,
+                    user = convertedUser,
+                    videoId = data["videoId"] as String,
+                    collectionId = data["collectionId"] as String
+            )
         }
     }
 

@@ -67,6 +67,28 @@ object TestFactories {
         )
     }
 
+    fun createAddToCollectionEvent(
+            captureTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)
+    ): Event<*> {
+        return AddToCollectionEvent(
+                timestamp = captureTime,
+                user = User.anonymous(),
+                videoId = "video-id",
+                collectionId = "collection-id"
+        )
+    }
+
+    fun createRemoveFromCollectionEvent(
+            captureTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)
+    ): Event<*> {
+        return RemoveFromCollectionEvent(
+                timestamp = captureTime,
+                user = User.anonymous(),
+                videoId = "video-id",
+                collectionId = "collection-id"
+        )
+    }
+
     fun createVideo(
             videoAsset: VideoAsset = createVideoAsset(),
             videoPlayback: VideoPlayback = createKalturaPlayback()

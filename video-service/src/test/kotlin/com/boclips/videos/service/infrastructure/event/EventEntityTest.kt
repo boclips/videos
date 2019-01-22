@@ -47,4 +47,22 @@ class EventEntityTest {
         assertThat(entity.toEvent()).isEqualToComparingFieldByField(noSearchResultsEvent)
     }
 
+    @Test
+    fun `AddToCollectionEvents can be round-tripped through Mongo`() {
+        val event = TestFactories.createAddToCollectionEvent()
+
+        val entity = EventEntity.fromEvent(event)
+
+        assertThat(entity.toEvent()).isEqualToComparingFieldByField(event)
+    }
+
+    @Test
+    fun `RemoveFromCollectionEvents can be round-tripped through Mongo`() {
+        val event = TestFactories.createRemoveFromCollectionEvent()
+
+        val entity = EventEntity.fromEvent(event)
+
+        assertThat(entity.toEvent()).isEqualToComparingFieldByField(event)
+    }
+
 }
