@@ -22,7 +22,7 @@ open class BuildLegacySearchIndex(
         try {
             videoAssetRepository.streamAll { videos ->
                 val videoAssets = videos
-                        .filter { it.playbackId.type == PlaybackProviderType.KALTURA }
+                        .filter { it.keywords.isNotEmpty() }
                         .map(VideoAssetToLegacyVideoMetadataConverter::convert)
 
                 legacySearchService.upsert(videoAssets, notifier)
