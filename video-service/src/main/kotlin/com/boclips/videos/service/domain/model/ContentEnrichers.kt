@@ -1,14 +1,14 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.asset.VideoAsset
 
 class ContentEnrichers {
     companion object {
         fun isClassroom(videoAsset: VideoAsset): Boolean {
             val lowercaseTextFragments = listOf(videoAsset.title, videoAsset.description).map(String::toLowerCase)
             val lowercaseText = lowercaseTextFragments.joinToString("\n")
-            val bagOfWords = lowercaseTextFragments.flatMap { it.split(" ") }.toSet()
+            val bagOfWords = wordChars.findAll(lowercaseText).mapTo(mutableSetOf(), MatchResult::value).toSet()
 
             return when {
                 videoAsset.type != LegacyVideoType.STOCK -> true
@@ -55,6 +55,8 @@ class ContentEnrichers {
                 listOf("biology", "animation"),
                 listOf("space", "animation")
         )
+
+        private val wordChars = Regex("\\w+")
     }
 }
 

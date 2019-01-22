@@ -66,6 +66,20 @@ class ContentEnrichersTest {
     }
 
     @Test
+    fun `punctuation is stripped to allow correct matching of excluded words `() {
+        val excludedTitles = listOf(
+                "Premier: space animation",
+                "Live at the space animation premier!",
+                "space animation premier.",
+                "space! animation! premier!"
+        )
+
+        excludedTitles.forEach {
+            assertThat(isClassroom(createVideoAsset(type = LegacyVideoType.STOCK, title = it))).withFailMessage("Expected '$it' to be excluded").isFalse()
+        }
+    }
+
+    @Test
     fun `stock featuring the excluded phrases is NOT matched as classroom`() {
         val excluded = listOf(
                 "red carpet",
