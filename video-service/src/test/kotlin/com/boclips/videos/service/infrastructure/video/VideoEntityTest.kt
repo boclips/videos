@@ -47,6 +47,13 @@ class VideoEntityTest {
     }
 
     @Test
+    fun `toVideo with empty keywords returns a video with empty keyword list`() {
+        assertThat(TestFactories.createVideoEntity(keywords = "").toVideoAsset().keywords).isEmpty()
+        assertThat(TestFactories.createVideoEntity(keywords = " ").toVideoAsset().keywords).isEmpty()
+        assertThat(TestFactories.createVideoEntity(keywords = "\t").toVideoAsset().keywords).isEmpty()
+    }
+
+    @Test
     fun `toVideo returns a video with correct duration`() {
         assertThat(TestFactories.createVideoEntity(duration = "01:02:03").toVideoAsset().duration).isEqualTo(Duration.ofHours(1).plusMinutes(2).plusSeconds(3))
     }

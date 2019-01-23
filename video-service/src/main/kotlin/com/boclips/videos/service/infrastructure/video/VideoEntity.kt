@@ -66,7 +66,7 @@ class VideoEntity(
                 contentPartnerId = source!!,
                 contentPartnerVideoId = uniqueId!!,
                 type = LegacyVideoType.fromId(type_id!!),
-                keywords = keywords?.split(",")?.map { it.trim() }.orEmpty(),
+                keywords = keywords?.split(",")?.map(String::trim)?.filter(String::isNotBlank).orEmpty(),
                 duration = DurationParser.parse(duration),
                 legalRestrictions = restrictions.orEmpty(),
                 subjects = emptySet()
