@@ -6,6 +6,10 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class MetricsContext {
+    companion object {
+        const val PREFIX = "boclips_"
+    }
+
     @Bean
-    fun videoCounter(registry: MeterRegistry) = registry.counter("video_count")
+    fun videoCounter(registry: MeterRegistry) = registry.counter("${PREFIX}created_video_count")
 }

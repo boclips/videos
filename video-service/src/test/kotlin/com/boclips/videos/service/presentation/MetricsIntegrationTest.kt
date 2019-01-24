@@ -46,6 +46,6 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/actuator/prometheus"))
                 .andExpect(status().isOk)
-                .andExpect(content().string(containsString("video_count_total ")))
+                .andExpect(content().string(containsString("boclips_created_video_count_total ")))
     }
 }
