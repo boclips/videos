@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+    <suppress>
+        <notes><![CDATA[
+      file name: emailaddress-rfc2822-1.1.2.jar
+      ]]></notes>
+        <gav regex="true">^com\.github\.bbottema:emailaddress-rfc2822:.*$</gav>
+        <cve>CVE-2014-1474</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: emailaddress-rfc2822-1.1.2.jar
+   ]]></notes>
+        <gav regex="true">^com\.github\.bbottema:emailaddress-rfc2822:.*$</gav>
+        <cve>CVE-2015-7686</cve>
+    </suppress>
+</suppressions>

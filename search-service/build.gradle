@@ -1,6 +1,7 @@
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.51"
     id 'com.adarshr.test-logger' version '1.2.0'
+    id 'org.owasp.dependencycheck' version '4.0.2'
 }
 
 group "com.boclips"
@@ -12,6 +13,7 @@ repositories {
     mavenCentral()
 }
 
+apply plugin: 'org.owasp.dependencycheck'
 
 test {
     useJUnitPlatform()
@@ -33,6 +35,8 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("io.github.microutils:kotlin-logging:1.4.9")
     compile('org.apache.solr:solr-solrj:5.5.5')
+    compile("org.apache.zookeeper:zookeeper:3.4.13")
+
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")
@@ -47,4 +51,16 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+dependencyCheck {
+    failBuildOnCVSS = 6 // Fail on medium severity or greater
+
+    data {
+        directory = '../dependency-check-cache'
+    }
+
+    analyzers {
+        assemblyEnabled = false
+    }
 }

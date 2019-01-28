@@ -22,12 +22,14 @@ buildscript {
 plugins {
     id 'com.adarshr.test-logger' version '1.2.0'
     id 'net.ltgt.apt' version '0.10'
+    id 'org.owasp.dependencycheck' version '4.0.2'
 }
 
 apply plugin: 'idea'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'org.owasp.dependencycheck'
 
 group = 'com.boclips'
 version = '0.0.1-SNAPSHOT'
@@ -175,6 +177,7 @@ dependencies {
     compile('io.springfox:springfox-swagger2:2.9.2')
     compile('io.springfox:springfox-swagger-ui:2.9.2')
     compile('org.apache.commons:commons-lang3:3.7')
+    compile("org.bouncycastle:bcprov-jdk15on:1.60")
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
         exclude group: 'junit', module: 'junit'
@@ -218,4 +221,18 @@ dependencies {
     client_testRuntime configurations.runtime
     client_testRuntime configurations.testRuntime
     client_testRuntime configurations.clientRuntime
+}
+
+dependencyCheck {
+    failBuildOnCVSS = 7 // Fail on high severity or greater
+
+    data {
+        directory = '../dependency-check-cache'
+    }
+
+    analyzers {
+        assemblyEnabled = false
+    }
+
+    suppressionFile = 'dependency-check-suppressions.xml'
 }

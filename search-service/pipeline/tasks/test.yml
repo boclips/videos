@@ -12,6 +12,7 @@ inputs:
 
 caches:
   - path: .gradle/
+  - path: source/dependency-check-cache
 
 run:
   path: source/search-service/pipeline/scripts/asroot.sh
