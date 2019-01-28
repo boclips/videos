@@ -2,7 +2,29 @@ buildscript {
     repositories {
         mavenCentral()
     }
+
+    dependencies {
+        classpath 'org.owasp:dependency-check-gradle:4.0.1'
+    }
 }
 
 group = 'com.boclips'
 version = '0.0.1-SNAPSHOT'
+
+allprojects {
+    apply plugin: 'org.owasp.dependencycheck'
+
+    dependencyCheck {
+        failBuildOnCVSS = 7 // Fail on high severity or greater
+
+        data {
+            directory = './dependency-check-cache'
+        }
+
+        analyzers {
+            assemblyEnabled = false
+        }
+
+        suppressionFile = './dependency-check-suppressions.xml'
+    }
+}

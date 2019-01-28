@@ -1,7 +1,6 @@
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.51"
     id 'com.adarshr.test-logger' version '1.2.0'
-    id 'org.owasp.dependencycheck' version '4.0.2'
 }
 
 group "com.boclips"
@@ -12,8 +11,6 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
 }
-
-apply plugin: 'org.owasp.dependencycheck'
 
 test {
     useJUnitPlatform()
@@ -51,16 +48,4 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
-}
-
-dependencyCheck {
-    failBuildOnCVSS = 6 // Fail on medium severity or greater
-
-    data {
-        directory = '../dependency-check-cache'
-    }
-
-    analyzers {
-        assemblyEnabled = false
-    }
 }
