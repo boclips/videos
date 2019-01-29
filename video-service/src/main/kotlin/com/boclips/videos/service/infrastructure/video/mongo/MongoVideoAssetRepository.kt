@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.mongodb.MongoClient
+import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.Filters.eq
 import org.bson.types.ObjectId
 
@@ -12,12 +13,20 @@ class MongoVideoAssetRepository(
 ) : VideoAssetRepository {
 
     override fun find(assetId: AssetId): VideoAsset? {
-        val document = getVideoCollection().find(eq("_id", ObjectId(assetId.value))).first()
-        return VideoDocumentConverter.fromDocument(document)
+        return getVideoCollection().find(eq("_id", ObjectId(assetId.value)))
+                .firstOrNull()
+                ?.let(VideoDocumentConverter::fromDocument)
     }
 
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
-        TODO("not implemented")
+        val videoByAssetId = getVideoCollection()
+                .find(`in`("_id", assetIds.map { ObjectId(it.value) }))
+                .map(VideoDocumentConverter::fromDocument)
+                .toList()
+                .map { (it.assetId to it) }
+                .toMap()
+
+        return assetIds.mapNotNull { videoByAssetId[it] }
     }
 
     override fun streamAll(consumer: (Sequence<VideoAsset>) -> Unit) {
@@ -25,7 +34,7 @@ class MongoVideoAssetRepository(
     }
 
     override fun delete(assetId: AssetId) {
-        TODO("not implemented")
+        getVideoCollection().deleteOne(eq("_id", ObjectId(assetId.value)))
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
