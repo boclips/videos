@@ -20,20 +20,17 @@ class E2EControllerTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoAssetRepository: VideoAssetRepository
 
-    @BeforeEach
-    fun setUp() {
-        saveVideo(videoId = 123)
-    }
-
     @Test
     fun `resets database and both search indices`() {
-        assertThat(fakeSearchService.count(Query(ids = listOf("123")))).isEqualTo(1)
-        assertThat(videoAssetRepository.find(AssetId(value = "123"))).isNotNull
+        val videoId = saveVideo().value
+
+        assertThat(fakeSearchService.count(Query(ids = listOf(videoId)))).isEqualTo(1)
+        assertThat(videoAssetRepository.find(AssetId(value = videoId))).isNotNull
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/e2e/actions/reset_all").asOperator())
                 .andExpect(MockMvcResultMatchers.status().isOk)
 
-        assertThat(fakeSearchService.count(Query(ids = listOf("123")))).isEqualTo(0)
-        assertThat(videoAssetRepository.find(AssetId(value = "123"))).isNull()
+        assertThat(fakeSearchService.count(Query(ids = listOf(videoId)))).isEqualTo(0)
+        assertThat(videoAssetRepository.find(AssetId(value = videoId))).isNull()
     }
 }

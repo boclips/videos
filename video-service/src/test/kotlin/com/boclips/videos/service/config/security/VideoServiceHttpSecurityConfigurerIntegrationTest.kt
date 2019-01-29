@@ -67,21 +67,21 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `get video does not require special roles`() {
-        saveVideo(videoId = 123)
+        val videoId = saveVideo()
 
-        mockMvc.perform(get("/v1/videos/123"))
+        mockMvc.perform(get("/v1/videos/${videoId.value}"))
                 .andExpect(status().is2xxSuccessful)
 
-        mockMvc.perform(get("/v1/videos/123").asReporter())
+        mockMvc.perform(get("/v1/videos/${videoId.value}").asReporter())
                 .andExpect(status().is2xxSuccessful)
 
-        mockMvc.perform(get("/v1/videos/123").asTeacher())
+        mockMvc.perform(get("/v1/videos/${videoId.value}").asTeacher())
                 .andExpect(status().is2xxSuccessful)
     }
 
     @Test
     fun `only teachers can get videos`() {
-        saveVideo(videoId = 123)
+        saveVideo()
 
         mockMvc.perform(get("/v1/videos?query=test"))
                 .andExpect(status().isForbidden)
@@ -95,24 +95,24 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `remove videos requires a special role`() {
-        saveVideo(videoId = 123)
+        val videoId = saveVideo()
 
-        mockMvc.perform(delete("/v1/videos/123"))
+        mockMvc.perform(delete("/v1/videos/${videoId.value}"))
                 .andExpect(status().isForbidden)
 
-        mockMvc.perform(delete("/v1/videos/123").asTeacher())
+        mockMvc.perform(delete("/v1/videos/${videoId.value}").asTeacher())
                 .andExpect(status().isForbidden)
 
-        mockMvc.perform(delete("/v1/videos/123").asReporter())
+        mockMvc.perform(delete("/v1/videos/${videoId.value}").asReporter())
                 .andExpect(status().isForbidden)
 
-        mockMvc.perform(delete("/v1/videos/123").asOperator())
+        mockMvc.perform(delete("/v1/videos/${videoId.value}").asOperator())
                 .andExpect(status().is2xxSuccessful)
     }
 
     @Test
     fun `insert videos requires a special role`() {
-        saveVideo(videoId = 123)
+        saveVideo()
 
         mockMvc.perform(post("/v1/videos"))
                 .andExpect(status().isForbidden)
@@ -132,8 +132,6 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `probe video existence requires a special role`() {
-        saveVideo(videoId = 123)
-
         mockMvc.perform(head("/v1/content-partners/ted/videos/666"))
                 .andExpect(status().isForbidden)
 

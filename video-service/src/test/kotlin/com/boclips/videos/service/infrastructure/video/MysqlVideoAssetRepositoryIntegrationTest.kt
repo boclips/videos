@@ -26,47 +26,46 @@ class MysqlVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `order is preserved between query and results`() {
-        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
-        saveVideo(videoId = 124, title = "Some title", description = "test description 3")
-        saveVideo(videoId = 125, title = "Some title", description = "test description 3")
+        val videoId1 = saveVideo(title = "Some title", description = "test description 1")
+        val videoId2 = saveVideo(title = "Some title", description = "test description 2")
+        val videoId3 = saveVideo(title = "Some title", description = "test description 3")
 
-        val videos = mysqlVideoRepository.findAll(listOf(AssetId(value = "124"), AssetId(value = "125"), AssetId(value = "123")))
+        val videos = mysqlVideoRepository.findAll(listOf(videoId2, videoId3, videoId1))
 
         assertThat(videos.map { it.assetId.value })
-                .isEqualTo(listOf("124", "125", "123"))
+                .isEqualTo(listOf(videoId2.value, videoId3.value, videoId1.value))
     }
 
     @Test
     fun `non-existing ids are skipped`() {
-        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
+        val videoId = saveVideo(title = "Some title", description = "test description 3")
 
         val videos = mysqlVideoRepository.findAll(listOf(
                 AssetId(value = "9999"),
-                AssetId(value = "123"),
+                videoId,
                 AssetId(value = "not-a-number"))
         )
 
-        assertThat(videos.map { it.assetId.value }).containsExactly("123")
+        assertThat(videos.map { it.assetId }).containsExactly(videoId)
     }
 
     @Test
     fun `findVideosBy does not throw when one video can't be found`() {
-        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
-        saveVideo(videoId = 124, title = "Some title", description = "test description 3")
+        val videoId1 = saveVideo(title = "Some title", description = "test description 1")
+        val videoId2 = saveVideo(title = "Some title", description = "test description 2")
 
-        val videos = mysqlVideoRepository.findAll(listOf(AssetId(value = "123"), AssetId(value = "124"), AssetId(value = "125")))
+        val videos = mysqlVideoRepository.findAll(listOf(videoId1, videoId2, AssetId(value = "125")))
 
         assertThat(videos).hasSize(2)
     }
 
     @Test
     fun `findVideoBy returns video details`() {
-        saveVideo(videoId = 123, title = "Some title", description = "test description 3")
+        val videoId = saveVideo(title = "Some title", description = "test description 3")
 
-        val videoId = AssetId(value = "123")
         val video = mysqlVideoRepository.find(videoId)!!
 
-        assertThat(video.assetId.value).isEqualTo("123")
+        assertThat(video.assetId).isEqualTo(videoId)
         assertThat(video.playbackId.value).isNotNull()
         assertThat(video.playbackId.type).isNotNull()
         assertThat(video.description).isNotEmpty()
@@ -82,8 +81,7 @@ class MysqlVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `video cannot be retrieved after it has been removed`() {
-        val videoId = AssetId("123")
-        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
+        val videoId = saveVideo(title = "Some title", description = "test description 3")
 
         mysqlVideoRepository.delete(videoId)
 
@@ -111,7 +109,7 @@ class MysqlVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `findByContentPartner checks both partner id and partner video id`() {
-        saveVideo(videoId = 123, contentProvider = "ted", contentProviderId = "abc")
+        saveVideo(contentProvider = "ted", contentProviderId = "abc")
 
         assertThat(mysqlVideoRepository.existsVideoFromContentPartner("ted", "abc")).isTrue()
         assertThat(mysqlVideoRepository.existsVideoFromContentPartner("teddy", "abc")).isFalse()

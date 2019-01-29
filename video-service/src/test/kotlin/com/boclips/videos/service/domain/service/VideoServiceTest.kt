@@ -20,7 +20,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
-        saveVideo(videoId = 1, title = "a kaltura asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"))
+        val videoId = saveVideo(title = "a kaltura asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"))
 
         val videos = videoService.search(VideoSearchQuery(text = "kaltura", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 10, pageIndex = 0))
 
@@ -31,7 +31,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retrieve videos by query returns Youtube videos`() {
-        saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
+        val videoId = saveVideo(title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
         val videos = videoService.search(VideoSearchQuery(text = "youtube", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 10, pageIndex = 0))
 
@@ -42,7 +42,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `count videos`() {
-        saveVideo(videoId = 1, title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
+        saveVideo(title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"))
 
         val size = videoService.count(VideoSearchQuery(text = "youtube", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 10, pageIndex = 0))
 
@@ -51,33 +51,33 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `look up video by id`() {
-        saveVideo(videoId = 1)
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "abc"))
 
-        val video = videoService.get(AssetId("1"))
+        val video = videoService.get(videoId)
 
         assertThat(video).isNotNull
-        assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-1.mp4")
+        assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-abc.mp4")
     }
 
     @Test
     fun `look up videos by ids`() {
-        saveVideo(videoId = 1)
-        saveVideo(videoId = 2)
-        saveVideo(videoId = 3)
+        val videoId1 = saveVideo()
+        saveVideo()
+        val videoId2 = saveVideo()
 
-        val video = videoService.get(listOf(AssetId("1"), AssetId("3")))
+        val video = videoService.get(listOf(videoId1, videoId2))
 
         assertThat(video).hasSize(2)
-        assertThat(video.map { it.asset.assetId.value }).containsExactly("1", "3")
+        assertThat(video.map { it.asset.assetId }).containsExactly(videoId1, videoId2)
     }
 
     @Test
     fun `look up video by id throws if no playback information if present`() {
-        saveVideo(videoId = 123, playbackId = PlaybackId(value = "1111", type = PlaybackProviderType.KALTURA))
+        val videoId = saveVideo(playbackId = PlaybackId(value = "1111", type = PlaybackProviderType.KALTURA))
 
         fakeKalturaClient.clear()
 
-        Assertions.assertThatThrownBy { videoService.get(AssetId("123")) }.isInstanceOf(VideoPlaybackNotFound::class.java)
+        Assertions.assertThatThrownBy { videoService.get(videoId) }.isInstanceOf(VideoPlaybackNotFound::class.java)
     }
 
     @Test
@@ -87,12 +87,11 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `update video asset`() {
-        saveVideo(videoId = 123)
+        val videoId = saveVideo()
 
-        val assetId = AssetId("123")
-        val video = videoService.update(assetId, VideoSubjectsUpdate(setOf(Subject("Maths"))))
+        val video = videoService.update(videoId, VideoSubjectsUpdate(setOf(Subject("Maths"))))
 
         assertThat(video.asset.subjects).containsExactly(Subject("Maths"))
-        assertThat(videoService.get(assetId).asset.subjects).containsExactly(Subject("Maths"))
+        assertThat(videoService.get(videoId).asset.subjects).containsExactly(Subject("Maths"))
     }
 }

@@ -62,11 +62,11 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `add a video to collection`() {
-        saveVideo(videoId = 10)
+        val videoId = saveVideo()
 
         val collectionId = createCollection().id
 
-        collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
+        collectionService.update(collectionId, AddVideoToCollection(videoId))
 
         val collection = collectionService.getById(collectionId)
 
@@ -75,12 +75,12 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `add a video to collection ignored when video already there`() {
-        saveVideo(videoId = 10)
+        val videoId = saveVideo()
 
         val collectionId = createCollection().id
 
-        collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
-        collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
+        collectionService.update(collectionId, AddVideoToCollection(videoId))
+        collectionService.update(collectionId, AddVideoToCollection(videoId))
 
         val collection = collectionService.getById(collectionId)
 
@@ -89,12 +89,12 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `remove a video from collection`() {
-        saveVideo(videoId = 10)
+        val videoId = saveVideo()
 
         val collectionId = createCollection().id
 
-        collectionService.update(collectionId, AddVideoToCollection(AssetId("10")))
-        collectionService.update(collectionId, RemoveVideoFromCollection(AssetId("10")))
+        collectionService.update(collectionId, AddVideoToCollection(videoId))
+        collectionService.update(collectionId, RemoveVideoFromCollection(videoId))
 
         val collection = collectionService.getById(collectionId)
 

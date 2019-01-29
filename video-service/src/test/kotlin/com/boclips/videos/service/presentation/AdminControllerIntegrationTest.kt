@@ -17,7 +17,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @BeforeEach
     fun setUp() {
-        saveVideo(videoId = 123)
+        val videoId = saveVideo()
     }
 
     @Test

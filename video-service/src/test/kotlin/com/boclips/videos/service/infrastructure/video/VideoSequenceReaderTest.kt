@@ -25,9 +25,9 @@ internal class VideoSequenceReaderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `streams all the videos`() {
-        saveVideo(videoId = 123, title = "Title 1")
-        saveVideo(videoId = 124, title = "Title 2")
-        saveVideo(videoId = 125, title = "Title 3")
+        saveVideo(title = "Title 1")
+        saveVideo(title = "Title 2")
+        saveVideo(title = "Title 3")
 
         var titles = emptyList<String>()
 

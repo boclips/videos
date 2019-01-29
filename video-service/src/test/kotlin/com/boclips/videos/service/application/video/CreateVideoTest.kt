@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
@@ -23,16 +22,10 @@ import java.time.Duration
 class CreateVideoTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var createVideo: CreateVideo
-
-    @Autowired
     lateinit var videoService: VideoService
 
     @Autowired
     lateinit var videoCounter: Counter
-
-    @Autowired
-    lateinit var legacySearchService: LegacySearchService
 
     @Test
     fun `requesting creation of an existing kaltura video creates the video`() {

@@ -33,11 +33,11 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `add video to default collection and retrieve it`() {
-        saveVideo(videoId = 123, title = "a video title")
+        val videoId = saveVideo(title = "a video title")
 
         val addVideoLink = mockMvc.perform(get("/v1/collections/default").asTeacher())
                 .andReturn()
-                .extractVideoAddLink(videoId = "123")
+                .extractVideoAddLink(videoId = videoId.value)
 
         mockMvc.perform(put(addVideoLink).asTeacher())
                 .andExpect(status().isNoContent)
@@ -45,20 +45,20 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/collections/default").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-                .andExpect(jsonPath("$.videos[0].id", `is`("123")))
+                .andExpect(jsonPath("$.videos[0].id", `is`(videoId.value)))
                 .andExpect(jsonPath("$.videos[0].title", `is`("a video title")))
     }
 
     @Test
     fun `remove video from the default collection`() {
-        saveVideo(videoId = 123, title = "a video title")
+        val videoId = saveVideo(title = "a video title")
 
         val result = mockMvc.perform(get("/v1/collections/default").asTeacher())
                 .andReturn()
 
 
-        val addVideoLink = result.extractVideoAddLink(videoId = "123")
-        val removeVideoLink = result.extractVideoRemoveLink(videoId = "123")
+        val addVideoLink = result.extractVideoAddLink(videoId = videoId.value)
+        val removeVideoLink = result.extractVideoRemoveLink(videoId = videoId.value)
 
         mockMvc.perform(put(addVideoLink).asTeacher())
                 .andExpect(status().isNoContent)

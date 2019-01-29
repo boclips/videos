@@ -23,11 +23,11 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `requesting deletion of an existing video deletes the video`() {
-        saveVideo(videoId = 123)
+        val videoId = saveVideo()
 
-        deleteVideos.execute("123")
+        deleteVideos.execute(videoId.value)
 
-        assertThatThrownBy { videoService.get(AssetId(value = "123")) }
+        assertThatThrownBy { videoService.get(videoId) }
                 .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
@@ -45,31 +45,28 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `remove deletes a video from repository`() {
-        val videoId = AssetId(value = "123")
-        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
+        val videoId = saveVideo(title = "Some title", description = "test description 3")
 
-        deleteVideos.execute("123")
+        deleteVideos.execute(videoId.value)
 
-        assertThatThrownBy { videoService.get(AssetId(value = "123")) }
+        assertThatThrownBy { videoService.get(videoId) }
                 .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test
     fun `remove deletes a video from search service`() {
-        val videoId = AssetId(value = "123")
-        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
+        val videoId = saveVideo(title = "Some title", description = "test description 3")
 
-        deleteVideos.execute("123")
+        deleteVideos.execute(videoId.value)
 
         assertThat(fakeSearchService.search(PaginatedSearchRequest(query = Query("Some title")))).isEmpty()
     }
 
     @Test
     fun `remove deletes a video from Kaltura`() {
-        val videoId = AssetId(value = "123")
-        saveVideo(videoId = videoId.value.toLong(), title = "Some title", description = "test description 3")
+        val videoId = saveVideo(title = "Some title", description = "test description 3", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123"))
 
-        deleteVideos.execute("123")
+        deleteVideos.execute(videoId.value)
 
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
         assertThat(kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))).isEmpty()

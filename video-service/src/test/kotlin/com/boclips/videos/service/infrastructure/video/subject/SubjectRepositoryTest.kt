@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.subject
 
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -11,18 +12,22 @@ class SubjectRepositoryTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var subjectRepository: SubjectRepository
 
-    val videoId = 1L
+    lateinit var videoAssetId: AssetId
 
     @BeforeEach
     fun setUp() {
-        saveVideo(videoId = videoId)
+        videoAssetId = saveVideo()
+    }
+
+    val videoId: Long by lazy {
+        videoAssetId.value.toLong()
     }
 
     @Test
     fun `add new subjects`() {
         subjectRepository.add(listOf(VideoSubjectEntity(videoId = videoId, subjectName = "Maths")))
 
-        val subjects = subjectRepository.findByVideoIds(listOf(1))
+        val subjects = subjectRepository.findByVideoIds(listOf(videoId))
 
         assertThat(subjects).hasSize(1)
     }

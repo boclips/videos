@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.*
@@ -19,42 +20,45 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    lateinit var kalturaVideoId: String
+    lateinit var youtubeVideoId: String
+
     @BeforeEach
     fun setUp() {
-        saveVideo(videoId = 123,
+        kalturaVideoId = saveVideo(
                 playbackId = PlaybackId(value = "ref-id-123", type = PlaybackProviderType.KALTURA),
                 title = "powerful asset about elephants",
                 description = "test description 3",
                 date = "2018-02-11",
                 duration = Duration.ofSeconds(23),
                 contentProvider = "cp"
-        )
+        ).value
 
-        saveVideo(videoId = 124,
+        youtubeVideoId = saveVideo(
                 playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
                 title = "elephants took out jobs",
                 description = "it's a asset from youtube",
                 date = "2017-02-11",
                 duration = Duration.ofSeconds(56),
                 contentProvider = "cp2"
-        )
+        ).value
     }
 
     @Test
     fun `returns Kaltura videos when query matches`() {
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("123")))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful asset about elephants")))
                 .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
                 .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
-                .andExpect(jsonPath("$._embedded.videos[0].playback.streamUrl", equalTo("https://stream/applehttp/asset-entry-123.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.streamUrl", equalTo("https://stream/applehttp/asset-entry-ref-id-123.mp4")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
-                .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
-                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/123")))
+                .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
+                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$kalturaVideoId")))
                 .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("ad-free"))))
 
                 .andExpect(jsonPath("$.page.size", Matchers.equalTo(100)))
@@ -67,41 +71,39 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `filters out non classroom results when filter param set`() {
-        val excludedVideoId = 999L
-        saveVideo(videoId = excludedVideoId, title = "Non educational video about elephants")
+        val excludedVideoId = saveVideo(title = "Non educational video about elephants", typeId = LegacyVideoType.STOCK.id)
 
         mockMvc.perform(get("/v1/videos?query=elephant&include_tag=classroom").asTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
+                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.value))))
     }
 
     @Test
     fun `can exclude results for a particular tag`() {
-        val excludedVideoId = 999L
-        saveVideo(videoId = excludedVideoId, tags = listOf("news"), title = "Elephant news")
+        val excludedVideoId = saveVideo(title = "Elephant news", typeId = LegacyVideoType.NEWS.id)
 
         mockMvc.perform(get("/v1/videos?query=elephant&exclude_tag=news").asTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.toString()))))
+                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.value))))
     }
 
     @Test
     fun `can find videos by tags`() {
-        saveVideo(videoId = 1, tags = listOf("news", "classroom"), title = "ben poos elephants")
-        saveVideo(videoId = 2, tags = listOf("classroom"), title = "Video about elephants")
+        val newsAndClassroomVideoId = saveVideo(title = "ben poos elephants", typeId = LegacyVideoType.NEWS.id)
+        val classroomVideoId = saveVideo(title = "Video about elephants", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
 
         mockMvc.perform(get("/v1/videos?query=elephants&include_tag=news&include_tag=classroom").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$._embedded.videos[*].id", hasItem("1")))
-                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem("2"))))
+                .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(newsAndClassroomVideoId.value)))
+                .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(classroomVideoId.value))))
     }
 
     @Test
     fun `returns Youtube videos when query matches`() {
         mockMvc.perform(get("/v1/videos?query=jobs").asTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("124")))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants took out jobs")))
                 .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a asset from youtube")))
                 .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2017-02-11")))
@@ -110,7 +112,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("YOUTUBE")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT56S")))
                 .andExpect(jsonPath("$._embedded.videos[0].playback.thumbnailUrl", equalTo("https://youtube.com/thumb/yt-id-124.png")))
-                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/124")))
+                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$youtubeVideoId")))
                 .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("youtube"))))
     }
 
@@ -123,10 +125,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns results when searching by id`() {
-        mockMvc.perform(get("/v1/videos?query=id:123,-1").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=id:$kalturaVideoId,-1").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo("123")))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
 
                 .andExpect(jsonPath("$.page.size", Matchers.equalTo(100)))
                 .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(1)))
@@ -142,22 +144,22 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 200 for valid video`() {
-        mockMvc.perform(get("/v1/videos/123").asTeacher())
+        mockMvc.perform(get("/v1/videos/${kalturaVideoId}").asTeacher())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", equalTo("123")))
+                .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
                 .andExpect(jsonPath("$.title", equalTo("powerful asset about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
-                .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-123")))
+                .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-ref-id-123")))
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
                 .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-                .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/asset-entry-123.mp4")))
-                .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-123.mp4")))
+                .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/asset-entry-ref-id-123.mp4")))
+                .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
                 .andExpect(jsonPath("$.type.id", equalTo(3)))
                 .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
-                .andExpect(jsonPath("$._links.self.href", containsString("/videos/123")))
+                .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
     }
 
     @Test
@@ -168,7 +170,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 200 when video is deleted`() {
-        mockMvc.perform(delete("/v1/videos/123").asOperator())
+        val videoId = saveVideo().value
+
+        mockMvc.perform(delete("/v1/videos/$videoId").asOperator())
                 .andExpect(status().`is`(200))
     }
 
@@ -257,7 +261,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isCreated)
 
-         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", containsString("""video from provider "AP" and provider id "1" already exists""")))
     }
@@ -297,31 +301,29 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `subject classifier can add subjects to an existing video with no subjects`() {
+    fun `add subjects to an existing video with no subjects`() {
         val mathsPatch = """{ "subjects": ["Maths", "Physics"] }"""
 
-        mockMvc.perform(post("/v1/videos/123").asSubjectClassifier()
+        val videoId = saveVideo(subjects = emptySet())
+
+        mockMvc.perform(post("/v1/videos/${videoId.value}").asSubjectClassifier()
                 .contentType(MediaType.APPLICATION_JSON).content(mathsPatch))
                 .andExpect(status().is2xxSuccessful)
 
-        mockMvc.perform(get("/v1/videos/123").asTeacher())
+        mockMvc.perform(get("/v1/videos/${videoId.value}").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.subjects", equalTo(listOf("Maths", "Physics"))))
-                .andExpect(jsonPath("$.title", equalTo("powerful asset about elephants")))
-                .andExpect(jsonPath("$.description", equalTo("test description 3")))
     }
 
     @Test
-    fun `subject classifier can replace subjects`() {
-        mockMvc.perform(post("/v1/videos/123").asSubjectClassifier()
-                .contentType(MediaType.APPLICATION_JSON).content("""{ "subjects": ["Maths"] }"""))
-                .andExpect(status().is2xxSuccessful)
+    fun `replace subjects`() {
+        val videoId = saveVideo(subjects = setOf("Maths")).value
 
-        mockMvc.perform(post("/v1/videos/123").asSubjectClassifier()
+        mockMvc.perform(post("/v1/videos/$videoId").asSubjectClassifier()
                 .contentType(MediaType.APPLICATION_JSON).content("""{ "subjects": ["Physics"] }"""))
                 .andExpect(status().is2xxSuccessful)
 
-        mockMvc.perform(get("/v1/videos/123").asTeacher())
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.subjects", equalTo(listOf("Physics"))))
     }
