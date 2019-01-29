@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.video.mysql
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository

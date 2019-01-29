@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.video.mysql
 
 import org.hibernate.SessionFactory
 import org.hibernate.StatelessSession

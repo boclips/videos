@@ -13,7 +13,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
-import com.boclips.videos.service.infrastructure.video.VideoEntity
+import com.boclips.videos.service.infrastructure.video.mysql.VideoEntity
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import java.time.Duration
 import java.time.LocalDate
@@ -105,7 +105,8 @@ object TestFactories {
             keywords: List<String> = listOf("keyword"),
             subjects: Set<Subject> = emptySet(),
             releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
-            duration: Duration = Duration.ZERO
+            duration: Duration = Duration.ZERO,
+            legalRestrictions: String = ""
     ): VideoAsset {
         return VideoAsset(
                 assetId = AssetId(value = videoId),
@@ -118,7 +119,7 @@ object TestFactories {
                 contentPartnerVideoId = contentPartnerVideoId,
                 type = type,
                 duration = duration,
-                legalRestrictions = "",
+                legalRestrictions = legalRestrictions,
                 subjects = subjects
         )
     }

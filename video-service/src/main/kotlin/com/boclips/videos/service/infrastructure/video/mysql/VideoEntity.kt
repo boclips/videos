@@ -1,10 +1,12 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.video.mysql
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.infrastructure.video.DurationParser
+import com.boclips.videos.service.infrastructure.video.generateNamespace
 import org.apache.commons.lang3.time.DurationFormatUtils
 import java.time.LocalDate
 import javax.persistence.*

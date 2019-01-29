@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundException
+import com.boclips.videos.service.infrastructure.video.mysql.MysqlVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.subject.SubjectCrudRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories

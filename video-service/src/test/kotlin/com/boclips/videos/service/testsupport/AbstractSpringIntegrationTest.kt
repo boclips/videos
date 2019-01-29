@@ -15,6 +15,7 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
+import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -67,6 +68,15 @@ abstract class AbstractSpringIntegrationTest {
     @BeforeEach
     fun resetState() {
         repos.forEach { it.deleteAll() }
+
+        MongoClient("localhost").apply {
+            listDatabaseNames()
+                    .filterNot { setOf("admin", "config").contains(it) }
+                    .forEach {
+                        println("Dropping $it")
+                        dropDatabase(it)
+                    }
+        }
 
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig", "collection_video", "collection", "video_subject")
 

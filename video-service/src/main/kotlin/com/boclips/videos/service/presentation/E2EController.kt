@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.domain.service.SearchService
-import com.boclips.videos.service.infrastructure.video.VideoEntityRepository
+import com.boclips.videos.service.infrastructure.video.mysql.VideoEntityRepository
 import mu.KLogging
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus

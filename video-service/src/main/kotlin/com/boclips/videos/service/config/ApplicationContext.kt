@@ -20,15 +20,20 @@ import com.boclips.videos.service.infrastructure.collection.VideoInCollectionEnt
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
-import com.boclips.videos.service.infrastructure.video.MysqlVideoAssetRepository
-import com.boclips.videos.service.infrastructure.video.VideoEntityRepository
-import com.boclips.videos.service.infrastructure.video.VideoSequenceReader
+import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
+import com.boclips.videos.service.infrastructure.video.mysql.MysqlVideoAssetRepository
+import com.boclips.videos.service.infrastructure.video.mysql.VideoEntityRepository
+import com.boclips.videos.service.infrastructure.video.mysql.VideoSequenceReader
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
+import com.mongodb.MongoClient
+import com.mongodb.MongoClientURI
 import io.micrometer.core.instrument.Counter
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
@@ -37,6 +42,9 @@ import java.util.concurrent.Executors
 
 @Configuration
 class ApplicationContext {
+    @Value("\${spring.data.mongodb.uri}")
+    var mongodbConnection: String? = null
+
     @Bean
     fun getVideoById(searchService: SearchService, videoService: VideoService) =
             GetVideoById(
@@ -92,12 +100,20 @@ class ApplicationContext {
     }
 
     @Bean
+    @Primary
     fun videoRepository(
             subjectRepository: SubjectRepository,
             videoEntityRepository: VideoEntityRepository,
             videoSequenceReader: VideoSequenceReader
     ): VideoAssetRepository {
         return MysqlVideoAssetRepository(subjectRepository, videoEntityRepository, videoSequenceReader)
+    }
+
+    @Bean
+    fun mongoVideoRepository(
+    ): VideoAssetRepository {
+        val mongoClient = MongoClient(MongoClientURI(mongodbConnection))
+        return MongoVideoAssetRepository(mongoClient)
     }
 
     @Bean
@@ -133,7 +149,7 @@ class ApplicationContext {
 
     @Bean
     fun buildLegacySearchIndex(videoAssetRepository: VideoAssetRepository,
-                           legacySearchService: LegacySearchService
+                               legacySearchService: LegacySearchService
     ): BuildLegacySearchIndex {
         return BuildLegacySearchIndex(
                 videoAssetRepository = videoAssetRepository,
