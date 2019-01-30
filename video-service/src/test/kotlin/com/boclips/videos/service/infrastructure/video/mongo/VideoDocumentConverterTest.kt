@@ -35,7 +35,7 @@ class VideoDocumentConverterTest {
         val document = VideoDocumentConverter.toDocument(video)
 
         assertThat(document.getObjectId("_id")).isEqualTo(ObjectId("5c1786db5236de0001d77747"))
-        assertThat(document.getList<String>("idAliases")).containsExactly("id-alias")
+        assertThat(document.getList<String>("aliases")).containsExactly("id-alias")
         assertThat(document.getString("title")).isEqualTo("the title")
         assertThat(document.getString("description")).isEqualTo("the description")
         assertThat(document.get("source", Map::class.java)).isEqualTo(mapOf(
@@ -62,7 +62,7 @@ class VideoDocumentConverterTest {
 
         val document = VideoDocumentConverter.toDocument(video)
 
-        assertThat(document.getList<String>("idAliases")).isEmpty()
+        assertThat(document.getList<String>("aliases")).isEmpty()
     }
 
     @Test

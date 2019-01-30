@@ -70,7 +70,7 @@ class MongoVideoAssetRepository(
     }
 
     override fun resolveAlias(alias: String): AssetId? {
-        return getVideoCollection().find(elemMatch("idAliases", Document.parse("{\$eq: \"$alias\"}")))
+        return getVideoCollection().find(elemMatch("aliases", Document.parse("{\$eq: \"$alias\"}")))
                 .firstOrNull()
                 ?.getObjectId("_id")
                 ?.toHexString()

@@ -17,7 +17,7 @@ object VideoDocumentConverter {
     fun toDocument(video: VideoAsset): Document {
         return Document()
                 .append("_id", ObjectId(video.assetId.value))
-                .append("idAliases", listOfNotNull(video.assetId.alias))
+                .append("aliases", listOfNotNull(video.assetId.alias))
                 .append("title", video.title)
                 .append("description", video.description)
                 .append("source",
@@ -65,7 +65,7 @@ object VideoDocumentConverter {
 }
 
 private class VideoFieldExtractor(val document: Document) {
-    fun id() = AssetId(document.getObjectId("_id").toHexString(), alias = document.getList<String>("idAliases").firstOrNull())
+    fun id() = AssetId(document.getObjectId("_id").toHexString(), alias = document.getList<String>("aliases").firstOrNull())
 
     fun title() = document.getString("title")
 
