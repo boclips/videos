@@ -34,6 +34,8 @@ class VideoController(
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java)
                 .getVideo(id)).withRel(rel)
 
+        fun getVideosLink() = linkTo(methodOn(VideoController::class.java).bulkUpdate()).withRel("videos")
+
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
         const val DEFAULT_PAGE_INDEX = 0
@@ -101,6 +103,11 @@ class VideoController(
     @PostMapping("/{id}")
     fun patchVideo(@PathVariable("id") id: String?, @RequestBody patchVideoRequest: VideoResource): ResponseEntity<Void> {
         patchVideo.execute(id, patchVideoRequest)
+        return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
+    }
+
+    @PatchMapping
+    fun bulkUpdate(): ResponseEntity<Void> {
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
