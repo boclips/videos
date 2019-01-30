@@ -17,5 +17,6 @@ data class VideoAsset(
         val type: LegacyVideoType,
         val duration: Duration,
         val legalRestrictions: String,
-        val subjects: Set<Subject>
+        val subjects: Set<Subject>,
+        val searchable: Boolean
 )

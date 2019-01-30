@@ -36,7 +36,8 @@ class VideoEntity(
         var type_id: Int? = null,
         var reference_id: String? = null,
         var playback_provider: String? = null,
-        var playback_id: String? = null
+        var playback_id: String? = null,
+        var searchable: Boolean = true
 ) {
 
     companion object {
@@ -54,7 +55,8 @@ class VideoEntity(
                 playback_id = videoAsset.playbackId.value,
                 playback_provider = videoAsset.playbackId.type.name,
                 source = videoAsset.contentPartnerId,
-                uniqueId = videoAsset.contentPartnerVideoId
+                uniqueId = videoAsset.contentPartnerVideoId,
+                searchable = videoAsset.searchable
         )
     }
 
@@ -71,7 +73,8 @@ class VideoEntity(
                 keywords = keywords?.split(",")?.map(String::trim)?.filter(String::isNotBlank).orEmpty(),
                 duration = DurationParser.parse(duration),
                 legalRestrictions = restrictions.orEmpty(),
-                subjects = emptySet()
+                subjects = emptySet(),
+                searchable = searchable
         )
     }
 

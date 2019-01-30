@@ -44,6 +44,7 @@ object VideoDocumentConverter {
                 .append("releaseDate", Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)))
                 .append("durationSeconds", video.duration.seconds.toInt())
                 .append("legalRestrictions", video.legalRestrictions)
+                .append("searchable", video.searchable)
     }
 
     fun fromDocument(document: Document) = VideoFieldExtractor(document).let {
@@ -59,7 +60,8 @@ object VideoDocumentConverter {
                 type = it.legacyType(),
                 duration = it.duration(),
                 legalRestrictions = it.legalRestrictions(),
-                subjects = it.subjects()
+                subjects = it.subjects(),
+                searchable = it.searchable()
         )
     }
 }
@@ -103,6 +105,8 @@ private class VideoFieldExtractor(val document: Document) {
     fun legalRestrictions() = document.getString("legalRestrictions")
 
     fun subjects() = document.getList<String>("subjects").map { Subject(it) }.toSet()
+
+    fun searchable() = document.getBoolean("searchable")
 
     private fun source() = document.getMap<Any>("source")
 }

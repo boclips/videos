@@ -35,7 +35,8 @@ class CreateVideoRequestToAssetConverter {
                 type = LegacyVideoType.valueOf(createVideoRequest.videoType!!),
                 duration = createVideoRequest.duration!!,
                 legalRestrictions = createVideoRequest.legalRestrictions ?: "",
-                subjects = createVideoRequest.subjects!!.map{ Subject(it) }.toSet()
+                subjects = createVideoRequest.subjects!!.map{ Subject(it) }.toSet(),
+                searchable = createVideoRequest.searchable ?: true
         )
     }
 

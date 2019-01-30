@@ -107,7 +107,8 @@ object TestFactories {
             subjects: Set<Subject> = emptySet(),
             releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
             duration: Duration = Duration.ZERO,
-            legalRestrictions: String = ""
+            legalRestrictions: String = "",
+            searchable: Boolean = true
     ): VideoAsset {
         return VideoAsset(
                 assetId = AssetId(value = videoId, alias = videoIdAlias),
@@ -121,11 +122,22 @@ object TestFactories {
                 type = type,
                 duration = duration,
                 legalRestrictions = legalRestrictions,
-                subjects = subjects
+                subjects = subjects,
+                searchable = searchable
         )
     }
 
-    fun createVideoEntity(title: String = "title", typeId: Int = 1, keywords: String = "k1,k2,k3", playbackId: String = "12312413-123123-123-123", playbackProvider: String = "KALTURA", duration: String = "00:00:00", restrictions: String? = null, uniqueId: String = "unique-id"): VideoEntity {
+    fun createVideoEntity(
+            title: String = "title",
+            typeId: Int = 1,
+            keywords: String = "k1,k2,k3",
+            playbackId: String = "12312413-123123-123-123",
+            playbackProvider: String = "KALTURA",
+            duration: String = "00:00:00",
+            restrictions: String? = null,
+            uniqueId: String = "unique-id",
+            searchable: Boolean = true
+    ): VideoEntity {
         return VideoEntity(
                 id = 123,
                 source = "source",
@@ -150,7 +162,8 @@ object TestFactories {
                 reference_id = "reference_id",
                 playback_provider = playbackProvider,
                 playback_id = playbackId,
-                uniqueId = uniqueId
+                uniqueId = uniqueId,
+                searchable = searchable
         )
     }
 

@@ -15,5 +15,6 @@ data class CreateVideoRequest(
         val videoType: String? = null,
         val playbackId: String? = null,
         val playbackProvider: String? = null,
-        val subjects: Set<String>? = emptySet()
+        val subjects: Set<String>? = emptySet(),
+        val searchable: Boolean? = null
 )
