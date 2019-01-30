@@ -20,6 +20,7 @@ import com.boclips.videos.service.infrastructure.collection.VideoInCollectionEnt
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
+import com.boclips.videos.service.infrastructure.video.CombinedVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mysql.MysqlVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mysql.VideoEntityRepository
@@ -100,10 +101,17 @@ class ApplicationContext {
     @Bean
     @Primary
     fun videoRepository(
+            mysqlVideoAssetRepository: MysqlVideoAssetRepository
+    ): VideoAssetRepository {
+        return CombinedVideoAssetRepository(mysqlVideoAssetRepository = mysqlVideoAssetRepository)
+    }
+
+    @Bean
+    fun mysqlVideoRepository(
             subjectRepository: SubjectRepository,
             videoEntityRepository: VideoEntityRepository,
             videoSequenceReader: VideoSequenceReader
-    ): VideoAssetRepository {
+    ): MysqlVideoAssetRepository {
         return MysqlVideoAssetRepository(subjectRepository, videoEntityRepository, videoSequenceReader)
     }
 
