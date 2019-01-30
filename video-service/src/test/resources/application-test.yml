@@ -17,9 +17,6 @@ event:
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;MODE=MYSQL
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/video-service-db?ssl=false&authSource=admin
 
 email:
   host: garbage.host

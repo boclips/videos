@@ -65,11 +65,14 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var createVideo: CreateVideo
 
+    @Autowired
+    lateinit var mongoClient: MongoClient
+
     @BeforeEach
     fun resetState() {
         repos.forEach { it.deleteAll() }
 
-        MongoClient("localhost").apply {
+        mongoClient.apply {
             listDatabaseNames()
                     .filterNot { setOf("admin", "config").contains(it) }
                     .forEach {

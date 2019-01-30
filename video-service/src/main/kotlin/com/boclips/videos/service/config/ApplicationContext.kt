@@ -42,8 +42,6 @@ import java.util.concurrent.Executors
 
 @Configuration
 class ApplicationContext {
-    @Value("\${spring.data.mongodb.uri}")
-    var mongodbConnection: String? = null
 
     @Bean
     fun getVideoById(searchService: SearchService, videoService: VideoService) =
@@ -111,8 +109,8 @@ class ApplicationContext {
 
     @Bean
     fun mongoVideoRepository(
+            mongoClient: MongoClient
     ): VideoAssetRepository {
-        val mongoClient = MongoClient(MongoClientURI(mongodbConnection))
         return MongoVideoAssetRepository(mongoClient)
     }
 
