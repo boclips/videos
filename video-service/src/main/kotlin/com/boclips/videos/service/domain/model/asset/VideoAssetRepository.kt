@@ -8,4 +8,5 @@ interface VideoAssetRepository {
     fun create(videoAsset: VideoAsset): VideoAsset
     fun update(videoAsset: VideoAsset): VideoAsset
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
+    fun resolveAlias(alias: String): AssetId?
 }

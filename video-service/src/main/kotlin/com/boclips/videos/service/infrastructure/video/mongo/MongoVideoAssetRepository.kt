@@ -13,7 +13,6 @@ import java.util.*
 class MongoVideoAssetRepository(
         private val mongoClient: MongoClient
 ) : VideoAssetRepository {
-
     override fun find(assetId: AssetId): VideoAsset? {
         return getVideoCollection().find(eq("_id", ObjectId(assetId.value)))
                 .firstOrNull()
@@ -45,12 +44,13 @@ class MongoVideoAssetRepository(
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
-        val document = VideoDocumentConverter.toDocument(videoAsset)
+        val id = videoAsset.assetId.copy(value = ObjectId().toHexString())
 
-        getVideoCollection()
-                .insertOne(document)
+        val document = VideoDocumentConverter.toDocument(videoAsset.copy(assetId = id))
 
-        return find(videoAsset.assetId) ?: throw VideoAssetNotFoundException()
+        getVideoCollection().insertOne(document)
+
+        return find(id) ?: throw VideoAssetNotFoundException()
     }
 
     override fun update(videoAsset: VideoAsset): VideoAsset {
@@ -67,6 +67,14 @@ class MongoVideoAssetRepository(
                 .first()
 
         return Optional.ofNullable(assetMatchingFilters).isPresent
+    }
+
+    override fun resolveAlias(alias: String): AssetId? {
+        return getVideoCollection().find(elemMatch("idAliases", Document.parse("{\$eq: \"$alias\"}")))
+                .firstOrNull()
+                ?.getObjectId("_id")
+                ?.toHexString()
+                ?.let { AssetId(it, alias) }
     }
 
     private fun getVideoCollection() = mongoClient.getDatabase("video-service-db").getCollection("videos")

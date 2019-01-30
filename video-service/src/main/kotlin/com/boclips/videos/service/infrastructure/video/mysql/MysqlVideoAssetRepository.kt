@@ -8,6 +8,7 @@ import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundExce
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
 import mu.KLogging
+import java.lang.UnsupportedOperationException
 
 open class MysqlVideoAssetRepository(
         private val subjectRepository: SubjectRepository,
@@ -84,6 +85,10 @@ open class MysqlVideoAssetRepository(
     private fun getSubjectsByVideoIds(videoIds: List<Long>): Map<Long, List<Subject>> =
             subjectRepository.findByVideoIds(videoIds)
                     .groupBy({ it.videoId!! }, { Subject(it.subjectName!!) })
+
+    override fun resolveAlias(alias: String): AssetId? {
+        throw UnsupportedOperationException("Alias resolution not supported by mysql video repository")
+    }
 
     private fun convertToVideoAssetOrNull(it: VideoEntity): VideoAsset? {
         return try {

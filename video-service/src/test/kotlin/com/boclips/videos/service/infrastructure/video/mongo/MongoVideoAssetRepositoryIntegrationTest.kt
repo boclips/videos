@@ -12,6 +12,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 
 class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -19,12 +20,18 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     lateinit var mongoVideoRepository: MongoVideoAssetRepository
 
     @Test
-    fun `create and find a video`() {
-        val id = ObjectId().toHexString()
-        val originalAsset = TestFactories.createVideoAsset(videoId = id)
+    fun `create a video`() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = "whatever", videoIdAlias = "123"))
 
-        mongoVideoRepository.create(originalAsset)
-        val retrievedAsset = mongoVideoRepository.find(AssetId(id))!!
+        assertThat(asset.assetId.value).hasSize(24)
+        assertThat(asset.assetId.alias).isEqualTo("123")
+    }
+
+    @Test
+    fun `find a video`() {
+        val originalAsset = mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = "", videoIdAlias = "123"))
+
+        val retrievedAsset = mongoVideoRepository.find(originalAsset.assetId)!!
 
         assertThat(retrievedAsset).isEqualToComparingFieldByFieldRecursively(originalAsset)
     }
@@ -36,21 +43,13 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `lookup videos by ids maintains video order`() {
-        val id1 = ObjectId().toHexString()
-        val id2 = ObjectId().toHexString()
-        val id3 = ObjectId().toHexString()
+        val id1 = mongoVideoRepository.create(TestFactories.createVideoAsset()).assetId
+        val id2 = mongoVideoRepository.create(TestFactories.createVideoAsset()).assetId
+        val id3 = mongoVideoRepository.create(TestFactories.createVideoAsset()).assetId
 
-        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = id1))
-        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = id2))
-        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = id3))
+        val videos = mongoVideoRepository.findAll(listOf(id2, id1, id3))
 
-        val videos = mongoVideoRepository.findAll(listOf(
-                AssetId(id2),
-                AssetId(id1),
-                AssetId(id3)
-        ))
-
-        assertThat(videos.map { it.assetId.value }).containsExactly(id2, id1, id3)
+        assertThat(videos.map { it.assetId }).containsExactly(id2, id1, id3)
     }
 
     @Test
@@ -78,15 +77,13 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `update a video`() {
-        val id = ObjectId().toHexString()
-        val existingAsset = TestFactories.createVideoAsset(
-                videoId = id,
-                title = "old title",
-                keywords = listOf("k1", "k2"),
-                playbackId = PlaybackId(PlaybackProviderType.KALTURA, "old-id")
+        val existingAsset = mongoVideoRepository.create(
+                TestFactories.createVideoAsset(
+                        title = "old title",
+                        keywords = listOf("k1", "k2"),
+                        playbackId = PlaybackId(PlaybackProviderType.KALTURA, "old-id")
+                )
         )
-
-        mongoVideoRepository.create(existingAsset)
 
         val assetToBeUpdated = existingAsset.copy(
                 title = "new title",
@@ -97,7 +94,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val updatedAsset = mongoVideoRepository.update(assetToBeUpdated)
 
         assertThat(updatedAsset).isEqualTo(assetToBeUpdated)
-        assertThat(mongoVideoRepository.find(AssetId(id))).isEqualTo(assetToBeUpdated)
+        assertThat(mongoVideoRepository.find(existingAsset.assetId)).isEqualTo(assetToBeUpdated)
     }
 
     @Test
@@ -122,5 +119,12 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks", "ted-id-1")).isTrue()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks", "ted-id-2")).isFalse()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks abc", "ted-id-1")).isFalse()
+    }
+
+    @Test
+    fun `resolve alias`() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(videoIdAlias = "123"))
+
+        assertThat(mongoVideoRepository.resolveAlias("123")).isEqualTo(asset.assetId)
     }
 }

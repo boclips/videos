@@ -96,6 +96,7 @@ object TestFactories {
 
     fun createVideoAsset(
             videoId: String = "123",
+            videoIdAlias: String? = null,
             title: String = "title",
             description: String = "description",
             contentProvider: String = "AP",
@@ -109,7 +110,7 @@ object TestFactories {
             legalRestrictions: String = ""
     ): VideoAsset {
         return VideoAsset(
-                assetId = AssetId(value = videoId),
+                assetId = AssetId(value = videoId, alias = videoIdAlias),
                 playbackId = playbackId,
                 title = title,
                 description = description,

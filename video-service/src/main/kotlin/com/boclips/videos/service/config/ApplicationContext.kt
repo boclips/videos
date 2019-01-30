@@ -101,9 +101,10 @@ class ApplicationContext {
     @Bean
     @Primary
     fun videoRepository(
-            mysqlVideoAssetRepository: MysqlVideoAssetRepository
+            mysqlVideoAssetRepository: MysqlVideoAssetRepository,
+            mongoVideoAssetRepository: MongoVideoAssetRepository
     ): VideoAssetRepository {
-        return CombinedVideoAssetRepository(mysqlVideoAssetRepository = mysqlVideoAssetRepository)
+        return CombinedVideoAssetRepository(mysqlVideoAssetRepository = mysqlVideoAssetRepository, mongoVideoAssetRepository = mongoVideoAssetRepository)
     }
 
     @Bean
@@ -118,7 +119,7 @@ class ApplicationContext {
     @Bean
     fun mongoVideoRepository(
             mongoClient: MongoClient
-    ): VideoAssetRepository {
+    ): MongoVideoAssetRepository {
         return MongoVideoAssetRepository(mongoClient)
     }
 

@@ -18,6 +18,7 @@ class VideoDocumentConverterTest {
     fun `converts a video to a document`() {
         val video = TestFactories.createVideoAsset(
                 videoId = "5c1786db5236de0001d77747",
+                videoIdAlias = "id-alias",
                 title = "the title",
                 description = "the description",
                 contentProvider = "the contentPartner",
@@ -34,6 +35,7 @@ class VideoDocumentConverterTest {
         val document = VideoDocumentConverter.toDocument(video)
 
         assertThat(document.getObjectId("_id")).isEqualTo(ObjectId("5c1786db5236de0001d77747"))
+        assertThat(document.getList<String>("idAliases")).containsExactly("id-alias")
         assertThat(document.getString("title")).isEqualTo("the title")
         assertThat(document.getString("description")).isEqualTo("the description")
         assertThat(document.get("source", Map::class.java)).isEqualTo(mapOf(
@@ -52,6 +54,15 @@ class VideoDocumentConverterTest {
         assertThat(document.getDate("releaseDate")).isEqualTo(Date.valueOf(LocalDate.of(2018, 1, 10)))
         assertThat(document.getInteger("durationSeconds")).isEqualTo(97)
         assertThat(document.getString("legalRestrictions")).isEqualTo("legal restrictions")
+    }
+
+    @Test
+    internal fun `convert sets empty aliases when alias null`() {
+        val video = TestFactories.createVideoAsset(videoId = "5ba8e657042ade0001d563fc", videoIdAlias = null)
+
+        val document = VideoDocumentConverter.toDocument(video)
+
+        assertThat(document.getList<String>("idAliases")).isEmpty()
     }
 
     @Test
