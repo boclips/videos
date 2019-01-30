@@ -1,10 +1,6 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.video.mysql
 
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.infrastructure.video.mysql.MysqlVideoAssetRepository
-import com.boclips.videos.service.infrastructure.video.mysql.VideoEntityRepository
-import com.boclips.videos.service.infrastructure.video.mysql.VideoEntitySequenceConsumer
-import com.boclips.videos.service.infrastructure.video.mysql.VideoSequenceReader
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any

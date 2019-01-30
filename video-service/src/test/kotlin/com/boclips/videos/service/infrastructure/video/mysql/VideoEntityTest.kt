@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.video.mysql
 
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType

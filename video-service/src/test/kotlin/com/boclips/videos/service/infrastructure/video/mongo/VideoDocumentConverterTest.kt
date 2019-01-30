@@ -1,10 +1,9 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.infrastructure.video.mongo.VideoDocumentConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.video.mysql
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundException
-import com.boclips.videos.service.infrastructure.video.mysql.MysqlVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.subject.SubjectCrudRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories

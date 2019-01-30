@@ -1,12 +1,14 @@
 package com.boclips.videos.service.infrastructure.video.mongo
 
+import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.mongodb.MongoClient
-import com.mongodb.client.model.Filters.`in`
-import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.*
+import org.bson.Document
 import org.bson.types.ObjectId
+import java.util.*
 
 class MongoVideoAssetRepository(
         private val mongoClient: MongoClient
@@ -30,25 +32,41 @@ class MongoVideoAssetRepository(
     }
 
     override fun streamAll(consumer: (Sequence<VideoAsset>) -> Unit) {
-        TODO("not implemented")
+        val sequence = Sequence { getVideoCollection().find().iterator() }
+                .map(VideoDocumentConverter::fromDocument)
+
+        consumer(sequence)
     }
 
     override fun delete(assetId: AssetId) {
-        getVideoCollection().deleteOne(eq("_id", ObjectId(assetId.value)))
+        val objectIdToBeDeleted = ObjectId(assetId.value)
+        getVideoCollection()
+                .deleteOne(eq("_id", objectIdToBeDeleted))
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
-        getVideoCollection().insertOne(VideoDocumentConverter.toDocument(videoAsset))
+        val document = VideoDocumentConverter.toDocument(videoAsset)
 
-        return videoAsset
+        getVideoCollection()
+                .insertOne(document)
+
+        return find(videoAsset.assetId) ?: throw VideoAssetNotFoundException()
     }
 
     override fun update(videoAsset: VideoAsset): VideoAsset {
-        TODO("not implemented")
+        val document = VideoDocumentConverter.toDocument(videoAsset)
+        getVideoCollection()
+                .replaceOne(eq("_id", ObjectId(videoAsset.assetId.value)), document)
+
+        return find(videoAsset.assetId) ?: throw VideoAssetNotFoundException()
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
-        TODO("not implemented")
+        val assetMatchingFilters = getVideoCollection()
+                .find(and(eq("source.contentPartner.name", contentPartnerId), eq("source.videoReference", partnerVideoId)))
+                .first()
+
+        return Optional.ofNullable(assetMatchingFilters).isPresent
     }
 
     private fun getVideoCollection() = mongoClient.getDatabase("video-service-db").getCollection("videos")
