@@ -12,7 +12,7 @@ internal class GetVideoByIdTest : AbstractSpringIntegrationTest() {
     lateinit var getVideoById: GetVideoById
 
     @Test
-    internal fun `throws exception when query is null`() {
+    fun `throws exception when query is null`() {
         assertThatThrownBy { getVideoById.execute(null) }.isInstanceOf(QueryValidationException::class.java)
     }
 }
