@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController
 class E2EController(
         private val legacySearchIndex: LegacySearchService,
         private val searchService: SearchService,
-        private val videoEntityRepository: VideoEntityRepository
+        private val mysqlVideoEntityRepository: VideoEntityRepository
 ) {
     companion object : KLogging()
 
     @PostMapping("/reset_all")
     fun resetAll(): ResponseEntity<Any> {
         try {
-            videoEntityRepository.findAll().forEach { videEntity ->
+            mysqlVideoEntityRepository.findAll().forEach { videEntity ->
                 val videoId = videEntity.id.toString()
                 try {
                     legacySearchIndex.removeFromSearch(videoId)
@@ -38,9 +38,9 @@ class E2EController(
                 logger.info { "Removed video $videoId" }
             }
 
-            videoEntityRepository.deleteAll()
+            mysqlVideoEntityRepository.deleteAll()
 
-            if (videoEntityRepository.count() != 0L) {
+            if (mysqlVideoEntityRepository.count() != 0L) {
                 throw IllegalStateException("Table drop failed")
             }
         } catch (ex: Exception) {
