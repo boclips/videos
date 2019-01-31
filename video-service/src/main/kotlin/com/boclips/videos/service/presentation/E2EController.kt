@@ -31,11 +31,16 @@ class E2EController(
                 try {
                     legacySearchIndex.removeFromSearch(videoId)
                 } catch (ex: SolrDocumentNotFound) {
-                    logger.warn { "Couuld not find and delete video $videoId in SOLR" }
+                    logger.warn { "Could not find and delete video $videoId in SOLR" }
                 }
 
-                searchService.removeFromSearch(videoId)
-                logger.info { "Removed video $videoId" }
+                try {
+                    searchService.removeFromSearch(videoId)
+                } catch(ex: Exception) {
+                    logger.warn { "Could not find and delete video $videoId in ES" }
+                }
+
+                logger.info { "Finished attempt to reset video $videoId" }
             }
 
             mysqlVideoEntityRepository.deleteAll()
