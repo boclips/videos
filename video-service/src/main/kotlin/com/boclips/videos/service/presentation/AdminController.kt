@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.videos.service.application.MigrateToMongo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import mu.KLogging
@@ -30,17 +29,11 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 @RestController
 @RequestMapping("/v1/admin/actions")
 class AdminController(
-        private val migrateToMongo: MigrateToMongo,
         private val rebuildSearchIndex: RebuildSearchIndex,
         private val buildLegacySearchIndex: BuildLegacySearchIndex
 ) {
 
     companion object : KLogging()
-
-    @PostMapping("/migrate_to_mongo")
-    fun migrateToMongo(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(migrateToMongo::execute)
-    }
 
     @PostMapping("/rebuild_search_index")
     fun rebuildSearchIndex(): ResponseEntity<ResponseBodyEmitter> {

@@ -3,7 +3,6 @@ package com.boclips.videos.service.config
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.videos.service.application.MigrateToMongo
 import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
 import com.boclips.videos.service.application.collection.GetDefaultCollection
 import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultCollection
@@ -31,7 +30,9 @@ import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.mongodb.MongoClient
+import com.mongodb.MongoClientURI
 import io.micrometer.core.instrument.Counter
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -148,17 +149,6 @@ class ApplicationContext {
     fun youtubePlaybackProvider(youtubeProperties: YoutubeProperties): PlaybackProvider {
         return YoutubePlaybackProvider(youtubeProperties.apiKey)
     }
-
-    @Bean
-    fun migrateToMongo(mysqlVideoAssetRepository: MysqlVideoAssetRepository,
-                           mongoVideoAssetRepository: MongoVideoAssetRepository
-    ): MigrateToMongo {
-        return MigrateToMongo(
-                mysqlVideoAssetRepository = mysqlVideoAssetRepository,
-                mongoVideoAssetRepository = mongoVideoAssetRepository
-        )
-    }
-
 
     @Bean
     fun rebuildSearchIndex(videoAssetRepository: VideoAssetRepository,
