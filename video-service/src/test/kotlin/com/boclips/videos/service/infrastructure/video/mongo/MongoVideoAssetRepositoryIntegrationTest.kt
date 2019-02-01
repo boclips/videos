@@ -8,11 +8,9 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 
 class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -21,15 +19,14 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `create a video`() {
-        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = "whatever", videoIdAlias = "123"))
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset())
 
         assertThat(asset.assetId.value).hasSize(24)
-        assertThat(asset.assetId.alias).isEqualTo("123")
     }
 
     @Test
     fun `find a video`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = "", videoIdAlias = "123"))
+        val originalAsset = mongoVideoRepository.create(TestFactories.createVideoAsset())
 
         val retrievedAsset = mongoVideoRepository.find(originalAsset.assetId)!!
 
@@ -38,7 +35,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `find video when does not exist`() {
-        assertThat(mongoVideoRepository.find(AssetId(ObjectId().toHexString()))).isNull()
+        assertThat(mongoVideoRepository.find(AssetId(TestFactories.aValidId()))).isNull()
     }
 
     @Test
@@ -54,7 +51,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `delete a video`() {
-        val id = ObjectId().toHexString()
+        val id = TestFactories.aValidId()
         val originalAsset = TestFactories.createVideoAsset(videoId = id)
 
         mongoVideoRepository.create(originalAsset)
@@ -65,9 +62,9 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `stream all videos`() {
-        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = ObjectId().toHexString()))
-        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = ObjectId().toHexString()))
-        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = ObjectId().toHexString()))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))
 
         var videos: List<VideoAsset> = emptyList()
         mongoVideoRepository.streamAll { videos = it.toList() }
@@ -100,7 +97,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     @Test
     fun `update throws when video not found`() {
         val asset = TestFactories.createVideoAsset(
-                videoId = ObjectId().toHexString()
+                videoId = TestFactories.aValidId()
         )
 
         assertThrows<VideoAssetNotFoundException> { mongoVideoRepository.update(asset) }
@@ -109,7 +106,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     @Test
     fun `find by content partner and content partner video id`() {
         val asset = TestFactories.createVideoAsset(
-                videoId = ObjectId().toHexString(),
+                videoId = TestFactories.aValidId(),
                 contentPartnerVideoId = "ted-id-1",
                 contentProvider = "TED Talks"
         )
@@ -119,12 +116,5 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks", "ted-id-1")).isTrue()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks", "ted-id-2")).isFalse()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks abc", "ted-id-1")).isFalse()
-    }
-
-    @Test
-    fun `resolve alias`() {
-        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(videoIdAlias = "123"))
-
-        assertThat(mongoVideoRepository.resolveAlias("123")).isEqualTo(asset.assetId)
     }
 }

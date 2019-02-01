@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
+import com.mongodb.MongoClient
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,9 +44,21 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var fakeYoutubePlaybackProvider: TestYoutubePlaybackProvider
 
+    @Autowired
+    lateinit var mongoClient: MongoClient
+
     @BeforeEach
     fun resetState() {
         repos.forEach { it.deleteAll() }
+
+        mongoClient.apply {
+            listDatabaseNames()
+                    .filterNot { setOf("admin", "config").contains(it) }
+                    .forEach {
+                        println("Dropping $it")
+                        dropDatabase(it)
+                    }
+        }
 
         JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
@@ -94,7 +107,8 @@ abstract class AbstractSpringIntegrationTest {
 
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.value, duration = duration))
-            else -> {}
+            else -> {
+            }
         }
     }
 

@@ -4,7 +4,6 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.types.AddToCollectionEventData
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.RemoveFromCollectionEventData
 import com.boclips.videos.service.testsupport.TestFactories
@@ -36,10 +35,10 @@ internal class RemoveVideoFromDefaultCollectionTest {
 
         val addVideoToCollection = RemoveVideoFromDefaultCollection(collectionService, eventService)
 
-        addVideoToCollection.execute("123")
+        addVideoToCollection.execute(TestFactories.aValidId())
 
         verify(eventService).saveEvent(com.nhaarman.mockito_kotlin.check<Event<RemoveFromCollectionEventData>> {
-            Assertions.assertThat(it.data.videoId).isEqualTo("123")
+            Assertions.assertThat(it.data.videoId).isNotEmpty()
             Assertions.assertThat(it.data.collectionId).isEqualTo("col id")
             Assertions.assertThat(it.user.id).isEqualTo("me@me.com")
         })

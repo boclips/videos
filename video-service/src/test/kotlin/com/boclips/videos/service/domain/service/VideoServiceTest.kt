@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -82,7 +83,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `look up by id throws if video does not exist`() {
-        Assertions.assertThatThrownBy { videoService.get(AssetId("123")) }.isInstanceOf(VideoAssetNotFoundException::class.java)
+        Assertions.assertThatThrownBy { videoService.get(AssetId(value = TestFactories.aValidId())) }.isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test

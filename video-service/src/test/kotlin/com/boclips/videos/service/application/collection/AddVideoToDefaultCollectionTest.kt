@@ -5,9 +5,9 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.types.AddToCollectionEvent
 import com.boclips.videos.service.infrastructure.event.types.AddToCollectionEventData
 import com.boclips.videos.service.infrastructure.event.types.Event
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createCollection
 import com.boclips.videos.service.testsupport.setSecurityContext
 import com.nhaarman.mockito_kotlin.check
@@ -15,7 +15,6 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.bouncycastle.asn1.x500.style.RFC4519Style.owner
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.internal.verification.Times
@@ -54,7 +53,7 @@ class AddVideoToDefaultCollectionTest {
 
         val addVideoToCollection = AddVideoToDefaultCollection(collectionService, mock())
 
-        addVideoToCollection.execute("123")
+        addVideoToCollection.execute(TestFactories.aValidId())
 
         verify(collectionService, Times(0)).create(UserId(value = "me@me.com"))
     }
@@ -70,10 +69,10 @@ class AddVideoToDefaultCollectionTest {
 
         val addVideoToCollection = AddVideoToDefaultCollection(collectionService, eventService)
 
-        addVideoToCollection.execute("123")
+        addVideoToCollection.execute(TestFactories.aValidId())
 
         verify(eventService).saveEvent(check<Event<AddToCollectionEventData>> {
-            assertThat(it.data.videoId).isEqualTo("123")
+            assertThat(it.data.videoId).isNotEmpty()
             assertThat(it.data.collectionId).isEqualTo("col id")
             assertThat(it.user.id).isEqualTo("me@me.com")
         })

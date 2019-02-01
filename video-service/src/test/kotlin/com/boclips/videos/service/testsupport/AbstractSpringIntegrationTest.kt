@@ -1,7 +1,6 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.kalturaclient.TestKalturaClient
-import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.application.video.CreateVideo
@@ -30,7 +29,6 @@ import org.springframework.test.jdbc.JdbcTestUtils
 import java.time.Duration
 import java.time.LocalDate
 import java.util.*
-import javax.transaction.Transactional
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)

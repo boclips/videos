@@ -64,15 +64,19 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     fun `created video becomes available in search`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
 
-        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
+        val createRequest = TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video")
+        createVideo.execute(createRequest)
 
-        assertThat(videoService.search(VideoSearchQuery(
+        val results = videoService.search(VideoSearchQuery(
                 text = "the latest bloomberg",
                 includeTags = emptyList(),
                 excludeTags = emptyList(),
                 pageSize = 1,
                 pageIndex = 0
-        )).first().asset.title).isEqualTo("the latest Bloomberg video")
+        ))
+
+        val firstVideoInResults = results.first()
+        assertThat(firstVideoInResults.asset.title).isEqualTo("the latest Bloomberg video")
     }
 
     @Test

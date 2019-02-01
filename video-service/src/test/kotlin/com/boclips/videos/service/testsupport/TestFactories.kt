@@ -13,8 +13,8 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.*
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
-import com.boclips.videos.service.infrastructure.video.mysql.VideoEntity
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
+import org.bson.types.ObjectId
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -95,8 +95,7 @@ object TestFactories {
     ) = Video(asset = videoAsset, playback = videoPlayback)
 
     fun createVideoAsset(
-            videoId: String = "123",
-            videoIdAlias: String? = null,
+            videoId: String = ObjectId().toHexString(),
             title: String = "title",
             description: String = "description",
             contentProvider: String = "AP",
@@ -111,7 +110,7 @@ object TestFactories {
             searchable: Boolean = true
     ): VideoAsset {
         return VideoAsset(
-                assetId = AssetId(value = videoId, alias = videoIdAlias),
+                assetId = AssetId(value = ObjectId(videoId).toHexString()),
                 playbackId = playbackId,
                 title = title,
                 description = description,
@@ -123,46 +122,6 @@ object TestFactories {
                 duration = duration,
                 legalRestrictions = legalRestrictions,
                 subjects = subjects,
-                searchable = searchable
-        )
-    }
-
-    fun createVideoEntity(
-            title: String = "title",
-            typeId: Int = 1,
-            keywords: String = "k1,k2,k3",
-            playbackId: String = "12312413-123123-123-123",
-            playbackProvider: String = "KALTURA",
-            duration: String = "00:00:00",
-            restrictions: String? = null,
-            uniqueId: String = "unique-id",
-            searchable: Boolean = true
-    ): VideoEntity {
-        return VideoEntity(
-                id = 123,
-                source = "source",
-                namespace = "namespace",
-                title = title,
-                description = "description",
-                date = "2014-08-13",
-                duration = duration,
-                keywords = keywords,
-                price_category = "price_category",
-                sounds = "sounds",
-                color = "color",
-                location = "location",
-                country = "country",
-                state = "state",
-                city = "city",
-                region = "region",
-                alternative_id = "alternative_id",
-                alt_source = "alt_source",
-                restrictions = restrictions,
-                type_id = typeId,
-                reference_id = "reference_id",
-                playback_provider = playbackProvider,
-                playback_id = playbackId,
-                uniqueId = uniqueId,
                 searchable = searchable
         )
     }
@@ -244,5 +203,10 @@ object TestFactories {
             title = title,
             videos = videos
     )
+
+    fun aValidId(): String {
+        return ObjectId().toHexString()
+    }
+
 }
 

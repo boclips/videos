@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 interface CollectionService {
     fun create(owner: UserId): Collection
 
-    fun getById(id: CollectionId): Collection
+    fun getById(id: CollectionId): Collection?
 
     fun getByOwner(owner: UserId): List<Collection>
 

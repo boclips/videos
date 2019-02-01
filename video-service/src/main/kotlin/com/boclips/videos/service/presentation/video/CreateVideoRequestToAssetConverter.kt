@@ -2,11 +2,12 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import org.bson.types.ObjectId
 
 class CreateVideoRequestToAssetConverter {
 
@@ -24,7 +25,7 @@ class CreateVideoRequestToAssetConverter {
         validateObligatoryField("subjects", createVideoRequest.subjects)
 
         return VideoAsset(
-                assetId = AssetId(""),
+                assetId = AssetId(value = ObjectId().toHexString()),
                 playbackId = PlaybackId(PlaybackProviderType.valueOf(createVideoRequest.playbackProvider!!), createVideoRequest.playbackId!!),
                 title = createVideoRequest.title!!,
                 description = createVideoRequest.description!!,
@@ -35,7 +36,7 @@ class CreateVideoRequestToAssetConverter {
                 type = LegacyVideoType.valueOf(createVideoRequest.videoType!!),
                 duration = createVideoRequest.duration!!,
                 legalRestrictions = createVideoRequest.legalRestrictions ?: "",
-                subjects = createVideoRequest.subjects!!.map{ Subject(it) }.toSet(),
+                subjects = createVideoRequest.subjects!!.map { Subject(it) }.toSet(),
                 searchable = createVideoRequest.searchable ?: true
         )
     }

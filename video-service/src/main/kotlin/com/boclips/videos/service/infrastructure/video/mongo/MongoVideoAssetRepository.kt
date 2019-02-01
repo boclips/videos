@@ -6,17 +6,26 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.*
-import org.bson.Document
+import mu.KLogging
 import org.bson.types.ObjectId
 import java.util.*
 
 class MongoVideoAssetRepository(
         private val mongoClient: MongoClient
 ) : VideoAssetRepository {
+    companion object : KLogging() {
+        const val databaseName = "video-service-db"
+        const val collectionName = "videos"
+    }
+
     override fun find(assetId: AssetId): VideoAsset? {
-        return getVideoCollection().find(eq("_id", ObjectId(assetId.value)))
+        val videoAssetOrNull = getVideoCollection().find(eq("_id", ObjectId(assetId.value)))
                 .firstOrNull()
                 ?.let(VideoDocumentConverter::fromDocument)
+
+        logger.info { "Found ${assetId.value}" }
+
+        return videoAssetOrNull
     }
 
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
@@ -27,7 +36,11 @@ class MongoVideoAssetRepository(
                 .map { (it.assetId to it) }
                 .toMap()
 
-        return assetIds.mapNotNull { videoByAssetId[it] }
+        logger.info { "Found ${assetIds.size} videos for assetIds $assetIds" }
+
+        return assetIds.mapNotNull { assetId ->
+            videoByAssetId[assetId]
+        }
     }
 
     override fun streamAll(consumer: (Sequence<VideoAsset>) -> Unit) {
@@ -41,22 +54,27 @@ class MongoVideoAssetRepository(
         val objectIdToBeDeleted = ObjectId(assetId.value)
         getVideoCollection()
                 .deleteOne(eq("_id", objectIdToBeDeleted))
+
+        logger.info { "Deleted video ${assetId.value}" }
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
-        val id = videoAsset.assetId.copy(value = ObjectId().toHexString())
-
-        val document = VideoDocumentConverter.toDocument(videoAsset.copy(assetId = id))
+        val document = VideoDocumentConverter.toDocument(videoAsset)
 
         getVideoCollection().insertOne(document)
 
-        return find(id) ?: throw VideoAssetNotFoundException()
+        val createdVideoAsset = find(videoAsset.assetId) ?: throw VideoAssetNotFoundException()
+
+        logger.info { "Created video ${createdVideoAsset.assetId.value}" }
+        return createdVideoAsset
     }
 
     override fun update(videoAsset: VideoAsset): VideoAsset {
         val document = VideoDocumentConverter.toDocument(videoAsset)
         getVideoCollection()
                 .replaceOne(eq("_id", ObjectId(videoAsset.assetId.value)), document)
+
+        logger.info { "Updated video ${videoAsset.assetId.value}" }
 
         return find(videoAsset.assetId) ?: throw VideoAssetNotFoundException()
     }
@@ -70,11 +88,25 @@ class MongoVideoAssetRepository(
     }
 
     override fun resolveAlias(alias: String): AssetId? {
-        return getVideoCollection().find(elemMatch("aliases", Document.parse("{\$eq: \"$alias\"}")))
+        val assetId = getVideoCollection().find(eq("aliases", alias))
                 .firstOrNull()
                 ?.getObjectId("_id")
                 ?.toHexString()
-                ?.let { AssetId(it, alias) }
+                ?.let { AssetId(it) }
+
+        logger.info { "Attempted to resolve alias $alias to $assetId" }
+
+        return assetId
+    }
+
+    override fun resolveId(assetId: AssetId): String? {
+        val alias = getVideoCollection().find(eq(ObjectId(assetId.value)))
+                .firstOrNull()
+                ?.getString("aliases")
+
+        logger.info { "Attempted to resolve alias $alias to $assetId" }
+
+        return alias
     }
 
     override fun disableFromSearch(assetIds: List<AssetId>) {
@@ -85,5 +117,5 @@ class MongoVideoAssetRepository(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    private fun getVideoCollection() = mongoClient.getDatabase("video-service-db").getCollection("videos")
+    private fun getVideoCollection() = mongoClient.getDatabase(databaseName).getCollection(collectionName)
 }

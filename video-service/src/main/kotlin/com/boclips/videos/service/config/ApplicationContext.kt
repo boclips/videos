@@ -1,13 +1,11 @@
 package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
 import com.boclips.videos.service.application.collection.GetDefaultCollection
 import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultCollection
 import com.boclips.videos.service.application.video.*
-import com.boclips.videos.service.config.properties.JdbcProperties
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
@@ -15,24 +13,19 @@ import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.infrastructure.collection.CollectionEntityRepository
-import com.boclips.videos.service.infrastructure.collection.MySqlCollectionService
-import com.boclips.videos.service.infrastructure.collection.VideoInCollectionEntityRepository
+import com.boclips.videos.service.infrastructure.collection.mongo.CollectionDocumentConverter
+import com.boclips.videos.service.infrastructure.collection.mongo.MongoCollectionService
+import com.boclips.videos.service.infrastructure.collection.mysql.CollectionEntityRepository
+import com.boclips.videos.service.infrastructure.collection.mysql.MySqlCollectionService
+import com.boclips.videos.service.infrastructure.collection.mysql.VideoInCollectionEntityRepository
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
-import com.boclips.videos.service.infrastructure.video.CombinedVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
-import com.boclips.videos.service.infrastructure.video.mysql.MysqlVideoAssetRepository
-import com.boclips.videos.service.infrastructure.video.mysql.VideoEntityRepository
-import com.boclips.videos.service.infrastructure.video.mysql.VideoSequenceReader
-import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
 import io.micrometer.core.instrument.Counter
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -46,10 +39,11 @@ import java.util.concurrent.Executors
 class ApplicationContext {
 
     @Bean
-    fun getVideoById(searchService: SearchService, videoService: VideoService) =
+    fun getVideoById(searchService: SearchService, videoService: VideoService, videoAssetRepository: VideoAssetRepository) =
             GetVideoById(
                     videoService = videoService,
-                    videoToResourceConverter = VideoToResourceConverter()
+                    videoToResourceConverter = VideoToResourceConverter(),
+                    videoAssetRepository = videoAssetRepository
             )
 
     @Bean
@@ -100,26 +94,19 @@ class ApplicationContext {
     }
 
     @Bean
-    fun collectionService(collectionEntityRepository: CollectionEntityRepository, videoInCollectionEntityRepository: VideoInCollectionEntityRepository, videoService: VideoService): CollectionService {
-        return MySqlCollectionService(collectionEntityRepository, videoInCollectionEntityRepository, videoService)
-    }
-
-    @Bean
     @Primary
-    fun videoRepository(
-            mysqlVideoAssetRepository: MysqlVideoAssetRepository,
-            mongoVideoAssetRepository: MongoVideoAssetRepository
-    ): VideoAssetRepository {
-        return CombinedVideoAssetRepository(mysqlVideoAssetRepository = mysqlVideoAssetRepository, mongoVideoAssetRepository = mongoVideoAssetRepository)
+    fun collectionService(mongoClient: MongoClient,
+                          videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
+                          videoService: VideoService): CollectionService {
+        return MongoCollectionService(mongoClient, CollectionDocumentConverter(), videoService)
     }
 
     @Bean
-    fun mysqlVideoRepository(
-            subjectRepository: SubjectRepository,
-            videoEntityRepository: VideoEntityRepository,
-            videoSequenceReader: VideoSequenceReader
-    ): MysqlVideoAssetRepository {
-        return MysqlVideoAssetRepository(subjectRepository, videoEntityRepository, videoSequenceReader)
+    fun mysqlCollectionService(collectionEntityRepository: CollectionEntityRepository,
+                               videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
+                               videoService: VideoService,
+                               mongoVideoAssetRepository: MongoVideoAssetRepository): MySqlCollectionService {
+        return MySqlCollectionService(collectionEntityRepository, videoInCollectionEntityRepository, videoService, mongoVideoAssetRepository)
     }
 
     @Bean
@@ -127,11 +114,6 @@ class ApplicationContext {
             mongoClient: MongoClient
     ): MongoVideoAssetRepository {
         return MongoVideoAssetRepository(mongoClient)
-    }
-
-    @Bean
-    fun videoSequenceFactory(jdbcProperties: JdbcProperties): VideoSequenceReader {
-        return VideoSequenceReader(fetchSize = jdbcProperties.fetchSize)
     }
 
     @Bean

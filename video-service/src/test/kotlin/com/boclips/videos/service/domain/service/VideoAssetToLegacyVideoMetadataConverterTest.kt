@@ -11,8 +11,9 @@ class VideoAssetToLegacyVideoMetadataConverterTest {
 
     @Test
     fun convert() {
+        val videoAssetId = TestFactories.aValidId()
         val asset = TestFactories.createVideoAsset(
-                videoId = "1",
+                videoId = videoAssetId,
                 title = "the title",
                 description = "the description",
                 keywords = listOf("keyword"),
@@ -25,7 +26,7 @@ class VideoAssetToLegacyVideoMetadataConverterTest {
 
         val legacyMetadata = VideoAssetToLegacyVideoMetadataConverter.convert(asset)
 
-        assertThat(legacyMetadata.id).isEqualTo("1")
+        assertThat(legacyMetadata.id).isEqualTo(videoAssetId)
         assertThat(legacyMetadata.title).isEqualTo("the title")
         assertThat(legacyMetadata.description).isEqualTo("the description")
         assertThat(legacyMetadata.keywords).containsExactly("keyword")

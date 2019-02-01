@@ -20,7 +20,7 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Test
-    fun `video counter increases when we ingest a video`() {
+    fun `video counter increases when we create a video`() {
         fakeKalturaClient.addMediaEntry(TestFactories.createMediaEntry(id = "entry-$123", referenceId = "abc1", duration = Duration.ofMinutes(1)))
 
         val content = """

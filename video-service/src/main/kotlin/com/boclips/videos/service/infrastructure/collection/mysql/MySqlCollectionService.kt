@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.collection
+package com.boclips.videos.service.infrastructure.collection.mysql
 
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -6,12 +6,14 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.*
+import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
 import java.util.*
 
 class MySqlCollectionService(
         private val collectionEntityRepository: CollectionEntityRepository,
         private val videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
-        private val videoService: VideoService
+        private val videoService: VideoService,
+        private val mongoVideoAssetRepository: MongoVideoAssetRepository
 ) : CollectionService {
     override fun create(owner: UserId): Collection {
         val collectionEntity = collectionEntityRepository.save(CollectionEntity(
@@ -48,14 +50,11 @@ class MySqlCollectionService(
     }
 
     private fun addVideo(id: CollectionId, videoId: AssetId) {
-        if (videoInCollectionEntityRepository.existsByCollectionIdAndVideoId(collectionId = id.value, videoId = videoId.value)) {
-            return
-        }
-        videoInCollectionEntityRepository.save(VideoInCollectionEntity(collectionId = id.value, videoId = videoId.value))
+        throw IllegalStateException()
     }
 
     private fun removeVideo(id: CollectionId, videoId: AssetId) {
-        videoInCollectionEntityRepository.deleteByCollectionIdAndVideoId(collectionId = id.value, videoId = videoId.value)
+        throw IllegalStateException()
     }
 
     private fun convert(collectionEntity: CollectionEntity): Collection {

@@ -11,15 +11,26 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class RebuildSearchIndexTest {
 
+    lateinit var searchService: VideoAssetSearchService
+
+    @BeforeEach
+    fun setUp() {
+        val inMemorySearchService = InMemorySearchService()
+        searchService = VideoAssetSearchService(inMemorySearchService, inMemorySearchService)
+    }
+
     @Test
     fun `execute rebuilds search index`() {
-        val inMemorySearchService = InMemorySearchService()
-        val searchService = VideoAssetSearchService(inMemorySearchService, inMemorySearchService)
-        searchService.upsert(sequenceOf(TestFactories.createVideoAsset(videoId = "1")))
+        val videoAssetId1 = TestFactories.aValidId()
+        val videoAssetId2 = TestFactories.aValidId()
+        val videoAssetId3 = TestFactories.aValidId()
+
+        searchService.upsert(sequenceOf(TestFactories.createVideoAsset(videoId = videoAssetId1)))
 
         val videoAssetRepository = mock<VideoAssetRepository> {
             on {
@@ -28,16 +39,16 @@ class RebuildSearchIndexTest {
                 val consumer = invocations.getArgument(0) as (Sequence<VideoAsset>) -> Unit
 
                 consumer(sequenceOf(
-                        TestFactories.createVideoAsset(videoId = "2"),
-                        TestFactories.createVideoAsset(videoId = "3")
+                        TestFactories.createVideoAsset(videoId = videoAssetId2),
+                        TestFactories.createVideoAsset(videoId = videoAssetId3)
                 ))
             }
         }
 
         val rebuildSearchIndex = RebuildSearchIndex(videoAssetRepository, searchService)
-
         rebuildSearchIndex.execute()
 
-        assertThat(searchService.search(PaginatedSearchRequest(Query(ids = listOf("1", "2", "3"))))).containsExactlyInAnyOrder("2", "3")
+        val searchRequest = PaginatedSearchRequest(Query(ids = listOf(videoAssetId1, videoAssetId2, videoAssetId3)))
+        assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(videoAssetId2, videoAssetId3)
     }
 }

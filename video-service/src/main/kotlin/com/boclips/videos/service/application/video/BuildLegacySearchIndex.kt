@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.service.VideoAssetToLegacyVideoMetadataConverter
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async

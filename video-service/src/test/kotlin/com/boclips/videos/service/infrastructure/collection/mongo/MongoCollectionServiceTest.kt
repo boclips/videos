@@ -1,0 +1,44 @@
+package com.boclips.videos.service.infrastructure.collection.mongo
+
+import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.service.AddVideoToCollection
+import com.boclips.videos.service.domain.service.CollectionService
+import com.boclips.videos.service.domain.service.RemoveVideoFromCollection
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+
+class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
+
+    @Autowired
+    lateinit var collectionService: CollectionService
+
+    @Test
+    fun `can create and update a collection`() {
+        val videoAsset1 = saveVideo()
+        val videoAsset2 = saveVideo()
+
+        val collection = collectionService.create(UserId(value = "user1"))
+
+        collectionService.update(collection.id, AddVideoToCollection(videoAsset1))
+        collectionService.update(collection.id, AddVideoToCollection(videoAsset2))
+        collectionService.update(collection.id, RemoveVideoFromCollection(videoAsset1))
+
+        val updatedCollection = collectionService.getById(collection.id)
+
+        assertThat(updatedCollection!!.owner).isEqualTo(UserId(value = "user1"))
+        assertThat(updatedCollection!!.videos).hasSize(1)
+    }
+
+    @Test
+    fun `can retrieve collection of user`() {
+        val videoInCollection = saveVideo()
+        val collection = collectionService.create(UserId(value = "user1"))
+        collectionService.update(collection.id, AddVideoToCollection(videoInCollection))
+
+        val userCollection = collectionService.getByOwner(UserId(value = "user1"))
+
+        assertThat(userCollection.size).isEqualTo(1)
+    }
+}

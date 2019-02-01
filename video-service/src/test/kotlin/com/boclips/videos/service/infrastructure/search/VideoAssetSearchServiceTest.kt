@@ -16,8 +16,8 @@ class VideoAssetSearchServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `upsert inserts videos`() {
-        val videoNews = TestFactories.createVideoAsset(videoId = "123", title = "isNews", type = LegacyVideoType.NEWS)
-        val videoStock = TestFactories.createVideoAsset(videoId = "124", title = "stock", type = LegacyVideoType.STOCK)
+        val videoNews = TestFactories.createVideoAsset(videoId = TestFactories.aValidId(), title = "isNews", type = LegacyVideoType.NEWS)
+        val videoStock = TestFactories.createVideoAsset(videoId = TestFactories.aValidId(), title = "stock", type = LegacyVideoType.STOCK)
 
         searchService.upsert(sequenceOf(videoNews, videoStock))
 

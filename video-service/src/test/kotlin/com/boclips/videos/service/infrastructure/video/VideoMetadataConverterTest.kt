@@ -11,8 +11,10 @@ import org.junit.jupiter.api.Test
 class VideoMetadataConverterTest {
     @Test
     fun `convert instructional video`() {
+        val videoAssetId = TestFactories.aValidId()
+
         val video = TestFactories.createVideoAsset(
-                videoId = "123",
+                videoId = videoAssetId,
                 title = "asset title",
                 description = "asset description",
                 contentProvider = "content partner",
@@ -23,7 +25,7 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video)
 
         assertThat(videoMetadata).isEqualTo(VideoMetadata(
-                id = "123",
+                id = videoAssetId,
                 title = "asset title",
                 description = "asset description",
                 contentProvider = "content partner",
@@ -69,7 +71,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `it doesn't tag videos without a match`() {
         val video = TestFactories.createVideoAsset(
-                videoId = "123",
+                videoId = TestFactories.aValidId(),
                 title = "garbage title",
                 type = LegacyVideoType.STOCK
         )

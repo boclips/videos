@@ -7,6 +7,7 @@ import com.boclips.videos.service.client.testsupport.AbstractSpringIntegrationTe
 import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -66,7 +67,12 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
 
     @Test
     fun `lookup video by content partner id`() {
-        getClient().create(TestFactories.createCreateVideoRequest(contentProviderId = "ted", contentProviderVideoId = "123", playbackId = "ref-id-123"))
+        val request = TestFactories.createCreateVideoRequest(
+                contentProviderId = "ted",
+                contentProviderVideoId = "123",
+                playbackId = "ref-id-123")
+
+        getClient().create(request)
 
         assertThat(getClient().existsByContentPartnerInfo("ted", "123")).isTrue()
         assertThat(getClient().existsByContentPartnerInfo("ted", "124")).isFalse()
@@ -84,7 +90,11 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
 
     @Test
     fun `tag videos with subjects throws when video doesn't exist`() {
-        val id = getClient().create(TestFactories.createCreateVideoRequest(contentProviderId = "ted", contentProviderVideoId = "123", playbackId = "ref-id-123"))
+        val request = TestFactories.createCreateVideoRequest(
+                contentProviderId = "ted",
+                contentProviderVideoId = "123",
+                playbackId = "ref-id-123")
+        val id = getClient().create(request)
 
         val nonExistingId = VideoId(URI(id.uri.toString() + "111"))
 
@@ -98,6 +108,7 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
     val fakeClient = VideoServiceClient.getFakeClient().apply {
         addIllegalPlaybackId("illegal-video")
     }
+
     override fun getClient() = fakeClient
 
 }

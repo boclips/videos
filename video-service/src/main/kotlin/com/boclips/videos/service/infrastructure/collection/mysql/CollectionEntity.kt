@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.collection
+package com.boclips.videos.service.infrastructure.collection.mysql
 
 import javax.persistence.Entity
 import javax.persistence.Id

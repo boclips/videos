@@ -23,9 +23,12 @@ class BuildLegacySearchIndexTest {
 
     @Test
     fun `execute builds search index`() {
+        val videoAssetId1 = TestFactories.aValidId()
+        val videoAssetId2 = TestFactories.aValidId()
+
         val videoAssetRepository = mockVideoAssetRepository(videos = sequenceOf(
-                TestFactories.createVideoAsset(videoId = "1", title = "a title", keywords = listOf("keyword")),
-                TestFactories.createVideoAsset(videoId = "2", keywords = listOf("keyword"))
+                TestFactories.createVideoAsset(videoId = videoAssetId1, title = "a title", keywords = listOf("keyword")),
+                TestFactories.createVideoAsset(videoId = videoAssetId2, keywords = listOf("keyword"))
         ))
         val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
 
@@ -33,7 +36,7 @@ class BuildLegacySearchIndexTest {
 
         val videos = getUpsertedVideos()
         assertThat(videos).hasSize(2)
-        assertThat(videos.first().id).isEqualTo("1")
+        assertThat(videos.first().id).isEqualTo(videoAssetId1)
         assertThat(videos.first().title).isEqualTo("a title")
     }
 
@@ -41,12 +44,12 @@ class BuildLegacySearchIndexTest {
     fun `execute ignores videos with no keywords`() {
         val videoAssetRepository = mockVideoAssetRepository(videos = sequenceOf(
                 TestFactories.createVideoAsset(
-                        videoId = "1",
+//                        videoId = "1",
                         keywords = emptyList(),
                         playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "1")
                 ),
                 TestFactories.createVideoAsset(
-                        videoId = "2",
+//                        videoId = "2",
                         keywords = emptyList(),
                         playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "2")
                 )

@@ -6,8 +6,13 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.AddVideoToCollection
 import com.boclips.videos.service.domain.service.RemoveVideoFromCollection
+import com.boclips.videos.service.infrastructure.collection.mysql.MySqlCollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Updates
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -60,57 +65,5 @@ class MySqlCollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(collectionService.getByOwner(owner = UserId(value = "tod"))).hasSize(0)
     }
 
-    @Test
-    fun `add a video to collection`() {
-        val videoId = saveVideo()
-
-        val collectionId = createCollection().id
-
-        collectionService.update(collectionId, AddVideoToCollection(videoId))
-
-        val collection = collectionService.getById(collectionId)
-
-        assertThat(collection.videos).isNotEmpty
-    }
-
-    @Test
-    fun `add a video to collection ignored when video already there`() {
-        val videoId = saveVideo()
-
-        val collectionId = createCollection().id
-
-        collectionService.update(collectionId, AddVideoToCollection(videoId))
-        collectionService.update(collectionId, AddVideoToCollection(videoId))
-
-        val collection = collectionService.getById(collectionId)
-
-        assertThat(collection.videos).hasSize(1)
-    }
-
-    @Test
-    fun `remove a video from collection`() {
-        val videoId = saveVideo()
-
-        val collectionId = createCollection().id
-
-        collectionService.update(collectionId, AddVideoToCollection(videoId))
-        collectionService.update(collectionId, RemoveVideoFromCollection(videoId))
-
-        val collection = collectionService.getById(collectionId)
-
-        assertThat(collection.videos).isEmpty()
-    }
-
-    @Test
-    fun `remove a video from collection ignored when video isn't present`() {
-        val collectionId = createCollection().id
-
-        collectionService.update(collectionId, RemoveVideoFromCollection(AssetId("10")))
-
-        val collection = collectionService.getById(collectionId)
-
-        assertThat(collection.videos).isEmpty()
-    }
-
-    private fun createCollection(owner: UserId =  UserId(value = "user@gmail.com")) = collectionService.create(owner = owner)
+    private fun createCollection(owner: UserId = UserId(value = "user@gmail.com")) = collectionService.create(owner = owner)
 }
