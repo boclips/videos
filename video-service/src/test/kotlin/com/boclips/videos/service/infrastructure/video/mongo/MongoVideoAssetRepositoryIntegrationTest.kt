@@ -12,6 +12,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 
 class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -125,54 +126,5 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(videoIdAlias = "123"))
 
         assertThat(mongoVideoRepository.resolveAlias("123")).isEqualTo(asset.assetId)
-    }
-
-    @Test
-    fun `upsert creates a new record if the video didn't exist before`() {
-        val asset = TestFactories.createVideoAsset(title = "Video title")
-        val upsertedAsset = mongoVideoRepository.upsert(asset)
-
-        assertThat(mongoVideoRepository.find(upsertedAsset.assetId)).isEqualToIgnoringGivenFields(asset, "assetId")
-    }
-
-    @Test
-    fun `upsert doesn't create an duplicate record if the alias matches`() {
-        val asset = TestFactories.createVideoAsset(
-                title = "Video title",
-                videoId = "mysql-id",
-                videoIdAlias = "123"
-        )
-
-        val createdAsset = mongoVideoRepository.create(asset)
-        val upsertedAsset = mongoVideoRepository.upsert(createdAsset)
-
-        assertThat(upsertedAsset).isEqualTo(createdAsset)
-    }
-
-    @Test
-    fun `upsert doesn't create an duplicate record if the Mongo ID matches`() {
-        val asset = TestFactories.createVideoAsset(
-                title = "Video title",
-                videoIdAlias = null,
-                videoId = ObjectId().toHexString()
-        )
-
-        val createdAsset = mongoVideoRepository.create(asset)
-        val upsertedAsset = mongoVideoRepository.upsert(createdAsset)
-
-        assertThat(upsertedAsset).isEqualTo(createdAsset)
-    }
-
-    @Test
-    fun `upsert updates attributes when the record already exists`() {
-        val asset = TestFactories.createVideoAsset(title = "Video title")
-
-        val createdAsset = mongoVideoRepository.create(asset)
-
-        val pendingUpdateAsset = createdAsset.copy(title = "Updated video title")
-        val upsertedAsset = mongoVideoRepository.upsert(pendingUpdateAsset)
-
-        assertThat(upsertedAsset).isEqualToIgnoringGivenFields(createdAsset, "title")
-        assertThat(upsertedAsset.title).isEqualTo("Updated video title")
     }
 }

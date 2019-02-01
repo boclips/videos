@@ -6,8 +6,6 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.*
-import com.mongodb.client.model.FindOneAndReplaceOptions
-import com.mongodb.client.model.ReturnDocument
 import org.bson.Document
 import org.bson.types.ObjectId
 import java.util.*
@@ -55,19 +53,6 @@ class MongoVideoAssetRepository(
         return find(id) ?: throw VideoAssetNotFoundException()
     }
 
-    fun upsert(videoAsset: VideoAsset): VideoAsset {
-        val assetId = migrateToMongoIdIfRequired(videoAsset.assetId)
-        val pendingUpdates = VideoDocumentConverter.toDocument(videoAsset.copy(assetId = assetId))
-
-        val upsertedDocument = getVideoCollection().findOneAndReplace(
-                findByIdOrAlias(assetId),
-                pendingUpdates,
-                FindOneAndReplaceOptions().upsert(true).returnDocument(ReturnDocument.AFTER)
-        )
-
-        return VideoDocumentConverter.fromDocument(upsertedDocument)
-    }
-
     override fun update(videoAsset: VideoAsset): VideoAsset {
         val document = VideoDocumentConverter.toDocument(videoAsset)
         getVideoCollection()
@@ -101,17 +86,4 @@ class MongoVideoAssetRepository(
     }
 
     private fun getVideoCollection() = mongoClient.getDatabase("video-service-db").getCollection("videos")
-
-    private fun migrateToMongoIdIfRequired(assetId: AssetId): AssetId {
-        val objectId = try {
-            ObjectId(assetId.value)
-        } catch (e: IllegalArgumentException) {
-            ObjectId()
-        }
-
-        return AssetId(objectId.toHexString(), assetId.alias)
-    }
-
-    private fun findByIdOrAlias(assetId: AssetId) =
-            or(eq("_id", ObjectId(assetId.value)), eq("aliases", assetId.alias))
 }
