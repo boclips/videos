@@ -8,6 +8,7 @@ import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundExce
 import com.boclips.videos.service.infrastructure.video.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.video.subject.VideoSubjectEntity
 import mu.KLogging
+import org.springframework.transaction.annotation.Transactional
 import java.lang.UnsupportedOperationException
 
 open class MysqlVideoAssetRepository(
@@ -73,6 +74,16 @@ open class MysqlVideoAssetRepository(
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
         return videoRepository.countBySourceAndUniqueId(contentPartnerId, partnerVideoId) > 0
+    }
+
+    @Transactional
+    override fun disableFromSearch(assetIds: List<AssetId>) {
+        videoRepository.setSearchableByIdIn(false, assetIds.map { it.value.toLong() })
+    }
+
+    @Transactional
+    override fun makeSearchable(assetIds: List<AssetId>) {
+        videoRepository.setSearchableByIdIn(true, assetIds.map { it.value.toLong() })
     }
 
     private fun findAllByIdWhilstRetainingOrder(videoIds: List<Long>): List<VideoEntity> = videoIds

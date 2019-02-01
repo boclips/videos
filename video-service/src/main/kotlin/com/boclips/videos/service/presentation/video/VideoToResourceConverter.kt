@@ -27,7 +27,8 @@ class VideoToResourceConverter {
                 playback = getPlayback(video),
                 subjects = video.asset.subjects.map { it.name }.toSet(),
                 badges = getBadges(video),
-                type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title)
+                type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
+                status = getStatus(video)
         )
     }
 
@@ -48,6 +49,14 @@ class VideoToResourceConverter {
         return when (video.playback) {
             is YoutubePlayback -> setOf(VideoBadge.YOUTUBE.id)
             else -> setOf(VideoBadge.AD_FREE.id)
+        }
+    }
+
+    private fun getStatus(video: Video): VideoResourceStatus {
+        return if (video.asset.searchable) {
+            VideoResourceStatus.SEARCHABLE
+        } else {
+            VideoResourceStatus.SEARCH_DISABLED
         }
     }
 }

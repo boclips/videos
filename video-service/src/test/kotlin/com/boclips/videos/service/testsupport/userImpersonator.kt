@@ -12,7 +12,7 @@ fun MockHttpServletRequestBuilder.asTeacher() =
 fun MockHttpServletRequestBuilder.asBoclipsEmployee() =
         this.with(SecurityMockMvcRequestPostProcessors
                 .user("teacher@boclips.com")
-                .roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS))
+                .roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS, UserRoles.UPDATE_VIDEOS))
 
 fun MockHttpServletRequestBuilder.asOperator() =
         this.with(SecurityMockMvcRequestPostProcessors

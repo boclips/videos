@@ -131,6 +131,29 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
+    fun `bulk upload videos requires a special role`() {
+        saveVideo()
+
+        mockMvc.perform(patch("/v1/videos"))
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(patch("/v1/videos").asTeacher())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(patch("/v1/videos").asReporter())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(patch("/v1/videos").asOperator())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(patch("/v1/videos").asIngestor())
+                .andExpect(status().isForbidden)
+
+        mockMvc.perform(patch("/v1/videos").asBoclipsEmployee())
+                .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
     fun `probe video existence requires a special role`() {
         mockMvc.perform(head("/v1/content-partners/ted/videos/666"))
                 .andExpect(status().isForbidden)

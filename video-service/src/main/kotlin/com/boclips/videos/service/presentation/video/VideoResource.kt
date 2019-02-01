@@ -15,5 +15,6 @@ data class VideoResource(
         val playback: PlaybackResource? = null,
         val subjects: Set<String>? = null,
         val badges: Set<String> = emptySet(),
-        val type: VideoTypeResource? = null
+        val type: VideoTypeResource? = null,
+        val status: VideoResourceStatus? = null
 )

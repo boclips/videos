@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
+import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -25,6 +26,7 @@ class VideoController(
         private val deleteVideos: DeleteVideos,
         private val createVideo: CreateVideo,
         private val patchVideo: PatchVideo,
+        private val bulkUpdate: BulkUpdate,
         private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
@@ -34,7 +36,7 @@ class VideoController(
         fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java)
                 .getVideo(id)).withRel(rel)
 
-        fun getVideosLink() = linkTo(methodOn(VideoController::class.java).bulkUpdate()).withRel("videos")
+        fun getVideosLink() = linkTo(methodOn(VideoController::class.java).bulkUpdate(null)).withRel("videos")
 
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
@@ -107,7 +109,8 @@ class VideoController(
     }
 
     @PatchMapping
-    fun bulkUpdate(): ResponseEntity<Void> {
+    fun bulkUpdate(@RequestBody bulkUpdateRequest: BulkUpdateRequest?): ResponseEntity<Void> {
+        bulkUpdate.execute(bulkUpdateRequest)
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 

@@ -9,4 +9,6 @@ interface VideoAssetRepository {
     fun update(videoAsset: VideoAsset): VideoAsset
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): AssetId?
+    fun disableFromSearch(assetIds: List<AssetId>)
+    fun makeSearchable(assetIds: List<AssetId>)
 }

@@ -6,12 +6,12 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mysql.MysqlVideoAssetRepository
 import mu.KLogging
+import javax.xml.transform.Templates
 
 class CombinedVideoAssetRepository(
         private val mysqlVideoAssetRepository: MysqlVideoAssetRepository,
         private val mongoVideoAssetRepository: MongoVideoAssetRepository
 ) : VideoAssetRepository {
-
     companion object : KLogging()
 
     override fun find(assetId: AssetId): VideoAsset? {
@@ -54,5 +54,13 @@ class CombinedVideoAssetRepository(
 
     override fun resolveAlias(alias: String): AssetId? {
         return mongoVideoAssetRepository.resolveAlias(alias)
+    }
+
+    override fun disableFromSearch(assetIds: List<AssetId>) {
+        mysqlVideoAssetRepository.disableFromSearch(assetIds)
+    }
+
+    override fun makeSearchable(assetIds: List<AssetId>) {
+        mysqlVideoAssetRepository.makeSearchable(assetIds)
     }
 }

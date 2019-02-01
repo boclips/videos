@@ -1,6 +1,7 @@
 package com.boclips.videos.service.config
 
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.MigrateToMongo
 import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
@@ -67,6 +68,11 @@ class ApplicationContext {
     @Bean
     fun patchVideo(videoService: VideoService): PatchVideo {
         return PatchVideo(videoService)
+    }
+
+    @Bean
+    fun bulkUpdate(videoAssetRepository: VideoAssetRepository, searchService: SearchService, legacySearchService: LegacySearchService): BulkUpdate {
+        return BulkUpdate(videoAssetRepository, searchService, legacySearchService)
     }
 
     @Bean

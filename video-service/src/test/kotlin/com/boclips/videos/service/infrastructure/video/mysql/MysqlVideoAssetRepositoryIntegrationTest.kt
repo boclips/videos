@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.video.mysql
 
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.exceptions.ResourceNotFoundException
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.time.LocalDate
 
-class MysqlVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
+open class MysqlVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mysqlVideoRepository: MysqlVideoAssetRepository
@@ -213,5 +213,30 @@ class MysqlVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         assertThrows<ResourceNotFoundException> {
             mysqlVideoRepository.update(TestFactories.createVideoAsset())
         }
+    }
+
+    @Test
+    fun `disableFromSearch marks searchable as false`() {
+        val videos = listOf(
+                TestFactories.createVideoAsset(searchable = true),
+                TestFactories.createVideoAsset(searchable = true))
+
+        val savedVideoIds = videos.map { mysqlVideoRepository.create(it).assetId }
+        mysqlVideoRepository.disableFromSearch(savedVideoIds)
+
+        assertThat(mysqlVideoRepository.findAll(savedVideoIds)).allMatch { it.searchable == false }
+    }
+
+    @Test
+    fun `makeSearchable marks searchable as true`() {
+        val videos = listOf(
+                TestFactories.createVideoAsset(searchable = false),
+                TestFactories.createVideoAsset(searchable = false)
+        )
+
+        val savedVideoIds = videos.map { mysqlVideoRepository.create(it).assetId }
+        mysqlVideoRepository.makeSearchable(savedVideoIds)
+
+        assertThat(mysqlVideoRepository.findAll(savedVideoIds)).allMatch { it.searchable == true }
     }
 }

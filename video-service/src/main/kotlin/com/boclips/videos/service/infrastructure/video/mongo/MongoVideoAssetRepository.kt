@@ -92,6 +92,14 @@ class MongoVideoAssetRepository(
                 ?.let { AssetId(it, alias) }
     }
 
+    override fun disableFromSearch(assetIds: List<AssetId>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun makeSearchable(assetIds: List<AssetId>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     private fun getVideoCollection() = mongoClient.getDatabase("video-service-db").getCollection("videos")
 
     private fun migrateToMongoIdIfRequired(assetId: AssetId): AssetId {

@@ -38,3 +38,7 @@ data class VideoSubjectsUpdate(val subjects: Set<Subject>) : VideoAssetUpdate() 
 data class VideoTitleUpdate(val title: String) : VideoAssetUpdate() {
     override fun updateAsset(video: VideoAsset) = video.copy(title = title)
 }
+
+data class VideoSearchableUpdate(val searchable: Boolean) : VideoAssetUpdate() {
+    override fun updateAsset(video: VideoAsset): VideoAsset = video.copy(searchable = searchable)
+}

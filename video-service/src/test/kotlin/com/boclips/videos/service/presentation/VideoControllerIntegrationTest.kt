@@ -10,6 +10,7 @@ import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -159,6 +160,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
                 .andExpect(jsonPath("$.type.id", equalTo(3)))
                 .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
+                .andExpect(jsonPath("$.status", equalTo("SEARCHABLE")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
     }
 
@@ -351,6 +353,26 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(post("/v1/videos/not-a-string").asSubjectClassifier()
                 .contentType(MediaType.APPLICATION_JSON).content(mathsPatch))
                 .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `it allows videos to be updated in bulk`() {
+        val videoIds = listOf(
+            saveVideo(searchable = true).value,
+            saveVideo(searchable = true).value,
+            saveVideo(searchable = true).value
+        )
+
+        mockMvc.perform(patch("/v1/videos").asBoclipsEmployee()
+                .content("""{ "ids": [${videoIds[0]}, ${videoIds[1]}], "status": "SEARCH_DISABLED" }""")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent)
+
+        videoIds.zip(listOf("SEARCH_DISABLED", "SEARCH_DISABLED", "SEARCHABLE")).forEach { (id, status) ->
+            mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
+                    .andExpect(status().isOk)
+                    .andExpect(jsonPath("$.status", equalTo(status)))
+        }
     }
 }
 

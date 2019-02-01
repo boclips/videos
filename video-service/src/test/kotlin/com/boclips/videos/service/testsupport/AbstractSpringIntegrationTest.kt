@@ -99,7 +99,8 @@ abstract class AbstractSpringIntegrationTest {
                   contentProviderId: String = "content-partner-video-id-${playbackId.value}",
                   typeId: Int = 3,
                   keywords: List<String> = emptyList(),
-                  subjects: Set<String> = emptySet()
+                  subjects: Set<String> = emptySet(),
+                  searchable: Boolean = true
     ): AssetId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-${playbackId.value}", referenceId = playbackId.value, duration = duration))
@@ -118,7 +119,8 @@ abstract class AbstractSpringIntegrationTest {
                 videoType = LegacyVideoType.fromId(typeId).name,
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
-                subjects = subjects
+                subjects = subjects,
+                searchable = searchable
         )).id
 
         return AssetId(id!!)
