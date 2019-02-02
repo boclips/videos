@@ -374,26 +374,25 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isNotFound)
     }
 
-    //TODO make bulk work again
-//    @Test
-//    fun `it allows videos to be updated in bulk`() {
-//        val videoIds = listOf(
-//                saveVideo(searchable = true).value,
-//                saveVideo(searchable = true).value,
-//                saveVideo(searchable = true).value
-//        )
-//
-//        mockMvc.perform(patch("/v1/videos").asBoclipsEmployee()
-//                .content("""{ "ids": [${videoIds[0]}, ${videoIds[1]}], "status": "SEARCH_DISABLED" }""")
-//                .contentType(MediaType.APPLICATION_JSON)
-//        ).andExpect(status().isNoContent)
-//
-//        videoIds.zip(listOf("SEARCH_DISABLED", "SEARCH_DISABLED", "SEARCHABLE")).forEach { (id, status) ->
-//            mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
-//                    .andExpect(status().isOk)
-//                    .andExpect(jsonPath("$.status", equalTo(status)))
-//        }
-//    }
+    @Test
+    fun `it allows videos to be updated in bulk`() {
+        val videoIds = listOf(
+                saveVideo(searchable = true).value,
+                saveVideo(searchable = true).value,
+                saveVideo(searchable = true).value
+        )
+
+        mockMvc.perform(patch("/v1/videos").asBoclipsEmployee()
+                .content("""{ "ids": ["${videoIds[0]}", "${videoIds[1]}"], "status": "SEARCH_DISABLED" }""")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent)
+
+        videoIds.zip(listOf("SEARCH_DISABLED", "SEARCH_DISABLED", "SEARCHABLE")).forEach { (id, status) ->
+            mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
+                    .andExpect(status().isOk)
+                    .andExpect(jsonPath("$.status", equalTo(status)))
+        }
+    }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(databaseName).getCollection(collectionName)
 }

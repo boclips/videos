@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.*
+import com.mongodb.client.model.Updates.set
 import mu.KLogging
 import org.bson.types.ObjectId
 import java.util.*
@@ -110,11 +111,20 @@ class MongoVideoAssetRepository(
     }
 
     override fun disableFromSearch(assetIds: List<AssetId>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //`in`("_id", assetIds.map { ObjectId(it.value) }
+        assetIds.forEach { assetId ->
+            getVideoCollection().updateOne(eq("_id", ObjectId(assetId.value)),
+                    set("searchable", false)
+            )
+        }
     }
 
     override fun makeSearchable(assetIds: List<AssetId>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        assetIds.forEach { assetId ->
+            getVideoCollection().updateOne(eq("_id", ObjectId(assetId.value)),
+                    set("searchable", true)
+            )
+        }
     }
 
     private fun getVideoCollection() = mongoClient.getDatabase(databaseName).getCollection(collectionName)
