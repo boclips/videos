@@ -19,4 +19,8 @@ data class VideoAsset(
         val legalRestrictions: String,
         val subjects: Set<Subject>,
         val searchable: Boolean
-)
+) {
+    override fun toString(): String {
+        return "VideoAsset(assetId=$assetId, title='$title', contentPartnerId='$contentPartnerId')"
+    }
+}
