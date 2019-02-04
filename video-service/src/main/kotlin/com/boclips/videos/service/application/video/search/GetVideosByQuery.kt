@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.application.video.exceptions.QueryValidationException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.VideoService
@@ -15,13 +14,12 @@ class GetVideosByQuery(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(query: String?, includeTags: List<String>, excludeTags: List<String>, pageSize: Int, pageNumber: Int): VideosResource {
-        validateQuery(query)
+    operator fun invoke(query: String, includeTags: List<String>, excludeTags: List<String>, pageSize: Int, pageNumber: Int): VideosResource {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
         val videoSearchQuery = VideoSearchQuery(
-                text = query!!,
+                text = query,
                 pageIndex = pageNumber,
                 pageSize = pageSize,
                 includeTags = includeTags,
@@ -42,10 +40,6 @@ class GetVideosByQuery(
                 pageNumber = pageNumber,
                 pageSize = pageSize
         )
-    }
-
-    private fun validateQuery(query: String?) {
-        query ?: throw QueryValidationException()
     }
 
     private fun validatePageNumber(pageNumber: Int) {

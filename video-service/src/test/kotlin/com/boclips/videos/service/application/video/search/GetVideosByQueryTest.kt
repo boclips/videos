@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.application.video.exceptions.QueryValidationException
+import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -25,7 +25,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
                     pageSize = 2,
                     pageNumber = 0
             )
-        }.isInstanceOf(QueryValidationException::class.java)
+        }.isInstanceOf(SearchRequestValidationException::class.java)
     }
 
     @Test

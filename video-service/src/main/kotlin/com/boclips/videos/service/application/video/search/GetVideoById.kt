@@ -1,7 +1,5 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.application.video.exceptions.QueryValidationException
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.VideoService
@@ -13,19 +11,8 @@ class GetVideoById(
         private val videoToResourceConverter: VideoToResourceConverter,
         private val videoAssetRepository: VideoAssetRepository
 ) {
-    companion object {
-        fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
-    }
 
-    operator fun invoke(videoId: String?): VideoResource {
-        videoId ?: throw QueryValidationException()
-
-        val assetId = if (isAlias(videoId)) {
-            videoAssetRepository.resolveAlias(videoId) ?: throw VideoAssetNotFoundException()
-        } else {
-            AssetId(value = videoId)
-        }
-
+    operator fun invoke(assetId: AssetId): VideoResource {
         return videoService.get(assetId)
                 .let(videoToResourceConverter::convert)
     }

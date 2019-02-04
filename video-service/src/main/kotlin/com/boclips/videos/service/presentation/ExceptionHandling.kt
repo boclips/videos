@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.event.InvalidEventException
-import com.boclips.videos.service.application.video.exceptions.QueryValidationException
+import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import mu.KLogging
 import org.springframework.http.HttpStatus
@@ -14,8 +14,8 @@ class ExceptionHandling {
     companion object : KLogging()
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Provided query is invalid")
-    @ExceptionHandler(QueryValidationException::class)
-    fun handleIOException(ex: QueryValidationException) {
+    @ExceptionHandler(SearchRequestValidationException::class)
+    fun handleIOException(ex: SearchRequestValidationException) {
         logger.error { "Provided query is invalid $ex" }
     }
 

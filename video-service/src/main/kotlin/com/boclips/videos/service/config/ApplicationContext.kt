@@ -66,7 +66,8 @@ class ApplicationContext {
     ) = SearchVideo(
             getVideoById(videoService, videoAssetRepository),
             getAllVideosById(videoService),
-            getVideosByQuery(videoService)
+            getVideosByQuery(videoService),
+            videoAssetRepository
     )
 
     @Bean
