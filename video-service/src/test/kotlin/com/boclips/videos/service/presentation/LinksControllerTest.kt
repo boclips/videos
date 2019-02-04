@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.*
@@ -21,6 +22,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `GET returns links`() {
         mockMvc.perform(get("/v1"))
                 .andExpect(status().isOk)
+                .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
                 .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
                 .andExpect(jsonPath("$._links.search.href", containsString("{&include_tag,exclude_tag}")))
                 .andExpect(jsonPath("$._links.search.templated", equalTo(true)))
@@ -30,6 +32,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/events/playback")))
                 .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href", endsWith("/events/no-search-results")))
                 .andExpect(jsonPath("$._links.userDefaultCollection.href", containsString("collections/default")))
+    }
+
+    @Test
+    fun `when can view restricted videos GET returns admin search`() {
+        mockMvc.perform(get("/v1").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
     }
 
     @Test

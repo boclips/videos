@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository.Companion.collectionName
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository.Companion.databaseName
+import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.*
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -24,6 +25,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    lateinit var disabledVideoId: String
     lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String
 
@@ -37,6 +39,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofSeconds(23),
                 contentProvider = "cp"
         ).value
+
+        disabledVideoId = saveVideo(
+                playbackId = PlaybackId(value = "ref-id-125", type = PlaybackProviderType.KALTURA),
+                title = "elephants eat a lot",
+                description = "this video got disabled because it offended overweight people",
+                date = "2018-05-10",
+                duration = Duration.ofSeconds(6),
+                contentProvider = "cp"
+        ).value
+        changeVideoStatus(disabledVideoId, VideoResourceStatus.SEARCH_DISABLED)
 
         youtubeVideoId = saveVideo(
                 playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
@@ -372,6 +384,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(post("/v1/videos/not-a-string").asSubjectClassifier()
                 .contentType(MediaType.APPLICATION_JSON).content(mathsPatch))
                 .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `returns all enabled and disabled video by ID`() {
+        mockMvc.perform(
+                post("/v1/videos/search?status=all")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""").asBoclipsEmployee()
+        )
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
+                .andExpect(jsonPath("$._embedded.videos[0].status", equalTo("SEARCH_DISABLED")))
+                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$disabledVideoId")))
+
+                .andExpect(jsonPath("$.page").doesNotExist())
     }
 
     @Test

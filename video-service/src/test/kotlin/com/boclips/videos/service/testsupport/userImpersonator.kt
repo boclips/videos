@@ -7,22 +7,36 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 fun MockHttpServletRequestBuilder.asTeacher() =
         this.with(SecurityMockMvcRequestPostProcessors
                 .user("teacher@gmail.com")
-                .roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS))
+                .roles(
+                        UserRoles.VIEW_VIDEOS,
+                        UserRoles.INSERT_EVENTS
+                ))
 
 fun MockHttpServletRequestBuilder.asBoclipsEmployee() =
         this.with(SecurityMockMvcRequestPostProcessors
                 .user("teacher@boclips.com")
-                .roles(UserRoles.VIEW_VIDEOS, UserRoles.INSERT_EVENTS, UserRoles.UPDATE_VIDEOS))
+                .roles(
+                        UserRoles.VIEW_VIDEOS,
+                        UserRoles.VIEW_DISABLED_VIDEOS,
+                        UserRoles.INSERT_EVENTS,
+                        UserRoles.UPDATE_VIDEOS
+                ))
 
 fun MockHttpServletRequestBuilder.asOperator() =
         this.with(SecurityMockMvcRequestPostProcessors
                 .user("operator")
-                .roles(UserRoles.REMOVE_VIDEOS, UserRoles.REBUILD_SEARCH_INDEX))
+                .roles(
+                        UserRoles.REMOVE_VIDEOS,
+                        UserRoles.REBUILD_SEARCH_INDEX
+                ))
 
 fun MockHttpServletRequestBuilder.asReporter() =
         this.with(SecurityMockMvcRequestPostProcessors
                 .user("reporter")
-                .roles(UserRoles.VIEW_EVENTS, UserRoles.INSERT_EVENTS))
+                .roles(
+                        UserRoles.VIEW_EVENTS,
+                        UserRoles.INSERT_EVENTS
+                ))
 
 fun MockHttpServletRequestBuilder.asIngestor() =
         this.with(SecurityMockMvcRequestPostProcessors

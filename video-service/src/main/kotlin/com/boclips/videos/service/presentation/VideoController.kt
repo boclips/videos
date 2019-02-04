@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
+import com.boclips.videos.service.presentation.video.AdminSearchRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
 import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
+import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
@@ -26,6 +28,7 @@ class VideoController(
         private val deleteVideos: DeleteVideos,
         private val createVideo: CreateVideo,
         private val patchVideo: PatchVideo,
+        private val getAllVideosById: GetAllVideosById,
         private val bulkUpdate: BulkUpdate,
         private val objectMapper: ObjectMapper
 ) {
@@ -37,6 +40,8 @@ class VideoController(
                 .getVideo(id)).withRel(rel)
 
         fun getVideosLink() = linkTo(methodOn(VideoController::class.java).bulkUpdate(null)).withRel("videos")
+
+        fun getAdminSearchLink() = linkTo(methodOn(VideoController::class.java).adminSearch(null)).withRel("adminSearch")
 
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
@@ -70,6 +75,14 @@ class VideoController(
                                 videosResource.totalVideos
                         )
                 ), HttpStatus.OK)
+    }
+
+    @PostMapping("/search")
+    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?) : ResponseEntity<Resources<*>>{
+        return getAllVideosById.execute(adminSearchRequest?.ids ?: emptyList())
+                .map(this::wrapResourceWithHateoas)
+                .let(HateoasEmptyCollection::fixIfEmptyCollection)
+                .let{ResponseEntity(Resources(it), HttpStatus.CREATED)}
     }
 
     @GetMapping("/{id}")

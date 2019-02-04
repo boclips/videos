@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.videos.service.application.video.BulkUpdate
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
@@ -12,7 +13,9 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOU
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
+import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
+import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
@@ -62,6 +65,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createVideo: CreateVideo
+
+    @Autowired
+    lateinit var bulkUpdate: BulkUpdate
 
     @Autowired
     lateinit var mongoClient: MongoClient
@@ -124,5 +130,8 @@ abstract class AbstractSpringIntegrationTest {
         return AssetId(id!!)
     }
 
+    fun changeVideoStatus(id: String, status: VideoResourceStatus) {
+        bulkUpdate.execute(BulkUpdateRequest(listOf(id), status))
+    }
 
 }

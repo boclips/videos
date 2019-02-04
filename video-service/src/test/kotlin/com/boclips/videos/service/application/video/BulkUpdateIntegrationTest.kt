@@ -24,9 +24,6 @@ class BulkUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var searchService: SearchService
 
-    @Autowired
-    lateinit var bulkUpdate: BulkUpdate
-
     @Test
     fun `disableFromSearch sets searchable field on video asset to false and removes from search indices`() {
         val videoIds = listOf(saveVideo(searchable = true), saveVideo(searchable = true))

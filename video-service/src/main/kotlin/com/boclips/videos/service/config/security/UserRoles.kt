@@ -6,6 +6,7 @@ object UserRoles {
 
     const val REMOVE_VIDEOS = "REMOVE_VIDEOS"
     const val VIEW_VIDEOS = "VIEW_VIDEOS"
+    const val VIEW_DISABLED_VIDEOS = "VIEW_DISABLED_VIDEOS"
     const val INSERT_VIDEOS = "INSERT_VIDEOS"
     const val UPDATE_VIDEOS = "UPDATE_VIDEOS"
 

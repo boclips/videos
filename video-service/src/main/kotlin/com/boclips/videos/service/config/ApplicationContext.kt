@@ -66,6 +66,11 @@ class ApplicationContext {
     }
 
     @Bean
+    fun getAllVideosById(videoService: VideoService): GetAllVideosById {
+        return GetAllVideosById(videoService, VideoToResourceConverter())
+    }
+
+    @Bean
     fun bulkUpdate(videoAssetRepository: VideoAssetRepository, searchService: SearchService, legacySearchService: LegacySearchService): BulkUpdate {
         return BulkUpdate(videoAssetRepository, searchService, legacySearchService)
     }
