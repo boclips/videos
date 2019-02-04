@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
+import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.AdminSearchRequest
@@ -23,12 +24,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/videos")
 class VideoController(
-        private val getVideoById: GetVideoById,
-        private val getVideosByQuery: GetVideosByQuery,
+        private val searchVideo: SearchVideo,
         private val deleteVideos: DeleteVideos,
         private val createVideo: CreateVideo,
         private val patchVideo: PatchVideo,
-        private val getAllVideosById: GetAllVideosById,
         private val bulkUpdate: BulkUpdate,
         private val objectMapper: ObjectMapper
 ) {
@@ -55,7 +54,7 @@ class VideoController(
                @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
                @RequestParam("size") size: Int?,
                @RequestParam("page") page: Int?): ResponseEntity<PagedResources<*>> {
-        val videosResource = getVideosByQuery.execute(query = query,
+        val videosResource = searchVideo.byQuery(query = query,
                 includeTags = includeTags?.let { includeTags } ?: emptyList(),
                 excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
                 pageSize = size ?: DEFAULT_PAGE_SIZE,
@@ -79,7 +78,7 @@ class VideoController(
 
     @PostMapping("/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?) : ResponseEntity<Resources<*>>{
-        return getAllVideosById.execute(adminSearchRequest?.ids ?: emptyList())
+        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
                 .map(this::wrapResourceWithHateoas)
                 .let(HateoasEmptyCollection::fixIfEmptyCollection)
                 .let{ResponseEntity(Resources(it), HttpStatus.CREATED)}
@@ -87,7 +86,7 @@ class VideoController(
 
     @GetMapping("/{id}")
     fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {
-        val videoResource = getVideoById.execute(id)
+        val videoResource = searchVideo.byId(id)
 
         return wrapResourceWithHateoas(videoResource)
     }

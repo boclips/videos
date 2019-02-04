@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.video
+package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.application.video.exceptions.QueryValidationException
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
@@ -13,12 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired
 class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var getVideosByQuery: GetVideosByQuery
+    lateinit var searchVideo: SearchVideo
 
     @Test
     fun `throws exception when query is null`() {
         assertThatThrownBy {
-            getVideosByQuery.execute(
+            searchVideo.byQuery(
                     query = null,
                     includeTags = emptyList(),
                     excludeTags = emptyList(),
@@ -31,21 +31,21 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws when page size too big`() {
         assertThatThrownBy {
-            getVideosByQuery.execute(query = "query", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 1000, pageNumber = 0)
+            searchVideo.byQuery(query = "query", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 1000, pageNumber = 0)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun `throws when page size is too small`() {
         assertThatThrownBy {
-            getVideosByQuery.execute(query = "query", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 0, pageNumber = 0)
+            searchVideo.byQuery(query = "query", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 0, pageNumber = 0)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun `throws page index is smaller than 0`() {
         assertThatThrownBy {
-            getVideosByQuery.execute(query = "query", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 0, pageNumber = -1)
+            searchVideo.byQuery(query = "query", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 0, pageNumber = -1)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -56,7 +56,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "a another asset", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-3"))
         saveVideo(title = "a youtube asset", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-4"))
 
-        val result = getVideosByQuery.execute(query = "youtube", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 2, pageNumber = 1)
+        val result = searchVideo.byQuery(query = "youtube", includeTags = emptyList(), excludeTags = emptyList(), pageSize = 2, pageNumber = 1)
 
         assertThat(result.videos).hasSize(1)
         assertThat(result.totalVideos).isEqualTo(3)
@@ -69,7 +69,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
         saveVideo(title = "banana", typeId = LegacyVideoType.STOCK.id)
 
-        val videos = getVideosByQuery.execute(query = "banana", includeTags = listOf("classroom"), excludeTags = emptyList(), pageSize = 2, pageNumber = 0)
+        val videos = searchVideo.byQuery(query = "banana", includeTags = listOf("classroom"), excludeTags = emptyList(), pageSize = 2, pageNumber = 0)
 
         assertThat(videos.videos).hasSize(1)
         assertThat(videos.videos.first().id).isEqualTo(videoId.value)
@@ -80,7 +80,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         val newsVideoId = saveVideo(title = "banana", typeId = LegacyVideoType.NEWS.id)
         saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
 
-        val videos = getVideosByQuery.execute(query = "banana", includeTags = listOf("news"), excludeTags = emptyList(), pageSize = 2, pageNumber = 0)
+        val videos = searchVideo.byQuery(query = "banana", includeTags = listOf("news"), excludeTags = emptyList(), pageSize = 2, pageNumber = 0)
 
         assertThat(videos.videos).hasSize(1)
         assertThat(videos.videos.first().id).isEqualTo(newsVideoId.value)
@@ -92,7 +92,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         val newsAndClassroomVideoId = saveVideo(title = "banana", typeId = LegacyVideoType.NEWS.id)
         saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
 
-        val videos = getVideosByQuery.execute(query = "banana", includeTags = listOf("news", "classroom"), excludeTags = emptyList(), pageSize = 2, pageNumber = 0)
+        val videos = searchVideo.byQuery(query = "banana", includeTags = listOf("news", "classroom"), excludeTags = emptyList(), pageSize = 2, pageNumber = 0)
 
         assertThat(videos.videos.map { it.id }).containsExactly(newsAndClassroomVideoId.value)
     }

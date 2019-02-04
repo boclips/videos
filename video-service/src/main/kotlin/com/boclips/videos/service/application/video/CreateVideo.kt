@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -17,7 +18,7 @@ import io.micrometer.core.instrument.Counter
 
 class CreateVideo(
         private val videoAssetRepository: VideoAssetRepository,
-        private val getVideoById: GetVideoById,
+        private val searchVideo: SearchVideo,
         private val createVideoRequestToAssetConverter: CreateVideoRequestToAssetConverter,
         private val searchServiceAdmin: SearchService,
         private val playbackRepository: PlaybackRespository,
@@ -40,7 +41,7 @@ class CreateVideo(
 
         videoCounter.increment()
 
-        return getVideoById.execute(createdAsset.assetId.value)
+        return searchVideo.byId(createdAsset.assetId.value)
     }
 
     private fun ensureVideoIsUnique(asset: VideoAsset) {

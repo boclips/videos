@@ -6,6 +6,10 @@ import com.boclips.videos.service.application.collection.AddVideoToDefaultCollec
 import com.boclips.videos.service.application.collection.GetDefaultCollection
 import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultCollection
 import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.search.GetAllVideosById
+import com.boclips.videos.service.application.video.search.GetVideoById
+import com.boclips.videos.service.application.video.search.GetVideosByQuery
+import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
@@ -38,36 +42,41 @@ import java.util.concurrent.Executors
 @Configuration
 class ApplicationContext {
 
-    @Bean
-    fun getVideoById(searchService: SearchService, videoService: VideoService, videoAssetRepository: VideoAssetRepository) =
+    private fun getVideoById(videoService: VideoService, videoAssetRepository: VideoAssetRepository) =
             GetVideoById(
                     videoService = videoService,
                     videoToResourceConverter = VideoToResourceConverter(),
                     videoAssetRepository = videoAssetRepository
             )
 
-    @Bean
-    fun getVideosByQuery(searchService: SearchService,
-                         videoService: VideoService,
-                         playbackRespository: PlaybackRespository) =
+    private fun getVideosByQuery(videoService: VideoService) =
             GetVideosByQuery(
                     videoService = videoService,
                     videoToResourceConverter = VideoToResourceConverter()
             )
 
+    private fun getAllVideosById(videoService: VideoService): GetAllVideosById {
+        return GetAllVideosById(videoService, VideoToResourceConverter())
+    }
+
     @Bean
-    fun createVideo(videoAssetRepository: VideoAssetRepository, getVideoById: GetVideoById, searchService: SearchService, playbackRepository: PlaybackRespository, videoCounter: Counter, legacySearchService: LegacySearchService): CreateVideo {
-        return CreateVideo(videoAssetRepository, getVideoById, CreateVideoRequestToAssetConverter(), searchService, playbackRepository, videoCounter, legacySearchService)
+    fun searchVideo(
+            videoService: VideoService,
+            videoAssetRepository: VideoAssetRepository
+    ) = SearchVideo(
+            getVideoById(videoService, videoAssetRepository),
+            getAllVideosById(videoService),
+            getVideosByQuery(videoService)
+    )
+
+    @Bean
+    fun createVideo(videoAssetRepository: VideoAssetRepository, searchVideo: SearchVideo, searchService: SearchService, playbackRepository: PlaybackRespository, videoCounter: Counter, legacySearchService: LegacySearchService): CreateVideo {
+        return CreateVideo(videoAssetRepository, searchVideo, CreateVideoRequestToAssetConverter(), searchService, playbackRepository, videoCounter, legacySearchService)
     }
 
     @Bean
     fun patchVideo(videoService: VideoService): PatchVideo {
         return PatchVideo(videoService)
-    }
-
-    @Bean
-    fun getAllVideosById(videoService: VideoService): GetAllVideosById {
-        return GetAllVideosById(videoService, VideoToResourceConverter())
     }
 
     @Bean
