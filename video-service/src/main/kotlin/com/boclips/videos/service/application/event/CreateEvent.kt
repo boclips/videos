@@ -18,7 +18,7 @@ class CreateEvent(
 ) {
     companion object : KLogging()
 
-    fun execute(event: CreatePlaybackEventCommand?) {
+    operator fun invoke(event: CreatePlaybackEventCommand?) {
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
 
@@ -34,7 +34,7 @@ class CreateEvent(
         ))
     }
 
-    fun execute(event: CreateNoSearchResultsEventCommand?) {
+    operator fun invoke(event: CreateNoSearchResultsEventCommand?) {
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
 

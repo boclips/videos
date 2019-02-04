@@ -19,11 +19,11 @@ class CollectionsController(
         private val removeVideoFromDefaultCollection: RemoveVideoFromDefaultCollection
 ) {
     companion object : KLogging() {
-        fun getUserDefaultCollectionLink() = linkTo(methodOn(CollectionsController::class.java).getDefaultCollection())
+        fun getUserDefaultCollectionLink() = linkTo(methodOn(CollectionsController::class.java).defaultCollection())
     }
 
     @GetMapping("/default")
-    fun getDefaultCollection(): Resource<CollectionResource> {
+    fun defaultCollection(): Resource<CollectionResource> {
         val selfLink = getUserDefaultCollectionLink().withSelfRel()
         val addVideoLink = linkTo(methodOn(CollectionsController::class.java)
                 .addVideo(null))
@@ -31,21 +31,21 @@ class CollectionsController(
         val removeVideoLink = linkTo(methodOn(CollectionsController::class.java)
                 .removeVideo(null))
                 .withRel("removeVideo")
-        val collectionResource = getDefaultCollection.execute()
+        val collectionResource = getDefaultCollection()
         return Resource(collectionResource, selfLink, addVideoLink, removeVideoLink)
     }
 
     @PutMapping("/default/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun addVideo(@PathVariable("video_id") videoId: String?): Any? {
-        addVideoToDefaultCollection.execute(videoId)
+        addVideoToDefaultCollection(videoId)
         return null
     }
 
     @DeleteMapping("/default/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun removeVideo(@PathVariable("video_id") videoId: String?): Any? {
-        removeVideoFromDefaultCollection.execute(videoId)
+        removeVideoFromDefaultCollection(videoId)
         return null
     }
 }

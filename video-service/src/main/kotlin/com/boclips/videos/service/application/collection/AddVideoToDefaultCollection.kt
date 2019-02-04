@@ -14,7 +14,7 @@ class AddVideoToDefaultCollection(
         private val collectionService: CollectionService,
         private val eventService: EventService
 ) {
-    fun execute(videoId: String?) {
+    operator fun invoke(videoId: String?) {
         videoId ?: throw Exception("Video id cannot be null")
 
         val user = UserExtractor.getCurrentUser()

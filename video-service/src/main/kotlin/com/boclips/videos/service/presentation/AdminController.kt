@@ -37,12 +37,12 @@ class AdminController(
 
     @PostMapping("/rebuild_search_index")
     fun rebuildSearchIndex(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(rebuildSearchIndex::execute)
+        return asyncWithNotifier(rebuildSearchIndex::invoke)
     }
 
     @PostMapping("/build_legacy_search_index")
     fun buildLegacySearchIndex(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(buildLegacySearchIndex::execute)
+        return asyncWithNotifier(buildLegacySearchIndex::invoke)
     }
 
     private fun asyncWithNotifier(handler: (ResponseEmitterProgressNotifier) -> CompletableFuture<Unit>): ResponseEntity<ResponseBodyEmitter> {

@@ -11,7 +11,7 @@ class GetDefaultCollection(
         private val collectionService: CollectionService,
         private val videoToResourceConverter: VideoToResourceConverter
 ) {
-    fun execute(): CollectionResource {
+    operator fun invoke(): CollectionResource {
         val userId = UserExtractor.getCurrentUser().id
         val owner = UserId(value = userId)
 

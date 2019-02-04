@@ -17,7 +17,7 @@ class GetVideoById(
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun execute(videoId: String?): VideoResource {
+    operator fun invoke(videoId: String?): VideoResource {
         videoId ?: throw QueryValidationException()
 
         val assetId = if (isAlias(videoId)) {

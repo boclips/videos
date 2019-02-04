@@ -25,7 +25,7 @@ class CreateVideo(
         private val videoCounter: Counter,
         private val legacySearchService: LegacySearchService
 ) {
-    fun execute(createRequest: CreateVideoRequest): VideoResource {
+    operator fun invoke(createRequest: CreateVideoRequest): VideoResource {
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest)
 
         ensureVideoPlaybackExists(createRequest)

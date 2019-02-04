@@ -4,7 +4,7 @@ import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 
 class GetLatestInteractions(private val eventService: EventService) {
-    fun execute(): List<Interaction> {
+    operator fun invoke(): List<Interaction> {
         return eventService.latestInteractions()
     }
 }

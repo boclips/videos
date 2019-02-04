@@ -13,10 +13,10 @@ class LinksController {
 
     @GetMapping
     fun search(request: SecurityContextHolderAwareRequestWrapper): Resource<String> = Resource("", listOfNotNull(
-            VideoController.getSearchLink(),
-            VideoController.getVideoLink(),
-            VideoController.getVideosLink(),
-            if (request.isUserInRole(VIEW_DISABLED_VIDEOS)) VideoController.getAdminSearchLink() else null,
+            VideoController.searchLink(),
+            VideoController.videoLink(),
+            VideoController.videosLink(),
+            if (request.isUserInRole(VIEW_DISABLED_VIDEOS)) VideoController.adminSearchLink() else null,
             EventController.createPlaybackEventLink(),
             EventController.createNoResultsEventLink(),
             CollectionsController.getUserDefaultCollectionLink().withRel("userDefaultCollection")

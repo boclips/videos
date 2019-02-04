@@ -32,15 +32,15 @@ class VideoController(
         private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
-        fun getSearchLink() = linkTo(methodOn(VideoController::class.java)
+        fun searchLink() = linkTo(methodOn(VideoController::class.java)
                 .search(null, null, null, null, null)).withRel("search")
 
-        fun getVideoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java)
+        fun videoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java)
                 .getVideo(id)).withRel(rel)
 
-        fun getVideosLink() = linkTo(methodOn(VideoController::class.java).bulkUpdate(null)).withRel("videos")
+        fun videosLink() = linkTo(methodOn(VideoController::class.java).patchMultipleVideos(null)).withRel("videos")
 
-        fun getAdminSearchLink() = linkTo(methodOn(VideoController::class.java).adminSearch(null)).withRel("adminSearch")
+        fun adminSearchLink() = linkTo(methodOn(VideoController::class.java).adminSearch(null)).withRel("adminSearch")
 
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
@@ -93,13 +93,13 @@ class VideoController(
 
     @DeleteMapping("/{id}")
     fun deleteVideo(@PathVariable("id") id: String?) {
-        deleteVideos.execute(id)
+        deleteVideos(id)
     }
 
     @PostMapping
-    fun createVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
+    fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
-            createVideo.execute(createVideoRequest)
+            createVideo(createVideoRequest)
         } catch (e: VideoAssetExists) {
             val errorDetails = mapOf("error" to "video from provider \"${e.contentPartnerId}\" and provider id \"${e.contentPartnerVideoId}\" already exists")
             return ResponseEntity(errorDetails, HttpStatus.CONFLICT)
@@ -110,22 +110,22 @@ class VideoController(
         }
 
         val headers = HttpHeaders()
-        headers.set(HttpHeaders.LOCATION, getVideoLink(resource.id, "self").href)
+        headers.set(HttpHeaders.LOCATION, videoLink(resource.id, "self").href)
         return ResponseEntity(headers, HttpStatus.CREATED)
     }
 
     @PostMapping("/{id}")
-    fun patchVideo(@PathVariable("id") id: String?, @RequestBody patchVideoRequest: VideoResource): ResponseEntity<Void> {
-        patchVideo.execute(id, patchVideoRequest)
+    fun patchOneVideo(@PathVariable("id") id: String?, @RequestBody patchVideoRequest: VideoResource): ResponseEntity<Void> {
+        patchVideo(id, patchVideoRequest)
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
     @PatchMapping
-    fun bulkUpdate(@RequestBody bulkUpdateRequest: BulkUpdateRequest?): ResponseEntity<Void> {
-        bulkUpdate.execute(bulkUpdateRequest)
+    fun patchMultipleVideos(@RequestBody bulkUpdateRequest: BulkUpdateRequest?): ResponseEntity<Void> {
+        bulkUpdate(bulkUpdateRequest)
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
     private fun wrapResourceWithHateoas(videoResource: VideoResource) =
-            Resource(videoResource, getVideoLink(videoResource.id, "self"))
+            Resource(videoResource, videoLink(videoResource.id, "self"))
 }

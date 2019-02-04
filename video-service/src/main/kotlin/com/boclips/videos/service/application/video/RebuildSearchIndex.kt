@@ -14,7 +14,7 @@ open class RebuildSearchIndex(
     companion object : KLogging()
 
     @Async
-    open fun execute(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
+    open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Starting a full reindex")
 
         try {

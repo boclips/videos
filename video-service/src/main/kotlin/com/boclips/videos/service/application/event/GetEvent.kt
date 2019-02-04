@@ -6,7 +6,7 @@ import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEven
 class GetEvent(
         private val eventService: EventService
 ) {
-    fun execute(): List<NoSearchResultsEvent> {
+    operator fun invoke(): List<NoSearchResultsEvent> {
         return eventService.getNoSearchResultsEvents()
     }
 }

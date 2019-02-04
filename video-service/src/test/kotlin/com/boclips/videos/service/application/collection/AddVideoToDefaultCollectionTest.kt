@@ -37,7 +37,7 @@ class AddVideoToDefaultCollectionTest {
         val addVideoToCollection = AddVideoToDefaultCollection(collectionService, mock())
 
         try {
-            addVideoToCollection.execute("123")
+            addVideoToCollection("123")
         } catch (e: Exception) {
             // fails after creating a collection because of the mock
         }
@@ -53,7 +53,7 @@ class AddVideoToDefaultCollectionTest {
 
         val addVideoToCollection = AddVideoToDefaultCollection(collectionService, mock())
 
-        addVideoToCollection.execute(TestFactories.aValidId())
+        addVideoToCollection(TestFactories.aValidId())
 
         verify(collectionService, Times(0)).create(UserId(value = "me@me.com"))
     }
@@ -69,7 +69,7 @@ class AddVideoToDefaultCollectionTest {
 
         val addVideoToCollection = AddVideoToDefaultCollection(collectionService, eventService)
 
-        addVideoToCollection.execute(TestFactories.aValidId())
+        addVideoToCollection(TestFactories.aValidId())
 
         verify(eventService).saveEvent(check<Event<AddToCollectionEventData>> {
             assertThat(it.data.videoId).isNotEmpty()

@@ -35,7 +35,7 @@ internal class RemoveVideoFromDefaultCollectionTest {
 
         val addVideoToCollection = RemoveVideoFromDefaultCollection(collectionService, eventService)
 
-        addVideoToCollection.execute(TestFactories.aValidId())
+        addVideoToCollection(TestFactories.aValidId())
 
         verify(eventService).saveEvent(com.nhaarman.mockito_kotlin.check<Event<RemoveFromCollectionEventData>> {
             Assertions.assertThat(it.data.videoId).isNotEmpty()

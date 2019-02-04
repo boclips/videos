@@ -15,7 +15,7 @@ class GetVideosByQuery(
 ) {
     companion object : KLogging()
 
-    fun execute(query: String?, includeTags: List<String>, excludeTags: List<String>, pageSize: Int, pageNumber: Int): VideosResource {
+    operator fun invoke(query: String?, includeTags: List<String>, excludeTags: List<String>, pageSize: Int, pageNumber: Int): VideosResource {
         validateQuery(query)
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)

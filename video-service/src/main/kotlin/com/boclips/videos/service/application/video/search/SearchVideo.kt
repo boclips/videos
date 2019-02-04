@@ -6,9 +6,9 @@ class SearchVideo(
         private val getVideosByQuery: GetVideosByQuery
 ) {
 
-    fun byId(id: String?) = getVideoById.execute(id)
+    fun byId(id: String?) = getVideoById(id)
 
-    fun byIds(ids: List<String>) = getAllVideosById.execute(ids)
+    fun byIds(ids: List<String>) = getAllVideosById(ids)
 
     fun byQuery(
             query: String?,
@@ -16,5 +16,5 @@ class SearchVideo(
             excludeTags: List<String>,
             pageSize: Int,
             pageNumber: Int
-    ) = getVideosByQuery.execute(query, includeTags, excludeTags, pageSize, pageNumber)
+    ) = getVideosByQuery(query, includeTags, excludeTags, pageSize, pageNumber)
 }

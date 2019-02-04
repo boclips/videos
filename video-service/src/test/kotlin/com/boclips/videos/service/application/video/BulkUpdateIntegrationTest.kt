@@ -27,7 +27,7 @@ class BulkUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `disableFromSearch sets searchable field on video asset to false and removes from search indices`() {
         val videoIds = listOf(saveVideo(searchable = true), saveVideo(searchable = true))
-        bulkUpdate.execute(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCH_DISABLED))
+        bulkUpdate(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCH_DISABLED))
 
         assertThat(videoAssetRepository.findAll(videoIds)).allMatch { it.searchable == false }
 
@@ -38,9 +38,9 @@ class BulkUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `makeSearchable sets searchable field on video asset to true and registers in search indices`() {
         val videoIds = listOf(saveVideo(searchable = false), saveVideo(searchable = false))
-        bulkUpdate.execute(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCH_DISABLED))
+        bulkUpdate(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCH_DISABLED))
 
-        bulkUpdate.execute(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
+        bulkUpdate(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
 
         assertThat(videoAssetRepository.findAll(videoIds)).allMatch { it.searchable == true }
         assertThat(searchService.count(Query(ids = videoIds.map { it.value }))).isEqualTo(2)
@@ -51,15 +51,15 @@ class BulkUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     fun `makeSearchable sets searchable field on video asset to true and does not register youtube videos in legacy search index`() {
         val videoId = saveVideo(searchable = false, playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}"))
 
-        bulkUpdate.execute(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCH_DISABLED))
+        bulkUpdate(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCH_DISABLED))
 
-        bulkUpdate.execute(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCHABLE))
+        bulkUpdate(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCHABLE))
 
         verify(legacySearchService).upsert(argThat { toList().isEmpty() }, isNull())
     }
 
     @Test
     fun `null bulkUpdateRequest results in invalid exception thrown`() {
-        assertThrows<InvalidBulkUpdateRequestException> { bulkUpdate.execute(null) }
+        assertThrows<InvalidBulkUpdateRequestException> { bulkUpdate(null) }
     }
 }

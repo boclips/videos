@@ -29,7 +29,7 @@ class GetDefaultCollectionTest {
         }
         val getDefaultCollection = GetDefaultCollection(collectionService, VideoToResourceConverter())
 
-        val collection = getDefaultCollection.execute()
+        val collection = getDefaultCollection()
 
         assertThat(collection.owner).isEqualTo("me@me.com")
         assertThat(collection.title).isEmpty()
@@ -47,7 +47,7 @@ class GetDefaultCollectionTest {
         }
         val getDefaultCollection = GetDefaultCollection(collectionService, VideoToResourceConverter())
 
-        val collection = getDefaultCollection.execute()
+        val collection = getDefaultCollection()
 
         assertThat(collection.owner).isEqualTo("me@me.com")
         assertThat(collection.title).isEqualTo("collection title")

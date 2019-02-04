@@ -13,7 +13,7 @@ class DeleteVideos(
         private val searchService: SearchService,
         private val playbackRepository: PlaybackRespository
 ) {
-    fun execute(id: String?) {
+    operator fun invoke(id: String?) {
         if (id == null || id.isBlank()) {
             throw VideoAssetNotFoundException()
         }

@@ -32,7 +32,7 @@ class BuildLegacySearchIndexTest {
         ))
         val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
 
-        rebuildSearchIndex.execute()
+        rebuildSearchIndex()
 
         val videos = getUpsertedVideos()
         assertThat(videos).hasSize(2)
@@ -56,7 +56,7 @@ class BuildLegacySearchIndexTest {
         ))
         val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
 
-        rebuildSearchIndex.execute()
+        rebuildSearchIndex()
 
         assertThat(getUpsertedVideos()).isEmpty()
     }

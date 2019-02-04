@@ -52,7 +52,7 @@ class CreateEventTest {
     fun `extracts user data for playback event`() {
         setSecurityContext(UserPrincipal("testing@boclips.com"))
 
-        createEvent.execute(playbackEvent)
+        createEvent(playbackEvent)
 
         verify(eventService).saveEvent(com.nhaarman.mockito_kotlin.check { event: PlaybackEvent ->
             Assertions.assertThat(event.user.boclipsEmployee).isTrue()
@@ -61,29 +61,29 @@ class CreateEventTest {
 
     @Test
     fun `validates a valid playback event`() {
-        assertThatCode { createEvent.execute(playbackEvent) }.doesNotThrowAnyException()
+        assertThatCode { createEvent(playbackEvent) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `validates a valid no results event`() {
-        assertThatCode { createEvent.execute(noResultsEvent) }.doesNotThrowAnyException()
+        assertThatCode { createEvent(noResultsEvent) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `handles well formed capture time`() {
-        assertThatCode { createEvent.execute(playbackEvent) }.doesNotThrowAnyException()
+        assertThatCode { createEvent(playbackEvent) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `handles badly formed capture time`() {
-        assertThatCode { createEvent.execute(playbackEvent.copy(captureTime = "abc")) }.doesNotThrowAnyException()
+        assertThatCode { createEvent(playbackEvent.copy(captureTime = "abc")) }.doesNotThrowAnyException()
     }
 
     @Test
     fun `extracts user data for no results event`() {
         SecurityContextHolder.setContext(SecurityContextImpl(TestingAuthenticationToken(UserPrincipal("teacher@boclips.com"), null)))
 
-        createEvent.execute(noResultsEvent)
+        createEvent(noResultsEvent)
 
         verify(eventService).saveEvent(com.nhaarman.mockito_kotlin.check { event: NoSearchResultsEvent ->
             Assertions.assertThat(event.user.boclipsEmployee).isTrue()
@@ -92,7 +92,7 @@ class CreateEventTest {
 
     @Test
     fun `sends email to log no search results event`() {
-        createEvent.execute(noResultsEvent)
+        createEvent(noResultsEvent)
 
         verify(emailClient).send(any())
     }

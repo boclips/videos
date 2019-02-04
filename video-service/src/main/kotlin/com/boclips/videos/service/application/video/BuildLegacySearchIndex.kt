@@ -15,7 +15,7 @@ open class BuildLegacySearchIndex(
     companion object : KLogging()
 
     @Async
-    open fun execute(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
+    open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Building a legacy index")
 
         try {

@@ -10,7 +10,7 @@ import com.boclips.videos.service.presentation.video.VideoResourceToVideoUpdateC
 class PatchVideo(
         private val videoService: VideoService
 ) {
-    fun execute(id: String?, patch: VideoResource) {
+    operator fun invoke(id: String?, patch: VideoResource) {
         val updateCommand = VideoResourceToVideoUpdateConverter.convert(patch)
 
         val assetId = try {

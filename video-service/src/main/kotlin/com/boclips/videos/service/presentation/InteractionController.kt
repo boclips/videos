@@ -13,6 +13,6 @@ class InteractionController(private val getLatestInteractions: GetLatestInteract
 
     @GetMapping
     fun status(): String {
-        return InteractionsFormatter.format(getLatestInteractions.execute())
+        return InteractionsFormatter.format(getLatestInteractions())
     }
 }

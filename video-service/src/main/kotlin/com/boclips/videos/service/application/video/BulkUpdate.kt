@@ -20,7 +20,7 @@ open class BulkUpdate(
 ) {
 
     @Transactional
-    open fun execute(bulkUpdateRequest: BulkUpdateRequest?) {
+    open operator fun invoke(bulkUpdateRequest: BulkUpdateRequest?) {
         when (bulkUpdateRequest?.status) {
             VideoResourceStatus.SEARCHABLE -> makeSearchable(bulkUpdateRequest)
             VideoResourceStatus.SEARCH_DISABLED -> disableFromSearch(bulkUpdateRequest)

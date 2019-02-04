@@ -28,19 +28,19 @@ class EventController(
 
     @PostMapping("/playback")
     fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?): ResponseEntity<Void> {
-        createEvent.execute(playbackEvent)
+        createEvent(playbackEvent)
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @PostMapping("/no-search-results")
     fun logNoSearchResultsEvent(@RequestBody noSearchResultsEvent: CreateNoSearchResultsEventCommand?): ResponseEntity<Void> {
-        createEvent.execute(noSearchResultsEvent)
+        createEvent(noSearchResultsEvent)
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @GetMapping("/no-search-results")
     fun getNoSearchResultsEvent(): ResponseEntity<Resources<NoSearchResultsEventResource>> {
-        val events = getEvent.execute()
+        val events = getEvent()
                 .map { convertToResource(it) }
 
         return ResponseEntity(Resources(events), HttpStatus.OK)
@@ -48,7 +48,7 @@ class EventController(
 
     @GetMapping("/status")
     fun status(): ResponseEntity<EventsStatus> {
-        val status = checkEventsStatus.execute()
+        val status = checkEventsStatus()
         val code = if (status.healthy) HttpStatus.OK else HttpStatus.SERVICE_UNAVAILABLE
 
         return ResponseEntity(status, code)

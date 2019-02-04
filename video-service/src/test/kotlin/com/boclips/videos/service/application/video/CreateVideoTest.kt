@@ -31,7 +31,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     fun `requesting creation of an existing kaltura video creates the video`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
 
-        val resource = createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+        val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
 
         assertThat(videoService.get(AssetId(resource.id!!))).isNotNull
     }
@@ -40,7 +40,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnail-url", duration = Duration.ZERO)
 
-        val resource = createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))
+        val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))
 
         assertThat(videoService.get(AssetId(resource.id!!))).isNotNull
     }
@@ -48,7 +48,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     @Test
     fun `requesting creation of video without playback ignores video and throws`() {
         assertThrows<VideoPlaybackNotFound> {
-            createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+            createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
         }
 
         assertThat(videoService.count(VideoSearchQuery(
@@ -65,7 +65,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
 
         val createRequest = TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video")
-        createVideo.execute(createRequest)
+        createVideo(createRequest)
 
         val results = videoService.search(VideoSearchQuery(
                 text = "the latest bloomberg",
@@ -83,7 +83,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     fun `created video is made available in legacy search`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
 
-        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
+        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
 
         verify(legacySearchService).upsert(any(), anyOrNull())
     }
@@ -91,7 +91,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws when create request is incomplete`() {
         assertThrows<InvalidCreateVideoRequestException> {
-            createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = null))
+            createVideo(TestFactories.createCreateVideoRequest(playbackId = null))
         }
     }
 
@@ -101,7 +101,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$123", referenceId = "1234", duration = Duration.ofMinutes(1)))
 
-        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
 
         val videoCounterAfter = videoCounter.count()
 
@@ -111,7 +111,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     @Test
     fun `does not populate legacy search when youtube video is created`() {
         fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
-        createVideo.execute(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest banana video", playbackProvider = "YOUTUBE"))
+        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest banana video", playbackProvider = "YOUTUBE"))
 
         verifyZeroInteractions(legacySearchService)
     }

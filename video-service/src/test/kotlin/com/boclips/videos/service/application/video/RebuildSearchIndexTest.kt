@@ -46,7 +46,7 @@ class RebuildSearchIndexTest {
         }
 
         val rebuildSearchIndex = RebuildSearchIndex(videoAssetRepository, searchService)
-        rebuildSearchIndex.execute()
+        rebuildSearchIndex()
 
         val searchRequest = PaginatedSearchRequest(Query(ids = listOf(videoAssetId1, videoAssetId2, videoAssetId3)))
         assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(videoAssetId2, videoAssetId3)

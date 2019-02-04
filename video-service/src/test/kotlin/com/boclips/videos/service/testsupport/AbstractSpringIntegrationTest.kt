@@ -111,7 +111,7 @@ abstract class AbstractSpringIntegrationTest {
             YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(playbackId.value, "https://youtube.com/thumb/${playbackId.value}.png", duration = duration)
         }
 
-        val id = createVideo.execute(CreateVideoRequest(
+        val id = createVideo(CreateVideoRequest(
                 provider = contentProvider,
                 providerVideoId = contentProviderId,
                 title = title,
@@ -131,7 +131,7 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {
-        bulkUpdate.execute(BulkUpdateRequest(listOf(id), status))
+        bulkUpdate(BulkUpdateRequest(listOf(id), status))
     }
 
 }

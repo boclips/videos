@@ -20,6 +20,6 @@ class GetVideoByIdTest {
 
     @Test
     fun `throws exception when query is null`() {
-        assertThatThrownBy { GetVideoById(mock(), mock(), mock()).execute(null) }.isInstanceOf(QueryValidationException::class.java)
+        assertThatThrownBy { GetVideoById(mock(), mock(), mock()).invoke(null) }.isInstanceOf(QueryValidationException::class.java)
     }
 }
