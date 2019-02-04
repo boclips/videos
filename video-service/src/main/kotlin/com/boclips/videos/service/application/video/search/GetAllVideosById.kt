@@ -10,9 +10,9 @@ class GetAllVideosById(
         private val videoToResourceConverter: VideoToResourceConverter
 ) {
 
-    operator fun invoke(videoIds: Collection<String>): List<VideoResource> {
+    operator fun invoke(videoIds: List<AssetId>): List<VideoResource> {
 
-        return videoService.get(videoIds.map { AssetId(it) })
+        return videoService.get(videoIds)
                 .let(videoToResourceConverter::convert)
     }
 }

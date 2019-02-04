@@ -389,7 +389,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns all enabled and disabled video by ID`() {
         mockMvc.perform(
-                post("/v1/videos/search?status=all")
+                post("/v1/videos/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""").asBoclipsEmployee()
         )
@@ -401,6 +401,22 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$disabledVideoId")))
 
                 .andExpect(jsonPath("$.page").doesNotExist())
+    }
+
+    @Test
+    fun `returns 201 when id searching by alias`() {
+        val title = "Back to the Future II"
+        val alias = "123123"
+        saveVideo(title = title)
+
+        mongoVideosCollection().findOneAndUpdate(
+                eq("title", title),
+                set("aliases", alias)
+        )
+
+        mockMvc.perform(post("/v1/videos/search").contentType(MediaType.APPLICATION_JSON)
+                .content("""{"ids": ["$alias"]}""").asBoclipsEmployee())
+                .andExpect(status().isCreated)
     }
 
     @Test

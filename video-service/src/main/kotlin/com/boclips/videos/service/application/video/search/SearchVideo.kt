@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.application.video.search.SearchVideo.Companion.isAlias
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 
@@ -17,7 +18,7 @@ class SearchVideo(
 
     fun byId(id: String?) = getVideoById(resolveToAssetId(id))
 
-    fun byIds(ids: List<String>) = getAllVideosById(ids)
+    fun byIds(ids: List<String>) = getAllVideosById(ids.map(this::resolveToAssetId))
 
     fun byQuery(
             query: String?,
