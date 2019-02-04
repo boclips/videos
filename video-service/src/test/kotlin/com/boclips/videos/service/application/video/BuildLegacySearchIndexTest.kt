@@ -64,7 +64,7 @@ class BuildLegacySearchIndexTest {
     private fun mockVideoAssetRepository(videos: Sequence<VideoAsset>): VideoAssetRepository {
         return mock {
             on {
-                streamAll(any())
+                streamAllSearchable(any())
             } doAnswer { invocations ->
                 val consumer = invocations.getArgument(0) as (Sequence<VideoAsset>) -> Unit
                 consumer(videos)

@@ -44,8 +44,8 @@ class MongoVideoAssetRepository(
         }
     }
 
-    override fun streamAll(consumer: (Sequence<VideoAsset>) -> Unit) {
-        val sequence = Sequence { getVideoCollection().find().iterator() }
+    override fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit) {
+        val sequence = Sequence { getVideoCollection().find(eq("searchable", true)).iterator() }
                 .map(VideoDocumentConverter::fromDocument)
 
         consumer(sequence)

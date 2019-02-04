@@ -18,7 +18,7 @@ open class RebuildSearchIndex(
         logger.info("Starting a full reindex")
 
         try {
-            videoAssetRepository.streamAll { videos ->
+            videoAssetRepository.streamAllSearchable { videos ->
                 searchService.safeRebuildIndex(videos, notifier)
             }
         } catch (e: Exception) {

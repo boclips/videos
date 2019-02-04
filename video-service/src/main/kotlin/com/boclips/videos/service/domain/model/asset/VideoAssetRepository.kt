@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.model.asset
 interface VideoAssetRepository {
     fun find(assetId: AssetId): VideoAsset?
     fun findAll(assetIds: List<AssetId>): List<VideoAsset>
-    fun streamAll(consumer: (Sequence<VideoAsset>) -> Unit)
+    fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit)
     fun delete(assetId: AssetId)
     fun create(videoAsset: VideoAsset): VideoAsset
     fun update(videoAsset: VideoAsset): VideoAsset
