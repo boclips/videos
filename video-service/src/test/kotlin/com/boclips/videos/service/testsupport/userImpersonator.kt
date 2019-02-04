@@ -47,3 +47,8 @@ fun MockHttpServletRequestBuilder.asSubjectClassifier() =
         this.with(SecurityMockMvcRequestPostProcessors
                 .user("subjectClassifier")
                 .roles(UserRoles.UPDATE_VIDEOS))
+
+fun MockHttpServletRequestBuilder.asUserWithRoles(vararg roles: String) =
+        this.with(SecurityMockMvcRequestPostProcessors
+                .user("aRandomUser")
+                .roles(*roles))

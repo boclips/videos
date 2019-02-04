@@ -174,6 +174,9 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
         mockMvc.perform(post("/v1/videos/search").asBoclipsEmployee())
                 .andExpect(status().`is`(not401Or403()))
+
+        mockMvc.perform(post("/v1/videos/search").asUserWithRoles(UserRoles.VIEW_DISABLED_VIDEOS))
+                .andExpect(status().`is`(not401Or403()))
     }
 
     @Test

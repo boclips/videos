@@ -39,6 +39,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
                 .antMatchers(HttpMethod.DELETE, "/v1/videos/*").hasRole(UserRoles.REMOVE_VIDEOS)
                 .antMatchers(HttpMethod.POST, "/v1/videos").hasRole(UserRoles.INSERT_VIDEOS)
                 .antMatchers(HttpMethod.PATCH, "/v1/videos").hasRole(UserRoles.UPDATE_VIDEOS)
+                .antMatchers(HttpMethod.POST, "/v1/videos/search").hasRole(UserRoles.VIEW_DISABLED_VIDEOS)
                 .antMatchers(HttpMethod.POST, "/v1/videos/*").hasRole(UserRoles.UPDATE_VIDEOS)
                 .antMatchers(HttpMethod.GET, "/v1/videos*").hasAnyRole(UserRoles.VIEW_VIDEOS)
                 .antMatchers(HttpMethod.GET, "/v1/videos/*").permitAll()
