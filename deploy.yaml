@@ -1,0 +1,22 @@
+app: video-service
+port: 8080
+scale: Large
+bootTime: Slow
+healthPath: /actuator/health
+environments:
+  production:
+    replicas: 2
+    urls:
+      - video-service.boclips.com
+  staging:
+    replicas: 1
+    urls:
+      - video-service.staging-boclips.com
+  testing:
+    replicas: 1
+    urls:
+      - video-service.testing-boclips.com
+  local:
+    replicas: 1
+    urls:
+      - video-service.local-boclips.com
