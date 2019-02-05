@@ -103,12 +103,8 @@ class MongoCollectionService(
                 id = CollectionId(value = collectionDocument.id),
                 title = collectionDocument.title!!,
                 owner = UserId(value = collectionDocument.owner),
-                videos = getVideosOfCollection(assetIds)
+                videos = videoService.get(assetIds)
         )
-    }
-
-    private fun getVideosOfCollection(assetIds: List<AssetId>): List<Video> {
-        return videoService.get(assetIds)
     }
 
 }
