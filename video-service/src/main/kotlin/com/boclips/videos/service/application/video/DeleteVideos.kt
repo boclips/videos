@@ -18,7 +18,8 @@ class DeleteVideos(
             throw VideoAssetNotFoundException()
         }
 
-        val videoAsset = videoAssetRepository.find(AssetId(value = id)) ?: throw VideoAssetNotFoundException()
+        val assetId = AssetId(value = id)
+        val videoAsset = videoAssetRepository.find(assetId) ?: throw VideoAssetNotFoundException(assetId)
 
         removeVideo(videoAsset)
     }

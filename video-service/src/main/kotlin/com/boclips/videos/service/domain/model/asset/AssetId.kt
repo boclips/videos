@@ -15,7 +15,7 @@ class AssetId(value: String) {
     }
 
     override fun toString(): String {
-        return "[id = ${this.value}]"
+        return this.value
     }
 
     override fun equals(other: Any?): Boolean {

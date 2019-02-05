@@ -47,7 +47,7 @@ class VideoService(
 
     fun get(assetId: AssetId): Video {
         val videoAsset = videoAssetRepository
-                .find(assetId) ?: throw VideoAssetNotFoundException()
+                .find(assetId) ?: throw VideoAssetNotFoundException(assetId)
 
         val videoPlayback = playbackRepository
                 .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()

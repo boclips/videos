@@ -64,7 +64,7 @@ class MongoVideoAssetRepository(
 
         getVideoCollection().insertOne(document)
 
-        val createdVideoAsset = find(videoAsset.assetId) ?: throw VideoAssetNotFoundException()
+        val createdVideoAsset = find(videoAsset.assetId) ?: throw VideoAssetNotFoundException(videoAsset.assetId)
 
         logger.info { "Created video ${createdVideoAsset.assetId.value}" }
         return createdVideoAsset
@@ -77,7 +77,7 @@ class MongoVideoAssetRepository(
 
         logger.info { "Updated video ${videoAsset.assetId.value}" }
 
-        return find(videoAsset.assetId) ?: throw VideoAssetNotFoundException()
+        return find(videoAsset.assetId) ?: throw VideoAssetNotFoundException(videoAsset.assetId)
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
