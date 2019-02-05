@@ -13,12 +13,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.mongodb.repository.MongoRepository
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.jdbc.JdbcTestUtils
 import java.time.Duration
 
 @SpringBootTest(
@@ -28,12 +25,6 @@ import java.time.Duration
 @ExtendWith(SpringExtension::class)
 @ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "no-security")
 abstract class AbstractSpringIntegrationTest {
-
-    @Autowired
-    lateinit var repos: Set<MongoRepository<*, *>>
-
-    @Autowired
-    lateinit var jdbcTemplate: JdbcTemplate
 
     @Autowired
     lateinit var fakeSearchService: InMemorySearchService
@@ -49,8 +40,6 @@ abstract class AbstractSpringIntegrationTest {
 
     @BeforeEach
     fun resetState() {
-        repos.forEach { it.deleteAll() }
-
         mongoClient.apply {
             listDatabaseNames()
                     .filterNot { setOf("admin", "config").contains(it) }
@@ -59,8 +48,6 @@ abstract class AbstractSpringIntegrationTest {
                         dropDatabase(it)
                     }
         }
-
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig")
 
         fakeSearchService.safeRebuildIndex(emptySequence())
         fakeKalturaClient.clear()
@@ -77,25 +64,6 @@ abstract class AbstractSpringIntegrationTest {
                   typeId: Int = 3,
                   keywords: List<String> = emptyList()
     ) {
-        jdbcTemplate.update("""
-            INSERT INTO metadata_orig (
-                id,
-                source,
-                title,
-                description,
-                date,
-                duration,
-                reference_id,
-                keywords,
-                type_id,
-                playback_id,
-                playback_provider,
-                unique_id,
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                videoId, contentProvider, title, description, date, "00:00:00", playbackId.value, keywords.joinToString(separator = ","), typeId, playbackId.value, playbackId.type.name, contentProviderId
-        )
-
         fakeSearchService.upsert(sequenceOf(VideoMetadata(
                 id = videoId.toString(),
                 title = title,

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.collection.mongo
+package com.boclips.videos.service.infrastructure.collection
 
 data class CollectionDocument(
         val id: String,

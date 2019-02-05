@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.collection.mongo
+package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.infrastructure.video.mongo.getList
 import org.bson.Document

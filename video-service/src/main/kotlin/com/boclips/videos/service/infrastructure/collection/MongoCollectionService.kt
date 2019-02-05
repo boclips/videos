@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.collection.mongo
+package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.Video

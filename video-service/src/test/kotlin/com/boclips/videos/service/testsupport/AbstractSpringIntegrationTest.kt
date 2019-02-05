@@ -25,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.repository.MongoRepository
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.jdbc.JdbcTestUtils
 import java.time.Duration
 import java.time.LocalDate
 import java.util.*
@@ -41,9 +39,6 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var repos: Set<MongoRepository<*, *>>
-
-    @Autowired
-    lateinit var jdbcTemplate: JdbcTemplate
 
     @Autowired
     lateinit var fakeSearchService: InMemorySearchService
@@ -84,8 +79,6 @@ abstract class AbstractSpringIntegrationTest {
                         dropDatabase(it)
                     }
         }
-
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "metadata_orig", "collection_video", "collection", "video_subject")
 
         fakeSearchService.safeRebuildIndex(emptySequence())
         fakeYoutubePlaybackProvider.clear()

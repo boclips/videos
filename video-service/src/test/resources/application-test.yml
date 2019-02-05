@@ -14,10 +14,6 @@ event:
       search: 1
       playback: 1
 
-spring:
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=MYSQL
-
 email:
   host: garbage.host
   port: 466

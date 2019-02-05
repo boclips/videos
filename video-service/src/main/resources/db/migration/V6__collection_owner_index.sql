@@ -1,1 +1,0 @@
-CREATE INDEX collection_owner_index ON collection (owner);

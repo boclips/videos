@@ -17,11 +17,8 @@ import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.domain.service.PlaybackProvider
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.infrastructure.collection.mongo.CollectionDocumentConverter
-import com.boclips.videos.service.infrastructure.collection.mongo.MongoCollectionService
-import com.boclips.videos.service.infrastructure.collection.mysql.CollectionEntityRepository
-import com.boclips.videos.service.infrastructure.collection.mysql.MySqlCollectionService
-import com.boclips.videos.service.infrastructure.collection.mysql.VideoInCollectionEntityRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionDocumentConverter
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionService
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
@@ -32,7 +29,6 @@ import com.mongodb.MongoClient
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import org.springframework.core.task.TaskExecutor
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
@@ -109,25 +105,15 @@ class ApplicationContext {
     }
 
     @Bean
-    @Primary
     fun collectionService(mongoClient: MongoClient,
-                          videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
                           videoService: VideoService): CollectionService {
         return MongoCollectionService(mongoClient, CollectionDocumentConverter(), videoService)
     }
 
     @Bean
-    fun mysqlCollectionService(collectionEntityRepository: CollectionEntityRepository,
-                               videoInCollectionEntityRepository: VideoInCollectionEntityRepository,
-                               videoService: VideoService,
-                               mongoVideoAssetRepository: MongoVideoAssetRepository): MySqlCollectionService {
-        return MySqlCollectionService(collectionEntityRepository, videoInCollectionEntityRepository, videoService, mongoVideoAssetRepository)
-    }
-
-    @Bean
     fun mongoVideoRepository(
             mongoClient: MongoClient
-    ): MongoVideoAssetRepository {
+    ): VideoAssetRepository {
         return MongoVideoAssetRepository(mongoClient)
     }
 
