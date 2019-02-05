@@ -35,13 +35,18 @@ class VideoService(
             logger.warn { "Found ${assetIds.size} videos with ${videoPlaybacks.size} playbacks for query ${query.text}" }
         }
 
-        return allVideoAssets.mapNotNull { videoAsset ->
+        val videos = allVideoAssets.mapNotNull { videoAsset ->
             val videoPlayback = videoPlaybacks[videoAsset.playbackId] ?: return@mapNotNull null
             Video(videoAsset, videoPlayback)
         }
+
+        logger.info { "Returning ${videos.size} videos for query $query" }
+
+        return videos
     }
 
     fun count(videoSearchQuery: VideoSearchQuery): Long {
+        logger.info { "Counted videos for query $videoSearchQuery" }
         return searchService.count(videoSearchQuery.toSearchQuery())
     }
 
@@ -51,6 +56,8 @@ class VideoService(
 
         val videoPlayback = playbackRepository
                 .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
+
+        logger.info { "Retrieved video $assetId" }
 
         return Video(videoAsset, videoPlayback)
     }
@@ -84,6 +91,8 @@ class VideoService(
         val video = get(assetId)
         val updatedVideo = updateCommand.update(video)
         val savedVideoAsset = videoAssetRepository.update(updatedVideo.asset)
+
+        logger.info { "Updated video $assetId" }
         return updatedVideo.copy(asset = savedVideoAsset)
     }
 }
