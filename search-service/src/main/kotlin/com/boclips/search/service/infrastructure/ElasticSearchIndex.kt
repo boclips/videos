@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter
 
 class ElasticSearchIndex {
     companion object {
-        const val ES_LEGACY_INDEX = "videos"
         const val ES_INDEX_ALIAS = "current_videos"
         private const val ES_INDEX_PREFIX = "videos_"
         const val ES_INDEX_WILDCARD = "$ES_INDEX_PREFIX*"

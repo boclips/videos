@@ -55,7 +55,6 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         notifier?.send("Deleting previous aliases...")
         val allVideoIndicesExceptNew = "${ElasticSearchIndex.ES_INDEX_WILDCARD},-$newIndexName"
         deleteIndex(allVideoIndicesExceptNew)
-        deleteIndex(ElasticSearchIndex.ES_LEGACY_INDEX) // TODO: Remove once every env has been rebuilt once
 
         notifier?.complete()
     }

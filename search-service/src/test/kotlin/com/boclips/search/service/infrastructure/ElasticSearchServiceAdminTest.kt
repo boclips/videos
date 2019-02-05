@@ -29,17 +29,6 @@ class ElasticSearchServiceAdminTest : EmbeddedElasticSearchIntegrationTest() {
     }
 
     @Test
-    fun `rebuilding the index deletes the legacy un-versioned index`() {
-        client.indices().create(CreateIndexRequest("videos"), RequestOptions.DEFAULT)
-
-        assertThat(getCurrentIndices()).contains("videos")
-
-        searchService.safeRebuildIndex(emptySequence())
-
-        assertThat(getCurrentIndices()).doesNotContain("videos")
-    }
-
-    @Test
     fun `rebuilding the index deletes previous index versions`() {
         searchService.safeRebuildIndex(emptySequence())
 
