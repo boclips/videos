@@ -118,4 +118,36 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks", "ted-id-2")).isFalse()
         assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks abc", "ted-id-1")).isFalse()
     }
+
+    @Test
+    fun `mark videos as searchable`() {
+        val videoAsset1 = TestFactories.createVideoAsset()
+        mongoVideoRepository.create(videoAsset1)
+
+        val videoAsset2 = TestFactories.createVideoAsset()
+        mongoVideoRepository.create(videoAsset2)
+
+        val videoAssets = listOf(videoAsset1.assetId, videoAsset2.assetId)
+
+        mongoVideoRepository.makeSearchable(videoAssets)
+        val updatedVideoAssets = mongoVideoRepository.findAll(videoAssets)
+
+        assertThat(updatedVideoAssets.map { it.searchable }).containsExactly(true, true)
+    }
+
+    @Test
+    fun `mark videos disabled for search`() {
+        val videoAsset1 = TestFactories.createVideoAsset()
+        mongoVideoRepository.create(videoAsset1)
+
+        val videoAsset2 = TestFactories.createVideoAsset()
+        mongoVideoRepository.create(videoAsset2)
+
+        val videoAssets = listOf(videoAsset1.assetId, videoAsset2.assetId)
+
+        mongoVideoRepository.disableFromSearch(videoAssets)
+        val updatedVideoAssets = mongoVideoRepository.findAll(videoAssets)
+
+        assertThat(updatedVideoAssets.map { it.searchable }).containsExactly(false, false)
+    }
 }

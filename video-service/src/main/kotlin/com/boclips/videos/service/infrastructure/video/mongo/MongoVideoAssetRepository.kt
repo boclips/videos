@@ -111,20 +111,22 @@ class MongoVideoAssetRepository(
     }
 
     override fun disableFromSearch(assetIds: List<AssetId>) {
-        //TODO `in`("_id", assetIds.map { ObjectId(it.value) }
-        assetIds.forEach { assetId ->
-            getVideoCollection().updateOne(eq("_id", ObjectId(assetId.value)),
-                    set("searchable", false)
-            )
-        }
+        val mongoIds = assetIds.map { ObjectId(it.value) }
+        getVideoCollection().updateMany(`in`("_id", mongoIds),
+                set("searchable", false)
+        )
+
+        logger.info { "Disabled $assetIds for search" }
     }
 
     override fun makeSearchable(assetIds: List<AssetId>) {
-        assetIds.forEach { assetId ->
-            getVideoCollection().updateOne(eq("_id", ObjectId(assetId.value)),
-                    set("searchable", true)
-            )
-        }
+        val mongoIds = assetIds.map { ObjectId(it.value) }
+
+        getVideoCollection().updateMany(`in`("_id", mongoIds),
+                set("searchable", true)
+        )
+
+        logger.info { "Made $assetIds searchable" }
     }
 
     private fun getVideoCollection() = mongoClient.getDatabase(databaseName).getCollection(collectionName)
