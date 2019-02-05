@@ -111,7 +111,7 @@ class MongoVideoAssetRepository(
     }
 
     override fun disableFromSearch(assetIds: List<AssetId>) {
-        //`in`("_id", assetIds.map { ObjectId(it.value) }
+        //TODO `in`("_id", assetIds.map { ObjectId(it.value) }
         assetIds.forEach { assetId ->
             getVideoCollection().updateOne(eq("_id", ObjectId(assetId.value)),
                     set("searchable", false)

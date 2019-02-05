@@ -7,7 +7,9 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
@@ -54,7 +56,28 @@ class VideoService(
     }
 
     fun get(assetIds: List<AssetId>): List<Video> {
-        return assetIds.mapNotNull { assetId -> this.get(assetId) }
+        val videoAssets = videoAssetRepository.findAll(assetIds)
+
+        if (assetIds.size != videoAssets.size) {
+            logger.warn {
+                val assetsNotFound = assetIds - videoAssets.map { it.assetId }
+                "Some of the requested video assets could not be found. Ids found: $assetsNotFound"
+            }
+        }
+
+        val playbackIds = videoAssets.map { asset -> asset.playbackId }
+        val videoPlaybacks: Map<PlaybackId, VideoPlayback> = playbackRepository.find(playbackIds)
+
+        return videoAssets.mapNotNull { videoAsset ->
+            val videoPlayback = videoPlaybacks[videoAsset.playbackId]
+
+            if (videoPlayback == null) {
+                logger.warn { "Failed to find playback for video ${videoAsset.assetId}" }
+                return@mapNotNull null
+            }
+
+            Video(videoAsset, videoPlayback)
+        }
     }
 
     fun update(assetId: AssetId, updateCommand: VideoUpdateCommand): Video {

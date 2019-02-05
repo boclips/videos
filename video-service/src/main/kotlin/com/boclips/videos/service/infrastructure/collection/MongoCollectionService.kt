@@ -97,12 +97,18 @@ class MongoCollectionService(
 
     private fun toCollection(collectionDocument: CollectionDocument?): Collection? {
         if (collectionDocument == null) return null
+        val assetIds = collectionDocument.videos.map { AssetId(value = it) }
+
         return Collection(
                 id = CollectionId(value = collectionDocument.id),
                 title = collectionDocument.title!!,
                 owner = UserId(value = collectionDocument.owner),
-                videos = videoService.get(collectionDocument.videos.map { AssetId(value = it) })
+                videos = getVideosOfCollection(assetIds)
         )
+    }
+
+    private fun getVideosOfCollection(assetIds: List<AssetId>): List<Video> {
+        return videoService.get(assetIds)
     }
 
 }
