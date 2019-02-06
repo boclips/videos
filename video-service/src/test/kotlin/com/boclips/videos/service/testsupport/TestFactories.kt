@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.Video
@@ -126,13 +127,14 @@ object TestFactories {
         )
     }
 
-    fun createMediaEntry(id: String = "1", referenceId: String = "ref-id-$id", duration: Duration = Duration.ofMinutes(1)): MediaEntry? {
+    fun createMediaEntry(id: String = "1", referenceId: String = "ref-id-$id", duration: Duration = Duration.ofMinutes(1), status: MediaEntryStatus = MediaEntryStatus.READY): MediaEntry? {
         return MediaEntry.builder()
                 .id(id)
                 .referenceId(referenceId)
                 .streams(StreamUrls("https://stream/[FORMAT]/asset-$id.mp4"))
                 .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
                 .duration(duration)
+                .status(status)
                 .build()
     }
 

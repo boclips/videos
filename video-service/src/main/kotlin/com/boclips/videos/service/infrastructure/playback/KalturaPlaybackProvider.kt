@@ -2,6 +2,8 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.http.KalturaClientApiException
+import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
@@ -26,19 +28,19 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : Playba
                         true
                     }
                 }
-                .map { id ->
-                    val kalturaVideoId = id
-                    val mediaEntry = mediaEntriesById[kalturaVideoId.value]!!.first()
+                .filter { kalturaVideoId -> filterValidMediaEntries(kalturaVideoId, mediaEntriesById) != null }
+                .mapNotNull { kalturaVideoId ->
+                    val mediaEntry = filterValidMediaEntries(kalturaVideoId, mediaEntriesById)
 
-                    val streamUrl = mediaEntry.streams.withFormat(StreamFormat.APPLE_HDS)
+                    val streamUrl = mediaEntry!!.streams.withFormat(StreamFormat.APPLE_HDS)
                     val videoPlayback = StreamPlayback(
-                            id = id,
+                            id = kalturaVideoId,
                             streamUrl = streamUrl,
                             thumbnailUrl = mediaEntry.thumbnailUrl,
                             duration = mediaEntry.duration
                     )
 
-                    (id to videoPlayback)
+                    (kalturaVideoId to videoPlayback)
                 }
                 .toMap()
     }
@@ -50,4 +52,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : Playba
             logger.error { "Failed to execute asset from Kaltura: $ex" }
         }
     }
+
+    private fun filterValidMediaEntries(id: PlaybackId, mediaEntriesById: Map<String, List<MediaEntry>>) =
+            mediaEntriesById[id.value]!!.firstOrNull { it.status == MediaEntryStatus.READY }
 }

@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntry
+import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
@@ -59,6 +60,24 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         kalturaPlaybackProvider.removePlayback(playbackToBeDeleted)
 
         assertThat(kalturaPlaybackProvider.retrievePlayback(listOf(playbackToBeDeleted))).isEmpty()
+    }
+
+    @Test
+    fun `filters non ready kaltura videos`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry("1", status = MediaEntryStatus.NOT_READY))
+        fakeKalturaClient.addMediaEntry(createMediaEntry("2", status = MediaEntryStatus.READY))
+
+        val playbackIdOfNonReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+        val playbackIdOfReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-2")
+
+        val videosWithPlayback = kalturaPlaybackProvider.retrievePlayback(
+                listOf(playbackIdOfNonReady, playbackIdOfReady)
+        )
+
+        assertThat(videosWithPlayback).hasSize(1)
+        assertThat(videosWithPlayback[playbackIdOfReady]).isNotNull
+        assertThat(videosWithPlayback[playbackIdOfNonReady]).isNull()
+
     }
 
 }
