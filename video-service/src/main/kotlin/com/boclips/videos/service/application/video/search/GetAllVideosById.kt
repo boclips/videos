@@ -12,7 +12,7 @@ class GetAllVideosById(
 
     operator fun invoke(videoIds: List<AssetId>): List<VideoResource> {
 
-        return videoService.get(videoIds)
+        return videoService.get(videoIds.toSet().toList())
                 .let(videoToResourceConverter::convert)
     }
 }

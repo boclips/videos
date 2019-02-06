@@ -404,6 +404,30 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `ignores unknown videos searching by IDs`() {
+        mockMvc.perform(
+                post("/v1/videos/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"ids": ["nonsense", "$disabledVideoId", "nonsense"]}""").asBoclipsEmployee()
+        )
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
+    }
+
+    @Test
+    fun `dedup videos searching by IDs`() {
+        mockMvc.perform(
+                post("/v1/videos/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"ids": ["$disabledVideoId", "$disabledVideoId"]}""").asBoclipsEmployee()
+        )
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
+    }
+
+    @Test
     fun `returns 201 when id searching by alias`() {
         val title = "Back to the Future II"
         val alias = "123123"

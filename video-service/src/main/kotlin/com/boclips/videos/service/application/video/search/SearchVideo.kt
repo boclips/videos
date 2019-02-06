@@ -15,9 +15,9 @@ class SearchVideo(
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?) = getVideoById(resolveToAssetId(id))
+    fun byId(id: String?) = getVideoById(resolveToAssetId(id)!!)
 
-    fun byIds(ids: List<String>) = getAllVideosById(ids.map(this::resolveToAssetId))
+    fun byIds(ids: List<String>) = getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) })
 
     fun byQuery(
             query: String?,
@@ -27,13 +27,19 @@ class SearchVideo(
             pageNumber: Int
     ) = getVideosByQuery(getOrThrow(query), includeTags, excludeTags, pageSize, pageNumber)
 
-    private fun resolveToAssetId(videoIdParam: String?): AssetId {
+    private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): AssetId? {
         val videoId = getOrThrow(videoIdParam)
 
-        return if (isAlias(videoId)) {
-            videoAssetRepository.resolveAlias(videoId) ?: throw VideoAssetNotFoundException()
-        } else {
-            AssetId(value = videoId)
+        return try {
+            if (isAlias(videoId)) {
+                videoAssetRepository.resolveAlias(videoId) ?: throw VideoAssetNotFoundException()
+            } else {
+                AssetId(value = videoId)
+            }
+        } catch (e: Exception) {
+            if (throwIfDoesNotExist)
+                throw e
+            null
         }
     }
 
