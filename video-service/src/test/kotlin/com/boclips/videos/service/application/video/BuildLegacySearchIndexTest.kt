@@ -44,14 +44,40 @@ class BuildLegacySearchIndexTest {
     fun `execute ignores videos with no keywords`() {
         val videoAssetRepository = mockVideoAssetRepository(videos = sequenceOf(
                 TestFactories.createVideoAsset(
-//                        videoId = "1",
                         keywords = emptyList(),
                         playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "1")
                 ),
                 TestFactories.createVideoAsset(
-//                        videoId = "2",
                         keywords = emptyList(),
                         playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "2")
+                )
+        ))
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
+
+        rebuildSearchIndex()
+
+        assertThat(getUpsertedVideos()).isEmpty()
+    }
+
+    @Test
+    fun `execute ignores videos with an empty description`() {
+        val videoAssetRepository = mockVideoAssetRepository(videos = sequenceOf(
+                TestFactories.createVideoAsset(
+                        description = ""
+                )
+        ))
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
+
+        rebuildSearchIndex()
+
+        assertThat(getUpsertedVideos()).isEmpty()
+    }
+
+    @Test
+    fun `execute ignores videos with an empty title`() {
+        val videoAssetRepository = mockVideoAssetRepository(videos = sequenceOf(
+                TestFactories.createVideoAsset(
+                        title = ""
                 )
         ))
         val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)

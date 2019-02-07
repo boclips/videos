@@ -21,7 +21,7 @@ open class BuildLegacySearchIndex(
         try {
             videoAssetRepository.streamAllSearchable { videos ->
                 val videoAssets = videos
-                        .filter { it.keywords.isNotEmpty() }
+                        .filter { it.keywords.isNotEmpty() && it.title.isNotEmpty() && it.description.isNotEmpty() }
                         .map(VideoAssetToLegacyVideoMetadataConverter::convert)
 
                 legacySearchService.upsert(videoAssets, notifier)
