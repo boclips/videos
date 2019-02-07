@@ -87,13 +87,14 @@ class VideoService(
         }
     }
 
-    fun update(assetId: AssetId, updateCommand: VideoUpdateCommand): Video {
+    fun update(assetId: AssetId, updateIntents: List<VideoUpdateIntent>): Video {
+
         val video = get(assetId)
-        val updatedVideo = updateCommand.update(video)
-        val savedVideoAsset = videoAssetRepository.update(updatedVideo.asset)
+
+        val savedVideoAsset = videoAssetRepository.update(assetId, updateIntents)
 
         logger.info { "Updated video $assetId" }
-        return updatedVideo.copy(asset = savedVideoAsset)
+        return video.copy(asset = savedVideoAsset)
     }
 }
 

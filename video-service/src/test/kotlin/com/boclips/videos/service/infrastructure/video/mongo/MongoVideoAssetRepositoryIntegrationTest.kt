@@ -2,9 +2,11 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.service.VideoSubjectsUpdate
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -74,25 +76,20 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
-    fun `update a video`() {
+    fun `update video subjects`() {
         val existingAsset = mongoVideoRepository.create(
                 TestFactories.createVideoAsset(
                         title = "old title",
                         keywords = listOf("k1", "k2"),
-                        playbackId = PlaybackId(PlaybackProviderType.KALTURA, "old-id")
+                        playbackId = PlaybackId(PlaybackProviderType.KALTURA, "old-id"),
+                        subjects = setOf(Subject("physics"))
                 )
         )
 
-        val assetToBeUpdated = existingAsset.copy(
-                title = "new title",
-                keywords = listOf("k2"),
-                playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, "new-id")
+        val updateCommand = VideoSubjectsUpdate(setOf(Subject("maths")))
+        mongoVideoRepository.update(existingAsset.assetId, listOf(updateCommand))
 
-        )
-        val updatedAsset = mongoVideoRepository.update(assetToBeUpdated)
-
-        assertThat(updatedAsset).isEqualTo(assetToBeUpdated)
-        assertThat(mongoVideoRepository.find(existingAsset.assetId)).isEqualTo(assetToBeUpdated)
+        assertThat(mongoVideoRepository.find(existingAsset.assetId)).isEqualTo(existingAsset.copy(subjects = setOf(Subject("maths"))))
     }
 
     @Test
@@ -101,7 +98,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
                 videoId = TestFactories.aValidId()
         )
 
-        assertThrows<VideoAssetNotFoundException> { mongoVideoRepository.update(asset) }
+        assertThrows<VideoAssetNotFoundException> { mongoVideoRepository.update(asset.assetId, emptyList()) }
     }
 
     @Test

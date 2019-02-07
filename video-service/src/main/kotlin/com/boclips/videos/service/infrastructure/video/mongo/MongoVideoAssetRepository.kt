@@ -4,10 +4,15 @@ import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoun
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.service.VideoSubjectsUpdate
+import com.boclips.videos.service.domain.service.VideoUpdateIntent
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.*
+import com.mongodb.client.model.Updates.combine
 import com.mongodb.client.model.Updates.set
 import mu.KLogging
+import org.bson.BsonArray
+import org.bson.BsonString
 import org.bson.types.ObjectId
 import java.util.*
 
@@ -70,14 +75,18 @@ class MongoVideoAssetRepository(
         return createdVideoAsset
     }
 
-    override fun update(videoAsset: VideoAsset): VideoAsset {
-        val document = VideoDocumentConverter.toDocument(videoAsset)
-        getVideoCollection()
-                .replaceOne(eq("_id", ObjectId(videoAsset.assetId.value)), document)
+    override fun update(assetId: AssetId, videoUpdateIntents: List<VideoUpdateIntent>): VideoAsset {
+        val setStatements = videoUpdateIntents.map { updateCommand ->
+            when(updateCommand) {
+                is VideoSubjectsUpdate -> set("subjects", BsonArray(updateCommand.subjects.map { BsonString(it.name) }))
+            }
+        }
 
-        logger.info { "Updated video ${videoAsset.assetId.value}" }
+        if(setStatements.isNotEmpty()) {
+            getVideoCollection().updateOne(eq(ObjectId(assetId.value)), combine(setStatements))
+        }
 
-        return find(videoAsset.assetId) ?: throw VideoAssetNotFoundException(videoAsset.assetId)
+        return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {

@@ -362,6 +362,25 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `setting subject doesn't destroy the alias`() {
+        val title = "Back to the Future II"
+        val alias = "123123"
+        saveVideo(title = title)
+
+        mongoVideosCollection().findOneAndUpdate(
+                eq("title", title),
+                set("aliases", alias)
+        )
+
+        mockMvc.perform(post("/v1/videos/$alias").asSubjectClassifier()
+                .contentType(MediaType.APPLICATION_JSON).content("""{ "subjects": ["Physics"] }"""))
+                .andExpect(status().is2xxSuccessful)
+
+        mockMvc.perform(get("/v1/videos/$alias").asTeacher())
+                .andExpect(status().isOk)
+    }
+
+    @Test
     fun `other roles are not authorised to add data to a video`() {
         mockMvc.perform(post("/v1/videos/99999").asIngestor()
                 .contentType(MediaType.APPLICATION_JSON).content("{}"))

@@ -90,7 +90,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `update video asset`() {
         val videoId = saveVideo()
 
-        val video = videoService.update(videoId, VideoSubjectsUpdate(setOf(Subject("Maths"))))
+        val video = videoService.update(videoId, listOf(VideoSubjectsUpdate(setOf(Subject("Maths")))))
 
         assertThat(video.asset.subjects).containsExactly(Subject("Maths"))
         assertThat(videoService.get(videoId).asset.subjects).containsExactly(Subject("Maths"))

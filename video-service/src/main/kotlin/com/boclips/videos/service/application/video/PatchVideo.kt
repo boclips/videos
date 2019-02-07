@@ -5,7 +5,6 @@ import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.VideoService
-import com.boclips.videos.service.domain.service.VideoUpdateCommand
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoResourceToVideoUpdateConverter
 
@@ -22,7 +21,7 @@ class PatchVideo(
             throw VideoAssetNotFoundException()
         }
 
-        videoService.update(assetId, VideoUpdateCommand.combine(updateCommand))
+        videoService.update(assetId, updateCommand)
     }
 
     private fun resolveToAssetId(videoIdParam: String?): AssetId {
