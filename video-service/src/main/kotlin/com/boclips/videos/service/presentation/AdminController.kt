@@ -46,7 +46,7 @@ class AdminController(
     }
 
     private fun asyncWithNotifier(handler: (ResponseEmitterProgressNotifier) -> CompletableFuture<Unit>): ResponseEntity<ResponseBodyEmitter> {
-        val emitter = ResponseBodyEmitter(TimeUnit.HOURS.toMillis(1))
+        val emitter = ResponseBodyEmitter(TimeUnit.HOURS.toMillis(2))
 
         emitter.onTimeout {
             logger.warn("ResponseBodyEmitter timed out")
