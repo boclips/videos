@@ -21,7 +21,7 @@ class PatchVideo(
             throw VideoAssetNotFoundException()
         }
 
-        videoService.update(assetId, updateCommand)
+        videoService.update(assetId, updateCommand.subjects)
     }
 
     private fun resolveToAssetId(videoIdParam: String?): AssetId {

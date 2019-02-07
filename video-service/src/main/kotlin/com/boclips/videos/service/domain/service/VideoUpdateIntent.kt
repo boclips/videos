@@ -4,4 +4,4 @@ import com.boclips.videos.service.domain.model.asset.Subject
 
 sealed class VideoUpdateIntent
 
-data class VideoSubjectsUpdate(val subjects: Set<Subject>) : VideoUpdateIntent()
+data class VideoSubjectsUpdate(val subjects: List<Subject>) : VideoUpdateIntent()

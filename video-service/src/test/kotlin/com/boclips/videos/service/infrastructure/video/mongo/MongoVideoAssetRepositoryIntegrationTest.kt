@@ -86,8 +86,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
                 )
         )
 
-        val updateCommand = VideoSubjectsUpdate(setOf(Subject("maths")))
-        mongoVideoRepository.update(existingAsset.assetId, listOf(updateCommand))
+        mongoVideoRepository.replaceSubjects(existingAsset.assetId, listOf(Subject("maths")))
 
         assertThat(mongoVideoRepository.find(existingAsset.assetId)).isEqualTo(existingAsset.copy(subjects = setOf(Subject("maths"))))
     }
@@ -98,7 +97,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
                 videoId = TestFactories.aValidId()
         )
 
-        assertThrows<VideoAssetNotFoundException> { mongoVideoRepository.update(asset.assetId, emptyList()) }
+        assertThrows<VideoAssetNotFoundException> { mongoVideoRepository.replaceSubjects(asset.assetId, emptyList()) }
     }
 
     @Test

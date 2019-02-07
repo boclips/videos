@@ -2,13 +2,11 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.service.VideoSubjectsUpdate
-import com.boclips.videos.service.domain.service.VideoUpdateIntent
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.*
-import com.mongodb.client.model.Updates.combine
 import com.mongodb.client.model.Updates.set
 import mu.KLogging
 import org.bson.BsonArray
@@ -75,17 +73,8 @@ class MongoVideoAssetRepository(
         return createdVideoAsset
     }
 
-    override fun update(assetId: AssetId, videoUpdateIntents: List<VideoUpdateIntent>): VideoAsset {
-        val setStatements = videoUpdateIntents.map { updateCommand ->
-            when(updateCommand) {
-                is VideoSubjectsUpdate -> set("subjects", BsonArray(updateCommand.subjects.map { BsonString(it.name) }))
-            }
-        }
-
-        if(setStatements.isNotEmpty()) {
-            getVideoCollection().updateOne(eq(ObjectId(assetId.value)), combine(setStatements))
-        }
-
+    override fun replaceSubjects(assetId: AssetId, subjects: List<Subject>): VideoAsset {
+        getVideoCollection().updateOne(eq(ObjectId(assetId.value)), set("subjects", BsonArray(subjects.map { BsonString(it.name) })))
         return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
     }
 

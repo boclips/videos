@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
@@ -87,11 +88,11 @@ class VideoService(
         }
     }
 
-    fun update(assetId: AssetId, updateIntents: List<VideoUpdateIntent>): Video {
+    fun update(assetId: AssetId, subjects: List<Subject>): Video {
 
         val video = get(assetId)
 
-        val savedVideoAsset = videoAssetRepository.update(assetId, updateIntents)
+        val savedVideoAsset = videoAssetRepository.replaceSubjects(assetId, subjects)
 
         logger.info { "Updated video $assetId" }
         return video.copy(asset = savedVideoAsset)

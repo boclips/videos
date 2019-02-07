@@ -8,16 +8,16 @@ import org.junit.jupiter.api.Test
 class VideoResourceToVideoUpdateConverterTest {
 
     @Test
-    fun `no update`() {
+    fun `no subjects to be updated`() {
         val videoResource = VideoResource()
         val videoUpdate = VideoResourceToVideoUpdateConverter.convert(videoResource)
-        assertThat(videoUpdate).isEmpty()
+        assertThat(videoUpdate.subjects).isEmpty()
     }
 
     @Test
-    fun `convert video resource to video update`() {
+    fun `convert video resource to video update for subjects`() {
         val videoResource = VideoResource(subjects = setOf("Maths"))
         val videoUpdate = VideoResourceToVideoUpdateConverter.convert(videoResource)
-        assertThat(videoUpdate).containsExactly(VideoSubjectsUpdate(setOf(Subject("Maths"))))
+        assertThat(videoUpdate).isEqualTo(VideoSubjectsUpdate(listOf(Subject("Maths"))))
     }
 }
