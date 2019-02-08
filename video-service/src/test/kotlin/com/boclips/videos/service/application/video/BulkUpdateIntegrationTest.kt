@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -9,10 +10,13 @@ import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
@@ -33,6 +37,20 @@ class BulkUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(searchService.count(Query(ids = videoIds.map { it.value }))).isEqualTo(0)
         videoIds.forEach { verify(legacySearchService).removeFromSearch(it.value) }
+    }
+
+    @Test
+    fun `disableFromSearch ignores Solr document not found errors`() {
+        Mockito.`when`(legacySearchService.removeFromSearch(any())).doAnswer {
+            throw SolrDocumentNotFound(videoId = "")
+        }
+
+        val bulkUpdateRequest = BulkUpdateRequest(
+                ids = listOf(TestFactories.aValidId()),
+                status = VideoResourceStatus.SEARCH_DISABLED
+        )
+
+        assertDoesNotThrow { bulkUpdate(bulkUpdateRequest) }
     }
 
     @Test

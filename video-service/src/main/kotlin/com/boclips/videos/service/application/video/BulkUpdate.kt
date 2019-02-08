@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
@@ -10,6 +11,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.service.VideoAssetToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
+import mu.KLogging
 import org.springframework.transaction.annotation.Transactional
 
 open class BulkUpdate(
@@ -18,6 +20,8 @@ open class BulkUpdate(
         private val legacySearchService: LegacySearchService
 
 ) {
+
+    companion object: KLogging();
 
     @Transactional
     open operator fun invoke(bulkUpdateRequest: BulkUpdateRequest?) {
@@ -33,7 +37,12 @@ open class BulkUpdate(
 
         bulkUpdateRequest.ids.forEach {
             searchAdminService.removeFromSearch(it)
-            legacySearchService.removeFromSearch(it)
+
+            try {
+                legacySearchService.removeFromSearch(it)
+            } catch (e: SolrDocumentNotFound) {
+                logger.warn("Video to be removed was not present in Solr video-id=$it")
+            }
         }
     }
 

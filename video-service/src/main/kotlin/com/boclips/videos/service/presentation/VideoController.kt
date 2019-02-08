@@ -1,6 +1,9 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.BulkUpdate
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideos
+import com.boclips.videos.service.application.video.PatchVideo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.infrastructure.logging.SearchLogging
@@ -77,11 +80,11 @@ class VideoController(
     }
 
     @PostMapping("/search")
-    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?) : ResponseEntity<Resources<*>>{
+    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> {
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
                 .map(this::wrapResourceWithHateoas)
                 .let(HateoasEmptyCollection::fixIfEmptyCollection)
-                .let{ResponseEntity(Resources(it), HttpStatus.CREATED)}
+                .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
     }
 
     @GetMapping("/{id}")
