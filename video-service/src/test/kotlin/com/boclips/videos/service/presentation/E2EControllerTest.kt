@@ -27,7 +27,7 @@ class E2EControllerTest : AbstractSpringIntegrationTest() {
         assertThat(videoAssetRepository.find(AssetId(value = videoId))).isNotNull
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/e2e/actions/reset_all").asOperator())
-                .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.status().isOk)
 
         assertThat(fakeSearchService.count(Query(ids = listOf(videoId)))).isEqualTo(0)
         assertThat(videoAssetRepository.find(AssetId(value = videoId))).isNull()

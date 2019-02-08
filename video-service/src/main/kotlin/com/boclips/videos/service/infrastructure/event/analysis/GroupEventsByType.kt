@@ -16,6 +16,5 @@ object GroupEventsByType {
             }
         }
     }
-
 }
 

@@ -8,10 +8,10 @@ class CollectionDocumentConverterTest {
     @Test
     fun `convert to and from document`() {
         val collectionInput = CollectionDocument(
-                id = TestFactories.aValidId(),
-                owner = "some-user",
-                title = "some-title",
-                videos = listOf(TestFactories.aValidId())
+            id = TestFactories.aValidId(),
+            owner = "some-user",
+            title = "some-title",
+            videos = listOf(TestFactories.aValidId())
         )
 
         val document = CollectionDocumentConverter().toDocument(collectionInput)

@@ -9,9 +9,9 @@ import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
 
 class DeleteVideos(
-        private val videoAssetRepository: VideoAssetRepository,
-        private val searchService: SearchService,
-        private val playbackRepository: PlaybackRespository
+    private val videoAssetRepository: VideoAssetRepository,
+    private val searchService: SearchService,
+    private val playbackRepository: PlaybackRespository
 ) {
     operator fun invoke(id: String?) {
         if (id == null || id.isBlank()) {

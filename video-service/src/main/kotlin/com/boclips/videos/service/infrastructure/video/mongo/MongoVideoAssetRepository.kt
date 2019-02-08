@@ -15,7 +15,7 @@ import org.bson.types.ObjectId
 import java.util.*
 
 class MongoVideoAssetRepository(
-        private val mongoClient: MongoClient
+    private val mongoClient: MongoClient
 ) : VideoAssetRepository {
     companion object : KLogging() {
         const val databaseName = "video-service-db"
@@ -24,8 +24,8 @@ class MongoVideoAssetRepository(
 
     override fun find(assetId: AssetId): VideoAsset? {
         val videoAssetOrNull = getVideoCollection().find(eq("_id", ObjectId(assetId.value)))
-                .firstOrNull()
-                ?.let(VideoDocumentConverter::fromDocument)
+            .firstOrNull()
+            ?.let(VideoDocumentConverter::fromDocument)
 
         logger.info { "Found ${assetId.value}" }
 
@@ -34,11 +34,11 @@ class MongoVideoAssetRepository(
 
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
         val videoByAssetId = getVideoCollection()
-                .find(`in`("_id", assetIds.map { ObjectId(it.value) }))
-                .map(VideoDocumentConverter::fromDocument)
-                .toList()
-                .map { (it.assetId to it) }
-                .toMap()
+            .find(`in`("_id", assetIds.map { ObjectId(it.value) }))
+            .map(VideoDocumentConverter::fromDocument)
+            .toList()
+            .map { (it.assetId to it) }
+            .toMap()
 
         logger.info { "Found ${assetIds.size} videos for assetIds $assetIds" }
 
@@ -49,7 +49,7 @@ class MongoVideoAssetRepository(
 
     override fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit) {
         val sequence = Sequence { getVideoCollection().find(eq("searchable", true)).iterator() }
-                .map(VideoDocumentConverter::fromDocument)
+            .map(VideoDocumentConverter::fromDocument)
 
         consumer(sequence)
     }
@@ -57,7 +57,7 @@ class MongoVideoAssetRepository(
     override fun delete(assetId: AssetId) {
         val objectIdToBeDeleted = ObjectId(assetId.value)
         getVideoCollection()
-                .deleteOne(eq("_id", objectIdToBeDeleted))
+            .deleteOne(eq("_id", objectIdToBeDeleted))
 
         logger.info { "Deleted video ${assetId.value}" }
     }
@@ -74,24 +74,27 @@ class MongoVideoAssetRepository(
     }
 
     override fun replaceSubjects(assetId: AssetId, subjects: List<Subject>): VideoAsset {
-        getVideoCollection().updateOne(eq(ObjectId(assetId.value)), set("subjects", BsonArray(subjects.map { BsonString(it.name) })))
+        getVideoCollection().updateOne(
+            eq(ObjectId(assetId.value)),
+            set("subjects", BsonArray(subjects.map { BsonString(it.name) }))
+        )
         return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
         val assetMatchingFilters = getVideoCollection()
-                .find(and(eq("source.contentPartner.name", contentPartnerId), eq("source.videoReference", partnerVideoId)))
-                .first()
+            .find(and(eq("source.contentPartner.name", contentPartnerId), eq("source.videoReference", partnerVideoId)))
+            .first()
 
         return Optional.ofNullable(assetMatchingFilters).isPresent
     }
 
     override fun resolveAlias(alias: String): AssetId? {
         val assetId = getVideoCollection().find(eq("aliases", alias))
-                .firstOrNull()
-                ?.getObjectId("_id")
-                ?.toHexString()
-                ?.let { AssetId(it) }
+            .firstOrNull()
+            ?.getObjectId("_id")
+            ?.toHexString()
+            ?.let { AssetId(it) }
 
         logger.info { "Attempted to resolve alias $alias to $assetId" }
 
@@ -100,8 +103,9 @@ class MongoVideoAssetRepository(
 
     override fun disableFromSearch(assetIds: List<AssetId>) {
         val mongoIds = assetIds.map { ObjectId(it.value) }
-        getVideoCollection().updateMany(`in`("_id", mongoIds),
-                set("searchable", false)
+        getVideoCollection().updateMany(
+            `in`("_id", mongoIds),
+            set("searchable", false)
         )
 
         logger.info { "Disabled $assetIds for search" }
@@ -110,8 +114,9 @@ class MongoVideoAssetRepository(
     override fun makeSearchable(assetIds: List<AssetId>) {
         val mongoIds = assetIds.map { ObjectId(it.value) }
 
-        getVideoCollection().updateMany(`in`("_id", mongoIds),
-                set("searchable", true)
+        getVideoCollection().updateMany(
+            `in`("_id", mongoIds),
+            set("searchable", true)
         )
 
         logger.info { "Made $assetIds searchable" }

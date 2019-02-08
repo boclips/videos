@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/collections")
 class CollectionsController(
-        private val getDefaultCollection: GetDefaultCollection,
-        private val addVideoToDefaultCollection: AddVideoToDefaultCollection,
-        private val removeVideoFromDefaultCollection: RemoveVideoFromDefaultCollection
+    private val getDefaultCollection: GetDefaultCollection,
+    private val addVideoToDefaultCollection: AddVideoToDefaultCollection,
+    private val removeVideoFromDefaultCollection: RemoveVideoFromDefaultCollection
 ) {
     companion object : KLogging() {
         fun getUserDefaultCollectionLink() = linkTo(methodOn(CollectionsController::class.java).defaultCollection())
@@ -25,12 +25,16 @@ class CollectionsController(
     @GetMapping("/default")
     fun defaultCollection(): Resource<CollectionResource> {
         val selfLink = getUserDefaultCollectionLink().withSelfRel()
-        val addVideoLink = linkTo(methodOn(CollectionsController::class.java)
-                .addVideo(null))
-                .withRel("addVideo")
-        val removeVideoLink = linkTo(methodOn(CollectionsController::class.java)
-                .removeVideo(null))
-                .withRel("removeVideo")
+        val addVideoLink = linkTo(
+            methodOn(CollectionsController::class.java)
+                .addVideo(null)
+        )
+            .withRel("addVideo")
+        val removeVideoLink = linkTo(
+            methodOn(CollectionsController::class.java)
+                .removeVideo(null)
+        )
+            .withRel("removeVideo")
         val collectionResource = getDefaultCollection()
         return Resource(collectionResource, selfLink, addVideoLink, removeVideoLink)
     }

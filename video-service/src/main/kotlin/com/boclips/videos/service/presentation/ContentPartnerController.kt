@@ -11,22 +11,22 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1/content-partners")
 class ContentPartnerController(
-        val videoAssetRepository: VideoAssetRepository
+    val videoAssetRepository: VideoAssetRepository
 ) {
 
     @RequestMapping(
-            "/{contentPartnerId}/videos/{contentPartnerVideoId}",
-            method = [RequestMethod.HEAD]
+        "/{contentPartnerId}/videos/{contentPartnerVideoId}",
+        method = [RequestMethod.HEAD]
     )
     fun lookupVideoByProviderId(
-            @PathVariable("contentPartnerId") contentPartnerId: String,
-            @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String): ResponseEntity<Void> {
+        @PathVariable("contentPartnerId") contentPartnerId: String,
+        @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
+    ): ResponseEntity<Void> {
 
         val exists = videoAssetRepository.existsVideoFromContentPartner(contentPartnerId, contentPartnerVideoId)
 
         val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
         return ResponseEntity(status)
     }
-
 }
 

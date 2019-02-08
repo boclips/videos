@@ -4,7 +4,6 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-
 class GroupRelatedEventsTest {
 
     @Test

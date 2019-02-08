@@ -14,14 +14,14 @@ import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
 import org.springframework.transaction.annotation.Transactional
 
-open class BulkUpdate(
-        private val videoAssetRepository: VideoAssetRepository,
-        private val searchAdminService: GenericSearchServiceAdmin<VideoAsset>,
-        private val legacySearchService: LegacySearchService
+open class BulkUpdateVideo(
+    private val videoAssetRepository: VideoAssetRepository,
+    private val searchAdminService: GenericSearchServiceAdmin<VideoAsset>,
+    private val legacySearchService: LegacySearchService
 
 ) {
 
-    companion object: KLogging();
+    companion object : KLogging();
 
     @Transactional
     open operator fun invoke(bulkUpdateRequest: BulkUpdateRequest?) {
@@ -50,13 +50,13 @@ open class BulkUpdate(
         val assetIds = bulkUpdateRequest.ids.map { AssetId(value = it) }
         videoAssetRepository.makeSearchable(assetIds)
 
-        videoAssetRepository.findAll(assetIds).let {
-            searchAdminService.upsert(it.asSequence())
+        videoAssetRepository.findAll(assetIds).let { assetId ->
+            searchAdminService.upsert(assetId.asSequence())
 
-            legacySearchService.upsert(it
-                    .filter { asset -> asset.playbackId.type == PlaybackProviderType.KALTURA }
-                    .map { asset -> VideoAssetToLegacyVideoMetadataConverter.convert(asset) }
-                    .asSequence())
+            legacySearchService.upsert(assetId
+                .filter { asset -> asset.playbackId.type == PlaybackProviderType.KALTURA }
+                .map { asset -> VideoAssetToLegacyVideoMetadataConverter.convert(asset) }
+                .asSequence())
         }
     }
 }

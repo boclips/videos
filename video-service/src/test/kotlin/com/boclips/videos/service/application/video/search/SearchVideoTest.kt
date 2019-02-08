@@ -25,18 +25,19 @@ class SearchVideoTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws exception when id is null`() {
-        Assertions.assertThatThrownBy { searchVideo.byId(null) }.isInstanceOf(SearchRequestValidationException::class.java)
+        Assertions.assertThatThrownBy { searchVideo.byId(null) }
+            .isInstanceOf(SearchRequestValidationException::class.java)
     }
 
     @Test
     fun `throws exception when ids is null`() {
         Assertions.assertThatThrownBy {
             searchVideo.byQuery(
-                    query = null,
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
-                    pageSize = 100,
-                    pageNumber = 1
+                query = null,
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 100,
+                pageNumber = 1
             )
         }.isInstanceOf(SearchRequestValidationException::class.java)
     }

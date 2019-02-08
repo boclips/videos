@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController
 class LinksController {
 
     @GetMapping
-    fun search(request: SecurityContextHolderAwareRequestWrapper): Resource<String> = Resource("", listOfNotNull(
+    fun search(request: SecurityContextHolderAwareRequestWrapper): Resource<String> = Resource(
+        "", listOfNotNull(
             VideoController.searchLink(),
             VideoController.videoLink(),
             VideoController.videosLink(),
@@ -20,6 +21,6 @@ class LinksController {
             EventController.createPlaybackEventLink(),
             EventController.createNoResultsEventLink(),
             CollectionsController.getUserDefaultCollectionLink().withRel("userDefaultCollection")
-    )
+        )
     )
 }

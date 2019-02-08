@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "email")
 data class EmailProperties(
-        var host: String = "",
-        var port: Int = 0,
-        var username: String = "",
-        var password: String = ""
+    var host: String = "",
+    var port: Int = 0,
+    var username: String = "",
+    var password: String = ""
 )

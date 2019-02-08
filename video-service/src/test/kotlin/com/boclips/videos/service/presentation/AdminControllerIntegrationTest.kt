@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-
 class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -23,25 +22,24 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `rebuildSearchIndex returns 403 when user is not allowed to reindex`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/rebuild_search_index").asTeacher())
-                .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
     }
 
     @Test
     fun `rebuildSearchIndex returns 200 OK when user is allowed to reindex`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/rebuild_search_index").asOperator())
-                .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
     fun `buildLegacySearchIndex returns 403 when user is not allowed to reindex`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/build_legacy_search_index").asTeacher())
-                .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
     }
 
     @Test
     fun `buildLegacySearchIndex returns 200 OK when user is allowed to reindex`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/build_legacy_search_index").asOperator())
-                .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.status().isOk)
     }
-
 }

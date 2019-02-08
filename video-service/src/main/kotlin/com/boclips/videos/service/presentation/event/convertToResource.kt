@@ -4,10 +4,10 @@ import com.boclips.videos.service.infrastructure.event.types.NoSearchResultsEven
 
 fun convertToResource(event: NoSearchResultsEvent): NoSearchResultsEventResource {
     return NoSearchResultsEventResource(
-            name = event.data.name,
-            email = event.data.email,
-            query = event.data.query,
-            description = event.data.description,
-            createdAt = event.timestamp
+        name = event.data.name,
+        email = event.data.email,
+        query = event.data.query,
+        description = event.data.description,
+        createdAt = event.timestamp
     )
 }

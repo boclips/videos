@@ -16,51 +16,54 @@ import java.util.*
 object VideoDocumentConverter {
     fun toDocument(video: VideoAsset): Document {
         return Document()
-                .append("_id", ObjectId(video.assetId.value))
-                .append("title", video.title)
-                .append("description", video.description)
-                .append("source",
-                        mapOf(
-                                "contentPartner" to mapOf(
-                                        "name" to video.contentPartnerId
-                                ),
-                                "videoReference" to video.contentPartnerVideoId
-                        )
+            .append("_id", ObjectId(video.assetId.value))
+            .append("title", video.title)
+            .append("description", video.description)
+            .append(
+                "source",
+                mapOf(
+                    "contentPartner" to mapOf(
+                        "name" to video.contentPartnerId
+                    ),
+                    "videoReference" to video.contentPartnerVideoId
                 )
-                .append("playback",
-                        mapOf(
-                                "id" to video.playbackId.value,
-                                "type" to video.playbackId.type.name
-                        )
+            )
+            .append(
+                "playback",
+                mapOf(
+                    "id" to video.playbackId.value,
+                    "type" to video.playbackId.type.name
                 )
-                .append("legacy",
-                        mapOf(
-                                "type" to video.type.name
-                        )
+            )
+            .append(
+                "legacy",
+                mapOf(
+                    "type" to video.type.name
                 )
-                .append("keywords", video.keywords)
-                .append("subjects", video.subjects.map { it.name })
-                .append("releaseDate", Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)))
-                .append("durationSeconds", video.duration.seconds.toInt())
-                .append("legalRestrictions", video.legalRestrictions)
-                .append("searchable", video.searchable)
+            )
+            .append("keywords", video.keywords)
+            .append("subjects", video.subjects.map { it.name })
+            .append("releaseDate", Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)))
+            .append("durationSeconds", video.duration.seconds.toInt())
+            .append("legalRestrictions", video.legalRestrictions)
+            .append("searchable", video.searchable)
     }
 
     fun fromDocument(document: Document) = VideoFieldExtractor(document).let {
         VideoAsset(
-                assetId = it.id(),
-                title = it.title(),
-                description = it.description(),
-                playbackId = it.playbackId(),
-                keywords = it.keywords(),
-                releasedOn = it.releaseDate(),
-                contentPartnerId = it.contentPartnerName(),
-                contentPartnerVideoId = it.contentPartnerVideoId(),
-                type = it.legacyType(),
-                duration = it.duration(),
-                legalRestrictions = it.legalRestrictions(),
-                subjects = it.subjects(),
-                searchable = it.searchable()
+            assetId = it.id(),
+            title = it.title(),
+            description = it.description(),
+            playbackId = it.playbackId(),
+            keywords = it.keywords(),
+            releasedOn = it.releaseDate(),
+            contentPartnerId = it.contentPartnerName(),
+            contentPartnerVideoId = it.contentPartnerVideoId(),
+            type = it.legacyType(),
+            duration = it.duration(),
+            legalRestrictions = it.legalRestrictions(),
+            subjects = it.subjects(),
+            searchable = it.searchable()
         )
     }
 }
@@ -75,8 +78,8 @@ private class VideoFieldExtractor(val document: Document) {
     fun playbackId(): PlaybackId {
         val playbackJson = document.getMap<String>("playback")
         return PlaybackId(
-                type = PlaybackProviderType.valueOf(playbackJson["type"] as String),
-                value = playbackJson["id"] as String
+            type = PlaybackProviderType.valueOf(playbackJson["type"] as String),
+            value = playbackJson["id"] as String
         )
     }
 
@@ -113,14 +116,14 @@ private class VideoFieldExtractor(val document: Document) {
 @Suppress("UNCHECKED_CAST")
 fun <T> Document.getMap(key: String): Map<String, T> {
     return this.get(key, Map::class.java)
-            .mapKeys { it.key as String }
-            .mapValues { it.value as T }
+        .mapKeys { it.key as String }
+        .mapValues { it.value as T }
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <T> Document.getList(key: String): List<T> {
     return this.get(key, List::class.java)
-            .map { it as T }
+        .map { it as T }
 }
 
 fun Document.getLocalDate(key: String): LocalDate {

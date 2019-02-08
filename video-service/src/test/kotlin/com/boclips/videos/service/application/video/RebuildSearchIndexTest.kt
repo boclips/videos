@@ -38,10 +38,12 @@ class RebuildSearchIndexTest {
             } doAnswer { invocations ->
                 val consumer = invocations.getArgument(0) as (Sequence<VideoAsset>) -> Unit
 
-                consumer(sequenceOf(
+                consumer(
+                    sequenceOf(
                         TestFactories.createVideoAsset(videoId = videoAssetId2),
                         TestFactories.createVideoAsset(videoId = videoAssetId3)
-                ))
+                    )
+                )
             }
         }
 

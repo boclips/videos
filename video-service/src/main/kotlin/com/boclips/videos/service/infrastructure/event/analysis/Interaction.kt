@@ -6,12 +6,12 @@ import com.boclips.videos.service.infrastructure.event.types.User
 import java.time.ZonedDateTime
 import kotlin.math.max
 
-
 data class Interaction(
-        val timestamp: ZonedDateTime,
-        val description: String,
-        val related: List<Interaction>,
-        val user: User) {
+    val timestamp: ZonedDateTime,
+    val description: String,
+    val related: List<Interaction>,
+    val user: User
+) {
 
     companion object {
         fun fromPlaybackEvents(events: List<PlaybackEvent>): List<Interaction> {
@@ -23,15 +23,15 @@ data class Interaction(
             }
 
             return events
-                    .groupBy { VideoIdPlayerId(it.data.videoId, it.data.playerId) }.values
-                    .map { segments ->
-                        Interaction(
-                                timestamp = segments.first().timestamp,
-                                description = formatDescription(segments),
-                                related = emptyList(),
-                                user = segments.first().user
-                        )
-                    }
+                .groupBy { VideoIdPlayerId(it.data.videoId, it.data.playerId) }.values
+                .map { segments ->
+                    Interaction(
+                        timestamp = segments.first().timestamp,
+                        description = formatDescription(segments),
+                        related = emptyList(),
+                        user = segments.first().user
+                    )
+                }
         }
 
         fun fromSearchAndPlaybackEvents(events: List<SearchAndPlayback>): List<Interaction> {
@@ -43,10 +43,10 @@ data class Interaction(
 
             val playbackInteractions = fromPlaybackEvents(playbackEvents)
             return Interaction(
-                    timestamp = searchEvent.timestamp,
-                    description = "Search for '${searchEvent.data.query}' (${searchEvent.data.resultsReturned} results).",
-                    related = playbackInteractions,
-                    user = searchEvent.user
+                timestamp = searchEvent.timestamp,
+                description = "Search for '${searchEvent.data.query}' (${searchEvent.data.resultsReturned} results).",
+                related = playbackInteractions,
+                user = searchEvent.user
             )
         }
 
@@ -64,8 +64,8 @@ data class Interaction(
             }
 
             return interactions
-                    .map { it.copy(related = sortRecursively(it.related)) }
-                    .sortedBy(::maxTime)
+                .map { it.copy(related = sortRecursively(it.related)) }
+                .sortedBy(::maxTime)
         }
     }
 

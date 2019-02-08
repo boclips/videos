@@ -32,7 +32,12 @@ object GroupRelatedEvents {
 
     private data class SearchAndPlaybackBySearchId(val map: Map<String, SearchAndPlayback>) {
 
-        constructor(searchEvents: List<SearchEvent>) : this(searchEvents.groupBy({ it.data.searchId }) { SearchAndPlayback(it, emptyList()) }.mapValues { it.value.first() })
+        constructor(searchEvents: List<SearchEvent>) : this(searchEvents.groupBy({ it.data.searchId }) {
+            SearchAndPlayback(
+                it,
+                emptyList()
+            )
+        }.mapValues { it.value.first() })
 
         fun add(playbackEvent: PlaybackEvent): SearchAndPlaybackBySearchId {
             val searchId = playbackEvent.data.searchId!!

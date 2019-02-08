@@ -8,7 +8,6 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-
 class EventEntityTest {
 
     @Test
@@ -64,5 +63,4 @@ class EventEntityTest {
 
         assertThat(entity.toEvent()).isEqualToComparingFieldByField(event)
     }
-
 }

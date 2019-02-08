@@ -11,8 +11,8 @@ import com.boclips.videos.service.infrastructure.event.types.User
 import java.time.ZonedDateTime
 
 class RemoveVideoFromDefaultCollection(
-        private val collectionService: CollectionService,
-        private val eventService: EventService
+    private val collectionService: CollectionService,
+    private val eventService: EventService
 ) {
     operator fun invoke(videoId: String?) {
         videoId ?: throw Exception("Video id cannot be null")
@@ -22,11 +22,13 @@ class RemoveVideoFromDefaultCollection(
 
         collectionService.update(collection.id, RemoveVideoFromCollection(AssetId(videoId)))
 
-        eventService.saveEvent(RemoveFromCollectionEvent(
+        eventService.saveEvent(
+            RemoveFromCollectionEvent(
                 timestamp = ZonedDateTime.now(),
                 user = User.fromSecurityUser(user),
                 collectionId = collection.id.value,
                 videoId = videoId
-        ))
+            )
+        )
     }
 }

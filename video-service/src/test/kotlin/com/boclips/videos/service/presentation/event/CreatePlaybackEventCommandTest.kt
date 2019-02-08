@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test
 
 class CreatePlaybackEventCommandTest {
     val playbackEvent = CreatePlaybackEventCommand(
-            playerId = "player-id",
-            videoId = "v678",
-            segmentStartSeconds = 10,
-            segmentEndSeconds = 20,
-            videoDurationSeconds = 60,
-            captureTime = "2018-01-01T00:00:00.000Z",
-            searchId = "search-id"
+        playerId = "player-id",
+        videoId = "v678",
+        segmentStartSeconds = 10,
+        segmentEndSeconds = 20,
+        videoDurationSeconds = 60,
+        captureTime = "2018-01-01T00:00:00.000Z",
+        searchId = "search-id"
     )
 
     @Test

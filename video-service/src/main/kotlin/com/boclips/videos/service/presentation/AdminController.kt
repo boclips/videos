@@ -29,8 +29,8 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 @RestController
 @RequestMapping("/v1/admin/actions")
 class AdminController(
-        private val rebuildSearchIndex: RebuildSearchIndex,
-        private val buildLegacySearchIndex: BuildLegacySearchIndex
+    private val rebuildSearchIndex: RebuildSearchIndex,
+    private val buildLegacySearchIndex: BuildLegacySearchIndex
 ) {
 
     companion object : KLogging()
@@ -53,13 +53,13 @@ class AdminController(
         }
 
         handler(ResponseEmitterProgressNotifier(emitter))
-                .whenComplete { _, ex ->
-                    if (ex != null) {
-                        emitter.completeWithError(ex)
-                    } else {
-                        emitter.complete()
-                    }
+            .whenComplete { _, ex ->
+                if (ex != null) {
+                    emitter.completeWithError(ex)
+                } else {
+                    emitter.complete()
                 }
+            }
 
         return ResponseEntity(emitter, HttpStatus.OK)
     }

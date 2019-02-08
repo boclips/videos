@@ -18,17 +18,17 @@ class VideoToResourceConverter {
 
     private fun toResource(video: Video): VideoResource {
         return VideoResource(
-                id = video.asset.assetId.value,
-                title = video.asset.title,
-                description = video.asset.description,
-                contentPartner = video.asset.contentPartnerId,
-                contentPartnerVideoId = video.asset.contentPartnerVideoId,
-                releasedOn = video.asset.releasedOn,
-                playback = getPlayback(video),
-                subjects = video.asset.subjects.map { it.name }.toSet(),
-                badges = getBadges(video),
-                type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
-                status = getStatus(video)
+            id = video.asset.assetId.value,
+            title = video.asset.title,
+            description = video.asset.description,
+            contentPartner = video.asset.contentPartnerId,
+            contentPartnerVideoId = video.asset.contentPartnerVideoId,
+            releasedOn = video.asset.releasedOn,
+            playback = getPlayback(video),
+            subjects = video.asset.subjects.map { it.name }.toSet(),
+            badges = getBadges(video),
+            type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
+            status = getStatus(video)
         )
     }
 

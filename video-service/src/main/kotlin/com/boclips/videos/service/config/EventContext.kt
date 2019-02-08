@@ -15,19 +15,22 @@ import org.springframework.data.mongodb.core.MongoTemplate
 @Configuration
 class EventContext {
     @Bean
-    fun eventService(eventLogRepository: EventLogRepository,
-                     eventMonitoringConfig: EventMonitoringConfig,
-                     mongoTemplate: MongoTemplate) =
-            EventService(
-                    eventLogRepository = eventLogRepository,
-                    eventMonitoringConfig = eventMonitoringConfig,
-                    mongoTemplate = mongoTemplate)
+    fun eventService(
+        eventLogRepository: EventLogRepository,
+        eventMonitoringConfig: EventMonitoringConfig,
+        mongoTemplate: MongoTemplate
+    ) =
+        EventService(
+            eventLogRepository = eventLogRepository,
+            eventMonitoringConfig = eventMonitoringConfig,
+            mongoTemplate = mongoTemplate
+        )
 
     @Bean
     fun createEvent(eventService: EventService, emailClient: EmailClient): CreateEvent {
         return CreateEvent(
-                eventService = eventService,
-                emailClient = emailClient
+            eventService = eventService,
+            emailClient = emailClient
         )
     }
 
@@ -39,7 +42,7 @@ class EventContext {
     @Bean
     fun checkEventsStatus(eventService: EventService): CheckEventsStatus {
         return CheckEventsStatus(
-                eventService = eventService
+            eventService = eventService
         )
     }
 

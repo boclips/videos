@@ -16,12 +16,36 @@ class VideoAssetSearchServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `upsert inserts videos`() {
-        val videoNews = TestFactories.createVideoAsset(videoId = TestFactories.aValidId(), title = "isNews", type = LegacyVideoType.NEWS)
-        val videoStock = TestFactories.createVideoAsset(videoId = TestFactories.aValidId(), title = "stock", type = LegacyVideoType.STOCK)
+        val videoNews = TestFactories.createVideoAsset(
+            videoId = TestFactories.aValidId(),
+            title = "isNews",
+            type = LegacyVideoType.NEWS
+        )
+        val videoStock = TestFactories.createVideoAsset(
+            videoId = TestFactories.aValidId(),
+            title = "stock",
+            type = LegacyVideoType.STOCK
+        )
 
         searchService.upsert(sequenceOf(videoNews, videoStock))
 
-        assertThat(searchService.search(PaginatedSearchRequest(query = Query("isNews"), startIndex = 0, windowSize = 10))).isNotEmpty
-        assertThat(searchService.search(PaginatedSearchRequest(query = Query("stock"), startIndex = 0, windowSize = 10))).isNotEmpty
+        assertThat(
+            searchService.search(
+                PaginatedSearchRequest(
+                    query = Query("isNews"),
+                    startIndex = 0,
+                    windowSize = 10
+                )
+            )
+        ).isNotEmpty
+        assertThat(
+            searchService.search(
+                PaginatedSearchRequest(
+                    query = Query("stock"),
+                    startIndex = 0,
+                    windowSize = 10
+                )
+            )
+        ).isNotEmpty
     }
 }

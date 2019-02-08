@@ -29,10 +29,12 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `posted playback events are being saved`() {
-        mockMvc.perform(post("/v1/events/playback")
+        mockMvc.perform(
+            post("/v1/events/playback")
                 .asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{
+                .content(
+                    """{
                     "playerId": "123",
                     "videoId" : "v555",
                     "segmentStartSeconds" : 0,
@@ -40,9 +42,10 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "videoDurationSeconds" : 200,
                     "captureTime" : "2018-01-01T00:00:00.000Z",
                     "searchId" : "srch-123"
-                    }""".trimMargin())
+                    }""".trimMargin()
+                )
         )
-                .andExpect(status().isCreated)
+            .andExpect(status().isCreated)
 
         assertThat(eventLogRepository.count()).isEqualTo(1)
         val event = eventLogRepository.findAll().first()
@@ -54,33 +57,40 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `post and retrieve no search results`() {
-        mockMvc.perform(post("/v1/events/no-search-results")
+        mockMvc.perform(
+            post("/v1/events/no-search-results")
                 .asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{
+                .content(
+                    """{
                         "name": "Hans Muster",
                         "query" : "animal",
                         "email" : "hans@muster.com",
                         "description" : "description"
-                        }""".trimMargin()))
-                .andExpect(status().isCreated)
+                        }""".trimMargin()
+                )
+        )
+            .andExpect(status().isCreated)
 
-        mockMvc.perform(get("/v1/events/no-search-results")
-                .asReporter())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded[*]", hasSize<Any>(1)))
-                .andExpect(jsonPath("$._embedded.events[0].createdAt").exists())
-                .andExpect(jsonPath("$._embedded.events[0].name").exists())
-                .andExpect(jsonPath("$._embedded.events[0].email").exists())
-                .andExpect(jsonPath("$._embedded.events[0].query").exists())
-                .andExpect(jsonPath("$._embedded.events[0].description").exists())
-                .andExpect(jsonPath("$._embedded.events[0].type").doesNotExist())
+        mockMvc.perform(
+            get("/v1/events/no-search-results")
+                .asReporter()
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded[*]", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.events[0].createdAt").exists())
+            .andExpect(jsonPath("$._embedded.events[0].name").exists())
+            .andExpect(jsonPath("$._embedded.events[0].email").exists())
+            .andExpect(jsonPath("$._embedded.events[0].query").exists())
+            .andExpect(jsonPath("$._embedded.events[0].description").exists())
+            .andExpect(jsonPath("$._embedded.events[0].type").doesNotExist())
     }
 
     @Test
     fun `status is 200 when there are events`() {
         eventService.saveEvent(SearchEvent(ZonedDateTime.now(), "search-id", User.anonymous(), "query", 10))
-        eventService.saveEvent(PlaybackEvent(
+        eventService.saveEvent(
+            PlaybackEvent(
                 playerId = "player-id",
                 captureTime = ZonedDateTime.now(),
                 searchId = "search-id",
@@ -89,22 +99,22 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 videoDurationSeconds = 50,
                 videoId = "asset-id",
                 user = User.anonymous()
-        ))
+            )
+        )
         mockMvc.perform(get("/v1/events/status"))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.healthy", `is`(true)))
-                .andExpect(jsonPath("$.latestSearch", not(isEmptyOrNullString())))
-                .andExpect(jsonPath("$.latestPlaybackInSearch", not(isEmptyOrNullString())))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.healthy", `is`(true)))
+            .andExpect(jsonPath("$.latestSearch", not(isEmptyOrNullString())))
+            .andExpect(jsonPath("$.latestPlaybackInSearch", not(isEmptyOrNullString())))
     }
 
     @Test
     fun `status is 500 when there are no events`() {
         mockMvc.perform(get("/v1/events/status"))
-                .andExpect(status().isServiceUnavailable)
-                .andExpect(jsonPath("$.healthy", `is`(false)))
-                .andExpect(jsonPath("$.latestSearch", isEmptyOrNullString()))
-                .andExpect(jsonPath("$.latestPlaybackInSearch", isEmptyOrNullString()))
-                .andExpect(jsonPath("$.latestPlaybackStandalone", isEmptyOrNullString()))
+            .andExpect(status().isServiceUnavailable)
+            .andExpect(jsonPath("$.healthy", `is`(false)))
+            .andExpect(jsonPath("$.latestSearch", isEmptyOrNullString()))
+            .andExpect(jsonPath("$.latestPlaybackInSearch", isEmptyOrNullString()))
+            .andExpect(jsonPath("$.latestPlaybackStandalone", isEmptyOrNullString()))
     }
-
 }

@@ -25,24 +25,26 @@ class CreateVideoRequestToAssetConverter {
         validateObligatoryField("subjects", createVideoRequest.subjects)
 
         return VideoAsset(
-                assetId = AssetId(value = ObjectId().toHexString()),
-                playbackId = PlaybackId(PlaybackProviderType.valueOf(createVideoRequest.playbackProvider!!), createVideoRequest.playbackId!!),
-                title = createVideoRequest.title!!,
-                description = createVideoRequest.description!!,
-                keywords = createVideoRequest.keywords!!,
-                releasedOn = createVideoRequest.releasedOn!!,
-                contentPartnerId = createVideoRequest.provider!!,
-                contentPartnerVideoId = createVideoRequest.providerVideoId!!,
-                type = LegacyVideoType.valueOf(createVideoRequest.videoType!!),
-                duration = createVideoRequest.duration!!,
-                legalRestrictions = createVideoRequest.legalRestrictions ?: "",
-                subjects = createVideoRequest.subjects!!.map { Subject(it) }.toSet(),
-                searchable = createVideoRequest.searchable ?: true
+            assetId = AssetId(value = ObjectId().toHexString()),
+            playbackId = PlaybackId(
+                PlaybackProviderType.valueOf(createVideoRequest.playbackProvider!!),
+                createVideoRequest.playbackId!!
+            ),
+            title = createVideoRequest.title!!,
+            description = createVideoRequest.description!!,
+            keywords = createVideoRequest.keywords!!,
+            releasedOn = createVideoRequest.releasedOn!!,
+            contentPartnerId = createVideoRequest.provider!!,
+            contentPartnerVideoId = createVideoRequest.providerVideoId!!,
+            type = LegacyVideoType.valueOf(createVideoRequest.videoType!!),
+            duration = createVideoRequest.duration!!,
+            legalRestrictions = createVideoRequest.legalRestrictions ?: "",
+            subjects = createVideoRequest.subjects!!.map { Subject(it) }.toSet(),
+            searchable = createVideoRequest.searchable ?: true
         )
     }
 
     private fun <T> validateObligatoryField(fieldName: String, fieldValue: T?) {
         fieldValue ?: throw InvalidCreateVideoRequestException("$fieldName cannot be null")
     }
-
 }

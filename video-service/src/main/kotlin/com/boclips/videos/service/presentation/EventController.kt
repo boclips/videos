@@ -17,13 +17,18 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/events")
 class EventController(
-        private val createEvent: CreateEvent,
-        private val checkEventsStatus: CheckEventsStatus,
-        private val getEvent: GetEvent
+    private val createEvent: CreateEvent,
+    private val checkEventsStatus: CheckEventsStatus,
+    private val getEvent: GetEvent
 ) {
     companion object {
-        fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logPlaybackEvent(null)).withRel("createPlaybackEvent")
-        fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)).withRel("createNoSearchResultsEvent")
+        fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(EventController::class.java).logPlaybackEvent(null)
+        ).withRel("createPlaybackEvent")
+
+        fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)
+        ).withRel("createNoSearchResultsEvent")
     }
 
     @PostMapping("/playback")
@@ -41,7 +46,7 @@ class EventController(
     @GetMapping("/no-search-results")
     fun getNoSearchResultsEvent(): ResponseEntity<Resources<NoSearchResultsEventResource>> {
         val events = getEvent()
-                .map { convertToResource(it) }
+            .map { convertToResource(it) }
 
         return ResponseEntity(Resources(events), HttpStatus.OK)
     }

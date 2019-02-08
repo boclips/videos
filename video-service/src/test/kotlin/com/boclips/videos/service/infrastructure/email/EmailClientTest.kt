@@ -10,7 +10,6 @@ import org.simplejavamail.email.Email
 import org.simplejavamail.mailer.Mailer
 import org.springframework.mock.env.MockEnvironment
 
-
 class EmailClientTest {
     private lateinit var mailerMock: Mailer
     private lateinit var emailService: EmailClient
@@ -45,7 +44,7 @@ class EmailClientTest {
     }
 
     private fun exampleEvent() =
-            NoResultsEmail("Hans", "hans@coolcat.com", "stupid query", "This is some additional information")
+        NoResultsEmail("Hans", "hans@coolcat.com", "stupid query", "This is some additional information")
 
     private fun mockEnvironment(): MockEnvironment {
         val environment = MockEnvironment()

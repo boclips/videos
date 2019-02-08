@@ -3,11 +3,12 @@ package com.boclips.videos.service.domain.model
 import com.boclips.search.service.domain.Query
 
 class VideoSearchQuery(
-        val text: String,
-        val includeTags: List<String>,
-        val excludeTags: List<String>,
-        val pageSize: Int,
-        val pageIndex: Int) {
+    val text: String,
+    val includeTags: List<String>,
+    val excludeTags: List<String>,
+    val pageSize: Int,
+    val pageIndex: Int
+) {
     fun toSearchQuery(): Query {
         return parse(this.text).copy(includeTags = includeTags, excludeTags = excludeTags)
     }

@@ -9,8 +9,8 @@ import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoResourceToVideoUpdateConverter
 
 class PatchVideo(
-        private val videoService: VideoService,
-        private val videoAssetRepository: VideoAssetRepository
+    private val videoService: VideoService,
+    private val videoAssetRepository: VideoAssetRepository
 ) {
     operator fun invoke(id: String?, patch: VideoResource) {
         val updateCommand = VideoResourceToVideoUpdateConverter.convert(patch)

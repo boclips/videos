@@ -15,17 +15,17 @@ import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
 class VideoService(
-        private val videoAssetRepository: VideoAssetRepository,
-        private val searchService: SearchService,
-        private val playbackRepository: PlaybackRespository
+    private val videoAssetRepository: VideoAssetRepository,
+    private val searchService: SearchService,
+    private val playbackRepository: PlaybackRespository
 ) {
     companion object : KLogging()
 
     fun search(query: VideoSearchQuery): List<Video> {
         val searchRequest = PaginatedSearchRequest(
-                query = query.toSearchQuery(),
-                startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
-                windowSize = query.pageSize
+            query = query.toSearchQuery(),
+            startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
+            windowSize = query.pageSize
         )
         val assetIds = searchService.search(searchRequest).map { AssetId(value = it) }
 
@@ -53,10 +53,10 @@ class VideoService(
 
     fun get(assetId: AssetId): Video {
         val videoAsset = videoAssetRepository
-                .find(assetId) ?: throw VideoAssetNotFoundException(assetId)
+            .find(assetId) ?: throw VideoAssetNotFoundException(assetId)
 
         val videoPlayback = playbackRepository
-                .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
+            .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
 
         logger.info { "Retrieved video $assetId" }
 

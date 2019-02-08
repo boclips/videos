@@ -28,19 +28,19 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
         deleteVideos(videoId.value)
 
         assertThatThrownBy { videoService.get(videoId) }
-                .isInstanceOf(VideoAssetNotFoundException::class.java)
+            .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test
     fun `requesting deletion with blank video ID throws an exception`() {
         assertThatThrownBy { deleteVideos("   ") }
-                .isInstanceOf(VideoAssetNotFoundException::class.java)
+            .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test
     fun `requesting deletion with null video ID throws an exception`() {
         assertThatThrownBy { deleteVideos(null) }
-                .isInstanceOf(VideoAssetNotFoundException::class.java)
+            .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test
@@ -50,7 +50,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
         deleteVideos(videoId.value)
 
         assertThatThrownBy { videoService.get(videoId) }
-                .isInstanceOf(VideoAssetNotFoundException::class.java)
+            .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
 
     @Test
@@ -64,7 +64,11 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `remove deletes a video from Kaltura`() {
-        val videoId = saveVideo(title = "Some title", description = "test description 3", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123"))
+        val videoId = saveVideo(
+            title = "Some title",
+            description = "test description 3",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
+        )
 
         deleteVideos(videoId.value)
 

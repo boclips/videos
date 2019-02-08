@@ -25,35 +25,35 @@ class ContentEnrichers {
         }
 
         private val classroomExcludedWords = listOf(
-                "award",
-                "awards",
-                "cannes",
-                "celebrities",
-                "celebrity",
-                "exchange",
-                "hollywood",
-                "naked",
-                "nude",
-                "party",
-                "premier",
-                "premiere",
-                "sexy",
-                "topless"
+            "award",
+            "awards",
+            "cannes",
+            "celebrities",
+            "celebrity",
+            "exchange",
+            "hollywood",
+            "naked",
+            "nude",
+            "party",
+            "premier",
+            "premiere",
+            "sexy",
+            "topless"
         )
 
         private val classroomExcludedPhrases = listOf(
-                "red carpet",
-                "los angeles"
+            "red carpet",
+            "los angeles"
         )
 
         private val classroomPermittedPhrases = listOf(
-                "archive public information film"
+            "archive public information film"
         )
 
         private val classroomPermittedNonAdjacentWords = listOf(
-                listOf("speech"),
-                listOf("biology", "animation"),
-                listOf("space", "animation")
+            listOf("speech"),
+            listOf("biology", "animation"),
+            listOf("space", "animation")
         )
 
         private val wordChars = Regex("\\w+")

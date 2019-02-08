@@ -41,7 +41,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         val inexistantPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")
 
         val videosWithPlayback = kalturaPlaybackProvider.retrievePlayback(
-                listOf(existingPlaybackId, inexistantPlaybackId)
+            listOf(existingPlaybackId, inexistantPlaybackId)
         )
 
         assertThat(videosWithPlayback).hasSize(1)
@@ -51,10 +51,12 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `removes the playback information`() {
-        kalturaClient.addMediaEntry(MediaEntry.builder()
+        kalturaClient.addMediaEntry(
+            MediaEntry.builder()
                 .id("something")
                 .referenceId("ref-123")
-                .build())
+                .build()
+        )
 
         val playbackToBeDeleted = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
         kalturaPlaybackProvider.removePlayback(playbackToBeDeleted)
@@ -71,13 +73,11 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         val playbackIdOfReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-2")
 
         val videosWithPlayback = kalturaPlaybackProvider.retrievePlayback(
-                listOf(playbackIdOfNonReady, playbackIdOfReady)
+            listOf(playbackIdOfNonReady, playbackIdOfReady)
         )
 
         assertThat(videosWithPlayback).hasSize(1)
         assertThat(videosWithPlayback[playbackIdOfReady]).isNotNull
         assertThat(videosWithPlayback[playbackIdOfNonReady]).isNull()
-
     }
-
 }

@@ -16,9 +16,9 @@ import mu.KLogging
 import org.bson.types.ObjectId
 
 class MongoCollectionService(
-        private val mongoClient: MongoClient,
-        private val documentConverter: CollectionDocumentConverter,
-        private val videoService: VideoService
+    private val mongoClient: MongoClient,
+    private val documentConverter: CollectionDocumentConverter,
+    private val videoService: VideoService
 ) : CollectionService {
     companion object : KLogging() {
         const val databaseName = "video-service-db"
@@ -29,25 +29,29 @@ class MongoCollectionService(
         val collectionId = CollectionId(value = ObjectId().toHexString())
 
         mongoClient
-                .getDatabase(databaseName)
-                .getCollection(collectionName)
-                .insertOne(documentConverter.toDocument(CollectionDocument(
+            .getDatabase(databaseName)
+            .getCollection(collectionName)
+            .insertOne(
+                documentConverter.toDocument(
+                    CollectionDocument(
                         id = collectionId.value,
                         owner = owner.value,
                         title = "",
                         videos = emptyList()
-                )))
+                    )
+                )
+            )
 
         return getById(collectionId) ?: throw CollectionNotCreatedException("Failed to create collection $collectionId")
     }
 
     override fun getById(id: CollectionId): Collection? {
         val collectionDocument = mongoClient
-                .getDatabase(databaseName)
-                .getCollection(collectionName)
-                .find(Filters.eq("_id", ObjectId(id.value)))
-                .firstOrNull()
-                ?.let(documentConverter::fromDocument)
+            .getDatabase(databaseName)
+            .getCollection(collectionName)
+            .find(Filters.eq("_id", ObjectId(id.value)))
+            .firstOrNull()
+            ?.let(documentConverter::fromDocument)
 
         MongoCollectionService.logger.info { "Found collection ${id.value}" }
 
@@ -56,11 +60,11 @@ class MongoCollectionService(
 
     override fun getByOwner(owner: UserId): List<Collection> {
         val collectionsDocuments = mongoClient
-                .getDatabase(databaseName)
-                .getCollection(collectionName)
-                .find(Filters.eq("owner", owner.value))
-                .toList()
-                .map { document -> documentConverter.fromDocument(document) }
+            .getDatabase(databaseName)
+            .getCollection(collectionName)
+            .find(Filters.eq("owner", owner.value))
+            .toList()
+            .map { document -> documentConverter.fromDocument(document) }
 
         MongoCollectionService.logger.info { "Found ${collectionsDocuments.size} collections for user ${owner.value}" }
 
@@ -77,22 +81,22 @@ class MongoCollectionService(
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId) {
         mongoClient
-                .getDatabase(databaseName)
-                .getCollection(collectionName)
-                .updateOne(
-                        eq("_id", ObjectId(collectionId.value)),
-                        pull("videos", assetId.value)
-                )
+            .getDatabase(databaseName)
+            .getCollection(collectionName)
+            .updateOne(
+                eq("_id", ObjectId(collectionId.value)),
+                pull("videos", assetId.value)
+            )
     }
 
     private fun addVideo(id: CollectionId, video: Video) {
         mongoClient
-                .getDatabase(databaseName)
-                .getCollection(collectionName)
-                .updateOne(
-                        eq("_id", ObjectId(id.value)),
-                        addToSet("videos", video.asset.assetId.value)
-                )
+            .getDatabase(databaseName)
+            .getCollection(collectionName)
+            .updateOne(
+                eq("_id", ObjectId(id.value)),
+                addToSet("videos", video.asset.assetId.value)
+            )
     }
 
     private fun toCollection(collectionDocument: CollectionDocument?): Collection? {
@@ -100,11 +104,10 @@ class MongoCollectionService(
         val assetIds = collectionDocument.videos.map { AssetId(value = it) }
 
         return Collection(
-                id = CollectionId(value = collectionDocument.id),
-                title = collectionDocument.title!!,
-                owner = UserId(value = collectionDocument.owner),
-                videos = videoService.get(assetIds)
+            id = CollectionId(value = collectionDocument.id),
+            title = collectionDocument.title!!,
+            owner = UserId(value = collectionDocument.owner),
+            videos = videoService.get(assetIds)
         )
     }
-
 }

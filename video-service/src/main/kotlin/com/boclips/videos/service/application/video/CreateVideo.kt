@@ -17,13 +17,13 @@ import com.boclips.videos.service.presentation.video.VideoResource
 import io.micrometer.core.instrument.Counter
 
 class CreateVideo(
-        private val videoAssetRepository: VideoAssetRepository,
-        private val searchVideo: SearchVideo,
-        private val createVideoRequestToAssetConverter: CreateVideoRequestToAssetConverter,
-        private val searchServiceAdmin: SearchService,
-        private val playbackRepository: PlaybackRespository,
-        private val videoCounter: Counter,
-        private val legacySearchService: LegacySearchService
+    private val videoAssetRepository: VideoAssetRepository,
+    private val searchVideo: SearchVideo,
+    private val createVideoRequestToAssetConverter: CreateVideoRequestToAssetConverter,
+    private val searchServiceAdmin: SearchService,
+    private val playbackRepository: PlaybackRespository,
+    private val videoCounter: Counter,
+    private val legacySearchService: LegacySearchService
 ) {
     operator fun invoke(createRequest: CreateVideoRequest): VideoResource {
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest)
@@ -51,7 +51,12 @@ class CreateVideo(
     }
 
     private fun ensureVideoPlaybackExists(createRequest: CreateVideoRequest) {
-        (playbackRepository.find(PlaybackId(type = PlaybackProviderType.valueOf(createRequest.playbackProvider!!), value = createRequest.playbackId!!))
-                ?: throw VideoPlaybackNotFound("Video playback for asset ${createRequest.playbackId} not found in ${createRequest.playbackProvider}"))
+        (playbackRepository.find(
+            PlaybackId(
+                type = PlaybackProviderType.valueOf(createRequest.playbackProvider!!),
+                value = createRequest.playbackId!!
+            )
+        )
+            ?: throw VideoPlaybackNotFound("Video playback for asset ${createRequest.playbackId} not found in ${createRequest.playbackProvider}"))
     }
 }

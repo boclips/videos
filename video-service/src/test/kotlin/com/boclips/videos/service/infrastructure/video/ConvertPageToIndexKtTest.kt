@@ -12,5 +12,4 @@ class ConvertPageToIndexKtTest {
         assertThat(convertPageToIndex(50, 1)).isEqualTo(50)
         assertThat(convertPageToIndex(50, 2)).isEqualTo(100)
     }
-
 }

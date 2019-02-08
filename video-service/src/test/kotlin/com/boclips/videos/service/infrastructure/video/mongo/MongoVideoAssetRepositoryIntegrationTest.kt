@@ -67,7 +67,12 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))
         mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))
         mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))
-        mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId(), searchable = false))
+        mongoVideoRepository.create(
+            TestFactories.createVideoAsset(
+                videoId = TestFactories.aValidId(),
+                searchable = false
+            )
+        )
 
         var videos: List<VideoAsset> = emptyList()
         mongoVideoRepository.streamAllSearchable { videos = it.toList() }
@@ -78,23 +83,29 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     @Test
     fun `update video subjects`() {
         val existingAsset = mongoVideoRepository.create(
-                TestFactories.createVideoAsset(
-                        title = "old title",
-                        keywords = listOf("k1", "k2"),
-                        playbackId = PlaybackId(PlaybackProviderType.KALTURA, "old-id"),
-                        subjects = setOf(Subject("physics"))
-                )
+            TestFactories.createVideoAsset(
+                title = "old title",
+                keywords = listOf("k1", "k2"),
+                playbackId = PlaybackId(PlaybackProviderType.KALTURA, "old-id"),
+                subjects = setOf(Subject("physics"))
+            )
         )
 
         mongoVideoRepository.replaceSubjects(existingAsset.assetId, listOf(Subject("maths")))
 
-        assertThat(mongoVideoRepository.find(existingAsset.assetId)).isEqualTo(existingAsset.copy(subjects = setOf(Subject("maths"))))
+        assertThat(mongoVideoRepository.find(existingAsset.assetId)).isEqualTo(
+            existingAsset.copy(
+                subjects = setOf(
+                    Subject("maths")
+                )
+            )
+        )
     }
 
     @Test
     fun `update throws when video not found`() {
         val asset = TestFactories.createVideoAsset(
-                videoId = TestFactories.aValidId()
+            videoId = TestFactories.aValidId()
         )
 
         assertThrows<VideoAssetNotFoundException> { mongoVideoRepository.replaceSubjects(asset.assetId, emptyList()) }
@@ -103,9 +114,9 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     @Test
     fun `find by content partner and content partner video id`() {
         val asset = TestFactories.createVideoAsset(
-                videoId = TestFactories.aValidId(),
-                contentPartnerVideoId = "ted-id-1",
-                contentProvider = "TED Talks"
+            videoId = TestFactories.aValidId(),
+            contentPartnerVideoId = "ted-id-1",
+            contentProvider = "TED Talks"
         )
 
         mongoVideoRepository.create(asset)

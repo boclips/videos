@@ -3,12 +3,15 @@ package com.boclips.videos.service.domain.model.playback
 import com.boclips.videos.service.domain.service.PlaybackProvider
 
 class PlaybackRespository(
-        val kalturaPlaybackProvider: PlaybackProvider,
-        val youtubePlaybackProvider: PlaybackProvider) {
+    val kalturaPlaybackProvider: PlaybackProvider,
+    val youtubePlaybackProvider: PlaybackProvider
+) {
 
     fun find(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback> {
-        val kalturaPlaybackById = kalturaPlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.KALTURA })
-        val youtubePlaybackById = youtubePlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.YOUTUBE })
+        val kalturaPlaybackById =
+            kalturaPlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.KALTURA })
+        val youtubePlaybackById =
+            youtubePlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == PlaybackProviderType.YOUTUBE })
 
         return playbackIds.mapNotNull { playbackId ->
             val playback = when (playbackId.type) {

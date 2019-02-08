@@ -19,9 +19,8 @@ class InteractionControllerIntegrationTest : AbstractSpringIntegrationTest() {
         eventService.saveEvent(TestFactories.createSearchEvent())
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/interactions"))
-                .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", startsWith("text/plain")))
-                .andExpect(content().string(startsWith(">  20")))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", startsWith("text/plain")))
+            .andExpect(content().string(startsWith(">  20")))
     }
-
 }

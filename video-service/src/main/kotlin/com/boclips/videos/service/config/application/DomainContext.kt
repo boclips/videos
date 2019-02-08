@@ -21,15 +21,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-
 @Configuration
 class DomainContext(val mongoClient: MongoClient) {
 
     @Bean
     fun videoService(
-            videoAssetRepository: VideoAssetRepository,
-            searchService: SearchService,
-            playbackRespository: PlaybackRespository
+        videoAssetRepository: VideoAssetRepository,
+        searchService: SearchService,
+        playbackRespository: PlaybackRespository
     ): VideoService {
         return VideoService(videoAssetRepository, searchService, playbackRespository)
     }
@@ -46,7 +45,7 @@ class DomainContext(val mongoClient: MongoClient) {
 
     @Bean
     fun playbackRepository(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider)
-            : PlaybackRespository {
+        : PlaybackRespository {
         return PlaybackRespository(kalturaPlaybackProvider, youtubePlaybackProvider)
     }
 

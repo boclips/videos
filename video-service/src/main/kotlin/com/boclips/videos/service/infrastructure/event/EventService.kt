@@ -18,9 +18,9 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class EventService(
-        private val eventLogRepository: EventLogRepository,
-        private val eventMonitoringConfig: EventMonitoringConfig,
-        private val mongoTemplate: MongoTemplate
+    private val eventLogRepository: EventLogRepository,
+    private val eventMonitoringConfig: EventMonitoringConfig,
+    private val mongoTemplate: MongoTemplate
 ) {
     fun <T> saveEvent(event: Event<T>) {
         eventLogRepository.insert(EventEntity.fromEvent(event))
@@ -30,21 +30,25 @@ class EventService(
         val utcNow = ZonedDateTime.now().withZoneSameInstant(ZoneOffset.UTC)
 
         val mostRecentSearch = mostRecentEventByType(typeEquals(EventType.SEARCH.name))
-        val mostRecentPlaybackInSearch = mostRecentEventByType(typeEquals(EventType.PLAYBACK.name).andOperator(searchIdSpecified()))
-        val mostRecentPlaybackStandalone = mostRecentEventByType(typeEquals(EventType.PLAYBACK.name).andOperator(searchIdNotSpecified()))
+        val mostRecentPlaybackInSearch =
+            mostRecentEventByType(typeEquals(EventType.PLAYBACK.name).andOperator(searchIdSpecified()))
+        val mostRecentPlaybackStandalone =
+            mostRecentEventByType(typeEquals(EventType.PLAYBACK.name).andOperator(searchIdNotSpecified()))
 
-        val recentSearchExists = mostRecentSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.search))
+        val recentSearchExists =
+            mostRecentSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.search))
                 ?: false
-        val recentPlaybackExists = mostRecentPlaybackInSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.playback))
+        val recentPlaybackExists =
+            mostRecentPlaybackInSearch?.isAfter(utcNow.minusHours(eventMonitoringConfig.lookbackHours.playback))
                 ?: false
 
         val healthy = recentSearchExists && recentPlaybackExists
 
         return EventsStatus(
-                healthy = healthy,
-                latestSearch = mostRecentSearch,
-                latestPlaybackInSearch = mostRecentPlaybackInSearch,
-                latestPlaybackStandalone = mostRecentPlaybackStandalone
+            healthy = healthy,
+            latestSearch = mostRecentSearch,
+            latestPlaybackInSearch = mostRecentPlaybackInSearch,
+            latestPlaybackStandalone = mostRecentPlaybackStandalone
         )
     }
 
@@ -55,27 +59,32 @@ class EventService(
 
         val relatedEvents = GroupRelatedEvents.create(allSearchEvents, allPlaybackEvents)
 
-        val interactions = fromPlaybackEvents(relatedEvents.standalonePlaybacks) + fromSearchAndPlaybackEvents(relatedEvents.searches)
+        val interactions =
+            fromPlaybackEvents(relatedEvents.standalonePlaybacks) + fromSearchAndPlaybackEvents(relatedEvents.searches)
 
         return sortRecursively(interactions)
     }
 
     fun getNoSearchResultsEvents(): List<NoSearchResultsEvent> {
         return getAllEvents()
-                .filter { event -> event.type.equals(EventType.NO_SEARCH_RESULTS.name) } as List<NoSearchResultsEvent>
+            .filter { event -> event.type.equals(EventType.NO_SEARCH_RESULTS.name) } as List<NoSearchResultsEvent>
     }
 
     private fun getAllEvents() = eventLogRepository.findAll()
-            .map { it.toEvent() }
+        .map { it.toEvent() }
 
     private fun mostRecentEventByType(criteria: Criteria): ZonedDateTime? {
         val filterByType = Aggregation.match(criteria)
         val findMax = Aggregation.project("type").andExpression("max(timestamp)").`as`("timestamp")
 
-        val result = mongoTemplate.aggregate(Aggregation.newAggregation(Event::class.java, listOf(
-                filterByType,
-                findMax
-        )), "event-log", MaxTimestampAggregationResult::class.java).mappedResults
+        val result = mongoTemplate.aggregate(
+            Aggregation.newAggregation(
+                Event::class.java, listOf(
+                    filterByType,
+                    findMax
+                )
+            ), "event-log", MaxTimestampAggregationResult::class.java
+        ).mappedResults
 
         return if (result.isEmpty()) null else result[0].timestamp.atZone(ZoneOffset.UTC)
     }

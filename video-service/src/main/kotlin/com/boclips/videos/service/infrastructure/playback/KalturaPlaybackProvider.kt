@@ -18,31 +18,31 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : Playba
         val mediaEntriesById = kalturaClient.getMediaEntriesByReferenceIds(kalturaVideoIds)
 
         return playbackIds
-                .asSequence()
-                .filter { id ->
-                    val kalturaVideoId = id.value
-                    if (mediaEntriesById[kalturaVideoId] == null) {
-                        logger.warn { "Omitted asset $kalturaVideoId due to lack of asset playback information" }
-                        false
-                    } else {
-                        true
-                    }
+            .asSequence()
+            .filter { id ->
+                val kalturaVideoId = id.value
+                if (mediaEntriesById[kalturaVideoId] == null) {
+                    logger.warn { "Omitted asset $kalturaVideoId due to lack of asset playback information" }
+                    false
+                } else {
+                    true
                 }
-                .filter { kalturaVideoId -> filterValidMediaEntries(kalturaVideoId, mediaEntriesById) != null }
-                .mapNotNull { kalturaVideoId ->
-                    val mediaEntry = filterValidMediaEntries(kalturaVideoId, mediaEntriesById)
+            }
+            .filter { kalturaVideoId -> filterValidMediaEntries(kalturaVideoId, mediaEntriesById) != null }
+            .mapNotNull { kalturaVideoId ->
+                val mediaEntry = filterValidMediaEntries(kalturaVideoId, mediaEntriesById)
 
-                    val streamUrl = mediaEntry!!.streams.withFormat(StreamFormat.APPLE_HDS)
-                    val videoPlayback = StreamPlayback(
-                            id = kalturaVideoId,
-                            streamUrl = streamUrl,
-                            thumbnailUrl = mediaEntry.thumbnailUrl,
-                            duration = mediaEntry.duration
-                    )
+                val streamUrl = mediaEntry!!.streams.withFormat(StreamFormat.APPLE_HDS)
+                val videoPlayback = StreamPlayback(
+                    id = kalturaVideoId,
+                    streamUrl = streamUrl,
+                    thumbnailUrl = mediaEntry.thumbnailUrl,
+                    duration = mediaEntry.duration
+                )
 
-                    (kalturaVideoId to videoPlayback)
-                }
-                .toMap()
+                (kalturaVideoId to videoPlayback)
+            }
+            .toMap()
     }
 
     override fun removePlayback(playbackId: PlaybackId) {
@@ -54,5 +54,5 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : Playba
     }
 
     private fun filterValidMediaEntries(id: PlaybackId, mediaEntriesById: Map<String, List<MediaEntry>>) =
-            mediaEntriesById[id.value]!!.firstOrNull { it.status == MediaEntryStatus.READY }
+        mediaEntriesById[id.value]!!.firstOrNull { it.status == MediaEntryStatus.READY }
 }

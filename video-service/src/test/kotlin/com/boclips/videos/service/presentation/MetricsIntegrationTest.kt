@@ -21,7 +21,13 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `video counter increases when we create a video`() {
-        fakeKalturaClient.addMediaEntry(TestFactories.createMediaEntry(id = "entry-$123", referenceId = "abc1", duration = Duration.ofMinutes(1)))
+        fakeKalturaClient.addMediaEntry(
+            TestFactories.createMediaEntry(
+                id = "entry-$123",
+                referenceId = "abc1",
+                duration = Duration.ofMinutes(1)
+            )
+        )
 
         val content = """
             {
@@ -41,11 +47,11 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
         """.trimIndent()
 
         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isCreated)
-                .andReturn().response.getHeader("Location")
+            .andExpect(status().isCreated)
+            .andReturn().response.getHeader("Location")
 
         mockMvc.perform(get("/actuator/prometheus"))
-                .andExpect(status().isOk)
-                .andExpect(content().string(containsString("boclips_created_video_count_total ")))
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString("boclips_created_video_count_total ")))
     }
 }

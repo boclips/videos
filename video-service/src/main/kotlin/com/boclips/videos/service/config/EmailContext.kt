@@ -19,9 +19,14 @@ class EmailContext {
     @Bean
     fun simpleJavaMailer(emailProperties: EmailProperties): Mailer {
         return MailerBuilder
-                .withSMTPServer(emailProperties.host, emailProperties.port, emailProperties.username, emailProperties.password)
-                .withTransportStrategy(TransportStrategy.SMTP_TLS)
-                .clearEmailAddressCriteria()
-                .buildMailer()
+            .withSMTPServer(
+                emailProperties.host,
+                emailProperties.port,
+                emailProperties.username,
+                emailProperties.password
+            )
+            .withTransportStrategy(TransportStrategy.SMTP_TLS)
+            .clearEmailAddressCriteria()
+            .buildMailer()
     }
 }

@@ -6,13 +6,12 @@ import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 
 class GetAllVideosById(
-        private val videoService: VideoService,
-        private val videoToResourceConverter: VideoToResourceConverter
+    private val videoService: VideoService,
+    private val videoToResourceConverter: VideoToResourceConverter
 ) {
 
     operator fun invoke(videoIds: List<AssetId>): List<VideoResource> {
-
         return videoService.get(videoIds.toSet().toList())
-                .let(videoToResourceConverter::convert)
+            .let(videoToResourceConverter::convert)
     }
 }

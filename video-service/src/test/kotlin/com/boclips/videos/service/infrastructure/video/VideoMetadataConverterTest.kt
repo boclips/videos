@@ -7,37 +7,38 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-
 class VideoMetadataConverterTest {
     @Test
     fun `convert instructional video`() {
         val videoAssetId = TestFactories.aValidId()
 
         val video = TestFactories.createVideoAsset(
-                videoId = videoAssetId,
-                title = "asset title",
-                description = "asset description",
-                contentProvider = "content partner",
-                keywords = listOf("k1"),
-                type = LegacyVideoType.INSTRUCTIONAL_CLIPS
+            videoId = videoAssetId,
+            title = "asset title",
+            description = "asset description",
+            contentProvider = "content partner",
+            keywords = listOf("k1"),
+            type = LegacyVideoType.INSTRUCTIONAL_CLIPS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
 
-        assertThat(videoMetadata).isEqualTo(VideoMetadata(
+        assertThat(videoMetadata).isEqualTo(
+            VideoMetadata(
                 id = videoAssetId,
                 title = "asset title",
                 description = "asset description",
                 contentProvider = "content partner",
                 keywords = listOf("k1"),
                 tags = listOf("classroom")
-        ))
+            )
+        )
     }
 
     @Test
     fun `tags classroom video`() {
         val video = TestFactories.createVideoAsset(
-                type = LegacyVideoType.INSTRUCTIONAL_CLIPS
+            type = LegacyVideoType.INSTRUCTIONAL_CLIPS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -48,7 +49,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `tags news video`() {
         val video = TestFactories.createVideoAsset(
-                type = LegacyVideoType.NEWS
+            type = LegacyVideoType.NEWS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -59,8 +60,8 @@ class VideoMetadataConverterTest {
     @Test
     fun `it can apply multiple tags`() {
         val video = TestFactories.createVideoAsset(
-                type = LegacyVideoType.NEWS,
-                description = "biology animation"
+            type = LegacyVideoType.NEWS,
+            description = "biology animation"
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -71,9 +72,9 @@ class VideoMetadataConverterTest {
     @Test
     fun `it doesn't tag videos without a match`() {
         val video = TestFactories.createVideoAsset(
-                videoId = TestFactories.aValidId(),
-                title = "garbage title",
-                type = LegacyVideoType.STOCK
+            videoId = TestFactories.aValidId(),
+            title = "garbage title",
+            type = LegacyVideoType.STOCK
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)

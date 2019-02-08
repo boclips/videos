@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
 
 open class BuildLegacySearchIndex(
-        private val videoAssetRepository: VideoAssetRepository,
-        private val legacySearchService: LegacySearchService
+    private val videoAssetRepository: VideoAssetRepository,
+    private val legacySearchService: LegacySearchService
 ) {
     companion object : KLogging()
 
@@ -21,8 +21,8 @@ open class BuildLegacySearchIndex(
         try {
             videoAssetRepository.streamAllSearchable { videos ->
                 val videoAssets = videos
-                        .filter { it.keywords.isNotEmpty() && it.title.isNotEmpty() && it.description.isNotEmpty() }
-                        .map(VideoAssetToLegacyVideoMetadataConverter::convert)
+                    .filter { it.keywords.isNotEmpty() && it.title.isNotEmpty() && it.description.isNotEmpty() }
+                    .map(VideoAssetToLegacyVideoMetadataConverter::convert)
 
                 legacySearchService.upsert(videoAssets, notifier)
             }

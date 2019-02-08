@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "youtube")
 data class YoutubeProperties(
-        var apiKey: String = ""
+    var apiKey: String = ""
 )

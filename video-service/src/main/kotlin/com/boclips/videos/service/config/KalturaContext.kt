@@ -9,9 +9,11 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class KalturaContext {
     @Bean
-    fun kalturaClient(kalturaProperties: KalturaProperties): KalturaClient = KalturaClient.create(KalturaClientConfig.builder()
+    fun kalturaClient(kalturaProperties: KalturaProperties): KalturaClient = KalturaClient.create(
+        KalturaClientConfig.builder()
             .partnerId(kalturaProperties.partnerId)
             .userId(kalturaProperties.userId)
             .secret(kalturaProperties.secret)
-            .build())
+            .build()
+    )
 }

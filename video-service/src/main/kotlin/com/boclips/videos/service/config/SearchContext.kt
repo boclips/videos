@@ -37,18 +37,21 @@ class SearchContext {
     }
 
     @Bean
-    fun searchService(videoMetadataSearchService: GenericSearchService, videoSearchServiceAdmin: GenericSearchServiceAdmin<VideoMetadata>): SearchService {
+    fun searchService(
+        videoMetadataSearchService: GenericSearchService,
+        videoSearchServiceAdmin: GenericSearchServiceAdmin<VideoMetadata>
+    ): SearchService {
         return VideoAssetSearchService(videoMetadataSearchService, videoSearchServiceAdmin)
     }
 
     @Bean
     fun elasticSearchConfig(elasticSearchProperties: ElasticSearchProperties): ElasticSearchConfig {
         return ElasticSearchConfig(
-                scheme = elasticSearchProperties.scheme,
-                host = elasticSearchProperties.host,
-                port = elasticSearchProperties.port,
-                username = elasticSearchProperties.username,
-                password = elasticSearchProperties.password
+            scheme = elasticSearchProperties.scheme,
+            host = elasticSearchProperties.host,
+            port = elasticSearchProperties.port,
+            username = elasticSearchProperties.username,
+            password = elasticSearchProperties.password
         )
     }
 }

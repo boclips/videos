@@ -6,10 +6,10 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 
 class SearchVideo(
-        private val getVideoById: GetVideoById,
-        private val getAllVideosById: GetAllVideosById,
-        private val getVideosByQuery: GetVideosByQuery,
-        private val videoAssetRepository: VideoAssetRepository
+    private val getVideoById: GetVideoById,
+    private val getAllVideosById: GetAllVideosById,
+    private val getVideosByQuery: GetVideosByQuery,
+    private val videoAssetRepository: VideoAssetRepository
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
@@ -20,11 +20,11 @@ class SearchVideo(
     fun byIds(ids: List<String>) = getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) })
 
     fun byQuery(
-            query: String?,
-            includeTags: List<String>,
-            excludeTags: List<String>,
-            pageSize: Int,
-            pageNumber: Int
+        query: String?,
+        includeTags: List<String>,
+        excludeTags: List<String>,
+        pageSize: Int,
+        pageNumber: Int
     ) = getVideosByQuery(getOrThrow(query), includeTags, excludeTags, pageSize, pageNumber)
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): AssetId? {

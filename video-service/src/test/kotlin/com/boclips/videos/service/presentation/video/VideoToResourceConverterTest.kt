@@ -14,29 +14,29 @@ import java.time.Duration
 internal class VideoToResourceConverterTest {
 
     val kalturaVideo = createVideo(
-            videoAsset = createVideoAsset(
-                    title = "Do what you love",
-                    description = "Best bottle slogan",
-                    contentProvider = "WeWork",
-                    contentPartnerVideoId = "111",
-                    type = LegacyVideoType.TED_TALKS,
-                    subjects = setOf(Subject("Maths")),
-                    searchable = true
-            ),
-            videoPlayback = TestFactories.createKalturaPlayback()
+        videoAsset = createVideoAsset(
+            title = "Do what you love",
+            description = "Best bottle slogan",
+            contentProvider = "WeWork",
+            contentPartnerVideoId = "111",
+            type = LegacyVideoType.TED_TALKS,
+            subjects = setOf(Subject("Maths")),
+            searchable = true
+        ),
+        videoPlayback = TestFactories.createKalturaPlayback()
     )
 
     val youtubeVideo = createVideo(
-            videoAsset = createVideoAsset(
-                    title = "Do what you love on youtube",
-                    description = "Best bottle slogan",
-                    contentProvider = "JacekWork",
-                    contentPartnerVideoId = "222",
-                    type = LegacyVideoType.OTHER,
-                    subjects = setOf(Subject("Biology")),
-                    searchable = false
-            ),
-            videoPlayback = createYoutubePlayback()
+        videoAsset = createVideoAsset(
+            title = "Do what you love on youtube",
+            description = "Best bottle slogan",
+            contentProvider = "JacekWork",
+            contentPartnerVideoId = "222",
+            type = LegacyVideoType.OTHER,
+            subjects = setOf(Subject("Biology")),
+            searchable = false
+        ),
+        videoPlayback = createYoutubePlayback()
     )
 
     @Test
@@ -81,7 +81,7 @@ internal class VideoToResourceConverterTest {
     @Test
     fun `converts heterogenous video lists`() {
         val resultResource = VideoToResourceConverter()
-                .convert(videos = listOf(youtubeVideo, kalturaVideo))
+            .convert(videos = listOf(youtubeVideo, kalturaVideo))
 
         assertThat(resultResource.map { it.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
     }

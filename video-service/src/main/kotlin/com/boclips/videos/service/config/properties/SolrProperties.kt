@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "legacy.solr")
 data class SolrProperties(
-        var host: String = "",
-        var port: Int = 0
+    var host: String = "",
+    var port: Int = 0
 )

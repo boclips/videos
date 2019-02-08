@@ -43,6 +43,4 @@ internal class RemoveVideoFromDefaultCollectionTest {
             Assertions.assertThat(it.user.id).isEqualTo("me@me.com")
         })
     }
-
-
 }

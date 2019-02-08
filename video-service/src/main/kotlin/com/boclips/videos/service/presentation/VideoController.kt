@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.video.BulkUpdate
+import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.PatchVideo
@@ -27,19 +27,23 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/videos")
 class VideoController(
-        private val searchVideo: SearchVideo,
-        private val deleteVideos: DeleteVideos,
-        private val createVideo: CreateVideo,
-        private val patchVideo: PatchVideo,
-        private val bulkUpdate: BulkUpdate,
-        private val objectMapper: ObjectMapper
+    private val searchVideo: SearchVideo,
+    private val deleteVideos: DeleteVideos,
+    private val createVideo: CreateVideo,
+    private val patchVideo: PatchVideo,
+    private val bulkUpdateVideo: BulkUpdateVideo,
+    private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
-        fun searchLink() = linkTo(methodOn(VideoController::class.java)
-                .search(null, null, null, null, null)).withRel("search")
+        fun searchLink() = linkTo(
+            methodOn(VideoController::class.java)
+                .search(null, null, null, null, null)
+        ).withRel("search")
 
-        fun videoLink(id: String? = null, rel: String = "video") = linkTo(methodOn(VideoController::class.java)
-                .getVideo(id)).withRel(rel)
+        fun videoLink(id: String? = null, rel: String = "video") = linkTo(
+            methodOn(VideoController::class.java)
+                .getVideo(id)
+        ).withRel(rel)
 
         fun videosLink() = linkTo(methodOn(VideoController::class.java).patchMultipleVideos(null)).withRel("videos")
 
@@ -52,39 +56,42 @@ class VideoController(
 
     @GetMapping
     @SearchLogging
-    fun search(@RequestParam("query") query: String?,
-               @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
-               @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
-               @RequestParam("size") size: Int?,
-               @RequestParam("page") page: Int?): ResponseEntity<PagedResources<*>> {
+    fun search(
+        @RequestParam("query") query: String?,
+        @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
+        @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
+        @RequestParam("size") size: Int?,
+        @RequestParam("page") page: Int?
+    ): ResponseEntity<PagedResources<*>> {
         val videosResource = searchVideo.byQuery(query = query,
-                includeTags = includeTags?.let { includeTags } ?: emptyList(),
-                excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
-                pageSize = size ?: DEFAULT_PAGE_SIZE,
-                pageNumber = page ?: DEFAULT_PAGE_INDEX)
+            includeTags = includeTags?.let { includeTags } ?: emptyList(),
+            excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
+            pageSize = size ?: DEFAULT_PAGE_SIZE,
+            pageNumber = page ?: DEFAULT_PAGE_INDEX)
 
         val videoResources = videosResource
-                .videos
-                .map(this::wrapResourceWithHateoas)
-                .let(HateoasEmptyCollection::fixIfEmptyCollection)
+            .videos
+            .map(this::wrapResourceWithHateoas)
+            .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
         return ResponseEntity(
-                PagedResources(
-                        videoResources,
-                        PagedResources.PageMetadata(
-                                videosResource.pageSize.toLong(),
-                                videosResource.pageNumber.toLong(),
-                                videosResource.totalVideos
-                        )
-                ), HttpStatus.OK)
+            PagedResources(
+                videoResources,
+                PagedResources.PageMetadata(
+                    videosResource.pageSize.toLong(),
+                    videosResource.pageNumber.toLong(),
+                    videosResource.totalVideos
+                )
+            ), HttpStatus.OK
+        )
     }
 
     @PostMapping("/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> {
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
-                .map(this::wrapResourceWithHateoas)
-                .let(HateoasEmptyCollection::fixIfEmptyCollection)
-                .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
+            .map(this::wrapResourceWithHateoas)
+            .let(HateoasEmptyCollection::fixIfEmptyCollection)
+            .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
     }
 
     @GetMapping("/{id}")
@@ -104,7 +111,8 @@ class VideoController(
         val resource = try {
             createVideo(createVideoRequest)
         } catch (e: VideoAssetExists) {
-            val errorDetails = mapOf("error" to "video from provider \"${e.contentPartnerId}\" and provider id \"${e.contentPartnerVideoId}\" already exists")
+            val errorDetails =
+                mapOf("error" to "video from provider \"${e.contentPartnerId}\" and provider id \"${e.contentPartnerVideoId}\" already exists")
             return ResponseEntity(errorDetails, HttpStatus.CONFLICT)
         } catch (e: Exception) {
             val errorDetails = mapOf("error" to e.message, "processed request" to createVideoRequest)
@@ -125,10 +133,10 @@ class VideoController(
 
     @PatchMapping
     fun patchMultipleVideos(@RequestBody bulkUpdateRequest: BulkUpdateRequest?): ResponseEntity<Void> {
-        bulkUpdate(bulkUpdateRequest)
+        bulkUpdateVideo(bulkUpdateRequest)
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
     private fun wrapResourceWithHateoas(videoResource: VideoResource) =
-            Resource(videoResource, videoLink(videoResource.id, "self"))
+        Resource(videoResource, videoLink(videoResource.id, "self"))
 }

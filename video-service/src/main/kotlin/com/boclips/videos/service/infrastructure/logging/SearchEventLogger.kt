@@ -12,11 +12,9 @@ class SearchLoggingPointcuts {
 
     @Pointcut("@annotation(com.boclips.videos.service.infrastructure.logging.SearchLogging)")
     fun annotatedWithSearchLogging() {
-
     }
 
     @Pointcut("inVideoService() && annotatedWithSearchLogging()")
     fun searchLoggingAnnotation() {
     }
-
 }

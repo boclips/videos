@@ -3,7 +3,6 @@ package com.boclips.videos.service.infrastructure.video
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-
 class GenerateNamespaceKtTest {
 
     @Test

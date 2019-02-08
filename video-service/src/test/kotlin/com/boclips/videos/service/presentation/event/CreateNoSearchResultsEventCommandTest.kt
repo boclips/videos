@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test
 
 class CreateNoSearchResultsEventCommandTest {
     val noSearchResultsEvent = CreateNoSearchResultsEventCommand(
-            name = "Heiri",
-            email = "heiri@schwizerland.ch",
-            query = "is heidi Swiss",
-            description = "I need to know"
+        name = "Heiri",
+        email = "heiri@schwizerland.ch",
+        query = "is heidi Swiss",
+        description = "I need to know"
     )
 
     @Test

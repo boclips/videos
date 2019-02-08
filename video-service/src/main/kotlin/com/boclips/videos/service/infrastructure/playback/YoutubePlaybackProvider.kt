@@ -13,8 +13,8 @@ import java.time.Duration
 class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
 
     private val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
-            .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
-            .build()
+        .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
+        .build()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
         if (playbackIds.isEmpty()) {
@@ -28,14 +28,13 @@ class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
         return response.items.map { item ->
             val playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, item.id)
             (playbackId to YoutubePlayback(
-                    id = playbackId,
-                    thumbnailUrl = item.snippet.thumbnails.high.url,
-                    duration = Duration.parse(item.contentDetails.duration)
+                id = playbackId,
+                thumbnailUrl = item.snippet.thumbnails.high.url,
+                duration = Duration.parse(item.contentDetails.duration)
             ))
         }.toMap()
     }
 
     override fun removePlayback(playbackId: PlaybackId) {
     }
-
 }

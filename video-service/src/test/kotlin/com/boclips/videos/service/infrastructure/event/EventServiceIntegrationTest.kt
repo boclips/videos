@@ -109,7 +109,8 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun savePlaybackEvent(timestamp: ZonedDateTime, searchId: String?) {
-        eventService.saveEvent(PlaybackEvent(
+        eventService.saveEvent(
+            PlaybackEvent(
                 playerId = "player-id",
                 captureTime = timestamp,
                 searchId = searchId,
@@ -118,7 +119,8 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 videoDurationSeconds = 50,
                 videoId = "video-id",
                 user = User.anonymous()
-        ))
+            )
+        )
     }
 
     private fun saveNoSearchResultsEvent() {

@@ -38,7 +38,16 @@ class PlaybackRespositoryTest {
 
     @Test
     fun `skips when streams are not found for video`() {
-        assertThat(playbackRespository.find(listOf(PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")))).isEmpty()
+        assertThat(
+            playbackRespository.find(
+                listOf(
+                    PlaybackId(
+                        type = PlaybackProviderType.KALTURA,
+                        value = "ref-id-100"
+                    )
+                )
+            )
+        ).isEmpty()
     }
 
     @Test
@@ -60,5 +69,4 @@ class PlaybackRespositoryTest {
         assertThat(playbackRespository.find(listOf(playbackId))).isEmpty()
         assertThat(playbackRespository.find(listOf(youtubeVideo))).isNotNull
     }
-
 }

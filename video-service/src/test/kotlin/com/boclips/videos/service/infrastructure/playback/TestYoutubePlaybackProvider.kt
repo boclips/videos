@@ -11,11 +11,11 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
         return playbackIds
-                .mapNotNull map@{ id ->
-                    val youtubePlayback = playbackById[id] ?: return@map null
-                    (id to youtubePlayback)
-                }
-                .toMap()
+            .mapNotNull map@{ id ->
+                val youtubePlayback = playbackById[id] ?: return@map null
+                (id to youtubePlayback)
+            }
+            .toMap()
     }
 
     override fun removePlayback(playbackId: PlaybackId) {
@@ -25,9 +25,10 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
         val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = youtubeId)
 
         playbackById[playbackId] = YoutubePlayback(
-                id = playbackId,
-                thumbnailUrl = thumbnailUrl,
-                duration = duration)
+            id = playbackId,
+            thumbnailUrl = thumbnailUrl,
+            duration = duration
+        )
 
         return this
     }

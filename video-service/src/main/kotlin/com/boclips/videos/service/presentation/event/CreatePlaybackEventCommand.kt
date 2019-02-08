@@ -3,13 +3,13 @@ package com.boclips.videos.service.presentation.event
 import com.boclips.videos.service.application.event.InvalidEventException
 
 data class CreatePlaybackEventCommand(
-        val playerId: String?,
-        val videoId: String?,
-        val segmentStartSeconds: Long?,
-        val segmentEndSeconds: Long?,
-        val videoDurationSeconds: Long?,
-        val captureTime: String?,
-        val searchId: String?
+    val playerId: String?,
+    val videoId: String?,
+    val segmentStartSeconds: Long?,
+    val segmentEndSeconds: Long?,
+    val videoDurationSeconds: Long?,
+    val captureTime: String?,
+    val searchId: String?
 ) : EventCommand() {
     override fun isValidOrThrows() {
         if (this.playerId.isNullOrBlank()) throw InvalidEventException("playerId must be specified")

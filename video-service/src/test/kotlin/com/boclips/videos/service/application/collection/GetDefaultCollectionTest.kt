@@ -39,11 +39,13 @@ class GetDefaultCollectionTest {
     @Test
     fun `user has a collection`() {
         collectionService = mock {
-            on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(TestFactories.createCollection(
+            on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(
+                TestFactories.createCollection(
                     owner = "me@me.com",
                     title = "collection title",
                     videos = listOf(createVideo())
-            ))
+                )
+            )
         }
         val getDefaultCollection = GetDefaultCollection(collectionService, VideoToResourceConverter())
 

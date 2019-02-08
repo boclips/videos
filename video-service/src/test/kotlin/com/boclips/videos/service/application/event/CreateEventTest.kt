@@ -21,20 +21,20 @@ import org.springframework.security.core.context.SecurityContextImpl
 
 class CreateEventTest {
     val playbackEvent = CreatePlaybackEventCommand(
-            playerId = "player-id",
-            videoId = "v678",
-            segmentStartSeconds = 10,
-            segmentEndSeconds = 20,
-            videoDurationSeconds = 60,
-            captureTime = "2018-01-01T00:00:00.000Z",
-            searchId = "search-id"
+        playerId = "player-id",
+        videoId = "v678",
+        segmentStartSeconds = 10,
+        segmentEndSeconds = 20,
+        videoDurationSeconds = 60,
+        captureTime = "2018-01-01T00:00:00.000Z",
+        searchId = "search-id"
     )
 
     val noResultsEvent = CreateNoSearchResultsEventCommand(
-            name = "Hans",
-            email = "hi@there.com",
-            description = "none",
-            query = "animal"
+        name = "Hans",
+        email = "hi@there.com",
+        description = "none",
+        query = "animal"
     )
 
     lateinit var createEvent: CreateEvent
@@ -81,7 +81,14 @@ class CreateEventTest {
 
     @Test
     fun `extracts user data for no results event`() {
-        SecurityContextHolder.setContext(SecurityContextImpl(TestingAuthenticationToken(UserPrincipal("teacher@boclips.com"), null)))
+        SecurityContextHolder.setContext(
+            SecurityContextImpl(
+                TestingAuthenticationToken(
+                    UserPrincipal("teacher@boclips.com"),
+                    null
+                )
+            )
+        )
 
         createEvent(noResultsEvent)
 

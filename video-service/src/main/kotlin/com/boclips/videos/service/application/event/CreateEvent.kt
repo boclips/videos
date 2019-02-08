@@ -13,8 +13,8 @@ import mu.KLogging
 import java.time.ZonedDateTime
 
 class CreateEvent(
-        private val eventService: EventService,
-        private val emailClient: EmailClient
+    private val eventService: EventService,
+    private val emailClient: EmailClient
 ) {
     companion object : KLogging()
 
@@ -22,7 +22,8 @@ class CreateEvent(
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
 
-        eventService.saveEvent(PlaybackEvent(
+        eventService.saveEvent(
+            PlaybackEvent(
                 playerId = event.playerId!!,
                 videoId = event.videoId!!,
                 user = User.fromSecurityUser(UserExtractor.getCurrentUser()),
@@ -31,28 +32,33 @@ class CreateEvent(
                 videoDurationSeconds = event.videoDurationSeconds!!,
                 captureTime = extractZonedDateTime(event),
                 searchId = event.searchId
-        ))
+            )
+        )
     }
 
     operator fun invoke(event: CreateNoSearchResultsEventCommand?) {
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
 
-        eventService.saveEvent(NoSearchResultsEvent(
+        eventService.saveEvent(
+            NoSearchResultsEvent(
                 name = event.name,
                 email = event.email!!,
                 user = User.fromSecurityUser(UserExtractor.getCurrentUser()),
                 query = event.query!!,
                 description = event.description,
                 captureTime = ZonedDateTime.now()
-        ))
+            )
+        )
 
-        emailClient.send(NoResultsEmail(
+        emailClient.send(
+            NoResultsEmail(
                 name = event.name,
                 email = event.email,
                 query = event.query,
                 description = event.description
-        ))
+            )
+        )
     }
 
     private fun extractZonedDateTime(event: CreatePlaybackEventCommand): ZonedDateTime {

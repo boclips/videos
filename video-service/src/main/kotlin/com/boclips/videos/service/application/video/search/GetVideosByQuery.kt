@@ -9,21 +9,27 @@ import com.boclips.videos.service.presentation.video.VideosResource
 import mu.KLogging
 
 class GetVideosByQuery(
-        private val videoService: VideoService,
-        private val videoToResourceConverter: VideoToResourceConverter
+    private val videoService: VideoService,
+    private val videoToResourceConverter: VideoToResourceConverter
 ) {
     companion object : KLogging()
 
-    operator fun invoke(query: String, includeTags: List<String>, excludeTags: List<String>, pageSize: Int, pageNumber: Int): VideosResource {
+    operator fun invoke(
+        query: String,
+        includeTags: List<String>,
+        excludeTags: List<String>,
+        pageSize: Int,
+        pageNumber: Int
+    ): VideosResource {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
         val videoSearchQuery = VideoSearchQuery(
-                text = query,
-                pageIndex = pageNumber,
-                pageSize = pageSize,
-                includeTags = includeTags,
-                excludeTags = excludeTags
+            text = query,
+            pageIndex = pageNumber,
+            pageSize = pageSize,
+            includeTags = includeTags,
+            excludeTags = excludeTags
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
@@ -35,10 +41,10 @@ class GetVideosByQuery(
         val videoResources = videoToResourceConverter.convert(videos)
 
         return VideosResource(
-                videos = videoResources,
-                totalVideos = totalVideos,
-                pageNumber = pageNumber,
-                pageSize = pageSize
+            videos = videoResources,
+            totalVideos = totalVideos,
+            pageNumber = pageNumber,
+            pageSize = pageSize
         )
     }
 

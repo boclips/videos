@@ -6,10 +6,9 @@ import org.simplejavamail.email.EmailBuilder
 import org.simplejavamail.mailer.Mailer
 import org.springframework.core.env.Environment
 
-
 class EmailClient(
-        private val mailer: Mailer,
-        private val environment: Environment
+    private val mailer: Mailer,
+    private val environment: Environment
 ) {
     companion object : KLogging()
 
@@ -26,12 +25,12 @@ class EmailClient(
         val activeProfile = environment.activeProfiles.first()?.toUpperCase()
 
         return EmailBuilder
-                .startingBlank()
-                .to("logging@boclips.com")
-                .from("noreply@boclips.com")
-                .withSubject("$activeProfile: No search result event logged")
-                .withPlainText(email.toPlainText())
-                .withReplyTo("noreply", "noreply@boclips.com")
-                .buildEmail()
+            .startingBlank()
+            .to("logging@boclips.com")
+            .from("noreply@boclips.com")
+            .withSubject("$activeProfile: No search result event logged")
+            .withPlainText(email.toPlainText())
+            .withReplyTo("noreply", "noreply@boclips.com")
+            .buildEmail()
     }
 }

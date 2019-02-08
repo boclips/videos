@@ -23,35 +23,36 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ApplicationContext(
-        val videoService: VideoService,
-        val videoAssetRepository: VideoAssetRepository,
-        val searchService: SearchService,
-        val playbackRepository: PlaybackRespository,
-        val legacySearchService: LegacySearchService,
-        val collectionService: CollectionService,
-        val eventService: EventService) {
+    val videoService: VideoService,
+    val videoAssetRepository: VideoAssetRepository,
+    val searchService: SearchService,
+    val playbackRepository: PlaybackRespository,
+    val legacySearchService: LegacySearchService,
+    val collectionService: CollectionService,
+    val eventService: EventService
+) {
 
     @Bean
     fun searchVideo() = SearchVideo(
-            getVideoById(),
-            getAllVideosById(),
-            getVideosByQuery(),
-            videoAssetRepository
+        getVideoById(),
+        getAllVideosById(),
+        getVideosByQuery(),
+        videoAssetRepository
     )
 
     @Bean
     fun createVideo(
-            searchVideo: SearchVideo,
-            videoCounter: Counter
+        searchVideo: SearchVideo,
+        videoCounter: Counter
     ): CreateVideo {
         return CreateVideo(
-                videoAssetRepository,
-                searchVideo,
-                CreateVideoRequestToAssetConverter(),
-                searchService,
-                playbackRepository,
-                videoCounter,
-                legacySearchService
+            videoAssetRepository,
+            searchVideo,
+            CreateVideoRequestToAssetConverter(),
+            searchService,
+            playbackRepository,
+            videoCounter,
+            legacySearchService
         )
     }
 
@@ -61,8 +62,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun bulkUpdate(): BulkUpdate {
-        return BulkUpdate(videoAssetRepository, searchService, legacySearchService)
+    fun bulkUpdate(): BulkUpdateVideo {
+        return BulkUpdateVideo(videoAssetRepository, searchService, legacySearchService)
     }
 
     @Bean
@@ -96,22 +97,21 @@ class ApplicationContext(
     }
 
     private fun getVideoById() =
-            GetVideoById(
-                    videoService,
-                    videoToResourceConverter(),
-                    videoAssetRepository
-            )
+        GetVideoById(
+            videoService,
+            videoToResourceConverter()
+        )
 
     private fun getVideosByQuery() =
-            GetVideosByQuery(
-                    videoService,
-                    videoToResourceConverter()
-            )
+        GetVideosByQuery(
+            videoService,
+            videoToResourceConverter()
+        )
 
     private fun getAllVideosById(): GetAllVideosById {
         return GetAllVideosById(
-                videoService,
-                videoToResourceConverter()
+            videoService,
+            videoToResourceConverter()
         )
     }
 

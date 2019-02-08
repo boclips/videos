@@ -3,7 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.InMemorySearchService
-import com.boclips.videos.service.application.video.BulkUpdate
+import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
@@ -62,7 +62,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createVideo: CreateVideo
 
     @Autowired
-    lateinit var bulkUpdate: BulkUpdate
+    lateinit var bulkUpdateVideo: BulkUpdateVideo
 
     @Autowired
     lateinit var mongoClient: MongoClient
@@ -73,11 +73,11 @@ abstract class AbstractSpringIntegrationTest {
 
         mongoClient.apply {
             listDatabaseNames()
-                    .filterNot { setOf("admin", "config").contains(it) }
-                    .forEach {
-                        println("Dropping $it")
-                        dropDatabase(it)
-                    }
+                .filterNot { setOf("admin", "config").contains(it) }
+                .forEach {
+                    println("Dropping $it")
+                    dropDatabase(it)
+                }
         }
 
         fakeSearchService.safeRebuildIndex(emptySequence())
@@ -87,24 +87,36 @@ abstract class AbstractSpringIntegrationTest {
         reset(legacySearchService)
     }
 
-    fun saveVideo(playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-${UUID.randomUUID()}"),
-                  title: String = "Some title!",
-                  description: String = "Some description!",
-                  date: String = "2018-01-01",
-                  duration: Duration = Duration.ofSeconds(10),
-                  contentProvider: String = "AP",
-                  contentProviderId: String = "content-partner-video-id-${playbackId.value}",
-                  typeId: Int = 3,
-                  keywords: List<String> = emptyList(),
-                  subjects: Set<String> = emptySet(),
-                  searchable: Boolean = true
+    fun saveVideo(
+        playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-${UUID.randomUUID()}"),
+        title: String = "Some title!",
+        description: String = "Some description!",
+        date: String = "2018-01-01",
+        duration: Duration = Duration.ofSeconds(10),
+        contentProvider: String = "AP",
+        contentProviderId: String = "content-partner-video-id-${playbackId.value}",
+        typeId: Int = 3,
+        keywords: List<String> = emptyList(),
+        subjects: Set<String> = emptySet(),
+        searchable: Boolean = true
     ): AssetId {
         when (playbackId.type) {
-            KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-${playbackId.value}", referenceId = playbackId.value, duration = duration))
-            YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(playbackId.value, "https://youtube.com/thumb/${playbackId.value}.png", duration = duration)
+            KALTURA -> fakeKalturaClient.addMediaEntry(
+                createMediaEntry(
+                    id = "entry-${playbackId.value}",
+                    referenceId = playbackId.value,
+                    duration = duration
+                )
+            )
+            YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(
+                playbackId.value,
+                "https://youtube.com/thumb/${playbackId.value}.png",
+                duration = duration
+            )
         }
 
-        val id = createVideo(CreateVideoRequest(
+        val id = createVideo(
+            CreateVideoRequest(
                 provider = contentProvider,
                 providerVideoId = contentProviderId,
                 title = title,
@@ -118,13 +130,13 @@ abstract class AbstractSpringIntegrationTest {
                 playbackProvider = playbackId.type.name,
                 subjects = subjects,
                 searchable = searchable
-        )).id
+            )
+        ).id
 
         return AssetId(id!!)
     }
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {
-        bulkUpdate(BulkUpdateRequest(listOf(id), status))
+        bulkUpdateVideo(BulkUpdateRequest(listOf(id), status))
     }
-
 }

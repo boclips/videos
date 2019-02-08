@@ -13,15 +13,15 @@ class VideoAssetToLegacyVideoMetadataConverterTest {
     fun convert() {
         val videoAssetId = TestFactories.aValidId()
         val asset = TestFactories.createVideoAsset(
-                videoId = videoAssetId,
-                title = "the title",
-                description = "the description",
-                keywords = listOf("keyword"),
-                duration = Duration.ofSeconds(10),
-                contentProvider = "Reuters",
-                contentPartnerVideoId = "r001",
-                releasedOn = LocalDate.parse("2019-01-17"),
-                type = LegacyVideoType.TED_TALKS
+            videoId = videoAssetId,
+            title = "the title",
+            description = "the description",
+            keywords = listOf("keyword"),
+            duration = Duration.ofSeconds(10),
+            contentProvider = "Reuters",
+            contentPartnerVideoId = "r001",
+            releasedOn = LocalDate.parse("2019-01-17"),
+            type = LegacyVideoType.TED_TALKS
         )
 
         val legacyMetadata = VideoAssetToLegacyVideoMetadataConverter.convert(asset)

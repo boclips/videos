@@ -13,14 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-
 @Profile("testing", "test")
 @RestController
 @RequestMapping("/v1/e2e/actions")
 class E2EController(
-        private val legacySearchIndex: LegacySearchService,
-        private val searchService: SearchService,
-        private val mongoClient: MongoClient
+    private val legacySearchIndex: LegacySearchService,
+    private val searchService: SearchService,
+    private val mongoClient: MongoClient
 ) {
     companion object : KLogging()
 
@@ -54,5 +53,4 @@ class E2EController(
 
         return ResponseEntity(HttpStatus.OK)
     }
-
 }

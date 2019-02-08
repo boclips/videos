@@ -3,7 +3,6 @@ package com.boclips.videos.service.infrastructure.event.analysis
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-
 class DurationFormatterTest {
 
     @Test
