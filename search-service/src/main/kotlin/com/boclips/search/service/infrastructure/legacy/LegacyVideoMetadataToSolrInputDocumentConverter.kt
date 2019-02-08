@@ -15,7 +15,10 @@ object LegacyVideoMetadataToSolrInputDocumentConverter {
             addField("keywords", video.keywords.joinToString(separator = ", "))
             addField("duration", LegacyDurationFormatter.format(video.duration))
             addField("durationsecs", video.duration.seconds.toInt())
-            addField("clip_date", video.releaseDate.atStartOfDay().atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            addField(
+                "clip_date",
+                video.releaseDate.atStartOfDay().atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+            )
             addField("source", video.contentPartnerName)
             addField("unique_id", video.contentPartnerVideoId)
             addField("namespace", "${video.contentPartnerName}:${video.contentPartnerVideoId}")

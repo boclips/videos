@@ -6,5 +6,5 @@ import org.elasticsearch.search.SearchHit
 class ElasticSearchResultConverter {
 
     fun convert(searchHit: SearchHit): ElasticSearchVideo = ElasticObjectMapper.get()
-            .readValue(searchHit.sourceAsString)
+        .readValue(searchHit.sourceAsString)
 }

@@ -5,16 +5,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class TestSearchService(query: GenericSearchService, admin: GenericSearchServiceAdmin<VideoMetadata>)
-    : SearchServiceAdapter<String>(query, admin) {
+class TestSearchService(query: GenericSearchService, admin: GenericSearchServiceAdmin<VideoMetadata>) :
+    SearchServiceAdapter<String>(query, admin) {
     override fun convert(document: String): VideoMetadata {
         return VideoMetadata(
-                id = document.substring(0, 1).toUpperCase(),
-                title = document,
-                description = "",
-                contentProvider = "",
-                keywords = emptyList(),
-                tags = listOf("classroom")
+            id = document.substring(0, 1).toUpperCase(),
+            title = document,
+            description = "",
+            contentProvider = "",
+            keywords = emptyList(),
+            tags = listOf("classroom")
         )
     }
 }
@@ -67,6 +67,5 @@ class SearchServiceAdapterTest {
         searchService.removeFromSearch("H")
 
         assertThat(searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1))).isEmpty()
-
     }
 }

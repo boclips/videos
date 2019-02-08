@@ -17,20 +17,20 @@ abstract class EmbeddedElasticSearchIntegrationTest {
 
     companion object {
         val CONFIG = ElasticSearchConfig(
-                scheme = "http",
-                host = "localhost",
-                port = port,
-                username = "",
-                password = ""
+            scheme = "http",
+            host = "localhost",
+            port = port,
+            username = "",
+            password = ""
         )
 
         init {
             EmbeddedElastic.builder()
-                    .withElasticVersion(org.elasticsearch.Version.CURRENT.toString())
-                    .withSetting(PopularProperties.HTTP_PORT, port)
-                    .withStartTimeout(2, TimeUnit.MINUTES)
-                    .build()
-                    .start()
+                .withElasticVersion(org.elasticsearch.Version.CURRENT.toString())
+                .withSetting(PopularProperties.HTTP_PORT, port)
+                .withStartTimeout(2, TimeUnit.MINUTES)
+                .build()
+                .start()
         }
     }
 

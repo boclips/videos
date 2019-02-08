@@ -25,9 +25,8 @@ class SolrSearchServiceIntegrationTest {
         val containerPort = 8983
 
         var solrServer = KGenericContainer("boclipsconcourse/solr:0.33.0")
-                .withExposedPorts(containerPort)
-                .withLogConsumer { frame -> if (frame.bytes != null) print("SOLR: " + String(frame.bytes)) }
-
+            .withExposedPorts(containerPort)
+            .withLogConsumer { frame -> if (frame.bytes != null) print("SOLR: " + String(frame.bytes)) }
 
         fun getPort(): Int {
             return solrServer.getMappedPort(containerPort)
@@ -67,11 +66,13 @@ class SolrSearchServiceIntegrationTest {
 
     @Test
     fun `upsert a video`() {
-        solrSearchService.upsert(sequenceOf(
+        solrSearchService.upsert(
+            sequenceOf(
                 LegacyVideoMetadataFactory.create(id = "1"),
                 LegacyVideoMetadataFactory.create(id = "2"),
                 LegacyVideoMetadataFactory.create(id = "3")
-        ))
+            )
+        )
 
         val results = solrSearchService.search(PaginatedSearchRequest(Query(ids = listOf("1", "2", "5"))))
         assertThat(results).containsExactlyInAnyOrder("1", "2")
@@ -90,8 +91,8 @@ class SolrSearchServiceIntegrationTest {
     @Test
     fun `throws when video does not exist for deletion`() {
         assertThatThrownBy { solrSearchService.removeFromSearch(videoId = "10") }
-                .isInstanceOf(SolrDocumentNotFound::class.java)
-                .hasMessage("Video 10 not found")
+            .isInstanceOf(SolrDocumentNotFound::class.java)
+            .hasMessage("Video 10 not found")
     }
 
     @Test
@@ -99,6 +100,6 @@ class SolrSearchServiceIntegrationTest {
         solrServer.stop()
 
         assertThatThrownBy { solrSearchService.removeFromSearch(videoId = "10") }
-                .isInstanceOf(SolrException::class.java)
+            .isInstanceOf(SolrException::class.java)
     }
 }

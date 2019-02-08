@@ -24,10 +24,10 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
 
     override fun upsert(videos: Sequence<LegacyVideoMetadata>, notifier: ProgressNotifier?) {
         videos.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
-                .forEachIndexed { batchIndex, videoBatch ->
-                    notifier?.send("Starting batch $batchIndex")
-                    this.upsertBatch(batchIndex, videoBatch)
-                }
+            .forEachIndexed { batchIndex, videoBatch ->
+                notifier?.send("Starting batch $batchIndex")
+                this.upsertBatch(batchIndex, videoBatch)
+            }
         notifier?.complete()
     }
 
@@ -52,11 +52,11 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
 
     override fun removeFromSearch(videoId: String) {
         fun <T> runAndThrow(f: () -> T): T =
-                try {
-                    f()
-                } catch (ex: Exception) {
-                    throw SolrException(ex)
-                }
+            try {
+                f()
+            } catch (ex: Exception) {
+                throw SolrException(ex)
+            }
 
         runAndThrow { client.getById(videoId) } ?: throw SolrDocumentNotFound(videoId)
         runAndThrow {

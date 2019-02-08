@@ -63,12 +63,15 @@ class ElasticSearchServiceAdminTest : EmbeddedElasticSearchIntegrationTest() {
         val credentialsProvider = BasicCredentialsProvider()
         credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(config.username, config.password))
 
-        return RestClient.builder(HttpHost(config.host, config.port, config.scheme)).setHttpClientConfigCallback { httpClientBuilder ->
-            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-        }
+        return RestClient.builder(HttpHost(config.host, config.port, config.scheme))
+            .setHttpClientConfigCallback { httpClientBuilder ->
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+            }
     }
 
-    private fun getCurrentIndices() = client.indices().get(GetIndexRequest().indices("video*"), RequestOptions.DEFAULT).indices
+    private fun getCurrentIndices() =
+        client.indices().get(GetIndexRequest().indices("video*"), RequestOptions.DEFAULT).indices
 
-    private fun getAliases() = client.indices().getAlias(GetAliasesRequest(ElasticSearchIndex.ES_INDEX_ALIAS), RequestOptions.DEFAULT)
+    private fun getAliases() =
+        client.indices().getAlias(GetAliasesRequest(ElasticSearchIndex.ES_INDEX_ALIAS), RequestOptions.DEFAULT)
 }

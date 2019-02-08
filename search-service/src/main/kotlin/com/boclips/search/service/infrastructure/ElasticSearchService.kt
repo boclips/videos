@@ -33,16 +33,17 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         val credentialsProvider = BasicCredentialsProvider()
         credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(config.username, config.password))
 
-        val builder = RestClient.builder(HttpHost(config.host, config.port, config.scheme)).setHttpClientConfigCallback { httpClientBuilder ->
-            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-        }
+        val builder = RestClient.builder(HttpHost(config.host, config.port, config.scheme))
+            .setHttpClientConfigCallback { httpClientBuilder ->
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+            }
         client = RestHighLevelClient(builder)
     }
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {
         return searchElasticSearch(searchRequest)
-                .map(elasticSearchResultConverter::convert)
-                .map { it.id }
+            .map(elasticSearchResultConverter::convert)
+            .map { it.id }
     }
 
     override fun count(query: Query): Long {
@@ -60,58 +61,70 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
     private fun buildFuzzyRequest(searchRequest: PaginatedSearchRequest): SearchRequest {
         val findMatchesQuery = QueryBuilders
-                .multiMatchQuery(
-                        searchRequest.query.phrase,
-                        ElasticSearchVideo.TITLE,
-                        "${ElasticSearchVideo.TITLE}.std",
-                        ElasticSearchVideo.DESCRIPTION,
-                        "${ElasticSearchVideo.DESCRIPTION}.std",
-                        ElasticSearchVideo.CONTENT_PROVIDER,
-                        ElasticSearchVideo.KEYWORDS
-                )
-                .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                .minimumShouldMatch("75%")
-                .fuzziness(Fuzziness.ZERO)
+            .multiMatchQuery(
+                searchRequest.query.phrase,
+                ElasticSearchVideo.TITLE,
+                "${ElasticSearchVideo.TITLE}.std",
+                ElasticSearchVideo.DESCRIPTION,
+                "${ElasticSearchVideo.DESCRIPTION}.std",
+                ElasticSearchVideo.CONTENT_PROVIDER,
+                ElasticSearchVideo.KEYWORDS
+            )
+            .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+            .minimumShouldMatch("75%")
+            .fuzziness(Fuzziness.ZERO)
 
         val filters = searchRequest.query.includeTags
-                .fold(QueryBuilders.boolQuery()) { acc: BoolQueryBuilder, term: String ->
-                    acc.must(QueryBuilders.termQuery(ElasticSearchVideo.TAGS, term))
-                }
+            .fold(QueryBuilders.boolQuery()) { acc: BoolQueryBuilder, term: String ->
+                acc.must(QueryBuilders.termQuery(ElasticSearchVideo.TAGS, term))
+            }
 
         val allMatchesQuery = QueryBuilders
-                .boolQuery()
-                .must(findMatchesQuery)
-                .should(QueryBuilders.matchPhraseQuery(ElasticSearchVideo.TITLE, searchRequest.query.phrase))
-                .should(QueryBuilders.matchPhraseQuery(ElasticSearchVideo.DESCRIPTION, searchRequest.query.phrase))
-                .should(QueryBuilders.matchQuery(ElasticSearchVideo.CONTENT_PROVIDER, searchRequest.query.phrase).boost(2.0F))
-                .mustNot(QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.excludeTags))
-                .filter(filters)
+            .boolQuery()
+            .must(findMatchesQuery)
+            .should(QueryBuilders.matchPhraseQuery(ElasticSearchVideo.TITLE, searchRequest.query.phrase))
+            .should(QueryBuilders.matchPhraseQuery(ElasticSearchVideo.DESCRIPTION, searchRequest.query.phrase))
+            .should(
+                QueryBuilders.matchQuery(
+                    ElasticSearchVideo.CONTENT_PROVIDER,
+                    searchRequest.query.phrase
+                ).boost(2.0F)
+            )
+            .mustNot(QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, searchRequest.query.excludeTags))
+            .filter(filters)
 
-        val rescoreQuery = QueryBuilders.multiMatchQuery(searchRequest.query.phrase, "title.$FIELD_DESCRIPTOR_SHINGLES", "description.$FIELD_DESCRIPTOR_SHINGLES")
-                .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+        val rescoreQuery = QueryBuilders.multiMatchQuery(
+            searchRequest.query.phrase,
+            "title.$FIELD_DESCRIPTOR_SHINGLES",
+            "description.$FIELD_DESCRIPTOR_SHINGLES"
+        )
+            .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
 
         val rescorer = QueryRescorerBuilder(rescoreQuery)
-                .windowSize(100)
-                .setScoreMode(QueryRescoreMode.Total)
+            .windowSize(100)
+            .setScoreMode(QueryRescoreMode.Total)
 
-        return SearchRequest(arrayOf(ElasticSearchIndex.ES_INDEX_ALIAS),
-                SearchSourceBuilder()
-                        .query(allMatchesQuery)
-                        .from(searchRequest.startIndex)
-                        .size(searchRequest.windowSize)
-                        .addRescorer(rescorer))
+        return SearchRequest(
+            arrayOf(ElasticSearchIndex.ES_INDEX_ALIAS),
+            SearchSourceBuilder()
+                .query(allMatchesQuery)
+                .from(searchRequest.startIndex)
+                .size(searchRequest.windowSize)
+                .addRescorer(rescorer)
+        )
     }
 
     private fun buildIdLookupRequest(searchRequest: PaginatedSearchRequest): SearchRequest {
         val findMatchesById = QueryBuilders.idsQuery().addIds(*(searchRequest.query.ids.toTypedArray()))
         val query = QueryBuilders.boolQuery().should(findMatchesById)
 
-        return SearchRequest(arrayOf(ElasticSearchIndex.ES_INDEX_ALIAS),
-                SearchSourceBuilder()
-                        .query(query)
-                        .from(searchRequest.startIndex)
-                        .size(searchRequest.windowSize))
-
+        return SearchRequest(
+            arrayOf(ElasticSearchIndex.ES_INDEX_ALIAS),
+            SearchSourceBuilder()
+                .query(query)
+                .from(searchRequest.startIndex)
+                .size(searchRequest.windowSize)
+        )
     }
 
     private fun isIdLookup(searchRequest: PaginatedSearchRequest) = searchRequest.query.ids.isNotEmpty()

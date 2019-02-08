@@ -35,9 +35,10 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         val credentialsProvider = BasicCredentialsProvider()
         credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(config.username, config.password))
 
-        val builder = RestClient.builder(HttpHost(config.host, config.port, config.scheme)).setHttpClientConfigCallback { httpClientBuilder ->
-            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-        }
+        val builder = RestClient.builder(HttpHost(config.host, config.port, config.scheme))
+            .setHttpClientConfigCallback { httpClientBuilder ->
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+            }
         client = RestHighLevelClient(builder)
     }
 
@@ -70,17 +71,18 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     }
 
     private fun upsertToIndex(videos: Sequence<VideoMetadata>, indexName: String, notifier: ProgressNotifier? = null) {
-        videos.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true).forEachIndexed { idx, batch ->
-            notifier?.send("Starting upsert batch $idx")
-            this.upsertBatch(idx, batch, indexName)
-        }
+        videos.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+            .forEachIndexed { idx, batch ->
+                notifier?.send("Starting upsert batch $idx")
+                this.upsertBatch(idx, batch, indexName)
+            }
     }
 
     private fun createIndex(indexName: String) {
         val indexConfiguration = IndexConfiguration()
         val createIndexRequest = CreateIndexRequest(indexName)
-                .settings(indexConfiguration.generateIndexSettings())
-                .mapping("asset", indexConfiguration.generateVideoMapping())
+            .settings(indexConfiguration.generateIndexSettings())
+            .mapping("asset", indexConfiguration.generateVideoMapping())
 
         logger.info("Creating index $indexName")
         client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
@@ -89,11 +91,11 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     private fun switchAliasToIndex(indexName: String, alias: String) {
         val request = IndicesAliasesRequest()
         val removeAliases = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.REMOVE)
-                .indices(ElasticSearchIndex.ES_INDEX_WILDCARD)
-                .alias(alias)
+            .indices(ElasticSearchIndex.ES_INDEX_WILDCARD)
+            .alias(alias)
         val addAliases = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.ADD)
-                .index(indexName)
-                .alias(alias)
+            .index(indexName)
+            .alias(alias)
 
         request.addAliasAction(removeAliases)
         request.addAliasAction(addAliases)
@@ -116,10 +118,10 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }
 
         val request = videos
-                .map { indexRequest(it, indexName) }
-                .fold(BulkRequest()) { bulkRequest, indexRequest ->
-                    bulkRequest.add(indexRequest)
-                }
+            .map { indexRequest(it, indexName) }
+            .fold(BulkRequest()) { bulkRequest, indexRequest ->
+                bulkRequest.add(indexRequest)
+            }
 
         request.timeout(TimeValue.timeValueMinutes(2))
         request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
@@ -133,18 +135,21 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     }
 
     private fun indexRequest(video: VideoMetadata, indexName: String): IndexRequest {
-        val document = ElasticObjectMapper.get().writeValueAsString(ElasticSearchVideo(
+        val document = ElasticObjectMapper.get().writeValueAsString(
+            ElasticSearchVideo(
                 id = video.id,
                 title = video.title,
                 description = video.description,
                 contentProvider = video.contentProvider,
                 keywords = video.keywords,
                 tags = video.tags
-        ))
+            )
+        )
 
         return IndexRequest(indexName, ES_TYPE, video.id)
-                .source(document, XContentType.JSON)
+            .source(document, XContentType.JSON)
     }
 
-    private fun indexExists(index: String) = client.indices().exists(GetIndexRequest().indices(index), RequestOptions.DEFAULT)
+    private fun indexExists(index: String) =
+        client.indices().exists(GetIndexRequest().indices(index), RequestOptions.DEFAULT)
 }

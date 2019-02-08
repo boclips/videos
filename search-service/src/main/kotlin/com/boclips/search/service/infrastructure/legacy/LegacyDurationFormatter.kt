@@ -13,7 +13,6 @@ object LegacyDurationFormatter {
     }
 
     private fun format(value: Long): Any {
-        return if(value < 10) "0$value" else value
+        return if (value < 10) "0$value" else value
     }
-
 }

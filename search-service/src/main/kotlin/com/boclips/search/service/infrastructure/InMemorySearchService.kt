@@ -8,27 +8,27 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
     override fun count(query: Query): Long = idsMatching(query).size.toLong()
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> = idsMatching(searchRequest.query)
-            .drop(searchRequest.startIndex)
-            .take(searchRequest.windowSize)
+        .drop(searchRequest.startIndex)
+        .take(searchRequest.windowSize)
 
     private fun idsMatching(query: Query): List<String> {
         val (phrase, ids) = query
         return when {
             !ids.isEmpty() -> index.filter { ids.contains(it.key) }
-                    .map { video -> video.key }
+                .map { video -> video.key }
             else -> index
-                    .filter { entry ->
-                        entry.value.title.contains(phrase!!, ignoreCase = true)
-                                || entry.value.description.contains(phrase, ignoreCase = true)
-                                || entry.value.contentProvider.contains(phrase, ignoreCase = true)
-                    }
-                    .filter { entry ->
-                        entry.value.tags.containsAll(query.includeTags)
-                    }
-                    .filter { entry ->
-                        entry.value.tags.none { query.excludeTags.contains(it) }
-                    }
-                    .map { video -> video.key }
+                .filter { entry ->
+                    entry.value.title.contains(phrase!!, ignoreCase = true)
+                        || entry.value.description.contains(phrase, ignoreCase = true)
+                        || entry.value.contentProvider.contains(phrase, ignoreCase = true)
+                }
+                .filter { entry ->
+                    entry.value.tags.containsAll(query.includeTags)
+                }
+                .filter { entry ->
+                    entry.value.tags.none { query.excludeTags.contains(it) }
+                }
+                .map { video -> video.key }
         }
     }
 

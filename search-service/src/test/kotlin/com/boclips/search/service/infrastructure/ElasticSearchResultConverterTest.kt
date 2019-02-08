@@ -11,7 +11,9 @@ class ElasticSearchResultConverterTest {
 
     @Test
     fun `convert search hit`() {
-        val searchHit = SearchHit(14).sourceRef(BytesArray("""
+        val searchHit = SearchHit(14).sourceRef(
+            BytesArray(
+                """
             {
                 "id": "14",
                 "title": "The title",
@@ -23,18 +25,21 @@ class ElasticSearchResultConverterTest {
                 "keywords": ["k1","k2"],
                 "tags": ["news", "classroom"]
             }
-        """.trimIndent()))
+        """.trimIndent()
+            )
+        )
 
         val video = elasticSearchResultConverter.convert(searchHit)
 
-        assertThat(video).isEqualTo(ElasticSearchVideo(
+        assertThat(video).isEqualTo(
+            ElasticSearchVideo(
                 id = "14",
                 title = "The title",
                 description = "The description",
                 contentProvider = "TED Talks",
                 keywords = listOf("k1", "k2"),
                 tags = listOf("news", "classroom")
-        ))
+            )
+        )
     }
-
 }
