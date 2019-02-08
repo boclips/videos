@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 class NoSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
-                .csrf().disable()
-                .authorizeRequests().anyRequest().permitAll()
+            .csrf().disable()
+            .authorizeRequests().anyRequest().permitAll()
     }
 }

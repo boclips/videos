@@ -20,7 +20,7 @@ public class Link {
     public Link interpolate(Map<String, Object> params) {
         var newHref = href;
 
-        for(Map.Entry<String, Object> keyValue : params.entrySet()) {
+        for (Map.Entry<String, Object> keyValue : params.entrySet()) {
             val valueToReplace = String.format("{%s}", keyValue.getKey());
             val valueToInsert = keyValue.getValue();
             newHref = newHref.replace(valueToReplace, valueToInsert.toString());

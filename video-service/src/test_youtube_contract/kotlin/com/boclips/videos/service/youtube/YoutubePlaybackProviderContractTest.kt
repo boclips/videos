@@ -17,7 +17,6 @@ import java.io.InputStream
 import java.time.Duration
 import java.util.stream.Stream
 
-
 class YoutubePlaybackProviderContractTest {
     @ParameterizedTest
     @ArgumentsSource(PlaybackProviderArgumentProvider::class)
@@ -56,12 +55,16 @@ class YoutubePlaybackProviderContractTest {
 class PlaybackProviderArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
         val testYoutubePlaybackProvider = TestYoutubePlaybackProvider()
-                .addVideo("4IYDb6K5UF8", "https://i.ytimg.com/vi/4IYDb6K5UF8/hqdefault.jpg", Duration.ofMinutes(1).plusSeconds(59))
+            .addVideo(
+                "4IYDb6K5UF8",
+                "https://i.ytimg.com/vi/4IYDb6K5UF8/hqdefault.jpg",
+                Duration.ofMinutes(1).plusSeconds(59)
+            )
         val realYoutubePlaybackProvider = YoutubePlaybackProvider(readYoutubeApiKeyFromConf())
 
         return Stream.of(
-                testYoutubePlaybackProvider,
-                realYoutubePlaybackProvider
+            testYoutubePlaybackProvider,
+            realYoutubePlaybackProvider
         ).map { playbackProvider -> Arguments.of(playbackProvider) }
     }
 }
@@ -75,8 +78,8 @@ private fun readYoutubeApiKeyFromConf(): String {
 
     val yaml = Yaml()
     val inputStream: InputStream =
-            YoutubePlaybackProviderContractTest::javaClass.javaClass.classLoader
-                    .getResourceAsStream("contract-test-setup.yml")
+        YoutubePlaybackProviderContractTest::javaClass.javaClass.classLoader
+            .getResourceAsStream("contract-test-setup.yml")
 
     val apiKey = yaml.load<Map<String, String>>(inputStream)[key]!!
     inputStream.close()

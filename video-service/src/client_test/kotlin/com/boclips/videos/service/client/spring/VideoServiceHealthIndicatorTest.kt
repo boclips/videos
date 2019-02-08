@@ -10,7 +10,6 @@ import org.springframework.boot.actuate.health.Status
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 
-
 internal class VideoServiceHealthIndicatorTest {
 
     val videoServiceClient = mock<VideoServiceClient>()
@@ -32,7 +31,11 @@ internal class VideoServiceHealthIndicatorTest {
 
     @Test
     fun `exception means unhealthy`() {
-        whenever(videoServiceClient.existsByContentPartnerInfo(any(), any())).thenThrow(HttpClientErrorException(HttpStatus.BAD_REQUEST))
+        whenever(videoServiceClient.existsByContentPartnerInfo(any(), any())).thenThrow(
+            HttpClientErrorException(
+                HttpStatus.BAD_REQUEST
+            )
+        )
 
         assertThat(subject.health().status).isEqualTo(Status.DOWN)
     }

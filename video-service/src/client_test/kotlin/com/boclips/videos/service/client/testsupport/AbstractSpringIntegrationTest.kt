@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
 
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
 )
 @ContextConfiguration(classes = [VideoServiceApplication::class])
 @ExtendWith(SpringExtension::class)
@@ -42,43 +42,52 @@ abstract class AbstractSpringIntegrationTest {
     fun resetState() {
         mongoClient.apply {
             listDatabaseNames()
-                    .filterNot { setOf("admin", "config").contains(it) }
-                    .forEach {
-                        println("Dropping $it")
-                        dropDatabase(it)
-                    }
+                .filterNot { setOf("admin", "config").contains(it) }
+                .forEach {
+                    println("Dropping $it")
+                    dropDatabase(it)
+                }
         }
 
         fakeSearchService.safeRebuildIndex(emptySequence())
         fakeKalturaClient.clear()
     }
 
-    fun saveVideo(videoId: Long,
-                  playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-$videoId"),
-                  title: String = "Some title!",
-                  description: String = "Some description!",
-                  date: String = "2018-01-01",
-                  duration: Duration = Duration.ofSeconds(10),
-                  contentProvider: String = "AP",
-                  contentProviderId: String = "provider-id-$videoId",
-                  typeId: Int = 3,
-                  keywords: List<String> = emptyList()
+    fun saveVideo(
+        videoId: Long,
+        playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-$videoId"),
+        title: String = "Some title!",
+        description: String = "Some description!",
+        date: String = "2018-01-01",
+        duration: Duration = Duration.ofSeconds(10),
+        contentProvider: String = "AP",
+        contentProviderId: String = "provider-id-$videoId",
+        typeId: Int = 3,
+        keywords: List<String> = emptyList()
     ) {
-        fakeSearchService.upsert(sequenceOf(VideoMetadata(
-                id = videoId.toString(),
-                title = title,
-                description = description,
-                contentProvider = contentProvider,
-                keywords = emptyList(),
-                tags = listOf("classroom")
-        )))
+        fakeSearchService.upsert(
+            sequenceOf(
+                VideoMetadata(
+                    id = videoId.toString(),
+                    title = title,
+                    description = description,
+                    contentProvider = contentProvider,
+                    keywords = emptyList(),
+                    tags = listOf("classroom")
+                )
+            )
+        )
 
         when (playbackId.type) {
-            KALTURA -> fakeKalturaClient.addMediaEntry(createMediaEntry(id = "entry-$videoId", referenceId = playbackId.value, duration = duration))
+            KALTURA -> fakeKalturaClient.addMediaEntry(
+                createMediaEntry(
+                    id = "entry-$videoId",
+                    referenceId = playbackId.value,
+                    duration = duration
+                )
+            )
             else -> {
             }
         }
     }
-
-
 }

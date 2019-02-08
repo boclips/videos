@@ -15,6 +15,4 @@ class LinkTest {
 
         assertThat(interpolatedLink.href).isEqualTo("http://boclips.com/video/123/456")
     }
-
-
 }

@@ -33,6 +33,7 @@ public interface VideoServiceClient {
         OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(credentials);
         return new ApiClient(baseUrl, restTemplate);
     }
+
     static VideoServiceClient getUnauthorisedApiClient(String baseUrl) {
         return new ApiClient(baseUrl, new RestTemplate());
     }
