@@ -1,5 +1,0 @@
-src/main/resources/application-*.yml
-/build/
-/out/
-
-.DS_Store
