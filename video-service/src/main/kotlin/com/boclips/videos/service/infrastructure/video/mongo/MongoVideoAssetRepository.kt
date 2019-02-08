@@ -98,16 +98,6 @@ class MongoVideoAssetRepository(
         return assetId
     }
 
-    override fun resolveId(assetId: AssetId): String? {
-        val alias = getVideoCollection().find(eq(ObjectId(assetId.value)))
-                .firstOrNull()
-                ?.getString("aliases")
-
-        logger.info { "Attempted to resolve alias $alias to $assetId" }
-
-        return alias
-    }
-
     override fun disableFromSearch(assetIds: List<AssetId>) {
         val mongoIds = assetIds.map { ObjectId(it.value) }
         getVideoCollection().updateMany(`in`("_id", mongoIds),
