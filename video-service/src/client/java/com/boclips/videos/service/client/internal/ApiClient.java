@@ -36,7 +36,7 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public VideoId create(CreateVideoRequest request) {
         try {
-            val uri = restTemplate.postForLocation(String.format("%s/v1/videos", baseUrl), request, String.class);
+            val uri = restTemplate.postForLocation(baseUrl + "/v1/videos", request);
             return new VideoId(uri);
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().equals(CONFLICT)) {
@@ -51,7 +51,7 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public Boolean existsByContentPartnerInfo(String contentPartnerId, String contentPartnerVideoId) {
         try {
-            restTemplate.headForHeaders(String.format("%s/v1/content-partners/%s/videos/%s", baseUrl, contentPartnerId, contentPartnerVideoId));
+            restTemplate.headForHeaders(baseUrl + "/v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}", contentPartnerId, contentPartnerVideoId);
             return true;
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == NOT_FOUND) {
@@ -87,8 +87,7 @@ public class ApiClient implements VideoServiceClient {
     @SneakyThrows
     public VideoId rawIdToVideoId(String rawId) {
         if (linkTemplate == null) {
-            val linksUrl = String.format("%s/v1", baseUrl);
-            val links = restTemplate.getForObject(linksUrl, LinksResource.class);
+            val links = restTemplate.getForObject(baseUrl + "/v1", LinksResource.class);
             linkTemplate = links.get_links().getVideo();
         }
         val params = new HashMap<String, Object>();

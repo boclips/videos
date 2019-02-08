@@ -79,6 +79,18 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
     }
 
     @Test
+    fun `lookup video by content partner id with URL reserved chars`() {
+        val request = TestFactories.createCreateVideoRequest(
+                contentProviderId = "irrelevant",
+                contentProviderVideoId = "?#&SP-123",
+                playbackId = "ref-id-123")
+
+        getClient().create(request)
+
+        assertThat(getClient().existsByContentPartnerInfo("irrelevant", "?#&SP-123")).isTrue()
+    }
+
+    @Test
     fun `tag videos with subjects`() {
         val id = getClient().create(TestFactories.createCreateVideoRequest(contentProviderId = "ted", contentProviderVideoId = "123", playbackId = "ref-id-123"))
 
