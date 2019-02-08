@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# This assumes you have provisioned the machine
+ktlint --apply-to-idea-project
