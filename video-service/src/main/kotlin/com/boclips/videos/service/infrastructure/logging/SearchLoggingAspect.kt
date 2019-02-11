@@ -51,30 +51,22 @@ class SearchLoggingAspect(
 class SearchLogger(
     private val eventService: EventService
 ) {
-    companion object {
-        const val X_CORRELATION_ID = "X-Correlation-ID"
-    }
-
     fun logSearch(
         response: Resources<*>,
         currentRequest: HttpServletRequest?,
         user: User,
         query: String
     ): ResponseEntity<Resources<*>> {
-        val correlationId = currentRequest?.getHeader(X_CORRELATION_ID) ?: UUID.randomUUID().toString()
-
         eventService.saveEvent(
             SearchEvent(
                 timestamp = ZonedDateTime.now(),
-                correlationId = correlationId,
                 query = query,
+                page = 0,
                 resultsReturned = response.content.size,
                 user = user
             )
         )
 
-        val headers = HttpHeaders()
-        headers[X_CORRELATION_ID] = correlationId
-        return ResponseEntity(response, headers, HttpStatus.OK)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 }

@@ -3,20 +3,20 @@ package com.boclips.videos.service.infrastructure.event.types
 import java.time.ZonedDateTime
 
 data class SearchEventData(
-    val searchId: String,
     val query: String,
+    val page: Int,
     val resultsReturned: Int
 )
 
 class SearchEvent(
     timestamp: ZonedDateTime,
-    correlationId: String,
     user: User,
+    page: Int,
     query: String,
     resultsReturned: Int
 ) : Event<SearchEventData>(
     EventType.SEARCH.name,
     timestamp,
     user,
-    SearchEventData(correlationId, query, resultsReturned)
+    SearchEventData(query, page, resultsReturned)
 )

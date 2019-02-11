@@ -18,49 +18,4 @@ class EventEntityTest {
 
         assertThat(EventEntity.fromEvent(event).timestamp).isEqualTo(LocalDateTime.of(2018, 1, 1, 0, 0, 0))
     }
-
-    @Test
-    fun `SearchEvents can be round-tripped through Mongo`() {
-        val searchEvent = TestFactories.createSearchEvent()
-
-        val entity = EventEntity.fromEvent(searchEvent)
-
-        assertThat(entity.toEvent()).isEqualToComparingFieldByField(searchEvent)
-    }
-
-    @Test
-    fun `PlaybackEvents can be round-tripped through Mongo`() {
-        val playbackEvent = TestFactories.createPlaybackEvent()
-
-        val entity = EventEntity.fromEvent(playbackEvent)
-
-        assertThat(entity.toEvent()).isEqualToComparingFieldByField(playbackEvent)
-    }
-
-    @Test
-    fun `NoSearchResultsEvents can be round-tripped through Mongo`() {
-        val noSearchResultsEvent = TestFactories.createNoSearchResultsEvent()
-
-        val entity = EventEntity.fromEvent(noSearchResultsEvent)
-
-        assertThat(entity.toEvent()).isEqualToComparingFieldByField(noSearchResultsEvent)
-    }
-
-    @Test
-    fun `AddToCollectionEvents can be round-tripped through Mongo`() {
-        val event = TestFactories.createAddToCollectionEvent()
-
-        val entity = EventEntity.fromEvent(event)
-
-        assertThat(entity.toEvent()).isEqualToComparingFieldByField(event)
-    }
-
-    @Test
-    fun `RemoveFromCollectionEvents can be round-tripped through Mongo`() {
-        val event = TestFactories.createRemoveFromCollectionEvent()
-
-        val entity = EventEntity.fromEvent(event)
-
-        assertThat(entity.toEvent()).isEqualToComparingFieldByField(event)
-    }
 }

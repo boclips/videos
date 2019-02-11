@@ -87,16 +87,6 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(status.latestPlaybackStandalone).isNull()
     }
 
-    @Test
-    fun `returns no search results events`() {
-        saveNoSearchResultsEvent()
-        savePlaybackEvent(ZonedDateTime.now(), "e01")
-
-        val events = eventService.getNoSearchResultsEvents()
-
-        assertThat(events).hasSize(1)
-    }
-
     private fun savePlaybackEvent(timestamp: ZonedDateTime, searchId: String?) {
         eventService.saveEvent(
             PlaybackEvent(
@@ -117,6 +107,6 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun saveSearchEvent(timestamp: ZonedDateTime) {
-        eventService.saveEvent(SearchEvent(timestamp, "e01", User.anonymous(), "brownie", 9))
+        eventService.saveEvent(SearchEvent(timestamp, User.anonymous(), 1, "brownie", 9))
     }
 }

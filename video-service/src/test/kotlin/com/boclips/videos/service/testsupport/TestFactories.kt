@@ -24,34 +24,14 @@ object TestFactories {
 
     fun createSearchEvent(
         timestamp: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
-        searchId: String = "search-id",
         query: String = "muscles",
         resultsReturned: Int = 10
     ) = SearchEvent(
         timestamp = timestamp,
-        correlationId = searchId,
         user = User.anonymous(),
         query = query,
+        page = 1,
         resultsReturned = resultsReturned
-    )
-
-    fun createPlaybackEvent(
-        playerId: String = "player-id",
-        videoId: String = "asset-id",
-        segmentStartSeconds: Long = 0,
-        segmentEndSeconds: Long = 30,
-        videoDurationSeconds: Long = 60,
-        captureTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
-        searchId: String? = null
-    ) = PlaybackEvent(
-        playerId = playerId,
-        videoId = videoId,
-        segmentStartSeconds = segmentStartSeconds,
-        segmentEndSeconds = segmentEndSeconds,
-        videoDurationSeconds = videoDurationSeconds,
-        captureTime = captureTime,
-        searchId = searchId,
-        user = User.anonymous()
     )
 
     fun createNoSearchResultsEvent(
@@ -64,28 +44,6 @@ object TestFactories {
             description = "description",
             captureTime = captureTime,
             user = User.anonymous()
-        )
-    }
-
-    fun createAddToCollectionEvent(
-        captureTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)
-    ): Event<*> {
-        return AddToCollectionEvent(
-            timestamp = captureTime,
-            user = User.anonymous(),
-            videoId = "video-id",
-            collectionId = "collection-id"
-        )
-    }
-
-    fun createRemoveFromCollectionEvent(
-        captureTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)
-    ): Event<*> {
-        return RemoveFromCollectionEvent(
-            timestamp = captureTime,
-            user = User.anonymous(),
-            videoId = "video-id",
-            collectionId = "collection-id"
         )
     }
 

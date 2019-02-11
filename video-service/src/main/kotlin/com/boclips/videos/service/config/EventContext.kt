@@ -2,7 +2,6 @@ package com.boclips.videos.service.config
 
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
-import com.boclips.videos.service.application.event.GetEvent
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
@@ -31,11 +30,6 @@ class EventContext {
             eventService = eventService,
             emailClient = emailClient
         )
-    }
-
-    @Bean
-    fun getEvent(eventService: EventService): GetEvent {
-        return GetEvent(eventService = eventService)
     }
 
     @Bean

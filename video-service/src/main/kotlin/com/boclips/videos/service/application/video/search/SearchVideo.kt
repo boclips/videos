@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.SearchRequestVali
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.infrastructure.logging.SearchLogging
 
 class SearchVideo(
     private val getVideoById: GetVideoById,

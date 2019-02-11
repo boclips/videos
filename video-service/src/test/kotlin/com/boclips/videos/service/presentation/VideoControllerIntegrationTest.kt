@@ -9,7 +9,6 @@ import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.*
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
-import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
@@ -224,13 +223,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(delete("/v1/videos/$videoId").asOperator())
             .andExpect(status().`is`(200))
-    }
-
-    @Test
-    fun `returns correlation id`() {
-        mockMvc.perform(get("/v1/videos?query=powerful").header("X-Correlation-ID", "correlation-id").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(header().string("X-Correlation-ID", "correlation-id"))
     }
 
     @Test

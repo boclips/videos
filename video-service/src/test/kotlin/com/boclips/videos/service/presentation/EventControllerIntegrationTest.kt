@@ -56,7 +56,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `post and retrieve no search results`() {
+    fun `post no search results`() {
         mockMvc.perform(
             post("/v1/events/no-search-results")
                 .asBoclipsEmployee()
@@ -71,24 +71,11 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
         )
             .andExpect(status().isCreated)
-
-        mockMvc.perform(
-            get("/v1/events/no-search-results")
-                .asReporter()
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded[*]", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.events[0].createdAt").exists())
-            .andExpect(jsonPath("$._embedded.events[0].name").exists())
-            .andExpect(jsonPath("$._embedded.events[0].email").exists())
-            .andExpect(jsonPath("$._embedded.events[0].query").exists())
-            .andExpect(jsonPath("$._embedded.events[0].description").exists())
-            .andExpect(jsonPath("$._embedded.events[0].type").doesNotExist())
     }
 
     @Test
     fun `status is 200 when there are events`() {
-        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), "search-id", User.anonymous(), "query", 10))
+        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), User.anonymous(), 1, "query", 10))
         eventService.saveEvent(
             PlaybackEvent(
                 playerId = "player-id",
