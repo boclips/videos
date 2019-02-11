@@ -31,12 +31,6 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
-    fun `everybody can access interactions`() {
-        mockMvc.perform(get("/v1/interactions"))
-            .andExpect(status().`is`(HttpStatus.OK.value()))
-    }
-
-    @Test
     fun `everybody can access any endpoint with OPTIONS`() {
         mockMvc.perform(options("/v1/videos"))
             .andExpect(status().isOk)

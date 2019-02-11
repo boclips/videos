@@ -12,7 +12,6 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.*
-import com.boclips.videos.service.infrastructure.event.analysis.Interaction
 import com.boclips.videos.service.infrastructure.event.types.*
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import org.bson.types.ObjectId
@@ -161,18 +160,6 @@ object TestFactories {
             duration = Duration.ofSeconds(21)
         )
     }
-
-    fun createInteraction(
-        timestamp: ZonedDateTime = ZonedDateTime.now(),
-        description: String = "something cool",
-        related: List<Interaction> = emptyList(),
-        user: User = User.anonymous()
-    ) = Interaction(
-        timestamp = timestamp,
-        description = description,
-        related = related,
-        user = user
-    )
 
     fun createCreateVideoRequest(
         provider: String? = "AP",

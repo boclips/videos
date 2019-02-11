@@ -88,17 +88,6 @@ class EventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `interactions`() {
-        saveSearchEvent(ZonedDateTime.now())
-        savePlaybackEvent(ZonedDateTime.now(), "e01")
-        savePlaybackEvent(ZonedDateTime.now(), null)
-
-        val interactions = eventService.latestInteractions()
-
-        assertThat(interactions).hasSize(2)
-    }
-
-    @Test
     fun `returns no search results events`() {
         saveNoSearchResultsEvent()
         savePlaybackEvent(ZonedDateTime.now(), "e01")

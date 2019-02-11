@@ -1,11 +1,5 @@
 package com.boclips.videos.service.infrastructure.event
 
-import com.boclips.videos.service.infrastructure.event.analysis.GroupEventsByType
-import com.boclips.videos.service.infrastructure.event.analysis.GroupRelatedEvents
-import com.boclips.videos.service.infrastructure.event.analysis.Interaction
-import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromPlaybackEvents
-import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.fromSearchAndPlaybackEvents
-import com.boclips.videos.service.infrastructure.event.analysis.Interaction.Companion.sortRecursively
 import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.infrastructure.event.types.EventEntity
 import com.boclips.videos.service.infrastructure.event.types.EventType
@@ -50,19 +44,6 @@ class EventService(
             latestPlaybackInSearch = mostRecentPlaybackInSearch,
             latestPlaybackStandalone = mostRecentPlaybackStandalone
         )
-    }
-
-    fun latestInteractions(): List<Interaction> {
-        val events = getAllEvents()
-
-        val (allSearchEvents, allPlaybackEvents) = GroupEventsByType.groupByType(events)
-
-        val relatedEvents = GroupRelatedEvents.create(allSearchEvents, allPlaybackEvents)
-
-        val interactions =
-            fromPlaybackEvents(relatedEvents.standalonePlaybacks) + fromSearchAndPlaybackEvents(relatedEvents.searches)
-
-        return sortRecursively(interactions)
     }
 
     fun getNoSearchResultsEvents(): List<NoSearchResultsEvent> {

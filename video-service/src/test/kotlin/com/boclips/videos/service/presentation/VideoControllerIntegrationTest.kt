@@ -234,16 +234,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `records search events`() {
-        mockMvc.perform(get("/v1/videos?query=bugs").header("X-Correlation-ID", "correlation-id").asBoclipsEmployee())
-            .andExpect(status().isOk)
-
-        val searchEvent = eventService.latestInteractions().last()
-        assertThat(searchEvent.description).startsWith("Search for 'bugs'")
-        assertThat(searchEvent.user.boclipsEmployee).isTrue()
-    }
-
-    @Test
     fun `create new video`() {
         fakeKalturaClient.addMediaEntry(
             TestFactories.createMediaEntry(

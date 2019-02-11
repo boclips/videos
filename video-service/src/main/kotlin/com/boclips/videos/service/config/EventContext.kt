@@ -3,7 +3,6 @@ package com.boclips.videos.service.config
 import com.boclips.videos.service.application.event.CheckEventsStatus
 import com.boclips.videos.service.application.event.CreateEvent
 import com.boclips.videos.service.application.event.GetEvent
-import com.boclips.videos.service.application.event.GetLatestInteractions
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.event.EventLogRepository
 import com.boclips.videos.service.infrastructure.event.EventMonitoringConfig
@@ -44,10 +43,5 @@ class EventContext {
         return CheckEventsStatus(
             eventService = eventService
         )
-    }
-
-    @Bean
-    fun getLatestInteractions(eventService: EventService): GetLatestInteractions {
-        return GetLatestInteractions(eventService = eventService)
     }
 }
