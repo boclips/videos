@@ -32,7 +32,9 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("io.github.microutils:kotlin-logging:1.4.9")
     compile('org.apache.solr:solr-solrj:5.5.5')
-    compile("org.apache.zookeeper:zookeeper:3.4.13")
+    compile("org.apache.zookeeper:zookeeper:3.4.13") {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
