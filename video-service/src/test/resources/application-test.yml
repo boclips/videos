@@ -23,6 +23,7 @@ email:
 logging:
   level:
     org.hibernate.SQL: TRACE
+  config: src/test/resources/logback-test.xml
 
 jdbc:
   fetchSize: 100
