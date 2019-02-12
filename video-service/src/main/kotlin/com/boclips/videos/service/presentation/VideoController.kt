@@ -6,7 +6,6 @@ import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.PatchVideo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.infrastructure.logging.SearchLogging
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.AdminSearchRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
@@ -55,7 +54,6 @@ class VideoController(
     }
 
     @GetMapping
-    @SearchLogging
     fun search(
         @RequestParam("query") query: String?,
         @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,

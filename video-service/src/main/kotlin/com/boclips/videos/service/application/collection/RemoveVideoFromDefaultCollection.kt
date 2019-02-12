@@ -6,13 +6,10 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.domain.service.RemoveVideoFromCollection
 import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.types.RemoveFromCollectionEvent
-import com.boclips.videos.service.infrastructure.event.types.User
-import java.time.ZonedDateTime
 
 class RemoveVideoFromDefaultCollection(
-    private val collectionService: CollectionService,
-    private val eventService: EventService
+        private val collectionService: CollectionService,
+        private val eventService: EventService
 ) {
     operator fun invoke(videoId: String?) {
         videoId ?: throw Exception("Video id cannot be null")
@@ -22,13 +19,9 @@ class RemoveVideoFromDefaultCollection(
 
         collectionService.update(collection.id, RemoveVideoFromCollection(AssetId(videoId)))
 
-        eventService.saveEvent(
-            RemoveFromCollectionEvent(
-                timestamp = ZonedDateTime.now(),
-                user = User.fromSecurityUser(user),
-                collectionId = collection.id.value,
-                videoId = videoId
-            )
+        eventService.saveRemoveFromCollectionEvent(
+                collectionId = collection.id,
+                videoId = AssetId(videoId)
         )
     }
 }

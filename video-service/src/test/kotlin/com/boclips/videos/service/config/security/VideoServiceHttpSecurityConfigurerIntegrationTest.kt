@@ -36,8 +36,6 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
             .andExpect(status().isOk)
         mockMvc.perform(options("/v1"))
             .andExpect(status().`is`(HttpStatus.OK.value()))
-        mockMvc.perform(options("/v1/events/status"))
-            .andExpect(status().`is`(HttpStatus.OK.value()))
     }
 
     @Test

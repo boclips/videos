@@ -1,107 +1,67 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.infrastructure.event.EventLogRepository
-import com.boclips.videos.service.infrastructure.event.types.PlaybackEvent
-import com.boclips.videos.service.infrastructure.event.types.SearchEvent
-import com.boclips.videos.service.infrastructure.event.types.User
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asReporter
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.ZonedDateTime
 
 class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    @Autowired
-    lateinit var eventLogRepository: EventLogRepository
-
     @Test
     fun `posted playback events are being saved`() {
+        val videoId = TestFactories.aValidId()
         mockMvc.perform(
-            post("/v1/events/playback")
-                .asBoclipsEmployee()
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{
+                post("/v1/events/playback")
+                        .asBoclipsEmployee()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Referer", "https://teachers.boclips.com/videos?q=abc")
+                        .content(
+                                """{
                     "playerId": "123",
-                    "videoId" : "v555",
+                    "videoId" : "$videoId",
                     "segmentStartSeconds" : 0,
                     "segmentEndSeconds" : 100,
                     "videoDurationSeconds" : 200,
                     "captureTime" : "2018-01-01T00:00:00.000Z",
                     "searchId" : "srch-123"
                     }""".trimMargin()
-                )
+                        )
         )
-            .andExpect(status().isCreated)
+                .andExpect(status().isCreated)
 
-        assertThat(eventLogRepository.count()).isEqualTo(1)
-        val event = eventLogRepository.findAll().first()
+        val event = eventService.playbackEvent()
         assertThat(event.timestamp).isNotNull()
         assertThat(event.type).isNotNull()
         assertThat(event.user.boclipsEmployee).isTrue()
-        assertThat(event.data).isNotNull()
+        assertThat(event.data).isNotNull
+        assertThat(event.url).contains("https://teachers.boclips.com/videos?q=abc")
     }
 
     @Test
     fun `post no search results`() {
         mockMvc.perform(
-            post("/v1/events/no-search-results")
-                .asBoclipsEmployee()
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{
+                post("/v1/events/no-search-results")
+                        .asBoclipsEmployee()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """{
                         "name": "Hans Muster",
                         "query" : "animal",
                         "email" : "hans@muster.com",
                         "description" : "description"
                         }""".trimMargin()
-                )
+                        )
         )
-            .andExpect(status().isCreated)
+                .andExpect(status().isCreated)
     }
 
-    @Test
-    fun `status is 200 when there are events`() {
-        eventService.saveEvent(SearchEvent(ZonedDateTime.now(), User.anonymous(), 1, "query", 10))
-        eventService.saveEvent(
-            PlaybackEvent(
-                playerId = "player-id",
-                captureTime = ZonedDateTime.now(),
-                searchId = "search-id",
-                segmentStartSeconds = 10,
-                segmentEndSeconds = 20,
-                videoDurationSeconds = 50,
-                videoId = "asset-id",
-                user = User.anonymous()
-            )
-        )
-        mockMvc.perform(get("/v1/events/status"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.healthy", `is`(true)))
-            .andExpect(jsonPath("$.latestSearch", not(isEmptyOrNullString())))
-            .andExpect(jsonPath("$.latestPlaybackInSearch", not(isEmptyOrNullString())))
-    }
-
-    @Test
-    fun `status is 500 when there are no events`() {
-        mockMvc.perform(get("/v1/events/status"))
-            .andExpect(status().isServiceUnavailable)
-            .andExpect(jsonPath("$.healthy", `is`(false)))
-            .andExpect(jsonPath("$.latestSearch", isEmptyOrNullString()))
-            .andExpect(jsonPath("$.latestPlaybackInSearch", isEmptyOrNullString()))
-            .andExpect(jsonPath("$.latestPlaybackStandalone", isEmptyOrNullString()))
-    }
 }

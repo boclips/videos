@@ -105,7 +105,8 @@ class ApplicationContext(
     private fun getVideosByQuery() =
         GetVideosByQuery(
             videoService,
-            videoToResourceConverter()
+            videoToResourceConverter(),
+            eventService
         )
 
     private fun getAllVideosById(): GetAllVideosById {

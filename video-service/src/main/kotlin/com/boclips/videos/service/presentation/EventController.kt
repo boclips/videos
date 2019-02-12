@@ -1,8 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.event.CheckEventsStatus
-import com.boclips.videos.service.application.event.CreateEvent
-import com.boclips.videos.service.infrastructure.event.EventsStatus
+import com.boclips.videos.service.application.video.search.ReportNoResults
+import com.boclips.videos.service.application.event.SavePlaybackEvent
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/v1/events")
 class EventController(
-        private val createEvent: CreateEvent,
-        private val checkEventsStatus: CheckEventsStatus
+        private val savePlaybackEvent: SavePlaybackEvent,
+        private val reportNoResults: ReportNoResults
 ) {
     companion object {
         fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(
@@ -28,21 +27,13 @@ class EventController(
 
     @PostMapping("/playback")
     fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?): ResponseEntity<Void> {
-        createEvent(playbackEvent)
+        savePlaybackEvent.execute(playbackEvent)
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @PostMapping("/no-search-results")
     fun logNoSearchResultsEvent(@RequestBody noSearchResultsEvent: CreateNoSearchResultsEventCommand?): ResponseEntity<Void> {
-        createEvent(noSearchResultsEvent)
+        reportNoResults.execute(noSearchResultsEvent)
         return ResponseEntity(HttpStatus.CREATED)
-    }
-
-    @GetMapping("/status")
-    fun status(): ResponseEntity<EventsStatus> {
-        val status = checkEventsStatus()
-        val code = if (status.healthy) HttpStatus.OK else HttpStatus.SERVICE_UNAVAILABLE
-
-        return ResponseEntity(status, code)
     }
 }

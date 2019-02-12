@@ -3,15 +3,12 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.CollectionService
-import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.types.Event
-import com.boclips.videos.service.infrastructure.event.types.RemoveFromCollectionEventData
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.boclips.videos.service.testsupport.setSecurityContext
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -31,16 +28,15 @@ internal class RemoveVideoFromDefaultCollectionTest {
             on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(collection)
         }
 
-        val eventService = mock<EventService>()
+        val eventService = FakeEventService()
 
-        val addVideoToCollection = RemoveVideoFromDefaultCollection(collectionService, eventService)
+        val removeVideoFromDefaultCollection = RemoveVideoFromDefaultCollection(collectionService, eventService)
 
-        addVideoToCollection(TestFactories.aValidId())
+        val videoId = TestFactories.aValidId()
+        removeVideoFromDefaultCollection(videoId)
 
-        verify(eventService).saveEvent(com.nhaarman.mockito_kotlin.check<Event<RemoveFromCollectionEventData>> {
-            Assertions.assertThat(it.data.videoId).isNotEmpty()
-            Assertions.assertThat(it.data.collectionId).isEqualTo("col id")
-            Assertions.assertThat(it.user.id).isEqualTo("me@me.com")
-        })
+        assertThat(eventService.removeFromCollectionEvent().data.videoId).isEqualTo(videoId)
+        assertThat(eventService.removeFromCollectionEvent().data.collectionId).isEqualTo("col id")
+        assertThat(eventService.removeFromCollectionEvent().user.id).isEqualTo("me@me.com")
     }
 }

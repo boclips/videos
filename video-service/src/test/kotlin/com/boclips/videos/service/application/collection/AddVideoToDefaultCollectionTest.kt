@@ -4,13 +4,10 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.CollectionService
-import com.boclips.videos.service.infrastructure.event.EventService
-import com.boclips.videos.service.infrastructure.event.types.AddToCollectionEventData
-import com.boclips.videos.service.infrastructure.event.types.Event
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createCollection
+import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.boclips.videos.service.testsupport.setSecurityContext
-import com.nhaarman.mockito_kotlin.check
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
@@ -65,16 +62,15 @@ class AddVideoToDefaultCollectionTest {
             on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(collection)
         }
 
-        val eventService = mock<EventService>()
+        val eventService = FakeEventService()
 
         val addVideoToCollection = AddVideoToDefaultCollection(collectionService, eventService)
 
-        addVideoToCollection(TestFactories.aValidId())
+        val videoId = TestFactories.aValidId()
+        addVideoToCollection(videoId)
 
-        verify(eventService).saveEvent(check<Event<AddToCollectionEventData>> {
-            assertThat(it.data.videoId).isNotEmpty()
-            assertThat(it.data.collectionId).isEqualTo("col id")
-            assertThat(it.user.id).isEqualTo("me@me.com")
-        })
+        assertThat(eventService.addToCollectionEvent().data.videoId).isEqualTo(videoId)
+        assertThat(eventService.addToCollectionEvent().data.collectionId).isEqualTo("col id")
+        assertThat(eventService.addToCollectionEvent().user.id).isEqualTo("me@me.com")
     }
 }

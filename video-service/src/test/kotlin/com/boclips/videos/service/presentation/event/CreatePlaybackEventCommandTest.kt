@@ -4,14 +4,12 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
 class CreatePlaybackEventCommandTest {
-    val playbackEvent = CreatePlaybackEventCommand(
+    private val playbackEvent = CreatePlaybackEventCommand(
         playerId = "player-id",
         videoId = "v678",
         segmentStartSeconds = 10,
         segmentEndSeconds = 20,
-        videoDurationSeconds = 60,
-        captureTime = "2018-01-01T00:00:00.000Z",
-        searchId = "search-id"
+        videoDurationSeconds = 60
     )
 
     @Test

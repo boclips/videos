@@ -10,13 +10,13 @@ import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
-import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
+import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
@@ -34,11 +33,8 @@ import java.util.*
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "fake-security")
+@ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "fake-security", "fake-event-service")
 abstract class AbstractSpringIntegrationTest {
-
-    @Autowired
-    lateinit var repos: Set<MongoRepository<*, *>>
 
     @Autowired
     lateinit var fakeSearchService: InMemorySearchService
@@ -56,7 +52,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
 
     @Autowired
-    lateinit var eventService: EventService
+    lateinit var eventService: FakeEventService
 
     @Autowired
     lateinit var createVideo: CreateVideo
@@ -69,8 +65,6 @@ abstract class AbstractSpringIntegrationTest {
 
     @BeforeEach
     fun resetState() {
-        repos.forEach { it.deleteAll() }
-
         mongoClient.apply {
             listDatabaseNames()
                 .filterNot { setOf("admin", "config").contains(it) }
@@ -83,6 +77,7 @@ abstract class AbstractSpringIntegrationTest {
         fakeSearchService.safeRebuildIndex(emptySequence())
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
+        eventService.clear()
 
         reset(legacySearchService)
     }
