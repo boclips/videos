@@ -4,6 +4,7 @@ spring:
       write-dates-as-timestamps: false
 
 logging:
+  config: "classpath:logback-json.xml"
   level:
     com.boclips.kalturaclient: debug
 
