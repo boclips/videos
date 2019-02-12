@@ -7,6 +7,7 @@ class CreatePlaybackEventCommandTest {
     private val playbackEvent = CreatePlaybackEventCommand(
         playerId = "player-id",
         videoId = "v678",
+        videoIndex = 0,
         segmentStartSeconds = 10,
         segmentEndSeconds = 20,
         videoDurationSeconds = 60

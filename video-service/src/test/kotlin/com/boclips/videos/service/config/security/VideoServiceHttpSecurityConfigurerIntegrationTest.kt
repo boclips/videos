@@ -39,24 +39,6 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
-    fun `everybody can access event status`() {
-        mockMvc.perform(get("/v1/events/status"))
-            .andExpect(status().`is`(not401Or403()))
-    }
-
-    @Test
-    fun `reporters can access event types`() {
-        mockMvc.perform(get("/v1/events/no-search-results").asReporter())
-            .andExpect(status().`is`(not401Or403()))
-        mockMvc.perform(get("/v1/events/status").asReporter())
-            .andExpect(status().`is`(not401Or403()))
-        mockMvc.perform(post("/v1/events/playback").asReporter())
-            .andExpect(status().`is`(not401Or403()))
-        mockMvc.perform(post("/v1/events/no-search-results").asReporter())
-            .andExpect(status().`is`(not401Or403()))
-    }
-
-    @Test
     fun `get video does not require special roles`() {
         val videoId = saveVideo()
 

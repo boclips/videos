@@ -27,9 +27,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers("/v1/").permitAll()
 
             .antMatchers(HttpMethod.GET, "/v1/interactions").permitAll()
-            .antMatchers(HttpMethod.GET, "/v1/events/status").permitAll()
-            .antMatchers(HttpMethod.GET, "/v1/events/*").hasRole(UserRoles.VIEW_EVENTS)
-            .antMatchers(HttpMethod.POST, "/v1/events/*").hasAnyRole(UserRoles.INSERT_EVENTS)
+            .antMatchers(HttpMethod.POST, "/v1/events/*").permitAll()
 
             .antMatchers(HttpMethod.POST, "/v1/admin/actions/rebuild_search_index")
             .hasRole(UserRoles.REBUILD_SEARCH_INDEX)

@@ -84,6 +84,7 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = TestFactories.aValidId()
         mongoEventService.savePlaybackEvent(
                 videoId = AssetId(videoId),
+                videoIndex = 6,
                 playerId = "player id",
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,

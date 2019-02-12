@@ -54,10 +54,11 @@ class FakeEventService : EventService {
         saveEvent(EventType.REMOVE_FROM_COLLECTION, RemoveFromCollectionEventData(collectionId = collectionId.value, videoId = videoId.value))
     }
 
-    override fun savePlaybackEvent(videoId: AssetId, playerId: String, segmentStartSeconds: Long, segmentEndSeconds: Long, videoDurationSeconds: Long) {
+    override fun savePlaybackEvent(videoId: AssetId, videoIndex: Int?, playerId: String, segmentStartSeconds: Long, segmentEndSeconds: Long, videoDurationSeconds: Long) {
         saveEvent(EventType.PLAYBACK, PlaybackEventData(
                 playerId = playerId,
                 videoId = videoId.value,
+                videoIndex = videoIndex,
                 segmentStartSeconds = segmentStartSeconds,
                 segmentEndSeconds = segmentEndSeconds,
                 videoDurationSeconds = videoDurationSeconds
@@ -99,6 +100,7 @@ data class AddToCollectionEventData(
 data class PlaybackEventData(
         val playerId: String,
         val videoId: String,
+        val videoIndex: Int?,
         val segmentStartSeconds: Long,
         val segmentEndSeconds: Long,
         val videoDurationSeconds: Long

@@ -21,9 +21,10 @@ class MongoEventService(
         }
     }
 
-    override fun savePlaybackEvent(videoId: AssetId, playerId: String, segmentStartSeconds: Long, segmentEndSeconds: Long, videoDurationSeconds: Long) {
+    override fun savePlaybackEvent(videoId: AssetId, videoIndex: Int?, playerId: String, segmentStartSeconds: Long, segmentEndSeconds: Long, videoDurationSeconds: Long) {
         saveEvent(EventType.PLAYBACK) {
             append("videoId", videoId.value)
+            append("videoIndex", videoIndex)
             append("playerId", playerId)
             append("segmentStartSeconds", segmentStartSeconds)
             append("segmentEndSeconds", segmentEndSeconds)

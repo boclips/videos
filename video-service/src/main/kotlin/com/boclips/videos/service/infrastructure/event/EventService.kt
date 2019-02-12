@@ -17,6 +17,7 @@ interface EventService {
 
     fun savePlaybackEvent(
             videoId: AssetId,
+            videoIndex: Int?,
             playerId: String,
             segmentStartSeconds: Long,
             segmentEndSeconds: Long,

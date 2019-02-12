@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.event.InvalidEventException
 data class CreatePlaybackEventCommand(
     val playerId: String?,
     val videoId: String?,
+    val videoIndex: Int?,
     val segmentStartSeconds: Long?,
     val segmentEndSeconds: Long?,
     val videoDurationSeconds: Long?
