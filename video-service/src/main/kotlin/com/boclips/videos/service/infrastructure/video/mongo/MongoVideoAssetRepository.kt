@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
@@ -11,6 +12,7 @@ import com.mongodb.client.model.Updates.set
 import mu.KLogging
 import org.bson.BsonArray
 import org.bson.BsonString
+import org.bson.Document
 import org.bson.types.ObjectId
 import java.util.*
 
@@ -73,11 +75,12 @@ class MongoVideoAssetRepository(
         return createdVideoAsset
     }
 
-    override fun replaceSubjects(assetId: AssetId, subjects: List<Subject>): VideoAsset {
+    override fun update(assetId: AssetId, attributes: PartialVideoAsset): VideoAsset {
         getVideoCollection().updateOne(
             eq(ObjectId(assetId.value)),
-            set("subjects", BsonArray(subjects.map { BsonString(it.name) }))
+            Document("\$set", VideoDocumentConverter.toPartialDocument(attributes))
         )
+
         return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
     }
 

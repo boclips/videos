@@ -87,15 +87,5 @@ class VideoService(
             Video(videoAsset, videoPlayback)
         }
     }
-
-    fun update(assetId: AssetId, subjects: List<Subject>): Video {
-
-        val video = get(assetId)
-
-        val savedVideoAsset = videoAssetRepository.replaceSubjects(assetId, subjects)
-
-        logger.info { "Updated video $assetId" }
-        return video.copy(asset = savedVideoAsset)
-    }
 }
 

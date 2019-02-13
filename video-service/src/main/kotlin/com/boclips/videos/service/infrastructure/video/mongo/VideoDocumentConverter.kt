@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -11,7 +12,7 @@ import org.bson.types.ObjectId
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.util.*
+import java.util.Date
 
 object VideoDocumentConverter {
     fun toDocument(video: VideoAsset): Document {
@@ -47,6 +48,55 @@ object VideoDocumentConverter {
             .append("durationSeconds", video.duration.seconds.toInt())
             .append("legalRestrictions", video.legalRestrictions)
             .append("searchable", video.searchable)
+    }
+
+    fun toPartialDocument(attributes: PartialVideoAsset): Document {
+        val document = Document()
+            .append("title", attributes.title)
+            .append("description", attributes.description)
+            .append("keywords", attributes.keywords)
+            .append("subjects", attributes.subjects?.map { it.name })
+            .append("durationSeconds", attributes.duration?.seconds?.toInt())
+            .append("legalRestrictions", attributes.legalRestrictions)
+            .append("searchable", attributes.searchable)
+
+
+        if (attributes.releasedOn != null) {
+            document.append("releaseDate", Date.from(attributes.releasedOn.atStartOfDay()?.toInstant(ZoneOffset.UTC)))
+        }
+
+        if (attributes.contentPartnerId != null && attributes.contentPartnerVideoId != null) {
+            document.append(
+                "source",
+                mapOf(
+                    "contentPartner" to mapOf(
+                        "name" to attributes.contentPartnerId
+                    ),
+                    "videoReference" to attributes.contentPartnerVideoId
+                )
+            )
+        }
+
+        if (attributes.playbackId != null) {
+            document.append(
+                "playback",
+                mapOf(
+                    "id" to attributes.playbackId.value,
+                    "type" to attributes.playbackId.type.name
+                )
+            )
+        }
+
+        if (attributes.type != null) {
+            document.append(
+                "legacy",
+                mapOf(
+                    "type" to attributes.type.name
+                )
+            )
+        }
+
+        return Document(document.filterValues { it != null })
     }
 
     fun fromDocument(document: Document) = VideoFieldExtractor(document).let {

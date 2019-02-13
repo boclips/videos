@@ -58,7 +58,7 @@ class ApplicationContext(
 
     @Bean
     fun patchVideo(): PatchVideo {
-        return PatchVideo(videoService, videoAssetRepository)
+        return PatchVideo(videoAssetRepository)
     }
 
     @Bean

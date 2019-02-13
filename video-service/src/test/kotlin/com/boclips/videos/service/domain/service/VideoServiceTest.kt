@@ -119,14 +119,4 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         Assertions.assertThatThrownBy { videoService.get(AssetId(value = TestFactories.aValidId())) }
             .isInstanceOf(VideoAssetNotFoundException::class.java)
     }
-
-    @Test
-    fun `update video asset`() {
-        val videoId = saveVideo()
-
-        val video = videoService.update(videoId, listOf(Subject("Maths")))
-
-        assertThat(video.asset.subjects).containsExactly(Subject("Maths"))
-        assertThat(videoService.get(videoId).asset.subjects).containsExactly(Subject("Maths"))
-    }
 }
