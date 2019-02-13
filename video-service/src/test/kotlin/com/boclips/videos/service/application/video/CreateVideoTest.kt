@@ -115,10 +115,49 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `created video asset uses the duration specified by the playback provider`() {
+        val createRequestDuration = Duration.ZERO
+        val playbackProviderDuration = Duration.ofMinutes(2)
+
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = playbackProviderDuration
+            )
+        )
+
+        val resource = createVideo(TestFactories.createCreateVideoRequest(
+            playbackId = "1234",
+            duration = createRequestDuration
+        ))
+
+        val video = videoService.get(AssetId(resource.id!!))
+
+        assertThat(video.asset.duration).isEqualTo(playbackProviderDuration)
+        assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
+    }
+
+    @Test
     fun `throws when create request is incomplete`() {
-        assertThrows<InvalidCreateVideoRequestException> {
-            createVideo(TestFactories.createCreateVideoRequest(playbackId = null))
-        }
+        val createRequest = TestFactories.createCreateVideoRequest(description = null, playbackProvider = "KALTURA")
+
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = createRequest.playbackId!!,
+                duration = Duration.ZERO
+            )
+        )
+
+        assertThrows<InvalidCreateVideoRequestException> { createVideo(createRequest) }
+    }
+
+    @Test
+    fun `throws when playback provider ID or type are missing`() {
+        val createRequest = TestFactories.createCreateVideoRequest(playbackId = null, playbackProvider = null)
+
+        assertThrows<VideoPlaybackNotFound> { createVideo(createRequest) }
     }
 
     @Test

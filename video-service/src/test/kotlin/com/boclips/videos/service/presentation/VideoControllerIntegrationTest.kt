@@ -273,7 +273,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error", containsString("cannot be null")))
+            .andExpect(jsonPath("$.error", containsString("not found")))
     }
 
     @Test

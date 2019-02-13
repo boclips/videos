@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoAssetToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -26,9 +27,9 @@ class CreateVideo(
     private val legacySearchService: LegacySearchService
 ) {
     operator fun invoke(createRequest: CreateVideoRequest): VideoResource {
-        val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest)
+        val videoPlayback = ensureVideoPlaybackExists(createRequest)
+        val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest, videoPlayback)
 
-        ensureVideoPlaybackExists(createRequest)
         ensureVideoIsUnique(assetToBeCreated)
 
         val createdAsset = videoAssetRepository.create(assetToBeCreated)
@@ -50,13 +51,18 @@ class CreateVideo(
         }
     }
 
-    private fun ensureVideoPlaybackExists(createRequest: CreateVideoRequest) {
-        (playbackRepository.find(
-            PlaybackId(
-                type = PlaybackProviderType.valueOf(createRequest.playbackProvider!!),
-                value = createRequest.playbackId!!
+    private fun ensureVideoPlaybackExists(createRequest: CreateVideoRequest): VideoPlayback {
+        return playbackRepository.find(buildPlaybackId(createRequest)) ?: throw VideoPlaybackNotFound(createRequest)
+    }
+
+    private fun buildPlaybackId(createRequest: CreateVideoRequest): PlaybackId {
+        if (createRequest.playbackId != null && createRequest.playbackProvider != null) {
+            return PlaybackId(
+                type = PlaybackProviderType.valueOf(createRequest.playbackProvider),
+                value = createRequest.playbackId
             )
-        )
-            ?: throw VideoPlaybackNotFound("Video playback for asset ${createRequest.playbackId} not found in ${createRequest.playbackProvider}"))
+        } else {
+            throw VideoPlaybackNotFound(createRequest)
+        }
     }
 }

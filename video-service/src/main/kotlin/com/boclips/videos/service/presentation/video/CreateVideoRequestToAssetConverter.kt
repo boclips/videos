@@ -7,17 +7,20 @@ import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import org.bson.types.ObjectId
 
 class CreateVideoRequestToAssetConverter {
 
-    fun convert(createVideoRequest: CreateVideoRequest): VideoAsset {
+    fun convert(
+        createVideoRequest: CreateVideoRequest,
+        videoPlayback: VideoPlayback
+    ): VideoAsset {
         validateObligatoryField("playback provider", createVideoRequest.playbackProvider)
         validateObligatoryField("playback id", createVideoRequest.playbackId)
         validateObligatoryField("title", createVideoRequest.title)
         validateObligatoryField("description", createVideoRequest.description)
         validateObligatoryField("keywords", createVideoRequest.keywords)
-        validateObligatoryField("duration", createVideoRequest.duration)
         validateObligatoryField("releasedOn", createVideoRequest.releasedOn)
         validateObligatoryField("contentPartnerId", createVideoRequest.provider)
         validateObligatoryField("contentPartnerVideoId", createVideoRequest.providerVideoId)
@@ -37,7 +40,7 @@ class CreateVideoRequestToAssetConverter {
             contentPartnerId = createVideoRequest.provider!!,
             contentPartnerVideoId = createVideoRequest.providerVideoId!!,
             type = LegacyVideoType.valueOf(createVideoRequest.videoType!!),
-            duration = createVideoRequest.duration!!,
+            duration = videoPlayback.duration,
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             subjects = createVideoRequest.subjects!!.map { Subject(it) }.toSet(),
             searchable = createVideoRequest.searchable ?: true
