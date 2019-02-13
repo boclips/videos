@@ -17,7 +17,6 @@ public class CreateVideoRequest {
     private final @NonNull String title;
     private final @NonNull String description;
     private final @NonNull LocalDate releasedOn;
-    private final @NonNull Duration duration;
     private final String legalRestrictions;
     private final @NonNull List<String> keywords;
     private final @NonNull VideoType videoType;

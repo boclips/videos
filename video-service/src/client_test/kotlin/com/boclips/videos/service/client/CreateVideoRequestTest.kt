@@ -20,7 +20,6 @@ class CreateVideoRequestTest {
         title: String = "title",
         description: String = "description",
         releasedOn: LocalDate = LocalDate.now(),
-        duration: Duration = Duration.ofSeconds(123),
         legalRestrictions: String? = "legal restrictions",
         keywords: List<String> = emptyList(),
         contentType: VideoType = VideoType.NEWS,
@@ -34,7 +33,6 @@ class CreateVideoRequestTest {
             .title(title)
             .description(description)
             .releasedOn(releasedOn)
-            .duration(duration)
             .legalRestrictions(legalRestrictions)
             .keywords(keywords)
             .videoType(contentType)

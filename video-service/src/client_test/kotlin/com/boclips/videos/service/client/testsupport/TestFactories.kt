@@ -14,7 +14,6 @@ object TestFactories {
         title: String = "video title",
         description: String = "video description",
         releasedOn: LocalDate = LocalDate.now(),
-        duration: Duration = Duration.ofSeconds(10),
         legalRestrictions: String = "None",
         keywords: List<String> = listOf("k1", "k2"),
         contentType: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
@@ -28,7 +27,6 @@ object TestFactories {
             .title(title)
             .description(description)
             .releasedOn(releasedOn)
-            .duration(duration)
             .legalRestrictions(legalRestrictions)
             .keywords(keywords)
             .videoType(contentType)

@@ -117,7 +117,6 @@ abstract class AbstractSpringIntegrationTest {
                 title = title,
                 description = description,
                 releasedOn = LocalDate.parse(date),
-                duration = duration,
                 legalRestrictions = "",
                 keywords = keywords,
                 videoType = LegacyVideoType.fromId(typeId).name,

@@ -116,7 +116,6 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `created video asset uses the duration specified by the playback provider`() {
-        val createRequestDuration = Duration.ZERO
         val playbackProviderDuration = Duration.ofMinutes(2)
 
         fakeKalturaClient.addMediaEntry(
@@ -127,10 +126,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val resource = createVideo(TestFactories.createCreateVideoRequest(
-            playbackId = "1234",
-            duration = createRequestDuration
-        ))
+        val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
 
         val video = videoService.get(AssetId(resource.id!!))
 

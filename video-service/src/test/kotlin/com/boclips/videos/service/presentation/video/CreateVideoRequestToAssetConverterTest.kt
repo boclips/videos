@@ -24,10 +24,7 @@ class CreateVideoRequestToAssetConverterTest {
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
         val playback = TestFactories.createKalturaPlayback(duration = expectedDuration)
-        val asset = converter.convert(
-            TestFactories.createCreateVideoRequest(duration = Duration.ZERO),
-            playback
-        )
+        val asset = converter.convert(TestFactories.createCreateVideoRequest(), playback)
 
         assertThat(asset.duration).isEqualTo(expectedDuration)
     }
