@@ -21,7 +21,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
-        val videoId = saveVideo(
+        saveVideo(
             title = "a kaltura asset",
             playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         )
@@ -43,7 +43,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retrieve videos by query returns Youtube videos`() {
-        val videoId = saveVideo(
+        saveVideo(
             title = "a youtube asset",
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123")
         )
