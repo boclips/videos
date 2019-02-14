@@ -23,6 +23,14 @@ The video service is using the search service module to search for videos in ela
 
 Java client to obtain, manage videos and collections. Abstracts away authentication and authorization for ease of use.
 
+The client is distributed using [JitPack](https://jitpack.io/#boclips/videos). 
+
+### Releasing a new client version
+
+1. Make your changes & ensure the `build-video-service` job succeeds
+2. Trigger the [`cut-release-video-service-client`](https://concourse.devboclips.net/teams/main/pipelines/boclips/jobs/cut-release-video-service-client) job
+3. Specify the new version in the `build.gradle` file of the project using the client
+
 # Development
 
 Download dependencies for development:
