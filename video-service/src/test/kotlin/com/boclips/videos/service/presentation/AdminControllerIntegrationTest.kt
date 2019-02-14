@@ -42,4 +42,16 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/build_legacy_search_index").asOperator())
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
+
+    @Test
+    fun `refreshVideoDuration returns 403 when user is not allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_video_durations").asTeacher())
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
+    fun `refreshVideoDuration returns 200 OK when user is allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_video_durations").asOperator())
+            .andExpect(MockMvcResultMatchers.status().isOk)
+    }
 }

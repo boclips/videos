@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.application.video.RefreshVideoDurations
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -30,7 +31,8 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 @RequestMapping("/v1/admin/actions")
 class AdminController(
     private val rebuildSearchIndex: RebuildSearchIndex,
-    private val buildLegacySearchIndex: BuildLegacySearchIndex
+    private val buildLegacySearchIndex: BuildLegacySearchIndex,
+    private val refreshVideoDurations: RefreshVideoDurations
 ) {
 
     companion object : KLogging()
@@ -43,6 +45,11 @@ class AdminController(
     @PostMapping("/build_legacy_search_index")
     fun buildLegacySearchIndex(): ResponseEntity<ResponseBodyEmitter> {
         return asyncWithNotifier(buildLegacySearchIndex::invoke)
+    }
+
+    @PostMapping("/refresh_video_durations")
+    fun refreshVideoDurations(): ResponseEntity<ResponseBodyEmitter> {
+        return asyncWithNotifier(refreshVideoDurations::invoke)
     }
 
     private fun asyncWithNotifier(handler: (ResponseEmitterProgressNotifier) -> CompletableFuture<Unit>): ResponseEntity<ResponseBodyEmitter> {

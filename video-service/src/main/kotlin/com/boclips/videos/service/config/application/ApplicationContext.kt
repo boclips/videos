@@ -96,6 +96,11 @@ class ApplicationContext(
         return BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
     }
 
+    @Bean
+    fun refreshVideoDurations(): RefreshVideoDurations {
+        return RefreshVideoDurations(videoAssetRepository, playbackRepository)
+    }
+
     private fun getVideoById() =
         GetVideoById(
             videoService,
