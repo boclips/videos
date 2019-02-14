@@ -10,7 +10,7 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.CollectionService
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoService
@@ -26,7 +26,7 @@ class ApplicationContext(
     val videoService: VideoService,
     val videoAssetRepository: VideoAssetRepository,
     val searchService: SearchService,
-    val playbackRepository: PlaybackRespository,
+    val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
     val collectionService: CollectionService,
     val eventService: EventService

@@ -4,14 +4,14 @@ import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
 
 open class RefreshVideoDurations(
     private val videoAssetRepository: VideoAssetRepository,
-    private val playbackRepository: PlaybackRespository
+    private val playbackRepository: PlaybackRepository
 ) {
     companion object : KLogging()
 

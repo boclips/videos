@@ -2,9 +2,9 @@ package com.boclips.videos.service.domain.model.playback
 
 import com.boclips.videos.service.domain.service.PlaybackProvider
 
-class PlaybackRespository(
-    val kalturaPlaybackProvider: PlaybackProvider,
-    val youtubePlaybackProvider: PlaybackProvider
+class PlaybackRepository(
+    private val kalturaPlaybackProvider: PlaybackProvider,
+    private val youtubePlaybackProvider: PlaybackProvider
 ) {
 
     fun find(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback> {

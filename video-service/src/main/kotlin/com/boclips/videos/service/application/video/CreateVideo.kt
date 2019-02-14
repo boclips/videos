@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.service.SearchService
 import com.boclips.videos.service.domain.service.VideoAssetToLegacyVideoMetadataConverter
@@ -22,7 +22,7 @@ class CreateVideo(
     private val searchVideo: SearchVideo,
     private val createVideoRequestToAssetConverter: CreateVideoRequestToAssetConverter,
     private val searchServiceAdmin: SearchService,
-    private val playbackRepository: PlaybackRespository,
+    private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
     private val legacySearchService: LegacySearchService
 ) {

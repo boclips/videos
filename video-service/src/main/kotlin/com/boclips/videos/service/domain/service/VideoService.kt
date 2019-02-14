@@ -6,10 +6,9 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackRespository
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
@@ -17,7 +16,7 @@ import mu.KLogging
 class VideoService(
     private val videoAssetRepository: VideoAssetRepository,
     private val searchService: SearchService,
-    private val playbackRepository: PlaybackRespository
+    private val playbackRepository: PlaybackRepository
 ) {
     companion object : KLogging()
 

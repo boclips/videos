@@ -4,36 +4,30 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.PlaybackRespository
-import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
 class RefreshVideoDurationsTest: AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var playbackRespository: PlaybackRespository
+    lateinit var playbackRepository: PlaybackRepository
 
     @Autowired
     lateinit var videoAssetRepository: VideoAssetRepository
 
     @Test
     fun `updates durations with the playback provider's value`() {
-        val refreshVideoDurations = RefreshVideoDurations(videoAssetRepository, playbackRespository)
+        val refreshVideoDurations = RefreshVideoDurations(videoAssetRepository, playbackRepository)
 
         val incorrectDuration = Duration.ZERO
         val playbackDuration1 = Duration.ofMinutes(1)
@@ -88,7 +82,7 @@ class RefreshVideoDurationsTest: AbstractSpringIntegrationTest() {
             }
         }
 
-        val refreshVideoDurations = RefreshVideoDurations(mockVideoAssetRepository, playbackRespository)
+        val refreshVideoDurations = RefreshVideoDurations(mockVideoAssetRepository, playbackRepository)
 
         refreshVideoDurations.invoke()
 
