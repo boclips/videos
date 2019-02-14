@@ -87,5 +87,6 @@ class RefreshVideoDurationsTest: AbstractSpringIntegrationTest() {
         refreshVideoDurations.invoke()
 
         verify(mockVideoAssetRepository, never()).update(any(), any())
+        verify(mockVideoAssetRepository, never()).bulkUpdate(any())
     }
 }

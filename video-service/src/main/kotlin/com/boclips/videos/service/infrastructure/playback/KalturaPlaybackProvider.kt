@@ -21,12 +21,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : Playba
             .asSequence()
             .filter { id ->
                 val kalturaVideoId = id.value
-                if (mediaEntriesById[kalturaVideoId] == null) {
-                    logger.warn { "Omitted asset $kalturaVideoId due to lack of asset playback information" }
-                    false
-                } else {
-                    true
-                }
+                mediaEntriesById[kalturaVideoId] != null
             }
             .filter { kalturaVideoId -> filterValidMediaEntries(kalturaVideoId, mediaEntriesById) != null }
             .mapNotNull { kalturaVideoId ->

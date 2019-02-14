@@ -3,18 +3,18 @@ package com.boclips.videos.service.infrastructure.video.mongo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
-import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.mongodb.MongoClient
-import com.mongodb.client.model.Filters.*
+import com.mongodb.client.model.Filters.`in`
+import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.UpdateOneModel
 import com.mongodb.client.model.Updates.set
 import mu.KLogging
-import org.bson.BsonArray
-import org.bson.BsonString
 import org.bson.Document
 import org.bson.types.ObjectId
-import java.util.*
+import java.util.Optional
 
 class MongoVideoAssetRepository(
     private val mongoClient: MongoClient
@@ -82,6 +82,18 @@ class MongoVideoAssetRepository(
         )
 
         return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
+    }
+
+    override fun bulkUpdate(updates: List<Pair<AssetId, PartialVideoAsset>>) {
+        val updateDocs = updates.map { (assetId, attributes) ->
+            UpdateOneModel<Document>(
+                eq(ObjectId(assetId.value)),
+                Document("\$set", VideoDocumentConverter.toPartialDocument(attributes))
+            )
+        }
+
+        val result = getVideoCollection().bulkWrite(updateDocs)
+        logger.info("Bulk update: $result")
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {

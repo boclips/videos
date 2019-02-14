@@ -148,6 +148,35 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
+    fun `bulk update applies multiple independent updates at once`() {
+        val originalAsset1 = mongoVideoRepository.create(TestFactories.createVideoAsset(
+            title = "original title 1",
+            description = "original description 1"
+        ))
+
+        val originalAsset2 = mongoVideoRepository.create(TestFactories.createVideoAsset(
+            title = "original title 2",
+            description = "original description 2"
+        ))
+
+        val updates = listOf(
+            Pair(originalAsset1.assetId, PartialVideoAsset(title = "New title 1")),
+            Pair(originalAsset2.assetId, PartialVideoAsset(description = "New description 2"))
+        )
+
+        mongoVideoRepository.bulkUpdate(updates)
+
+        val updatedAsset1 = mongoVideoRepository.find(originalAsset1.assetId)!!
+        val updatedAsset2 = mongoVideoRepository.find(originalAsset2.assetId)!!
+
+        assertThat(updatedAsset1).isEqualToIgnoringGivenFields(originalAsset1, "title")
+        assertThat(updatedAsset1.title).isEqualTo("New title 1")
+
+        assertThat(updatedAsset2).isEqualToIgnoringGivenFields(originalAsset2, "description")
+        assertThat(updatedAsset2.description).isEqualTo("New description 2")
+    }
+
+    @Test
     fun `find by content partner and content partner video id`() {
         val asset = TestFactories.createVideoAsset(
             videoId = TestFactories.aValidId(),

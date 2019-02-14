@@ -7,6 +7,7 @@ interface VideoAssetRepository {
     fun delete(assetId: AssetId)
     fun create(videoAsset: VideoAsset): VideoAsset
     fun update(assetId: AssetId, attributes: PartialVideoAsset): VideoAsset
+    fun bulkUpdate(updates: List<Pair<AssetId, PartialVideoAsset>>)
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): AssetId?
     fun disableFromSearch(assetIds: List<AssetId>)

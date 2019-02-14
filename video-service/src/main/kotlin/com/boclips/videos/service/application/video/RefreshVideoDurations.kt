@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
@@ -18,21 +19,41 @@ open class RefreshVideoDurations(
     @Async
     open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Starting a refresh of video durations")
+        val future = CompletableFuture<Unit>()
 
-        videoAssetRepository.streamAllSearchable { videos ->
-            videos.forEach { updateVideoDuration(it) }
+        videoAssetRepository.streamAllSearchable { sequence ->
+            var batch = 0
+
+            sequence.chunked(size = 50).forEach { videos ->
+                notifier?.send("Processing durations updates batch ${batch++}")
+
+                val updatesByAssetId = durationsToUpdate(videos)
+                if (updatesByAssetId.isNotEmpty()) {
+                    logger.info("Updating durations for ${updatesByAssetId.size} videos")
+                    notifier?.send("Updating durations for ${updatesByAssetId.size} videos")
+                    videoAssetRepository.bulkUpdate(updatesByAssetId)
+                }
+            }
+
+            future.complete(null)
+            logger.info("Completed refresh of video durations")
         }
 
-        logger.info("Completed refresh of video durations")
-        return CompletableFuture.completedFuture(null)
+        return future
     }
 
-    private fun updateVideoDuration(video: VideoAsset) {
-        playbackRepository.find(video.playbackId)?.let {
-            if (it.duration != video.duration) {
-                logger.info("Updating duration video=${video.assetId.value} before=${video.duration} after=${it.duration}")
-                videoAssetRepository.update(video.assetId, PartialVideoAsset(duration = it.duration))
+    private fun durationsToUpdate(videos: List<VideoAsset>): List<Pair<AssetId, PartialVideoAsset>> {
+        val playbackIds = videos.map(VideoAsset::playbackId).toList()
+        val playbacksById = playbackRepository.find(playbackIds)
+
+        return videos.mapNotNull { video ->
+            playbacksById[video.playbackId]?.let { playback ->
+                if (playback.duration != video.duration) {
+                    Pair(video.assetId, PartialVideoAsset(duration = playback.duration))
+                } else {
+                    null
+                }
             }
-        }
+        }.toList()
     }
 }
