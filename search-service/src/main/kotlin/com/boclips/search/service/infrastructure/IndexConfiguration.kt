@@ -23,28 +23,28 @@ class IndexConfiguration {
                                         "synonyms" to synonyms,
                                         "expand" to false
                                 ),
-                                "english_stop" to mapOf(
+                                "english_stop_filter" to mapOf(
                                         "type" to "stop",
                                         "stopwords" to "_english_"
                                 ),
-                                "english_stemmer" to mapOf(
+                                "english_stemmer_filter" to mapOf(
                                         "type" to "stemmer",
                                         "language" to "english"
                                 ),
-                                "english_possessive_stemmer" to mapOf(
+                                "english_possessive_stemmer_filter" to mapOf(
                                         "type" to "stemmer",
                                         "language" to "possessive_english"
                                 )
                         ),
                         "analyzer" to mapOf(
-                                "english_analyser" to mapOf(
+                                "english_analyzer" to mapOf(
                                         "tokenizer" to "standard",
                                         "filter" to listOf(
-                                                "english_possessive_stemmer",
+                                                "english_possessive_stemmer_filter",
                                                 "lowercase",
-                                                "english_stemmer",
+                                                "english_stemmer_filter",
                                                 "synonym_filter",
-                                                "english_stop"
+                                                "english_stop_filter"
                                         )
                                 ),
                                 "shingle_analyzer" to mapOf(
@@ -63,14 +63,14 @@ class IndexConfiguration {
     fun generateVideoMapping(): Map<String, Any> {
         val freeTextField = mapOf(
                 "type" to "text",
-                "analyzer" to "english_analyser",
+                "analyzer" to "english_analyzer",
                 "fields" to mapOf(
                         FIELD_DESCRIPTOR_SHINGLES to mapOf("type" to "text", "analyzer" to "shingle_analyzer")
                 )
         )
         val keywordField = mapOf(
                 "type" to "text",
-                "analyzer" to "english_analyser",
+                "analyzer" to "english_analyzer",
                 "position_increment_gap" to 100
         )
         return mapOf(
