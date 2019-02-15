@@ -16,16 +16,20 @@ open class RebuildSearchIndex(
     @Async
     open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Starting a full reindex")
+        val future = CompletableFuture<Unit>()
 
         try {
             videoAssetRepository.streamAllSearchable { videos ->
                 searchService.safeRebuildIndex(videos, notifier)
             }
+
+            logger.info("Full reindex done")
+            future.complete(null)
         } catch (e: Exception) {
             logger.error("Error reindexing", e)
+            future.completeExceptionally(e)
         }
 
-        logger.info("Full reindex done")
-        return CompletableFuture.completedFuture(null)
+        return future
     }
 }

@@ -7,7 +7,14 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.*
+import com.mongodb.MongoClientException
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.anyOrNull
+import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doThrow
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -38,7 +45,7 @@ class BuildLegacySearchIndexTest {
         )
         val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
 
-        rebuildSearchIndex()
+        assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
         val videos = getUpsertedVideos()
         assertThat(videos).hasSize(2)
@@ -97,6 +104,19 @@ class BuildLegacySearchIndexTest {
         rebuildSearchIndex()
 
         assertThat(getUpsertedVideos()).isEmpty()
+    }
+
+    @Test
+    fun `the future surfaces any underlying exceptions`() {
+        val videoAssetRepository = mock<VideoAssetRepository> {
+            on {
+                streamAllSearchable(any())
+            } doThrow(MongoClientException("Boom"))
+        }
+
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
+
+        assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }
 
     private fun mockVideoAssetRepository(videos: Sequence<VideoAsset>): VideoAssetRepository {

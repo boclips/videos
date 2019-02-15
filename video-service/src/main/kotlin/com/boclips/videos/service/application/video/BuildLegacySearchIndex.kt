@@ -17,6 +17,7 @@ open class BuildLegacySearchIndex(
     @Async
     open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Building a legacy index")
+        val future = CompletableFuture<Unit>()
 
         try {
             videoAssetRepository.streamAllSearchable { videos ->
@@ -26,11 +27,14 @@ open class BuildLegacySearchIndex(
 
                 legacySearchService.upsert(videoAssets, notifier)
             }
+
+            logger.info("Building a legacy index done.")
+            future.complete(null)
         } catch (e: Exception) {
             logger.error("Error building legacy index", e)
+            future.completeExceptionally(e)
         }
 
-        logger.info("Building a legacy index done.")
-        return CompletableFuture.completedFuture(null)
+        return future
     }
 }

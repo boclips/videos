@@ -21,6 +21,20 @@ open class RefreshVideoDurations(
         logger.info("Starting a refresh of video durations")
         val future = CompletableFuture<Unit>()
 
+        try {
+            refreshDurations(notifier)
+
+            logger.info("Completed refresh of video durations")
+            future.complete(null)
+        } catch (e: Exception) {
+            logger.error("Error refreshing video durations", e)
+            future.completeExceptionally(e)
+        }
+
+        return future
+    }
+
+    private fun refreshDurations(notifier: ProgressNotifier?) {
         videoAssetRepository.streamAllSearchable { sequence ->
             var batch = 0
 
@@ -34,12 +48,7 @@ open class RefreshVideoDurations(
                     videoAssetRepository.bulkUpdate(updatesByAssetId)
                 }
             }
-
-            future.complete(null)
-            logger.info("Completed refresh of video durations")
         }
-
-        return future
     }
 
     private fun durationsToUpdate(videos: List<VideoAsset>): List<Pair<AssetId, PartialVideoAsset>> {

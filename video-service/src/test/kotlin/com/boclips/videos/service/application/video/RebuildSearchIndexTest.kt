@@ -7,8 +7,10 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
 import com.boclips.videos.service.testsupport.TestFactories
+import com.mongodb.MongoClientException
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doThrow
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -48,9 +50,23 @@ class RebuildSearchIndexTest {
         }
 
         val rebuildSearchIndex = RebuildSearchIndex(videoAssetRepository, searchService)
-        rebuildSearchIndex()
+
+        assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
         val searchRequest = PaginatedSearchRequest(Query(ids = listOf(videoAssetId1, videoAssetId2, videoAssetId3)))
         assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(videoAssetId2, videoAssetId3)
+    }
+
+    @Test
+    fun `the future surfaces any underlying exceptions`() {
+        val videoAssetRepository = mock<VideoAssetRepository> {
+            on {
+                streamAllSearchable(any())
+            } doThrow(MongoClientException("Boom"))
+        }
+
+        val rebuildSearchIndex = RebuildSearchIndex(videoAssetRepository, searchService)
+
+        assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }
 }

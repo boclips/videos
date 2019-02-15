@@ -8,8 +8,10 @@ import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
+import com.mongodb.MongoClientException
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doThrow
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
@@ -88,5 +90,18 @@ class RefreshVideoDurationsTest: AbstractSpringIntegrationTest() {
 
         verify(mockVideoAssetRepository, never()).update(any(), any())
         verify(mockVideoAssetRepository, never()).bulkUpdate(any())
+    }
+
+    @Test
+    fun `the future surfaces any underlying exceptions`() {
+        val videoAssetRepository = mock<VideoAssetRepository> {
+            on {
+                streamAllSearchable(any())
+            } doThrow(MongoClientException("Boom"))
+        }
+
+        val refreshVideoDurations = RefreshVideoDurations(videoAssetRepository, playbackRepository)
+
+        assertThat(refreshVideoDurations()).hasFailedWithThrowableThat().hasMessage("Boom")
     }
 }
