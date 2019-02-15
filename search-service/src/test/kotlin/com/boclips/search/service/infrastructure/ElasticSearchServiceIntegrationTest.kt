@@ -423,4 +423,18 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
 
         assertThat(results).containsExactly("1")
     }
+
+    @Test
+    fun `case sensitive synonyms`() {
+        adminService.upsert(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(id = "1", description = "Welcome to the US"),
+                        SearchableVideoMetadataFactory.create(id = "2", description = "Beware of us")
+                )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("United States of America")))
+
+        assertThat(results).containsExactly("1")
+    }
 }

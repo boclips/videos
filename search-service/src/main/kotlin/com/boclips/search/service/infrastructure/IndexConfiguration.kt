@@ -5,7 +5,11 @@ class IndexConfiguration {
     companion object {
         const val FIELD_DESCRIPTOR_SHINGLES = "shingles"
 
-        val synonyms = IndexConfiguration::class.java.getResource("/synonyms/english.txt").readText().trim().split("\n")
+        val synonyms = loadSynonyms("english.txt")
+        val synonymsCaseSensitive = loadSynonyms("english-case-sensitive.txt")
+
+        private fun loadSynonyms(filename: String) = IndexConfiguration::class.java.getResource("/synonyms/$filename")
+                .readText().trim().split("\n")
     }
 
     fun generateIndexSettings(): Map<String, Any> {
@@ -18,9 +22,14 @@ class IndexConfiguration {
                                         "max_shingle_size" to 2,
                                         "output_unigrams" to false
                                 ),
-                                "synonym_filter" to mapOf(
+                                "english_synonym_filter" to mapOf(
                                         "type" to "synonym",
                                         "synonyms" to synonyms,
+                                        "expand" to false
+                                ),
+                                "english_synonym_case_sensitive_filter" to mapOf(
+                                        "type" to "synonym",
+                                        "synonyms" to synonymsCaseSensitive,
                                         "expand" to false
                                 ),
                                 "english_stop_filter" to mapOf(
@@ -41,9 +50,10 @@ class IndexConfiguration {
                                         "tokenizer" to "standard",
                                         "filter" to listOf(
                                                 "english_possessive_stemmer_filter",
+                                                "english_synonym_case_sensitive_filter",
                                                 "lowercase",
                                                 "english_stemmer_filter",
-                                                "synonym_filter",
+                                                "english_synonym_filter",
                                                 "english_stop_filter"
                                         )
                                 ),
