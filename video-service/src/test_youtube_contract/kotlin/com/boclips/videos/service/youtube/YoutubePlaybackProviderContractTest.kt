@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.springframework.util.ResourceUtils
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStream
 import java.time.Duration
@@ -54,84 +55,14 @@ class YoutubePlaybackProviderContractTest {
     @ParameterizedTest
     @ArgumentsSource(PlaybackProviderArgumentProvider::class)
     fun `retrievePlayback handles the 50 video query limit by making multiple requests`(playbackProvider: PlaybackProvider) {
-        assertThat(youtubeIdsList.size).isGreaterThan(50)
+        val youtubeIds = readYoutubeIds()
 
-        val playbackIds = youtubeIdsList.map { PlaybackId(type = PlaybackProviderType.YOUTUBE, value = it) }
+        assertThat(youtubeIds.size).isGreaterThan(50)
 
+        val playbackIds = youtubeIds.map { PlaybackId(type = PlaybackProviderType.YOUTUBE, value = it) }
         val results = playbackProvider.retrievePlayback(playbackIds)
 
         assertThat(results.size).isGreaterThan(50)
-    }
-
-    companion object {
-        // To refresh this list with valid video IDs:
-        // 1. Visit a Youtube category / index page with lots of videos
-        // 2. Run the following in your browser console (IDs are copied to the clipboard):
-        //
-        // copy(Array.from(new Set(Array.from(document.querySelectorAll("a[href*='watch']")).map(link => link.href.match(/watch\?v=(?<id>.*)$/).groups.id))))
-
-        val youtubeIdsList = listOf(
-            "_t4uPDtMqrs",
-            "-50NdPawLVY",
-            "-bNwqXvMuB8",
-            "-GRqHkV9Bls",
-            "-lAEuwE0hlE",
-            "1PnHB4sLqew",
-            "24C8r8JupYY",
-            "4toZ2_9Q758",
-            "5bLN85bo48s",
-            "6nEepIHGatI",
-            "7Vp6A0FHNL0",
-            "7zcGNt7tfoQ",
-            "8kVI621fZug",
-            "aJOTlE1K90k",
-            "AYGbDycSvfs",
-            "BPOV3kIYVzw",
-            "bwmSjveL3Lc",
-            "C6-TWRn0k4I",
-            "chXKA41cec4",
-            "CWh-TmG_h7g",
-            "D5oo6i-ahW4",
-            "DiItGE3eAyQ",
-            "DmWWqogr_r8",
-            "dy9nwe9_xzw",
-            "e21Bi86YyZ8",
-            "e6O84iYhtIg",
-            "E771A0HMNAY",
-            "ew8_a4qbCzk",
-            "f1QOw1WdLtA",
-            "f9DLsXCXhlI",
-            "Fk_pnsCaTKI",
-            "gcmzYjQRq0A",
-            "gFZfwWZV074",
-            "GhVLQBtmz6g",
-            "gl1aHhXnN1k",
-            "GmrreAjF0lc",
-            "gvu891ubYWE",
-            "GvVVq2Wa1y4",
-            "gY01irEl8Eo",
-            "H9tWRGxuKTw",
-            "HAPq85D-sgE",
-            "HH_a6aRO1TE",
-            "hhzYbExfVIY",
-            "HUHC9tYz8ik",
-            "I_GfXq6AeUQ",
-            "i0p1bmr0EmE",
-            "i70HWRP1i9o",
-            "i8A849ZvOAE",
-            "iC9FmrRLaJE",
-            "IHNzOHi8sJs",
-            "IXcGORjWte8",
-            "jf0JqfcvZKw",
-            "Jtols_QhuWw",
-            "K2fkCcjzBrQ",
-            "k2k5Wt-H_iU",
-            "Kk2gALRGZOs",
-            "ksDsUYPofDs",
-            "LH4Y1ZUUx2g",
-            "LJMuk01J5yw",
-            "LR2h0T_aIPA"
-        )
     }
 }
 
@@ -144,7 +75,7 @@ class PlaybackProviderArgumentProvider : ArgumentsProvider {
                 Duration.ofMinutes(1).plusSeconds(59)
             )
 
-        YoutubePlaybackProviderContractTest.youtubeIdsList.forEach {
+        readYoutubeIds().forEach {
             testYoutubePlaybackProvider.addVideo(it, "https://example.com/$it.jpg", Duration.ofMinutes(1))
         }
 
@@ -173,4 +104,17 @@ private fun readYoutubeApiKeyFromConf(): String {
     inputStream.close()
 
     return apiKey
+}
+
+private fun readYoutubeIds(): List<String> {
+    // To refresh this list with valid video IDs:
+    // 1. Visit a Youtube category / index page with lots of videos
+    // 2. Run the following in your browser console:
+    //
+    // Array.from(new Set(Array.from(document.querySelectorAll("a[href*='watch']")).map(link => link.href.match(/watch\?v=(?<id>.*)$/).groups.id))).join("\n")
+
+    val file = ResourceUtils.getFile(
+        YoutubePlaybackProviderContractTest::class.java.getResource("/youtube-ids.txt")
+    )
+    return file.readLines().filterNot(String::isEmpty)
 }
