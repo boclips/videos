@@ -8,9 +8,13 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeRequestInitializer
+import com.google.api.services.youtube.model.Video
 import java.time.Duration
 
 class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
+    companion object {
+        const val IDS_PER_QUERY_LIMIT = 50
+    }
 
     private val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
         .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
@@ -21,18 +25,24 @@ class YoutubePlaybackProvider(youtubeApiKey: String) : PlaybackProvider {
             return emptyMap()
         }
 
-        val videosListByIdRequest = youtube.videos().list("snippet,contentDetails")
-        videosListByIdRequest.id = playbackIds.map { playbackId -> playbackId.value }.joinToString(separator = ",")
+        return playbackIds.chunked(IDS_PER_QUERY_LIMIT).flatMap(this::fetchPlaybacks).toMap()
+    }
 
-        val response = videosListByIdRequest.execute()
-        return response.items.map { item ->
-            val playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, item.id)
-            (playbackId to YoutubePlayback(
-                id = playbackId,
-                thumbnailUrl = item.snippet.thumbnails.high.url,
-                duration = Duration.parse(item.contentDetails.duration)
-            ))
-        }.toMap()
+    private fun fetchPlaybacks(playbackIds: List<PlaybackId>): List<Pair<PlaybackId, YoutubePlayback>> {
+        val videosListByIdRequest = youtube.videos().list("snippet,contentDetails")
+        videosListByIdRequest.id = playbackIds.joinToString(separator = ",", transform = PlaybackId::value)
+
+        return videosListByIdRequest.execute().items.map(this::convertToPlayback)
+    }
+
+    private fun convertToPlayback(item: Video): Pair<PlaybackId, YoutubePlayback> {
+        val playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, item.id)
+
+        return (playbackId to YoutubePlayback(
+            id = playbackId,
+            thumbnailUrl = item.snippet.thumbnails.high.url,
+            duration = Duration.parse(item.contentDetails.duration)
+        ))
     }
 
     override fun removePlayback(playbackId: PlaybackId) {
