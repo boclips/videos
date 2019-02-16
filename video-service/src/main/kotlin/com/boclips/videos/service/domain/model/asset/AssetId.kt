@@ -10,7 +10,7 @@ class AssetId(value: String) {
             ObjectId(value)
             this.value = value
         } catch (e: IllegalArgumentException) {
-            throw IllegalVideoIdentifier("$value is not a valid ID")
+            throw IllegalVideoIdentifierException("$value is not a valid ID")
         }
     }
 

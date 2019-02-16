@@ -14,10 +14,10 @@ class AssetIdTest {
 
     @Test
     fun `cannot create asset ids which are not valid hex strings`() {
-        assertThatThrownBy { AssetId(value = "not-an-id") }.isInstanceOf(IllegalVideoIdentifier::class.java)
-        assertThatThrownBy { AssetId(value = "123123412") }.isInstanceOf(IllegalVideoIdentifier::class.java)
+        assertThatThrownBy { AssetId(value = "not-an-id") }.isInstanceOf(IllegalVideoIdentifierException::class.java)
+        assertThatThrownBy { AssetId(value = "123123412") }.isInstanceOf(IllegalVideoIdentifierException::class.java)
         assertThatThrownBy { AssetId(value = ObjectId().toHexString().substring(0, 23)) }.isInstanceOf(
-            IllegalVideoIdentifier::class.java
+            IllegalVideoIdentifierException::class.java
         )
     }
 }
