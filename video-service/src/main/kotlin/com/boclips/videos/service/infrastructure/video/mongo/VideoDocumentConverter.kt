@@ -61,7 +61,7 @@ object VideoDocumentConverter {
         return document
     }
 
-    fun fromDocument(document: Document) = VideoFieldExtractor(document).let {
+    fun toVideoAsset(document: Document) = VideoFieldExtractor(document).let {
         VideoAsset(
             assetId = it.id(),
             title = it.title(),

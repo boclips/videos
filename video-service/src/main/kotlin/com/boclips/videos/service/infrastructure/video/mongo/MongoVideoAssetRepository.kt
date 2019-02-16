@@ -29,7 +29,7 @@ class MongoVideoAssetRepository(
     override fun find(assetId: AssetId): VideoAsset? {
         val videoAssetOrNull = getVideoCollection().find(eq("_id", ObjectId(assetId.value)))
             .firstOrNull()
-            ?.let(VideoDocumentConverter::fromDocument)
+            ?.let(VideoDocumentConverter::toVideoAsset)
 
         logger.info { "Found ${assetId.value}" }
 
@@ -39,7 +39,7 @@ class MongoVideoAssetRepository(
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
         val videoByAssetId = getVideoCollection()
             .find(`in`("_id", assetIds.map { ObjectId(it.value) }))
-            .map(VideoDocumentConverter::fromDocument)
+            .map(VideoDocumentConverter::toVideoAsset)
             .toList()
             .map { (it.assetId to it) }
             .toMap()
@@ -53,7 +53,7 @@ class MongoVideoAssetRepository(
 
     override fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit) {
         val sequence = Sequence { getVideoCollection().find(eq("searchable", true)).iterator() }
-            .map(VideoDocumentConverter::fromDocument)
+            .map(VideoDocumentConverter::toVideoAsset)
 
         consumer(sequence)
     }

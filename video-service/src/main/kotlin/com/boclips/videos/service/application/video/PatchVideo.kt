@@ -5,7 +5,6 @@ import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.presentation.video.VideoResource
-import com.boclips.videos.service.presentation.video.VideoResourceToPartialVideoAssetConverter
 
 class PatchVideo(
     private val videoAssetRepository: VideoAssetRepository
@@ -17,7 +16,7 @@ class PatchVideo(
             throw VideoAssetNotFoundException()
         }
 
-        val updateCommands = VideoResourceToPartialVideoAssetConverter
+        val updateCommands = VideoUpdatesConverter
             .convert(patch.copy(id = assetId.value))
 
         videoAssetRepository.update(updateCommands.first())

@@ -27,7 +27,7 @@ class E2EController(
     fun resetAll(): ResponseEntity<Any> {
         try {
             mongoClient.getDatabase("video-service-db").getCollection("videos").find().forEach { videoAssetDocument ->
-                val videoAsset = VideoDocumentConverter.fromDocument(videoAssetDocument)
+                val videoAsset = VideoDocumentConverter.toVideoAsset(videoAssetDocument)
 
                 val videoId = videoAsset.assetId.value
                 try {

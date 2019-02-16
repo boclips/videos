@@ -67,7 +67,7 @@ class VideoDocumentConverterTest {
         val originalVideo = TestFactories.createVideoAsset(videoId = "5ba8e657042ade0001d563fc")
 
         val document = VideoDocumentConverter.toNewDocument(originalVideo)
-        val restoredVideo = VideoDocumentConverter.fromDocument(document)
+        val restoredVideo = VideoDocumentConverter.toVideoAsset(document)
 
         assertThat(restoredVideo).isEqualTo(originalVideo)
     }
