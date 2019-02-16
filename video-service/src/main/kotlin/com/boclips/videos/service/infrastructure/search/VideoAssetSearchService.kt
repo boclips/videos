@@ -5,12 +5,13 @@ import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.SearchServiceAdapter
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.service.SearchService
+import com.boclips.videos.service.domain.service.video.SearchService
 
 class VideoAssetSearchService(
     genericSearchService: GenericSearchService,
     genericSearchServiceAdmin: GenericSearchServiceAdmin<VideoMetadata>
-) : SearchServiceAdapter<VideoAsset>(genericSearchService, genericSearchServiceAdmin), SearchService {
+) : SearchServiceAdapter<VideoAsset>(genericSearchService, genericSearchServiceAdmin),
+    SearchService {
 
     override fun convert(document: VideoAsset): VideoMetadata {
         return VideoMetadataConverter.convert(document)

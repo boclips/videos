@@ -4,9 +4,9 @@ import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoun
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.service.ReplaceDuration
-import com.boclips.videos.service.domain.service.ReplaceSubjects
-import com.boclips.videos.service.domain.service.VideoUpdateCommand
+import com.boclips.videos.service.domain.service.video.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.Filters.and

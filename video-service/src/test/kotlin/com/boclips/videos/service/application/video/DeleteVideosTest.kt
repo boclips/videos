@@ -3,10 +3,9 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

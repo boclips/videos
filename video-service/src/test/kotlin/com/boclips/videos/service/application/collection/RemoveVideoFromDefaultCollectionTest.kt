@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.boclips.videos.service.testsupport.setSecurityContext

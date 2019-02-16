@@ -11,7 +11,7 @@ import com.boclips.search.service.infrastructure.legacy.SolrSearchService
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
-import com.boclips.videos.service.domain.service.SearchService
+import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
 import org.springframework.context.annotation.Bean

@@ -4,7 +4,7 @@ import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.ReplaceDuration
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
@@ -57,7 +57,10 @@ open class RefreshVideoDurations(
         return videos.mapNotNull { video ->
             playbacksById[video.playbackId]?.let { playback ->
                 if (playback.duration != video.duration) {
-                    ReplaceDuration(video.assetId, duration = playback.duration)
+                    ReplaceDuration(
+                        video.assetId,
+                        duration = playback.duration
+                    )
                 } else {
                     null
                 }

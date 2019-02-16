@@ -1,12 +1,10 @@
 package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.nhaarman.mockito_kotlin.argThat
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class GetAllVideosByIdTest {

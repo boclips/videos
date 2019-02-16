@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.service.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo

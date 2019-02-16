@@ -7,8 +7,8 @@ import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.service.ReplaceDuration
-import com.boclips.videos.service.domain.service.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.ReplaceSubjects
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -104,7 +104,10 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         )
 
         val updatedAsset = mongoVideoRepository.update(
-            ReplaceDuration(originalAsset.assetId, Duration.ofMinutes(5))
+            ReplaceDuration(
+                originalAsset.assetId,
+                Duration.ofMinutes(5)
+            )
         )
 
         assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "assetId", "duration")
@@ -120,7 +123,12 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
             )
         )
 
-        val updatedAsset = mongoVideoRepository.update(ReplaceSubjects(originalAsset.assetId, listOf()))
+        val updatedAsset = mongoVideoRepository.update(
+            ReplaceSubjects(
+                originalAsset.assetId,
+                listOf()
+            )
+        )
 
         assertThat(updatedAsset.subjects).isEmpty()
         assertThat(updatedAsset.title).isEqualTo("original title")
@@ -130,7 +138,10 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     fun `update throws when video not found`() {
         assertThrows<VideoAssetNotFoundException> {
             mongoVideoRepository.update(
-                ReplaceDuration(AssetId(value = TestFactories.aValidId()), duration = Duration.ZERO)
+                ReplaceDuration(
+                    AssetId(value = TestFactories.aValidId()),
+                    duration = Duration.ZERO
+                )
             )
         }
     }
@@ -154,10 +165,22 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         )
 
         val updates = listOf(
-            ReplaceSubjects(assetId = originalAsset1.assetId, subjects = emptyList()),
-            ReplaceDuration(assetId = originalAsset1.assetId, duration = Duration.ofMinutes(10)),
-            ReplaceSubjects(assetId = originalAsset2.assetId, subjects = listOf(Subject("French"))),
-            ReplaceDuration(assetId = originalAsset2.assetId, duration = Duration.ofMinutes(11))
+            ReplaceSubjects(
+                assetId = originalAsset1.assetId,
+                subjects = emptyList()
+            ),
+            ReplaceDuration(
+                assetId = originalAsset1.assetId,
+                duration = Duration.ofMinutes(10)
+            ),
+            ReplaceSubjects(
+                assetId = originalAsset2.assetId,
+                subjects = listOf(Subject("French"))
+            ),
+            ReplaceDuration(
+                assetId = originalAsset2.assetId,
+                duration = Duration.ofMinutes(11)
+            )
         )
 
         mongoVideoRepository.bulkUpdate(updates)

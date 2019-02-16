@@ -1,6 +1,7 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.service.video.VideoAssetToLegacyVideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

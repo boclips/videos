@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException

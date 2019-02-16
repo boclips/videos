@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.asset
 
-import com.boclips.videos.service.domain.service.VideoUpdateCommand
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 
 interface VideoAssetRepository {
     fun find(assetId: AssetId): VideoAsset?

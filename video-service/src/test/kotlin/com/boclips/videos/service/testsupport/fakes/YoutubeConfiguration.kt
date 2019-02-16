@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport.fakes
 
-import com.boclips.videos.service.domain.service.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

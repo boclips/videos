@@ -5,8 +5,8 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.SearchService
-import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoService
 
 class DeleteVideos(
     private val videoAssetRepository: VideoAssetRepository,

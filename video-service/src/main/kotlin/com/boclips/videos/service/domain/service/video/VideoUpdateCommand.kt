@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject

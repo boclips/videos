@@ -7,10 +7,11 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
-import com.boclips.videos.service.domain.service.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import mu.KLogging
 
-class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) : PlaybackProvider {
+class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
+    PlaybackProvider {
     companion object : KLogging()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, StreamPlayback> {

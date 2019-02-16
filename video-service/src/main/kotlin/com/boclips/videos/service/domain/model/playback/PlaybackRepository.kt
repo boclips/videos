@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.playback
 
-import com.boclips.videos.service.domain.service.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.PlaybackProvider
 
 class PlaybackRepository(
     private val kalturaPlaybackProvider: PlaybackProvider,

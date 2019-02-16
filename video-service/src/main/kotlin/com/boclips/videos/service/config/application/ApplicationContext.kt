@@ -11,9 +11,9 @@ import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.CollectionService
-import com.boclips.videos.service.domain.service.SearchService
-import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter

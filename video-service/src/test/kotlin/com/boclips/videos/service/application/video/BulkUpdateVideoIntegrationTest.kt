@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdate
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.service.SearchService
+import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest

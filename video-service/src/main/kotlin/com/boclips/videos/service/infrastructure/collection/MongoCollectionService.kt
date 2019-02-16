@@ -6,7 +6,11 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.service.*
+import com.boclips.videos.service.domain.service.collection.AddVideoToCollection
+import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollection
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.eq

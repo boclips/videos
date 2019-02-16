@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.InvalidCreateVide
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.service.VideoService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
