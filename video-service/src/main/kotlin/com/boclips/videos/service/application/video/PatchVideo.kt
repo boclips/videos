@@ -4,7 +4,6 @@ import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoun
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.service.VideoService
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoResourceToPartialVideoAssetConverter
 
@@ -12,15 +11,16 @@ class PatchVideo(
     private val videoAssetRepository: VideoAssetRepository
 ) {
     operator fun invoke(id: String?, patch: VideoResource) {
-        val updateAttributes = VideoResourceToPartialVideoAssetConverter.convert(patch)
-
         val assetId = try {
             resolveToAssetId(id)
         } catch (ex: Exception) {
             throw VideoAssetNotFoundException()
         }
 
-        videoAssetRepository.update(assetId, updateAttributes)
+        val updateCommands = VideoResourceToPartialVideoAssetConverter
+            .convert(patch.copy(id = assetId.value))
+
+        videoAssetRepository.update(updateCommands.first())
     }
 
     private fun resolveToAssetId(videoIdParam: String?): AssetId {

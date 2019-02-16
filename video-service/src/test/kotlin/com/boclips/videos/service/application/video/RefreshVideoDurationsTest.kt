@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class RefreshVideoDurationsTest: AbstractSpringIntegrationTest() {
+class RefreshVideoDurationsTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var playbackRepository: PlaybackRepository
 
@@ -88,7 +88,7 @@ class RefreshVideoDurationsTest: AbstractSpringIntegrationTest() {
 
         refreshVideoDurations.invoke()
 
-        verify(mockVideoAssetRepository, never()).update(any(), any())
+        verify(mockVideoAssetRepository, never()).update(any())
         verify(mockVideoAssetRepository, never()).bulkUpdate(any())
     }
 
@@ -97,7 +97,7 @@ class RefreshVideoDurationsTest: AbstractSpringIntegrationTest() {
         val videoAssetRepository = mock<VideoAssetRepository> {
             on {
                 streamAllSearchable(any())
-            } doThrow(MongoClientException("Boom"))
+            } doThrow (MongoClientException("Boom"))
         }
 
         val refreshVideoDurations = RefreshVideoDurations(videoAssetRepository, playbackRepository)

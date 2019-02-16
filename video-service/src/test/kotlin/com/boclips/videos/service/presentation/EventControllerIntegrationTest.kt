@@ -28,7 +28,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         .content(
                                 """{
                     "playerId": "123",
-                    "videoId" : "$videoId",
+                    "assetId" : "$videoId",
                     "videoIndex" : 3,
                     "segmentStartSeconds" : 0,
                     "segmentEndSeconds" : 100,
@@ -58,7 +58,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         .content(
                                 """{
                     "playerId": "123",
-                    "videoId" : "$videoId",
+                    "assetId" : "$videoId",
                     "videoIndex" : 3,
                     "segmentStartSeconds" : 0,
                     "segmentEndSeconds" : 100,

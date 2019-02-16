@@ -2,9 +2,11 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.service.ReplaceDuration
+import com.boclips.videos.service.domain.service.ReplaceSubjects
+import com.boclips.videos.service.domain.service.VideoUpdateCommand
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.Filters.and
@@ -65,7 +67,7 @@ class MongoVideoAssetRepository(
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
-        val document = VideoDocumentConverter.toDocument(videoAsset)
+        val document = VideoDocumentConverter.toNewDocument(videoAsset)
 
         getVideoCollection().insertOne(document)
 
@@ -75,20 +77,23 @@ class MongoVideoAssetRepository(
         return createdVideoAsset
     }
 
-    override fun update(assetId: AssetId, attributes: PartialVideoAsset): VideoAsset {
+    override fun update(updateCommand: VideoUpdateCommand): VideoAsset {
+        val update: Document = partialDocumentToBeUpdated(updateCommand)
+
+        val assetId = updateCommand.assetId
         getVideoCollection().updateOne(
             eq(ObjectId(assetId.value)),
-            Document("\$set", VideoDocumentConverter.toPartialDocument(attributes))
+            Document("\$set", update)
         )
 
         return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
     }
 
-    override fun bulkUpdate(updates: List<Pair<AssetId, PartialVideoAsset>>) {
-        val updateDocs = updates.map { (assetId, attributes) ->
+    override fun bulkUpdate(updates: List<VideoUpdateCommand>) {
+        val updateDocs = updates.map { updateCommand ->
             UpdateOneModel<Document>(
-                eq(ObjectId(assetId.value)),
-                Document("\$set", VideoDocumentConverter.toPartialDocument(attributes))
+                eq(ObjectId(updateCommand.assetId.value)),
+                Document("\$set", partialDocumentToBeUpdated(updateCommand))
             )
         }
 
@@ -135,6 +140,16 @@ class MongoVideoAssetRepository(
         )
 
         logger.info { "Made $assetIds searchable" }
+    }
+
+    private fun partialDocumentToBeUpdated(updateCommand: VideoUpdateCommand): Document {
+        return when (updateCommand) {
+            is ReplaceDuration -> VideoDocumentConverter.durationToDocument(updateCommand.duration)
+            is ReplaceSubjects -> VideoDocumentConverter.subjectsToDocument(updateCommand.subjects)
+            else -> {
+                throw IllegalArgumentException("Update command not supported")
+            }
+        }
     }
 
     private fun getVideoCollection() = mongoClient.getDatabase(databaseName).getCollection(collectionName)

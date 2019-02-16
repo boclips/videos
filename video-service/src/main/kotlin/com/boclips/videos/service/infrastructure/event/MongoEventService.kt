@@ -23,7 +23,7 @@ class MongoEventService(
 
     override fun savePlaybackEvent(videoId: AssetId, videoIndex: Int?, playerId: String, segmentStartSeconds: Long, segmentEndSeconds: Long, videoDurationSeconds: Long) {
         saveEvent(EventType.PLAYBACK) {
-            append("videoId", videoId.value)
+            append("assetId", videoId.value)
             append("videoIndex", videoIndex)
             append("playerId", playerId)
             append("segmentStartSeconds", segmentStartSeconds)
@@ -34,14 +34,14 @@ class MongoEventService(
 
     override fun saveAddToCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
         saveEvent(EventType.ADD_TO_COLLECTION) {
-            append("videoId", videoId.value)
+            append("assetId", videoId.value)
             append("collectionId", collectionId.value)
         }
     }
 
     override fun saveRemoveFromCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
         saveEvent(EventType.REMOVE_FROM_COLLECTION) {
-            append("videoId", videoId.value)
+            append("assetId", videoId.value)
             append("collectionId", collectionId.value)
         }
     }

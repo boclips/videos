@@ -1,17 +1,21 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.service.ReplaceSubjects
+import com.boclips.videos.service.domain.service.VideoUpdateCommand
 
 class VideoResourceToPartialVideoAssetConverter {
-    // Incomplete implementation
+    //TODO Incomplete implementation
     companion object {
-        fun convert(videoResource: VideoResource): PartialVideoAsset {
+        fun convert(videoResource: VideoResource): List<VideoUpdateCommand> {
+            val videoId = AssetId(value = videoResource.id!!)
+
             return if (videoResource.subjects != null) {
-                val subjects = videoResource.subjects.map { Subject(it) }.toSet()
-                PartialVideoAsset(subjects = subjects)
+                val subjects = videoResource.subjects.map { Subject(it) }.toList()
+                listOf(ReplaceSubjects(assetId = videoId, subjects = subjects))
             } else {
-                PartialVideoAsset()
+                emptyList()
             }
         }
     }

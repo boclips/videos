@@ -95,7 +95,7 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(event["type"]).isEqualTo("PLAYBACK")
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
-        assertThat(event["videoId"]).isEqualTo(videoId)
+        assertThat(event["assetId"]).isEqualTo(videoId)
         assertThat(event["playerId"]).isEqualTo("player id")
         assertThat(event["segmentStartSeconds"]).isEqualTo(10L)
         assertThat(event["segmentEndSeconds"]).isEqualTo(20L)
@@ -115,7 +115,7 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
         assertThat(event["userId"]).isEqualTo("user@example.com")
         assertThat(event["userIsBoclips"]).isEqualTo(false)
-        assertThat(event["videoId"]).isEqualTo(videoId)
+        assertThat(event["assetId"]).isEqualTo(videoId)
         assertThat(event["collectionId"]).isEqualTo("collection id")
     }
 
@@ -130,7 +130,7 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
         assertThat(event["userId"]).isEqualTo("user@example.com")
         assertThat(event["userIsBoclips"]).isEqualTo(false)
-        assertThat(event["videoId"]).isEqualTo(videoId)
+        assertThat(event["assetId"]).isEqualTo(videoId)
         assertThat(event["collectionId"]).isEqualTo("collection id")
     }
 

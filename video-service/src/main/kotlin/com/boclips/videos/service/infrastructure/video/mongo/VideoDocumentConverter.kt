@@ -2,10 +2,8 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoAssetAttributes
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.bson.Document
@@ -16,56 +14,50 @@ import java.time.ZoneOffset
 import java.util.Date
 
 object VideoDocumentConverter {
-    fun toDocument(video: VideoAsset): Document {
-        return extractAttributes(video)
+    fun toNewDocument(video: VideoAsset): Document {
+        return Document()
             .append("_id", ObjectId(video.assetId.value))
-    }
-
-    fun toPartialDocument(partialVideo: PartialVideoAsset): Document {
-        val partialDoc = extractAttributes(partialVideo)
-        return Document(partialDoc.filterValues { it != null })
-    }
-
-    private fun extractAttributes(attributes: VideoAssetAttributes): Document {
-        val document = Document()
-            .append("title", attributes.title)
-            .append("description", attributes.description)
-            .append("keywords", attributes.keywords)
-            .append("subjects", attributes.subjects?.map { it.name })
-            .append("durationSeconds", attributes.duration?.seconds?.toInt())
-            .append("legalRestrictions", attributes.legalRestrictions)
-            .append("searchable", attributes.searchable)
-
-        attributes.releasedOn?.let {
-            document.append("releaseDate", Date.from(it.atStartOfDay().toInstant(ZoneOffset.UTC)))
-        }
-
-        attributes.playbackId?.let {
-            document.append(
-                "playback",
-                mapOf(
-                    "id" to attributes.playbackId?.value,
-                    "type" to attributes.playbackId?.type?.name
-                )
-            )
-        }
-
-        attributes.type?.let {
-            document.append("legacy", mapOf("type" to attributes.type?.name))
-        }
-
-        if (attributes.contentPartnerId != null && attributes.contentPartnerVideoId != null) {
-            document.append(
+            .append("title", video.title)
+            .append("description", video.description)
+            .append(
                 "source",
                 mapOf(
                     "contentPartner" to mapOf(
-                        "name" to attributes.contentPartnerId
+                        "name" to video.contentPartnerId
                     ),
-                    "videoReference" to attributes.contentPartnerVideoId
+                    "videoReference" to video.contentPartnerVideoId
                 )
             )
-        }
+            .append(
+                "playback",
+                mapOf(
+                    "id" to video.playbackId.value,
+                    "type" to video.playbackId.type.name
+                )
+            )
+            .append(
+                "legacy",
+                mapOf(
+                    "type" to video.type.name
+                )
+            )
+            .append("keywords", video.keywords)
+            .append("subjects", video.subjects.map { it.name })
+            .append("releaseDate", Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)))
+            .append("durationSeconds", video.duration.seconds.toInt())
+            .append("legalRestrictions", video.legalRestrictions)
+            .append("searchable", video.searchable)
+    }
 
+    fun durationToDocument(duration: Duration): Document {
+        val document = Document()
+        document.append("durationSeconds", duration.seconds.toInt())
+        return document
+    }
+
+    fun subjectsToDocument(subjects: List<Subject>): Document {
+        val document = Document()
+        document.append("subjects", subjects.map { it.name })
         return document
     }
 

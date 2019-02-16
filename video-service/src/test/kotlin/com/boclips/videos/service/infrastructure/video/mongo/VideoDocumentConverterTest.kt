@@ -33,7 +33,7 @@ class VideoDocumentConverterTest {
             legalRestrictions = "legal restrictions"
         )
 
-        val document = VideoDocumentConverter.toDocument(video)
+        val document = VideoDocumentConverter.toNewDocument(video)
 
         assertThat(document.getObjectId("_id")).isEqualTo(ObjectId("5c1786db5236de0001d77747"))
         assertThat(document.getString("title")).isEqualTo("the title")
@@ -66,7 +66,7 @@ class VideoDocumentConverterTest {
     fun `converts video to document to video`() {
         val originalVideo = TestFactories.createVideoAsset(videoId = "5ba8e657042ade0001d563fc")
 
-        val document = VideoDocumentConverter.toDocument(originalVideo)
+        val document = VideoDocumentConverter.toNewDocument(originalVideo)
         val restoredVideo = VideoDocumentConverter.fromDocument(document)
 
         assertThat(restoredVideo).isEqualTo(originalVideo)

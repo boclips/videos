@@ -1,11 +1,10 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.service.ReplaceDuration
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
@@ -51,14 +50,14 @@ open class RefreshVideoDurations(
         }
     }
 
-    private fun durationsToUpdate(videos: List<VideoAsset>): List<Pair<AssetId, PartialVideoAsset>> {
+    private fun durationsToUpdate(videos: List<VideoAsset>): List<ReplaceDuration> {
         val playbackIds = videos.map(VideoAsset::playbackId).toList()
         val playbacksById = playbackRepository.find(playbackIds)
 
         return videos.mapNotNull { video ->
             playbacksById[video.playbackId]?.let { playback ->
                 if (playback.duration != video.duration) {
-                    Pair(video.assetId, PartialVideoAsset(duration = playback.duration))
+                    ReplaceDuration(video.assetId, duration = playback.duration)
                 } else {
                     null
                 }

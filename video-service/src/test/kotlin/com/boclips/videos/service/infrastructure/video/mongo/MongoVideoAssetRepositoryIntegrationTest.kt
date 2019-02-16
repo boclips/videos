@@ -3,11 +3,12 @@ package com.boclips.videos.service.infrastructure.video.mongo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.PartialVideoAsset
 import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.service.ReplaceDuration
+import com.boclips.videos.service.domain.service.ReplaceSubjects
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -85,83 +86,78 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `update can update all attributes except asset ID`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideoAsset(
-            title = "title",
-            description = "description",
-            contentProvider= "AP",
-            contentPartnerVideoId = "cp-id-123",
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
-            type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
-            keywords = listOf("keywords"),
-            subjects = emptySet(),
-            releasedOn = LocalDate.parse("2018-01-01"),
-            duration = Duration.ZERO,
-            legalRestrictions = "",
-            searchable = true
-        ))
-
-        val requestedUpdates = PartialVideoAsset(
-            title = "title updated",
-            description = "description updated",
-            contentPartnerId = "AP updated",
-            contentPartnerVideoId = "cp-id-123-updated",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "ref-id-1-updated"),
-            type = LegacyVideoType.STOCK,
-            keywords = listOf("keywords", "updated"),
-            subjects = setOf(Subject(name = "updated")),
-            releasedOn = LocalDate.parse("2019-12-12"),
-            duration = Duration.ofMinutes(2),
-            legalRestrictions = "Too many",
-            searchable = false
+        val originalAsset = mongoVideoRepository.create(
+            TestFactories.createVideoAsset(
+                title = "title",
+                description = "description",
+                contentProvider = "AP",
+                contentPartnerVideoId = "cp-id-123",
+                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
+                type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+                keywords = listOf("keywords"),
+                subjects = emptySet(),
+                releasedOn = LocalDate.parse("2018-01-01"),
+                duration = Duration.ZERO,
+                legalRestrictions = "",
+                searchable = true
+            )
         )
 
-        val updatedAsset = mongoVideoRepository.update(originalAsset.assetId, requestedUpdates)
+        val updatedAsset = mongoVideoRepository.update(
+            ReplaceDuration(originalAsset.assetId, Duration.ofMinutes(5))
+        )
 
-        assertThat(updatedAsset).isEqualToIgnoringGivenFields(requestedUpdates, "assetId")
+        assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "assetId", "duration")
+        assertThat(updatedAsset.duration).isEqualTo(Duration.ofMinutes(5))
     }
 
     @Test
     fun `update doesn't touch unspecified attributes`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideoAsset(
-            title = "original title",
-            description = "original description"
-        ))
-
-        val requestedUpdates = PartialVideoAsset(
-            description = "new description"
+        val originalAsset = mongoVideoRepository.create(
+            TestFactories.createVideoAsset(
+                title = "original title",
+                subjects = setOf(Subject("Maths"))
+            )
         )
 
-        val updatedAsset = mongoVideoRepository.update(originalAsset.assetId, requestedUpdates)
+        val updatedAsset = mongoVideoRepository.update(ReplaceSubjects(originalAsset.assetId, listOf()))
 
-        assertThat(updatedAsset.description).isEqualTo("new description")
+        assertThat(updatedAsset.subjects).isEmpty()
         assertThat(updatedAsset.title).isEqualTo("original title")
     }
 
     @Test
     fun `update throws when video not found`() {
-        val asset = TestFactories.createVideoAsset(videoId = TestFactories.aValidId())
-
-        assertThrows<VideoAssetNotFoundException> { mongoVideoRepository.update(
-            assetId = asset.assetId,
-            attributes = PartialVideoAsset(title = "title")
-        ) }
+        assertThrows<VideoAssetNotFoundException> {
+            mongoVideoRepository.update(
+                ReplaceDuration(AssetId(value = TestFactories.aValidId()), duration = Duration.ZERO)
+            )
+        }
     }
 
     @Test
     fun `bulk update applies multiple independent updates at once`() {
-        val originalAsset1 = mongoVideoRepository.create(TestFactories.createVideoAsset(
-            title = "original title 1",
-            description = "original description 1"
-        ))
+        val originalAsset1 = mongoVideoRepository.create(
+            TestFactories.createVideoAsset(
+                title = "original title 1",
+                duration = Duration.ofMinutes(1),
+                subjects = setOf(Subject("German"))
+            )
+        )
 
-        val originalAsset2 = mongoVideoRepository.create(TestFactories.createVideoAsset(
-            title = "original title 2",
-            description = "original description 2"
-        ))
+        val originalAsset2 = mongoVideoRepository.create(
+            TestFactories.createVideoAsset(
+                title = "original title 2",
+                duration = Duration.ofMinutes(99),
+                subjects = setOf(Subject("Maths"))
+            )
+        )
 
         val updates = listOf(
-            Pair(originalAsset1.assetId, PartialVideoAsset(title = "New title 1")),
-            Pair(originalAsset2.assetId, PartialVideoAsset(description = "New description 2"))
+            ReplaceSubjects(assetId = originalAsset1.assetId, subjects = emptyList()),
+            ReplaceDuration(assetId = originalAsset1.assetId, duration = Duration.ofMinutes(10)),
+            ReplaceSubjects(assetId = originalAsset2.assetId, subjects = listOf(Subject("French"))),
+            ReplaceDuration(assetId = originalAsset2.assetId, duration = Duration.ofMinutes(11))
         )
 
         mongoVideoRepository.bulkUpdate(updates)
@@ -169,11 +165,13 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val updatedAsset1 = mongoVideoRepository.find(originalAsset1.assetId)!!
         val updatedAsset2 = mongoVideoRepository.find(originalAsset2.assetId)!!
 
-        assertThat(updatedAsset1).isEqualToIgnoringGivenFields(originalAsset1, "title")
-        assertThat(updatedAsset1.title).isEqualTo("New title 1")
+        assertThat(updatedAsset1).isEqualToIgnoringGivenFields(originalAsset1, "subjects", "duration")
+        assertThat(updatedAsset1.duration).isEqualTo(Duration.ofMinutes(10))
+        assertThat(updatedAsset1.subjects).isEmpty()
 
-        assertThat(updatedAsset2).isEqualToIgnoringGivenFields(originalAsset2, "description")
-        assertThat(updatedAsset2.description).isEqualTo("New description 2")
+        assertThat(updatedAsset2).isEqualToIgnoringGivenFields(originalAsset2, "subjects", "duration")
+        assertThat(updatedAsset2.duration).isEqualTo(Duration.ofMinutes(11))
+        assertThat(updatedAsset2.subjects).isEqualTo(setOf(Subject("French")))
     }
 
     @Test
