@@ -28,7 +28,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)

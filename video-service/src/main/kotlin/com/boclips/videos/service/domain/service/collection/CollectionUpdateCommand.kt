@@ -6,5 +6,6 @@ interface CollectionUpdateCommand
 
 class AddVideoToCollection(val videoId: AssetId) :
     CollectionUpdateCommand
+
 class RemoveVideoFromCollection(val videoId: AssetId) :
     CollectionUpdateCommand

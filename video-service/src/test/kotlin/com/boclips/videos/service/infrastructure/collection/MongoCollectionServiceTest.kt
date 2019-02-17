@@ -21,13 +21,16 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
         val collection = collectionService.create(UserId(value = "user1"))
 
-        collectionService.update(collection.id,
+        collectionService.update(
+            collection.id,
             AddVideoToCollection(videoAsset1)
         )
-        collectionService.update(collection.id,
+        collectionService.update(
+            collection.id,
             AddVideoToCollection(videoAsset2)
         )
-        collectionService.update(collection.id,
+        collectionService.update(
+            collection.id,
             RemoveVideoFromCollection(videoAsset1)
         )
 
@@ -41,7 +44,8 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     fun `can retrieve collection of user`() {
         val videoInCollection = saveVideo()
         val collection = collectionService.create(UserId(value = "user1"))
-        collectionService.update(collection.id,
+        collectionService.update(
+            collection.id,
             AddVideoToCollection(videoInCollection)
         )
 

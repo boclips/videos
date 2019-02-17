@@ -13,8 +13,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import java.util.*
-import javax.servlet.http.HttpServletRequest
+import java.util.Date
 
 class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -29,10 +28,10 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `saving search events`() {
         mongoEventService.saveSearchEvent(
-                query = "the query",
-                pageIndex = 1,
-                pageSize = 10,
-                totalResults = 789
+            query = "the query",
+            pageIndex = 1,
+            pageSize = 10,
+            totalResults = 789
         )
 
         val event = getEvent()
@@ -83,12 +82,12 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun `saving playback events`() {
         val videoId = TestFactories.aValidId()
         mongoEventService.savePlaybackEvent(
-                videoId = AssetId(videoId),
-                videoIndex = 6,
-                playerId = "player id",
-                segmentStartSeconds = 10,
-                segmentEndSeconds = 20,
-                videoDurationSeconds = 40
+            videoId = AssetId(videoId),
+            videoIndex = 6,
+            playerId = "player id",
+            segmentStartSeconds = 10,
+            segmentEndSeconds = 20,
+            videoDurationSeconds = 40
         )
 
         val event = getEvent()

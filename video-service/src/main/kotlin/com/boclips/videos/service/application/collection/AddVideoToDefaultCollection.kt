@@ -23,7 +23,8 @@ class AddVideoToDefaultCollection(
 
         val collection = collectionService.getByOwner(UserId(value = userId)).first()
 
-        collectionService.update(collection.id,
+        collectionService.update(
+            collection.id,
             AddVideoToCollection(AssetId(videoId))
         )
 

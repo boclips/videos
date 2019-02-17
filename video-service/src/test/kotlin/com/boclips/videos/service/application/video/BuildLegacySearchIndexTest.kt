@@ -111,7 +111,7 @@ class BuildLegacySearchIndexTest {
         val videoAssetRepository = mock<VideoAssetRepository> {
             on {
                 streamAllSearchable(any())
-            } doThrow(MongoClientException("Boom"))
+            } doThrow (MongoClientException("Boom"))
         }
 
         val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)

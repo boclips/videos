@@ -6,7 +6,7 @@ import com.boclips.videos.service.infrastructure.email.NoResultsEmail
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 
 class ReportNoResults(
-        private val emailClient: EmailClient
+    private val emailClient: EmailClient
 ) {
 
     fun execute(event: CreateNoSearchResultsEventCommand?) {
@@ -14,12 +14,12 @@ class ReportNoResults(
         event.isValidOrThrows()
 
         emailClient.send(
-                NoResultsEmail(
-                        name = event.name,
-                        email = event.email,
-                        query = event.query,
-                        description = event.description
-                )
+            NoResultsEmail(
+                name = event.name,
+                email = event.email,
+                query = event.query,
+                description = event.description
+            )
         )
     }
 }

@@ -32,37 +32,55 @@ class FakeEventService : EventService {
 
     private fun <T> saveEvent(type: EventType, data: T) {
         val event = Event(
-                type = type,
-                timestamp = ZonedDateTime.now(),
-                user = UserExtractor.getCurrentUser(),
-                data = data,
-                url = RefererHeaderExtractor.getReferer()
+            type = type,
+            timestamp = ZonedDateTime.now(),
+            user = UserExtractor.getCurrentUser(),
+            data = data,
+            url = RefererHeaderExtractor.getReferer()
         )
 
         events.add(event)
     }
 
     override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
-        saveEvent(EventType.SEARCH, SearchEventData(query = query, pageIndex = pageIndex, pageSize = pageSize, totalResults = totalResults))
+        saveEvent(
+            EventType.SEARCH,
+            SearchEventData(query = query, pageIndex = pageIndex, pageSize = pageSize, totalResults = totalResults)
+        )
     }
 
     override fun saveAddToCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
-        saveEvent(EventType.ADD_TO_COLLECTION, AddToCollectionEventData(collectionId = collectionId.value, videoId = videoId.value))
+        saveEvent(
+            EventType.ADD_TO_COLLECTION,
+            AddToCollectionEventData(collectionId = collectionId.value, videoId = videoId.value)
+        )
     }
 
     override fun saveRemoveFromCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
-        saveEvent(EventType.REMOVE_FROM_COLLECTION, RemoveFromCollectionEventData(collectionId = collectionId.value, videoId = videoId.value))
+        saveEvent(
+            EventType.REMOVE_FROM_COLLECTION,
+            RemoveFromCollectionEventData(collectionId = collectionId.value, videoId = videoId.value)
+        )
     }
 
-    override fun savePlaybackEvent(videoId: AssetId, videoIndex: Int?, playerId: String, segmentStartSeconds: Long, segmentEndSeconds: Long, videoDurationSeconds: Long) {
-        saveEvent(EventType.PLAYBACK, PlaybackEventData(
+    override fun savePlaybackEvent(
+        videoId: AssetId,
+        videoIndex: Int?,
+        playerId: String,
+        segmentStartSeconds: Long,
+        segmentEndSeconds: Long,
+        videoDurationSeconds: Long
+    ) {
+        saveEvent(
+            EventType.PLAYBACK, PlaybackEventData(
                 playerId = playerId,
                 videoId = videoId.value,
                 videoIndex = videoIndex,
                 segmentStartSeconds = segmentStartSeconds,
                 segmentEndSeconds = segmentEndSeconds,
                 videoDurationSeconds = videoDurationSeconds
-        ))
+            )
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -78,35 +96,35 @@ class FakeEventService : EventService {
 }
 
 class Event<TData>(
-        val type: EventType,
-        val timestamp: ZonedDateTime,
-        val user: User,
-        val data: TData,
-        val url: String?
+    val type: EventType,
+    val timestamp: ZonedDateTime,
+    val user: User,
+    val data: TData,
+    val url: String?
 )
 
 data class SearchEventData(
-        val query: String,
-        val pageIndex: Int,
-        val pageSize: Int,
-        val totalResults: Long
+    val query: String,
+    val pageIndex: Int,
+    val pageSize: Int,
+    val totalResults: Long
 )
 
 data class AddToCollectionEventData(
-        val collectionId: String,
-        val videoId: String
+    val collectionId: String,
+    val videoId: String
 )
 
 data class PlaybackEventData(
-        val playerId: String,
-        val videoId: String,
-        val videoIndex: Int?,
-        val segmentStartSeconds: Long,
-        val segmentEndSeconds: Long,
-        val videoDurationSeconds: Long
+    val playerId: String,
+    val videoId: String,
+    val videoIndex: Int?,
+    val segmentStartSeconds: Long,
+    val segmentEndSeconds: Long,
+    val videoDurationSeconds: Long
 )
 
 data class RemoveFromCollectionEventData(
-        val collectionId: String,
-        val videoId: String
+    val collectionId: String,
+    val videoId: String
 )

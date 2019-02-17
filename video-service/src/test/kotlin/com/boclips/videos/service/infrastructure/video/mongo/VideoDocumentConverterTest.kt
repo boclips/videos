@@ -57,7 +57,20 @@ class VideoDocumentConverterTest {
         )
         assertThat(document.get("keywords", List::class.java)).containsExactly("keyword1", "keyword2")
         assertThat(document.get("subjects", List::class.java)).containsExactlyInAnyOrder("subject1", "subject2")
-        assertThat(document.getDate("releaseDate")).isEqualTo(Date.from(ZonedDateTime.of(2018, 1, 10, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()))
+        assertThat(document.getDate("releaseDate")).isEqualTo(
+            Date.from(
+                ZonedDateTime.of(
+                    2018,
+                    1,
+                    10,
+                    0,
+                    0,
+                    0,
+                    0,
+                    ZoneOffset.UTC
+                ).toInstant()
+            )
+        )
         assertThat(document.getInteger("durationSeconds")).isEqualTo(97)
         assertThat(document.getString("legalRestrictions")).isEqualTo("legal restrictions")
     }

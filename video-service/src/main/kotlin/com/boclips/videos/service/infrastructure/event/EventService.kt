@@ -5,10 +5,10 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 
 interface EventService {
     fun saveSearchEvent(
-            query: String,
-            pageIndex: Int,
-            pageSize: Int,
-            totalResults: Long
+        query: String,
+        pageIndex: Int,
+        pageSize: Int,
+        totalResults: Long
     )
 
     fun saveAddToCollectionEvent(collectionId: CollectionId, videoId: AssetId)
@@ -16,12 +16,12 @@ interface EventService {
     fun saveRemoveFromCollectionEvent(collectionId: CollectionId, videoId: AssetId)
 
     fun savePlaybackEvent(
-            videoId: AssetId,
-            videoIndex: Int?,
-            playerId: String,
-            segmentStartSeconds: Long,
-            segmentEndSeconds: Long,
-            videoDurationSeconds: Long
+        videoId: AssetId,
+        videoIndex: Int?,
+        playerId: String,
+        segmentStartSeconds: Long,
+        segmentEndSeconds: Long,
+        videoDurationSeconds: Long
     )
 }
 

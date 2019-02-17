@@ -8,8 +8,8 @@ import com.boclips.videos.service.domain.service.collection.RemoveVideoFromColle
 import com.boclips.videos.service.infrastructure.event.EventService
 
 class RemoveVideoFromDefaultCollection(
-        private val collectionService: CollectionService,
-        private val eventService: EventService
+    private val collectionService: CollectionService,
+    private val eventService: EventService
 ) {
     operator fun invoke(videoId: String?) {
         videoId ?: throw Exception("Video id cannot be null")
@@ -17,13 +17,14 @@ class RemoveVideoFromDefaultCollection(
         val user = UserExtractor.getCurrentUser()
         val collection = collectionService.getByOwner(UserId(value = user.id)).first()
 
-        collectionService.update(collection.id,
+        collectionService.update(
+            collection.id,
             RemoveVideoFromCollection(AssetId(videoId))
         )
 
         eventService.saveRemoveFromCollectionEvent(
-                collectionId = collection.id,
-                videoId = AssetId(videoId)
+            collectionId = collection.id,
+            videoId = AssetId(videoId)
         )
     }
 }

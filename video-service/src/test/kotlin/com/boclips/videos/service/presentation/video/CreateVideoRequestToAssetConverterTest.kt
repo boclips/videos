@@ -31,17 +31,24 @@ class CreateVideoRequestToAssetConverterTest {
 
     @Test
     fun `throws when playback provider is null`() {
-        assertThatThrownBy { converter.convert(
-            TestFactories.createCreateVideoRequest(playbackProvider = null),
-            videoPlayback
-        ) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(playbackProvider = null),
+                videoPlayback
+            )
+        }
             .isInstanceOf(InvalidCreateVideoRequestException::class.java)
             .hasMessage("playback provider cannot be null")
     }
 
     @Test
     fun `throws when playback id is null`() {
-        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(playbackId = null), videoPlayback) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(playbackId = null),
+                videoPlayback
+            )
+        }
             .isInstanceOf(InvalidCreateVideoRequestException::class.java)
             .hasMessage("playback id cannot be null")
     }
@@ -55,10 +62,12 @@ class CreateVideoRequestToAssetConverterTest {
 
     @Test
     fun `throws when description is null`() {
-        assertThatThrownBy { converter.convert(
-            TestFactories.createCreateVideoRequest(description = null),
-            videoPlayback
-        ) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(description = null),
+                videoPlayback
+            )
+        }
             .isInstanceOf(InvalidCreateVideoRequestException::class.java)
             .hasMessage("description cannot be null")
     }
@@ -72,7 +81,12 @@ class CreateVideoRequestToAssetConverterTest {
 
     @Test
     fun `throws when releasedOn is null`() {
-        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(releasedOn = null), videoPlayback) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(releasedOn = null),
+                videoPlayback
+            )
+        }
             .isInstanceOf(InvalidCreateVideoRequestException::class.java)
             .hasMessage("releasedOn cannot be null")
     }
@@ -86,27 +100,36 @@ class CreateVideoRequestToAssetConverterTest {
 
     @Test
     fun `throws when contentProviderId is null`() {
-        assertThatThrownBy { converter.convert(
-            TestFactories.createCreateVideoRequest(providerVideoId = null),
-            videoPlayback
-        ) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(providerVideoId = null),
+                videoPlayback
+            )
+        }
             .isInstanceOf(InvalidCreateVideoRequestException::class.java)
             .hasMessage("contentPartnerVideoId cannot be null")
     }
 
     @Test
     fun `throws when content type is null`() {
-        assertThatThrownBy { converter.convert(
-            TestFactories.createCreateVideoRequest(contentType = null),
-            videoPlayback
-        ) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(contentType = null),
+                videoPlayback
+            )
+        }
             .isInstanceOf(InvalidCreateVideoRequestException::class.java)
             .hasMessage("content type cannot be null")
     }
 
     @Test
     fun `empty string when restrictions is null`() {
-        assertThat(converter.convert(TestFactories.createCreateVideoRequest(legalRestrictions = null), videoPlayback).legalRestrictions).isEmpty()
+        assertThat(
+            converter.convert(
+                TestFactories.createCreateVideoRequest(legalRestrictions = null),
+                videoPlayback
+            ).legalRestrictions
+        ).isEmpty()
     }
 
     @Test

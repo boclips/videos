@@ -19,11 +19,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     fun `throws exception when query is null`() {
         assertThatThrownBy {
             searchVideo.byQuery(
-                    query = null,
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
-                    pageSize = 2,
-                    pageNumber = 0
+                query = null,
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 2,
+                pageNumber = 0
             )
         }.isInstanceOf(SearchRequestValidationException::class.java)
     }
@@ -32,11 +32,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     fun `throws when page size too big`() {
         assertThatThrownBy {
             searchVideo.byQuery(
-                    query = "query",
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
-                    pageSize = 1000,
-                    pageNumber = 0
+                query = "query",
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 1000,
+                pageNumber = 0
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -45,11 +45,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     fun `throws when page size is too small`() {
         assertThatThrownBy {
             searchVideo.byQuery(
-                    query = "query",
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
-                    pageSize = 0,
-                    pageNumber = 0
+                query = "query",
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 0,
+                pageNumber = 0
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -58,11 +58,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     fun `throws page index is smaller than 0`() {
         assertThatThrownBy {
             searchVideo.byQuery(
-                    query = "query",
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
-                    pageSize = 0,
-                    pageNumber = -1
+                query = "query",
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 0,
+                pageNumber = -1
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -70,28 +70,28 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns paginated results`() {
         saveVideo(
-                title = "a youtube asset",
-                playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1")
+            title = "a youtube asset",
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1")
         )
         saveVideo(
-                title = "a youtube asset",
-                playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-2")
+            title = "a youtube asset",
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-2")
         )
         saveVideo(
-                title = "a another asset",
-                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-3")
+            title = "a another asset",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-3")
         )
         saveVideo(
-                title = "a youtube asset",
-                playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-4")
+            title = "a youtube asset",
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-4")
         )
 
         val result = searchVideo.byQuery(
-                query = "youtube",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
-                pageSize = 2,
-                pageNumber = 1
+            query = "youtube",
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageNumber = 1
         )
 
         assertThat(result.videos).hasSize(1)
@@ -106,11 +106,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "banana", typeId = LegacyVideoType.STOCK.id)
 
         val videos = searchVideo.byQuery(
-                query = "banana",
-                includeTags = listOf("classroom"),
-                excludeTags = emptyList(),
-                pageSize = 2,
-                pageNumber = 0
+            query = "banana",
+            includeTags = listOf("classroom"),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageNumber = 0
         )
 
         assertThat(videos.videos).hasSize(1)
@@ -123,11 +123,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
 
         val videos = searchVideo.byQuery(
-                query = "banana",
-                includeTags = listOf("news"),
-                excludeTags = emptyList(),
-                pageSize = 2,
-                pageNumber = 0
+            query = "banana",
+            includeTags = listOf("news"),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageNumber = 0
         )
 
         assertThat(videos.videos).hasSize(1)
@@ -141,11 +141,11 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
 
         val videos = searchVideo.byQuery(
-                query = "banana",
-                includeTags = listOf("news", "classroom"),
-                excludeTags = emptyList(),
-                pageSize = 2,
-                pageNumber = 0
+            query = "banana",
+            includeTags = listOf("news", "classroom"),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageNumber = 0
         )
 
         assertThat(videos.videos.map { it.id }).containsExactly(newsAndClassroomVideoId.value)
@@ -158,17 +158,16 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "why are camels so tall 3")
 
         searchVideo.byQuery(
-                query = "why are camels so tall",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
-                pageSize = 2,
-                pageNumber = 1
+            query = "why are camels so tall",
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageNumber = 1
         )
 
         assertThat(eventService.searchEvent().data.query).isEqualTo("why are camels so tall")
         assertThat(eventService.searchEvent().data.pageIndex).isEqualTo(1)
         assertThat(eventService.searchEvent().data.pageSize).isEqualTo(2)
         assertThat(eventService.searchEvent().data.totalResults).isEqualTo(3L)
-
     }
 }

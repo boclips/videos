@@ -6,10 +6,10 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.mongodb.MongoClient
 import org.bson.Document
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Date
 
 class MongoEventService(
-        private val mongoClient: MongoClient
+    private val mongoClient: MongoClient
 ) : EventService {
 
     override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
@@ -21,7 +21,14 @@ class MongoEventService(
         }
     }
 
-    override fun savePlaybackEvent(videoId: AssetId, videoIndex: Int?, playerId: String, segmentStartSeconds: Long, segmentEndSeconds: Long, videoDurationSeconds: Long) {
+    override fun savePlaybackEvent(
+        videoId: AssetId,
+        videoIndex: Int?,
+        playerId: String,
+        segmentStartSeconds: Long,
+        segmentEndSeconds: Long,
+        videoDurationSeconds: Long
+    ) {
         saveEvent(EventType.PLAYBACK) {
             append("assetId", videoId.value)
             append("videoIndex", videoIndex)
@@ -48,15 +55,14 @@ class MongoEventService(
 
     private fun saveEvent(type: EventType, customize: Document.() -> Unit) {
         val event = Document()
-                .append("type", type.name)
-                .append("timestamp", Date.from(ZonedDateTime.now().toInstant()))
-                .append("userId", UserExtractor.getCurrentUser().id)
-                .append("userIsBoclips", UserExtractor.getCurrentUser().boclipsEmployee)
-                .append("url", RefererHeaderExtractor.getReferer())
+            .append("type", type.name)
+            .append("timestamp", Date.from(ZonedDateTime.now().toInstant()))
+            .append("userId", UserExtractor.getCurrentUser().id)
+            .append("userIsBoclips", UserExtractor.getCurrentUser().boclipsEmployee)
+            .append("url", RefererHeaderExtractor.getReferer())
 
         customize(event)
 
         mongoClient.getDatabase("video-service-db").getCollection("event-log").insertOne(event)
     }
-
 }

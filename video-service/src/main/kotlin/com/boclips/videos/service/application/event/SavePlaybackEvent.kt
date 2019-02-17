@@ -5,7 +5,7 @@ import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 
 class SavePlaybackEvent(
-        private val eventService: EventService
+    private val eventService: EventService
 ) {
     fun execute(event: CreatePlaybackEventCommand?) {
 
@@ -13,14 +13,12 @@ class SavePlaybackEvent(
         event.isValidOrThrows()
 
         eventService.savePlaybackEvent(
-                playerId = event.playerId!!,
-                videoId = AssetId(event.assetId!!),
-                videoIndex = event.videoIndex,
-                segmentStartSeconds = event.segmentStartSeconds!!,
-                segmentEndSeconds = event.segmentEndSeconds!!,
-                videoDurationSeconds = event.videoDurationSeconds!!
+            playerId = event.playerId!!,
+            videoId = AssetId(event.assetId!!),
+            videoIndex = event.videoIndex,
+            segmentStartSeconds = event.segmentStartSeconds!!,
+            segmentEndSeconds = event.segmentEndSeconds!!,
+            videoDurationSeconds = event.videoDurationSeconds!!
         )
     }
-
-
 }

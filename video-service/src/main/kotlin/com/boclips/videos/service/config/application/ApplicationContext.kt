@@ -4,7 +4,13 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
 import com.boclips.videos.service.application.collection.GetDefaultCollection
 import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultCollection
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.BuildLegacySearchIndex
+import com.boclips.videos.service.application.video.BulkUpdateVideo
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideos
+import com.boclips.videos.service.application.video.PatchVideo
+import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.application.video.RefreshVideoDurations
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery

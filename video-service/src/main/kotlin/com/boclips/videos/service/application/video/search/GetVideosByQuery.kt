@@ -42,7 +42,12 @@ class GetVideosByQuery(
 
         val videoResources = videoToResourceConverter.convert(videos)
 
-        eventService.saveSearchEvent(query = query, pageIndex = pageNumber, pageSize = pageSize, totalResults = totalVideos)
+        eventService.saveSearchEvent(
+            query = query,
+            pageIndex = pageNumber,
+            pageSize = pageSize,
+            totalResults = totalVideos
+        )
 
         return VideosResource(
             videos = videoResources,
