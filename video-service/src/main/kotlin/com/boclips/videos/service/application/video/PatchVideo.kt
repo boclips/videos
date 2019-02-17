@@ -16,19 +16,19 @@ class PatchVideo(
             throw VideoAssetNotFoundException()
         }
 
-        val updateCommands = VideoUpdatesConverter
-            .convert(patch.copy(id = assetId.value))
+        val updateCommands = VideoUpdatesConverter.convert(assetId, patch)
 
-        videoAssetRepository.update(updateCommands.first())
+        videoAssetRepository.bulkUpdate(updateCommands)
     }
 
-    private fun resolveToAssetId(videoIdParam: String?): AssetId {
-        if (videoIdParam == null) throw VideoAssetNotFoundException()
+    private fun resolveToAssetId(idOrAlias: String?): AssetId {
+        if (idOrAlias == null) throw VideoAssetNotFoundException()
 
-        return if (SearchVideo.isAlias(videoIdParam)) {
-            videoAssetRepository.resolveAlias(videoIdParam) ?: throw VideoAssetNotFoundException()
+        return if (SearchVideo.isAlias(idOrAlias)) {
+            videoAssetRepository.resolveAlias(idOrAlias) ?: throw VideoAssetNotFoundException()
         } else {
-            AssetId(value = videoIdParam)
+            videoAssetRepository.find(AssetId(value = idOrAlias))?.let { it.assetId }
+                ?: throw VideoAssetNotFoundException()
         }
     }
 }

@@ -8,14 +8,12 @@ import com.boclips.videos.service.presentation.video.VideoResource
 
 class VideoUpdatesConverter {
     companion object {
-        fun convert(videoResource: VideoResource): List<VideoUpdateCommand> {
-            val videoId = AssetId(value = videoResource.id!!)
-
+        fun convert(assetId: AssetId, videoResource: VideoResource): List<VideoUpdateCommand> {
             return if (videoResource.subjects != null) {
                 val subjects = videoResource.subjects.map { Subject(it) }.toList()
                 listOf(
                     ReplaceSubjects(
-                        assetId = videoId,
+                        assetId = assetId,
                         subjects = subjects
                     )
                 )
