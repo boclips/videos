@@ -21,12 +21,12 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `posted playback events are being saved`() {
         val videoId = TestFactories.aValidId()
         mockMvc.perform(
-                post("/v1/events/playback")
-                        .asBoclipsEmployee()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Referer", "https://teachers.boclips.com/videos?q=abc")
-                        .content(
-                                """{
+            post("/v1/events/playback")
+                .asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Referer", "https://teachers.boclips.com/videos?q=abc")
+                .content(
+                    """{
                     "playerId": "123",
                     "assetId" : "$videoId",
                     "videoIndex" : 3,
@@ -35,10 +35,10 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "videoDurationSeconds" : 200,
                     "captureTime" : "2018-01-01T00:00:00.000Z",
                     "searchId" : "srch-123"
-                    }""".trimMargin()
-                        )
+                    }""".trim()
+                )
         )
-                .andExpect(status().isCreated)
+            .andExpect(status().isCreated)
 
         val event = eventService.playbackEvent()
         assertThat(event.timestamp).isNotNull()
@@ -53,10 +53,10 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `playbacks by unathorized users are saved`() {
         val videoId = TestFactories.aValidId()
         mockMvc.perform(
-                post("/v1/events/playback")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """{
+            post("/v1/events/playback")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """{
                     "playerId": "123",
                     "assetId" : "$videoId",
                     "videoIndex" : 3,
@@ -66,27 +66,26 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "captureTime" : "2018-01-01T00:00:00.000Z",
                     "searchId" : "srch-123"
                     }""".trimMargin()
-                        )
+                )
         )
-                .andExpect(status().isCreated)
+            .andExpect(status().isCreated)
     }
 
     @Test
     fun `post no search results`() {
         mockMvc.perform(
-                post("/v1/events/no-search-results")
-                        .asTeacher()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """{
+            post("/v1/events/no-search-results")
+                .asTeacher()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """{
                         "name": "Hans Muster",
                         "query" : "animal",
                         "email" : "hans@muster.com",
                         "description" : "description"
                         }""".trimMargin()
-                        )
+                )
         )
-                .andExpect(status().isCreated)
+            .andExpect(status().isCreated)
     }
-
 }
