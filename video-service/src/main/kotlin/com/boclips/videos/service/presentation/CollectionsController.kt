@@ -41,6 +41,20 @@ class CollectionsController(
         return defaultCollectionResource()
     }
 
+    @PutMapping("/default/videos/{video_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun addVideo(@PathVariable("video_id") videoId: String?): Any? {
+        addVideoToDefaultCollection(videoId)
+        return null
+    }
+
+    @DeleteMapping("/default/videos/{video_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun removeVideo(@PathVariable("video_id") videoId: String?): Any? {
+        removeVideoFromDefaultCollection(videoId)
+        return null
+    }
+
     private fun defaultCollectionResource(): Resource<CollectionResource> {
         val selfLink = getUserDefaultCollectionLink().withSelfRel()
         val addVideoLink = linkTo(
@@ -55,19 +69,5 @@ class CollectionsController(
             .withRel("removeVideo")
         val collectionResource = getDefaultCollection()
         return Resource(collectionResource, selfLink, addVideoLink, removeVideoLink)
-    }
-
-    @PutMapping("/default/videos/{video_id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun addVideo(@PathVariable("video_id") videoId: String?): Any? {
-        addVideoToDefaultCollection(videoId)
-        return null
-    }
-
-    @DeleteMapping("/default/videos/{video_id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun removeVideo(@PathVariable("video_id") videoId: String?): Any? {
-        removeVideoFromDefaultCollection(videoId)
-        return null
     }
 }
