@@ -29,6 +29,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `gets all user collections`() {
         mockMvc.perform(get("/v1/collections").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", `is`("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].title", `is`("")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(0)))
@@ -43,6 +44,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `empty default collection`() {
         mockMvc.perform(get("/v1/collections/default").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", `is`("teacher@gmail.com")))
             .andExpect(jsonPath("$.title", `is`("")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))

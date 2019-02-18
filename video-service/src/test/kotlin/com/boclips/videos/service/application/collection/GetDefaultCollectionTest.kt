@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
@@ -23,16 +24,23 @@ class GetDefaultCollectionTest {
     }
 
     @Test
-    fun `user does not have a collection`() {
+    fun `collection is created for user who doesn't have one yet`() {
+        val onCreateCollection = TestFactories.createCollection(
+            owner = "me@me.com",
+            title = "Freshly created",
+            videos = emptyList()
+        )
+
         collectionService = mock {
             on { getByOwner(UserId(value = "me@me.com")) } doReturn emptyList<Collection>()
+            on { create(UserId(value = "me@me.com")) } doReturn(onCreateCollection)
         }
-        val getDefaultCollection = GetDefaultCollection(collectionService, VideoToResourceConverter())
 
-        val collection = getDefaultCollection()
+        val collection = GetDefaultCollection(collectionService, VideoToResourceConverter()).invoke()
 
-        assertThat(collection.owner).isEqualTo("me@me.com")
-        assertThat(collection.title).isEmpty()
+        assertThat(collection.id).isEqualTo(onCreateCollection.id.value)
+        assertThat(collection.owner).isEqualTo(onCreateCollection.owner.value)
+        assertThat(collection.title).isEqualTo(onCreateCollection.title)
         assertThat(collection.videos).isEmpty()
     }
 
@@ -41,16 +49,16 @@ class GetDefaultCollectionTest {
         collectionService = mock {
             on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(
                 TestFactories.createCollection(
+                    id = CollectionId("collection-id"),
                     owner = "me@me.com",
                     title = "collection title",
                     videos = listOf(createVideo())
                 )
             )
         }
-        val getDefaultCollection = GetDefaultCollection(collectionService, VideoToResourceConverter())
+        val collection = GetDefaultCollection(collectionService, VideoToResourceConverter()).invoke()
 
-        val collection = getDefaultCollection()
-
+        assertThat(collection.id).isEqualTo("collection-id")
         assertThat(collection.owner).isEqualTo("me@me.com")
         assertThat(collection.title).isEqualTo("collection title")
         assertThat(collection.videos).hasSize(1)

@@ -14,18 +14,14 @@ class GetDefaultCollection(
     operator fun invoke(): CollectionResource {
         val userId = UserExtractor.getCurrentUser().id
         val owner = UserId(value = userId)
+        val collection = collectionService.getByOwner(owner).firstOrNull() ?: collectionService.create(owner)
 
-        val collections = collectionService.getByOwner(owner)
-
-        return collections.firstOrNull()
-            ?.let { convert(it) }
-            ?: CollectionResource(
-                owner = userId, title = "", videos = emptyList()
-            )
+        return collection.let(this::convert)
     }
 
     private fun convert(collection: Collection): CollectionResource {
         return CollectionResource(
+            id = collection.id.value,
             owner = collection.owner.value,
             title = collection.title,
             videos = videoToResourceConverter.convert(collection.videos)
