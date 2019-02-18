@@ -19,7 +19,10 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         val videoAsset1 = saveVideo()
         val videoAsset2 = saveVideo()
 
-        val collection = collectionService.create(UserId(value = "user1"))
+        val collection = collectionService.create(
+            owner = UserId(value = "user1"),
+            title = "Collection vs Playlist"
+        )
 
         collectionService.update(
             collection.id,
@@ -38,12 +41,16 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedCollection!!.owner).isEqualTo(UserId(value = "user1"))
         assertThat(updatedCollection!!.videos).hasSize(1)
+        assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
     }
 
     @Test
     fun `can retrieve collection of user`() {
         val videoInCollection = saveVideo()
-        val collection = collectionService.create(UserId(value = "user1"))
+        val collection = collectionService.create(
+            owner = UserId(value = "user1"),
+            title = ""
+        )
         collectionService.update(
             collection.id,
             AddVideoToCollection(videoInCollection)

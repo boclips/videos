@@ -8,6 +8,7 @@ import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createCollection
 import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.boclips.videos.service.testsupport.setSecurityContext
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
@@ -39,7 +40,7 @@ class AddVideoToDefaultCollectionTest {
             // fails after creating a collection because of the mock
         }
 
-        verify(collectionService).create(UserId(value = "me@me.com"))
+        verify(collectionService).create(UserId(value = "me@me.com"), "My Videos")
     }
 
     @Test
@@ -52,7 +53,7 @@ class AddVideoToDefaultCollectionTest {
 
         addVideoToCollection(TestFactories.aValidId())
 
-        verify(collectionService, Times(0)).create(UserId(value = "me@me.com"))
+        verify(collectionService, Times(0)).create(any(), any())
     }
 
     @Test

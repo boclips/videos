@@ -5,6 +5,7 @@ import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.endsWith
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
@@ -31,7 +32,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", `is`("teacher@gmail.com")))
-            .andExpect(jsonPath("$._embedded.collections[0].title", `is`("")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("My Videos")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(0)))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
@@ -46,7 +47,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", `is`("teacher@gmail.com")))
-            .andExpect(jsonPath("$.title", `is`("")))
+            .andExpect(jsonPath("$.title",  equalTo("My Videos")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
             .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))

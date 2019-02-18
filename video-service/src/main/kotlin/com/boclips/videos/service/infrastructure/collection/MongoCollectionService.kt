@@ -29,7 +29,7 @@ class MongoCollectionService(
         const val collectionName = "collections"
     }
 
-    override fun create(owner: UserId): Collection {
+    override fun create(owner: UserId, title: String): Collection {
         val collectionId = CollectionId(value = ObjectId().toHexString())
 
         mongoClient
@@ -40,7 +40,7 @@ class MongoCollectionService(
                     CollectionDocument(
                         id = collectionId.value,
                         owner = owner.value,
-                        title = "",
+                        title = title,
                         videos = emptyList()
                     )
                 )

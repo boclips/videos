@@ -14,7 +14,9 @@ class GetDefaultCollection(
     operator fun invoke(): CollectionResource {
         val userId = UserExtractor.getCurrentUser().id
         val owner = UserId(value = userId)
-        val collection = collectionService.getByOwner(owner).firstOrNull() ?: collectionService.create(owner)
+        val collection =
+            collectionService.getByOwner(owner).firstOrNull() ?:
+            collectionService.create(owner = owner, title = Collection.DEFAULT_TITLE)
 
         return collection.let(this::convert)
     }

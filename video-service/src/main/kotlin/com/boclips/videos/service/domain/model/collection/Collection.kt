@@ -8,4 +8,8 @@ data class Collection(
     val owner: UserId,
     val title: String,
     val videos: List<Video>
-)
+) {
+    companion object {
+        const val DEFAULT_TITLE = "My Videos"
+    }
+}
