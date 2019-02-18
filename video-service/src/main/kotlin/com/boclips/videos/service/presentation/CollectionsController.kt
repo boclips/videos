@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultC
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import mu.KLogging
 import org.springframework.hateoas.Resource
+import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
@@ -25,11 +26,22 @@ class CollectionsController(
     private val removeVideoFromDefaultCollection: RemoveVideoFromDefaultCollection
 ) {
     companion object : KLogging() {
+        fun getUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).index())
         fun getUserDefaultCollectionLink() = linkTo(methodOn(CollectionsController::class.java).defaultCollection())
+    }
+
+    @GetMapping
+    fun index(): Resources<Resource<CollectionResource>> {
+        val selfLink = getUserCollectionsLink().withSelfRel()
+        return Resources(listOf(defaultCollectionResource()), selfLink)
     }
 
     @GetMapping("/default")
     fun defaultCollection(): Resource<CollectionResource> {
+        return defaultCollectionResource()
+    }
+
+    private fun defaultCollectionResource(): Resource<CollectionResource> {
         val selfLink = getUserDefaultCollectionLink().withSelfRel()
         val addVideoLink = linkTo(
             methodOn(CollectionsController::class.java)

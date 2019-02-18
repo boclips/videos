@@ -20,7 +20,8 @@ class LinksController {
             if (request.isUserInRole(VIEW_DISABLED_VIDEOS)) VideoController.adminSearchLink() else null,
             EventController.createPlaybackEventLink(),
             EventController.createNoResultsEventLink(),
-            CollectionsController.getUserDefaultCollectionLink().withRel("userDefaultCollection")
+            CollectionsController.getUserDefaultCollectionLink().withRel("userDefaultCollection"),
+            CollectionsController.getUserCollectionsLink().withRel("userCollections")
         )
     )
 }

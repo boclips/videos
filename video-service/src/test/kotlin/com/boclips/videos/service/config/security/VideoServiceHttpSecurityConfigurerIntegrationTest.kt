@@ -33,7 +33,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
-    fun `everybody  can access links without permissions`() {
+    fun `everybody can access links without permissions`() {
         mockMvc.perform(get("/v1"))
             .andExpect(status().`is`(HttpStatus.OK.value()))
 
@@ -74,6 +74,18 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
             .andExpect(status().isForbidden)
 
         mockMvc.perform(get("/v1/videos?query=test").asTeacher())
+            .andExpect(status().is2xxSuccessful)
+    }
+
+    @Test
+    fun `teachers can access their collections`() {
+        mockMvc.perform(get("/v1/collections"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/collections").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/collections").asTeacher())
             .andExpect(status().is2xxSuccessful)
     }
 

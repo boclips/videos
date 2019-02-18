@@ -4,6 +4,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
@@ -25,6 +26,20 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Test
+    fun `gets all user collections`() {
+        mockMvc.perform(get("/v1/collections").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections[0].owner", `is`("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", `is`("")))
+            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(0)))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections")))
+            .andReturn()
+    }
+
+    @Test
     fun `empty default collection`() {
         mockMvc.perform(get("/v1/collections/default").asTeacher())
             .andExpect(status().isOk)
@@ -34,6 +49,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.addVideo.templated", `is`(true)))
+            .andExpect(jsonPath("$._links.removeVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.removeVideo.templated", `is`(true)))
     }
 
     @Test
@@ -78,14 +95,15 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
     }
+
+    private fun MvcResult.extractVideoAddLink(videoId: String): URI {
+        val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.addVideo.href")
+        return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
+    }
+
+    private fun MvcResult.extractVideoRemoveLink(videoId: String): URI {
+        val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.removeVideo.href")
+        return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
+    }
 }
 
-fun MvcResult.extractVideoAddLink(videoId: String): URI {
-    val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.addVideo.href")
-    return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
-}
-
-fun MvcResult.extractVideoRemoveLink(videoId: String): URI {
-    val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.removeVideo.href")
-    return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
-}
