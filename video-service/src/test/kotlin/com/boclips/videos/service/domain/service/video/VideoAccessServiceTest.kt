@@ -51,10 +51,10 @@ class VideoAccessServiceTest {
     @DisplayName("update accessibility")
     inner class UpdateAccessibilityTests {
         @Test
-        fun `grants access to video`() {
+        fun `grants access to videos`() {
             val assetId = AssetId(value = aValidId())
 
-            videoAccessService.grantAccess(assetId)
+            videoAccessService.grantAccess(listOf(assetId))
 
             verify(videoAssetRepositoryMock).makeSearchable(any())
         }
@@ -63,7 +63,7 @@ class VideoAccessServiceTest {
         fun `revokes access to video`() {
             val assetId = AssetId(value = aValidId())
 
-            videoAccessService.revokeAccess(assetId)
+            videoAccessService.revokeAccess(listOf(assetId))
 
             verify(videoAssetRepositoryMock).disableFromSearch(any())
         }

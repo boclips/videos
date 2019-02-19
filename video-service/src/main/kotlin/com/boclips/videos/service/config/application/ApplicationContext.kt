@@ -20,6 +20,7 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
@@ -36,7 +37,8 @@ class ApplicationContext(
     val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
     val collectionService: CollectionService,
-    val eventService: EventService
+    val eventService: EventService,
+    val videoAccessService: VideoAccessService
 ) {
 
     @Bean
@@ -70,7 +72,7 @@ class ApplicationContext(
 
     @Bean
     fun bulkUpdate(): BulkUpdateVideo {
-        return BulkUpdateVideo(videoAssetRepository, searchService, legacySearchService)
+        return BulkUpdateVideo(videoAssetRepository, searchService, legacySearchService, videoAccessService)
     }
 
     @Bean

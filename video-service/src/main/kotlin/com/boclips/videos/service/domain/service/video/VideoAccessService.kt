@@ -13,11 +13,11 @@ class VideoAccessService(
         videoAsset?.let { return it.searchable } ?: throw VideoAssetNotFoundException()
     }
 
-    fun grantAccess(assetId: AssetId) {
-        videoAssetRepository.makeSearchable(assetIds = listOf(assetId))
+    fun grantAccess(assetIds: List<AssetId>) {
+        videoAssetRepository.makeSearchable(assetIds = assetIds)
     }
 
-    fun revokeAccess(assetId: AssetId) {
-        videoAssetRepository.disableFromSearch(assetIds = listOf(assetId))
+    fun revokeAccess(assetIds: List<AssetId>) {
+        videoAssetRepository.disableFromSearch(assetIds = assetIds)
     }
 }

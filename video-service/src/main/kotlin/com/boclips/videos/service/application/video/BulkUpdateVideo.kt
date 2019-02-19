@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoAssetToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
@@ -17,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional
 open class BulkUpdateVideo(
     private val videoAssetRepository: VideoAssetRepository,
     private val searchAdminService: GenericSearchServiceAdmin<VideoAsset>,
-    private val legacySearchService: LegacySearchService
-
+    private val legacySearchService: LegacySearchService,
+    private val videoAccessService: VideoAccessService
 ) {
 
     companion object : KLogging();
@@ -33,7 +34,8 @@ open class BulkUpdateVideo(
     }
 
     private fun disableFromSearch(bulkUpdateRequest: BulkUpdateRequest) {
-        videoAssetRepository.disableFromSearch(bulkUpdateRequest.ids.map { AssetId(value = it) })
+        val assetIds = bulkUpdateRequest.ids.map { AssetId(value = it) }
+        videoAccessService.revokeAccess(assetIds)
 
         bulkUpdateRequest.ids.forEach {
             searchAdminService.removeFromSearch(it)
@@ -48,7 +50,7 @@ open class BulkUpdateVideo(
 
     private fun makeSearchable(bulkUpdateRequest: BulkUpdateRequest) {
         val assetIds = bulkUpdateRequest.ids.map { AssetId(value = it) }
-        videoAssetRepository.makeSearchable(assetIds)
+        videoAccessService.grantAccess(assetIds)
 
         videoAssetRepository.findAll(assetIds).let { assetId ->
             searchAdminService.upsert(assetId.asSequence())
