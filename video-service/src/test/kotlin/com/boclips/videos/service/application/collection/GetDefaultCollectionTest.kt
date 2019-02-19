@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.presentation.collections.CollectionResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -20,10 +21,12 @@ import org.junit.jupiter.api.Test
 class GetDefaultCollectionTest {
 
     lateinit var collectionService: CollectionService
+    lateinit var collectionResourceConverter: CollectionResourceConverter
 
     @BeforeEach
     fun setUp() {
         setSecurityContext("me@me.com")
+        collectionResourceConverter = CollectionResourceConverter(VideoToResourceConverter())
     }
 
     @Test
@@ -39,7 +42,7 @@ class GetDefaultCollectionTest {
             on { create(eq(UserId(value = "me@me.com")), any()) } doReturn(onCreateCollection)
         }
 
-        val collection = GetDefaultCollection(collectionService, VideoToResourceConverter()).invoke()
+        val collection = GetDefaultCollection(collectionService, collectionResourceConverter).invoke()
 
         assertThat(collection.id).isEqualTo(onCreateCollection.id.value)
         assertThat(collection.owner).isEqualTo(onCreateCollection.owner.value)
@@ -54,7 +57,7 @@ class GetDefaultCollectionTest {
             on { create(eq(UserId(value = "me@me.com")), any()) } doReturn(TestFactories.createCollection())
         }
 
-        GetDefaultCollection(collectionService, VideoToResourceConverter()).invoke()
+        GetDefaultCollection(collectionService, collectionResourceConverter).invoke()
 
         verify(collectionService).create(any(), eq("My Videos"))
     }
@@ -71,7 +74,7 @@ class GetDefaultCollectionTest {
                 )
             )
         }
-        val collection = GetDefaultCollection(collectionService, VideoToResourceConverter()).invoke()
+        val collection = GetDefaultCollection(collectionService, collectionResourceConverter).invoke()
 
         assertThat(collection.id).isEqualTo("collection-id")
         assertThat(collection.owner).isEqualTo("me@me.com")

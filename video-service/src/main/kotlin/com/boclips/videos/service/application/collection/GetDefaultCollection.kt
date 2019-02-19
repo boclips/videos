@@ -5,11 +5,11 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.CollectionResource
-import com.boclips.videos.service.presentation.video.VideoToResourceConverter
+import com.boclips.videos.service.presentation.collections.CollectionResourceConverter
 
 class GetDefaultCollection(
     private val collectionService: CollectionService,
-    private val videoToResourceConverter: VideoToResourceConverter
+    private val collectionResourceConverter: CollectionResourceConverter
 ) {
     operator fun invoke(): CollectionResource {
         val userId = UserExtractor.getCurrentUser().id
@@ -18,15 +18,6 @@ class GetDefaultCollection(
             collectionService.getByOwner(owner).firstOrNull() ?:
             collectionService.create(owner = owner, title = Collection.DEFAULT_TITLE)
 
-        return collection.let(this::convert)
-    }
-
-    private fun convert(collection: Collection): CollectionResource {
-        return CollectionResource(
-            id = collection.id.value,
-            owner = collection.owner.value,
-            title = collection.title,
-            videos = videoToResourceConverter.convert(collection.videos)
-        )
+        return collection.let(collectionResourceConverter::toResource)
     }
 }

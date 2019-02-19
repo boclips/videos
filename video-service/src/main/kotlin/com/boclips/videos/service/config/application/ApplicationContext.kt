@@ -23,6 +23,7 @@ import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.presentation.collections.CollectionResourceConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import io.micrometer.core.instrument.Counter
@@ -82,12 +83,12 @@ class ApplicationContext(
 
     @Bean
     fun getCollection(): GetCollection {
-        return GetCollection(collectionService, VideoToResourceConverter())
+        return GetCollection(collectionService, CollectionResourceConverter(VideoToResourceConverter()))
     }
 
     @Bean
     fun getDefaultCollection(): GetDefaultCollection {
-        return GetDefaultCollection(collectionService, VideoToResourceConverter())
+        return GetDefaultCollection(collectionService, CollectionResourceConverter(VideoToResourceConverter()))
     }
 
     @Bean
