@@ -1,11 +1,9 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.collection.AddVideoToCollection
-import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetDefaultCollection
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
-import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultCollection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import mu.KLogging
 import org.springframework.hateoas.Resource
@@ -26,9 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 class CollectionsController(
     private val getDefaultCollection: GetDefaultCollection,
     private val getCollection: GetCollection,
-    private val addVideoToDefaultCollection: AddVideoToDefaultCollection,
     private val addVideoToCollection: AddVideoToCollection,
-    private val removeVideoFromDefaultCollection: RemoveVideoFromDefaultCollection,
     private val removeVideoFromCollection: RemoveVideoFromCollection
 ) {
     companion object : KLogging() {
@@ -58,7 +54,7 @@ class CollectionsController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun addVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
         if (collectionId == LEGACY_DEFAULT_COLLECTION) {
-            addVideoToDefaultCollection(videoId)
+            addVideoToCollection(getDefaultCollection().id, videoId)
         } else {
             addVideoToCollection(collectionId = collectionId, videoId = videoId)
         }
@@ -70,7 +66,7 @@ class CollectionsController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun removeVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
         if (collectionId == LEGACY_DEFAULT_COLLECTION) {
-            removeVideoFromDefaultCollection(videoId)
+            removeVideoFromCollection(getDefaultCollection().id, videoId)
         } else {
             removeVideoFromCollection(collectionId, videoId)
         }
