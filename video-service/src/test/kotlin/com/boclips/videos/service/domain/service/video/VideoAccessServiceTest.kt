@@ -5,8 +5,11 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
@@ -16,28 +19,53 @@ class VideoAccessServiceTest {
     private val videoAssetRepositoryMock = Mockito.mock(VideoAssetRepository::class.java)
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         videoAccessService = VideoAccessService(videoAssetRepositoryMock)
     }
 
-    @Test
-    fun `can find out if a video is accessible`() {
-        `when`(videoAssetRepositoryMock.find(any()))
-                .thenReturn(TestFactories.createVideoAsset(searchable = true))
+    @Nested
+    @DisplayName("check accessibility")
+    inner class AccessibilityTests {
+        @Test
+        fun `returns true if a video is accessible`() {
+            `when`(videoAssetRepositoryMock.find(any()))
+                    .thenReturn(TestFactories.createVideoAsset(searchable = true))
 
-        val isVideoAccessible = videoAccessService.accessible(AssetId(value = aValidId()))
+            val isVideoAccessible = videoAccessService.accessible(AssetId(value = aValidId()))
 
-        assertThat(isVideoAccessible).isEqualTo(true)
+            assertThat(isVideoAccessible).isEqualTo(true)
+        }
+
+        @Test
+        fun `returns false if a video is not accessible`() {
+            `when`(videoAssetRepositoryMock.find(any()))
+                    .thenReturn(TestFactories.createVideoAsset(searchable = false))
+
+            val isVideoAccessible = videoAccessService.accessible(AssetId(value = aValidId()))
+
+            assertThat(isVideoAccessible).isEqualTo(false)
+        }
     }
 
-    @Test
-    fun `returns false if a video is not accessible`() {
-        `when`(videoAssetRepositoryMock.find(any()))
-                .thenReturn(TestFactories.createVideoAsset(searchable = false))
+    @Nested
+    @DisplayName("update accessibility")
+    inner class UpdateAccessibilityTests {
+        @Test
+        fun `grants access to video`() {
+            val assetId = AssetId(value = aValidId())
 
-        val isVideoAccessible = videoAccessService.accessible(AssetId(value = aValidId()))
+            videoAccessService.grantAccess(assetId)
 
-        assertThat(isVideoAccessible).isEqualTo(false)
+            verify(videoAssetRepositoryMock).makeSearchable(any())
+        }
+
+        @Test
+        fun `revokes access to video`() {
+            val assetId = AssetId(value = aValidId())
+
+            videoAccessService.revokeAccess(assetId)
+
+            verify(videoAssetRepositoryMock).disableFromSearch(any())
+        }
     }
-
 }
