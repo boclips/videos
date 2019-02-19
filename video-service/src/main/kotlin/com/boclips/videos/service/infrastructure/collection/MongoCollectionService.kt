@@ -109,7 +109,7 @@ class MongoCollectionService(
 
         return Collection(
             id = CollectionId(value = collectionDocument.id),
-            title = collectionDocument.title!!,
+            title = collectionDocument.title,
             owner = UserId(value = collectionDocument.owner),
             videos = videoService.get(assetIds)
         )
