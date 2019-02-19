@@ -6,7 +6,6 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.bson.types.ObjectId
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -38,7 +38,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/collections").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0].owner", `is`("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("My Videos")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(0)))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
@@ -50,128 +50,99 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `empty default collection`() {
-        mockMvc.perform(get("/v1/collections/default").asTeacher())
+        getCollection("default")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", not(isEmptyString())))
-            .andExpect(jsonPath("$.owner", `is`("teacher@gmail.com")))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.title",  equalTo("My Videos")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
             .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.addVideo.templated", `is`(true)))
+            .andExpect(jsonPath("$._links.addVideo.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.removeVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.removeVideo.templated", `is`(true)))
+            .andExpect(jsonPath("$._links.removeVideo.templated", equalTo(true)))
     }
 
     @Test
     fun `fetching a non-existent collection returns 404`() {
         mockMvc.perform(get("/v1/collections/${ObjectId().toHexString()}").asTeacher())
-            .andExpect(status().`is`(404))
+            .andExpect(status().isNotFound)
             .andExpect(content().string(isEmptyString()))
     }
 
     @Test
     fun `add video to default collection and retrieve it`() {
         val videoId = saveVideo(title = "a video title")
+        val collectionId = "default"
 
-        val addVideoLink = mockMvc.perform(get("/v1/collections/default").asTeacher())
-            .andReturn()
-            .extractVideoAddLink(videoId = videoId.value)
+        assertCollectionSize(collectionId, 0)
+        addVideo(collectionId, videoId.value)
 
-        mockMvc.perform(put(addVideoLink).asTeacher())
-            .andExpect(status().isNoContent)
-
-        mockMvc.perform(get("/v1/collections/default").asTeacher())
-            .andExpect(status().isOk)
+        getCollection(collectionId)
             .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-            .andExpect(jsonPath("$.videos[0].id", `is`(videoId.value)))
-            .andExpect(jsonPath("$.videos[0].title", `is`("a video title")))
-    }
-
-    @Test
-    fun `add video to specific collection and retrieve it`() {
-        val email = "teacher@gmail.com"
-        val videoId = saveVideo(title = "a video title")
-        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
-
-        val response = mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(email))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
-            .andReturn()
-
-        val addVideoLink = response.extractVideoAddLink(videoId = videoId.value)
-
-        mockMvc.perform(put(addVideoLink).asTeacher(email))
-            .andExpect(status().isNoContent)
-
-        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(email))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-            .andExpect(jsonPath("$.videos[0].id", `is`(videoId.value)))
-            .andExpect(jsonPath("$.videos[0].title", `is`("a video title")))
+            .andExpect(jsonPath("$.videos[0].id", equalTo(videoId.value)))
+            .andExpect(jsonPath("$.videos[0].title", equalTo("a video title")))
     }
 
     @Test
     fun `remove video from the default collection`() {
-        val videoId = saveVideo(title = "a video title")
+        val videoId = saveVideo(title = "a video title").value
+        val collectionId = "default"
 
-        val result = mockMvc.perform(get("/v1/collections/default").asTeacher())
-            .andReturn()
-
-        val addVideoLink = result.extractVideoAddLink(videoId = videoId.value)
-        val removeVideoLink = result.extractVideoRemoveLink(videoId = videoId.value)
-
-        mockMvc.perform(put(addVideoLink).asTeacher())
-            .andExpect(status().isNoContent)
-
-        mockMvc.perform(get("/v1/collections/default").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-
-        mockMvc.perform(delete(removeVideoLink).asTeacher())
-            .andExpect(status().isNoContent)
-
-        mockMvc.perform(get("/v1/collections/default").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
+        assertCollectionSize(collectionId, 0)
+        addVideo(collectionId, videoId)
+        assertCollectionSize(collectionId, 1)
+        removeVideo(collectionId, videoId)
+        assertCollectionSize(collectionId, 0)
     }
 
     @Test
-    fun `remove video from a specific collection`() {
+    fun `add and remove video from a specific collection`() {
         val email = "teacher@gmail.com"
-        val videoId = saveVideo(title = "a video title")
+        val videoId = saveVideo(title = "a video title").value
         val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
 
-        val result = mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(email))
+        assertCollectionSize(collectionId, 0)
+        addVideo(collectionId, videoId)
+        assertCollectionSize(collectionId, 1)
+        removeVideo(collectionId, videoId)
+        assertCollectionSize(collectionId, 0)
+    }
+
+    fun addVideo(collectionId: String, videoId: String) {
+        mockMvc.perform(put(addVideoLink(collectionId, videoId)).asTeacher())
+            .andExpect(status().isNoContent)
+    }
+
+    fun removeVideo(collectionId: String, videoId: String) {
+        mockMvc.perform(delete(removeVideoLink(collectionId, videoId)).asTeacher())
+            .andExpect(status().isNoContent)
+    }
+
+    fun getCollection(collectionId: String): ResultActions {
+        return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
+    }
+
+    fun assertCollectionSize(collectionId: String, expectedSize: Int): ResultActions {
+        return getCollection(collectionId)
+            .andExpect(jsonPath("$.videos", hasSize<Any>(expectedSize)))
+    }
+
+    private fun addVideoLink(collectionId: String, videoId: String): URI {
+        return getCollection(collectionId)
             .andReturn()
-
-        val addVideoLink = result.extractVideoAddLink(videoId = videoId.value)
-        val removeVideoLink = result.extractVideoRemoveLink(videoId = videoId.value)
-
-        mockMvc.perform(put(addVideoLink).asTeacher(email))
-            .andExpect(status().isNoContent)
-
-        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(email))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-
-        mockMvc.perform(delete(removeVideoLink).asTeacher(email))
-            .andExpect(status().isNoContent)
-
-        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(email))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
+            .extractLink("addVideo", videoId)
     }
 
-    private fun MvcResult.extractVideoAddLink(videoId: String): URI {
-        val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.addVideo.href")
-        return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
+    private fun removeVideoLink(collectionId: String, videoId: String): URI {
+        return getCollection(collectionId)
+            .andReturn()
+            .extractLink("removeVideo", videoId)
     }
 
-    private fun MvcResult.extractVideoRemoveLink(videoId: String): URI {
-        val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.removeVideo.href")
+    private fun MvcResult.extractLink(relName: String, videoId: String): URI {
+        val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.$relName.href")
         return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
     }
 }
