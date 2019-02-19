@@ -4,7 +4,7 @@ import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollection
+import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.infrastructure.event.EventService
 
@@ -26,7 +26,7 @@ class AddVideoToDefaultCollection(
 
         collectionService.update(
             collection.id,
-            AddVideoToCollection(AssetId(videoId))
+            AddVideoToCollectionCommand(AssetId(videoId))
         )
 
         eventService.saveAddToCollectionEvent(collectionId = collection.id, videoId = AssetId(videoId))

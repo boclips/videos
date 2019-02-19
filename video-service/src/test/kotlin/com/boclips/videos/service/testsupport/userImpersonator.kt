@@ -4,10 +4,10 @@ import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
-fun MockHttpServletRequestBuilder.asTeacher() =
+fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com") =
     this.with(
         SecurityMockMvcRequestPostProcessors
-            .user("teacher@gmail.com")
+            .user(email)
             .roles(
                 UserRoles.VIEW_VIDEOS,
                 UserRoles.INSERT_EVENTS

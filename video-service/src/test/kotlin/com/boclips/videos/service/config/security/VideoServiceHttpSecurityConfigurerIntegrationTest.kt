@@ -90,6 +90,18 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
+    fun `teachers can access specific collections`() {
+        mockMvc.perform(get("/v1/collections/default"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/collections/default").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/collections/default").asTeacher())
+            .andExpect(status().is2xxSuccessful)
+    }
+
+    @Test
     fun `remove videos requires a special role`() {
         val videoId = saveVideo()
 

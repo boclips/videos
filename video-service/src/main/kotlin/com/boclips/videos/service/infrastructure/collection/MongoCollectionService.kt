@@ -6,10 +6,10 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollection
+import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollection
+import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters
@@ -77,8 +77,8 @@ class MongoCollectionService(
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
         when (updateCommand) {
-            is AddVideoToCollection -> addVideo(id, videoService.get(updateCommand.videoId))
-            is RemoveVideoFromCollection -> removeVideo(id, updateCommand.videoId)
+            is AddVideoToCollectionCommand -> addVideo(id, videoService.get(updateCommand.videoId))
+            is RemoveVideoFromCollectionCommand -> removeVideo(id, updateCommand.videoId)
             else -> throw Error("Not supported update: $updateCommand")
         }
     }

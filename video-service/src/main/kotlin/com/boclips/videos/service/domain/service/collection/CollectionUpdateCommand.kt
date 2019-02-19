@@ -4,8 +4,8 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 
 interface CollectionUpdateCommand
 
-class AddVideoToCollection(val videoId: AssetId) :
+class AddVideoToCollectionCommand(val videoId: AssetId) :
     CollectionUpdateCommand
 
-class RemoveVideoFromCollection(val videoId: AssetId) :
+class RemoveVideoFromCollectionCommand(val videoId: AssetId) :
     CollectionUpdateCommand

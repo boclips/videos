@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.UserId
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollection
+import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollection
+import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -26,15 +26,15 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
         collectionService.update(
             collection.id,
-            AddVideoToCollection(videoAsset1)
+            AddVideoToCollectionCommand(videoAsset1)
         )
         collectionService.update(
             collection.id,
-            AddVideoToCollection(videoAsset2)
+            AddVideoToCollectionCommand(videoAsset2)
         )
         collectionService.update(
             collection.id,
-            RemoveVideoFromCollection(videoAsset1)
+            RemoveVideoFromCollectionCommand(videoAsset1)
         )
 
         val updatedCollection = collectionService.getById(collection.id)
@@ -53,7 +53,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         )
         collectionService.update(
             collection.id,
-            AddVideoToCollection(videoInCollection)
+            AddVideoToCollectionCommand(videoInCollection)
         )
 
         val userCollection = collectionService.getByOwner(UserId(value = "user1"))

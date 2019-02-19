@@ -1,7 +1,10 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.AddVideoToDefaultCollection
+import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetDefaultCollection
+import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.RemoveVideoFromDefaultCollection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import mu.KLogging
@@ -22,52 +25,70 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/collections")
 class CollectionsController(
     private val getDefaultCollection: GetDefaultCollection,
+    private val getCollection: GetCollection,
     private val addVideoToDefaultCollection: AddVideoToDefaultCollection,
-    private val removeVideoFromDefaultCollection: RemoveVideoFromDefaultCollection
+    private val addVideoToCollection: AddVideoToCollection,
+    private val removeVideoFromDefaultCollection: RemoveVideoFromDefaultCollection,
+    private val removeVideoFromCollection: RemoveVideoFromCollection
 ) {
     companion object : KLogging() {
         fun getUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).index())
-        fun getUserDefaultCollectionLink() = linkTo(methodOn(CollectionsController::class.java).defaultCollection())
+        fun getUserCollectionLink(collectionId: String?) = linkTo(methodOn(CollectionsController::class.java).show(
+            collectionId))
+
+        const val LEGACY_DEFAULT_COLLECTION = "default"
     }
 
     @GetMapping
     fun index(): Resources<Resource<CollectionResource>> {
         val selfLink = getUserCollectionsLink().withSelfRel()
-        return Resources(listOf(defaultCollectionResource()), selfLink)
+        return Resources(listOf(wrapCollection(getDefaultCollection())), selfLink)
     }
 
-    @GetMapping("/default")
-    fun defaultCollection(): Resource<CollectionResource> {
-        return defaultCollectionResource()
+    @GetMapping("/{collection_id}")
+    fun show(@PathVariable("collection_id") collectionId: String?): Resource<CollectionResource> {
+        return if (collectionId == LEGACY_DEFAULT_COLLECTION) {
+            wrapCollection(getDefaultCollection())
+        } else {
+            wrapCollection(getCollection(collectionId))
+        }
     }
 
-    @PutMapping("/default/videos/{video_id}")
+    @PutMapping("/{collection_id}/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun addVideo(@PathVariable("video_id") videoId: String?): Any? {
-        addVideoToDefaultCollection(videoId)
+    fun addVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
+        if (collectionId == LEGACY_DEFAULT_COLLECTION) {
+            addVideoToDefaultCollection(videoId)
+        } else {
+            addVideoToCollection(collectionId = collectionId, videoId = videoId)
+        }
+
         return null
     }
 
-    @DeleteMapping("/default/videos/{video_id}")
+    @DeleteMapping("/{collection_id}/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun removeVideo(@PathVariable("video_id") videoId: String?): Any? {
-        removeVideoFromDefaultCollection(videoId)
+    fun removeVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
+        if (collectionId == LEGACY_DEFAULT_COLLECTION) {
+            removeVideoFromDefaultCollection(videoId)
+        } else {
+            removeVideoFromCollection(collectionId, videoId)
+        }
         return null
     }
 
-    private fun defaultCollectionResource(): Resource<CollectionResource> {
-        val selfLink = getUserDefaultCollectionLink().withSelfRel()
+    private fun wrapCollection(collection: CollectionResource): Resource<CollectionResource> {
+        val selfLink = getUserCollectionLink(collection.id).withSelfRel()
         val addVideoLink = linkTo(
             methodOn(CollectionsController::class.java)
-                .addVideo(null)
+                .addVideo(collectionId = collection.id, videoId = null)
         )
             .withRel("addVideo")
         val removeVideoLink = linkTo(
             methodOn(CollectionsController::class.java)
-                .removeVideo(null)
+                .removeVideo(collectionId = collection.id, videoId = null)
         )
             .withRel("removeVideo")
-        val collectionResource = getDefaultCollection()
-        return Resource(collectionResource, selfLink, addVideoLink, removeVideoLink)
+        return Resource(collection, selfLink, addVideoLink, removeVideoLink)
     }
 }

@@ -1,29 +1,26 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.security.utils.UserExtractor
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.infrastructure.event.EventService
 
-class RemoveVideoFromDefaultCollection(
+class RemoveVideoFromCollection(
     private val collectionService: CollectionService,
     private val eventService: EventService
 ) {
-    operator fun invoke(videoId: String?) {
+    operator fun invoke(collectionId: String?, videoId: String?) {
+        collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        val user = UserExtractor.getCurrentUser()
-        val collection = collectionService.getByOwner(UserId(value = user.id)).first()
-
         collectionService.update(
-            collection.id,
-            RemoveVideoFromCollectionCommand(AssetId(videoId))
+            id = CollectionId(collectionId),
+            updateCommand = RemoveVideoFromCollectionCommand(AssetId(videoId))
         )
 
         eventService.saveRemoveFromCollectionEvent(
-            collectionId = collection.id,
+            collectionId = CollectionId(collectionId),
             videoId = AssetId(videoId)
         )
     }
