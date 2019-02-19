@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.security.utils.UserExtractor
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -16,12 +18,16 @@ class GetCollection(
             throw CollectionNotFoundException("unknown ID")
         }
 
+        val userId = UserId(UserExtractor.getCurrentUser().id)
         val collection = collectionService.getById(CollectionId(collectionId))
 
-        if (collection == null) {
-            throw CollectionNotFoundException(collectionId)
-        } else {
-            return collection.let(this::convert)
+        when {
+            collection == null ->
+                throw CollectionNotFoundException(collectionId)
+            collection.owner != userId ->
+                throw CollectionAccessNotAuthorizedException(userId, collectionId)
+            else ->
+                return collection.let(this::convert)
         }
     }
 

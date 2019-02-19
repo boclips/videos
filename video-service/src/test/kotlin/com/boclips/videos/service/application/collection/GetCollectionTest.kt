@@ -30,8 +30,7 @@ class GetCollectionTest {
         val onGetCollection = TestFactories.createCollection(
             id = collectionId,
             owner = "me@me.com",
-            title = "Freshly created",
-            videos = emptyList()
+            title = "Freshly found"
         )
 
         collectionService = mock {
@@ -55,5 +54,21 @@ class GetCollectionTest {
 
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = "123") }
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = null) }
+    }
+
+    @Test
+    fun `throws error when user doesn't own the collection`() {
+        setSecurityContext("attacker@example.com")
+
+        val collectionId = CollectionId("collection-123")
+        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com")
+
+        collectionService = mock {
+            on { getById(collectionId) } doReturn onGetCollection
+        }
+
+        val getCollection = GetCollection(collectionService, VideoToResourceConverter())
+
+        assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId = collectionId.value) }
     }
 }
