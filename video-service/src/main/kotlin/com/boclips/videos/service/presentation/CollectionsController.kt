@@ -33,8 +33,8 @@ class CollectionsController(
 ) {
     companion object : KLogging() {
         fun getUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).index())
-        fun getUserCollectionLink(collectionId: String?) = linkTo(methodOn(CollectionsController::class.java).show(
-            collectionId))
+        fun getUserCollectionLink(id: String?) = linkTo(methodOn(CollectionsController::class.java).show(
+            id))
 
         const val LEGACY_DEFAULT_COLLECTION = "default"
     }
@@ -45,12 +45,12 @@ class CollectionsController(
         return Resources(listOf(wrapCollection(getDefaultCollection())), selfLink)
     }
 
-    @GetMapping("/{collection_id}")
-    fun show(@PathVariable("collection_id") collectionId: String?): Resource<CollectionResource> {
-        return if (collectionId == LEGACY_DEFAULT_COLLECTION) {
+    @GetMapping("/{id}")
+    fun show(@PathVariable("id") id: String?): Resource<CollectionResource> {
+        return if (id == LEGACY_DEFAULT_COLLECTION) {
             wrapCollection(getDefaultCollection())
         } else {
-            wrapCollection(getCollection(collectionId))
+            wrapCollection(getCollection(id))
         }
     }
 
