@@ -13,7 +13,6 @@ import com.boclips.videos.service.domain.service.video.VideoAssetToLegacyVideoMe
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
-import org.springframework.transaction.annotation.Transactional
 
 open class BulkUpdateVideo(
     private val videoAssetRepository: VideoAssetRepository,
@@ -24,7 +23,6 @@ open class BulkUpdateVideo(
 
     companion object : KLogging();
 
-    @Transactional
     open operator fun invoke(bulkUpdateRequest: BulkUpdateRequest?) {
         when (bulkUpdateRequest?.status) {
             VideoResourceStatus.SEARCHABLE -> makeSearchable(bulkUpdateRequest)

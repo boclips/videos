@@ -6,13 +6,11 @@ import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
-import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
@@ -22,6 +20,14 @@ import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
+import de.flapdoodle.embed.mongo.MongodProcess
+import de.flapdoodle.embed.mongo.MongodStarter
+import de.flapdoodle.embed.mongo.config.MongodConfigBuilder
+import de.flapdoodle.embed.mongo.config.Net
+import de.flapdoodle.embed.mongo.distribution.Version
+import de.flapdoodle.embed.process.runtime.Network
+import mu.KLogging
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -68,6 +74,30 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var mongoClient: MongoClient
+
+    companion object : KLogging() {
+        private var mongoProcess: MongodProcess? = null
+
+        @BeforeAll
+        @JvmStatic
+        fun beforeAll() {
+            if (mongoProcess == null) {
+                val starter = MongodStarter.getDefaultInstance()
+                val host = "localhost"
+                val port = 27017
+
+                logger.info { "Booting up MongoDB ${Version.Main.V3_6} on $host:$port" }
+
+                val mongoConfig = MongodConfigBuilder()
+                    .version(Version.Main.V3_6)
+                    .net(Net(host, port, Network.localhostIsIPv6()))
+                    .build()
+
+                val mongoExecutable = starter.prepare(mongoConfig)
+                mongoProcess = mongoExecutable.start()
+            }
+        }
+    }
 
     @BeforeEach
     fun resetState() {
