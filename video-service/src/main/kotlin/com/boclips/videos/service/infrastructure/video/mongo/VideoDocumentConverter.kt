@@ -11,7 +11,7 @@ import org.bson.types.ObjectId
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.util.Date
+import java.util.*
 
 object VideoDocumentConverter {
     fun toNewDocument(video: VideoAsset): Document {

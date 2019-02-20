@@ -8,6 +8,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Instant
 
 class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
@@ -37,11 +38,40 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             RemoveVideoFromCollectionCommand(videoAsset1)
         )
 
-        val updatedCollection = collectionService.getById(collection.id)
+        val updatedCollection = collectionService.getById(collection.id)!!
 
-        assertThat(updatedCollection!!.owner).isEqualTo(UserId(value = "user1"))
-        assertThat(updatedCollection!!.videos).hasSize(1)
+        assertThat(updatedCollection.owner).isEqualTo(UserId(value = "user1"))
+        assertThat(updatedCollection.videos).hasSize(1)
+        assertThat(updatedCollection.videos.map { it.asset.assetId }).contains(videoAsset2)
         assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
+    }
+
+    @Test
+    fun `updatedAt timestamp on modifying changes`() {
+        val videoAsset1 = saveVideo()
+
+        val moment = Instant.now()
+        val collectionV1 = collectionService.create(owner = UserId(value = "user1"), title = "My Videos")
+
+        assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
+
+        collectionService.update(
+                collectionV1.id,
+                AddVideoToCollectionCommand(videoAsset1)
+        )
+
+        val collectionV2 = collectionService.getById(collectionV1.id)!!
+
+        assertThat(collectionV2.updatedAt).isAfter(collectionV1.updatedAt)
+
+        collectionService.update(
+                collectionV2.id,
+                RemoveVideoFromCollectionCommand(videoAsset1)
+        )
+
+        val collectionV3 = collectionService.getById(collectionV1.id)!!
+
+        assertThat(collectionV3.updatedAt).isAfter(collectionV2.updatedAt)
     }
 
     @Test

@@ -19,8 +19,7 @@ import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import org.bson.types.ObjectId
-import java.time.Duration
-import java.time.LocalDate
+import java.time.*
 
 object TestFactories {
 
@@ -134,12 +133,14 @@ object TestFactories {
         id: CollectionId = CollectionId("collection-id"),
         owner: String = "collection owner",
         title: String = "collection title",
-        videos: List<Video> = listOf(createVideo())
+        videos: List<Video> = listOf(createVideo()),
+        updatedAt: Instant = Instant.now()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
         title = title,
-        videos = videos
+        videos = videos,
+        updatedAt = updatedAt
     )
 
     fun aValidId(): String {

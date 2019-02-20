@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.UserId
-import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -14,10 +13,11 @@ import com.boclips.videos.service.domain.service.video.VideoService
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Updates.addToSet
-import com.mongodb.client.model.Updates.pull
+import com.mongodb.client.model.Updates.*
 import mu.KLogging
+import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import java.time.Instant
 
 class MongoCollectionService(
     private val mongoClient: MongoClient,
@@ -41,7 +41,8 @@ class MongoCollectionService(
                         id = collectionId.value,
                         owner = owner.value,
                         title = title,
-                        videos = emptyList()
+                        videos = emptyList(),
+                        updatedAt = Instant.now()
                     )
                 )
             )
@@ -77,30 +78,31 @@ class MongoCollectionService(
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
         when (updateCommand) {
-            is AddVideoToCollectionCommand -> addVideo(id, videoService.get(updateCommand.videoId))
+            is AddVideoToCollectionCommand -> addVideo(id, videoService.get(updateCommand.videoId).asset.assetId)
             is RemoveVideoFromCollectionCommand -> removeVideo(id, updateCommand.videoId)
             else -> throw Error("Not supported update: $updateCommand")
         }
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId) {
-        mongoClient
-            .getDatabase(databaseName)
-            .getCollection(collectionName)
-            .updateOne(
-                eq("_id", ObjectId(collectionId.value)),
-                pull("videos", assetId.value)
-            )
+        updateOne(collectionId, pull("videos", assetId.value))
     }
 
-    private fun addVideo(id: CollectionId, video: Video) {
+    private fun addVideo(id: CollectionId, assetId: AssetId) {
+        updateOne(id, addToSet("videos", assetId.value))
+    }
+
+    private fun updateOne(id: CollectionId, update: Bson) {
         mongoClient
-            .getDatabase(databaseName)
-            .getCollection(collectionName)
-            .updateOne(
-                eq("_id", ObjectId(id.value)),
-                addToSet("videos", video.asset.assetId.value)
-            )
+                .getDatabase(databaseName)
+                .getCollection(collectionName)
+                .updateOne(
+                        eq("_id", ObjectId(id.value)),
+                        combine(
+                                update,
+                                set("updatedAt", Instant.now())
+                        )
+                )
     }
 
     private fun toCollection(collectionDocument: CollectionDocument?): Collection? {
@@ -111,7 +113,8 @@ class MongoCollectionService(
             id = CollectionId(value = collectionDocument.id),
             title = collectionDocument.title,
             owner = UserId(value = collectionDocument.owner),
-            videos = videoService.get(assetIds)
+            videos = videoService.get(assetIds),
+            updatedAt = collectionDocument.updatedAt
         )
     }
 }

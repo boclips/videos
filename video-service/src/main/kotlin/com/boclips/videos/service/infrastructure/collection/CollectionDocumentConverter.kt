@@ -11,6 +11,7 @@ class CollectionDocumentConverter {
             .append("title", collectionDocument.title)
             .append("owner", collectionDocument.owner)
             .append("videos", collectionDocument.videos)
+            .append("updatedAt", collectionDocument.updatedAt)
     }
 
     fun fromDocument(document: Document): CollectionDocument {
@@ -18,7 +19,8 @@ class CollectionDocumentConverter {
             id = document.getObjectId("_id").toHexString(),
             owner = document.getString("owner"),
             title = document.getString("title"),
-            videos = document.getList("videos")
+            videos = document.getList("videos"),
+            updatedAt = document.getDate("updatedAt").toInstant()
         )
     }
 }
