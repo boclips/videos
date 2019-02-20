@@ -2,8 +2,10 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.collection.AddVideoToCollection
+import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetDefaultCollection
+import com.boclips.videos.service.application.collection.GetUserCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
@@ -82,6 +84,11 @@ class ApplicationContext(
     }
 
     @Bean
+    fun createCollection(addVideoToCollection: AddVideoToCollection): CreateCollection {
+        return CreateCollection(collectionService, addVideoToCollection)
+    }
+
+    @Bean
     fun getCollection(): GetCollection {
         return GetCollection(collectionService, CollectionResourceConverter(VideoToResourceConverter()))
     }
@@ -89,6 +96,11 @@ class ApplicationContext(
     @Bean
     fun getDefaultCollection(): GetDefaultCollection {
         return GetDefaultCollection(collectionService, CollectionResourceConverter(VideoToResourceConverter()))
+    }
+
+    @Bean
+    fun getUserCollections(): GetUserCollections {
+        return GetUserCollections(collectionService, CollectionResourceConverter(VideoToResourceConverter()))
     }
 
     @Bean

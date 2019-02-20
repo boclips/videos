@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
+import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.Subject
@@ -16,38 +16,23 @@ class CreateVideoRequestToAssetConverter {
         createVideoRequest: CreateVideoRequest,
         videoPlayback: VideoPlayback
     ): VideoAsset {
-        validateObligatoryField("playback provider", createVideoRequest.playbackProvider)
-        validateObligatoryField("playback id", createVideoRequest.playbackId)
-        validateObligatoryField("title", createVideoRequest.title)
-        validateObligatoryField("description", createVideoRequest.description)
-        validateObligatoryField("keywords", createVideoRequest.keywords)
-        validateObligatoryField("releasedOn", createVideoRequest.releasedOn)
-        validateObligatoryField("contentPartnerId", createVideoRequest.provider)
-        validateObligatoryField("contentPartnerVideoId", createVideoRequest.providerVideoId)
-        validateObligatoryField("content type", createVideoRequest.videoType)
-        validateObligatoryField("subjects", createVideoRequest.subjects)
-
         return VideoAsset(
             assetId = AssetId(value = ObjectId().toHexString()),
             playbackId = PlaybackId(
-                PlaybackProviderType.valueOf(createVideoRequest.playbackProvider!!),
-                createVideoRequest.playbackId!!
+                PlaybackProviderType.valueOf(getOrThrow(createVideoRequest.playbackProvider, "playback provider")),
+                getOrThrow(createVideoRequest.playbackId, "playback id")
             ),
-            title = createVideoRequest.title!!,
-            description = createVideoRequest.description!!,
-            keywords = createVideoRequest.keywords!!,
-            releasedOn = createVideoRequest.releasedOn!!,
-            contentPartnerId = createVideoRequest.provider!!,
-            contentPartnerVideoId = createVideoRequest.providerVideoId!!,
-            type = LegacyVideoType.valueOf(createVideoRequest.videoType!!),
+            title = getOrThrow(createVideoRequest.title, "title"),
+            description = getOrThrow(createVideoRequest.description, "description"),
+            keywords = getOrThrow(createVideoRequest.keywords, "keywords"),
+            releasedOn = getOrThrow(createVideoRequest.releasedOn, "releasedOn"),
+            contentPartnerId = getOrThrow(createVideoRequest.provider, "contentPartnerId"),
+            contentPartnerVideoId = getOrThrow(createVideoRequest.providerVideoId, "contentPartnerVideoId"),
+            type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "content type")),
             duration = videoPlayback.duration,
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
-            subjects = createVideoRequest.subjects!!.map { Subject(it) }.toSet(),
+            subjects = getOrThrow(createVideoRequest.subjects, "subjects").map { Subject(it) }.toSet(),
             searchable = createVideoRequest.searchable ?: true
         )
-    }
-
-    private fun <T> validateObligatoryField(fieldName: String, fieldValue: T?) {
-        fieldValue ?: throw InvalidCreateVideoRequestException("$fieldName cannot be null")
     }
 }

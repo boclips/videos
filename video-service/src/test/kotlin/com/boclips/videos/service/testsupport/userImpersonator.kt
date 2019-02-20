@@ -10,6 +10,9 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
             .user(email)
             .roles(
                 UserRoles.VIEW_VIDEOS,
+                UserRoles.VIEW_COLLECTIONS,
+                UserRoles.UPDATE_COLLECTIONS,
+                UserRoles.INSERT_COLLECTIONS,
                 UserRoles.INSERT_EVENTS
             )
     )

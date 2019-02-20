@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionNotFoundExce
 import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.infrastructure.event.EventService
+import getCurrentUserId
 
 class AddVideoToCollection(
     private val collectionService: CollectionService,
@@ -17,7 +18,7 @@ class AddVideoToCollection(
         collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        val userId = UserId(UserExtractor.getCurrentUser().id)
+        val userId = UserExtractor.getCurrentUserId()
         val collection = collectionService.getById(CollectionId(collectionId))
 
         if (collection == null) {

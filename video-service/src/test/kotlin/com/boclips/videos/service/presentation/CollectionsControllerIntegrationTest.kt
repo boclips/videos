@@ -6,6 +6,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.bson.types.ObjectId
+import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -14,13 +15,16 @@ import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
@@ -34,13 +38,39 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var collectionService: CollectionService
 
     @Test
+    fun `create a collection`() {
+        val collectionUrl = mockMvc.perform(
+            post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                .content("""{"title": "a collection"}""")
+                .asTeacher()
+        )
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", containsString("/collections/")))
+            .andReturn().response.getHeader("Location")!!
+
+        mockMvc.perform(get(collectionUrl).asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", not(isEmptyString())))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.title", equalTo("a collection")))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
+            .andReturn()
+    }
+
+    @Test
     fun `gets all user collections`() {
+        val collectionId = createCollection("collection 1")
+        createCollection("collection 2")
+        addVideo(collectionId, saveVideo(title = "a video title").value)
+
         mockMvc.perform(get("/v1/collections").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("My Videos")))
-            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(0)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
+            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0].title", equalTo("a video title")))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
@@ -54,7 +84,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
-            .andExpect(jsonPath("$.title",  equalTo("My Videos")))
+            .andExpect(jsonPath("$.title", equalTo("My Videos")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
             .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
@@ -118,6 +148,11 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(delete(removeVideoLink(collectionId, videoId)).asTeacher())
             .andExpect(status().isNoContent)
     }
+
+    fun createCollection(title: String = "a collection name") =
+        mockMvc.perform(post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
+            .andExpect(status().isCreated)
+            .andReturn().response.getHeader("Location")!!.substringAfterLast("/")
 
     fun getCollection(collectionId: String): ResultActions {
         return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())

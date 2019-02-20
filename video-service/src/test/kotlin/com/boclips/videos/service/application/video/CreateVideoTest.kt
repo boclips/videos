@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
+import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -146,7 +146,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThrows<InvalidCreateVideoRequestException> { createVideo(createRequest) }
+        assertThrows<NonNullableFieldCreateRequestException> { createVideo(createRequest) }
     }
 
     @Test

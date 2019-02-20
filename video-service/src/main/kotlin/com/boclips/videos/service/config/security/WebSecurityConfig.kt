@@ -47,14 +47,16 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(HttpMethod.GET, "/v1/videos*").hasAnyRole(UserRoles.VIEW_VIDEOS)
             .antMatchers(HttpMethod.GET, "/v1/videos/*").permitAll()
 
-            .antMatchers(HttpMethod.GET, "/v1/collections").hasRole(UserRoles.VIEW_VIDEOS)
-            .antMatchers(HttpMethod.GET, "/v1/collections/*").hasRole(UserRoles.VIEW_VIDEOS)
-            .antMatchers(HttpMethod.PUT, "/v1/collections/*/videos/*").hasRole(UserRoles.VIEW_VIDEOS)
-            .antMatchers(HttpMethod.DELETE, "/v1/collections/*/videos/*").hasRole(UserRoles.VIEW_VIDEOS)
+            .antMatchers(HttpMethod.POST, "/v1/collections").hasRole(UserRoles.INSERT_COLLECTIONS)
+            .antMatchers(HttpMethod.GET, "/v1/collections").hasRole(UserRoles.VIEW_COLLECTIONS)
+            .antMatchers(HttpMethod.GET, "/v1/collections/*").hasRole(UserRoles.VIEW_COLLECTIONS)
+            .antMatchers(HttpMethod.PUT, "/v1/collections/*/videos/*").hasRole(UserRoles.UPDATE_COLLECTIONS)
+            .antMatchers(HttpMethod.DELETE, "/v1/collections/*/videos/*").hasRole(UserRoles.UPDATE_COLLECTIONS)
 
             .antMatchers(HttpMethod.HEAD, "/v1/content-partners/*/videos/*").hasAnyRole(UserRoles.INSERT_VIDEOS)
 
             .anyRequest().denyAll()
     }
 }
+
 

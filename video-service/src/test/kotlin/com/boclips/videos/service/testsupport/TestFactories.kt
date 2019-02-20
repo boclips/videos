@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import org.bson.types.ObjectId
 import java.time.Duration
@@ -119,6 +120,14 @@ object TestFactories {
         playbackId = playbackId,
         playbackProvider = playbackProvider,
         subjects = subjects
+    )
+
+    fun createCollectionRequest(
+        title: String? = "collection title",
+        videos: List<String> = listOf()
+    ) = CreateCollectionRequest(
+        title = title,
+        videos = videos
     )
 
     fun createCollection(

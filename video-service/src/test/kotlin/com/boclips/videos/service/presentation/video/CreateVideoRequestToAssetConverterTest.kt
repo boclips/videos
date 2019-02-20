@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.application.video.exceptions.InvalidCreateVideoRequestException
+import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -37,7 +37,7 @@ class CreateVideoRequestToAssetConverterTest {
                 videoPlayback
             )
         }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("playback provider cannot be null")
     }
 
@@ -49,14 +49,14 @@ class CreateVideoRequestToAssetConverterTest {
                 videoPlayback
             )
         }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("playback id cannot be null")
     }
 
     @Test
     fun `throws when title is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(title = null), videoPlayback) }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("title cannot be null")
     }
 
@@ -68,14 +68,14 @@ class CreateVideoRequestToAssetConverterTest {
                 videoPlayback
             )
         }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("description cannot be null")
     }
 
     @Test
     fun `throws when keywords is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(keywords = null), videoPlayback) }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("keywords cannot be null")
     }
 
@@ -87,14 +87,14 @@ class CreateVideoRequestToAssetConverterTest {
                 videoPlayback
             )
         }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("releasedOn cannot be null")
     }
 
     @Test
     fun `throws when contentProvider is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(provider = null), videoPlayback) }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("contentPartnerId cannot be null")
     }
 
@@ -106,7 +106,7 @@ class CreateVideoRequestToAssetConverterTest {
                 videoPlayback
             )
         }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("contentPartnerVideoId cannot be null")
     }
 
@@ -118,7 +118,7 @@ class CreateVideoRequestToAssetConverterTest {
                 videoPlayback
             )
         }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("content type cannot be null")
     }
 
@@ -135,7 +135,7 @@ class CreateVideoRequestToAssetConverterTest {
     @Test
     fun `throws when subjects is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(subjects = null), videoPlayback) }
-            .isInstanceOf(InvalidCreateVideoRequestException::class.java)
+            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasMessage("subjects cannot be null")
     }
 }

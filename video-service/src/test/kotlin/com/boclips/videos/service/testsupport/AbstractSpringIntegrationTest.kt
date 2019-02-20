@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.domain.model.UserId
@@ -58,6 +59,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createVideo: CreateVideo
+
+    @Autowired
+    lateinit var createCollection: CreateCollection
 
     @Autowired
     lateinit var bulkUpdateVideo: BulkUpdateVideo
