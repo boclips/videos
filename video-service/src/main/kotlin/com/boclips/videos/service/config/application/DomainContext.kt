@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.infrastructure.collection.CollectionDocumentConverter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
@@ -42,7 +41,7 @@ class DomainContext(val mongoClient: MongoClient) {
 
     @Bean
     fun collectionService(videoService: VideoService): CollectionService {
-        return MongoCollectionService(mongoClient, CollectionDocumentConverter(), videoService)
+        return MongoCollectionService(mongoClient, videoService)
     }
 
     @Bean

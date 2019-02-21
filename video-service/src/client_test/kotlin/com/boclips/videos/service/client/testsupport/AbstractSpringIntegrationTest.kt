@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -56,7 +57,7 @@ abstract class AbstractSpringIntegrationTest {
             if (mongoProcess == null) {
                 val starter = MongodStarter.getDefaultInstance()
                 val host = "localhost"
-                val port = 27017
+                val port = MongoProperties.DEFAULT_PORT
 
                 AbstractSpringIntegrationTest.logger.info { "Booting up MongoDB ${Version.Main.V3_6} on $host:$port" }
 

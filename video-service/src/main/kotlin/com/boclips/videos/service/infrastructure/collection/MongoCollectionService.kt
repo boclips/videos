@@ -11,17 +11,21 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateComm
 import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.mongodb.MongoClient
-import com.mongodb.client.model.Filters
-import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Updates.*
+import com.mongodb.client.MongoCollection
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.addToSet
+import org.litote.kmongo.combine
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.pull
+import org.litote.kmongo.set
 import java.time.Instant
 
 class MongoCollectionService(
     private val mongoClient: MongoClient,
-    private val documentConverter: CollectionDocumentConverter,
     private val videoService: VideoService
 ) : CollectionService {
     companion object : KLogging() {
@@ -31,49 +35,34 @@ class MongoCollectionService(
 
     override fun create(owner: UserId, title: String): Collection {
         val collectionId = CollectionId(value = ObjectId().toHexString())
+        val document = CollectionDocument(
+            id = collectionId.value,
+            owner = owner.value,
+            title = title,
+            videos = emptyList(),
+            updatedAt = Instant.now()
+        )
 
-        mongoClient
-            .getDatabase(databaseName)
-            .getCollection(collectionName)
-            .insertOne(
-                documentConverter.toDocument(
-                    CollectionDocument(
-                        id = collectionId.value,
-                        owner = owner.value,
-                        title = title,
-                        videos = emptyList(),
-                        updatedAt = Instant.now()
-                    )
-                )
-            )
-
+        dbCollection().insertOne(document)
         return getById(collectionId) ?: throw CollectionNotCreatedException("Failed to create collection $collectionId")
     }
 
     override fun getById(id: CollectionId): Collection? {
-        val collectionDocument = mongoClient
-            .getDatabase(databaseName)
-            .getCollection(collectionName)
-            .find(Filters.eq("_id", ObjectId(id.value)))
-            .firstOrNull()
-            ?.let(documentConverter::fromDocument)
+        val collectionDocument = dbCollection().findOne(CollectionDocument::id eq id.value)
 
-        MongoCollectionService.logger.info { "Found collection ${id.value}" }
+        MongoCollectionService.logger.info { "Found collection ${id.value}: $collectionDocument" }
 
         return toCollection(collectionDocument)
     }
 
     override fun getByOwner(owner: UserId): List<Collection> {
-        val collectionsDocuments = mongoClient
-            .getDatabase(databaseName)
-            .getCollection(collectionName)
-            .find(Filters.eq("owner", owner.value))
-            .toList()
-            .map { document -> documentConverter.fromDocument(document) }
+        val collectionsDocuments = dbCollection()
+            .find(CollectionDocument::owner eq owner.value)
+            .mapNotNull(this::toCollection)
 
         MongoCollectionService.logger.info { "Found ${collectionsDocuments.size} collections for user ${owner.value}" }
 
-        return collectionsDocuments.mapNotNull { toCollection(it) }
+        return collectionsDocuments
     }
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
@@ -85,24 +74,26 @@ class MongoCollectionService(
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId) {
-        updateOne(collectionId, pull("videos", assetId.value))
+        updateOne(collectionId, pull(CollectionDocument::videos, assetId.value))
     }
 
     private fun addVideo(id: CollectionId, assetId: AssetId) {
-        updateOne(id, addToSet("videos", assetId.value))
+        updateOne(id, addToSet(CollectionDocument::videos, assetId.value))
     }
 
     private fun updateOne(id: CollectionId, update: Bson) {
-        mongoClient
-                .getDatabase(databaseName)
-                .getCollection(collectionName)
-                .updateOne(
-                        eq("_id", ObjectId(id.value)),
-                        combine(
-                                update,
-                                set("updatedAt", Instant.now())
-                        )
-                )
+        val updatesWithTimestamp = combine(
+            update,
+            set(CollectionDocument::updatedAt, Instant.now())
+        )
+
+        dbCollection().updateOne(CollectionDocument::id eq id.value, updatesWithTimestamp)
+    }
+
+    private fun dbCollection(): MongoCollection<CollectionDocument> {
+        return mongoClient
+            .getDatabase(databaseName)
+            .getCollection<CollectionDocument>(collectionName)
     }
 
     private fun toCollection(collectionDocument: CollectionDocument?): Collection? {
