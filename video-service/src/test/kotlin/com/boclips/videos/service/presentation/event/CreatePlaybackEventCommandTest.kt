@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class CreatePlaybackEventCommandTest {
     private val playbackEvent = CreatePlaybackEventCommand(
         playerId = "player-id",
-        assetId = "v678",
+        videoId = "v678",
         videoIndex = 0,
         segmentStartSeconds = 10,
         segmentEndSeconds = 20,
@@ -21,8 +21,8 @@ class CreatePlaybackEventCommandTest {
 
     @Test
     fun `validates video identifier`() {
-        Assertions.assertThatThrownBy { playbackEvent.copy(assetId = null).isValidOrThrows() }
-        Assertions.assertThatThrownBy { playbackEvent.copy(assetId = "").isValidOrThrows() }
+        Assertions.assertThatThrownBy { playbackEvent.copy(videoId = null).isValidOrThrows() }
+        Assertions.assertThatThrownBy { playbackEvent.copy(videoId = "").isValidOrThrows() }
     }
 
     @Test

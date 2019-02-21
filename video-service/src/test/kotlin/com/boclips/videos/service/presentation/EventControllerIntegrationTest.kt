@@ -20,23 +20,23 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `posted playback events are being saved`() {
         val videoId = TestFactories.aValidId()
+
+        val content = """{
+            "videoId":"$videoId",
+            "videoIndex":3,
+            "captureTime":"2019-02-21T15:34:37.186Z",
+            "playerId":"f249f486-fc04-48f7-7361-4413c13a4183",
+            "segmentStartSeconds":0,
+            "segmentEndSeconds":0.728248,
+            "videoDurationSeconds":610
+        }""".trimIndent()
+
         mockMvc.perform(
             post("/v1/events/playback")
                 .asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Referer", "https://teachers.boclips.com/videos?q=abc")
-                .content(
-                    """{
-                    "playerId": "123",
-                    "assetId" : "$videoId",
-                    "videoIndex" : 3,
-                    "segmentStartSeconds" : 0,
-                    "segmentEndSeconds" : 100,
-                    "videoDurationSeconds" : 200,
-                    "captureTime" : "2018-01-01T00:00:00.000Z",
-                    "searchId" : "srch-123"
-                    }""".trim()
-                )
+                .content(content)
         )
             .andExpect(status().isCreated)
 
@@ -58,7 +58,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .content(
                     """{
                     "playerId": "123",
-                    "assetId" : "$videoId",
+                    "videoId" : "$videoId",
                     "videoIndex" : 3,
                     "segmentStartSeconds" : 0,
                     "segmentEndSeconds" : 100,

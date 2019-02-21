@@ -14,7 +14,7 @@ class SavePlaybackEvent(
 
         eventService.savePlaybackEvent(
             playerId = event.playerId!!,
-            videoId = AssetId(event.assetId!!),
+            videoId = AssetId(event.videoId!!),
             videoIndex = event.videoIndex,
             segmentStartSeconds = event.segmentStartSeconds!!,
             segmentEndSeconds = event.segmentEndSeconds!!,

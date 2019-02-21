@@ -11,7 +11,7 @@ class SavePlaybackEventTest {
 
     private val payload = CreatePlaybackEventCommand(
         playerId = "player-id",
-        assetId = TestFactories.aValidId(),
+        videoId = TestFactories.aValidId(),
         videoIndex = null,
         segmentStartSeconds = 10,
         segmentEndSeconds = 20,
