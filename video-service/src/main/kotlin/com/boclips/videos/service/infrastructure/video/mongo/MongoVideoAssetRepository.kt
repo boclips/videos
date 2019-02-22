@@ -8,14 +8,17 @@ import com.boclips.videos.service.domain.service.video.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.ReplaceSubjects
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.mongodb.MongoClient
-import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.UpdateOneModel
-import com.mongodb.client.model.Updates.set
 import mu.KLogging
 import org.bson.Document
 import org.bson.types.ObjectId
+import org.litote.kmongo.`in`
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.set
 import java.util.Optional
 
 class MongoVideoAssetRepository(
@@ -27,9 +30,8 @@ class MongoVideoAssetRepository(
     }
 
     override fun find(assetId: AssetId): VideoAsset? {
-        val videoAssetOrNull = getVideoCollection().find(eq("_id", ObjectId(assetId.value)))
-            .firstOrNull()
-            ?.let(VideoDocumentConverter::toVideoAsset)
+        val videoAssetOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(assetId.value))
+            ?.let(VideoDocumentConverter::toAsset)
 
         logger.info { "Found ${assetId.value}" }
 
@@ -37,37 +39,33 @@ class MongoVideoAssetRepository(
     }
 
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
-        val videoByAssetId = getVideoCollection()
-            .find(`in`("_id", assetIds.map { ObjectId(it.value) }))
-            .map(VideoDocumentConverter::toVideoAsset)
-            .toList()
-            .map { (it.assetId to it) }
+        val objectIds = assetIds.map { ObjectId(it.value) }
+
+        val assets = getVideoCollection()
+            .find(VideoDocument::id `in` objectIds)
+            .map(VideoDocumentConverter::toAsset)
+            .map { it.assetId to it }
             .toMap()
 
-        logger.info { "Found ${assetIds.size} videos for assetIds $assetIds" }
-
-        return assetIds.mapNotNull { assetId ->
-            videoByAssetId[assetId]
-        }
+        return assetIds.mapNotNull { assetId ->  assets[assetId] }
     }
 
     override fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit) {
-        val sequence = Sequence { getVideoCollection().find(eq("searchable", true)).iterator() }
-            .map(VideoDocumentConverter::toVideoAsset)
+        val sequence = Sequence { getVideoCollection().find(VideoDocument::searchable eq true).iterator() }
+            .map(VideoDocumentConverter::toAsset)
 
         consumer(sequence)
     }
 
     override fun delete(assetId: AssetId) {
         val objectIdToBeDeleted = ObjectId(assetId.value)
-        getVideoCollection()
-            .deleteOne(eq("_id", objectIdToBeDeleted))
+        getVideoCollection().deleteOne(VideoDocument::id eq objectIdToBeDeleted)
 
         logger.info { "Deleted video ${assetId.value}" }
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
-        val document = VideoDocumentConverter.toNewDocument(videoAsset)
+        val document = VideoDocumentConverter.toDocument(videoAsset)
 
         getVideoCollection().insertOne(document)
 
@@ -77,13 +75,13 @@ class MongoVideoAssetRepository(
         return createdVideoAsset
     }
 
-    override fun update(updateCommand: VideoUpdateCommand): VideoAsset {
-        val update: Document = partialDocumentToBeUpdated(updateCommand)
+    override fun update(update: VideoUpdateCommand): VideoAsset {
+        val updateDoc: Document = partialDocumentToBeUpdated(update)
 
-        val assetId = updateCommand.assetId
+        val assetId = update.assetId
         getVideoCollection().updateOne(
-            eq(ObjectId(assetId.value)),
-            Document("\$set", update)
+            VideoDocument::id eq ObjectId(assetId.value),
+            Document("\$set", updateDoc)
         )
 
         return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
@@ -91,8 +89,8 @@ class MongoVideoAssetRepository(
 
     override fun bulkUpdate(updates: List<VideoUpdateCommand>) {
         val updateDocs = updates.map { updateCommand ->
-            UpdateOneModel<Document>(
-                eq(ObjectId(updateCommand.assetId.value)),
+            UpdateOneModel<VideoDocument>(
+                VideoDocument::id eq ObjectId(updateCommand.assetId.value),
                 Document("\$set", partialDocumentToBeUpdated(updateCommand))
             )
         }
@@ -110,11 +108,8 @@ class MongoVideoAssetRepository(
     }
 
     override fun resolveAlias(alias: String): AssetId? {
-        val assetId = getVideoCollection().find(eq("aliases", alias))
-            .firstOrNull()
-            ?.getObjectId("_id")
-            ?.toHexString()
-            ?.let { AssetId(it) }
+        val assetId = getVideoCollection().findOne(eq("aliases", alias))
+            ?.let { AssetId(it.id.toHexString()) }
 
         logger.info { "Attempted to resolve alias $alias to $assetId" }
 
@@ -124,8 +119,8 @@ class MongoVideoAssetRepository(
     override fun disableFromSearch(assetIds: List<AssetId>) {
         val mongoIds = assetIds.map { ObjectId(it.value) }
         getVideoCollection().updateMany(
-            `in`("_id", mongoIds),
-            set("searchable", false)
+            VideoDocument::id `in` mongoIds,
+            set(VideoDocument::searchable, false)
         )
 
         logger.info { "Disabled $assetIds for search" }
@@ -135,8 +130,8 @@ class MongoVideoAssetRepository(
         val mongoIds = assetIds.map { ObjectId(it.value) }
 
         getVideoCollection().updateMany(
-            `in`("_id", mongoIds),
-            set("searchable", true)
+            VideoDocument::id `in` mongoIds,
+            set(VideoDocument::searchable, true)
         )
 
         logger.info { "Made $assetIds searchable" }
@@ -152,5 +147,5 @@ class MongoVideoAssetRepository(
         }
     }
 
-    private fun getVideoCollection() = mongoClient.getDatabase(databaseName).getCollection(collectionName)
+    private fun getVideoCollection() = mongoClient.getDatabase(databaseName).getCollection<VideoDocument>(collectionName)
 }

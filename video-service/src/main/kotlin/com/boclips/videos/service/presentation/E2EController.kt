@@ -3,9 +3,11 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
 import com.boclips.videos.service.infrastructure.video.mongo.VideoDocumentConverter
 import com.mongodb.MongoClient
 import mu.KLogging
+import org.litote.kmongo.getCollection
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -26,10 +28,8 @@ class E2EController(
     @PostMapping("/reset_all")
     fun resetAll(): ResponseEntity<Any> {
         try {
-            mongoClient.getDatabase("video-service-db").getCollection("videos").find().forEach { videoAssetDocument ->
-                val videoAsset = VideoDocumentConverter.toVideoAsset(videoAssetDocument)
-
-                val videoId = videoAsset.assetId.value
+            mongoClient.getDatabase("video-service-db").getCollection<VideoDocument>("videos").find().forEach { document ->
+                val videoId = document.id.toHexString()
                 try {
                     legacySearchIndex.removeFromSearch(videoId)
                 } catch (ex: SolrDocumentNotFound) {

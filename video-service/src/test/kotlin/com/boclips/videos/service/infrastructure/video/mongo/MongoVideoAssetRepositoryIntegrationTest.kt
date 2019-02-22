@@ -25,18 +25,18 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `create a video`() {
-        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset())
+        val asset = TestFactories.createVideoAsset()
+        val createdAsset = mongoVideoRepository.create(asset)
 
-        assertThat(asset.assetId.value).hasSize(24)
+        assertThat(createdAsset).isEqualTo(asset)
     }
 
     @Test
     fun `find a video`() {
         val originalAsset = mongoVideoRepository.create(TestFactories.createVideoAsset())
-
         val retrievedAsset = mongoVideoRepository.find(originalAsset.assetId)!!
 
-        assertThat(retrievedAsset).isEqualToComparingFieldByFieldRecursively(originalAsset)
+        assertThat(retrievedAsset).isEqualTo(originalAsset)
     }
 
     @Test
