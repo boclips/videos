@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.net.URI
+import java.net.URL
 import java.time.ZonedDateTime
 
 class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -142,6 +143,16 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertCollectionSize(collectionId, 0)
     }
 
+    @Test
+    fun `rename a collection`() {
+        val email = "teacher@gmail.com"
+        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
+
+        assertCollectionName(collectionId, "My Special Collection")
+        renameCollection(collectionId, "New Name")
+        assertCollectionName(collectionId, "New Name")
+    }
+
     fun addVideo(collectionId: String, videoId: String) {
         mockMvc.perform(put(addVideoLink(collectionId, videoId)).asTeacher())
             .andExpect(status().isNoContent)
@@ -149,7 +160,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     fun removeVideo(collectionId: String, videoId: String) {
         mockMvc.perform(delete(removeVideoLink(collectionId, videoId)).asTeacher())
-            .andExpect(status().isNoContent)
+                .andExpect(status().isNoContent)
+    }
+
+    fun renameCollection(collectionId: String, title: String) {
+        mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
+                .andExpect(status().isNoContent)
     }
 
     fun createCollection(title: String = "a collection name") =
@@ -162,6 +178,10 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
     }
 
+    fun assertCollectionName(collectionId: String, expectedTitle: String) {
+        getCollection(collectionId).andExpect(jsonPath("$.title", equalTo(expectedTitle)))
+    }
+
     fun assertCollectionSize(collectionId: String, expectedSize: Int): ResultActions {
         return getCollection(collectionId)
             .andExpect(jsonPath("$.videos", hasSize<Any>(expectedSize)))
@@ -170,16 +190,26 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     private fun addVideoLink(collectionId: String, videoId: String): URI {
         return getCollection(collectionId)
             .andReturn()
-            .extractLink("addVideo", videoId)
+            .extractVideoLink("addVideo", videoId)
     }
 
     private fun removeVideoLink(collectionId: String, videoId: String): URI {
         return getCollection(collectionId)
             .andReturn()
-            .extractLink("removeVideo", videoId)
+            .extractVideoLink("removeVideo", videoId)
     }
 
-    private fun MvcResult.extractLink(relName: String, videoId: String): URI {
+    private fun selfLink(collectionId: String): URI {
+        return getCollection(collectionId)
+                .andReturn()
+                .extractLink("self")
+    }
+
+    private fun MvcResult.extractLink(relName: String): URI {
+        return URI(JsonPath.parse(response.contentAsString).read<String>("$._links.$relName.href"))
+    }
+
+    private fun MvcResult.extractVideoLink(relName: String, videoId: String): URI {
         val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.$relName.href")
         return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
     }

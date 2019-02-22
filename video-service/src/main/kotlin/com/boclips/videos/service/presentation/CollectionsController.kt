@@ -1,11 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.collection.AddVideoToCollection
-import com.boclips.videos.service.application.collection.CreateCollection
-import com.boclips.videos.service.application.collection.GetCollection
-import com.boclips.videos.service.application.collection.GetDefaultCollection
-import com.boclips.videos.service.application.collection.GetUserCollections
-import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
+import com.boclips.videos.service.application.collection.*
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import mu.KLogging
@@ -16,15 +11,9 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+
+class RenameCollectionRequest(var title: String? = null)
 
 @RestController
 @RequestMapping("/v1/collections")
@@ -34,7 +23,8 @@ class CollectionsController(
     private val getUserCollections: GetUserCollections,
     private val getCollection: GetCollection,
     private val addVideoToCollection: AddVideoToCollection,
-    private val removeVideoFromCollection: RemoveVideoFromCollection
+    private val removeVideoFromCollection: RemoveVideoFromCollection,
+    private val renameCollection: RenameCollection
 ) {
     companion object : KLogging() {
         fun getUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).getAllUserCollections())
@@ -51,6 +41,12 @@ class CollectionsController(
             set(HttpHeaders.LOCATION, getUserCollectionLink(collection.id.value).toUri().toString())
         }
         return ResponseEntity(headers, HttpStatus.CREATED)
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun patchCollection(@PathVariable("id") id: String, @RequestBody request: RenameCollectionRequest?) {
+        renameCollection(id, request?.title)
     }
 
     @GetMapping

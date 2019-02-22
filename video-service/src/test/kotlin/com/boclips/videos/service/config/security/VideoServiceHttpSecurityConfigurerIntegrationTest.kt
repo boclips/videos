@@ -90,6 +90,18 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
+    fun `teachers can rename their collections`() {
+        mockMvc.perform(patch("/v1/collections/default"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(patch("/v1/collections/default").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(patch("/v1/collections/default").asTeacher())
+                .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
     fun `teachers can create their collections`() {
         mockMvc.perform(post("/v1/collections"))
             .andExpect(status().isForbidden)

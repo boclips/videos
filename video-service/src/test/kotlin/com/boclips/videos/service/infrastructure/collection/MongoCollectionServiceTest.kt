@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
+import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,7 +17,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     lateinit var collectionService: CollectionService
 
     @Test
-    fun `can create and update a collection`() {
+    fun `can create and add videos to a collection`() {
         val videoAsset1 = saveVideo()
         val videoAsset2 = saveVideo()
 
@@ -44,6 +45,20 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         assertThat(updatedCollection.videos).hasSize(1)
         assertThat(updatedCollection.videos.map { it.asset.assetId }).contains(videoAsset2)
         assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
+    }
+
+    @Test
+    fun `can create and then rename a collection`() {
+        val collection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title"
+        )
+
+        collectionService.update(collection.id, RenameCollectionCommand("New Title"))
+
+        val updatedCollection = collectionService.getById(collection.id)!!
+
+        assertThat(updatedCollection.title).isEqualTo("New Title")
     }
 
     @Test

@@ -9,3 +9,6 @@ class AddVideoToCollectionCommand(val videoId: AssetId) :
 
 class RemoveVideoFromCollectionCommand(val videoId: AssetId) :
     CollectionUpdateCommand
+
+class RenameCollectionCommand(val title: String) :
+    CollectionUpdateCommand

@@ -5,10 +5,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
-import com.boclips.videos.service.domain.service.collection.CollectionService
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
+import com.boclips.videos.service.domain.service.collection.*
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -70,6 +67,7 @@ class MongoCollectionService(
         when (updateCommand) {
             is AddVideoToCollectionCommand -> addVideo(id, videoService.get(updateCommand.videoId).asset.assetId)
             is RemoveVideoFromCollectionCommand -> removeVideo(id, updateCommand.videoId)
+            is RenameCollectionCommand -> renameCollection(id, updateCommand.title)
             else -> throw Error("Not supported update: $updateCommand")
         }
     }
@@ -80,6 +78,10 @@ class MongoCollectionService(
 
     private fun addVideo(id: CollectionId, assetId: AssetId) {
         updateOne(id, addToSet(CollectionDocument::videos, assetId.value))
+    }
+
+    private fun renameCollection(id: CollectionId, title: String) {
+        updateOne(id, set(CollectionDocument::title, title))
     }
 
     private fun updateOne(id: CollectionId, update: Bson) {
