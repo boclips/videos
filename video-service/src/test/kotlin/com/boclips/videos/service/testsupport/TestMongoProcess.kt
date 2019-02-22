@@ -2,6 +2,7 @@ package com.boclips.videos.service.testsupport
 
 import de.flapdoodle.embed.mongo.MongodProcess
 import de.flapdoodle.embed.mongo.MongodStarter
+import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
@@ -19,6 +20,7 @@ object TestMongoProcess {
 
         val mongoConfig = MongodConfigBuilder()
             .version(Version.Main.V3_6)
+            .cmdOptions(MongoCmdOptionsBuilder().useStorageEngine("ephemeralForTest").build())
             .net(Net(host, port, Network.localhostIsIPv6()))
             .build()
 
