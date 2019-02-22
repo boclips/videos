@@ -7,7 +7,9 @@ import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.bson.Document
+import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.set
 import java.time.Duration
 import java.time.ZoneOffset
 import java.util.Date
@@ -54,12 +56,11 @@ object VideoDocumentConverter {
             )
     }
 
-    fun durationToDocument(duration: Duration): Document {
-        return Document()
-            .append("durationSeconds", duration.seconds.toInt())
+    fun durationToDocument(duration: Duration): Bson {
+        return set(VideoDocument::durationSeconds, duration.seconds.toInt())
     }
 
-    fun subjectsToDocument(subjects: List<Subject>): Document {
-        return Document().append("subjects", subjects.map { it.name })
+    fun subjectsToDocument(subjects: List<Subject>): Bson {
+        return set(VideoDocument::subjects, subjects.map { it.name })
     }
 }

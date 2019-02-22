@@ -85,7 +85,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
-    fun `update can update all attributes except asset ID`() {
+    fun `can update duration`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideoAsset(
                 title = "title",
@@ -110,12 +110,12 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
             )
         )
 
-        assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "assetId", "duration")
+        assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "duration")
         assertThat(updatedAsset.duration).isEqualTo(Duration.ofMinutes(5))
     }
 
     @Test
-    fun `update doesn't touch unspecified attributes`() {
+    fun `can update subjects`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideoAsset(
                 title = "original title",
@@ -126,12 +126,12 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val updatedAsset = mongoVideoRepository.update(
             ReplaceSubjects(
                 originalAsset.assetId,
-                listOf()
+                listOf(Subject("Biology"))
             )
         )
 
-        assertThat(updatedAsset.subjects).isEmpty()
-        assertThat(updatedAsset.title).isEqualTo("original title")
+        assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects")
+        assertThat(updatedAsset.subjects).containsOnly(Subject("Biology"))
     }
 
     @Test

@@ -8,8 +8,8 @@ interface VideoAssetRepository {
     fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit)
     fun delete(assetId: AssetId)
     fun create(videoAsset: VideoAsset): VideoAsset
-    fun update(update: VideoUpdateCommand): VideoAsset
-    fun bulkUpdate(updates: List<VideoUpdateCommand>)
+    fun update(command: VideoUpdateCommand): VideoAsset
+    fun bulkUpdate(commands: List<VideoUpdateCommand>)
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): AssetId?
     fun disableFromSearch(assetIds: List<AssetId>)

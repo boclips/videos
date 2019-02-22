@@ -13,7 +13,7 @@ import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
-import org.bson.Document
+import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
 import org.litote.kmongo.eq
@@ -75,23 +75,21 @@ class MongoVideoAssetRepository(
         return createdVideoAsset
     }
 
-    override fun update(update: VideoUpdateCommand): VideoAsset {
-        val updateDoc: Document = partialDocumentToBeUpdated(update)
-
-        val assetId = update.assetId
+    override fun update(command: VideoUpdateCommand): VideoAsset {
+        val assetId = command.assetId
         getVideoCollection().updateOne(
             VideoDocument::id eq ObjectId(assetId.value),
-            Document("\$set", updateDoc)
+            updatedOperation(command)
         )
 
         return find(assetId) ?: throw VideoAssetNotFoundException(assetId)
     }
 
-    override fun bulkUpdate(updates: List<VideoUpdateCommand>) {
-        val updateDocs = updates.map { updateCommand ->
+    override fun bulkUpdate(commands: List<VideoUpdateCommand>) {
+        val updateDocs = commands.map { updateCommand ->
             UpdateOneModel<VideoDocument>(
                 VideoDocument::id eq ObjectId(updateCommand.assetId.value),
-                Document("\$set", partialDocumentToBeUpdated(updateCommand))
+                updatedOperation(updateCommand)
             )
         }
 
@@ -137,7 +135,7 @@ class MongoVideoAssetRepository(
         logger.info { "Made $assetIds searchable" }
     }
 
-    private fun partialDocumentToBeUpdated(updateCommand: VideoUpdateCommand): Document {
+    private fun updatedOperation(updateCommand: VideoUpdateCommand): Bson {
         return when (updateCommand) {
             is ReplaceDuration -> VideoDocumentConverter.durationToDocument(updateCommand.duration)
             is ReplaceSubjects -> VideoDocumentConverter.subjectsToDocument(updateCommand.subjects)
