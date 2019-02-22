@@ -34,9 +34,10 @@ class MongoCollectionService(
     }
 
     override fun create(owner: UserId, title: String): Collection {
-        val collectionId = CollectionId(value = ObjectId().toHexString())
+        val objectId = ObjectId()
+        val collectionId = CollectionId(value = objectId.toHexString())
         val document = CollectionDocument(
-            id = collectionId.value,
+            id = objectId,
             owner = owner.value,
             title = title,
             videos = emptyList(),
@@ -48,7 +49,7 @@ class MongoCollectionService(
     }
 
     override fun getById(id: CollectionId): Collection? {
-        val collectionDocument = dbCollection().findOne(CollectionDocument::id eq id.value)
+        val collectionDocument = dbCollection().findOne(CollectionDocument::id eq ObjectId(id.value))
 
         MongoCollectionService.logger.info { "Found collection ${id.value}: $collectionDocument" }
 
@@ -87,7 +88,7 @@ class MongoCollectionService(
             set(CollectionDocument::updatedAt, Instant.now())
         )
 
-        dbCollection().updateOne(CollectionDocument::id eq id.value, updatesWithTimestamp)
+        dbCollection().updateOne(CollectionDocument::id eq ObjectId(id.value), updatesWithTimestamp)
     }
 
     private fun dbCollection(): MongoCollection<CollectionDocument> {
@@ -101,7 +102,7 @@ class MongoCollectionService(
         val assetIds = collectionDocument.videos.map { AssetId(value = it) }
 
         return Collection(
-            id = CollectionId(value = collectionDocument.id),
+            id = CollectionId(value = collectionDocument.id.toHexString()),
             title = collectionDocument.title,
             owner = UserId(value = collectionDocument.owner),
             videos = videoService.get(assetIds),
