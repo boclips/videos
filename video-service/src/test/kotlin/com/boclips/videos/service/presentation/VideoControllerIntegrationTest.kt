@@ -3,8 +3,8 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository.Companion.collectionName
-import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository.Companion.databaseName
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -528,6 +528,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
     }
 
-    private fun mongoVideosCollection() = mongoClient.getDatabase(databaseName).getCollection(collectionName)
+    private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)
 }
 

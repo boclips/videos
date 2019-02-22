@@ -3,8 +3,9 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
-import com.boclips.videos.service.infrastructure.video.mongo.VideoDocumentConverter
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.litote.kmongo.getCollection
@@ -27,8 +28,12 @@ class E2EController(
 
     @PostMapping("/reset_all")
     fun resetAll(): ResponseEntity<Any> {
+        val collection = mongoClient
+            .getDatabase(DATABASE_NAME)
+            .getCollection<VideoDocument>(MongoVideoAssetRepository.collectionName)
+
         try {
-            mongoClient.getDatabase("video-service-db").getCollection<VideoDocument>("videos").find().forEach { document ->
+            collection.find().forEach { document ->
                 val videoId = document.id.toHexString()
                 try {
                     legacySearchIndex.removeFromSearch(videoId)
@@ -45,7 +50,7 @@ class E2EController(
                 logger.info { "Finished attempt to reset video $videoId" }
             }
 
-            mongoClient.getDatabase("video-service-db").getCollection("videos").drop()
+            collection.drop()
         } catch (ex: Exception) {
             logger.error { "Failed to reset video-service state" }
             throw IllegalStateException("Failed to reset video-service state", ex)

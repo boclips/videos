@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.video.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.ReplaceSubjects
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
@@ -25,7 +26,6 @@ class MongoVideoAssetRepository(
     private val mongoClient: MongoClient
 ) : VideoAssetRepository {
     companion object : KLogging() {
-        const val databaseName = "video-service-db"
         const val collectionName = "videos"
     }
 
@@ -147,5 +147,5 @@ class MongoVideoAssetRepository(
         }
     }
 
-    private fun getVideoCollection() = mongoClient.getDatabase(databaseName).getCollection<VideoDocument>(collectionName)
+    private fun getVideoCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection<VideoDocument>(collectionName)
 }

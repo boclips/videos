@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import mu.KLogging
@@ -29,7 +30,6 @@ class MongoCollectionService(
     private val videoService: VideoService
 ) : CollectionService {
     companion object : KLogging() {
-        const val databaseName = "video-service-db"
         const val collectionName = "collections"
     }
 
@@ -92,7 +92,7 @@ class MongoCollectionService(
 
     private fun dbCollection(): MongoCollection<CollectionDocument> {
         return mongoClient
-            .getDatabase(databaseName)
+            .getDatabase(DATABASE_NAME)
             .getCollection<CollectionDocument>(collectionName)
     }
 

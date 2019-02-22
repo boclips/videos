@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.event
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.setSecurityContext
@@ -134,6 +135,6 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun getEvent(): Document {
-        return mongoClient.getDatabase("video-service-db").getCollection("event-log").find().single()
+        return mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoEventService.collectionName).find().single()
     }
 }

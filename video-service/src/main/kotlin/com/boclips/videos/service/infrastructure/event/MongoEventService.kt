@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.event
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import org.bson.Document
 import java.time.ZonedDateTime
@@ -11,6 +12,9 @@ import java.util.Date
 class MongoEventService(
     private val mongoClient: MongoClient
 ) : EventService {
+    companion object {
+        const val collectionName = "event-log"
+    }
 
     override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
         saveEvent(EventType.SEARCH) {
@@ -63,6 +67,6 @@ class MongoEventService(
 
         customize(event)
 
-        mongoClient.getDatabase("video-service-db").getCollection("event-log").insertOne(event)
+        mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName).insertOne(event)
     }
 }
