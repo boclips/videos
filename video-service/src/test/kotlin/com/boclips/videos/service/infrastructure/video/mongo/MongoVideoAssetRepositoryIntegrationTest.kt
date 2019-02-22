@@ -13,6 +13,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
@@ -213,34 +214,17 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
-    fun `mark videos as searchable`() {
-        val videoAsset1 = TestFactories.createVideoAsset()
-        mongoVideoRepository.create(videoAsset1)
+    fun `setSearchable for toggling searchable`() {
+        val asset1 = mongoVideoRepository.create(TestFactories.createVideoAsset(searchable = true))
+        val asset2 = mongoVideoRepository.create(TestFactories.createVideoAsset(searchable = true))
+        val assetIds = listOf(asset1.assetId, asset2.assetId)
 
-        val videoAsset2 = TestFactories.createVideoAsset()
-        mongoVideoRepository.create(videoAsset2)
+        mongoVideoRepository.setSearchable(assetIds = assetIds, searchable = false)
 
-        val videoAssets = listOf(videoAsset1.assetId, videoAsset2.assetId)
+        assertThat(mongoVideoRepository.findAll(assetIds).map(VideoAsset::searchable)).containsExactly(false, false)
 
-        mongoVideoRepository.makeSearchable(videoAssets)
-        val updatedVideoAssets = mongoVideoRepository.findAll(videoAssets)
+        mongoVideoRepository.setSearchable(assetIds = assetIds, searchable = true)
 
-        assertThat(updatedVideoAssets.map { it.searchable }).containsExactly(true, true)
-    }
-
-    @Test
-    fun `mark videos disabled for search`() {
-        val videoAsset1 = TestFactories.createVideoAsset()
-        mongoVideoRepository.create(videoAsset1)
-
-        val videoAsset2 = TestFactories.createVideoAsset()
-        mongoVideoRepository.create(videoAsset2)
-
-        val videoAssets = listOf(videoAsset1.assetId, videoAsset2.assetId)
-
-        mongoVideoRepository.disableFromSearch(videoAssets)
-        val updatedVideoAssets = mongoVideoRepository.findAll(videoAssets)
-
-        assertThat(updatedVideoAssets.map { it.searchable }).containsExactly(false, false)
+        assertThat(mongoVideoRepository.findAll(assetIds).map(VideoAsset::searchable)).containsExactly(true, true)
     }
 }

@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -52,20 +53,20 @@ class VideoAccessServiceTest {
     inner class UpdateAccessibilityTests {
         @Test
         fun `grants access to videos`() {
-            val assetId = AssetId(value = aValidId())
+            val assetIds = listOf(AssetId(value = aValidId()))
 
-            videoAccessService.grantAccess(listOf(assetId))
+            videoAccessService.grantAccess(assetIds)
 
-            verify(videoAssetRepositoryMock).makeSearchable(any())
+            verify(videoAssetRepositoryMock).setSearchable(eq(assetIds), eq(true))
         }
 
         @Test
         fun `revokes access to video`() {
-            val assetId = AssetId(value = aValidId())
+            val assetIds = listOf(AssetId(value = aValidId()))
 
-            videoAccessService.revokeAccess(listOf(assetId))
+            videoAccessService.revokeAccess(assetIds)
 
-            verify(videoAssetRepositoryMock).disableFromSearch(any())
+            verify(videoAssetRepositoryMock).setSearchable(eq(assetIds), eq(false))
         }
     }
 }

@@ -14,10 +14,10 @@ class VideoAccessService(
     }
 
     fun grantAccess(assetIds: List<AssetId>) {
-        videoAssetRepository.makeSearchable(assetIds = assetIds)
+        videoAssetRepository.setSearchable(assetIds = assetIds, searchable = true)
     }
 
     fun revokeAccess(assetIds: List<AssetId>) {
-        videoAssetRepository.disableFromSearch(assetIds = assetIds)
+        videoAssetRepository.setSearchable(assetIds = assetIds, searchable = false)
     }
 }

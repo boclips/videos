@@ -12,6 +12,5 @@ interface VideoAssetRepository {
     fun bulkUpdate(commands: List<VideoUpdateCommand>)
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): AssetId?
-    fun disableFromSearch(assetIds: List<AssetId>)
-    fun makeSearchable(assetIds: List<AssetId>)
+    fun setSearchable(assetIds: List<AssetId>, searchable: Boolean)
 }

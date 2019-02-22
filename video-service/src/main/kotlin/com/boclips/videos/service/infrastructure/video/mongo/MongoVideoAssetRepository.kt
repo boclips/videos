@@ -114,25 +114,15 @@ class MongoVideoAssetRepository(
         return assetId
     }
 
-    override fun disableFromSearch(assetIds: List<AssetId>) {
-        val mongoIds = assetIds.map { ObjectId(it.value) }
-        getVideoCollection().updateMany(
-            VideoDocument::id `in` mongoIds,
-            set(VideoDocument::searchable, false)
-        )
-
-        logger.info { "Disabled $assetIds for search" }
-    }
-
-    override fun makeSearchable(assetIds: List<AssetId>) {
-        val mongoIds = assetIds.map { ObjectId(it.value) }
+    override fun setSearchable(assetIds: List<AssetId>, searchable: Boolean) {
+        val ids = assetIds.map { ObjectId(it.value) }
 
         getVideoCollection().updateMany(
-            VideoDocument::id `in` mongoIds,
-            set(VideoDocument::searchable, true)
+            VideoDocument::id `in` ids,
+            set(VideoDocument::searchable, searchable)
         )
 
-        logger.info { "Made $assetIds searchable" }
+        logger.info { "Set $assetIds to searchable=$searchable" }
     }
 
     private fun updatedOperation(updateCommand: VideoUpdateCommand): Bson {
