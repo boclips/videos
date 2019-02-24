@@ -16,6 +16,7 @@ import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoResource
 import io.micrometer.core.instrument.Counter
+import org.springframework.hateoas.Resource
 
 class CreateVideo(
     private val videoAssetRepository: VideoAssetRepository,
@@ -26,7 +27,7 @@ class CreateVideo(
     private val videoCounter: Counter,
     private val legacySearchService: LegacySearchService
 ) {
-    operator fun invoke(createRequest: CreateVideoRequest): VideoResource {
+    operator fun invoke(createRequest: CreateVideoRequest): Resource<VideoResource> {
         val videoPlayback = ensureVideoPlaybackExists(createRequest)
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest, videoPlayback)
 

@@ -41,7 +41,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Kaltura`() {
-        val videoResource = VideoToResourceConverter().convert(kalturaVideo)
+        val videoResource = VideoToResourceConverter().convert(kalturaVideo).content
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -61,7 +61,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Youtube`() {
-        val videoResource = VideoToResourceConverter().convert(youtubeVideo)
+        val videoResource = VideoToResourceConverter().convert(youtubeVideo).content
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -83,6 +83,6 @@ internal class VideoToResourceConverterTest {
         val resultResource = VideoToResourceConverter()
             .convert(videos = listOf(youtubeVideo, kalturaVideo))
 
-        assertThat(resultResource.map { it.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
+        assertThat(resultResource.map { it.content.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
     }
 }

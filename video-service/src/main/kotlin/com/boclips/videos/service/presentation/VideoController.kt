@@ -47,9 +47,9 @@ class VideoController(
                 .search(null, null, null, null, null)
         ).withRel("search")
 
-        fun videoLink(id: String? = null, rel: String = "video") = linkTo(
+        fun videoLink(videoResource: VideoResource? = null, rel: String = "video") = linkTo(
             methodOn(VideoController::class.java)
-                .getVideo(id)
+                .getVideo(videoResource?.id)
         ).withRel(rel)
 
         fun videosLink() = linkTo(methodOn(VideoController::class.java).patchMultipleVideos(null)).withRel("videos")
@@ -77,7 +77,6 @@ class VideoController(
 
         val videoResources = videosResource
             .videos
-            .map(this::wrapResourceWithHateoas)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
         return ResponseEntity(
@@ -95,16 +94,13 @@ class VideoController(
     @PostMapping("/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> {
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
-            .map(this::wrapResourceWithHateoas)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
     }
 
     @GetMapping("/{id}")
     fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {
-        val videoResource = searchVideo.byId(id)
-
-        return wrapResourceWithHateoas(videoResource)
+        return searchVideo.byId(id)
     }
 
     @DeleteMapping("/{id}")
@@ -127,7 +123,7 @@ class VideoController(
         }
 
         val headers = HttpHeaders()
-        headers.set(HttpHeaders.LOCATION, videoLink(resource.id, "self").href)
+        headers.set(HttpHeaders.LOCATION, resource.getLink("self").href)
         return ResponseEntity(headers, HttpStatus.CREATED)
     }
 
@@ -143,6 +139,4 @@ class VideoController(
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
-    private fun wrapResourceWithHateoas(videoResource: VideoResource) =
-        Resource(videoResource, videoLink(videoResource.id, "self"))
 }

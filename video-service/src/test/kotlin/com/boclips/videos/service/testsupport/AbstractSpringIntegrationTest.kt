@@ -144,7 +144,7 @@ abstract class AbstractSpringIntegrationTest {
                 subjects = subjects,
                 searchable = searchable
             )
-        ).id
+        ).content.id
 
         return AssetId(id!!)
     }

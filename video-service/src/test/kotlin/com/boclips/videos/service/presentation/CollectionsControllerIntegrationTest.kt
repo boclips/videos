@@ -62,6 +62,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].title", equalTo("a video title")))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))

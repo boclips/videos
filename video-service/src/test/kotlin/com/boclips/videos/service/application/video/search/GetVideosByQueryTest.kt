@@ -114,7 +114,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(videos.videos).hasSize(1)
-        assertThat(videos.videos.first().id).isEqualTo(videoId.value)
+        assertThat(videos.videos.first().content.id).isEqualTo(videoId.value)
     }
 
     @Test
@@ -131,7 +131,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(videos.videos).hasSize(1)
-        assertThat(videos.videos.first().id).isEqualTo(newsVideoId.value)
+        assertThat(videos.videos.first().content.id).isEqualTo(newsVideoId.value)
     }
 
     @Test
@@ -148,7 +148,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 0
         )
 
-        assertThat(videos.videos.map { it.id }).containsExactly(newsAndClassroomVideoId.value)
+        assertThat(videos.videos.map { it.content.id }).containsExactly(newsAndClassroomVideoId.value)
     }
 
     @Test

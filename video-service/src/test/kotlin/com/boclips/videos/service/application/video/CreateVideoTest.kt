@@ -39,7 +39,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
 
-        assertThat(videoService.get(AssetId(resource.id!!))).isNotNull
+        assertThat(videoService.get(AssetId(resource.content.id!!))).isNotNull
     }
 
     @Test
@@ -49,7 +49,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         val resource =
             createVideo(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))
 
-        assertThat(videoService.get(AssetId(resource.id!!))).isNotNull
+        assertThat(videoService.get(AssetId(resource.content.id!!))).isNotNull
     }
 
     @Test
@@ -128,7 +128,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
 
-        val video = videoService.get(AssetId(resource.id!!))
+        val video = videoService.get(AssetId(resource.content.id!!))
 
         assertThat(video.asset.duration).isEqualTo(playbackProviderDuration)
         assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)

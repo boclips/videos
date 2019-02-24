@@ -20,8 +20,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     @WithMockUser("this-user")
     fun `creates collection and associates videos`() {
-        val videoId1 = createVideo(TestFactories.createCreateVideoRequest(title = "a-video", providerVideoId = "hurray", playbackId = "hiphip")).id
-        val videoId2 = createVideo(TestFactories.createCreateVideoRequest(title = "another-video")).id
+        val videoId1 = createVideo(TestFactories.createCreateVideoRequest(title = "a-video", providerVideoId = "hurray", playbackId = "hiphip")).content.id
+        val videoId2 = createVideo(TestFactories.createCreateVideoRequest(title = "another-video")).content.id
         val createRequest = TestFactories.createCollectionRequest(
             title = "title",
             videos = listOf("http://localhost/v1/videos/$videoId1", "http://localhost/v1/videos/$videoId2")

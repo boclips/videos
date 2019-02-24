@@ -3,21 +3,23 @@ package com.boclips.videos.service.presentation.video
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
+import org.springframework.hateoas.Resource
 
 class VideoToResourceConverter {
-    fun convert(videos: List<Video>): List<VideoResource> {
+    fun convert(videos: List<Video>): List<Resource<VideoResource>> {
         return videos.map { video -> convert(video) }
     }
 
-    fun convert(video: Video): VideoResource {
+    fun convert(video: Video): Resource<VideoResource> {
         return toResource(video)
     }
 
-    private fun toResource(video: Video): VideoResource {
-        return VideoResource(
+    private fun toResource(video: Video): Resource<VideoResource> {
+        return wrapResourceWithHateoas(VideoResource(
             id = video.asset.assetId.value,
             title = video.asset.title,
             description = video.asset.description,
@@ -29,7 +31,7 @@ class VideoToResourceConverter {
             badges = getBadges(video),
             type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
             status = getStatus(video)
-        )
+        ))
     }
 
     private fun getPlayback(video: Video): PlaybackResource {
@@ -59,4 +61,7 @@ class VideoToResourceConverter {
             VideoResourceStatus.SEARCH_DISABLED
         }
     }
+
+    private fun wrapResourceWithHateoas(videoResource: VideoResource) =
+            Resource(videoResource, VideoController.videoLink(videoResource, "self"))
 }
