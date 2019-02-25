@@ -64,14 +64,15 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `returns documents where there is a content partner match`() {
+    fun `returns documents where content partner matches exactly`() {
         adminService.upsert(
                 sequenceOf(
-                        SearchableVideoMetadataFactory.create(id = "2", contentProvider = "TED Talks")
+                        SearchableVideoMetadataFactory.create(id = "1", contentProvider = "Bozeman Science"),
+                        SearchableVideoMetadataFactory.create(id = "2", title = "a video about science")
                 )
         )
 
-        val results = queryService.search(PaginatedSearchRequest(query = Query("ted talk")))
+        val results = queryService.search(PaginatedSearchRequest(query = Query("science")))
 
         assertThat(results).containsExactly("2")
     }
@@ -83,13 +84,14 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
                         SearchableVideoMetadataFactory.create(id = "1", title = "TED-Ed"),
                         SearchableVideoMetadataFactory.create(id = "2", description = "TED-Ed"),
                         SearchableVideoMetadataFactory.create(id = "3", contentProvider = "TED-Ed"),
-                        SearchableVideoMetadataFactory.create(id = "4", keywords = listOf("TED-Ed"))
+                        SearchableVideoMetadataFactory.create(id = "4", keywords = listOf("TED-Ed")),
+                        SearchableVideoMetadataFactory.create(id = "5", title = "TED-Ed", description = "TED-Ed", keywords = listOf("TED-Ed"))
                 )
         )
 
-        val results = queryService.search(PaginatedSearchRequest(query = Query("ted")))
+        val results = queryService.search(PaginatedSearchRequest(query = Query("Ted-ed")))
 
-        assertThat(results.first()).isEqualTo("3")
+        assertThat(results).startsWith("3")
     }
 
     @Test
@@ -120,7 +122,7 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
-    fun `exact phrase matches are returned higher then other documents with matching words`() {
+    fun `exact phrase matches are returned higher than other documents with matching words`() {
         adminService.upsert(
                 sequenceOf(
                         SearchableVideoMetadataFactory.create(

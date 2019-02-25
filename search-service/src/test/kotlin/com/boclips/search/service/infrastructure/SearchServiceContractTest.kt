@@ -68,7 +68,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "4",
                     title = "Who are you, really?",
-                    contentProvider = "Gentleman Ben"
+                    contentProvider = "Gentleman"
                 )
             )
         )
@@ -128,7 +128,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "4",
                     title = "Who are you, really?",
-                    contentProvider = "Gentleman Ben"
+                    contentProvider = "Gentleman"
                 )
             )
         )
@@ -164,7 +164,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "4",
                     title = "Who are you, really?",
-                    contentProvider = "Gentleman Ben"
+                    contentProvider = "Gentleman"
                 )
             )
         )
