@@ -67,10 +67,15 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     }
 
     override fun upsert(videos: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
+        makeSureIndexIsThere()
+        upsertToIndex(videos, ElasticSearchIndex.ES_INDEX_ALIAS)
+    }
+
+    @Synchronized
+    private fun makeSureIndexIsThere() {
         if (!client.indices().exists(GetIndexRequest().indices(ElasticSearchIndex.ES_INDEX_ALIAS), RequestOptions.DEFAULT)) {
             safeRebuildIndex(emptySequence())
         }
-        upsertToIndex(videos, ElasticSearchIndex.ES_INDEX_ALIAS)
     }
 
     private fun upsertToIndex(videos: Sequence<VideoMetadata>, indexName: String, notifier: ProgressNotifier? = null) {
