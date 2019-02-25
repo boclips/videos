@@ -18,14 +18,7 @@ class AddVideoToCollection(
         collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        val userId = UserExtractor.getCurrentUserId()
-        val collection = collectionService.getById(CollectionId(collectionId))
-
-        if (collection == null) {
-            throw CollectionNotFoundException(collectionId)
-        } else if (collection.owner != userId) {
-            throw CollectionAccessNotAuthorizedException(userId, collectionId)
-        }
+        getOwnedCollectionOrThrow(collectionId, collectionService)
 
         collectionService.update(
             CollectionId(collectionId),
