@@ -17,7 +17,24 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     internal fun setUp() {
         queryService = ElasticSearchService(CONFIG)
         adminService = ElasticSearchServiceAdmin(CONFIG)
-        adminService.safeRebuildIndex(emptySequence())
+    }
+
+    @Test
+    fun `calling upsert doesn't delete the index`() {
+        adminService.upsert(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy")
+                )
+        )
+        adminService.upsert(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple")
+                )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("candy")))
+
+        assertThat(results).hasSize(2)
     }
 
     @Test
