@@ -1,5 +1,7 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
+
 class IndexConfiguration {
 
     companion object {
@@ -65,6 +67,12 @@ class IndexConfiguration {
                                                 "shingle_filter"
                                         )
                                 )
+                        ),
+                        "normalizer" to mapOf(
+                            "lowercase_normalizer" to mapOf(
+                                    "type" to "custom",
+                                    "filter" to listOf("lowercase")
+                            )
                         )
                 )
         )
@@ -78,6 +86,10 @@ class IndexConfiguration {
                         FIELD_DESCRIPTOR_SHINGLES to mapOf("type" to "text", "analyzer" to "shingle_analyzer")
                 )
         )
+        val contentPartnerField = mapOf(
+                "type" to "keyword",
+                "normalizer" to "lowercase_normalizer"
+        )
         val keywordField = mapOf(
                 "type" to "text",
                 "analyzer" to "english_analyzer",
@@ -87,7 +99,7 @@ class IndexConfiguration {
                 "properties" to mapOf(
                         "title" to freeTextField,
                         "description" to freeTextField,
-                        "contentProvider" to freeTextField,
+                        "contentProvider" to contentPartnerField,
                         "keywords" to keywordField
                 )
         )
