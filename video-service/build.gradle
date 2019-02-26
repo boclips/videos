@@ -171,8 +171,7 @@ dependencies {
     compile('org.apache.commons:commons-lang3:3.7')
     compile("org.bouncycastle:bcprov-jdk15on:1.60")
     compile('org.litote.kmongo:kmongo:3.9.2')
-
-    compile("net.logstash.logback:logstash-logback-encoder:5.3")
+    compile('io.sentry:sentry-logback:1.7.21')
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
         exclude group: 'junit', module: 'junit'
