@@ -3,7 +3,6 @@ package com.boclips.videos.service.client.testsupport
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
-import java.time.Duration
 import java.time.LocalDate
 
 object TestFactories {

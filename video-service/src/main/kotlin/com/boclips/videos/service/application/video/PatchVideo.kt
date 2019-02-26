@@ -27,7 +27,7 @@ class PatchVideo(
         return if (SearchVideo.isAlias(idOrAlias)) {
             videoAssetRepository.resolveAlias(idOrAlias) ?: throw VideoAssetNotFoundException()
         } else {
-            videoAssetRepository.find(AssetId(value = idOrAlias))?.let { it.assetId }
+            videoAssetRepository.find(AssetId(value = idOrAlias))?.assetId
                 ?: throw VideoAssetNotFoundException()
         }
     }

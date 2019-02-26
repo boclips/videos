@@ -1,7 +1,5 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
-
 class IndexConfiguration {
 
     companion object {

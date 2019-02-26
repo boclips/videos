@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.asset.Subject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import org.bson.Document
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.set
