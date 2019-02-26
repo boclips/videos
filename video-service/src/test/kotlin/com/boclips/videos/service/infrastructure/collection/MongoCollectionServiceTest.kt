@@ -62,6 +62,20 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can delete a collection`() {
+        val collection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title"
+        )
+
+        collectionService.delete(collection.id)
+
+        val deletedCollection = collectionService.getById(collection.id)
+
+        assertThat(deletedCollection).isNull()
+    }
+
+    @Test
     fun `updatedAt timestamp on modifying changes`() {
         val videoAsset1 = saveVideo()
 

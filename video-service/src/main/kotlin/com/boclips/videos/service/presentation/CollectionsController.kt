@@ -24,7 +24,8 @@ class CollectionsController(
     private val getCollection: GetCollection,
     private val addVideoToCollection: AddVideoToCollection,
     private val removeVideoFromCollection: RemoveVideoFromCollection,
-    private val renameCollection: RenameCollection
+    private val renameCollection: RenameCollection,
+    private val deleteCollection: DeleteCollection
 ) {
     companion object : KLogging() {
         fun getUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).getAllUserCollections())
@@ -47,6 +48,12 @@ class CollectionsController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun patchCollection(@PathVariable("id") id: String, @RequestBody request: RenameCollectionRequest?) {
         renameCollection(id, request?.title)
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun removeCollection(@PathVariable("id") id: String) {
+        deleteCollection(id)
     }
 
     @GetMapping

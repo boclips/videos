@@ -114,6 +114,11 @@ class ApplicationContext(
     }
 
     @Bean
+    fun deleteCollection(): DeleteCollection {
+        return DeleteCollection(collectionService)
+    }
+
+    @Bean
     fun rebuildSearchIndex(): RebuildSearchIndex {
         return RebuildSearchIndex(videoAssetRepository, searchService)
     }

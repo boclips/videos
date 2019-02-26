@@ -13,13 +13,7 @@ import com.mongodb.client.MongoCollection
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.addToSet
-import org.litote.kmongo.combine
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.pull
-import org.litote.kmongo.set
+import org.litote.kmongo.*
 import java.time.Instant
 
 class MongoCollectionService(
@@ -70,6 +64,10 @@ class MongoCollectionService(
             is RenameCollectionCommand -> renameCollection(id, updateCommand.title)
             else -> throw Error("Not supported update: $updateCommand")
         }
+    }
+
+    override fun delete(id: CollectionId) {
+        dbCollection().deleteOne(CollectionDocument::id eq ObjectId(id.value))
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId) {

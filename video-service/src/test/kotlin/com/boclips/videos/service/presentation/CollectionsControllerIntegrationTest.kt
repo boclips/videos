@@ -153,6 +153,17 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertCollectionName(collectionId, "New Name")
     }
 
+    @Test
+    fun `delete a collection`() {
+        val email = "teacher@gmail.com"
+        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
+
+        mockMvc.perform(delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher())
+                .andExpect(status().isNoContent)
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                .andExpect(status().isNotFound)
+    }
+
     fun addVideo(collectionId: String, videoId: String) {
         mockMvc.perform(put(addVideoLink(collectionId, videoId)).asTeacher())
             .andExpect(status().isNoContent)
