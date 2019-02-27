@@ -433,14 +433,36 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     fun `videos match via synonyms`() {
         adminService.upsert(
                 sequenceOf(
-                        SearchableVideoMetadataFactory.create(id = "1", description = "Second world war"),
-                        SearchableVideoMetadataFactory.create(id = "2", description = "war")
+                        SearchableVideoMetadataFactory.create(id = "1", description = "Second world war")
                 )
         )
 
         val results = queryService.search(PaginatedSearchRequest(query = Query("WW2")))
 
         assertThat(results).containsExactly("1")
+    }
+
+    @Test
+    fun `multiword synonyms must match query entirely`() {
+        adminService.upsert(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(id = "1", description = "video about ww2")
+                )
+        )
+
+        assertThat(queryService.search(PaginatedSearchRequest(query = Query("second world war")))).containsExactly("1")
+        assertThat(queryService.search(PaginatedSearchRequest(query = Query("second world")))).isEmpty()
+    }
+
+    @Test
+    fun `multiword synonyms must match video metadata entirely`() {
+        adminService.upsert(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(id = "1", description = "second world")
+                )
+        )
+
+        assertThat(queryService.search(PaginatedSearchRequest(query = Query("ww2")))).isEmpty()
     }
 
     @Test

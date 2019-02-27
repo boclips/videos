@@ -5,6 +5,27 @@ class IndexConfiguration {
     companion object {
         const val FIELD_DESCRIPTOR_SHINGLES = "shingles"
 
+        object Analyzers {
+            const val ENGLISH = "english_analyzer"
+            const val ENGLISH_SEARCH = "english_search_analyzer"
+            const val SHINGLES = "shingle_analyzer"
+        }
+
+        object Filters {
+            const val PREDEFINED_LOWERCASE = "lowercase"
+
+            const val SHINGLES = "shingle_filter"
+            const val ENGLISH_SYNONYMS = "english_synonym_filter"
+            const val ENGLISH_SYNONYMS_CASE_SENSITIVE = "english_synonym_case_sensitive_filter"
+            const val ENGLISH_STOP = "english_stop_filter"
+            const val ENGLISH_STEMMER = "english_stemmer_filter"
+            const val ENGLISH_POSSESSIVE_STEMMER = "english_possessive_stemmer_filter"
+        }
+
+        object Normalizers {
+            const val LOWERCASE = "lowercase_normalizer"
+        }
+
         val synonyms = loadSynonyms("english.txt")
         val synonymsCaseSensitive = loadSynonyms("english-case-sensitive.txt")
 
@@ -16,60 +37,70 @@ class IndexConfiguration {
         return mapOf(
                 "analysis" to mapOf(
                         "filter" to mapOf(
-                                "shingle_filter" to mapOf(
+                                Filters.SHINGLES to mapOf(
                                         "type" to "shingle",
                                         "min_shingle_size" to 2,
                                         "max_shingle_size" to 2,
                                         "output_unigrams" to false
                                 ),
-                                "english_synonym_filter" to mapOf(
-                                        "type" to "synonym",
+                                Filters.ENGLISH_SYNONYMS to mapOf(
+                                        "type" to "synonym_graph",
                                         "synonyms" to synonyms,
-                                        "expand" to false
+                                        "expand" to true
                                 ),
-                                "english_synonym_case_sensitive_filter" to mapOf(
+                                Filters.ENGLISH_SYNONYMS_CASE_SENSITIVE to mapOf(
                                         "type" to "synonym",
                                         "synonyms" to synonymsCaseSensitive,
                                         "expand" to false
                                 ),
-                                "english_stop_filter" to mapOf(
+                                Filters.ENGLISH_STOP to mapOf(
                                         "type" to "stop",
                                         "stopwords" to "_english_"
                                 ),
-                                "english_stemmer_filter" to mapOf(
+                                Filters.ENGLISH_STEMMER to mapOf(
                                         "type" to "stemmer",
                                         "language" to "english"
                                 ),
-                                "english_possessive_stemmer_filter" to mapOf(
+                                Filters.ENGLISH_POSSESSIVE_STEMMER to mapOf(
                                         "type" to "stemmer",
                                         "language" to "possessive_english"
                                 )
                         ),
                         "analyzer" to mapOf(
-                                "english_analyzer" to mapOf(
+                                Analyzers.ENGLISH to mapOf(
                                         "tokenizer" to "standard",
                                         "filter" to listOf(
-                                                "english_possessive_stemmer_filter",
-                                                "english_synonym_case_sensitive_filter",
-                                                "lowercase",
-                                                "english_stemmer_filter",
-                                                "english_synonym_filter",
-                                                "english_stop_filter"
+                                                Filters.ENGLISH_POSSESSIVE_STEMMER,
+                                                Filters.ENGLISH_SYNONYMS_CASE_SENSITIVE,
+                                                Filters.PREDEFINED_LOWERCASE,
+                                                Filters.ENGLISH_STEMMER,
+                                                Filters.ENGLISH_STOP
                                         )
                                 ),
-                                "shingle_analyzer" to mapOf(
+                                Analyzers.ENGLISH_SEARCH to mapOf(
+                                        "tokenizer" to "standard",
+                                        "filter" to listOf(
+                                                Filters.ENGLISH_POSSESSIVE_STEMMER,
+                                                Filters.ENGLISH_SYNONYMS_CASE_SENSITIVE,
+                                                Filters.PREDEFINED_LOWERCASE,
+                                                Filters.ENGLISH_STEMMER,
+                                                Filters.ENGLISH_SYNONYMS,
+                                                Filters.ENGLISH_STOP
+                                        )
+                                ),
+                                Analyzers.SHINGLES to mapOf(
                                         "type" to "custom",
                                         "tokenizer" to "standard",
                                         "filter" to listOf(
-                                                "lowercase",
-                                                "shingle_filter"
+                                                Filters.PREDEFINED_LOWERCASE,
+                                                Filters.SHINGLES
                                         )
                                 )
                         ),
                         "normalizer" to mapOf(
-                            "lowercase_normalizer" to mapOf(
+                            Normalizers.LOWERCASE to mapOf(
                                     "type" to "custom",
-                                    "filter" to listOf("lowercase")
+                                    "filter" to listOf(Filters.PREDEFINED_LOWERCASE)
                             )
                         )
                 )
@@ -79,18 +110,19 @@ class IndexConfiguration {
     fun generateVideoMapping(): Map<String, Any> {
         val freeTextField = mapOf(
                 "type" to "text",
-                "analyzer" to "english_analyzer",
+                "analyzer" to Analyzers.ENGLISH,
+                "search_analyzer" to Analyzers.ENGLISH_SEARCH,
                 "fields" to mapOf(
-                        FIELD_DESCRIPTOR_SHINGLES to mapOf("type" to "text", "analyzer" to "shingle_analyzer")
+                        FIELD_DESCRIPTOR_SHINGLES to mapOf("type" to "text", "analyzer" to Analyzers.SHINGLES)
                 )
         )
         val contentPartnerField = mapOf(
                 "type" to "keyword",
-                "normalizer" to "lowercase_normalizer"
+                "normalizer" to Normalizers.LOWERCASE
         )
         val keywordField = mapOf(
                 "type" to "text",
-                "analyzer" to "english_analyzer",
+                "analyzer" to Analyzers.ENGLISH,
                 "position_increment_gap" to 100
         )
         return mapOf(
