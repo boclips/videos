@@ -19,6 +19,7 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
 
     private val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
         .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
+        .setApplicationName("boclips-video-service")
         .build()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
