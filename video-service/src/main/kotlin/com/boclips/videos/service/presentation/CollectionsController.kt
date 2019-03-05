@@ -65,10 +65,12 @@ class CollectionsController(
                 id
             )
         )
+
+        fun postUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).postCollection(null))
     }
 
     @PostMapping
-    fun postCollection(@RequestBody createCollectionRequest: CreateCollectionRequest): ResponseEntity<Void> {
+    fun postCollection(@RequestBody createCollectionRequest: CreateCollectionRequest?): ResponseEntity<Void> {
         val collection = createCollection(createCollectionRequest)
         val headers = HttpHeaders().apply {
             set(HttpHeaders.LOCATION, getUserCollectionLink(collection.id.value).toUri().toString())

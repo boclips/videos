@@ -21,7 +21,7 @@ class LinksController {
             EventController.createPlaybackEventLink(),
             EventController.createNoResultsEventLink(),
             CollectionsController.getUserCollectionLink(null).withRel("userCollection"),
-            CollectionsController.getUserCollectionsDetailsLink().withRel("userCollections"),
+            CollectionsController.postUserCollectionsLink().withRel("userCollections"),
             CollectionsController.getUserCollectionsDetailsLink().withRel("userCollectionsDetails"),
             CollectionsController.getUserCollectionsListLink().withRel("userCollectionsList")
         )

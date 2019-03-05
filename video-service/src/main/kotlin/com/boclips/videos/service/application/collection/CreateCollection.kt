@@ -11,10 +11,10 @@ class CreateCollection(
     private val collectionService: CollectionService,
     private val addVideoToCollection: AddVideoToCollection
 ) {
-    operator fun invoke(createCollectionRequest: CreateCollectionRequest) = collectionService
-        .create(UserExtractor.getCurrentUserId(), getOrThrow(createCollectionRequest.title, "title"))
+    operator fun invoke(createCollectionRequest: CreateCollectionRequest?) = collectionService
+        .create(UserExtractor.getCurrentUserId(), getOrThrow(createCollectionRequest?.title, "title"))
         .apply {
-            createCollectionRequest.videos.forEach { video ->
+            createCollectionRequest?.videos?.forEach { video ->
                 addVideoToCollection(id.value, video.substringAfterLast("/videos/"))
             }
         }
