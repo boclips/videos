@@ -1,8 +1,10 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.collections.CollectionResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
@@ -20,11 +22,17 @@ class GetCollectionTest {
 
     lateinit var collectionService: CollectionService
     lateinit var collectionResourceConverter: CollectionResourceConverter
+    lateinit var videoService: VideoService
 
     @BeforeEach
     fun setUp() {
         setSecurityContext("me@me.com")
-        collectionResourceConverter = CollectionResourceConverter(VideoToResourceConverter())
+        videoService = mock {
+            on { get(any<List<AssetId>>()) } doReturn listOf(
+                TestFactories.createVideo()
+            )
+        }
+        collectionResourceConverter = CollectionResourceConverter(VideoToResourceConverter(), videoService)
     }
 
     @Test

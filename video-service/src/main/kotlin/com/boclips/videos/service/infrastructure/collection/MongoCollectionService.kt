@@ -105,7 +105,7 @@ class MongoCollectionService(
             id = CollectionId(value = collectionDocument.id.toHexString()),
             title = collectionDocument.title,
             owner = UserId(value = collectionDocument.owner),
-            videos = videoService.get(assetIds),
+            videos = assetIds,
             updatedAt = collectionDocument.updatedAt
         )
     }

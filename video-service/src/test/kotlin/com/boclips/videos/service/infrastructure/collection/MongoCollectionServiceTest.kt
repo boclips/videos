@@ -43,7 +43,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedCollection.owner).isEqualTo(UserId(value = "user1"))
         assertThat(updatedCollection.videos).hasSize(1)
-        assertThat(updatedCollection.videos.map { it.asset.assetId }).contains(videoAsset2)
+        assertThat(updatedCollection.videos).contains(videoAsset2)
         assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
     }
 

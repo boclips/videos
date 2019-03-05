@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.collections.CollectionResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
@@ -18,11 +19,19 @@ class GetUserCollectionsTest {
 
     lateinit var collectionService: CollectionService
     lateinit var collectionResourceConverter: CollectionResourceConverter
+    lateinit var videoService: VideoService
+
+    val assetId = createVideo().asset.assetId
 
     @BeforeEach
     fun setUp() {
         setSecurityContext("me@me.com")
-        collectionResourceConverter = CollectionResourceConverter(VideoToResourceConverter())
+        videoService = mock {
+            on { get(listOf(assetId)) } doReturn listOf(
+                createVideo()
+            )
+        }
+        collectionResourceConverter = CollectionResourceConverter(VideoToResourceConverter(), videoService)
     }
 
     @Test
@@ -33,7 +42,7 @@ class GetUserCollectionsTest {
                     id = CollectionId("collection-id"),
                     owner = "me@me.com",
                     title = "collection title",
-                    videos = listOf(createVideo())
+                    videos = listOf(assetId)
                 ),
                 TestFactories.createCollection()
             )
