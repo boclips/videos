@@ -35,9 +35,10 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/events/playback")))
             .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href", endsWith("/events/no-search-results")))
             .andExpect(jsonPath("$._links.userDefaultCollection.href", containsString("collections/default")))
-            .andExpect(jsonPath("$._links.userCollections.href", endsWith("collections")))
+            .andExpect(jsonPath("$._links.userCollections.href", endsWith("collections?projection=details")))
             .andExpect(jsonPath("$._links.userCollection.href", endsWith("collections/{id}")))
             .andExpect(jsonPath("$._links.userCollection.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.userCollectionsDetails.href", endsWith("collections?projection=details")))
     }
 
     @Test

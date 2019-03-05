@@ -61,12 +61,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `gets all user collections`() {
+    fun `gets all user collections with full details`() {
         val collectionId = createCollection("collection 1")
         createCollection("collection 2")
         addVideo(collectionId, saveVideo(title = "a video title").value)
 
-        mockMvc.perform(get("/v1/collections").asTeacher())
+        mockMvc.perform(get("/v1/collections?projection=details").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
@@ -78,7 +78,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections")))
+            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=details")))
+            .andExpect(jsonPath("$._links.details.href", endsWith("/v1/collections?projection=details")))
             .andReturn()
     }
 

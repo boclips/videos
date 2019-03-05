@@ -22,7 +22,8 @@ class LinksController {
             EventController.createNoResultsEventLink(),
             CollectionsController.getUserCollectionLink(CollectionsController.LEGACY_DEFAULT_COLLECTION).withRel("userDefaultCollection"),
             CollectionsController.getUserCollectionLink(null).withRel("userCollection"),
-            CollectionsController.getUserCollectionsLink().withRel("userCollections")
+            CollectionsController.getUserCollectionsDetailsLink().withRel("userCollections"),
+            CollectionsController.getUserCollectionsDetailsLink().withRel("userCollectionsDetails")
         )
     )
 }
