@@ -13,6 +13,6 @@ class GetVideoById(
 
     operator fun invoke(assetId: AssetId): Resource<VideoResource> {
         return videoService.get(assetId)
-            .let(videoToResourceConverter::convert)
+            .let(videoToResourceConverter::fromVideo)
     }
 }

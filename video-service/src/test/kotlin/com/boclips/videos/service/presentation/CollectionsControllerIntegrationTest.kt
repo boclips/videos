@@ -80,6 +80,32 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=details")))
             .andExpect(jsonPath("$._links.details.href", endsWith("/v1/collections?projection=details")))
+            .andExpect(jsonPath("$._links.list.href", endsWith("/v1/collections?projection=list")))
+            .andReturn()
+    }
+
+    @Test
+    fun `gets all user collections with basic video details`() {
+        val collectionId = createCollection("collection 1")
+        createCollection("collection 2")
+        val savedVideoAssetId = saveVideo(title = "a video title")
+        addVideo(collectionId, savedVideoAssetId.value)
+
+        mockMvc.perform(get("/v1/collections?projection=list").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
+            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(savedVideoAssetId.value)))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=list")))
+            .andExpect(jsonPath("$._links.details.href", endsWith("/v1/collections?projection=details")))
+            .andExpect(jsonPath("$._links.list.href", endsWith("/v1/collections?projection=list")))
             .andReturn()
     }
 
@@ -130,9 +156,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
 
         mockMvc.perform(delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher())
-                .andExpect(status().isNoContent)
+            .andExpect(status().isNoContent)
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
-                .andExpect(status().isNotFound)
+            .andExpect(status().isNotFound)
     }
 
     fun addVideo(collectionId: String, videoId: String) {
@@ -142,12 +168,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     fun removeVideo(collectionId: String, videoId: String) {
         mockMvc.perform(delete(removeVideoLink(collectionId, videoId)).asTeacher())
-                .andExpect(status().isNoContent)
+            .andExpect(status().isNoContent)
     }
 
     fun renameCollection(collectionId: String, title: String) {
         mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
-                .andExpect(status().isNoContent)
+            .andExpect(status().isNoContent)
     }
 
     fun createCollection(title: String = "a collection name") =
@@ -183,8 +209,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     private fun selfLink(collectionId: String): URI {
         return getCollection(collectionId)
-                .andReturn()
-                .extractLink("self")
+            .andReturn()
+            .extractLink("self")
     }
 
     private fun MvcResult.extractLink(relName: String): URI {

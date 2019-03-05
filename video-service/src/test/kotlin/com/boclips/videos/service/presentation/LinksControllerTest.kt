@@ -38,6 +38,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.userCollection.href", endsWith("collections/{id}")))
             .andExpect(jsonPath("$._links.userCollection.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.userCollectionsDetails.href", endsWith("collections?projection=details")))
+            .andExpect(jsonPath("$._links.userCollectionsList.href", endsWith("collections?projection=list")))
     }
 
     @Test

@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.collections.CollectionResourceConverter
+import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.setSecurityContext
@@ -21,7 +21,7 @@ import org.junit.jupiter.api.assertThrows
 class GetCollectionTest {
 
     lateinit var collectionService: CollectionService
-    lateinit var collectionResourceConverter: CollectionResourceConverter
+    lateinit var collectionResourceFactory: CollectionResourceFactory
     lateinit var videoService: VideoService
 
     @BeforeEach
@@ -32,7 +32,7 @@ class GetCollectionTest {
                 TestFactories.createVideo()
             )
         }
-        collectionResourceConverter = CollectionResourceConverter(VideoToResourceConverter(), videoService)
+        collectionResourceFactory = CollectionResourceFactory(VideoToResourceConverter(), videoService)
     }
 
     @Test
@@ -48,7 +48,7 @@ class GetCollectionTest {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val collection = GetCollection(collectionService, collectionResourceConverter).invoke(collectionId.value)
+        val collection = GetCollection(collectionService, collectionResourceFactory).invoke(collectionId.value)
 
         assertThat(collection.id).isEqualTo(onGetCollection.id.value)
         assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
@@ -61,7 +61,7 @@ class GetCollectionTest {
             on { getById(any()) } doAnswer { null }
         }
 
-        val getCollection = GetCollection(collectionService, collectionResourceConverter)
+        val getCollection = GetCollection(collectionService, collectionResourceFactory)
 
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = "123") }
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = null) }
@@ -78,7 +78,7 @@ class GetCollectionTest {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val getCollection = GetCollection(collectionService, collectionResourceConverter)
+        val getCollection = GetCollection(collectionService, collectionResourceFactory)
 
         assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId = collectionId.value) }
     }

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.boclips.videos.service.presentation.VideoController
@@ -10,28 +11,34 @@ import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackRes
 import org.springframework.hateoas.Resource
 
 class VideoToResourceConverter {
-    fun convert(videos: List<Video>): List<Resource<VideoResource>> {
-        return videos.map { video -> convert(video) }
+    fun fromVideos(videos: List<Video>): List<Resource<VideoResource>> {
+        return videos.map { video -> fromVideo(video) }
     }
 
-    fun convert(video: Video): Resource<VideoResource> {
+    fun fromAssetIds(assetIds: List<AssetId>): List<Resource<VideoResource>> {
+        return assetIds.map { assetId -> wrapResourceWithHateoas(VideoResource(id = assetId.value)) }
+    }
+
+    fun fromVideo(video: Video): Resource<VideoResource> {
         return toResource(video)
     }
 
     private fun toResource(video: Video): Resource<VideoResource> {
-        return wrapResourceWithHateoas(VideoResource(
-            id = video.asset.assetId.value,
-            title = video.asset.title,
-            description = video.asset.description,
-            contentPartner = video.asset.contentPartnerId,
-            contentPartnerVideoId = video.asset.contentPartnerVideoId,
-            releasedOn = video.asset.releasedOn,
-            playback = getPlayback(video),
-            subjects = video.asset.subjects.map { it.name }.toSet(),
-            badges = getBadges(video),
-            type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
-            status = getStatus(video)
-        ))
+        return wrapResourceWithHateoas(
+            VideoResource(
+                id = video.asset.assetId.value,
+                title = video.asset.title,
+                description = video.asset.description,
+                contentPartner = video.asset.contentPartnerId,
+                contentPartnerVideoId = video.asset.contentPartnerVideoId,
+                releasedOn = video.asset.releasedOn,
+                playback = getPlayback(video),
+                subjects = video.asset.subjects.map { it.name }.toSet(),
+                badges = getBadges(video),
+                type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
+                status = getStatus(video)
+            )
+        )
     }
 
     private fun getPlayback(video: Video): PlaybackResource {
@@ -63,5 +70,5 @@ class VideoToResourceConverter {
     }
 
     private fun wrapResourceWithHateoas(videoResource: VideoResource) =
-            Resource(videoResource, VideoController.videoLink(videoResource, "self"))
+        Resource(videoResource, VideoController.videoLink(videoResource, "self"))
 }

@@ -43,13 +43,20 @@ class CollectionsController(
     private val deleteCollection: DeleteCollection
 ) {
     enum class Projections {
-        details
+        details,
+        list
     }
 
     companion object : KLogging() {
         fun getUserCollectionsDetailsLink() = linkTo(
             methodOn(CollectionsController::class.java).getAllUserCollections(
                 Projections.details
+            )
+        )
+
+        fun getUserCollectionsListLink() = linkTo(
+            methodOn(CollectionsController::class.java).getAllUserCollections(
+                Projections.list
             )
         )
 
@@ -83,10 +90,15 @@ class CollectionsController(
 
     @GetMapping
     fun getAllUserCollections(@RequestParam projection: Projections): Resources<Resource<CollectionResource>> {
-        val selfLink = getUserCollectionsDetailsLink().withSelfRel()
-        val detailsLink = getUserCollectionsDetailsLink().withRel("details")
+        val selfLink = when (projection) {
+            Projections.details -> getUserCollectionsDetailsLink().withSelfRel()
+            Projections.list -> getUserCollectionsListLink().withSelfRel()
+        }
 
-        return Resources(getUserCollections().map(::wrapCollection), selfLink, detailsLink)
+        val detailsLink = getUserCollectionsDetailsLink().withRel("details")
+        val listLink = getUserCollectionsListLink().withRel("list")
+
+        return Resources(getUserCollections(projection).map(::wrapCollection), selfLink, detailsLink, listLink)
     }
 
     @GetMapping("/{id}")
