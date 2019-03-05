@@ -84,21 +84,6 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `empty default collection`() {
-        getCollection("default")
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", not(isEmptyString())))
-            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
-            .andExpect(jsonPath("$.title", equalTo("My Videos")))
-            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
-            .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.addVideo.templated", equalTo(true)))
-            .andExpect(jsonPath("$._links.removeVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.removeVideo.templated", equalTo(true)))
-    }
-
-    @Test
     fun `collection includes an updatedAt timestamp`() {
         val collectionId = collectionService.create(owner = UserId("teacher@gmail.com"), title = "Collection").id.value
 
@@ -114,32 +99,6 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/collections/${ObjectId().toHexString()}").asTeacher())
             .andExpect(status().isNotFound)
             .andExpect(content().string(isEmptyString()))
-    }
-
-    @Test
-    fun `add video to default collection and retrieve it`() {
-        val videoId = saveVideo(title = "a video title")
-        val collectionId = "default"
-
-        assertCollectionSize(collectionId, 0)
-        addVideo(collectionId, videoId.value)
-
-        getCollection(collectionId)
-            .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-            .andExpect(jsonPath("$.videos[0].id", equalTo(videoId.value)))
-            .andExpect(jsonPath("$.videos[0].title", equalTo("a video title")))
-    }
-
-    @Test
-    fun `remove video from the default collection`() {
-        val videoId = saveVideo(title = "a video title").value
-        val collectionId = "default"
-
-        assertCollectionSize(collectionId, 0)
-        addVideo(collectionId, videoId)
-        assertCollectionSize(collectionId, 1)
-        removeVideo(collectionId, videoId)
-        assertCollectionSize(collectionId, 0)
     }
 
     @Test

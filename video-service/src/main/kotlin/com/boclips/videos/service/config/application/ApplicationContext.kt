@@ -89,11 +89,6 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getDefaultCollection(): GetDefaultCollection {
-        return GetDefaultCollection(collectionService, CollectionResourceConverter(VideoToResourceConverter()))
-    }
-
-    @Bean
     fun getUserCollections(): GetUserCollections {
         return GetUserCollections(collectionService, CollectionResourceConverter(VideoToResourceConverter()))
     }

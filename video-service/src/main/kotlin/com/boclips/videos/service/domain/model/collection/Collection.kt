@@ -10,8 +10,4 @@ data class Collection(
     val title: String,
     val videos: List<Video>,
     val updatedAt: Instant
-) {
-    companion object {
-        const val DEFAULT_TITLE = "My Videos"
-    }
-}
+)
