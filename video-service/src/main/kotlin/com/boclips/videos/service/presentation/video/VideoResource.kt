@@ -16,5 +16,6 @@ data class VideoResource(
     val subjects: Set<String>? = null,
     val badges: Set<String> = emptySet(),
     val type: VideoTypeResource? = null,
-    val status: VideoResourceStatus? = null
+    val status: VideoResourceStatus? = null,
+    val legalRestrictions: String? = null
 )

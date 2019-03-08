@@ -112,7 +112,8 @@ abstract class AbstractSpringIntegrationTest {
         typeId: Int = 3,
         keywords: List<String> = emptyList(),
         subjects: Set<String> = emptySet(),
-        searchable: Boolean = true
+        searchable: Boolean = true,
+        legalRestrictions: String = ""
     ): AssetId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(
@@ -136,7 +137,7 @@ abstract class AbstractSpringIntegrationTest {
                 title = title,
                 description = description,
                 releasedOn = LocalDate.parse(date),
-                legalRestrictions = "",
+                legalRestrictions = legalRestrictions,
                 keywords = keywords,
                 videoType = LegacyVideoType.fromId(typeId).name,
                 playbackId = playbackId.value,

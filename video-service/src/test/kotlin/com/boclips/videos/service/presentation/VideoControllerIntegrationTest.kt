@@ -50,7 +50,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = "cp"
+            contentProvider = "cp",
+            legalRestrictions = "None"
         ).value
 
         disabledVideoId = saveVideo(
@@ -82,6 +83,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
             .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp")))
+            .andExpect(jsonPath("$._embedded.videos[0].legalRestrictions", equalTo("None")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
             .andExpect(

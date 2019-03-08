@@ -36,7 +36,8 @@ class VideoToResourceConverter {
                 subjects = video.asset.subjects.map { it.name }.toSet(),
                 badges = getBadges(video),
                 type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
-                status = getStatus(video)
+                status = getStatus(video),
+                legalRestrictions = video.asset.legalRestrictions
             )
         )
     }

@@ -23,7 +23,8 @@ internal class VideoToResourceConverterTest {
             contentPartnerVideoId = "111",
             type = LegacyVideoType.TED_TALKS,
             subjects = setOf(Subject("Maths")),
-            searchable = true
+            searchable = true,
+            legalRestrictions = "None"
         ),
         videoPlayback = TestFactories.createKalturaPlayback()
     )
@@ -36,7 +37,8 @@ internal class VideoToResourceConverterTest {
             contentPartnerVideoId = "222",
             type = LegacyVideoType.OTHER,
             subjects = setOf(Subject("Biology")),
-            searchable = false
+            searchable = false,
+            legalRestrictions = "Many"
         ),
         videoPlayback = createYoutubePlayback()
     )
@@ -76,6 +78,7 @@ internal class VideoToResourceConverterTest {
         assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("kaltura-stream")
         assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
         assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCHABLE)
+        assertThat(videoResource.legalRestrictions).isEqualTo("None")
     }
 
     @Test
@@ -95,6 +98,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.id).isEqualTo("444")
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
         assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCH_DISABLED)
+        assertThat(videoResource.legalRestrictions).isEqualTo("Many")
     }
 
     @Test
