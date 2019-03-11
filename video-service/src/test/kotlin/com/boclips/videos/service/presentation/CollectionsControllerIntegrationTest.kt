@@ -151,6 +151,16 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `mark a collection as public and private`() {
+        val email = "teacher@gmail.com"
+        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
+
+        assertCollectionIsPrivate(collectionId)
+        updateCollectionToBePublic(collectionId)
+        assertCollectionIsPublic(collectionId)
+    }
+
+    @Test
     fun `delete a collection`() {
         val email = "teacher@gmail.com"
         val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
@@ -176,6 +186,11 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isNoContent)
     }
 
+    fun updateCollectionToBePublic(collectionId: String) {
+        mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"public": "true"}""").asTeacher())
+            .andExpect(status().isNoContent)
+    }
+
     fun createCollection(title: String = "a collection name") =
         mockMvc.perform(post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
             .andExpect(status().isCreated)
@@ -184,6 +199,14 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun getCollection(collectionId: String): ResultActions {
         return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isOk)
+    }
+
+    fun assertCollectionIsPublic(collectionId: String) {
+        getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(true)))
+    }
+
+    fun assertCollectionIsPrivate(collectionId: String) {
+        getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(false)))
     }
 
     fun assertCollectionName(collectionId: String, expectedTitle: String) {

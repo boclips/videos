@@ -1,15 +1,23 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
+import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.Document
+import org.bson.types.ObjectId
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
+import java.util.Date
 
 class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
@@ -50,8 +58,8 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can create and then rename a collection`() {
         val collection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title"
+            owner = UserId(value = "user1"),
+            title = "Starting Title"
         )
 
         collectionService.update(collection.id, RenameCollectionCommand("New Title"))
@@ -62,10 +70,25 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can create and mark a collection as public`() {
+        val collection = collectionService.create(
+            owner = UserId(value = "user1"),
+            title = "Starting Title"
+        )
+        assertThat(collection.isPublic).isEqualTo(false)
+
+        collectionService.update(collection.id, ChangeVisibilityCommand(isPublic = true))
+
+        val updatedCollection = collectionService.getById(collection.id)!!
+
+        assertThat(updatedCollection.isPublic).isEqualTo(true)
+    }
+
+    @Test
     fun `can delete a collection`() {
         val collection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title"
+            owner = UserId(value = "user1"),
+            title = "Starting Title"
         )
 
         collectionService.delete(collection.id)
@@ -85,8 +108,8 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
 
         collectionService.update(
-                collectionV1.id,
-                AddVideoToCollectionCommand(videoAsset1)
+            collectionV1.id,
+            AddVideoToCollectionCommand(videoAsset1)
         )
 
         val collectionV2 = collectionService.getById(collectionV1.id)!!
@@ -94,8 +117,8 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         assertThat(collectionV2.updatedAt).isAfter(collectionV1.updatedAt)
 
         collectionService.update(
-                collectionV2.id,
-                RemoveVideoFromCollectionCommand(videoAsset1)
+            collectionV2.id,
+            RemoveVideoFromCollectionCommand(videoAsset1)
         )
 
         val collectionV3 = collectionService.getById(collectionV1.id)!!
@@ -118,5 +141,27 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         val userCollection = collectionService.getByOwner(UserId(value = "user1"))
 
         assertThat(userCollection.size).isEqualTo(1)
+    }
+
+    @Nested
+    inner class MigrationTests {
+        @Test
+        fun `can retrieve legacy documents ands marks collections as private when they not contain isPublic property`() {
+            mongoClient
+                .getDatabase(DATABASE_NAME)
+                .getCollection(MongoCollectionService.collectionName)
+                .insertOne(
+                    Document()
+                        .append("_id", ObjectId("5c55697860fef77aa4af323a"))
+                        .append("title", "My Videos")
+                        .append("owner", "a4efeee2-0166-4371-ba72-0fa5a13c9aca")
+                        .append("updatedAt", Date())
+                        .append("videos", emptyList<AssetId>())
+                )
+
+            val collection = collectionService.getById(CollectionId(value = "5c55697860fef77aa4af323a"))!!
+
+            assertThat(collection.isPublic).isEqualTo(false)
+        }
     }
 }

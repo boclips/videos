@@ -142,7 +142,8 @@ object TestFactories {
         owner = UserId(value = owner),
         title = title,
         videos = videos,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        isPublic = false
     )
 
     fun aValidId(): String {

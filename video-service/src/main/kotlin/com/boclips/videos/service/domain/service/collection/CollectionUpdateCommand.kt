@@ -12,3 +12,6 @@ class RemoveVideoFromCollectionCommand(val videoId: AssetId) :
 
 class RenameCollectionCommand(val title: String) :
     CollectionUpdateCommand
+
+class ChangeVisibilityCommand(val isPublic: Boolean) :
+    CollectionUpdateCommand

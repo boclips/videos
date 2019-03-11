@@ -14,7 +14,8 @@ class CollectionResourceFactory(
             owner = collection.owner.value,
             title = collection.title,
             videos = videoToResourceConverter.fromVideos(videoService.get(collection.videos)),
-            updatedAt = collection.updatedAt
+            updatedAt = collection.updatedAt,
+            isPublic = collection.isPublic
         )
     }
 
@@ -24,7 +25,8 @@ class CollectionResourceFactory(
             owner = collection.owner.value,
             title = collection.title,
             videos = videoToResourceConverter.fromAssetIds(collection.videos),
-            updatedAt = collection.updatedAt
+            updatedAt = collection.updatedAt,
+            isPublic = collection.isPublic
         )
     }
 }
