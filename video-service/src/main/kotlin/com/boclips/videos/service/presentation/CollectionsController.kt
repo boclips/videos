@@ -6,9 +6,10 @@ import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetUserCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
-import com.boclips.videos.service.application.collection.RenameCollection
+import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
+import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import mu.KLogging
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -29,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
-class RenameCollectionRequest(var title: String? = null)
-
 @RestController
 @RequestMapping("/v1/collections")
 class CollectionsController(
@@ -39,7 +38,7 @@ class CollectionsController(
     private val getCollection: GetCollection,
     private val addVideoToCollection: AddVideoToCollection,
     private val removeVideoFromCollection: RemoveVideoFromCollection,
-    private val renameCollection: RenameCollection,
+    private val updateCollection: UpdateCollection,
     private val deleteCollection: DeleteCollection
 ) {
     enum class Projections {
@@ -80,8 +79,8 @@ class CollectionsController(
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun patchCollection(@PathVariable("id") id: String, @RequestBody request: RenameCollectionRequest?) {
-        renameCollection(id, request?.title)
+    fun patchCollection(@PathVariable("id") id: String, @RequestBody request: UpdateCollectionRequest?) {
+        updateCollection(id, request)
     }
 
     @DeleteMapping("/{id}")
