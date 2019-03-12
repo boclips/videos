@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -31,7 +32,7 @@ class UpdateCollectionTest {
     }
 
     @Test
-    fun `renames collection`() {
+    fun `updates on collection delegate`() {
         collectionService = mock {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
@@ -42,24 +43,7 @@ class UpdateCollectionTest {
         renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
 
         argumentCaptor<RenameCollectionCommand>().apply {
-            verify(collectionService).update(eq(CollectionId(collectionId)), capture())
-            assertThat(firstValue.title).isEqualTo("new title")
-        }
-    }
-
-    @Test
-    fun `number of changed properties equals number of updates`() {
-        collectionService = mock {
-            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
-        }
-
-        val collectionId = TestFactories.aValidId()
-
-        val updateRequest = UpdateCollectionRequest(title = "new title")
-        UpdateCollection(collectionService).invoke(collectionId, updateRequest)
-
-        argumentCaptor<RenameCollectionCommand>().apply {
-            verify(collectionService, times(1)).update(any(), any())
+            verify(collectionService).update(eq(CollectionId(collectionId)), any<List<CollectionUpdateCommand>>())
         }
     }
 
@@ -82,7 +66,7 @@ class UpdateCollectionTest {
                 updateCollectionRequest = UpdateCollectionRequest(title = "new title")
             )
         }
-        verify(collectionService, never()).update(any(), any())
+        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
     }
 
     @Test
@@ -104,6 +88,6 @@ class UpdateCollectionTest {
                 updateCollectionRequest = UpdateCollectionRequest(title = "new title")
             )
         }
-        verify(collectionService, never()).update(any(), any())
+        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
     }
 }

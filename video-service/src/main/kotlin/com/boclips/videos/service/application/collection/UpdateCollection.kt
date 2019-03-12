@@ -13,6 +13,6 @@ class UpdateCollection(
 
         val commands: List<CollectionUpdateCommand> = CollectionUpdatesConverter.convert(updateCollectionRequest)
 
-        commands.forEach { command -> collectionService.update(CollectionId(collectionId), command) }
+        collectionService.update(CollectionId(collectionId), commands)
     }
 }

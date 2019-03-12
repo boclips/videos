@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.boclips.videos.service.testsupport.setSecurityContext
@@ -30,7 +31,7 @@ class AddVideoToCollectionTest {
     @Test
     fun `creates a collection if it doesn't exist`() {
         collectionService = mock {
-            on { getById(any())}.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
+            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
         val addVideoToCollection = AddVideoToCollection(collectionService, mock())
@@ -48,7 +49,7 @@ class AddVideoToCollectionTest {
     @Test
     fun `logs an event`() {
         collectionService = mock {
-            on { getById(any())}.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
+            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
         val eventService = FakeEventService()
@@ -76,10 +77,12 @@ class AddVideoToCollectionTest {
 
         val addToCollection = AddVideoToCollection(collectionService, FakeEventService())
 
-        assertThrows<CollectionAccessNotAuthorizedException> { addToCollection(
-            collectionId = collectionId.value,
-            videoId = TestFactories.aValidId()
-        ) }
-        verify(collectionService, never()).update(any(), any())
+        assertThrows<CollectionAccessNotAuthorizedException> {
+            addToCollection(
+                collectionId = collectionId.value,
+                videoId = TestFactories.aValidId()
+            )
+        }
+        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
     }
 }

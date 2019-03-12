@@ -9,5 +9,6 @@ interface CollectionService {
     fun getById(id: CollectionId): Collection?
     fun getByOwner(owner: UserId): List<Collection>
     fun update(id: CollectionId, updateCommand: CollectionUpdateCommand)
+    fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>)
     fun delete(id: CollectionId)
 }

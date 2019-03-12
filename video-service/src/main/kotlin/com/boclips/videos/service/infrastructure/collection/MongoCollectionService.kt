@@ -16,6 +16,7 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import mu.KLogging
+import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.addToSet
@@ -70,13 +71,30 @@ class MongoCollectionService(
     }
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
-        when (updateCommand) {
-            is AddVideoToCollectionCommand -> addVideo(id, videoService.get(updateCommand.videoId).asset.assetId)
-            is RemoveVideoFromCollectionCommand -> removeVideo(id, updateCommand.videoId)
-            is RenameCollectionCommand -> renameCollection(id, updateCommand.title)
-            is ChangeVisibilityCommand -> changeVisibility(id, updateCommand.isPublic)
-            else -> throw Error("Not supported update: $updateCommand")
-        }
+        update(id, listOf(updateCommand))
+    }
+
+    override fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
+        val updateBson =
+            updateCommands.fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
+                val commandAsBson = when (updateCommand) {
+                    is AddVideoToCollectionCommand -> addVideo(
+                        id,
+                        videoService.get(updateCommand.videoId).asset.assetId
+                    )
+                    is RemoveVideoFromCollectionCommand -> removeVideo(id, updateCommand.videoId)
+                    is RenameCollectionCommand -> renameCollection(id, updateCommand.title)
+                    is ChangeVisibilityCommand -> changeVisibility(id, updateCommand.isPublic)
+                    else -> throw Error("Not supported update: $updateCommand")
+                }
+
+                combine(
+                    partialDocument,
+                    commandAsBson
+                )
+            }
+
+        updateOne(id, updateBson)
     }
 
     override fun delete(collectionId: CollectionId) {
@@ -84,26 +102,26 @@ class MongoCollectionService(
         logger.info { "Deleted collection $collectionId" }
     }
 
-    private fun removeVideo(collectionId: CollectionId, assetId: AssetId) {
-        updateOne(collectionId, pull(CollectionDocument::videos, assetId.value))
-        logger.info { "Removed video from collection $collectionId" }
+    private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {
+        logger.info { "Prepare video for removal from collection $collectionId" }
+        return pull(CollectionDocument::videos, assetId.value)
     }
 
-    private fun addVideo(collectionId: CollectionId, assetId: AssetId) {
-        updateOne(collectionId, addToSet(CollectionDocument::videos, assetId.value))
-        logger.info { "Added video from collection $collectionId" }
+    private fun addVideo(collectionId: CollectionId, assetId: AssetId): Bson {
+        logger.info { "Prepare video for addition to collection $collectionId" }
+        return addToSet(CollectionDocument::videos, assetId.value)
     }
 
-    private fun renameCollection(collectionId: CollectionId, title: String) {
-        updateOne(collectionId, set(CollectionDocument::title, title))
-        logger.info { "Renamed collection $collectionId" }
+    private fun renameCollection(collectionId: CollectionId, title: String): Bson {
+        logger.info { "Prepare renaming of video in collection $collectionId" }
+        return set(CollectionDocument::title, title)
     }
 
-    private fun changeVisibility(collectionId: CollectionId, isPublic: Boolean) {
+    private fun changeVisibility(collectionId: CollectionId, isPublic: Boolean): Bson {
         val visibility = if (isPublic) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE
 
-        updateOne(collectionId, set(CollectionDocument::visibility, visibility))
-        logger.info { "Changed visibility of collection $collectionId to $visibility" }
+        logger.info { "Prepare visibility change of collection $collectionId to $visibility" }
+        return set(CollectionDocument::visibility, visibility)
     }
 
     private fun updateOne(id: CollectionId, update: Bson) {
@@ -113,6 +131,7 @@ class MongoCollectionService(
         )
 
         dbCollection().updateOne(CollectionDocument::id eq ObjectId(id.value), updatesWithTimestamp)
+        logger.info { "Updated collection $id" }
     }
 
     private fun dbCollection(): MongoCollection<CollectionDocument> {

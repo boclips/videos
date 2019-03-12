@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeEventService
@@ -75,6 +76,6 @@ internal class RemoveVideoFromCollectionTest {
             collectionId = collectionId.value,
             videoId = TestFactories.aValidId()
         ) }
-        verify(collectionService, never()).update(any(), any())
+        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
     }
 }

@@ -19,6 +19,7 @@ internal class CollectionUpdatesConverterTest {
         val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title"))
 
         assertThat(commands.first()).isInstanceOf(RenameCollectionCommand::class.java)
+        assertThat(commands).hasSize(1)
     }
 
     @Test
@@ -27,6 +28,7 @@ internal class CollectionUpdatesConverterTest {
 
         val command = commands.first() as ChangeVisibilityCommand
         assertThat(command.isPublic).isEqualTo(true)
+        assertThat(commands).hasSize(1)
     }
 
     @Test
@@ -35,6 +37,7 @@ internal class CollectionUpdatesConverterTest {
 
         val command = commands.first() as ChangeVisibilityCommand
         assertThat(command.isPublic).isEqualTo(false)
+        assertThat(commands).hasSize(1)
     }
 
     @Test
