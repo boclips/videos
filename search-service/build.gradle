@@ -31,7 +31,7 @@ dependencies {
     compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticSearchVersion}")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("io.github.microutils:kotlin-logging:1.4.9")
-    compile('org.apache.solr:solr-solrj:6.0.1')
+    compile('org.apache.solr:solr-solrj:7.7.1')
     compile("org.apache.zookeeper:zookeeper:3.4.13") {
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     }

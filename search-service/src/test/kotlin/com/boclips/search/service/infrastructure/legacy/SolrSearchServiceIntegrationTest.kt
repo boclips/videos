@@ -45,7 +45,7 @@ class SolrSearchServiceIntegrationTest {
     }
 
     private fun coreReady(): Boolean {
-        val client = HttpSolrClient("http://localhost:${getPort()}/solr")
+        val client = HttpSolrClient.Builder("http://localhost:${getPort()}/solr").build()!!
         val request = CoreAdminRequest()
         request.setAction(CoreAdminParams.CoreAdminAction.STATUS)
         val result = request.process(client)

@@ -20,7 +20,7 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
         throw java.lang.UnsupportedOperationException("Not supported by SOLR search service")
     }
 
-    val client = HttpSolrClient("http://$host:$port/solr/km")
+    val client = HttpSolrClient.Builder("http://$host:$port/solr/km").build()!!
 
     override fun upsert(videos: Sequence<LegacyVideoMetadata>, notifier: ProgressNotifier?) {
         videos.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
