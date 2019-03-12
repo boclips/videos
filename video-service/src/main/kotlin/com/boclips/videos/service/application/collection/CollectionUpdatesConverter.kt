@@ -14,7 +14,9 @@ class CollectionUpdatesConverter {
 
             if (updateCollectionRequest.title != null) {
                 updates.add(RenameCollectionCommand(title = updateCollectionRequest.title!!))
-            } else if (updateCollectionRequest.isPublic !== null) {
+            }
+
+            if (updateCollectionRequest.isPublic !== null) {
                 updates.add(ChangeVisibilityCommand(isPublic = updateCollectionRequest.isPublic!!))
             }
 

@@ -36,4 +36,11 @@ internal class CollectionUpdatesConverterTest {
         val command = commands.first() as ChangeVisibilityCommand
         assertThat(command.isPublic).isEqualTo(false)
     }
+
+    @Test
+    fun `converts multiple changes to commands`() {
+        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title", isPublic = true))
+
+        assertThat(commands).hasSize(2)
+    }
 }
