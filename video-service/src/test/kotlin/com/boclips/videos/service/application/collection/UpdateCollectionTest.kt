@@ -14,6 +14,7 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -43,6 +44,22 @@ class UpdateCollectionTest {
         argumentCaptor<RenameCollectionCommand>().apply {
             verify(collectionService).update(eq(CollectionId(collectionId)), capture())
             assertThat(firstValue.title).isEqualTo("new title")
+        }
+    }
+
+    @Test
+    fun `number of changed properties equals number of updates`() {
+        collectionService = mock {
+            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
+        }
+
+        val collectionId = TestFactories.aValidId()
+
+        val updateRequest = UpdateCollectionRequest(title = "new title")
+        UpdateCollection(collectionService).invoke(collectionId, updateRequest)
+
+        argumentCaptor<RenameCollectionCommand>().apply {
+            verify(collectionService, times(1)).update(any(), any())
         }
     }
 

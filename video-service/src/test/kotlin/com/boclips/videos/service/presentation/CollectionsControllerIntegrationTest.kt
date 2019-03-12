@@ -142,8 +142,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `rename a collection`() {
-        val email = "teacher@gmail.com"
-        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
+        val collectionId = createCollectionWithTitle("My Special Collection")
 
         assertCollectionName(collectionId, "My Special Collection")
         renameCollection(collectionId, "New Name")
@@ -152,8 +151,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `mark a collection as public and private`() {
-        val email = "teacher@gmail.com"
-        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
+        val collectionId = createCollectionWithTitle("My Special Collection")
 
         assertCollectionIsPrivate(collectionId)
         updateCollectionToBePublic(collectionId)
@@ -161,9 +159,19 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `change more than one property of a collection`() {
+        val collectionId = createCollectionWithTitle("My Special Collection")
+
+        assertCollectionIsPrivate(collectionId)
+        assertCollectionName(collectionId, "My Special Collection")
+        updateCollectionToBePublicAndRename(collectionId, "New Name")
+        assertCollectionName(collectionId, "New Name")
+        assertCollectionIsPublic(collectionId)
+    }
+
+    @Test
     fun `delete a collection`() {
-        val email = "teacher@gmail.com"
-        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
+        val collectionId = createCollectionWithTitle("My Special Collection")
 
         mockMvc.perform(delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher())
             .andExpect(status().isNoContent)
@@ -171,49 +179,60 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isNotFound)
     }
 
-    fun addVideo(collectionId: String, videoId: String) {
+    private fun createCollectionWithTitle(title: String): String {
+        val email = "teacher@gmail.com"
+        val collectionId = collectionService.create(owner = UserId(email), title = title).id.value
+        return collectionId
+    }
+
+    private fun addVideo(collectionId: String, videoId: String) {
         mockMvc.perform(put(addVideoLink(collectionId, videoId)).asTeacher())
             .andExpect(status().isNoContent)
     }
 
-    fun removeVideo(collectionId: String, videoId: String) {
+    private fun removeVideo(collectionId: String, videoId: String) {
         mockMvc.perform(delete(removeVideoLink(collectionId, videoId)).asTeacher())
             .andExpect(status().isNoContent)
     }
 
-    fun renameCollection(collectionId: String, title: String) {
+    private fun renameCollection(collectionId: String, title: String) {
         mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
             .andExpect(status().isNoContent)
     }
 
-    fun updateCollectionToBePublic(collectionId: String) {
+    private fun updateCollectionToBePublic(collectionId: String) {
         mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"public": "true"}""").asTeacher())
             .andExpect(status().isNoContent)
     }
 
-    fun createCollection(title: String = "a collection name") =
+    private fun updateCollectionToBePublicAndRename(collectionId: String, title: String) {
+        mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"public": "true", "title": "$title"}""").asTeacher())
+            .andExpect(status().isNoContent)
+    }
+
+    private fun createCollection(title: String = "a collection name") =
         mockMvc.perform(post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
             .andExpect(status().isCreated)
             .andReturn().response.getHeader("Location")!!.substringAfterLast("/")
 
-    fun getCollection(collectionId: String): ResultActions {
+    private fun getCollection(collectionId: String): ResultActions {
         return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isOk)
     }
 
-    fun assertCollectionIsPublic(collectionId: String) {
+    private fun assertCollectionIsPublic(collectionId: String) {
         getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(true)))
     }
 
-    fun assertCollectionIsPrivate(collectionId: String) {
+    private fun assertCollectionIsPrivate(collectionId: String) {
         getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(false)))
     }
 
-    fun assertCollectionName(collectionId: String, expectedTitle: String) {
+    private fun assertCollectionName(collectionId: String, expectedTitle: String) {
         getCollection(collectionId).andExpect(jsonPath("$.title", equalTo(expectedTitle)))
     }
 
-    fun assertCollectionSize(collectionId: String, expectedSize: Int): ResultActions {
+    private fun assertCollectionSize(collectionId: String, expectedSize: Int): ResultActions {
         return getCollection(collectionId)
             .andExpect(jsonPath("$.videos", hasSize<Any>(expectedSize)))
     }
