@@ -36,11 +36,11 @@ class DeleteCollectionTest {
     }
 
     @Test
-    fun `throws error when user doesn't own the collection`() {
+    fun `throws error when user doesn't own the private collection`() {
         setSecurityContext("attacker@example.com")
 
         val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com")
+        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = false)
 
         collectionService = mock {
             on { getById(collectionId) } doReturn onGetCollection
@@ -55,6 +55,28 @@ class DeleteCollectionTest {
         }
         verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
     }
+
+    @Test
+    fun `throws error when user doesn't own the public collection`() {
+        setSecurityContext("attacker@example.com")
+
+        val collectionId = CollectionId("collection-123")
+        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = true)
+
+        collectionService = mock {
+            on { getById(collectionId) } doReturn onGetCollection
+        }
+
+        val deleteCollection = DeleteCollection(collectionService)
+
+        assertThrows<CollectionAccessNotAuthorizedException> {
+            deleteCollection(
+                    collectionId = collectionId.value
+            )
+        }
+        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+    }
+
 
     @Test
     fun `throws when collection doesn't exist`() {

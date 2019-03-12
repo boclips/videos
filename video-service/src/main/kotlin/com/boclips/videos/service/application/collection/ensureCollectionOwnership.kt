@@ -7,14 +7,20 @@ import com.boclips.videos.service.domain.model.collection.CollectionNotFoundExce
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import getCurrentUserId
 
-fun getOwnedCollectionOrThrow(collectionId: String, collectionService: CollectionService): Collection {
+fun getOwnedCollectionOrThrow(collectionId: String, collectionService: CollectionService) =
+        getCollectionOrThrow(collectionId = collectionId, collectionService = collectionService, isForReading = false)
+
+fun getReadableCollectionOrThrow(collectionId: String, collectionService: CollectionService) =
+        getCollectionOrThrow(collectionId = collectionId, collectionService = collectionService, isForReading = true)
+
+private fun getCollectionOrThrow(collectionId: String, collectionService: CollectionService, isForReading: Boolean): Collection {
     val userId = UserExtractor.getCurrentUserId()
     val collection = collectionService.getById(CollectionId(collectionId))
+            ?: throw CollectionNotFoundException(collectionId)
 
-    if (collection == null) {
-        throw CollectionNotFoundException(collectionId)
-    } else if (collection.owner != userId) {
-        throw CollectionAccessNotAuthorizedException(userId, collectionId)
+    return when {
+        isForReading && collection.isPublic -> collection
+        collection.owner != userId -> throw CollectionAccessNotAuthorizedException(userId, collectionId)
+        else -> collection
     }
-    return collection
 }

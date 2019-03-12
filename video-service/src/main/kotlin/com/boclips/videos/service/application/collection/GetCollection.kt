@@ -14,6 +14,6 @@ class GetCollection(
             throw CollectionNotFoundException("unknown ID")
         }
 
-        return getOwnedCollectionOrThrow(collectionId, collectionService).let(collectionResourceFactory::buildCollectionDetailsResource)
+        return getReadableCollectionOrThrow(collectionId, collectionService).let(collectionResourceFactory::buildCollectionDetailsResource)
     }
 }

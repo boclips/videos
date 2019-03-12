@@ -68,18 +68,32 @@ class GetCollectionTest {
     }
 
     @Test
-    fun `throws error when user doesn't own the collection`() {
+    fun `throws error when user doesn't own the private collection`() {
         setSecurityContext("attacker@example.com")
 
-        val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com")
+        val privateCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = false)
 
         collectionService = mock {
-            on { getById(collectionId) } doReturn onGetCollection
+            on { getById(privateCollection.id) } doReturn privateCollection
         }
 
         val getCollection = GetCollection(collectionService, collectionResourceFactory)
 
-        assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId = collectionId.value) }
+        assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId = privateCollection.id.value) }
+    }
+
+    @Test
+    fun `allows any teacher to access public collection`() {
+        setSecurityContext("nosey@example.com")
+
+        val publicCollection = TestFactories.createCollection(owner = "owner@example.com", isPublic = true)
+
+        collectionService = mock {
+            on { getById(publicCollection.id) } doReturn publicCollection
+        }
+
+        val collection = GetCollection(collectionService, collectionResourceFactory).invoke(publicCollection.id.value)
+
+        assertThat(collection.id).isEqualTo(publicCollection.id.value)
     }
 }
