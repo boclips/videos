@@ -100,7 +100,7 @@ class MongoCollectionService(
     }
 
     private fun changeVisibility(collectionId: CollectionId, isPublic: Boolean) {
-        val visibility = if (isPublic) CollectionVisibilityDocument.ON_BOCLIPS else CollectionVisibilityDocument.PRIVATE
+        val visibility = if (isPublic) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE
 
         updateOne(collectionId, set(CollectionDocument::visibility, visibility))
         logger.info { "Changed visibility of collection $collectionId to $visibility" }
@@ -124,7 +124,7 @@ class MongoCollectionService(
     private fun toCollection(collectionDocument: CollectionDocument?): Collection? {
         if (collectionDocument == null) return null
         val assetIds = collectionDocument.videos.map { AssetId(value = it) }
-        val isPubliclyVisible = collectionDocument.visibility == CollectionVisibilityDocument.ON_BOCLIPS
+        val isPubliclyVisible = collectionDocument.visibility == CollectionVisibilityDocument.PUBLIC
 
         return Collection(
             id = CollectionId(value = collectionDocument.id.toHexString()),
