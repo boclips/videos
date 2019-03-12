@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.application.collection.security.getOwnedCollectionOrThrow
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -14,7 +15,7 @@ class RemoveVideoFromCollection(
         collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        getOwnedCollectionOrThrow(collectionId, collectionService)
+        collectionService.getOwnedCollectionOrThrow(collectionId)
 
         collectionService.update(
             id = CollectionId(collectionId),

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.application.collection.security.getReadableCollectionOrThrow
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -14,6 +15,6 @@ class GetCollection(
             throw CollectionNotFoundException("unknown ID")
         }
 
-        return getReadableCollectionOrThrow(collectionId, collectionService).let(collectionResourceFactory::buildCollectionDetailsResource)
+        return collectionService.getReadableCollectionOrThrow(collectionId).let(collectionResourceFactory::buildCollectionDetailsResource)
     }
 }

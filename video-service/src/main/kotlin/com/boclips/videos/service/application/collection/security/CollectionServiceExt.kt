@@ -1,17 +1,18 @@
-package com.boclips.videos.service.application.collection
+package com.boclips.videos.service.application.collection.security
 
 import com.boclips.security.utils.UserExtractor
+import com.boclips.videos.service.application.collection.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import getCurrentUserId
 
-fun getOwnedCollectionOrThrow(collectionId: String, collectionService: CollectionService) =
-        getCollectionOrThrow(collectionId = collectionId, collectionService = collectionService, isForReading = false)
+fun CollectionService.getOwnedCollectionOrThrow(collectionId: String) =
+        getCollectionOrThrow(collectionId = collectionId, collectionService = this, isForReading = false)
 
-fun getReadableCollectionOrThrow(collectionId: String, collectionService: CollectionService) =
-        getCollectionOrThrow(collectionId = collectionId, collectionService = collectionService, isForReading = true)
+fun CollectionService.getReadableCollectionOrThrow(collectionId: String) =
+        getCollectionOrThrow(collectionId = collectionId, collectionService = this, isForReading = true)
 
 private fun getCollectionOrThrow(collectionId: String, collectionService: CollectionService, isForReading: Boolean): Collection {
     val userId = UserExtractor.getCurrentUserId()
