@@ -141,7 +141,6 @@ test.finalizedBy(testYoutubeContract)
 test.finalizedBy(testClient)
 
 def junitVersion = "5.3.1"
-def jacksonVersion = "2.9.7"
 
 dependencies {
     compile project(':search-service')
@@ -162,7 +161,7 @@ dependencies {
 
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     compile("io.github.microutils:kotlin-logging:1.4.9")
     compile('org.simplejavamail:simple-java-mail:5.0.8')
     compile('com.google.apis:google-api-services-youtube:v3-rev206-1.25.0')
