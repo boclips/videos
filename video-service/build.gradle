@@ -157,7 +157,7 @@ dependencies {
     compile("io.micrometer:micrometer-registry-prometheus:${micrometerVersion}")
 
     compile('com.github.boclips:boclips-spring-security:0.12.0')
-    compile("com.github.boclips:kaltura-client:0.44.0")
+    compile("com.github.boclips:kaltura-client:0.49.0")
 
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
