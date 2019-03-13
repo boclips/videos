@@ -1,7 +1,13 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.security.utils.UserExtractor
-import com.boclips.videos.service.application.collection.*
+import com.boclips.videos.service.application.collection.AddVideoToCollection
+import com.boclips.videos.service.application.collection.CreateCollection
+import com.boclips.videos.service.application.collection.DeleteCollection
+import com.boclips.videos.service.application.collection.GetCollection
+import com.boclips.videos.service.application.collection.GetUserCollections
+import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
+import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
@@ -14,7 +20,17 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/collections")
@@ -70,9 +86,9 @@ class CollectionsController(
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun removeCollection(@PathVariable("id") id: String) {
+    fun removeCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
         deleteCollection(id)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @GetMapping
@@ -102,11 +118,9 @@ class CollectionsController(
     }
 
     @DeleteMapping("/{collection_id}/videos/{video_id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun removeVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
+    fun removeVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): ResponseEntity<Void> {
         removeVideoFromCollection(collectionId, videoId)
-
-        return null
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     private fun wrapCollection(collection: CollectionResource): Resource<CollectionResource> {
@@ -116,6 +130,9 @@ class CollectionsController(
             links.add(linkTo(
                     methodOn(CollectionsController::class.java).patchCollection(id = collection.id, request = null)
             ).withRel("edit"))
+            links.add(linkTo(
+                    methodOn(CollectionsController::class.java).removeCollection(id = collection.id)
+            ).withRel("remove"))
 
             links.add(linkTo(
                     methodOn(CollectionsController::class.java).addVideo(collectionId = collection.id, videoId = null)
