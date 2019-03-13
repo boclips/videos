@@ -31,9 +31,10 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                 val streamUrl = mediaEntry!!.streams.withFormat(StreamFormat.APPLE_HDS)
                 val videoPlayback = StreamPlayback(
                     id = kalturaVideoId,
-                    streamUrl = streamUrl,
                     thumbnailUrl = mediaEntry.thumbnailUrl,
-                    duration = mediaEntry.duration
+                    duration = mediaEntry.duration,
+                    streamUrl = streamUrl,
+                    downloadUrl = mediaEntry.downloadUrl
                 )
 
                 (kalturaVideoId to videoPlayback)
@@ -50,5 +51,5 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
     }
 
     private fun filterValidMediaEntries(id: PlaybackId, mediaEntriesById: Map<String, List<MediaEntry>>) =
-        mediaEntriesById[id.value]!!.firstOrNull { it.status == MediaEntryStatus.READY }
+        mediaEntriesById.getValue(id.value).firstOrNull { it.status == MediaEntryStatus.READY }
 }

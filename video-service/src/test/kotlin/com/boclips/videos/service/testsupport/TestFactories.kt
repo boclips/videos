@@ -73,6 +73,7 @@ object TestFactories {
             .referenceId(referenceId)
             .streams(StreamUrls("https://stream/[FORMAT]/asset-$id.mp4"))
             .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
+            .downloadUrl("https://download/video-$id.mp4")
             .duration(duration)
             .status(status)
             .build()
@@ -84,6 +85,7 @@ object TestFactories {
             id = playbackId,
             streamUrl = "kaltura-stream",
             thumbnailUrl = "kaltura-thumbnail",
+            downloadUrl = "kaltura-download",
             duration = duration
         )
     }

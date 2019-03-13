@@ -71,14 +71,16 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.subjects).containsExactly("Maths")
         assertThat(videoResource.type!!.id).isEqualTo(10)
         assertThat(videoResource.type!!.name).isEqualTo("TED Talks")
+        assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
+        assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCHABLE)
+        assertThat(videoResource.legalRestrictions).isEqualTo("None")
+
         assertThat(videoResource.playback!!.type).isEqualTo("STREAM")
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("kaltura-thumbnail")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(videoResource.playback!!.id).isEqualTo("555")
         assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("kaltura-stream")
-        assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
-        assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCHABLE)
-        assertThat(videoResource.legalRestrictions).isEqualTo("None")
+        assertThat((videoResource.playback!! as StreamPlaybackResource).downloadUrl).isEqualTo("kaltura-download")
     }
 
     @Test

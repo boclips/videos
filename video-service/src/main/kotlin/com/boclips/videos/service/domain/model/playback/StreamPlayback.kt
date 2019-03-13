@@ -6,7 +6,8 @@ class StreamPlayback(
     id: PlaybackId,
     thumbnailUrl: String,
     duration: Duration,
-    val streamUrl: String
+    val streamUrl: String,
+    val downloadUrl: String
 ) : VideoPlayback(id = id, thumbnailUrl = thumbnailUrl, duration = duration) {
 
     override fun equals(other: Any?): Boolean {
