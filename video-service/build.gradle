@@ -102,8 +102,8 @@ compileClient_testKotlin {
 allprojects {
     repositories {
         mavenCentral()
-        maven { url 'http://repo.spring.io/libs-release/' }
         maven { url 'https://jitpack.io' }
+        maven { url 'http://repo.spring.io/libs-release/' }
     }
 }
 
