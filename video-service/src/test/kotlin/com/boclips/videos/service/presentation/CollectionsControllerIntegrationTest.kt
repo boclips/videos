@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asTeacher
@@ -121,10 +122,37 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `fetching a private owned collection`() {
+        val collectionId = createCollection("collection from a teacher")
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
+                .andExpect(jsonPath("$._links.edit.href", not(isEmptyString())))
+                .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
+                .andExpect(jsonPath("$._links.removeVideo.href", not(isEmptyString())))
+    }
+
+    @Test
     fun `fetching a non-existent collection returns 404`() {
         mockMvc.perform(get("/v1/collections/${ObjectId().toHexString()}").asTeacher())
             .andExpect(status().isNotFound)
             .andExpect(content().string(isEmptyString()))
+    }
+
+    @Test
+    fun `fetching a public collection owned by other teacher omits edit links`() {
+        val collectionId = createCollection("collection from a teacher")
+        updateCollectionToBePublic(collectionId)
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
+            .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
+                .andExpect(jsonPath("$._links.edit").doesNotExist())
+                .andExpect(jsonPath("$._links.addVideo").doesNotExist())
+                .andExpect(jsonPath("$._links.removeVideo").doesNotExist())
     }
 
     @Test
