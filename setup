@@ -6,4 +6,5 @@ ktlint --apply-to-idea-project
 # Generate external contract test configuration
 pushd video-service/src/test_youtube_contract/resources/
 ./setup-contract-test
+echo "set up contract tests"
 popd
