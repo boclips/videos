@@ -80,7 +80,6 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(videoResource.playback!!.id).isEqualTo("555")
         assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("kaltura-stream")
-        assertThat((videoResource.playback!! as StreamPlaybackResource).downloadUrl).isEqualTo("kaltura-download")
     }
 
     @Test

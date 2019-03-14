@@ -205,7 +205,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
             .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/asset-entry-ref-id-123.mp4")))
             .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
-            .andExpect(jsonPath("$.playback.downloadUrl", equalTo("https://download/video-entry-ref-id-123.mp4")))
             .andExpect(jsonPath("$.type.id", equalTo(3)))
             .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
             .andExpect(jsonPath("$.status", equalTo("SEARCHABLE")))

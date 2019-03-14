@@ -45,7 +45,7 @@ class VideoToResourceConverter {
     private fun getPlayback(video: Video): PlaybackResource {
         val playback = video.playback
         val playbackResource = when (playback) {
-            is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.streamUrl, downloadUrl = playback.downloadUrl)
+            is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.streamUrl)
             is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE")
             else -> throw Exception()
         }
