@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.collection.security
 
-import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.application.collection.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -15,7 +14,7 @@ fun CollectionService.getReadableCollectionOrThrow(collectionId: String) =
         getCollectionOrThrow(collectionId = collectionId, collectionService = this, isForReading = true)
 
 private fun getCollectionOrThrow(collectionId: String, collectionService: CollectionService, isForReading: Boolean): Collection {
-    val userId = UserExtractor.getCurrentUserId()
+    val userId = getCurrentUserId()
     val collection = collectionService.getById(CollectionId(collectionId))
             ?: throw CollectionNotFoundException(collectionId)
 

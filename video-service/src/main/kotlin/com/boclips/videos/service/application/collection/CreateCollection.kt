@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.application.collection.exceptions.CollectionCreationException
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -12,7 +11,7 @@ class CreateCollection(
     private val addVideoToCollection: AddVideoToCollection
 ) {
     operator fun invoke(createCollectionRequest: CreateCollectionRequest?) = collectionService
-        .create(UserExtractor.getCurrentUserId(), getOrThrow(createCollectionRequest?.title, "title"))
+        .create(getCurrentUserId(), getOrThrow(createCollectionRequest?.title, "title"))
         .apply {
             createCollectionRequest?.videos?.forEach { video ->
                 addVideoToCollection(id.value, video.substringAfterLast("/videos/"))

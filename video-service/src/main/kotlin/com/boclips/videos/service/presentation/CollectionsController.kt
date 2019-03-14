@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
@@ -147,4 +146,4 @@ class CollectionsController(
     }
 }
 
-private fun CollectionResource.isOwnedByCurrentUser() = this.owner == UserExtractor.getCurrentUserId().value
+private fun CollectionResource.isOwnedByCurrentUser() = this.owner == getCurrentUserId().value

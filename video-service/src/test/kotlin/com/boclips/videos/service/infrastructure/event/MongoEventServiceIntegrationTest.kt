@@ -1,12 +1,11 @@
 package com.boclips.videos.service.infrastructure.event
 
+import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.setSecurityContext
-import com.sun.security.auth.UserPrincipal
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.Document
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +22,7 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @BeforeEach
     fun setUp() {
         mongoEventService = MongoEventService(mongoClient)
-        setSecurityContext(UserPrincipal("user@example.com"))
+        setSecurityContext("user@example.com")
     }
 
     @Test
@@ -49,7 +48,7 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `internal users' events are flagged`() {
-        setSecurityContext(UserPrincipal("user@boclips.com"))
+        setSecurityContext("user@boclips.com")
         mongoEventService.saveSearchEvent(query = "", pageIndex = 0, pageSize = 0, totalResults = 1)
 
         val event = getEvent()

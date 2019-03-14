@@ -1,4 +1,7 @@
+import com.boclips.security.utils.User
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.domain.model.UserId
 
-fun UserExtractor.getCurrentUserId() = this.getCurrentUser().let { UserId(value = it.id) }
+fun getCurrentUserId() = UserId(value = getCurrentUser().id)
+
+fun getCurrentUser() = UserExtractor.getCurrentUser() ?: User(false, "anonymous", emptySet())

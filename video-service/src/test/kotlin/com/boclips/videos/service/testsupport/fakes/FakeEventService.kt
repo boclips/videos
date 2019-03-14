@@ -1,12 +1,12 @@
 package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.security.utils.User
-import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.EventType
 import com.boclips.videos.service.infrastructure.event.RefererHeaderExtractor
+import getCurrentUser
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -34,7 +34,7 @@ class FakeEventService : EventService {
         val event = Event(
             type = type,
             timestamp = ZonedDateTime.now(),
-            user = UserExtractor.getCurrentUser(),
+            user = getCurrentUser(),
             data = data,
             url = RefererHeaderExtractor.getReferer()
         )

@@ -1,10 +1,10 @@
 package com.boclips.videos.service.infrastructure.event
 
-import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
+import getCurrentUser
 import org.bson.Document
 import java.time.ZonedDateTime
 import java.util.Date
@@ -61,8 +61,8 @@ class MongoEventService(
         val event = Document()
             .append("type", type.name)
             .append("timestamp", Date.from(ZonedDateTime.now().toInstant()))
-            .append("userId", UserExtractor.getCurrentUser().id)
-            .append("userIsBoclips", UserExtractor.getCurrentUser().boclipsEmployee)
+            .append("userId", getCurrentUser().id)
+            .append("userIsBoclips", getCurrentUser().boclipsEmployee)
             .append("url", RefererHeaderExtractor.getReferer())
 
         customize(event)
