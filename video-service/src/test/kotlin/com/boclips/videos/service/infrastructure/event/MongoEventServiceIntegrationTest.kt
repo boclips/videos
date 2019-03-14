@@ -3,6 +3,8 @@ package com.boclips.videos.service.infrastructure.event
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
+import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -131,6 +133,37 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event["userIsBoclips"]).isEqualTo(false)
         assertThat(event["assetId"]).isEqualTo(videoId)
         assertThat(event["collectionId"]).isEqualTo("collection id")
+    }
+
+    @Test
+    fun `saving rename collection event`() {
+        val collectionId = TestFactories.aValidId()
+        mongoEventService.saveUpdateCollectionEvent(CollectionId(collectionId), listOf(RenameCollectionCommand(title = "a new title")))
+
+        val event = getEvent()
+
+        assertThat(event["type"]).isEqualTo("RENAME_COLLECTION")
+        assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
+        assertThat(event["userId"]).isEqualTo("user@example.com")
+        assertThat(event["userIsBoclips"]).isEqualTo(false)
+        assertThat(event["collectionId"]).isEqualTo(collectionId)
+        assertThat(event["title"]).isEqualTo("a new title")
+    }
+
+    @Test
+    fun `saving change visibility event`() {
+        val collectionId = TestFactories.aValidId()
+        mongoEventService.saveUpdateCollectionEvent(CollectionId(collectionId), listOf(ChangeVisibilityCommand(isPublic = false)))
+
+        val event = getEvent()
+
+        assertThat(event["type"]).isEqualTo("CHANGE_VISIBILITY")
+        assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
+        assertThat(event["userId"]).isEqualTo("user@example.com")
+        assertThat(event["userIsBoclips"]).isEqualTo(false)
+        assertThat(event["collectionId"]).isEqualTo(collectionId)
+        assertThat(event["isPublic"]).isEqualTo(false)
+
     }
 
     private fun getEvent(): Document {

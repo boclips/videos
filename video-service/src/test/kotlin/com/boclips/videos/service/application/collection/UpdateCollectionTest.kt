@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateComm
 import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.fakes.FakeEventService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.doReturn
@@ -16,6 +17,7 @@ import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -35,7 +37,7 @@ class UpdateCollectionTest {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val renameCollection = UpdateCollection(collectionService)
+        val renameCollection = UpdateCollection(collectionService, FakeEventService())
         val collectionId = TestFactories.aValidId()
 
         renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
@@ -43,6 +45,40 @@ class UpdateCollectionTest {
         argumentCaptor<RenameCollectionCommand>().apply {
             verify(collectionService).update(eq(CollectionId(collectionId)), any<List<CollectionUpdateCommand>>())
         }
+    }
+
+    @Test
+    fun `logs an event for renaming`() {
+        collectionService = mock {
+            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
+        }
+
+        val eventService = FakeEventService()
+        val renameCollection = UpdateCollection(collectionService, eventService)
+        val collectionId = TestFactories.aValidId()
+
+        renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
+
+        assertThat(eventService.renameCollectionEvent().data.collectionId).isEqualTo(collectionId)
+        assertThat(eventService.renameCollectionEvent().user.id).isEqualTo("me@me.com")
+        assertThat(eventService.renameCollectionEvent().data.collectionTitle).isEqualTo("new title")
+    }
+
+    @Test
+    fun `logs an event for changing visiblity`() {
+        collectionService = mock {
+            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
+        }
+
+        val eventService = FakeEventService()
+        val renameCollection = UpdateCollection(collectionService, eventService)
+        val collectionId = TestFactories.aValidId()
+
+        renameCollection(collectionId, UpdateCollectionRequest(isPublic = true))
+
+        assertThat(eventService.changeVisibilityOfCollectionEvent().data.collectionId).isEqualTo(collectionId)
+        assertThat(eventService.changeVisibilityOfCollectionEvent().user.id).isEqualTo("me@me.com")
+        assertThat(eventService.changeVisibilityOfCollectionEvent().data.isPublic).isTrue()
     }
 
     @Test
@@ -56,7 +92,7 @@ class UpdateCollectionTest {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val renameCollection = UpdateCollection(collectionService)
+        val renameCollection = UpdateCollection(collectionService, FakeEventService())
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             renameCollection(
@@ -78,7 +114,7 @@ class UpdateCollectionTest {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val renameCollection = UpdateCollection(collectionService)
+        val renameCollection = UpdateCollection(collectionService, FakeEventService())
 
         assertThrows<CollectionNotFoundException> {
             renameCollection(

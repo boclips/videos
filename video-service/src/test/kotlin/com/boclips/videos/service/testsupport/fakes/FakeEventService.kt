@@ -3,6 +3,9 @@ package com.boclips.videos.service.testsupport.fakes
 import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.infrastructure.event.EventService
 import com.boclips.videos.service.infrastructure.event.EventType
 import com.boclips.videos.service.infrastructure.event.RefererHeaderExtractor
@@ -83,6 +86,25 @@ class FakeEventService : EventService {
         )
     }
 
+    override fun saveUpdateCollectionEvent(collectiondId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
+        updateCommands.forEach { updateCommand ->
+            when (updateCommand) {
+                is RenameCollectionCommand -> saveEvent(
+                    EventType.RENAME_COLLECTION, RenameCollectionEvent(
+                        collectionId = collectiondId.value,
+                        collectionTitle = updateCommand.title
+                    )
+                )
+                is ChangeVisibilityCommand -> saveEvent(
+                    EventType.CHANGE_VISIBILITY, ChangeVisibilityOfCollectionEvent(
+                        collectionId = collectiondId.value,
+                        isPublic = updateCommand.isPublic
+                    )
+                )
+            }
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun <T> event() = events.single() as Event<T>
 
@@ -93,6 +115,10 @@ class FakeEventService : EventService {
     fun addToCollectionEvent() = event<AddToCollectionEventData>()
 
     fun removeFromCollectionEvent() = event<RemoveFromCollectionEventData>()
+
+    fun renameCollectionEvent() = event<RenameCollectionEvent>()
+
+    fun changeVisibilityOfCollectionEvent() = event<ChangeVisibilityOfCollectionEvent>()
 }
 
 class Event<TData>(
@@ -127,4 +153,14 @@ data class PlaybackEventData(
 data class RemoveFromCollectionEventData(
     val collectionId: String,
     val videoId: String
+)
+
+data class RenameCollectionEvent(
+    val collectionId: String,
+    val collectionTitle: String
+)
+
+data class ChangeVisibilityOfCollectionEvent(
+    val collectionId: String,
+    val isPublic: Boolean
 )

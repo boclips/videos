@@ -2,6 +2,9 @@ package com.boclips.videos.service.infrastructure.event
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import getCurrentUser
@@ -54,6 +57,21 @@ class MongoEventService(
         saveEvent(EventType.REMOVE_FROM_COLLECTION) {
             append("assetId", videoId.value)
             append("collectionId", collectionId.value)
+        }
+    }
+
+    override fun saveUpdateCollectionEvent(collectiondId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
+        updateCommands.forEach { updateCommand ->
+            when(updateCommand) {
+                is RenameCollectionCommand -> saveEvent(EventType.RENAME_COLLECTION) {
+                    append("title", updateCommand.title)
+                    append("collectionId", collectiondId.value)
+                }
+                is ChangeVisibilityCommand -> saveEvent(EventType.CHANGE_VISIBILITY) {
+                    append("collectionId", collectiondId.value)
+                    append("isPublic", updateCommand.isPublic)
+                }
+            }
         }
     }
 
