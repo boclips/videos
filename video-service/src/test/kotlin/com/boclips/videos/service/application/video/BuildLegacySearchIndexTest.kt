@@ -4,17 +4,9 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.anyOrNull
-import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doThrow
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,43 +43,6 @@ class BuildLegacySearchIndexTest {
         assertThat(videos).hasSize(2)
         assertThat(videos.first().id).isEqualTo(videoAssetId1)
         assertThat(videos.first().title).isEqualTo("a title")
-    }
-
-    @Test
-    fun `execute ignores videos with no keywords`() {
-        val videoAssetRepository = mockVideoAssetRepository(
-            videos = sequenceOf(
-                TestFactories.createVideoAsset(
-                    keywords = emptyList(),
-                    playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "1")
-                ),
-                TestFactories.createVideoAsset(
-                    keywords = emptyList(),
-                    playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "2")
-                )
-            )
-        )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
-
-        rebuildSearchIndex()
-
-        assertThat(getUpsertedVideos()).isEmpty()
-    }
-
-    @Test
-    fun `execute ignores videos with an empty description`() {
-        val videoAssetRepository = mockVideoAssetRepository(
-            videos = sequenceOf(
-                TestFactories.createVideoAsset(
-                    description = ""
-                )
-            )
-        )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
-
-        rebuildSearchIndex()
-
-        assertThat(getUpsertedVideos()).isEmpty()
     }
 
     @Test
