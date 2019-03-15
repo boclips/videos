@@ -23,8 +23,12 @@ management:
   health:
     solr:
       enabled: false
+    elasticsearch:
+      enabled: false
 
 legacy:
   solr:
     host: solr
     port: 80
+server:
+  use-forward-headers: true
