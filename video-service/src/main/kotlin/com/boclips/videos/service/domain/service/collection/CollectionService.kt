@@ -11,4 +11,5 @@ interface CollectionService {
     fun update(id: CollectionId, updateCommand: CollectionUpdateCommand)
     fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>)
     fun delete(id: CollectionId)
+    fun getPublic(): List<Collection>
 }

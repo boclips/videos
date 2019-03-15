@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.collections
 
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 
 class CollectionResourceFactory(
@@ -29,4 +30,10 @@ class CollectionResourceFactory(
             isPublic = collection.isPublic
         )
     }
+
+    fun buildCollectionResource(collection: Collection, projection: CollectionsController.Projections) =
+        when (projection) {
+            CollectionsController.Projections.list -> buildCollectionListResource(collection)
+            CollectionsController.Projections.details -> buildCollectionDetailsResource(collection)
+        }
 }

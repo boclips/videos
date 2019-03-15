@@ -143,6 +143,34 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         assertThat(userCollection.size).isEqualTo(1)
     }
 
+    @Test
+    fun `can retrieve all public collections`() {
+        val publicCollection = collectionService.create(
+            owner = UserId(value = "user1"),
+            title = "Starting Title"
+        )
+
+        val publicCollection2 = collectionService.create(
+            owner = UserId(value = "user2"),
+            title = "Starting Title"
+        )
+
+        val privateCollection = collectionService.create(
+            owner = UserId(value = "user1"),
+            title = "Starting Title"
+        )
+
+        collectionService.update(publicCollection.id, ChangeVisibilityCommand(true))
+        collectionService.update(publicCollection2.id, ChangeVisibilityCommand(true))
+
+        val publicCollections = collectionService.getPublic()
+
+        assertThat(publicCollections).hasSize(2)
+        assertThat(publicCollections.map { it.id }).contains(publicCollection.id, publicCollection2.id)
+
+        assertThat(publicCollections).doesNotContain(privateCollection)
+    }
+
     @Nested
     inner class MigrationTests {
         @Test

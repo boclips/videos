@@ -102,6 +102,16 @@ class MongoCollectionService(
         logger.info { "Deleted collection $collectionId" }
     }
 
+    override fun getPublic(): List<Collection> {
+        val publicCollections =
+            dbCollection().find(CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC)
+                .mapNotNull(this::toCollection)
+
+        logger.info { "Found ${publicCollections.size} public collections" }
+
+        return publicCollections
+    }
+
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {
         logger.info { "Prepare video for removal from collection $collectionId" }
         return pull(CollectionDocument::videos, assetId.value)
