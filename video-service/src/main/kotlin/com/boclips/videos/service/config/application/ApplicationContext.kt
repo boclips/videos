@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
+import com.boclips.videos.service.application.collection.GetPublicCollections
 import com.boclips.videos.service.application.collection.GetUserCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -97,6 +98,11 @@ class ApplicationContext(
     @Bean
     fun getUserCollections(): GetUserCollections {
         return GetUserCollections(collectionService, CollectionResourceFactory(VideoToResourceConverter(), videoService))
+    }
+
+    @Bean
+    fun getPublicCollections(): GetPublicCollections {
+        return GetPublicCollections(collectionService, CollectionResourceFactory(VideoToResourceConverter(), videoService))
     }
 
     @Bean

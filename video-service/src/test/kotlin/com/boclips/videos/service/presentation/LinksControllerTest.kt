@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
@@ -37,8 +38,20 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.userCollections.href", endsWith("collections")))
             .andExpect(jsonPath("$._links.userCollection.href", endsWith("collections/{id}")))
             .andExpect(jsonPath("$._links.userCollection.templated", equalTo(true)))
-            .andExpect(jsonPath("$._links.userCollectionsDetails.href", endsWith("collections?projection=details")))
-            .andExpect(jsonPath("$._links.userCollectionsList.href", endsWith("collections?projection=list")))
+            .andExpect(jsonPath("$._links.userCollectionsDetails.href", endsWith("collections?projection=details&owner={owner}")))
+            .andExpect(jsonPath("$._links.userCollectionsDetails.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.userCollectionsList.href", endsWith("collections?projection=list&owner={owner}")))
+            .andExpect(jsonPath("$._links.userCollectionsList.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.publicCollections.href", endsWith("collections?projection=list&owner={owner}")))
+    }
+
+    @Test
+    fun `when authenticated user`() {
+        val userId = "teacher@teacher.com"
+        mockMvc.perform(get("/v1").asTeacher(userId))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.userCollectionsDetails.href", endsWith("collections?projection=details&owner=$userId")))
+            .andExpect(jsonPath("$._links.userCollectionsList.href", endsWith("collections?projection=list&owner=$userId")))
     }
 
     @Test

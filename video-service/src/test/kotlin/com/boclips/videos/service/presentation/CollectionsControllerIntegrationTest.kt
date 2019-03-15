@@ -66,7 +66,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         createCollection("collection 2")
         addVideo(collectionId, saveVideo(title = "a video title").value)
 
-        mockMvc.perform(get("/v1/collections?projection=details").asTeacher())
+        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
@@ -78,9 +78,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=details")))
-            .andExpect(jsonPath("$._links.details.href", endsWith("/v1/collections?projection=details")))
-            .andExpect(jsonPath("$._links.list.href", endsWith("/v1/collections?projection=list")))
+            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=details&owner=teacher@gmail.com")))
+            .andExpect(jsonPath("$._links.details.href", endsWith("/v1/collections?projection=details&owner=teacher@gmail.com")))
+            .andExpect(jsonPath("$._links.list.href", endsWith("/v1/collections?projection=list&owner=teacher@gmail.com")))
             .andReturn()
     }
 
@@ -91,7 +91,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val savedVideoAssetId = saveVideo(title = "a video title")
         addVideo(collectionId, savedVideoAssetId.value)
 
-        mockMvc.perform(get("/v1/collections?projection=list").asTeacher())
+        mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
@@ -103,10 +103,33 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=list")))
-            .andExpect(jsonPath("$._links.details.href", endsWith("/v1/collections?projection=details")))
-            .andExpect(jsonPath("$._links.list.href", endsWith("/v1/collections?projection=list")))
+            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=list&owner=teacher@gmail.com")))
+            .andExpect(jsonPath("$._links.details.href", endsWith("/v1/collections?projection=details&owner=teacher@gmail.com")))
+            .andExpect(jsonPath("$._links.list.href", endsWith("/v1/collections?projection=list&owner=teacher@gmail.com")))
             .andReturn()
+    }
+
+    @Test
+    fun `cannot fetch collection when owner does not match user`() {
+        createCollection("collection 1")
+
+        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher("notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections").doesNotExist())
+    }
+
+    @Test
+    fun `get all public collections`() {
+        val collectionId = createCollection("collection 1")
+        createCollection("private collection")
+        updateCollectionToBePublic(collectionId)
+
+        mockMvc.perform(get("/v1/collections?projection=list").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
     }
 
     @Test
@@ -125,13 +148,13 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val collectionId = createCollection("collection from a teacher")
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
-                .andExpect(jsonPath("$._links.remove.href", not(isEmptyString())))
-                .andExpect(jsonPath("$._links.edit.href", not(isEmptyString())))
-                .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
-                .andExpect(jsonPath("$._links.removeVideo.href", not(isEmptyString())))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.remove.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.edit.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.removeVideo.href", not(isEmptyString())))
     }
 
     @Test
@@ -148,12 +171,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
             .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
-                .andExpect(jsonPath("$._links.remove").doesNotExist())
-                .andExpect(jsonPath("$._links.edit").doesNotExist())
-                .andExpect(jsonPath("$._links.addVideo").doesNotExist())
-                .andExpect(jsonPath("$._links.removeVideo").doesNotExist())
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.remove").doesNotExist())
+            .andExpect(jsonPath("$._links.edit").doesNotExist())
+            .andExpect(jsonPath("$._links.addVideo").doesNotExist())
+            .andExpect(jsonPath("$._links.removeVideo").doesNotExist())
     }
 
     @Test

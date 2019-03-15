@@ -5,3 +5,13 @@ import com.boclips.videos.service.domain.model.UserId
 fun getCurrentUserId() = UserId(value = getCurrentUser().id)
 
 fun getCurrentUser() = UserExtractor.getCurrentUser() ?: User(false, "anonymous", emptySet())
+
+fun getCurrentUserIfNotAnonymous() : User? {
+    val user = UserExtractor.getCurrentUser()
+
+    if (user?.id == "anonymousUser") {
+        return null
+    }
+
+    return user
+}

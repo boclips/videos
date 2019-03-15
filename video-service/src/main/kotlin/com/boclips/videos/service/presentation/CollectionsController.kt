@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
+import com.boclips.videos.service.application.collection.GetPublicCollections
 import com.boclips.videos.service.application.collection.GetUserCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -40,7 +41,8 @@ class CollectionsController(
     private val addVideoToCollection: AddVideoToCollection,
     private val removeVideoFromCollection: RemoveVideoFromCollection,
     private val updateCollection: UpdateCollection,
-    private val deleteCollection: DeleteCollection
+    private val deleteCollection: DeleteCollection,
+    private val getPublicCollections: GetPublicCollections
 ) {
     enum class Projections {
         details,
@@ -48,15 +50,17 @@ class CollectionsController(
     }
 
     companion object : KLogging() {
-        fun getUserCollectionsDetailsLink() = linkTo(
-            methodOn(CollectionsController::class.java).getAllUserCollections(
-                Projections.details
+        fun getUserCollectionsDetailsLink(owner: String?) = linkTo(
+            methodOn(CollectionsController::class.java).getCollections(
+                Projections.details,
+                owner
             )
         )
 
-        fun getUserCollectionsListLink() = linkTo(
-            methodOn(CollectionsController::class.java).getAllUserCollections(
-                Projections.list
+        fun getUserCollectionsListLink(owner: String?) = linkTo(
+            methodOn(CollectionsController::class.java).getCollections(
+                Projections.list,
+                owner
             )
         )
 
@@ -67,6 +71,13 @@ class CollectionsController(
         )
 
         fun postUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).postCollection(null))
+
+        fun getPublicCollections() = linkTo(
+            methodOn(CollectionsController::class.java).getCollections(
+                Projections.list,
+                null
+            )
+        )
     }
 
     @PostMapping
@@ -91,16 +102,22 @@ class CollectionsController(
     }
 
     @GetMapping
-    fun getAllUserCollections(@RequestParam projection: Projections): Resources<Resource<CollectionResource>> {
+    fun getCollections(@RequestParam projection: Projections, @RequestParam owner: String?): Resources<Resource<CollectionResource>> {
         val selfLink = when (projection) {
-            Projections.details -> getUserCollectionsDetailsLink().withSelfRel()
-            Projections.list -> getUserCollectionsListLink().withSelfRel()
+            Projections.details -> getUserCollectionsDetailsLink(owner).withSelfRel()
+            Projections.list -> getUserCollectionsListLink(owner).withSelfRel()
         }
 
-        val detailsLink = getUserCollectionsDetailsLink().withRel("details")
-        val listLink = getUserCollectionsListLink().withRel("list")
+        val detailsLink = getUserCollectionsDetailsLink(owner).withRel("details")
+        val listLink = getUserCollectionsListLink(owner).withRel("list")
 
-        return Resources(getUserCollections(projection).map(::wrapCollection), selfLink, detailsLink, listLink)
+        val collections = if (owner != null ){
+            getUserCollections(projection)
+        } else {
+            getPublicCollections(projection)
+        }
+
+        return Resources(collections.map(::wrapCollection), selfLink, detailsLink, listLink)
     }
 
     @GetMapping("/{id}")
