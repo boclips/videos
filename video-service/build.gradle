@@ -2,9 +2,6 @@ buildscript {
     ext {
         kotlinVersion = '1.2.71'
         springBootVersion = '2.0.4.RELEASE'
-        springVersion = '5.0.7.RELEASE'
-        flapdoodleVersion = '2.0.3'
-        micrometerVersion = '1.0.6'
     }
     repositories {
         mavenCentral()
@@ -25,6 +22,7 @@ apply plugin: 'idea'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 group = 'com.boclips'
 version = '0.0.1-SNAPSHOT'
@@ -145,16 +143,16 @@ def junitVersion = "5.3.1"
 dependencies {
     compile project(':search-service')
 
-    compile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-hateoas:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-hateoas")
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.boot:spring-boot-starter-aop")
 
     compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.10.1'
 
-    compile("io.micrometer:micrometer-core:${micrometerVersion}")
-    compile("io.micrometer:micrometer-registry-prometheus:${micrometerVersion}")
+    compile("io.micrometer:micrometer-core")
+    compile("io.micrometer:micrometer-registry-prometheus")
 
     compile('com.github.boclips:boclips-spring-security:0.48.0')
     compile("com.github.boclips:kaltura-client:0.49.0")
@@ -172,11 +170,11 @@ dependencies {
     compile('org.litote.kmongo:kmongo:3.9.2')
     compile('io.sentry:sentry-logback:1.7.21')
 
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+    testCompile("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
     }
-    testCompile("org.springframework.security:spring-security-test:${springVersion}")
-    testCompile("de.flapdoodle.embed:de.flapdoodle.embed.mongo:${flapdoodleVersion}")
+    testCompile("org.springframework.security:spring-security-test")
+    testCompile("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testCompile("com.nhaarman:mockito-kotlin:1.5.0")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
@@ -194,10 +192,10 @@ dependencies {
     clientCompileOnly('org.projectlombok:lombok:1.18.4')
     clientApt('org.projectlombok:lombok:1.18.4')
     clientCompileOnly('org.springframework.security.oauth:spring-security-oauth2:2.1.3.RELEASE')
-    clientCompileOnly("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    clientCompileOnly("org.springframework.boot:spring-boot-starter-test")
     client_testCompile('org.springframework.security.oauth:spring-security-oauth2:2.1.3.RELEASE')
-    clientCompileOnly("org.springframework.boot:spring-boot-actuator:${springBootVersion}")
-    client_testCompile("org.springframework.boot:spring-boot-actuator:${springBootVersion}")
+    clientCompileOnly("org.springframework.boot:spring-boot-actuator")
+    client_testCompile("org.springframework.boot:spring-boot-actuator")
 
     testCompile("com.github.tomakehurst:wiremock:2.19.0") {
         exclude group: 'junit', module: 'junit'
