@@ -4,9 +4,17 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.anyOrNull
+import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doThrow
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,6 +59,22 @@ class BuildLegacySearchIndexTest {
             videos = sequenceOf(
                 TestFactories.createVideoAsset(
                     title = ""
+                )
+            )
+        )
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
+
+        rebuildSearchIndex()
+
+        assertThat(getUpsertedVideos()).isEmpty()
+    }
+
+    @Test
+    fun `execute ignores youtube videos`() {
+        val videoAssetRepository = mockVideoAssetRepository(
+            videos = sequenceOf(
+                TestFactories.createVideoAsset(
+                    playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, "video")
                 )
             )
         )
