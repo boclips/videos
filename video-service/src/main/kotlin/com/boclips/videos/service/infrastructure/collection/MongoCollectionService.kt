@@ -104,7 +104,7 @@ class MongoCollectionService(
 
     override fun getPublic(): List<Collection> {
         val publicCollections =
-            dbCollection().find(CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC)
+            dbCollection().find(CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC).limit(30)
                 .mapNotNull(this::toCollection)
 
         logger.info { "Found ${publicCollections.size} public collections" }
