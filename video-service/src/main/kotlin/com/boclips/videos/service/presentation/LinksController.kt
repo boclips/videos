@@ -27,8 +27,8 @@ class LinksController {
                 addIfAuthenticated(VideoController.searchLink()),
                 addIfAuthenticated(CollectionsController.getUserCollectionLink(null).withRel("userCollection")),
                 addIfAuthenticated(CollectionsController.postUserCollectionsLink().withRel("userCollections")),
-                addIfAuthenticated(CollectionsController.getUserCollectionsDetailsLink(currentUserId).withRel("userCollectionsDetails")),
-                addIfAuthenticated(CollectionsController.getUserCollectionsListLink(currentUserId).withRel("userCollectionsList")),
+                currentUserId?.let { addIfAuthenticated(CollectionsController.getUserCollectionsDetailsLink(it).withRel("userCollectionsDetails")) },
+                currentUserId?.let { addIfAuthenticated(CollectionsController.getUserCollectionsListLink(it).withRel("userCollectionsList")) },
 
                 if (request.isUserInRole(VIEW_DISABLED_VIDEOS)) VideoController.adminSearchLink() else null
             )
