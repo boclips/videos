@@ -14,4 +14,25 @@
         <gav regex="true">^com\.github\.bbottema:emailaddress-rfc2822:.*$</gav>
         <cve>CVE-2015-7686</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: opencensus-contrib-grpc-metrics-0.12.3.jar
+   ]]></notes>
+        <gav regex="true">^io\.opencensus:opencensus-contrib-grpc-metrics:.*$</gav>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: spring-cloud-stream-2.1.2.RELEASE.jar
+   ]]></notes>
+        <gav regex="true">^org\.springframework\.cloud:spring-cloud-stream:.*$</gav>
+        <cpe>cpe:/a:pivotal_software:spring_integration</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: spring-tuple-1.0.0.RELEASE.jar
+   ]]></notes>
+        <gav regex="true">^org\.springframework:spring-tuple:.*$</gav>
+        <cve>CVE-2011-2730</cve>
+    </suppress>
 </suppressions>
