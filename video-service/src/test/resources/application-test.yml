@@ -27,3 +27,9 @@ logging:
 
 jdbc:
   fetchSize: 100
+
+spring:
+  cloud:
+    gcp:
+      pubsub:
+        enabled: false
