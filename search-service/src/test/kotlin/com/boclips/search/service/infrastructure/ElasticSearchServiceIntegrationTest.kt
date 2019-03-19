@@ -95,6 +95,38 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
+    fun `returns documents where content partner matches exactly, respecting excluded tags`() {
+        val contentProvider = "Bozeman Science"
+
+        adminService.upsert(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(id = "1", contentProvider = contentProvider, tags = listOf("news")),
+                        SearchableVideoMetadataFactory.create(id = "2", contentProvider = contentProvider, tags = emptyList())
+                )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query(contentProvider, excludeTags = listOf("news"))))
+
+        assertThat(results).containsExactly("2")
+    }
+
+    @Test
+    fun `returns documents where content partner matches exactly, respecting include tags`() {
+        val contentProvider = "Bozeman Science"
+
+        adminService.upsert(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(id = "1", contentProvider = contentProvider, tags = listOf("education")),
+                        SearchableVideoMetadataFactory.create(id = "2", contentProvider = contentProvider, tags = emptyList())
+                )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query(contentProvider, includeTags = listOf("education"))))
+
+        assertThat(results).containsExactly("1")
+    }
+
+    @Test
     fun `content partner match is ranked higher than matches in other fields`() {
         adminService.upsert(
                 sequenceOf(

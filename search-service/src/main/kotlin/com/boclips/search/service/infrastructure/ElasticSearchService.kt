@@ -82,14 +82,18 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         return QueryBuilders
                 .boolQuery()
                 .should(matchFieldsExceptContentPartner(query))
-                .should(matchContentPartnerExactly(query).boost(1000.0F))
+                .should(matchContentPartnerAndTagsExactly(query).boost(1000.0F))
     }
 
-    private fun matchContentPartnerExactly(query: Query): TermQueryBuilder {
-        return QueryBuilders.termQuery(
-                ElasticSearchVideo.CONTENT_PROVIDER,
-                query.phrase
-        )
+    private fun matchContentPartnerAndTagsExactly(query: Query): BoolQueryBuilder {
+        return QueryBuilders
+                .boolQuery()
+                .must(QueryBuilders.termQuery(
+                        ElasticSearchVideo.CONTENT_PROVIDER,
+                        query.phrase
+                ))
+                .mustNot(matchTags(query.excludeTags))
+                .filter(filterByTag(query.includeTags))
     }
 
     private fun matchFieldsExceptContentPartner(query: Query): BoolQueryBuilder {
