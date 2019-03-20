@@ -1,17 +1,17 @@
 package com.boclips.videos.service.config
 
 import com.boclips.videos.service.application.event.SavePlaybackEvent
-import com.boclips.videos.service.infrastructure.event.AnalyticsEventService
-import com.boclips.videos.service.infrastructure.event.MongoAnalyticsEventService
+import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
+import com.boclips.videos.service.infrastructure.analytics.MongoAnalyticsEventService
 import com.mongodb.MongoClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class EventContext {
+class AnalyticsEventContext {
 
     @Bean
-    fun eventService(mongoClient: MongoClient): AnalyticsEventService = MongoAnalyticsEventService(mongoClient)
+    fun analyticsEventService(mongoClient: MongoClient): AnalyticsEventService = MongoAnalyticsEventService(mongoClient)
 
     @Bean
     fun savePlaybackEvent(analyticsEventService: AnalyticsEventService): SavePlaybackEvent {

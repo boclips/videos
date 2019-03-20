@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.event
+package com.boclips.videos.service.infrastructure.analytics
 
 enum class EventType {
     SEARCH,

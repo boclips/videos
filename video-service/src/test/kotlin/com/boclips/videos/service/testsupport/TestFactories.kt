@@ -79,13 +79,16 @@ object TestFactories {
             .build()
     }
 
-    fun createKalturaPlayback(duration: Duration = Duration.ofSeconds(11)): StreamPlayback {
+    fun createKalturaPlayback(
+        duration: Duration = Duration.ofSeconds(11),
+        downloadUrl: String = "kaltura-download"
+    ): StreamPlayback {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "555")
         return StreamPlayback(
             id = playbackId,
             streamUrl = "kaltura-stream",
             thumbnailUrl = "kaltura-thumbnail",
-            downloadUrl = "kaltura-download",
+            downloadUrl = downloadUrl,
             duration = duration
         )
     }

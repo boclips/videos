@@ -40,7 +40,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isCreated)
 
-        val event = eventService.playbackEvent()
+        val event = analyticsEventService.playbackEvent()
         assertThat(event.timestamp).isNotNull()
         assertThat(event.type).isNotNull()
         assertThat(event.user.boclipsEmployee).isTrue()

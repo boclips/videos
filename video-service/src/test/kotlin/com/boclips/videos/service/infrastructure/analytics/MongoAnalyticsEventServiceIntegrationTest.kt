@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.event
+package com.boclips.videos.service.infrastructure.analytics
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.asset.AssetId

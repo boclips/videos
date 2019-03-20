@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
-import com.boclips.videos.service.infrastructure.event.AnalyticsEventService
+import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 
 class AddVideoToCollection(
     private val collectionService: CollectionService,

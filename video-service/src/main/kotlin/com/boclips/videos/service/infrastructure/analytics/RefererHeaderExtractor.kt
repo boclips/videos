@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.event
+package com.boclips.videos.service.infrastructure.analytics
 
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes

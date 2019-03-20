@@ -4,12 +4,13 @@ import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.application.video.RefreshVideoDurations
-import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.service.EventService
+import com.boclips.videos.service.domain.service.video.VideoService
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.messaging.support.MessageBuilder
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -36,7 +37,8 @@ class AdminController(
     private val rebuildSearchIndex: RebuildSearchIndex,
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
     private val refreshVideoDurations: RefreshVideoDurations,
-    private val videosToAnalyse: VideosToAnalyse
+    private val videoService : VideoService,
+    private val eventService: EventService
 ) {
     companion object : KLogging()
 
@@ -57,9 +59,10 @@ class AdminController(
 
     @PostMapping("/analyse_video/{videoId}")
     fun analyseVideo(@PathVariable videoId: String): ResponseEntity<Void> {
-        println(videosToAnalyse.output().javaClass)
-        val sent = videosToAnalyse.output().send(MessageBuilder.withPayload(videoId).build())
-        println(sent)
+        val video = videoService.get(assetId = AssetId(value = videoId))
+
+        eventService.analyseVideo(video)
+
         return ResponseEntity(HttpStatus.ACCEPTED)
     }
 

@@ -6,9 +6,9 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
-import com.boclips.videos.service.infrastructure.event.AnalyticsEventService
-import com.boclips.videos.service.infrastructure.event.EventType
-import com.boclips.videos.service.infrastructure.event.RefererHeaderExtractor
+import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
+import com.boclips.videos.service.infrastructure.analytics.EventType
+import com.boclips.videos.service.infrastructure.analytics.RefererHeaderExtractor
 import getCurrentUser
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

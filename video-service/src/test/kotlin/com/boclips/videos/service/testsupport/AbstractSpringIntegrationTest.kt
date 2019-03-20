@@ -56,7 +56,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
 
     @Autowired
-    lateinit var eventService: FakeAnalyticsEventService
+    lateinit var analyticsEventService: FakeAnalyticsEventService
 
     @Autowired
     lateinit var createVideo: CreateVideo
@@ -96,7 +96,7 @@ abstract class AbstractSpringIntegrationTest {
         fakeSearchService.safeRebuildIndex(emptySequence())
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
-        eventService.clear()
+        analyticsEventService.clear()
 
         reset(legacySearchService)
     }

@@ -1,5 +1,8 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.domain.service.EventService
+import com.boclips.videos.service.infrastructure.event.SpringCloudEventService
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import org.litote.kmongo.KMongo
@@ -20,5 +23,10 @@ class InfrastructureContext(val mongoProperties: MongoProperties) {
     @Bean
     fun mongoClient(): MongoClient {
         return KMongo.createClient(MongoClientURI(mongoProperties.determineUri()))
+    }
+
+    @Bean
+    fun eventService(videosToAnalyse: VideosToAnalyse): EventService {
+        return SpringCloudEventService(videosToAnalyse)
     }
 }

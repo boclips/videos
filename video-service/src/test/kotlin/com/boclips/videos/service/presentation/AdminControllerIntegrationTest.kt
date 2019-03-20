@@ -1,6 +1,8 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
@@ -66,13 +68,14 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `analyse video enqueues videos for analysis`() {
-        val assetId = saveVideo()
+        val assetId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123"))
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
         val message = messageCollector.forChannel(videosToAnalyse.output()).poll()
 
-        assertThat(message.payload).isEqualTo(assetId.value)
+        assertThat(message.payload.toString()).contains(assetId.value)
+        assertThat(message.payload.toString()).contains("https://download/video-entry-123.mp4")
     }
 
     @Test

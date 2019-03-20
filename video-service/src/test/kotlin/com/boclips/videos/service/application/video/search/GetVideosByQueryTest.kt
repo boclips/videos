@@ -165,9 +165,9 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 1
         )
 
-        assertThat(eventService.searchEvent().data.query).isEqualTo("why are camels so tall")
-        assertThat(eventService.searchEvent().data.pageIndex).isEqualTo(1)
-        assertThat(eventService.searchEvent().data.pageSize).isEqualTo(2)
-        assertThat(eventService.searchEvent().data.totalResults).isEqualTo(3L)
+        assertThat(analyticsEventService.searchEvent().data.query).isEqualTo("why are camels so tall")
+        assertThat(analyticsEventService.searchEvent().data.pageIndex).isEqualTo(1)
+        assertThat(analyticsEventService.searchEvent().data.pageSize).isEqualTo(2)
+        assertThat(analyticsEventService.searchEvent().data.totalResults).isEqualTo(3L)
     }
 }

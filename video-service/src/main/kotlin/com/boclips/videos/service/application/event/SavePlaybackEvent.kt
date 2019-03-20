@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.event
 
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.infrastructure.event.AnalyticsEventService
+import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 
 class SavePlaybackEvent(

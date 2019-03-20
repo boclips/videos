@@ -1,0 +1,23 @@
+package com.boclips.videos.service.infrastructure.event
+
+import com.boclips.eventtypes.VideoToAnalyse
+import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.service.EventService
+import org.springframework.messaging.support.MessageBuilder
+
+class SpringCloudEventService(
+    private val videosToAnalyse: VideosToAnalyse
+) : EventService {
+
+    override fun analyseVideo(video: Video) {
+        val playback = video.playback as StreamPlayback
+        val videoToAnalyse = VideoToAnalyse.builder()
+            .videoId(video.asset.assetId.value)
+            .videoUrl(playback.downloadUrl)
+            .build()
+
+        videosToAnalyse.output().send(MessageBuilder.withPayload(videoToAnalyse).build())
+    }
+}
