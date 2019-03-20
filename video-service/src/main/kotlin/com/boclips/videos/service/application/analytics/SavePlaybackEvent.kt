@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.event
+package com.boclips.videos.service.application.analytics
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService

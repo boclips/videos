@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.event.InvalidEventException
+import com.boclips.videos.service.application.analytics.InvalidEventException
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import mu.KLogging

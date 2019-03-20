@@ -1,6 +1,6 @@
 package com.boclips.videos.service.config
 
-import com.boclips.videos.service.application.event.SavePlaybackEvent
+import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.infrastructure.analytics.MongoAnalyticsEventService
 import com.mongodb.MongoClient

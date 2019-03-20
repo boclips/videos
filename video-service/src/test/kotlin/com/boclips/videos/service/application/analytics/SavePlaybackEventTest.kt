@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.event
+package com.boclips.videos.service.application.analytics
 
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.testsupport.TestFactories

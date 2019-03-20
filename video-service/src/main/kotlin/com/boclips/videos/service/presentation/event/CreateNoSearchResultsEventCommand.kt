@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.event
 
-import com.boclips.videos.service.application.event.InvalidEventException
+import com.boclips.videos.service.application.analytics.InvalidEventException
 
 data class CreateNoSearchResultsEventCommand(
     val name: String?,

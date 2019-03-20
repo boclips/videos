@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.event.SavePlaybackEvent
+import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand

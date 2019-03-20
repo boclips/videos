@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.videos.service.application.event.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.application.video.RefreshVideoDurations
@@ -37,8 +38,7 @@ class AdminController(
     private val rebuildSearchIndex: RebuildSearchIndex,
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
     private val refreshVideoDurations: RefreshVideoDurations,
-    private val videoService : VideoService,
-    private val eventService: EventService
+    private val analyseVideo: AnalyseVideo
 ) {
     companion object : KLogging()
 
@@ -58,10 +58,8 @@ class AdminController(
     }
 
     @PostMapping("/analyse_video/{videoId}")
-    fun analyseVideo(@PathVariable videoId: String): ResponseEntity<Void> {
-        val video = videoService.get(assetId = AssetId(value = videoId))
-
-        eventService.analyseVideo(video)
+    fun postAnalyseVideo(@PathVariable videoId: String): ResponseEntity<Void> {
+        analyseVideo(videoId)
 
         return ResponseEntity(HttpStatus.ACCEPTED)
     }

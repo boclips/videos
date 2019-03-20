@@ -1,3 +1,3 @@
-package com.boclips.videos.service.application.event
+package com.boclips.videos.service.application.analytics
 
 class InvalidEventException(message: String) : Exception(message)

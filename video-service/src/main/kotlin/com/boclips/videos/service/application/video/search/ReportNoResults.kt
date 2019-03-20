@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.application.event.InvalidEventException
+import com.boclips.videos.service.application.analytics.InvalidEventException
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.email.NoResultsEmail
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand

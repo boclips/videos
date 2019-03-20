@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.collection.GetPublicCollections
 import com.boclips.videos.service.application.collection.GetUserCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.event.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
@@ -22,6 +23,7 @@ import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.service.EventService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
@@ -43,7 +45,8 @@ class ApplicationContext(
     val legacySearchService: LegacySearchService,
     val collectionService: CollectionService,
     val analyticsEventService: AnalyticsEventService,
-    val videoAccessService: VideoAccessService
+    val videoAccessService: VideoAccessService,
+    val eventService: EventService
 ) {
 
     @Bean
@@ -133,6 +136,11 @@ class ApplicationContext(
     @Bean
     fun buildLegacySearchIndex(): BuildLegacySearchIndex {
         return BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
+    }
+
+    @Bean
+    fun analyseVideo(): AnalyseVideo {
+        return AnalyseVideo(videoService, eventService)
     }
 
     @Bean
