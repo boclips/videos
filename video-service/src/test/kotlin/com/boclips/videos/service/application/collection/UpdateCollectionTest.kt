@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateComm
 import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.fakes.FakeEventService
+import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.doReturn
@@ -37,7 +37,7 @@ class UpdateCollectionTest {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val renameCollection = UpdateCollection(collectionService, FakeEventService())
+        val renameCollection = UpdateCollection(collectionService, FakeAnalyticsEventService())
         val collectionId = TestFactories.aValidId()
 
         renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
@@ -53,7 +53,7 @@ class UpdateCollectionTest {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val eventService = FakeEventService()
+        val eventService = FakeAnalyticsEventService()
         val renameCollection = UpdateCollection(collectionService, eventService)
         val collectionId = TestFactories.aValidId()
 
@@ -70,7 +70,7 @@ class UpdateCollectionTest {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val eventService = FakeEventService()
+        val eventService = FakeAnalyticsEventService()
         val renameCollection = UpdateCollection(collectionService, eventService)
         val collectionId = TestFactories.aValidId()
 
@@ -92,7 +92,7 @@ class UpdateCollectionTest {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val renameCollection = UpdateCollection(collectionService, FakeEventService())
+        val renameCollection = UpdateCollection(collectionService, FakeAnalyticsEventService())
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             renameCollection(
@@ -114,7 +114,7 @@ class UpdateCollectionTest {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val renameCollection = UpdateCollection(collectionService, FakeEventService())
+        val renameCollection = UpdateCollection(collectionService, FakeAnalyticsEventService())
 
         assertThrows<CollectionNotFoundException> {
             renameCollection(

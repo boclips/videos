@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.fakes.FakeEventService
+import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.eq
@@ -31,7 +31,7 @@ internal class RemoveVideoFromCollectionTest {
             on { getById(any())}.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, FakeEventService())
+        val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, FakeAnalyticsEventService())
 
         val videoId = TestFactories.aValidId()
         removeVideoFromCollection("col-id", videoId)
@@ -48,7 +48,7 @@ internal class RemoveVideoFromCollectionTest {
             on { getById(any())}.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val eventService = FakeEventService()
+        val eventService = FakeAnalyticsEventService()
         val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, eventService)
 
         val videoId = TestFactories.aValidId()
@@ -70,7 +70,7 @@ internal class RemoveVideoFromCollectionTest {
             on { getById(any())}.thenReturn(onGetCollection)
         }
 
-        val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, FakeEventService())
+        val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, FakeAnalyticsEventService())
 
         assertThrows<CollectionAccessNotAuthorizedException> { removeVideoFromCollection(
             collectionId = collectionId.value,

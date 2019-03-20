@@ -17,7 +17,7 @@ import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
-import com.boclips.videos.service.testsupport.fakes.FakeEventService
+import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -56,7 +56,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
 
     @Autowired
-    lateinit var eventService: FakeEventService
+    lateinit var eventService: FakeAnalyticsEventService
 
     @Autowired
     lateinit var createVideo: CreateVideo

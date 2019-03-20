@@ -17,13 +17,13 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.util.Date
 
-class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
+class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
-    lateinit var mongoEventService: MongoEventService
+    lateinit var mongoEventService: MongoAnalyticsEventService
 
     @BeforeEach
     fun setUp() {
-        mongoEventService = MongoEventService(mongoClient)
+        mongoEventService = MongoAnalyticsEventService(mongoClient)
         setSecurityContext("user@example.com")
     }
 
@@ -167,6 +167,6 @@ class MongoEventServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun getEvent(): Document {
-        return mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoEventService.collectionName).find().single()
+        return mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoAnalyticsEventService.collectionName).find().single()
     }
 }

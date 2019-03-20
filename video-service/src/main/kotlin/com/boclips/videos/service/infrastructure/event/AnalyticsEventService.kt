@@ -4,7 +4,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
-interface EventService {
+interface AnalyticsEventService {
     fun saveSearchEvent(
         query: String,
         pageIndex: Int,

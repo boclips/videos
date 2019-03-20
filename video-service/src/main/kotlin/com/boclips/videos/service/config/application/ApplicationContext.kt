@@ -26,7 +26,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.event.AnalyticsEventService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -42,7 +42,7 @@ class ApplicationContext(
     val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
     val collectionService: CollectionService,
-    val eventService: EventService,
+    val analyticsEventService: AnalyticsEventService,
     val videoAccessService: VideoAccessService
 ) {
 
@@ -107,17 +107,17 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionService, eventService)
+        return AddVideoToCollection(collectionService, analyticsEventService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionService, eventService)
+        return RemoveVideoFromCollection(collectionService, analyticsEventService)
     }
 
     @Bean
     fun updateCollection(): UpdateCollection {
-        return UpdateCollection(collectionService, eventService)
+        return UpdateCollection(collectionService, analyticsEventService)
     }
 
     @Bean
@@ -150,7 +150,7 @@ class ApplicationContext(
         GetVideosByQuery(
             videoService,
             videoToResourceConverter(),
-            eventService
+            analyticsEventService
         )
 
     private fun getAllVideosById(): GetAllVideosById {

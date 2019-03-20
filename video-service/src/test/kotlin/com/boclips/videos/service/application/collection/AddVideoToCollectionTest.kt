@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.service.collection.AddVideoToCollection
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.fakes.FakeEventService
+import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.doReturn
@@ -52,7 +52,7 @@ class AddVideoToCollectionTest {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val eventService = FakeEventService()
+        val eventService = FakeAnalyticsEventService()
         val addVideoToCollection = AddVideoToCollection(collectionService, eventService)
         val collectionId = TestFactories.aValidId()
         val videoId = TestFactories.aValidId()
@@ -75,7 +75,7 @@ class AddVideoToCollectionTest {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val addToCollection = AddVideoToCollection(collectionService, FakeEventService())
+        val addToCollection = AddVideoToCollection(collectionService, FakeAnalyticsEventService())
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             addToCollection(

@@ -12,9 +12,9 @@ import org.bson.Document
 import java.time.ZonedDateTime
 import java.util.Date
 
-class MongoEventService(
+class MongoAnalyticsEventService(
     private val mongoClient: MongoClient
-) : EventService {
+) : AnalyticsEventService {
     companion object {
         const val collectionName = "event-log"
     }

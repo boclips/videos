@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
-import com.boclips.videos.service.infrastructure.event.EventService
+import com.boclips.videos.service.infrastructure.event.AnalyticsEventService
 import com.boclips.videos.service.infrastructure.event.EventType
 import com.boclips.videos.service.infrastructure.event.RefererHeaderExtractor
 import getCurrentUser
@@ -21,12 +21,12 @@ import java.time.ZonedDateTime
 class EventServiceFakeConfiguration {
     @Bean
     @Primary
-    fun fakeEventService(): EventService {
-        return FakeEventService()
+    fun fakeEventService(): AnalyticsEventService {
+        return FakeAnalyticsEventService()
     }
 }
 
-class FakeEventService : EventService {
+class FakeAnalyticsEventService : AnalyticsEventService {
     private val events: MutableList<Event<*>> = mutableListOf()
 
     fun clear() {
