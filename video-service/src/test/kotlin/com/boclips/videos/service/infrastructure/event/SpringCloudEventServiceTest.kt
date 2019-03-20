@@ -2,17 +2,17 @@ package com.boclips.videos.service.infrastructure.event
 
 import com.boclips.eventtypes.VideoToAnalyse
 import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.test.binder.MessageCollector
 
-internal class SpringCloudEventServiceTest : AbstractSpringIntegrationTest()
-
-{
+class SpringCloudEventServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var eventService: SpringCloudEventService
 
@@ -26,7 +26,7 @@ internal class SpringCloudEventServiceTest : AbstractSpringIntegrationTest()
     lateinit var objectMapper: ObjectMapper
 
     @Test
-    internal fun `analyses a video`() {
+    fun `analyses a video`() {
         val videoId = TestFactories.aValidId()
         val video = TestFactories.createVideo(
             videoAsset = TestFactories.createVideoAsset(videoId = videoId),
@@ -41,5 +41,16 @@ internal class SpringCloudEventServiceTest : AbstractSpringIntegrationTest()
 
         assertThat(messagePayload.videoId).isEqualTo(videoId)
         assertThat(messagePayload.videoUrl).isEqualTo("test_url")
+    }
+
+    @Test
+    fun `throws exception for a YouTube video`() {
+        val videoId = TestFactories.aValidId()
+        val video = TestFactories.createVideo(
+            videoAsset = TestFactories.createVideoAsset(videoId = videoId),
+            videoPlayback = TestFactories.createYoutubePlayback()
+        )
+
+        assertThrows<VideoNotAnalysableException> { eventService.analyseVideo(video) }
     }
 }

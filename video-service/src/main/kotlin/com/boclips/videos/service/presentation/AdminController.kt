@@ -5,9 +5,7 @@ import com.boclips.videos.service.application.event.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.application.video.RefreshVideoDurations
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.service.EventService
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -59,7 +57,12 @@ class AdminController(
 
     @PostMapping("/analyse_video/{videoId}")
     fun postAnalyseVideo(@PathVariable videoId: String): ResponseEntity<Void> {
-        analyseVideo(videoId)
+        try {
+            analyseVideo(videoId)
+        }
+        catch (e: VideoNotAnalysableException) {
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
 
         return ResponseEntity(HttpStatus.ACCEPTED)
     }

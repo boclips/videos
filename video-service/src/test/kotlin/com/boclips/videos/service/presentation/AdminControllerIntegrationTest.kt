@@ -79,6 +79,13 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `analyse video returns 400 for youtube videos`() {
+        val assetId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asOperator())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
     fun `analyse video returns 403 when user is not allowed`() {
         val assetId = saveVideo()
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asTeacher())
