@@ -121,15 +121,18 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `get all public collections`() {
         val collectionId = createCollection("collection 1")
-        createCollection("private collection")
+        createCollection("public collection")
         updateCollectionToBePublic(collectionId)
 
-        mockMvc.perform(get("/v1/collections?projection=list").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=30").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
+
+            .andExpect(jsonPath("$._links.self.href", endsWith("/v1/collections?projection=list&page=0&size=30")))
+            .andExpect(jsonPath("$._links.next.href", endsWith("/v1/collections?projection=list&page=1&size=30")))
     }
 
     @Test

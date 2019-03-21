@@ -6,6 +6,7 @@ import com.boclips.videos.service.presentation.collections.CreateCollectionReque
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import getCurrentUserId
 import mu.KLogging
+import org.springframework.hateoas.LinkBuilder
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
@@ -33,32 +34,34 @@ class CollectionsController(
     }
 
     companion object : KLogging() {
-        fun getUserCollectionsDetailsLink(owner: String) = linkTo(
+        val PUBLIC_COLLECTIONS_PAGE_SIZE = 30
+
+        fun getUserCollectionsDetailsLink(owner: String): LinkBuilder = linkTo(
                 methodOn(CollectionsController::class.java).getOwnCollections(
                 Projections.details,
                 owner
             )
         )
 
-        fun getUserCollectionsListLink(owner: String) = linkTo(
+        fun getUserCollectionsListLink(owner: String): LinkBuilder = linkTo(
                 methodOn(CollectionsController::class.java).getOwnCollections(
                 Projections.list,
                 owner
             )
         )
 
-        fun getUserCollectionLink(id: String?) = linkTo(
+        fun getUserCollectionLink(id: String?): LinkBuilder = linkTo(
             methodOn(CollectionsController::class.java).show(
                 id
             )
         )
 
-        fun postUserCollectionsLink() = linkTo(methodOn(CollectionsController::class.java).postCollection(null))
+        fun postUserCollectionsLink(): LinkBuilder = linkTo(methodOn(CollectionsController::class.java).postCollection(null))
 
-        fun getPublicCollections() = linkTo(
-                methodOn(CollectionsController::class.java).getThePublicCollections(
-                Projections.list
-            )
+        fun getPublicCollectionsLink(page: Int = 0, size: Int = PUBLIC_COLLECTIONS_PAGE_SIZE): LinkBuilder = linkTo(
+                methodOn(CollectionsController::class.java)
+                        .getThePublicCollections(Projections.list, page, size
+                        )
         )
     }
 
@@ -99,10 +102,18 @@ class CollectionsController(
     }
 
     @GetMapping
-    fun getThePublicCollections(@RequestParam projection: Projections): Resources<Resource<CollectionResource>> {
+    fun getThePublicCollections(
+            @RequestParam projection: Projections,
+            @RequestParam page: Int,
+            @RequestParam size: Int
+    ): Resources<Resource<CollectionResource>> {
         val collections = getPublicCollections(projection)
 
-        return Resources(collections.map(::wrapCollection))
+        return Resources(
+                collections.map(::wrapCollection),
+                getPublicCollectionsLink(page, size).withSelfRel(),
+                getPublicCollectionsLink(page + 1, size).withRel("next")
+        )
     }
 
     @GetMapping("/{id}")

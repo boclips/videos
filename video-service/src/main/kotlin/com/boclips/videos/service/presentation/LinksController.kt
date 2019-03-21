@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.security.UserRoles.VIEW_DISABLED_VIDEOS
+import com.boclips.videos.service.presentation.CollectionsController.Companion.PUBLIC_COLLECTIONS_PAGE_SIZE
 import getCurrentUserIfNotAnonymous
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
@@ -21,7 +22,7 @@ class LinksController {
                 VideoController.videoLink(),
                 EventController.createPlaybackEventLink(),
                 EventController.createNoResultsEventLink(),
-                CollectionsController.getPublicCollections().withRel("publicCollections"),
+                CollectionsController.getPublicCollectionsLink().withRel("publicCollections"),
 
                 addIfAuthenticated(VideoController.videosLink()),
                 addIfAuthenticated(VideoController.searchLink()),
