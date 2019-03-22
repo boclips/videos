@@ -1,2 +1,9 @@
 keycloak:
   configurationFile: 'classpath:keycloak-staging.json'
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        videos-to-analyse:
+          destination: videos-to-analyse-staging
