@@ -1,6 +1,9 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.domain.model.Page
+import com.boclips.videos.service.domain.model.PageInfo
+import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -9,6 +12,7 @@ import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
@@ -37,7 +41,7 @@ class GetPublicCollectionsTest {
     @Test
     fun `fetches all public collections with skinny videos`() {
         collectionService = mock {
-            on { getPublic() } doReturn listOf(
+            on { getPublic(PageRequest(0, 1)) } doReturn Page(listOf(
                 TestFactories.createCollection(
                     id = CollectionId("collection-id"),
                     owner = "yoyoyo@public.com",
@@ -46,13 +50,13 @@ class GetPublicCollectionsTest {
                     isPublic = true
                 ),
                 TestFactories.createCollection(isPublic = true)
-            )
+            ), PageInfo(true))
         }
 
-        val collections = GetPublicCollections(collectionService, collectionResourceFactory)(CollectionsController.Projections.list)
+        val collections = GetPublicCollections(collectionService, collectionResourceFactory)(CollectionsController.Projections.list, 0, 1)
 
-        assertThat(collections).hasSize(2)
-        val collection = collections.first()
+        assertThat(collections.elements).hasSize(2)
+        val collection = collections.elements.first()
         assertThat(collection.id).isEqualTo("collection-id")
         assertThat(collection.owner).isEqualTo("yoyoyo@public.com")
         assertThat(collection.title).isEqualTo("collection title")
@@ -63,7 +67,7 @@ class GetPublicCollectionsTest {
     @Test
     fun `fetches all public collections with fat videos`() {
         collectionService = mock {
-            on { getPublic() } doReturn listOf(
+            on { getPublic(PageRequest(0,1)) } doReturn Page(listOf(
                 TestFactories.createCollection(
                     id = CollectionId("collection-id"),
                     owner = "yoyoyo@public.com",
@@ -72,13 +76,13 @@ class GetPublicCollectionsTest {
                     isPublic = true
                 ),
                 TestFactories.createCollection(isPublic = true)
-            )
+            ), PageInfo(true))
         }
 
-        val collections = GetPublicCollections(collectionService, collectionResourceFactory)(CollectionsController.Projections.details)
+        val collections = GetPublicCollections(collectionService, collectionResourceFactory)(CollectionsController.Projections.details,0,1)
 
-        assertThat(collections).hasSize(2)
-        val collection = collections.first()
+        assertThat(collections.elements).hasSize(2)
+        val collection = collections.elements.first()
         assertThat(collection.id).isEqualTo("collection-id")
         assertThat(collection.owner).isEqualTo("yoyoyo@public.com")
         assertThat(collection.title).isEqualTo("collection title")

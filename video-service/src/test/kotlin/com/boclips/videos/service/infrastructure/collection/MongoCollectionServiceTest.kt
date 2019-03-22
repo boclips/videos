@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -144,7 +145,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can retrieve all public collections`() {
+    fun `can retrieve public collections`() {
         val publicCollection = collectionService.create(
             owner = UserId(value = "user1"),
             title = "Starting Title"
@@ -163,12 +164,39 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         collectionService.update(publicCollection.id, ChangeVisibilityCommand(true))
         collectionService.update(publicCollection2.id, ChangeVisibilityCommand(true))
 
-        val publicCollections = collectionService.getPublic()
+        val publicCollections = collectionService.getPublic(PageRequest(0, 10))
 
-        assertThat(publicCollections).hasSize(2)
-        assertThat(publicCollections.map { it.id }).contains(publicCollection.id, publicCollection2.id)
+        assertThat(publicCollections.elements).hasSize(2)
+        assertThat(publicCollections.elements.map { it.id }).contains(publicCollection.id, publicCollection2.id)
 
-        assertThat(publicCollections).doesNotContain(privateCollection)
+        assertThat(publicCollections.elements).doesNotContain(privateCollection)
+    }
+
+    @Test
+    fun `can retrieve pages of public collections ordered by last edited`() {
+        val publicCollection1 = collectionService.create(
+            owner = UserId(value = "user1"),
+            title = "Starting Title"
+        )
+
+        val publicCollection2 = collectionService.create(
+            owner = UserId(value = "user2"),
+            title = "Starting Title"
+        )
+
+        collectionService.update(publicCollection1.id, ChangeVisibilityCommand(true))
+        collectionService.update(publicCollection2.id, ChangeVisibilityCommand(true))
+
+        val firstPage = collectionService.getPublic(PageRequest(0, 1))
+
+        assertThat(firstPage.pageInfo.hasMoreElements).isTrue()
+        assertThat(firstPage.elements).hasSize(1)
+        assertThat(firstPage.elements.map { it.id }).contains(publicCollection2.id)
+
+        val lastPage = collectionService.getPublic(PageRequest(1, 1))
+        assertThat(lastPage.pageInfo.hasMoreElements).isFalse()
+        assertThat(lastPage.elements).hasSize(1)
+        assertThat(lastPage.elements.map { it.id }).contains(publicCollection1.id)
     }
 
     @Nested

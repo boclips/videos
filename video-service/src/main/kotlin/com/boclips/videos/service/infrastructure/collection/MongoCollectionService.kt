@@ -1,16 +1,14 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.Page
+import com.boclips.videos.service.domain.model.PageInfo
+import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
-import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
-import com.boclips.videos.service.domain.service.collection.CollectionService
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
+import com.boclips.videos.service.domain.service.collection.*
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -19,13 +17,7 @@ import mu.KLogging
 import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.addToSet
-import org.litote.kmongo.combine
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.pull
-import org.litote.kmongo.set
+import org.litote.kmongo.*
 import java.time.Instant
 
 class MongoCollectionService(
@@ -102,14 +94,20 @@ class MongoCollectionService(
         logger.info { "Deleted collection $collectionId" }
     }
 
-    override fun getPublic(): List<Collection> {
+    override fun getPublic(pageRequest: PageRequest): Page<Collection> {
+        val publicCollectionsCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
         val publicCollections =
-            dbCollection().find(CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC).limit(30)
+                dbCollection().find(publicCollectionsCriteria)
+                        .descendingSort(CollectionDocument::updatedAt)
+                        .limit(pageRequest.size)
+                        .skip(pageRequest.size * pageRequest.page)
                 .mapNotNull(this::toCollection)
 
+        val hasMoreElements = dbCollection().countDocuments(publicCollectionsCriteria) > (pageRequest.size + 1) * pageRequest.page
         logger.info { "Found ${publicCollections.size} public collections" }
 
-        return publicCollections
+        return Page(elements = publicCollections, pageInfo = PageInfo(hasMoreElements = hasMoreElements))
+
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {

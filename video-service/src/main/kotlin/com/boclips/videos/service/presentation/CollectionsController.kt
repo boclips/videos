@@ -107,13 +107,14 @@ class CollectionsController(
             @RequestParam page: Int,
             @RequestParam size: Int
     ): Resources<Resource<CollectionResource>> {
-        val collections = getPublicCollections(projection)
+        val collections = getPublicCollections(projection, page, size)
 
         return Resources(
-                collections.map(::wrapCollection),
-                getPublicCollectionsLink(page, size).withSelfRel(),
-                getPublicCollectionsLink(page + 1, size).withRel("next")
-        )
+                collections.elements.map(::wrapCollection),
+                listOfNotNull(
+                        getPublicCollectionsLink(page, size).withSelfRel(),
+                        if (collections.pageInfo.hasMoreElements) getPublicCollectionsLink(page + 1, size).withRel("next") else null
+                ))
     }
 
     @GetMapping("/{id}")
