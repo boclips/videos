@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.event
 
 import com.boclips.eventtypes.VideoToAnalyse
-import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.config.VideosToAnalyseTopic
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -20,7 +20,7 @@ class SpringCloudEventServiceTest : AbstractSpringIntegrationTest() {
     lateinit var messageCollector: MessageCollector
 
     @Autowired
-    lateinit var videosToAnalyse : VideosToAnalyse
+    lateinit var videosToAnalyse : VideosToAnalyseTopic
 
     @Autowired
     lateinit var objectMapper: ObjectMapper

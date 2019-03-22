@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.config.VideosToAnalyseTopic
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -20,7 +20,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Autowired
-    lateinit var videosToAnalyse: VideosToAnalyse
+    lateinit var videosToAnalyse: VideosToAnalyseTopic
 
     @Autowired
     lateinit var messageCollector: MessageCollector

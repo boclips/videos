@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.event
 
 import com.boclips.eventtypes.VideoToAnalyse
-import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.config.VideosToAnalyseTopic
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.service.EventService
 import org.springframework.messaging.support.MessageBuilder
 
 class SpringCloudEventService(
-    private val videosToAnalyse: VideosToAnalyse
+    private val videosToAnalyse: VideosToAnalyseTopic
 ) : EventService {
 
     override fun analyseVideo(video: Video) {

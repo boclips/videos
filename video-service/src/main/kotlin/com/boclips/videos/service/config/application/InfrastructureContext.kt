@@ -1,6 +1,6 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.videos.service.config.VideosToAnalyse
+import com.boclips.videos.service.config.VideosToAnalyseTopic
 import com.boclips.videos.service.domain.service.EventService
 import com.boclips.videos.service.infrastructure.event.SpringCloudEventService
 import com.mongodb.MongoClient
@@ -26,7 +26,7 @@ class InfrastructureContext(val mongoProperties: MongoProperties) {
     }
 
     @Bean
-    fun eventService(videosToAnalyse: VideosToAnalyse): EventService {
+    fun eventService(videosToAnalyse: VideosToAnalyseTopic): EventService {
         return SpringCloudEventService(videosToAnalyse)
     }
 }

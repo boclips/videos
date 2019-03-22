@@ -5,9 +5,9 @@ import org.springframework.cloud.stream.annotation.Output
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.MessageChannel
 
-interface VideosToAnalyse {
+interface VideosToAnalyseTopic {
 
-    @Output(VideosToAnalyse.OUTPUT)
+    @Output(VideosToAnalyseTopic.OUTPUT)
     fun output(): MessageChannel
 
     companion object {
@@ -16,5 +16,5 @@ interface VideosToAnalyse {
 }
 
 @Configuration
-@EnableBinding(VideosToAnalyse::class)
+@EnableBinding(VideosToAnalyseTopic::class)
 class MessagingContext
