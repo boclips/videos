@@ -18,15 +18,19 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
             )
     )
 
-fun MockHttpServletRequestBuilder.asBoclipsEmployee() =
+fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "teacher@boclips.com") =
     this.with(
         SecurityMockMvcRequestPostProcessors
-            .user("teacher@boclips.com")
+            .user(email)
             .roles(
                 UserRoles.VIEW_VIDEOS,
                 UserRoles.VIEW_DISABLED_VIDEOS,
                 UserRoles.INSERT_EVENTS,
-                UserRoles.UPDATE_VIDEOS
+                UserRoles.UPDATE_VIDEOS,
+                UserRoles.VIEW_COLLECTIONS,
+                UserRoles.UPDATE_COLLECTIONS,
+                UserRoles.DELETE_COLLECTIONS,
+                UserRoles.INSERT_COLLECTIONS
             )
     )
 

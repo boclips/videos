@@ -3,16 +3,13 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.isEmptyString
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
@@ -20,15 +17,8 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.net.URI
 import java.time.ZonedDateTime
 
@@ -55,9 +45,29 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
             .andExpect(jsonPath("$.title", equalTo("a collection")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
             .andReturn()
+    }
+
+    @Test
+    @Disabled
+    fun `highlighting collection from Boclips employees`() {
+        val email = "terry@boclips.com"
+
+        val collectionUrl = mockMvc.perform(
+                post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"title": "a collection"}""")
+                        .asBoclipsEmployee(email)
+        )
+                .andExpect(status().isCreated)
+                .andExpect(header().string("Location", containsString("/collections/")))
+                .andReturn().response.getHeader("Location")!!
+
+        mockMvc.perform(get(collectionUrl).asBoclipsEmployee(email))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.createdBy", equalTo("Boclips")))
     }
 
     @Test
