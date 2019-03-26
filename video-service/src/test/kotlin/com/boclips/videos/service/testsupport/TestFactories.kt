@@ -142,14 +142,16 @@ object TestFactories {
         title: String = "collection title",
         videos: List<AssetId> = listOf(createVideo().asset.assetId),
         updatedAt: Instant = Instant.now(),
-        isPublic: Boolean = false
+        isPublic: Boolean = false,
+        createdByBoclips: Boolean = false
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
         title = title,
         videos = videos,
         updatedAt = updatedAt,
-        isPublic = isPublic
+        isPublic = isPublic,
+        createdByBoclips = createdByBoclips
     )
 
     fun aValidId(): String {

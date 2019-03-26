@@ -10,5 +10,6 @@ data class CollectionDocument(
     val title: String,
     val videos: List<String>,
     val updatedAt: Instant,
-    val visibility: CollectionVisibilityDocument?
+    val visibility: CollectionVisibilityDocument?,
+    val createdByBoclips: Boolean?
 )

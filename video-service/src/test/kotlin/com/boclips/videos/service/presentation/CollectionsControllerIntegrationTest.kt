@@ -9,7 +9,6 @@ import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
@@ -52,7 +51,6 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun `highlighting collection from Boclips employees`() {
         val email = "terry@boclips.com"
 
@@ -154,7 +152,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `collection includes an updatedAt timestamp`() {
-        val collectionId = collectionService.create(owner = UserId("teacher@gmail.com"), title = "Collection").id.value
+        val collectionId = collectionService.create(owner = UserId("teacher@gmail.com"), title = "Collection", createdByBoclips = false).id.value
 
         val moment = ZonedDateTime.now()
         val result = getCollection(collectionId).andReturn()
@@ -203,7 +201,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `add and remove video from a specific collection`() {
         val email = "teacher@gmail.com"
         val videoId = saveVideo(title = "a video title").value
-        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection").id.value
+        val collectionId = collectionService.create(owner = UserId(email), title = "My Special Collection", createdByBoclips = false).id.value
 
         assertCollectionSize(collectionId, 0)
         addVideo(collectionId, videoId)
@@ -253,8 +251,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     private fun createCollectionWithTitle(title: String): String {
         val email = "teacher@gmail.com"
-        val collectionId = collectionService.create(owner = UserId(email), title = title).id.value
-        return collectionId
+        return collectionService.create(owner = UserId(email), title = title, createdByBoclips = false).id.value
     }
 
     private fun addVideo(collectionId: String, videoId: String) {

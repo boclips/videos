@@ -13,5 +13,5 @@ data class CollectionResource(
     val videos: List<Resource<VideoResource>>,
     val updatedAt: Instant,
     val isPublic: Boolean,
-    val createdBy: String = "Teacher"
+    val createdBy: String
 )

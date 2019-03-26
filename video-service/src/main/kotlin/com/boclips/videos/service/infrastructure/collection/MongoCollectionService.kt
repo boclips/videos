@@ -28,7 +28,7 @@ class MongoCollectionService(
         const val collectionName = "collections"
     }
 
-    override fun create(owner: UserId, title: String): Collection {
+    override fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection {
         val objectId = ObjectId()
         val collectionId = CollectionId(value = objectId.toHexString())
         val document = CollectionDocument(
@@ -37,7 +37,8 @@ class MongoCollectionService(
             title = title,
             videos = emptyList(),
             updatedAt = Instant.now(),
-            visibility = CollectionVisibilityDocument.PRIVATE
+            visibility = CollectionVisibilityDocument.PRIVATE,
+            createdByBoclips = createdByBoclips
         )
 
         dbCollection().insertOne(document)
@@ -159,7 +160,8 @@ class MongoCollectionService(
             owner = UserId(value = collectionDocument.owner),
             videos = assetIds,
             updatedAt = collectionDocument.updatedAt,
-            isPublic = isPubliclyVisible
+            isPublic = isPubliclyVisible,
+            createdByBoclips = collectionDocument.createdByBoclips ?: false
         )
     }
 }

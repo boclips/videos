@@ -10,5 +10,14 @@ data class Collection(
     val title: String,
     val videos: List<AssetId>,
     val updatedAt: Instant,
-    val isPublic: Boolean
-)
+    val isPublic: Boolean,
+    val createdByBoclips: Boolean
+) {
+    fun createdBy(): String {
+        return if (createdByBoclips) {
+            "Boclips"
+        } else {
+            "Teacher"
+        }
+    }
+}

@@ -35,6 +35,16 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         assertThat(collection.owner.value).isEqualTo("this-user")
         assertThat(collection.videos).hasSize(2)
         assertThat(collection.videos.first().value).isEqualTo(videoId1)
+        assertThat(collection.createdByBoclips).isFalse()
+    }
+
+    @Test
+    @WithMockUser("user@boclips.com")
+    fun `flags collections by Boclips employees`() {
+        val createRequest = TestFactories.createCollectionRequest(title = "title", videos = emptyList())
+        val collection = createCollection(createRequest)
+
+        assertThat(collection.createdByBoclips).isTrue()
     }
 
     @Test
