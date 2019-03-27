@@ -31,9 +31,9 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
         val videoAsset2 = saveVideo()
 
         val collection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Collection vs Playlist",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "Collection vs Playlist",
+            createdByBoclips = false
         )
 
         collectionService.update(
@@ -60,9 +60,9 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can create and then rename a collection`() {
         val collection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
 
         collectionService.update(collection.id, RenameCollectionCommand("New Title"))
@@ -75,9 +75,9 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can create and mark a collection as public`() {
         val collection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
         assertThat(collection.isPublic).isEqualTo(false)
 
@@ -91,9 +91,9 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can delete a collection`() {
         val collection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
 
         collectionService.delete(collection.id)
@@ -109,9 +109,9 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
         val moment = Instant.now()
         val collectionV1 = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "My Videos",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "My Videos",
+            createdByBoclips = false
         )
 
         assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
@@ -139,9 +139,9 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     fun `can retrieve collection of user`() {
         val videoInCollection = saveVideo()
         val collection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "",
+            createdByBoclips = false
         )
         collectionService.update(
             collection.id,
@@ -156,21 +156,21 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can retrieve public collections`() {
         val publicCollection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
 
         val publicCollection2 = collectionService.create(
-                owner = UserId(value = "user2"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user2"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
 
         val privateCollection = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
 
         collectionService.update(publicCollection.id, ChangeVisibilityCommand(true))
@@ -187,22 +187,24 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can retrieve pages of public collections ordered by last edited`() {
         val publicCollection1 = collectionService.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
 
         val publicCollection2 = collectionService.create(
-                owner = UserId(value = "user2"),
-                title = "Starting Title",
-                createdByBoclips = false
+            owner = UserId(value = "user2"),
+            title = "Starting Title",
+            createdByBoclips = false
         )
 
         collectionService.update(publicCollection1.id, ChangeVisibilityCommand(true))
+
+        Thread.sleep(500)
+
         collectionService.update(publicCollection2.id, ChangeVisibilityCommand(true))
 
         val firstPage = collectionService.getPublic(PageRequest(0, 1))
-
         assertThat(firstPage.pageInfo.hasMoreElements).isTrue()
         assertThat(firstPage.elements).hasSize(1)
         assertThat(firstPage.elements.map { it.id }).contains(publicCollection2.id)
