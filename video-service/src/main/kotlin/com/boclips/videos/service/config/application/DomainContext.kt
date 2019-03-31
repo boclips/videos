@@ -41,7 +41,7 @@ class DomainContext(val mongoClient: MongoClient) {
 
     @Bean
     fun collectionService(videoService: VideoService): CollectionService {
-        return MongoCollectionService(mongoClient, videoService)
+        return MongoCollectionService(mongoClient)
     }
 
     @Bean

@@ -8,13 +8,8 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
-import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
-import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -22,19 +17,17 @@ import mu.KLogging
 import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.addToSet
 import org.litote.kmongo.combine
 import org.litote.kmongo.descendingSort
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
-import org.litote.kmongo.pull
 import org.litote.kmongo.set
 import java.time.Instant
 
 class MongoCollectionService(
     private val mongoClient: MongoClient,
-    private val videoService: VideoService
+    private val collectionUpdates: CollectionUpdates = CollectionUpdates()
 ) : CollectionService {
     companion object : KLogging() {
         const val collectionName = "collections"
@@ -79,16 +72,17 @@ class MongoCollectionService(
     }
 
     override fun getPublic(pageRequest: PageRequest): Page<Collection> {
-        val publicCollectionsCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
-        val publicCollections =
-            dbCollection().find(publicCollectionsCriteria)
-                .descendingSort(CollectionDocument::updatedAt)
-                .limit(pageRequest.size)
-                .skip(pageRequest.size * pageRequest.page)
-                .mapNotNull(this::toCollection)
+        val criteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
 
-        val hasMoreElements =
-            dbCollection().countDocuments(publicCollectionsCriteria) > (pageRequest.size + 1) * pageRequest.page
+        val publicCollections = dbCollection()
+            .find(criteria)
+            .descendingSort(CollectionDocument::updatedAt)
+            .limit(pageRequest.size)
+            .skip(pageRequest.size * pageRequest.page)
+            .mapNotNull(this::toCollection)
+
+        val totalDocuments = dbCollection().countDocuments(criteria)
+        val hasMoreElements = totalDocuments > (pageRequest.size + 1) * pageRequest.page
         logger.info { "Found ${publicCollections.size} public collections" }
 
         return Page(elements = publicCollections, pageInfo = PageInfo(hasMoreElements = hasMoreElements))
@@ -99,22 +93,11 @@ class MongoCollectionService(
     }
 
     override fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
-        val updateBson =
-            updateCommands.fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
-                val commandAsBson = when (updateCommand) {
-                    is AddVideoToCollectionCommand -> addVideo(
-                        id,
-                        videoService.get(updateCommand.videoId).asset.assetId
-                    )
-                    is RemoveVideoFromCollectionCommand -> removeVideo(id, updateCommand.videoId)
-                    is RenameCollectionCommand -> renameCollection(id, updateCommand.title)
-                    is ChangeVisibilityCommand -> changeVisibility(id, updateCommand.isPublic)
-                    else -> throw Error("Not supported update: $updateCommand")
-                }
-
+        val updateBson = updateCommands
+            .fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
                 combine(
                     partialDocument,
-                    commandAsBson
+                    collectionUpdates.toBson(id, updateCommand)
                 )
             }
 
@@ -124,28 +107,6 @@ class MongoCollectionService(
     override fun delete(collectionId: CollectionId) {
         dbCollection().deleteOne(CollectionDocument::id eq ObjectId(collectionId.value))
         logger.info { "Deleted collection $collectionId" }
-    }
-
-    private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {
-        logger.info { "Prepare video for removal from collection $collectionId" }
-        return pull(CollectionDocument::videos, assetId.value)
-    }
-
-    private fun addVideo(collectionId: CollectionId, assetId: AssetId): Bson {
-        logger.info { "Prepare video for addition to collection $collectionId" }
-        return addToSet(CollectionDocument::videos, assetId.value)
-    }
-
-    private fun renameCollection(collectionId: CollectionId, title: String): Bson {
-        logger.info { "Prepare renaming of video in collection $collectionId" }
-        return set(CollectionDocument::title, title)
-    }
-
-    private fun changeVisibility(collectionId: CollectionId, isPublic: Boolean): Bson {
-        val visibility = if (isPublic) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE
-
-        logger.info { "Prepare visibility change of collection $collectionId to $visibility" }
-        return set(CollectionDocument::visibility, visibility)
     }
 
     private fun updateOne(id: CollectionId, update: Bson) {
