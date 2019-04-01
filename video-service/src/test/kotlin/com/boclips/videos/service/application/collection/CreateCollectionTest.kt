@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
+import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -20,7 +21,13 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     @WithMockUser("this-user")
     fun `creates collection and associates videos`() {
-        val videoId1 = createVideo(TestFactories.createCreateVideoRequest(title = "a-video", providerVideoId = "hurray", playbackId = "hiphip")).content.id
+        val videoId1 = createVideo(
+            TestFactories.createCreateVideoRequest(
+                title = "a-video",
+                providerVideoId = "hurray",
+                playbackId = "hiphip"
+            )
+        ).content.id
         val videoId2 = createVideo(TestFactories.createCreateVideoRequest(title = "another-video")).content.id
         val createRequest = TestFactories.createCollectionRequest(
             title = "title",
@@ -28,14 +35,14 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         )
 
         val collection = createCollection(createRequest)
-
-        val allCollections = collectionService.getByOwner(UserId("this-user"))
-        assertThat(allCollections).contains(collection)
         assertThat(collection.title).isEqualTo("title")
         assertThat(collection.owner.value).isEqualTo("this-user")
         assertThat(collection.videos).hasSize(2)
         assertThat(collection.videos.first().value).isEqualTo(videoId1)
         assertThat(collection.createdByBoclips).isFalse()
+
+        val allCollections = collectionService.getByOwner(UserId("this-user"), PageRequest(0, 10)).elements
+        assertThat(allCollections).contains(collection)
     }
 
     @Test

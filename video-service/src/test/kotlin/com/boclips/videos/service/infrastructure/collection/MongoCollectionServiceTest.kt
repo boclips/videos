@@ -148,9 +148,9 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             AddVideoToCollectionCommand(videoInCollection)
         )
 
-        val userCollection = collectionService.getByOwner(UserId(value = "user1"))
-
-        assertThat(userCollection.size).isEqualTo(1)
+        val userCollection = collectionService.getByOwner(UserId(value = "user1"), PageRequest(0, 10))
+        assertThat(userCollection.elements).hasSize(1)
+        assertThat(userCollection.elements.map { it.id }).contains(collection.id)
     }
 
     @Test

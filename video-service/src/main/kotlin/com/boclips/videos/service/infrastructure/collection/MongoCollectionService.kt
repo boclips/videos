@@ -53,14 +53,33 @@ class MongoCollectionService(
         return toCollection(collectionDocument)
     }
 
-    override fun getByOwner(owner: UserId): List<Collection> {
+    override fun getByOwner(
+        owner: UserId,
+        pageRequest: PageRequest
+    ): Page<Collection> {
         val collectionsDocuments = dbCollection()
             .find(CollectionDocument::owner eq owner.value)
             .mapNotNull(this::toCollection)
 
         logger.info { "Found ${collectionsDocuments.size} collections for user ${owner.value}" }
 
-        return collectionsDocuments
+        return Page(elements=collectionsDocuments, pageInfo = PageInfo(hasMoreElements = false))
+    }
+
+    override fun getPublic(pageRequest: PageRequest): Page<Collection> {
+        val publicCollectionsCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
+        val publicCollections =
+            dbCollection().find(publicCollectionsCriteria)
+                .descendingSort(CollectionDocument::updatedAt)
+                .limit(pageRequest.size)
+                .skip(pageRequest.size * pageRequest.page)
+                .mapNotNull(this::toCollection)
+
+        val hasMoreElements = dbCollection().countDocuments(publicCollectionsCriteria) > (pageRequest.size + 1) * pageRequest.page
+        logger.info { "Found ${publicCollections.size} public collections" }
+
+        return Page(elements = publicCollections, pageInfo = PageInfo(hasMoreElements = hasMoreElements))
+
     }
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
@@ -93,22 +112,6 @@ class MongoCollectionService(
     override fun delete(collectionId: CollectionId) {
         dbCollection().deleteOne(CollectionDocument::id eq ObjectId(collectionId.value))
         logger.info { "Deleted collection $collectionId" }
-    }
-
-    override fun getPublic(pageRequest: PageRequest): Page<Collection> {
-        val publicCollectionsCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
-        val publicCollections =
-                dbCollection().find(publicCollectionsCriteria)
-                        .descendingSort(CollectionDocument::updatedAt)
-                        .limit(pageRequest.size)
-                        .skip(pageRequest.size * pageRequest.page)
-                .mapNotNull(this::toCollection)
-
-        val hasMoreElements = dbCollection().countDocuments(publicCollectionsCriteria) > (pageRequest.size + 1) * pageRequest.page
-        logger.info { "Found ${publicCollections.size} public collections" }
-
-        return Page(elements = publicCollections, pageInfo = PageInfo(hasMoreElements = hasMoreElements))
-
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {

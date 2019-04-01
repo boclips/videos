@@ -1,6 +1,9 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.domain.model.Page
+import com.boclips.videos.service.domain.model.PageInfo
+import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -38,7 +41,7 @@ class GetUserCollectionsTest {
     @Test
     fun `user fetches 2 collections with full fat videos`() {
         collectionService = mock {
-            on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(
+            on { getByOwner(UserId(value = "me@me.com"), PageRequest(0, 10)) } doReturn Page(elements=listOf(
                 TestFactories.createCollection(
                     id = CollectionId("collection-id"),
                     owner = "me@me.com",
@@ -46,6 +49,7 @@ class GetUserCollectionsTest {
                     videos = listOf(video.asset.assetId)
                 ),
                 TestFactories.createCollection()
+            ), pageInfo = PageInfo(hasMoreElements = false)
             )
         }
 
@@ -66,7 +70,7 @@ class GetUserCollectionsTest {
     @Test
     fun `user fetches 2 collections with skinny videos`() {
         collectionService = mock {
-            on { getByOwner(UserId(value = "me@me.com")) } doReturn listOf(
+            on { getByOwner(UserId(value = "me@me.com"), PageRequest(0, 10)) } doReturn Page(elements=listOf(
                 TestFactories.createCollection(
                     id = CollectionId("collection-id"),
                     owner = "me@me.com",
@@ -74,6 +78,7 @@ class GetUserCollectionsTest {
                     videos = listOf(video.asset.assetId)
                 ),
                 TestFactories.createCollection()
+            ), pageInfo = PageInfo(hasMoreElements = false)
             )
         }
 
