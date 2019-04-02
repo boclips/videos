@@ -8,18 +8,17 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.CollectionsController
+import com.boclips.videos.service.presentation.Projections
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class GetPublicCollectionsTest {
+class GetCollectionsTest {
 
     lateinit var collectionResourceFactory: CollectionResourceFactory
     lateinit var videoService: VideoService
@@ -41,19 +40,27 @@ class GetPublicCollectionsTest {
     @Test
     fun `fetches all public collections with skinny videos`() {
         collectionService = mock {
-            on { getPublic(PageRequest(0, 1)) } doReturn Page(listOf(
-                TestFactories.createCollection(
-                    id = CollectionId("collection-id"),
-                    owner = "yoyoyo@public.com",
-                    title = "collection title",
-                    videos = listOf(video.asset.assetId),
-                    isPublic = true
-                ),
-                TestFactories.createCollection(isPublic = true)
-            ), PageInfo(true))
+            on { getPublic(PageRequest(0, 1)) } doReturn Page(
+                listOf(
+                    TestFactories.createCollection(
+                        id = CollectionId("collection-id"),
+                        owner = "yoyoyo@public.com",
+                        title = "collection title",
+                        videos = listOf(video.asset.assetId),
+                        isPublic = true
+                    ),
+                    TestFactories.createCollection(isPublic = true)
+                ), PageInfo(true)
+            )
         }
 
-        val collections = GetPublicCollections(collectionService, collectionResourceFactory)(CollectionsController.Projections.list, 0, 1)
+        val collections = GetCollections(collectionService, collectionResourceFactory)(
+            Projections.list,
+            true,
+            null,
+            0,
+            1
+        )
 
         assertThat(collections.elements).hasSize(2)
         val collection = collections.elements.first()
@@ -67,19 +74,24 @@ class GetPublicCollectionsTest {
     @Test
     fun `fetches all public collections with fat videos`() {
         collectionService = mock {
-            on { getPublic(PageRequest(0,1)) } doReturn Page(listOf(
-                TestFactories.createCollection(
-                    id = CollectionId("collection-id"),
-                    owner = "yoyoyo@public.com",
-                    title = "collection title",
-                    videos = listOf(video.asset.assetId),
-                    isPublic = true
-                ),
-                TestFactories.createCollection(isPublic = true)
-            ), PageInfo(true))
+            on { getPublic(PageRequest(0, 1)) } doReturn Page(
+                listOf(
+                    TestFactories.createCollection(
+                        id = CollectionId("collection-id"),
+                        owner = "yoyoyo@public.com",
+                        title = "collection title",
+                        videos = listOf(video.asset.assetId),
+                        isPublic = true
+                    ),
+                    TestFactories.createCollection(isPublic = true)
+                ), PageInfo(true)
+            )
         }
 
-        val collections = GetPublicCollections(collectionService, collectionResourceFactory)(CollectionsController.Projections.details,0,1)
+        val collections = GetCollections(
+            collectionService,
+            collectionResourceFactory
+        )(projection = Projections.details, public = true, owner = null, page = 0, size = 1)
 
         assertThat(collections.elements).hasSize(2)
         val collection = collections.elements.first()

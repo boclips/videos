@@ -8,7 +8,12 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.service.collection.*
+import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
+import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
+import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
+import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -17,7 +22,14 @@ import mu.KLogging
 import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.*
+import org.litote.kmongo.addToSet
+import org.litote.kmongo.combine
+import org.litote.kmongo.descendingSort
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.pull
+import org.litote.kmongo.set
 import java.time.Instant
 
 class MongoCollectionService(
@@ -63,7 +75,7 @@ class MongoCollectionService(
 
         logger.info { "Found ${collectionsDocuments.size} collections for user ${owner.value}" }
 
-        return Page(elements=collectionsDocuments, pageInfo = PageInfo(hasMoreElements = false))
+        return Page(elements = collectionsDocuments, pageInfo = PageInfo(hasMoreElements = false))
     }
 
     override fun getPublic(pageRequest: PageRequest): Page<Collection> {
@@ -75,11 +87,11 @@ class MongoCollectionService(
                 .skip(pageRequest.size * pageRequest.page)
                 .mapNotNull(this::toCollection)
 
-        val hasMoreElements = dbCollection().countDocuments(publicCollectionsCriteria) > (pageRequest.size + 1) * pageRequest.page
+        val hasMoreElements =
+            dbCollection().countDocuments(publicCollectionsCriteria) > (pageRequest.size + 1) * pageRequest.page
         logger.info { "Found ${publicCollections.size} public collections" }
 
         return Page(elements = publicCollections, pageInfo = PageInfo(hasMoreElements = hasMoreElements))
-
     }
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {

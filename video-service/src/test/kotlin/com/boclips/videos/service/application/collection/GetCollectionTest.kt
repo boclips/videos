@@ -64,7 +64,6 @@ class GetCollectionTest {
         val getCollection = GetCollection(collectionService, collectionResourceFactory)
 
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = "123") }
-        assertThrows<CollectionNotFoundException> { getCollection(collectionId = null) }
     }
 
     @Test

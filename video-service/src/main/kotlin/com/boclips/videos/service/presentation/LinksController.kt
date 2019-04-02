@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.security.UserRoles.VIEW_DISABLED_VIDEOS
-import com.boclips.videos.service.presentation.CollectionsController.Companion.PUBLIC_COLLECTIONS_PAGE_SIZE
 import getCurrentUserIfNotAnonymous
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
@@ -12,24 +11,22 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1")
-class LinksController {
+class LinksController(
+    private val collectionsLinkBuilder: CollectionsLinkBuilder
+) {
     @GetMapping
     fun search(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
-        val currentUserId = getCurrentUserIfNotAnonymous()?.id
-
         return Resource(
             "", listOfNotNull(
                 VideoController.videoLink(),
                 EventController.createPlaybackEventLink(),
                 EventController.createNoResultsEventLink(),
-                CollectionsController.getPublicCollectionsLink().withRel("publicCollections"),
 
-                addIfAuthenticated(VideoController.videosLink()),
-                addIfAuthenticated(VideoController.searchLink()),
-                addIfAuthenticated(CollectionsController.getUserCollectionLink(null).withRel("userCollection")),
-                addIfAuthenticated(CollectionsController.postUserCollectionsLink().withRel("userCollections")),
-                currentUserId?.let { addIfAuthenticated(CollectionsController.getUserCollectionsDetailsLink(it).withRel("userCollectionsDetails")) },
-                currentUserId?.let { addIfAuthenticated(CollectionsController.getUserCollectionsListLink(it).withRel("userCollectionsList")) },
+                addIfAuthenticated { collectionsLinkBuilder.publicCollections() },
+                addIfAuthenticated { VideoController.videosLink() },
+                addIfAuthenticated { VideoController.searchLink() },
+                addIfAuthenticated { collectionsLinkBuilder.collection(null) },
+                addIfAuthenticated { userId -> collectionsLinkBuilder.collectionsByUser(userId) },
 
                 if (request.isUserInRole(VIEW_DISABLED_VIDEOS)) VideoController.adminSearchLink() else null
             )
@@ -37,4 +34,5 @@ class LinksController {
     }
 }
 
-private fun addIfAuthenticated(link: Link) = getCurrentUserIfNotAnonymous()?.let { link }
+private fun addIfAuthenticated(linkSupplier: (user: String) -> Link): Link? =
+    getCurrentUserIfNotAnonymous()?.let { linkSupplier(it.id) }

@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.collection.security.getReadableCollectionOrThrow
-import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
@@ -10,11 +9,8 @@ class GetCollection(
     private val collectionService: CollectionService,
     private val collectionResourceFactory: CollectionResourceFactory
 ) {
-    operator fun invoke(collectionId: String?): CollectionResource {
-        if (collectionId == null) {
-            throw CollectionNotFoundException("unknown ID")
-        }
-
-        return collectionService.getReadableCollectionOrThrow(collectionId).let(collectionResourceFactory::buildCollectionListResource)
+    operator fun invoke(collectionId: String): CollectionResource {
+        return collectionService.getReadableCollectionOrThrow(collectionId)
+            .let(collectionResourceFactory::buildCollectionListResource)
     }
 }
