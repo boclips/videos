@@ -35,8 +35,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.search").doesNotExist())
             .andExpect(jsonPath("$._links.videos").doesNotExist())
             .andExpect(jsonPath("$._links.publicCollections").doesNotExist())
-            .andExpect(jsonPath("$._links.userCollections").doesNotExist())
-            .andExpect(jsonPath("$._links.userCollection").doesNotExist())
+            .andExpect(jsonPath("$._links.myCollections").doesNotExist())
+            .andExpect(jsonPath("$._links.collection").doesNotExist())
             .andExpect(jsonPath("$._links.collections").doesNotExist())
     }
 
@@ -57,12 +57,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(
                 jsonPath(
-                    "$._links.userCollections.href",
+                    "$._links.myCollections.href",
                     endsWith("collections?projection=list&owner=teacher@teacher.com&page=0&size=30")
                 )
             )
-            .andExpect(jsonPath("$._links.userCollection.href", endsWith("collections/{id}")))
-            .andExpect(jsonPath("$._links.userCollection.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.collection.href", endsWith("collections/{id}")))
+            .andExpect(jsonPath("$._links.collection.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.collections.href", endsWith("collections")))
 
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())

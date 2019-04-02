@@ -40,7 +40,7 @@ class CollectionsLinkBuilderTest {
         )
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&owner=user1&page=0&size=2")
-        assertThat(link.rel).isEqualTo("userCollections")
+        assertThat(link.rel).isEqualTo("myCollections")
     }
 
     @Test
@@ -65,7 +65,7 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.collection(id = "c123")
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections/c123")
-        assertThat(link.rel).isEqualTo("userCollection")
+        assertThat(link.rel).isEqualTo("collection")
     }
 
     @Test
@@ -77,7 +77,7 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.collection(id = null)
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections/{id}")
-        assertThat(link.rel).isEqualTo("userCollection")
+        assertThat(link.rel).isEqualTo("collection")
         assertThat(link.isTemplated).isTrue()
     }
 

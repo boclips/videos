@@ -24,13 +24,13 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return if (id == null) {
             Link(
                 getCollectionsRoot().toUriString() + "/{id}",
-                "userCollection"
+                "collection"
             )
         } else {
             val href = getCollectionsRoot()
                 .pathSegment(id)
                 .toUriString()
-            Link(href, "userCollection")
+            Link(href, "collection")
         }
     }
 
@@ -62,7 +62,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             .queryParam("page", page)
             .queryParam("size", size)
             .toUriString()
-        return Link(href, "userCollections")
+        return Link(href, "myCollections")
     }
 
     fun self(): Link {
