@@ -58,34 +58,14 @@ class MongoCollectionService(
         return toCollection(collectionDocument)
     }
 
-    override fun getByOwner(
-        owner: UserId,
-        pageRequest: PageRequest
-    ): Page<Collection> {
-        val collectionsDocuments = dbCollection()
-            .find(CollectionDocument::owner eq owner.value)
-            .mapNotNull(this::toCollection)
-
-        logger.info { "Found ${collectionsDocuments.size} collections for user ${owner.value}" }
-
-        return Page(elements = collectionsDocuments, pageInfo = PageInfo(hasMoreElements = false))
+    override fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection> {
+        val criteria = CollectionDocument::owner eq owner.value
+        return getPagedCollections(pageRequest, criteria)
     }
 
     override fun getPublic(pageRequest: PageRequest): Page<Collection> {
         val criteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
-
-        val publicCollections = dbCollection()
-            .find(criteria)
-            .descendingSort(CollectionDocument::updatedAt)
-            .limit(pageRequest.size)
-            .skip(pageRequest.size * pageRequest.page)
-            .mapNotNull(this::toCollection)
-
-        val totalDocuments = dbCollection().countDocuments(criteria)
-        val hasMoreElements = totalDocuments > (pageRequest.size + 1) * pageRequest.page
-        logger.info { "Found ${publicCollections.size} public collections" }
-
-        return Page(elements = publicCollections, pageInfo = PageInfo(hasMoreElements = hasMoreElements))
+        return getPagedCollections(pageRequest, criteria)
     }
 
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
@@ -107,6 +87,25 @@ class MongoCollectionService(
     override fun delete(collectionId: CollectionId) {
         dbCollection().deleteOne(CollectionDocument::id eq ObjectId(collectionId.value))
         logger.info { "Deleted collection $collectionId" }
+    }
+
+    private fun getPagedCollections(
+        pageRequest: PageRequest,
+        criteria: Bson
+    ): Page<Collection> {
+        val offset = pageRequest.size * pageRequest.page
+        val collections = dbCollection()
+            .find(criteria)
+            .descendingSort(CollectionDocument::updatedAt)
+            .limit(pageRequest.size)
+            .skip(offset)
+            .mapNotNull(this::toCollection)
+
+        val totalDocuments = dbCollection().countDocuments(criteria)
+        val hasMoreElements = totalDocuments > (pageRequest.size + 1) * pageRequest.page
+        logger.info { "Found ${collections.size} public collections" }
+
+        return Page(elements = collections, pageInfo = PageInfo(hasMoreElements = hasMoreElements))
     }
 
     private fun updateOne(id: CollectionId, update: Bson) {
