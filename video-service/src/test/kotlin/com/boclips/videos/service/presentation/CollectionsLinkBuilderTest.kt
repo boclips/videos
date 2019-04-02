@@ -44,6 +44,19 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
+    fun `when collections`() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.collections()
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections")
+        assertThat(link.rel).isEqualTo("collections")
+    }
+
+
+    @Test
     fun `when collection`() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))

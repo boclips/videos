@@ -34,6 +34,8 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
+    fun collections() = Link(getCollectionsRoot().toUriString(), "collections")
+
     fun publicCollections(
         projection: Projections = Projections.list,
         page: Int = 0,

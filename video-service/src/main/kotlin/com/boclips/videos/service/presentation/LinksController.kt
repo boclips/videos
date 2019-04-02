@@ -27,6 +27,7 @@ class LinksController(
                 addIfAuthenticated { VideoController.searchLink() },
                 addIfAuthenticated { collectionsLinkBuilder.collection(null) },
                 addIfAuthenticated { userId -> collectionsLinkBuilder.collectionsByUser(userId) },
+                addIfAuthenticated { collectionsLinkBuilder.collections() },
 
                 if (request.isUserInRole(VIEW_DISABLED_VIDEOS)) VideoController.adminSearchLink() else null
             )
