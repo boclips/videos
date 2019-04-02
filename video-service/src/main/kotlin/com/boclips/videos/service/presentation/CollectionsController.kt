@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.collection.AddVideoToCollection
+import com.boclips.videos.service.application.collection.CollectionFilter
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
@@ -10,6 +11,7 @@ import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import getCurrentUserId
 import mu.KLogging
 import org.springframework.hateoas.Resource
@@ -70,16 +72,21 @@ class CollectionsController(
 
     @GetMapping
     fun getFilteredCollections(
-        @RequestParam projection: Projections,
+        @RequestParam projection: Projection,
         @RequestParam public: Boolean = false,
         @RequestParam(required = false) owner: String?,
         @RequestParam page: Int?,
         @RequestParam size: Int?
     ): Resources<Resource<CollectionResource>> {
-        val pageNum = page?.let { it } ?: 0
-        val pageSize = size?.let { it } ?: PUBLIC_COLLECTIONS_PAGE_SIZE
+        val collectionFilter = CollectionFilter(
+            projection = projection,
+            visibility = public,
+            owner = owner,
+            pageNumber = page?.let { it } ?: 0,
+            pageSize = size?.let { it } ?: PUBLIC_COLLECTIONS_PAGE_SIZE
+        )
 
-        val collections = getCollections(projection, public, owner, pageNum, pageSize)
+        val collections = getCollections(collectionFilter)
 
         return Resources(
             collections.elements.map(::wrapCollection),

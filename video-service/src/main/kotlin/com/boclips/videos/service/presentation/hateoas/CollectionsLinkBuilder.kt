@@ -1,6 +1,8 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.videos.service.domain.model.PageInfo
+import com.boclips.videos.service.presentation.CollectionsController
+import com.boclips.videos.service.presentation.Projection
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.hateoas.Link
@@ -37,7 +39,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun collections() = Link(getCollectionsRoot().toUriString(), "collections")
 
     fun publicCollections(
-        projection: Projections = Projections.list,
+        projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
     ): Link {
@@ -52,7 +54,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
 
     fun collectionsByUser(
         owner: String,
-        projection: Projections = Projections.list,
+        projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
     ): Link {
@@ -83,7 +85,10 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
-    fun projections() = ProjectionsCollectionsLinkBuilder(uriComponentsBuilderFactory)
+    fun projections() =
+        ProjectionsCollectionsLinkBuilder(
+            uriComponentsBuilderFactory
+        )
 
     private fun getCollectionsRoot() = uriComponentsBuilderFactory.getInstance().replacePath("/v1/collections")
 

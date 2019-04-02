@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-enum class Projections {
+enum class Projection {
     details,
     list
 }

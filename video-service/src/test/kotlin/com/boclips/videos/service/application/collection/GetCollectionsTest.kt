@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.Projections
+import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
@@ -54,12 +54,8 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(collectionService, collectionResourceFactory)(
-            Projections.list,
-            true,
-            null,
-            0,
-            1
+        val collections = GetCollections(collectionService, collectionResourceFactory).invoke(
+            CollectionFilter(Projection.list, true, null, 0, 1)
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -88,12 +84,18 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(
-            collectionService,
-            collectionResourceFactory
-        )(projection = Projections.details, public = true, owner = null, page = 0, size = 1)
+        val collections = GetCollections(collectionService, collectionResourceFactory).invoke(
+            CollectionFilter(
+                projection = Projection.details,
+                visibility = true,
+                owner = null,
+                pageNumber = 0,
+                pageSize = 1
+            )
+        )
 
         assertThat(collections.elements).hasSize(2)
+
         val collection = collections.elements.first()
         assertThat(collection.id).isEqualTo("collection-id")
         assertThat(collection.owner).isEqualTo("yoyoyo@public.com")

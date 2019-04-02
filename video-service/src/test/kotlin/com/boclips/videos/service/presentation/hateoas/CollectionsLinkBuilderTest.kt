@@ -1,6 +1,7 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.videos.service.domain.model.PageInfo
+import com.boclips.videos.service.presentation.Projection
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +18,7 @@ class CollectionsLinkBuilderTest {
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.publicCollections(
-            projection = Projections.details,
+            projection = Projection.details,
             page = 0,
             size = 2
         )
@@ -34,7 +35,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.collectionsByUser(
             owner = "user1",
-            projection = Projections.list,
+            projection = Projection.list,
             page = 0,
             size = 2
         )

@@ -138,5 +138,4 @@ class VideoController(
         bulkUpdateVideo(bulkUpdateRequest)
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
-
 }

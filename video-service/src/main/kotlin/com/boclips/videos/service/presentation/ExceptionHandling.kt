@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.application.UnauthorizedException
 import com.boclips.videos.service.application.analytics.InvalidEventException
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
@@ -29,5 +30,11 @@ class ExceptionHandling {
     @ExceptionHandler(InvalidEventException::class)
     fun handleInvalidEventException(ex: InvalidEventException) {
         logger.error { "Event data malformed or invalid: $ex" }
+    }
+
+    @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Not authorized")
+    @ExceptionHandler(UnauthorizedException::class)
+    fun handleNotAuthorizedException(ex: UnauthorizedException) {
+        logger.error { "Unauthorized: $ex" }
     }
 }

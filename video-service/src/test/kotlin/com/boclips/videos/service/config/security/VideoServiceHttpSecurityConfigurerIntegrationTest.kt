@@ -45,6 +45,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     fun `everybody can access any endpoint with OPTIONS`() {
         mockMvc.perform(options("/v1/videos"))
             .andExpect(status().isOk)
+
         mockMvc.perform(options("/v1"))
             .andExpect(status().`is`(HttpStatus.OK.value()))
     }
@@ -79,13 +80,13 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `teachers can access their collections`() {
-        mockMvc.perform(get("/v1/collections?projection=details&page=0&size=1"))
+        mockMvc.perform(get("/v1/collections?projection=details&public=true&page=0&size=1"))
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(get("/v1/collections?projection=details&page=0&size=1").asReporter())
+        mockMvc.perform(get("/v1/collections?projection=details&public=true&page=0&size=1").asReporter())
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(get("/v1/collections?projection=details&page=0&size=1").asTeacher())
+        mockMvc.perform(get("/v1/collections?projection=details&public=true&page=0&size=1").asTeacher())
             .andExpect(status().is2xxSuccessful)
     }
 
@@ -98,7 +99,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
             .andExpect(status().isForbidden)
 
         mockMvc.perform(patch("/v1/collections/53fbf4615c3b9f41c381b6a3").asTeacher())
-                .andExpect(status().`is`(not401Or403()))
+            .andExpect(status().`is`(not401Or403()))
     }
 
     @Test
@@ -110,7 +111,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
             .andExpect(status().isForbidden)
 
         mockMvc.perform(delete("/v1/collections/53fbf4615c3b9f41c381b6a3").asTeacher())
-                .andExpect(status().`is`(not401Or403()))
+            .andExpect(status().`is`(not401Or403()))
     }
 
     @Test

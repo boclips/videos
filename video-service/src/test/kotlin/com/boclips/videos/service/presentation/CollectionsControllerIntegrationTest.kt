@@ -133,8 +133,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         createCollection("collection 1")
 
         mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher("notTheOwner@gmail.com"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.collections").doesNotExist())
+            .andExpect(status().isForbidden)
     }
 
     @Test

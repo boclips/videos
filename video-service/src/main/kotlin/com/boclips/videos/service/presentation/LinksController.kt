@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.security.UserRoles.VIEW_DISABLED_VIDEOS
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import getCurrentUserIfNotAnonymous
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
