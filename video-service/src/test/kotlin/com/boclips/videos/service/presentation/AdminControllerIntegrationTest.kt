@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.config.VideosToAnalyseTopic
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -18,9 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var videosToAnalyse: VideosToAnalyseTopic
 
     @Autowired
     lateinit var messageCollector: MessageCollector
@@ -72,7 +68,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
-        val message = messageCollector.forChannel(videosToAnalyse.output()).poll()
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
 
         assertThat(message.payload.toString()).contains(assetId.value)
         assertThat(message.payload.toString()).contains("https://download/video-entry-123.mp4")
@@ -91,7 +87,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
-        val message = messageCollector.forChannel(videosToAnalyse.output()).poll()
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
 
         assertThat(message).isNull()
     }

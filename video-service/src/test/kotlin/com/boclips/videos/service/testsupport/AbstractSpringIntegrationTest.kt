@@ -6,6 +6,7 @@ import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.config.messaging.Topics
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -69,6 +70,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var mongoClient: MongoClient
+
+    @Autowired
+    lateinit var topics: Topics
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null

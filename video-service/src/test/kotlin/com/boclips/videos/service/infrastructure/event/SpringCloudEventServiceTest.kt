@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.event
 
-import com.boclips.eventtypes.VideoToAnalyse
-import com.boclips.videos.service.config.VideosToAnalyseTopic
+import com.boclips.events.types.VideoToAnalyse
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -20,9 +19,6 @@ class SpringCloudEventServiceTest : AbstractSpringIntegrationTest() {
     lateinit var messageCollector: MessageCollector
 
     @Autowired
-    lateinit var videosToAnalyse : VideosToAnalyseTopic
-
-    @Autowired
     lateinit var objectMapper: ObjectMapper
 
     @Test
@@ -34,7 +30,7 @@ class SpringCloudEventServiceTest : AbstractSpringIntegrationTest() {
         )
         eventService.analyseVideo(video)
 
-        val message = messageCollector.forChannel(videosToAnalyse.output()).poll()
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
         assertThat(message.payload).isNotNull
 
         val messagePayload = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)

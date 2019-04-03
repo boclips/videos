@@ -1,9 +1,6 @@
 keycloak:
   configurationFile: 'classpath:keycloak-testing.json'
 
-spring:
-  cloud:
-    stream:
-      bindings:
-        videos-to-analyse:
-          destination: videos-to-analyse-testing
+pubsub:
+  topic:
+    suffix: testing

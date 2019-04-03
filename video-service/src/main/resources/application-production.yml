@@ -2,9 +2,6 @@ keycloak:
   configurationFile: 'classpath:keycloak-production.json'
 
 
-spring:
-  cloud:
-    stream:
-      bindings:
-        videos-to-analyse:
-          destination: videos-to-analyse-production
+pubsub:
+  topic:
+    suffix: production
