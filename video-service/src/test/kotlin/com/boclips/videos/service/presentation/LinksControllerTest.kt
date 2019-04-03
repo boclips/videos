@@ -30,11 +30,16 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.video.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/events/playback")))
             .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href", endsWith("/events/no-search-results")))
+            .andExpect(
+                jsonPath(
+                    "$._links.publicCollections.href",
+                    endsWith("collections?projection=list&public=true&page=0&size=30")
+                )
+            )
 
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
             .andExpect(jsonPath("$._links.search").doesNotExist())
             .andExpect(jsonPath("$._links.videos").doesNotExist())
-            .andExpect(jsonPath("$._links.publicCollections").doesNotExist())
             .andExpect(jsonPath("$._links.myCollections").doesNotExist())
             .andExpect(jsonPath("$._links.collection").doesNotExist())
             .andExpect(jsonPath("$._links.collections").doesNotExist())

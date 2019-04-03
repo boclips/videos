@@ -22,8 +22,8 @@ class LinksController(
                 VideoController.videoLink(),
                 EventController.createPlaybackEventLink(),
                 EventController.createNoResultsEventLink(),
+                collectionsLinkBuilder.publicCollections(),
 
-                addIfAuthenticated { collectionsLinkBuilder.publicCollections() },
                 addIfAuthenticated { VideoController.videosLink() },
                 addIfAuthenticated { VideoController.searchLink() },
                 addIfAuthenticated { collectionsLinkBuilder.collection(null) },
