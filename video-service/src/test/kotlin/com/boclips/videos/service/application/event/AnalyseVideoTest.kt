@@ -1,27 +1,35 @@
 package com.boclips.videos.service.application.event
 
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.service.EventService
-import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.boclips.events.types.VideoToAnalyse
+import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
 
-internal class AnalyseVideoTest {
+class AnalyseVideoIntegrationTest(
+    @Autowired val analyseVideo: AnalyseVideo
+) : AbstractSpringIntegrationTest() {
 
     @Test
-    internal fun `sends an event`() {
-        val id = TestFactories.aValidId()
-        val video = TestFactories.createVideo()
-        val videoService = mock<VideoService>()
-        whenever(videoService.get(AssetId(id))).thenReturn(video)
-        val eventService = mock<EventService>()
-        val analyseVideo = AnalyseVideo(videoService, eventService)
+    fun `sends an event`() {
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id")).value
 
-        analyseVideo(id)
+        analyseVideo(videoId)
 
-        verify(eventService).analyseVideo(video)
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
+    }
+
+    @Test
+    fun `throws on youtube videos`() {
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "youtube-id")).value
+
+        assertThrows<VideoNotAnalysableException> { analyseVideo(videoId) }
     }
 }

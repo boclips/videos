@@ -20,9 +20,9 @@ import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.config.messaging.Topics
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.EventService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
@@ -45,7 +45,7 @@ class ApplicationContext(
     val collectionService: CollectionService,
     val analyticsEventService: AnalyticsEventService,
     val videoAccessService: VideoAccessService,
-    val eventService: EventService
+    val topics: Topics
 ) {
 
     @Bean
@@ -134,7 +134,7 @@ class ApplicationContext(
 
     @Bean
     fun analyseVideo(): AnalyseVideo {
-        return AnalyseVideo(videoService, eventService)
+        return AnalyseVideo(videoService, topics)
     }
 
     @Bean

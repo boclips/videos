@@ -19,6 +19,7 @@ import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.stream.test.binder.MessageCollector
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
@@ -73,6 +75,12 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var topics: Topics
+
+    @Autowired
+    lateinit var messageCollector: MessageCollector
+
+    @Autowired
+    lateinit var objectMapper: ObjectMapper
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null
