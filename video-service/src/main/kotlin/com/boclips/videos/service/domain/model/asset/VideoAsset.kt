@@ -17,6 +17,7 @@ data class VideoAsset(
     val duration: Duration,
     val legalRestrictions: String,
     val subjects: Set<Subject>,
+    val language: String?,
     val searchable: Boolean
 ) {
     override fun toString(): String {

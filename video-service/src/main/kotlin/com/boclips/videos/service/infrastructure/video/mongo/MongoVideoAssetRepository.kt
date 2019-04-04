@@ -26,9 +26,9 @@ class MongoVideoAssetRepository(
     private val mongoClient: MongoClient
 ) : VideoAssetRepository {
     companion object : KLogging() {
+
         const val collectionName = "videos"
     }
-
     override fun find(assetId: AssetId): VideoAsset? {
         val videoAssetOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(assetId.value))
             ?.let(VideoDocumentConverter::toAsset)
@@ -123,6 +123,13 @@ class MongoVideoAssetRepository(
         )
 
         logger.info { "Set $assetIds to searchable=$searchable" }
+    }
+
+    override fun setLanguage(assetId: AssetId, language: String) {
+        getVideoCollection().updateOne(
+            VideoDocument::id eq ObjectId(assetId.value),
+            set(VideoDocument::language, language)
+        )
     }
 
     private fun updatedOperation(updateCommand: VideoUpdateCommand): Bson {

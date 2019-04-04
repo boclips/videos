@@ -16,6 +16,7 @@ data class VideoDocument(
     val releaseDate: Date,
     val durationSeconds: Int,
     val legalRestrictions: String,
+    val language: String?,
     val searchable: Boolean
 ) {
     data class Source(val contentPartner: ContentPartner, val videoReference: String) {

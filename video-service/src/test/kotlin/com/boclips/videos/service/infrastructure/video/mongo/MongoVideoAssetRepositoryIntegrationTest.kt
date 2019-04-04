@@ -226,4 +226,14 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
         assertThat(mongoVideoRepository.findAll(assetIds).map(VideoAsset::searchable)).containsExactly(true, true)
     }
+
+    @Test
+    fun setLanguage() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(language = null))
+
+        mongoVideoRepository.setLanguage(asset.assetId, "en-US")
+        val updatedAsset = mongoVideoRepository.find(asset.assetId)
+
+        assertThat(updatedAsset?.language).isEqualTo("en-US")
+    }
 }

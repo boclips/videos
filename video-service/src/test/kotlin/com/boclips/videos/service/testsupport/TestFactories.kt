@@ -43,6 +43,7 @@ object TestFactories {
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         duration: Duration = Duration.ZERO,
         legalRestrictions: String = "",
+        language: String? = null,
         searchable: Boolean = true
     ): VideoAsset {
         return VideoAsset(
@@ -58,6 +59,7 @@ object TestFactories {
             duration = duration,
             legalRestrictions = legalRestrictions,
             subjects = subjects,
+            language = language,
             searchable = searchable
         )
     }

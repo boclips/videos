@@ -30,6 +30,7 @@ object VideoDocumentConverter {
             releaseDate = Date.from(asset.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             durationSeconds = asset.duration.seconds.toInt(),
             legalRestrictions = asset.legalRestrictions,
+            language = asset.language,
             searchable = asset.searchable
         )
     }
@@ -51,6 +52,7 @@ object VideoDocumentConverter {
                 releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
                 duration = Duration.ofSeconds(document.durationSeconds.toLong()),
                 legalRestrictions = document.legalRestrictions,
+                language = document.language,
                 searchable = document.searchable
             )
     }

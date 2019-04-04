@@ -13,4 +13,5 @@ interface VideoAssetRepository {
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): AssetId?
     fun setSearchable(assetIds: List<AssetId>, searchable: Boolean)
+    fun setLanguage(assetId: AssetId, language: String)
 }
