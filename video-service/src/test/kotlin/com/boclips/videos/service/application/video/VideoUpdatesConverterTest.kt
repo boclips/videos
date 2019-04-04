@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Subject
-import com.boclips.videos.service.domain.service.video.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +27,7 @@ class VideoUpdatesConverterTest {
 
         val updates = VideoUpdatesConverter.convert(assetId, videoResource)
 
-        val replaceSubjects = updates.first() as ReplaceSubjects
+        val replaceSubjects = updates.first() as VideoUpdateCommand.ReplaceSubjects
 
         assertThat(replaceSubjects.subjects).isEqualTo(listOf(Subject("Maths")))
     }

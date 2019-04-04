@@ -2,11 +2,7 @@ package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
-import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import org.bson.conversions.Bson
 import org.litote.kmongo.addToSet
 import org.litote.kmongo.pull
@@ -18,14 +14,13 @@ class CollectionUpdates {
         anyUpdateCommand: CollectionUpdateCommand
     ): Bson {
         return when (anyUpdateCommand) {
-            is AddVideoToCollectionCommand -> addVideo(
+            is CollectionUpdateCommand.AddVideoToCollectionCommand -> addVideo(
                 id,
                 anyUpdateCommand.videoId
             )
-            is RemoveVideoFromCollectionCommand -> removeVideo(id, anyUpdateCommand.videoId)
-            is RenameCollectionCommand -> renameCollection(id, anyUpdateCommand.title)
-            is ChangeVisibilityCommand -> changeVisibility(id, anyUpdateCommand.isPublic)
-            else -> throw Error("Not supported update: $anyUpdateCommand")
+            is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> removeVideo(id, anyUpdateCommand.videoId)
+            is CollectionUpdateCommand.RenameCollectionCommand -> renameCollection(id, anyUpdateCommand.title)
+            is CollectionUpdateCommand.ChangeVisibilityCommand -> changeVisibility(id, anyUpdateCommand.isPublic)
         }
     }
 

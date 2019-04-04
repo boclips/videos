@@ -4,11 +4,8 @@ import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
-import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -40,15 +37,15 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
             collectionService.update(
                 collection.id,
-                AddVideoToCollectionCommand(videoAsset1)
+                CollectionUpdateCommand.AddVideoToCollectionCommand(videoAsset1)
             )
             collectionService.update(
                 collection.id,
-                AddVideoToCollectionCommand(videoAsset2)
+                CollectionUpdateCommand.AddVideoToCollectionCommand(videoAsset2)
             )
             collectionService.update(
                 collection.id,
-                RemoveVideoFromCollectionCommand(videoAsset1)
+                CollectionUpdateCommand.RemoveVideoFromCollectionCommand(videoAsset1)
             )
 
             val updatedCollection = collectionService.getById(collection.id)!!
@@ -67,7 +64,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
                 createdByBoclips = false
             )
 
-            collectionService.update(collection.id, RenameCollectionCommand("New Title"))
+            collectionService.update(collection.id, CollectionUpdateCommand.RenameCollectionCommand("New Title"))
 
             val updatedCollection = collectionService.getById(collection.id)!!
 
@@ -83,7 +80,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             )
             assertThat(collection.isPublic).isEqualTo(false)
 
-            collectionService.update(collection.id, ChangeVisibilityCommand(isPublic = true))
+            collectionService.update(collection.id, CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = true))
 
             val updatedCollection = collectionService.getById(collection.id)!!
 
@@ -121,7 +118,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
         collectionService.update(
             collectionV1.id,
-            AddVideoToCollectionCommand(videoAsset1)
+            CollectionUpdateCommand.AddVideoToCollectionCommand(videoAsset1)
         )
 
         val collectionV2 = collectionService.getById(collectionV1.id)!!
@@ -130,7 +127,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
         collectionService.update(
             collectionV2.id,
-            RemoveVideoFromCollectionCommand(videoAsset1)
+            CollectionUpdateCommand.RemoveVideoFromCollectionCommand(videoAsset1)
         )
 
         val collectionV3 = collectionService.getById(collectionV1.id)!!
@@ -150,7 +147,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             )
             collectionService.update(
                 collection.id,
-                AddVideoToCollectionCommand(videoInCollection)
+                CollectionUpdateCommand.AddVideoToCollectionCommand(videoInCollection)
             )
 
             val userCollection = collectionService.getByOwner(UserId(value = "user1"), PageRequest(0, 10))
@@ -178,8 +175,8 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
                 createdByBoclips = false
             )
 
-            collectionService.update(publicCollection.id, ChangeVisibilityCommand(true))
-            collectionService.update(publicCollection2.id, ChangeVisibilityCommand(true))
+            collectionService.update(publicCollection.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
+            collectionService.update(publicCollection2.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
 
             val publicCollections = collectionService.getPublic(PageRequest(0, 10))
 
@@ -203,11 +200,11 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
                 createdByBoclips = false
             )
 
-            collectionService.update(publicCollection1.id, ChangeVisibilityCommand(true))
+            collectionService.update(publicCollection1.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
 
             Thread.sleep(500)
 
-            collectionService.update(publicCollection2.id, ChangeVisibilityCommand(true))
+            collectionService.update(publicCollection2.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
 
             val firstPage = collectionService.getPublic(PageRequest(0, 1))
             assertThat(firstPage.pageInfo.hasMoreElements).isTrue()

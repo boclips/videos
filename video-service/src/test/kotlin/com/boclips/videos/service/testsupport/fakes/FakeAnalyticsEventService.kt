@@ -3,9 +3,7 @@ package com.boclips.videos.service.testsupport.fakes
 import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.infrastructure.analytics.EventType
 import com.boclips.videos.service.infrastructure.analytics.RefererHeaderExtractor
@@ -52,20 +50,6 @@ class FakeAnalyticsEventService : AnalyticsEventService {
         )
     }
 
-    override fun saveAddToCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
-        saveEvent(
-            EventType.ADD_TO_COLLECTION,
-            AddToCollectionEventData(collectionId = collectionId.value, videoId = videoId.value)
-        )
-    }
-
-    override fun saveRemoveFromCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
-        saveEvent(
-            EventType.REMOVE_FROM_COLLECTION,
-            RemoveFromCollectionEventData(collectionId = collectionId.value, videoId = videoId.value)
-        )
-    }
-
     override fun savePlaybackEvent(
         videoId: AssetId,
         videoIndex: Int?,
@@ -86,22 +70,32 @@ class FakeAnalyticsEventService : AnalyticsEventService {
         )
     }
 
-    override fun saveUpdateCollectionEvent(collectiondId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
-        updateCommands.forEach { updateCommand ->
-            when (updateCommand) {
-                is RenameCollectionCommand -> saveEvent(
-                    EventType.RENAME_COLLECTION, RenameCollectionEvent(
-                        collectionId = collectiondId.value,
-                        collectionTitle = updateCommand.title
-                    )
+    override fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
+        updateCommands.forEach { saveEvent(collectionId, it) }
+    }
+
+    private fun saveEvent(collectionId: CollectionId, updateCommand: CollectionUpdateCommand) {
+        return when (updateCommand) {
+            is CollectionUpdateCommand.RenameCollectionCommand -> saveEvent(
+                EventType.RENAME_COLLECTION, RenameCollectionEvent(
+                    collectionId = collectionId.value,
+                    collectionTitle = updateCommand.title
                 )
-                is ChangeVisibilityCommand -> saveEvent(
-                    EventType.CHANGE_VISIBILITY, ChangeVisibilityOfCollectionEvent(
-                        collectionId = collectiondId.value,
-                        isPublic = updateCommand.isPublic
-                    )
+            )
+            is CollectionUpdateCommand.ChangeVisibilityCommand -> saveEvent(
+                EventType.CHANGE_VISIBILITY, ChangeVisibilityOfCollectionEvent(
+                    collectionId = collectionId.value,
+                    isPublic = updateCommand.isPublic
                 )
-            }
+            )
+            is CollectionUpdateCommand.AddVideoToCollectionCommand -> saveEvent(
+                EventType.ADD_TO_COLLECTION,
+                AddToCollectionEventData(collectionId = collectionId.value, videoId = updateCommand.videoId.value)
+            )
+            is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> saveEvent(
+                EventType.REMOVE_FROM_COLLECTION,
+                RemoveFromCollectionEventData(collectionId = collectionId.value, videoId = updateCommand.videoId.value)
+            )
         }
     }
 

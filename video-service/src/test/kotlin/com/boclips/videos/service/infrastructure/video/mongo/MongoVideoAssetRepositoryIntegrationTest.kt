@@ -8,8 +8,7 @@ import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.service.video.ReplaceDuration
-import com.boclips.videos.service.domain.service.video.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -106,7 +105,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         )
 
         val updatedAsset = mongoVideoRepository.update(
-            ReplaceDuration(
+            VideoUpdateCommand.ReplaceDuration(
                 originalAsset.assetId,
                 Duration.ofMinutes(5)
             )
@@ -126,7 +125,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         )
 
         val updatedAsset = mongoVideoRepository.update(
-            ReplaceSubjects(
+            VideoUpdateCommand.ReplaceSubjects(
                 originalAsset.assetId,
                 listOf(Subject("Biology"))
             )
@@ -140,7 +139,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     fun `update throws when video not found`() {
         assertThrows<VideoAssetNotFoundException> {
             mongoVideoRepository.update(
-                ReplaceDuration(
+                VideoUpdateCommand.ReplaceDuration(
                     AssetId(value = TestFactories.aValidId()),
                     duration = Duration.ZERO
                 )
@@ -167,19 +166,19 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         )
 
         val updates = listOf(
-            ReplaceSubjects(
+            VideoUpdateCommand.ReplaceSubjects(
                 assetId = originalAsset1.assetId,
                 subjects = emptyList()
             ),
-            ReplaceDuration(
+            VideoUpdateCommand.ReplaceDuration(
                 assetId = originalAsset1.assetId,
                 duration = Duration.ofMinutes(10)
             ),
-            ReplaceSubjects(
+            VideoUpdateCommand.ReplaceSubjects(
                 assetId = originalAsset2.assetId,
                 subjects = listOf(Subject("French"))
             ),
-            ReplaceDuration(
+            VideoUpdateCommand.ReplaceDuration(
                 assetId = originalAsset2.assetId,
                 duration = Duration.ofMinutes(11)
             )

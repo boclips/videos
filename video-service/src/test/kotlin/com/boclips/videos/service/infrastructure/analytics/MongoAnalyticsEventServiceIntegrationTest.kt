@@ -3,8 +3,7 @@ package com.boclips.videos.service.infrastructure.analytics
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -108,7 +107,10 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `saving add to collection events`() {
         val videoId = TestFactories.aValidId()
-        mongoEventService.saveAddToCollectionEvent(CollectionId("collection id"), AssetId(videoId))
+        mongoEventService.saveUpdateCollectionEvent(
+            CollectionId("collection id"),
+            listOf(CollectionUpdateCommand.AddVideoToCollectionCommand(AssetId(videoId)))
+        )
 
         val event = getEvent()
 
@@ -123,7 +125,10 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `saving remove from collection events`() {
         val videoId = TestFactories.aValidId()
-        mongoEventService.saveRemoveFromCollectionEvent(CollectionId("collection id"), AssetId(videoId))
+        mongoEventService.saveUpdateCollectionEvent(
+            CollectionId("collection id"),
+            listOf(CollectionUpdateCommand.RemoveVideoFromCollectionCommand(AssetId(videoId)))
+        )
 
         val event = getEvent()
 
@@ -138,7 +143,10 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `saving rename collection event`() {
         val collectionId = TestFactories.aValidId()
-        mongoEventService.saveUpdateCollectionEvent(CollectionId(collectionId), listOf(RenameCollectionCommand(title = "a new title")))
+        mongoEventService.saveUpdateCollectionEvent(
+            CollectionId(collectionId),
+            listOf(CollectionUpdateCommand.RenameCollectionCommand(title = "a new title"))
+        )
 
         val event = getEvent()
 
@@ -153,7 +161,10 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `saving change visibility event`() {
         val collectionId = TestFactories.aValidId()
-        mongoEventService.saveUpdateCollectionEvent(CollectionId(collectionId), listOf(ChangeVisibilityCommand(isPublic = false)))
+        mongoEventService.saveUpdateCollectionEvent(
+            CollectionId(collectionId),
+            listOf(CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = false))
+        )
 
         val event = getEvent()
 
@@ -163,10 +174,10 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(event["userIsBoclips"]).isEqualTo(false)
         assertThat(event["collectionId"]).isEqualTo(collectionId)
         assertThat(event["isPublic"]).isEqualTo(false)
-
     }
 
     private fun getEvent(): Document {
-        return mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoAnalyticsEventService.collectionName).find().single()
+        return mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoAnalyticsEventService.collectionName).find()
+            .single()
     }
 }

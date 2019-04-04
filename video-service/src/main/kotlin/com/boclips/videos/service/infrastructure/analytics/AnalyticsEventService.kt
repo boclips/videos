@@ -12,11 +12,7 @@ interface AnalyticsEventService {
         totalResults: Long
     )
 
-    fun saveAddToCollectionEvent(collectionId: CollectionId, videoId: AssetId)
-
-    fun saveRemoveFromCollectionEvent(collectionId: CollectionId, videoId: AssetId)
-
-    fun saveUpdateCollectionEvent(collectiondId: CollectionId, updateCommands :List<CollectionUpdateCommand>)
+    fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands :List<CollectionUpdateCommand>)
 
     fun savePlaybackEvent(
         videoId: AssetId,

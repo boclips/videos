@@ -5,8 +5,6 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.service.video.ReplaceDuration
-import com.boclips.videos.service.domain.service.video.ReplaceSubjects
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -30,8 +28,8 @@ class MongoVideoAssetRepository(
     companion object : KLogging() {
 
         const val collectionName = "videos"
-
     }
+
     override fun find(assetId: AssetId): VideoAsset? {
         val videoAssetOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(assetId.value))
             ?.let(VideoDocumentConverter::toAsset)
@@ -40,6 +38,7 @@ class MongoVideoAssetRepository(
 
         return videoAssetOrNull
     }
+
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
         val objectIds = assetIds.map { ObjectId(it.value) }
 
@@ -49,7 +48,7 @@ class MongoVideoAssetRepository(
             .map { it.assetId to it }
             .toMap()
 
-        return assetIds.mapNotNull { assetId ->  assets[assetId] }
+        return assetIds.mapNotNull { assetId -> assets[assetId] }
     }
 
     override fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit) {
@@ -150,13 +149,11 @@ class MongoVideoAssetRepository(
 
     private fun updatedOperation(updateCommand: VideoUpdateCommand): Bson {
         return when (updateCommand) {
-            is ReplaceDuration -> VideoDocumentConverter.durationToDocument(updateCommand.duration)
-            is ReplaceSubjects -> VideoDocumentConverter.subjectsToDocument(updateCommand.subjects)
-            else -> {
-                throw IllegalArgumentException("Update command not supported")
-            }
+            is VideoUpdateCommand.ReplaceDuration -> VideoDocumentConverter.durationToDocument(updateCommand.duration)
+            is VideoUpdateCommand.ReplaceSubjects -> VideoDocumentConverter.subjectsToDocument(updateCommand.subjects)
         }
     }
 
-    private fun getVideoCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection<VideoDocument>(collectionName)
+    private fun getVideoCollection() =
+        mongoClient.getDatabase(DATABASE_NAME).getCollection<VideoDocument>(collectionName)
 }

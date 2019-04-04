@@ -2,7 +2,6 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.AddVideoToCollectionCommand
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
@@ -40,7 +39,7 @@ class AddVideoToCollectionTest {
 
         addVideoToCollection(collectionId, videoId)
 
-        argumentCaptor<AddVideoToCollectionCommand>().apply {
+        argumentCaptor<CollectionUpdateCommand.AddVideoToCollectionCommand>().apply {
             verify(collectionService).update(eq(CollectionId(collectionId)), capture())
             assertThat(firstValue.videoId.value).isEqualTo(videoId)
         }

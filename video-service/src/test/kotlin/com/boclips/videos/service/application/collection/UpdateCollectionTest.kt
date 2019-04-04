@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
@@ -42,7 +41,7 @@ class UpdateCollectionTest {
 
         renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
 
-        argumentCaptor<RenameCollectionCommand>().apply {
+        argumentCaptor<CollectionUpdateCommand.RenameCollectionCommand>().apply {
             verify(collectionService).update(eq(CollectionId(collectionId)), any<List<CollectionUpdateCommand>>())
         }
     }

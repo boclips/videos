@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.collection.security.getOwnedCollec
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
-import com.boclips.videos.service.domain.service.collection.RemoveVideoFromCollectionCommand
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 
 class RemoveVideoFromCollection(
@@ -19,13 +19,12 @@ class RemoveVideoFromCollection(
 
         collectionService.update(
             id = CollectionId(collectionId),
-            updateCommand = RemoveVideoFromCollectionCommand(AssetId(videoId))
+            updateCommand = CollectionUpdateCommand.RemoveVideoFromCollectionCommand(AssetId(videoId))
         )
 
-        analyticsEventService.saveRemoveFromCollectionEvent(
-            collectionId = CollectionId(collectionId),
-            videoId = AssetId(videoId)
+        analyticsEventService.saveUpdateCollectionEvent(
+            CollectionId(collectionId),
+            listOf(CollectionUpdateCommand.RemoveVideoFromCollectionCommand(AssetId(videoId)))
         )
     }
-
 }

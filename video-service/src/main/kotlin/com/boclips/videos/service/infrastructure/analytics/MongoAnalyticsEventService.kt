@@ -2,9 +2,7 @@ package com.boclips.videos.service.infrastructure.analytics
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.ChangeVisibilityCommand
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.RenameCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import getCurrentUser
@@ -46,30 +44,24 @@ class MongoAnalyticsEventService(
         }
     }
 
-    override fun saveAddToCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
-        saveEvent(EventType.ADD_TO_COLLECTION) {
-            append("assetId", videoId.value)
-            append("collectionId", collectionId.value)
-        }
-    }
-
-    override fun saveRemoveFromCollectionEvent(collectionId: CollectionId, videoId: AssetId) {
-        saveEvent(EventType.REMOVE_FROM_COLLECTION) {
-            append("assetId", videoId.value)
-            append("collectionId", collectionId.value)
-        }
-    }
-
-    override fun saveUpdateCollectionEvent(collectiondId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
+    override fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
         updateCommands.forEach { updateCommand ->
-            when(updateCommand) {
-                is RenameCollectionCommand -> saveEvent(EventType.RENAME_COLLECTION) {
+            when (updateCommand) {
+                is CollectionUpdateCommand.RenameCollectionCommand -> saveEvent(EventType.RENAME_COLLECTION) {
                     append("title", updateCommand.title)
-                    append("collectionId", collectiondId.value)
+                    append("collectionId", collectionId.value)
                 }
-                is ChangeVisibilityCommand -> saveEvent(EventType.CHANGE_VISIBILITY) {
-                    append("collectionId", collectiondId.value)
+                is CollectionUpdateCommand.ChangeVisibilityCommand -> saveEvent(EventType.CHANGE_VISIBILITY) {
+                    append("collectionId", collectionId.value)
                     append("isPublic", updateCommand.isPublic)
+                }
+                is CollectionUpdateCommand.AddVideoToCollectionCommand -> saveEvent(EventType.ADD_TO_COLLECTION) {
+                    append("assetId", updateCommand.videoId.value)
+                    append("collectionId", collectionId.value)
+                }
+                is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> saveEvent(EventType.REMOVE_FROM_COLLECTION) {
+                    append("assetId", updateCommand.videoId.value)
+                    append("collectionId", collectionId.value)
                 }
             }
         }
