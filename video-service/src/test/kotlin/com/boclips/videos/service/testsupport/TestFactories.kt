@@ -23,6 +23,7 @@ import org.bson.types.ObjectId
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.util.Locale
 
 object TestFactories {
 
@@ -44,7 +45,7 @@ object TestFactories {
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         duration: Duration = Duration.ZERO,
         legalRestrictions: String = "",
-        language: String? = null,
+        language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
         searchable: Boolean = true

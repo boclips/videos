@@ -18,6 +18,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.time.LocalDate
+import java.util.Locale
 
 class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -232,10 +233,10 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     fun setLanguage() {
         val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(language = null))
 
-        mongoVideoRepository.setLanguage(asset.assetId, "en-US")
+        mongoVideoRepository.setLanguage(asset.assetId, Locale.US)
         val updatedAsset = mongoVideoRepository.find(asset.assetId)
 
-        assertThat(updatedAsset?.language).isEqualTo("en-US")
+        assertThat(updatedAsset?.language).isEqualTo(Locale.US)
     }
 
     @Test
@@ -252,9 +253,9 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     fun setTopics() {
         val topic = Topic(
             name = "Bayesian Methods",
-            language = "en-US",
+            language = Locale.US,
             confidence = 0.85,
-            parent = Topic(name = "Statistics", confidence = 1.0, language = "en-US", parent = null)
+            parent = Topic(name = "Statistics", confidence = 1.0, language = Locale.US, parent = null)
         )
         val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(topics = emptySet()))
 

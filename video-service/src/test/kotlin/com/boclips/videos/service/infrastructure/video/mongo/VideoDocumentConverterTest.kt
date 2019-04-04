@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
+import java.util.Locale
 
 class VideoDocumentConverterTest {
 
@@ -27,14 +28,21 @@ class VideoDocumentConverterTest {
             subjects = setOf(Subject("subject1"), Subject("subject2")),
             releasedOn = LocalDate.ofYearDay(2018, 10),
             duration = Duration.ofSeconds(97),
-            language = "pl-PL",
+            language = Locale.GERMANY,
             transcript = "hello",
-            topics = setOf(Topic(
-                name = "topic name",
-                language = "es-ES",
-                confidence = 0.23,
-                parent = Topic(name = "parent topic", parent = null, language = "es-ES", confidence = 1.0)
-            )),
+            topics = setOf(
+                Topic(
+                    name = "topic name",
+                    language = Locale.forLanguageTag("es-ES"),
+                    confidence = 0.23,
+                    parent = Topic(
+                        name = "parent topic",
+                        parent = null,
+                        language = Locale.forLanguageTag("es-ES"),
+                        confidence = 1.0
+                    )
+                )
+            ),
             legalRestrictions = "legal restrictions"
         )
 

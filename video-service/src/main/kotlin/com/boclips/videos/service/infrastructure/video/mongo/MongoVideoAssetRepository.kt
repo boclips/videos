@@ -21,6 +21,7 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.set
+import java.util.Locale
 import java.util.Optional
 
 class MongoVideoAssetRepository(
@@ -126,10 +127,10 @@ class MongoVideoAssetRepository(
         logger.info { "Set $assetIds to searchable=$searchable" }
     }
 
-    override fun setLanguage(assetId: AssetId, language: String) {
+    override fun setLanguage(assetId: AssetId, language: Locale) {
         getVideoCollection().updateOne(
             VideoDocument::id eq ObjectId(assetId.value),
-            set(VideoDocument::language, language)
+            set(VideoDocument::language, language.toLanguageTag())
         )
     }
 

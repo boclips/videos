@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.model.asset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import java.time.Duration
 import java.time.LocalDate
+import java.util.Locale
 
 data class VideoAsset(
     val assetId: AssetId,
@@ -18,7 +19,7 @@ data class VideoAsset(
     val legalRestrictions: String,
     val subjects: Set<Subject>,
     val topics: Set<Topic>,
-    val language: String?,
+    val language: Locale?,
     val transcript: String?,
     val searchable: Boolean
 ) {
@@ -29,7 +30,7 @@ data class VideoAsset(
 
 data class Topic(
     val name: String,
-    val language: String,
+    val language: Locale,
     val confidence: Double,
     val parent: Topic?
 )

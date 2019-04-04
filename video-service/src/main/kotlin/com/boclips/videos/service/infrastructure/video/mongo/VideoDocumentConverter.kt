@@ -12,6 +12,7 @@ import org.litote.kmongo.set
 import java.time.Duration
 import java.time.ZoneOffset
 import java.util.Date
+import java.util.Locale
 
 object VideoDocumentConverter {
     fun toDocument(asset: VideoAsset): VideoDocument {
@@ -30,7 +31,7 @@ object VideoDocumentConverter {
             releaseDate = Date.from(asset.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             durationSeconds = asset.duration.seconds.toInt(),
             legalRestrictions = asset.legalRestrictions,
-            language = asset.language,
+            language = asset.language?.toLanguageTag(),
             transcript = asset.transcript,
             topics = asset.topics.map(TopicDocumentConverter::toDocument),
             searchable = asset.searchable
@@ -39,26 +40,26 @@ object VideoDocumentConverter {
 
     fun toAsset(document: VideoDocument): VideoAsset {
         return VideoAsset(
-                assetId = AssetId(document.id.toHexString()),
-                title = document.title,
-                description = document.description,
-                contentPartnerId = document.source.contentPartner.name,
-                contentPartnerVideoId = document.source.videoReference,
-                playbackId = PlaybackId(
-                    type = PlaybackProviderType.valueOf(document.playback.type),
-                    value = document.playback.id
-                ),
-                type = LegacyVideoType.valueOf(document.legacy.type),
-                keywords = document.keywords,
-                subjects = document.subjects.map(::Subject).toSet(),
-                releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
-                duration = Duration.ofSeconds(document.durationSeconds.toLong()),
-                legalRestrictions = document.legalRestrictions,
-                language = document.language,
-                transcript = document.transcript,
-                topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
-                searchable = document.searchable
-            )
+            assetId = AssetId(document.id.toHexString()),
+            title = document.title,
+            description = document.description,
+            contentPartnerId = document.source.contentPartner.name,
+            contentPartnerVideoId = document.source.videoReference,
+            playbackId = PlaybackId(
+                type = PlaybackProviderType.valueOf(document.playback.type),
+                value = document.playback.id
+            ),
+            type = LegacyVideoType.valueOf(document.legacy.type),
+            keywords = document.keywords,
+            subjects = document.subjects.map(::Subject).toSet(),
+            releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
+            duration = Duration.ofSeconds(document.durationSeconds.toLong()),
+            legalRestrictions = document.legalRestrictions,
+            language = document.language?.let(Locale::forLanguageTag),
+            transcript = document.transcript,
+            topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
+            searchable = document.searchable
+        )
     }
 
     fun durationToDocument(duration: Duration): Bson {
