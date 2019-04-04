@@ -28,6 +28,7 @@ class MongoVideoAssetRepository(
     companion object : KLogging() {
 
         const val collectionName = "videos"
+
     }
     override fun find(assetId: AssetId): VideoAsset? {
         val videoAssetOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(assetId.value))
@@ -37,7 +38,6 @@ class MongoVideoAssetRepository(
 
         return videoAssetOrNull
     }
-
     override fun findAll(assetIds: List<AssetId>): List<VideoAsset> {
         val objectIds = assetIds.map { ObjectId(it.value) }
 
@@ -129,6 +129,13 @@ class MongoVideoAssetRepository(
         getVideoCollection().updateOne(
             VideoDocument::id eq ObjectId(assetId.value),
             set(VideoDocument::language, language)
+        )
+    }
+
+    override fun setTranscript(assetId: AssetId, transcript: String) {
+        getVideoCollection().updateOne(
+            VideoDocument::id eq ObjectId(assetId.value),
+            set(VideoDocument::transcript, transcript)
         )
     }
 

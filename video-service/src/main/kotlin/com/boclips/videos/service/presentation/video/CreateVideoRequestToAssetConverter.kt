@@ -33,6 +33,7 @@ class CreateVideoRequestToAssetConverter {
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             subjects = getOrThrow(createVideoRequest.subjects, "subjects").map { Subject(it) }.toSet(),
             language = null,
+            transcript = null,
             searchable = createVideoRequest.searchable ?: true
         )
     }

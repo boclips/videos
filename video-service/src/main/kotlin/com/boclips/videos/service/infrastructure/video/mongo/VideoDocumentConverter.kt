@@ -31,6 +31,7 @@ object VideoDocumentConverter {
             durationSeconds = asset.duration.seconds.toInt(),
             legalRestrictions = asset.legalRestrictions,
             language = asset.language,
+            transcript = asset.transcript,
             searchable = asset.searchable
         )
     }
@@ -53,6 +54,7 @@ object VideoDocumentConverter {
                 duration = Duration.ofSeconds(document.durationSeconds.toLong()),
                 legalRestrictions = document.legalRestrictions,
                 language = document.language,
+                transcript = document.transcript,
                 searchable = document.searchable
             )
     }

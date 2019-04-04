@@ -14,4 +14,5 @@ interface VideoAssetRepository {
     fun resolveAlias(alias: String): AssetId?
     fun setSearchable(assetIds: List<AssetId>, searchable: Boolean)
     fun setLanguage(assetId: AssetId, language: String)
+    fun setTranscript(assetId: AssetId, transcript: String)
 }

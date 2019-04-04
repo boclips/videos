@@ -236,4 +236,14 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
         assertThat(updatedAsset?.language).isEqualTo("en-US")
     }
+
+    @Test
+    fun setTranscript() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(transcript = null))
+
+        mongoVideoRepository.setTranscript(asset.assetId, "bla bla bla")
+        val updatedAsset = mongoVideoRepository.find(asset.assetId)
+
+        assertThat(updatedAsset?.transcript).isEqualTo("bla bla bla")
+    }
 }

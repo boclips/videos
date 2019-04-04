@@ -44,6 +44,7 @@ object TestFactories {
         duration: Duration = Duration.ZERO,
         legalRestrictions: String = "",
         language: String? = null,
+        transcript: String? = null,
         searchable: Boolean = true
     ): VideoAsset {
         return VideoAsset(
@@ -60,6 +61,7 @@ object TestFactories {
             legalRestrictions = legalRestrictions,
             subjects = subjects,
             language = language,
+            transcript = transcript,
             searchable = searchable
         )
     }

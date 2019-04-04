@@ -26,6 +26,8 @@ class VideoDocumentConverterTest {
             subjects = setOf(Subject("subject1"), Subject("subject2")),
             releasedOn = LocalDate.ofYearDay(2018, 10),
             duration = Duration.ofSeconds(97),
+            language = "pl-PL",
+            transcript = "hello",
             legalRestrictions = "legal restrictions"
         )
 
