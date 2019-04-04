@@ -14,10 +14,10 @@ class VideoAccessService(
     }
 
     fun grantAccess(assetIds: List<AssetId>) {
-        videoAssetRepository.setSearchable(assetIds = assetIds, searchable = true)
+        videoAssetRepository.bulkUpdate(assetIds.map(VideoUpdateCommand::MakeSearchable))
     }
 
     fun revokeAccess(assetIds: List<AssetId>) {
-        videoAssetRepository.setSearchable(assetIds = assetIds, searchable = false)
+        videoAssetRepository.bulkUpdate(assetIds.map(VideoUpdateCommand::HideFromSearch))
     }
 }

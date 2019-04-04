@@ -214,53 +214,54 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
-    fun `setSearchable for toggling searchable`() {
-        val asset1 = mongoVideoRepository.create(TestFactories.createVideoAsset(searchable = true))
-        val asset2 = mongoVideoRepository.create(TestFactories.createVideoAsset(searchable = true))
-        val assetIds = listOf(asset1.assetId, asset2.assetId)
+    fun `updates searchable`() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(searchable = true))
 
-        mongoVideoRepository.setSearchable(assetIds = assetIds, searchable = false)
+        mongoVideoRepository.update(VideoUpdateCommand.HideFromSearch(asset.assetId))
 
-        assertThat(mongoVideoRepository.findAll(assetIds).map(VideoAsset::searchable)).containsExactly(false, false)
+        assertThat(mongoVideoRepository.find(asset.assetId)!!.searchable).isEqualTo(false)
 
-        mongoVideoRepository.setSearchable(assetIds = assetIds, searchable = true)
+        mongoVideoRepository.update(VideoUpdateCommand.MakeSearchable(asset.assetId))
 
-        assertThat(mongoVideoRepository.findAll(assetIds).map(VideoAsset::searchable)).containsExactly(true, true)
+        assertThat(mongoVideoRepository.find(asset.assetId)!!.searchable).isEqualTo(true)
     }
 
     @Test
-    fun setLanguage() {
-        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(language = null))
+    fun `replaces language`() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(language = Locale.TAIWAN))
 
-        mongoVideoRepository.setLanguage(asset.assetId, Locale.US)
+        mongoVideoRepository.update(VideoUpdateCommand.ReplaceLanguage(asset.assetId, Locale.GERMAN))
+
         val updatedAsset = mongoVideoRepository.find(asset.assetId)
 
-        assertThat(updatedAsset?.language).isEqualTo(Locale.US)
+        assertThat(updatedAsset!!.language).isEqualTo(Locale.GERMAN)
     }
 
     @Test
-    fun setTranscript() {
+    fun `replaces transcript`() {
         val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(transcript = null))
 
-        mongoVideoRepository.setTranscript(asset.assetId, "bla bla bla")
+        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(asset.assetId, "bla bla bla"))
+
         val updatedAsset = mongoVideoRepository.find(asset.assetId)
 
-        assertThat(updatedAsset?.transcript).isEqualTo("bla bla bla")
+        assertThat(updatedAsset!!.transcript).isEqualTo("bla bla bla")
     }
 
     @Test
-    fun setTopics() {
+    fun `replaces topics`() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(transcript = null))
         val topic = Topic(
             name = "Bayesian Methods",
             language = Locale.US,
             confidence = 0.85,
             parent = Topic(name = "Statistics", confidence = 1.0, language = Locale.US, parent = null)
         )
-        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(topics = emptySet()))
 
-        mongoVideoRepository.setTopics(asset.assetId, setOf(topic))
+        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTopics(asset.assetId, setOf(topic)))
+
         val updatedAsset = mongoVideoRepository.find(asset.assetId)
 
-        assertThat(updatedAsset?.topics).containsExactly(topic)
+        assertThat(updatedAsset!!.topics).containsExactly(topic)
     }
 }

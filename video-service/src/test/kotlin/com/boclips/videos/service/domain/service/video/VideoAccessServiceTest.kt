@@ -5,8 +5,6 @@ import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -30,7 +28,7 @@ class VideoAccessServiceTest {
         @Test
         fun `returns true if a video is accessible`() {
             `when`(videoAssetRepositoryMock.find(any()))
-                    .thenReturn(TestFactories.createVideoAsset(searchable = true))
+                .thenReturn(TestFactories.createVideoAsset(searchable = true))
 
             val isVideoAccessible = videoAccessService.accessible(AssetId(value = aValidId()))
 
@@ -40,33 +38,11 @@ class VideoAccessServiceTest {
         @Test
         fun `returns false if a video is not accessible`() {
             `when`(videoAssetRepositoryMock.find(any()))
-                    .thenReturn(TestFactories.createVideoAsset(searchable = false))
+                .thenReturn(TestFactories.createVideoAsset(searchable = false))
 
             val isVideoAccessible = videoAccessService.accessible(AssetId(value = aValidId()))
 
             assertThat(isVideoAccessible).isEqualTo(false)
-        }
-    }
-
-    @Nested
-    @DisplayName("update accessibility")
-    inner class UpdateAccessibilityTests {
-        @Test
-        fun `grants access to videos`() {
-            val assetIds = listOf(AssetId(value = aValidId()))
-
-            videoAccessService.grantAccess(assetIds)
-
-            verify(videoAssetRepositoryMock).setSearchable(eq(assetIds), eq(true))
-        }
-
-        @Test
-        fun `revokes access to video`() {
-            val assetIds = listOf(AssetId(value = aValidId()))
-
-            videoAccessService.revokeAccess(assetIds)
-
-            verify(videoAssetRepositoryMock).setSearchable(eq(assetIds), eq(false))
         }
     }
 }

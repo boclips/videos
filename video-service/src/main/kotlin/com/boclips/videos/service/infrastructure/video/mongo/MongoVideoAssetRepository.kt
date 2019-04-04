@@ -2,7 +2,6 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -19,7 +18,6 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.set
-import java.util.Locale
 import java.util.Optional
 
 class MongoVideoAssetRepository(
@@ -115,42 +113,26 @@ class MongoVideoAssetRepository(
         return assetId
     }
 
-    override fun setSearchable(assetIds: List<AssetId>, searchable: Boolean) {
-        val ids = assetIds.map { ObjectId(it.value) }
-
-        getVideoCollection().updateMany(
-            VideoDocument::id `in` ids,
-            set(VideoDocument::searchable, searchable)
-        )
-
-        logger.info { "Set $assetIds to searchable=$searchable" }
-    }
-
-    override fun setLanguage(assetId: AssetId, language: Locale) {
-        getVideoCollection().updateOne(
-            VideoDocument::id eq ObjectId(assetId.value),
-            set(VideoDocument::language, language.toLanguageTag())
-        )
-    }
-
-    override fun setTranscript(assetId: AssetId, transcript: String) {
-        getVideoCollection().updateOne(
-            VideoDocument::id eq ObjectId(assetId.value),
-            set(VideoDocument::transcript, transcript)
-        )
-    }
-
-    override fun setTopics(assetId: AssetId, topics: Set<Topic>) {
-        getVideoCollection().updateOne(
-            VideoDocument::id eq ObjectId(assetId.value),
-            set(VideoDocument::topics, topics.map(TopicDocumentConverter::toDocument))
-        )
-    }
-
     private fun updatedOperation(updateCommand: VideoUpdateCommand): Bson {
         return when (updateCommand) {
-            is VideoUpdateCommand.ReplaceDuration -> VideoDocumentConverter.durationToDocument(updateCommand.duration)
-            is VideoUpdateCommand.ReplaceSubjects -> VideoDocumentConverter.subjectsToDocument(updateCommand.subjects)
+            is VideoUpdateCommand.ReplaceDuration -> set(
+                VideoDocument::durationSeconds,
+                updateCommand.duration.seconds.toInt()
+            )
+            is VideoUpdateCommand.ReplaceSubjects -> set(
+                VideoDocument::subjects,
+                updateCommand.subjects.map { it.name })
+            is VideoUpdateCommand.MakeSearchable -> set(VideoDocument::searchable, true)
+            is VideoUpdateCommand.HideFromSearch -> set(VideoDocument::searchable, false)
+            is VideoUpdateCommand.ReplaceLanguage -> set(
+                VideoDocument::language,
+                updateCommand.language.toLanguageTag()
+            )
+            is VideoUpdateCommand.ReplaceTranscript -> set(VideoDocument::transcript, updateCommand.transcript)
+            is VideoUpdateCommand.ReplaceTopics -> set(
+                VideoDocument::topics,
+                updateCommand.topics.map(TopicDocumentConverter::toDocument)
+            )
         }
     }
 

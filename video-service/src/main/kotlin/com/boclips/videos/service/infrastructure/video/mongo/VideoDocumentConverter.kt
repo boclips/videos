@@ -61,12 +61,4 @@ object VideoDocumentConverter {
             searchable = document.searchable
         )
     }
-
-    fun durationToDocument(duration: Duration): Bson {
-        return set(VideoDocument::durationSeconds, duration.seconds.toInt())
-    }
-
-    fun subjectsToDocument(subjects: List<Subject>): Bson {
-        return set(VideoDocument::subjects, subjects.map { it.name })
-    }
 }
