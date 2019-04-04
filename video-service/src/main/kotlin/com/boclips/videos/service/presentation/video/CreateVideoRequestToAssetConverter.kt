@@ -34,6 +34,7 @@ class CreateVideoRequestToAssetConverter {
             subjects = getOrThrow(createVideoRequest.subjects, "subjects").map { Subject(it) }.toSet(),
             language = null,
             transcript = null,
+            topics = emptySet(),
             searchable = createVideoRequest.searchable ?: true
         )
     }

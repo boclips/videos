@@ -15,4 +15,5 @@ interface VideoAssetRepository {
     fun setSearchable(assetIds: List<AssetId>, searchable: Boolean)
     fun setLanguage(assetId: AssetId, language: String)
     fun setTranscript(assetId: AssetId, transcript: String)
+    fun setTopics(assetId: AssetId, topics: Set<Topic>)
 }

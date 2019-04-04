@@ -32,6 +32,7 @@ object VideoDocumentConverter {
             legalRestrictions = asset.legalRestrictions,
             language = asset.language,
             transcript = asset.transcript,
+            topics = asset.topics.map(TopicDocumentConverter::toDocument),
             searchable = asset.searchable
         )
     }
@@ -55,6 +56,7 @@ object VideoDocumentConverter {
                 legalRestrictions = document.legalRestrictions,
                 language = document.language,
                 transcript = document.transcript,
+                topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
                 searchable = document.searchable
             )
     }

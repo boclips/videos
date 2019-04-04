@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.video.ReplaceDuration
@@ -136,6 +137,13 @@ class MongoVideoAssetRepository(
         getVideoCollection().updateOne(
             VideoDocument::id eq ObjectId(assetId.value),
             set(VideoDocument::transcript, transcript)
+        )
+    }
+
+    override fun setTopics(assetId: AssetId, topics: Set<Topic>) {
+        getVideoCollection().updateOne(
+            VideoDocument::id eq ObjectId(assetId.value),
+            set(VideoDocument::topics, topics.map(TopicDocumentConverter::toDocument))
         )
     }
 

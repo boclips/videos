@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoun
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -245,5 +246,21 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val updatedAsset = mongoVideoRepository.find(asset.assetId)
 
         assertThat(updatedAsset?.transcript).isEqualTo("bla bla bla")
+    }
+
+    @Test
+    fun setTopics() {
+        val topic = Topic(
+            name = "Bayesian Methods",
+            language = "en-US",
+            confidence = 0.85,
+            parent = Topic(name = "Statistics", confidence = 1.0, language = "en-US", parent = null)
+        )
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(topics = emptySet()))
+
+        mongoVideoRepository.setTopics(asset.assetId, setOf(topic))
+        val updatedAsset = mongoVideoRepository.find(asset.assetId)
+
+        assertThat(updatedAsset?.topics).containsExactly(topic)
     }
 }

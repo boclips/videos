@@ -17,6 +17,7 @@ data class VideoAsset(
     val duration: Duration,
     val legalRestrictions: String,
     val subjects: Set<Subject>,
+    val topics: Set<Topic>,
     val language: String?,
     val transcript: String?,
     val searchable: Boolean
@@ -25,3 +26,10 @@ data class VideoAsset(
         return "VideoAsset(assetId=$assetId, title='$title', contentPartnerId='$contentPartnerId')"
     }
 }
+
+data class Topic(
+    val name: String,
+    val language: String,
+    val confidence: Double,
+    val parent: Topic?
+)

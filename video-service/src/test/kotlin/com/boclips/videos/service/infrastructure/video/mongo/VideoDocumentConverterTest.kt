@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
@@ -28,6 +29,12 @@ class VideoDocumentConverterTest {
             duration = Duration.ofSeconds(97),
             language = "pl-PL",
             transcript = "hello",
+            topics = setOf(Topic(
+                name = "topic name",
+                language = "es-ES",
+                confidence = 0.23,
+                parent = Topic(name = "parent topic", parent = null, language = "es-ES", confidence = 1.0)
+            )),
             legalRestrictions = "legal restrictions"
         )
 
