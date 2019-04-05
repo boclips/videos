@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.playback
 
+import com.boclips.events.types.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
@@ -14,9 +15,9 @@ import java.time.Duration
 class YoutubePlaybackProvider(youtubeApiKey: String) :
     PlaybackProvider {
     companion object {
+
         const val IDS_PER_QUERY_LIMIT = 50
     }
-
     private val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
         .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
         .setApplicationName("boclips-video-service")
@@ -28,6 +29,10 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
         }
 
         return playbackIds.chunked(IDS_PER_QUERY_LIMIT).flatMap(this::fetchPlaybacks).toMap()
+    }
+
+    override fun uploadCaptions(playbackId: PlaybackId, captions: Captions) {
+        throw UnsupportedOperationException("Uploading captions to YouTube is not supported")
     }
 
     private fun fetchPlaybacks(playbackIds: List<PlaybackId>): List<Pair<PlaybackId, YoutubePlayback>> {

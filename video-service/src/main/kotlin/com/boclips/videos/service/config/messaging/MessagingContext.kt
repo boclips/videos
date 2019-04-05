@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 
 @Configuration
-@EnableBinding(Topics::class)
+@EnableBinding(Topics::class, Subscriptions::class)
 class MessagingContext(@Value("\${pubsub.topic.suffix}") val topicSuffix: String) {
 
     @Primary

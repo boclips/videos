@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.presentation.video.VideoResource
 
-class PatchVideo(
+class UpdateVideo(
     private val videoAssetRepository: VideoAssetRepository
 ) {
     operator fun invoke(id: String?, patch: VideoResource) {

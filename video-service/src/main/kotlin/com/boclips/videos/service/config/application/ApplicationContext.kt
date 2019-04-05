@@ -1,21 +1,8 @@
 package com.boclips.videos.service.config.application
 
 import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.videos.service.application.collection.AddVideoToCollection
-import com.boclips.videos.service.application.collection.CreateCollection
-import com.boclips.videos.service.application.collection.DeleteCollection
-import com.boclips.videos.service.application.collection.GetCollection
-import com.boclips.videos.service.application.collection.GetCollections
-import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
-import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.videos.service.application.event.AnalyseVideo
-import com.boclips.videos.service.application.video.BuildLegacySearchIndex
-import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideos
-import com.boclips.videos.service.application.video.PatchVideo
-import com.boclips.videos.service.application.video.RebuildSearchIndex
-import com.boclips.videos.service.application.video.RefreshVideoDurations
+import com.boclips.videos.service.application.collection.*
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
@@ -37,44 +24,49 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ApplicationContext(
-    val videoService: VideoService,
-    val videoAssetRepository: VideoAssetRepository,
-    val searchService: SearchService,
-    val playbackRepository: PlaybackRepository,
-    val legacySearchService: LegacySearchService,
-    val collectionService: CollectionService,
-    val analyticsEventService: AnalyticsEventService,
-    val videoAccessService: VideoAccessService,
-    val topics: Topics
+        val videoService: VideoService,
+        val videoAssetRepository: VideoAssetRepository,
+        val searchService: SearchService,
+        val playbackRepository: PlaybackRepository,
+        val legacySearchService: LegacySearchService,
+        val collectionService: CollectionService,
+        val analyticsEventService: AnalyticsEventService,
+        val videoAccessService: VideoAccessService,
+        val topics: Topics
 ) {
 
     @Bean
     fun searchVideo() = SearchVideo(
-        getVideoById(),
-        getAllVideosById(),
-        getVideosByQuery(),
-        videoAssetRepository
+            getVideoById(),
+            getAllVideosById(),
+            getVideosByQuery(),
+            videoAssetRepository
     )
 
     @Bean
     fun createVideo(
-        searchVideo: SearchVideo,
-        videoCounter: Counter
+            searchVideo: SearchVideo,
+            videoCounter: Counter
     ): CreateVideo {
         return CreateVideo(
-            videoAssetRepository,
-            searchVideo,
-            CreateVideoRequestToAssetConverter(),
-            searchService,
-            playbackRepository,
-            videoCounter,
-            legacySearchService
+                videoAssetRepository,
+                searchVideo,
+                CreateVideoRequestToAssetConverter(),
+                searchService,
+                playbackRepository,
+                videoCounter,
+                legacySearchService
         )
     }
 
     @Bean
-    fun patchVideo(): PatchVideo {
-        return PatchVideo(videoAssetRepository)
+    fun updateVideo(): UpdateVideo {
+        return UpdateVideo(videoAssetRepository)
+    }
+
+    @Bean
+    fun updateAnalysedVideo(): UpdateAnalysedVideo {
+        return UpdateAnalysedVideo(playbackRepository, videoAssetRepository)
     }
 
     @Bean
@@ -143,22 +135,22 @@ class ApplicationContext(
     }
 
     private fun getVideoById() =
-        GetVideoById(
-            videoService,
-            videoToResourceConverter()
-        )
+            GetVideoById(
+                    videoService,
+                    videoToResourceConverter()
+            )
 
     private fun getVideosByQuery() =
-        GetVideosByQuery(
-            videoService,
-            videoToResourceConverter(),
-            analyticsEventService
-        )
+            GetVideosByQuery(
+                    videoService,
+                    videoToResourceConverter(),
+                    analyticsEventService
+            )
 
     private fun getAllVideosById(): GetAllVideosById {
         return GetAllVideosById(
-            videoService,
-            videoToResourceConverter()
+                videoService,
+                videoToResourceConverter()
         )
     }
 

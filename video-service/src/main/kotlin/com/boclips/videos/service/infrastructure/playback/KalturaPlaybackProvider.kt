@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.playback
 
+import com.boclips.events.types.Captions
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.MediaEntry
@@ -8,6 +9,7 @@ import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
+import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import mu.KLogging
 
 class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
@@ -48,6 +50,19 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
         } catch (ex: KalturaClientApiException) {
             logger.error { "Failed to execute asset from Kaltura: $ex" }
         }
+    }
+
+    override fun uploadCaptions(playbackId: PlaybackId, captions: Captions) {
+        val captionAsset = getCaptionAsset(captions)
+        logger.info { "Checking existing captions for ref is ${playbackId.value}" }
+        val existingCaptions = kalturaClient.getCaptionFilesByReferenceId(playbackId.value)
+        if(existingCaptions.any { it.language == captionAsset.language }) {
+            logger.info { "Skipping captions upload for ref id ${playbackId.value} because there already are ${captionAsset.language} captions in Kaltura" }
+            return
+        }
+
+        logger.info { "Uploading new ${captionAsset.language} captions for ref id ${playbackId.value}" }
+        kalturaClient.createCaptionsFile(playbackId.value, captionAsset, captions.content)
     }
 
     private fun filterValidMediaEntries(id: PlaybackId, mediaEntriesById: Map<String, List<MediaEntry>>) =

@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
-import com.boclips.videos.service.application.video.PatchVideo
+import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
@@ -37,7 +37,7 @@ class VideoController(
     private val searchVideo: SearchVideo,
     private val deleteVideos: DeleteVideos,
     private val createVideo: CreateVideo,
-    private val patchVideo: PatchVideo,
+    private val updateVideo: UpdateVideo,
     private val bulkUpdateVideo: BulkUpdateVideo,
     private val objectMapper: ObjectMapper
 ) {
@@ -129,7 +129,7 @@ class VideoController(
 
     @PostMapping("/{id}")
     fun patchOneVideo(@PathVariable("id") id: String?, @RequestBody patchVideoRequest: VideoResource): ResponseEntity<Void> {
-        patchVideo(id, patchVideoRequest)
+        updateVideo(id, patchVideoRequest)
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.videos.service.application.event.AnalyseVideo
+import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.application.video.RefreshVideoDurations

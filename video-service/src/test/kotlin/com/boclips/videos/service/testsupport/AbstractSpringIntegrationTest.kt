@@ -6,6 +6,7 @@ import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.config.messaging.Subscriptions
 import com.boclips.videos.service.config.messaging.Topics
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
@@ -75,6 +76,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var topics: Topics
+
+    @Autowired
+    lateinit var subscriptions: Subscriptions
 
     @Autowired
     lateinit var messageCollector: MessageCollector

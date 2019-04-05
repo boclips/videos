@@ -6,18 +6,21 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
+import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.Duration
 
 class PlaybackRepositoryTest {
     lateinit var playbackRepository: PlaybackRepository
+    lateinit var kalturaClient: TestKalturaClient
 
     @BeforeEach
     fun setUp() {
-        val kalturaClient = TestKalturaClient()
+        kalturaClient = TestKalturaClient()
         kalturaClient.addMediaEntry(createMediaEntry(referenceId = "ref-id-1"))
 
         val kalturaPlaybackProvider = KalturaPlaybackProvider(kalturaClient)
@@ -59,7 +62,7 @@ class PlaybackRepositoryTest {
     }
 
     @Test
-    fun `removes a a video for Kaltura, does nothing for youtube`() {
+    fun `removes a video for Kaltura, does nothing for youtube`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
 
@@ -68,5 +71,23 @@ class PlaybackRepositoryTest {
 
         assertThat(playbackRepository.find(listOf(playbackId))).isEmpty()
         assertThat(playbackRepository.find(listOf(youtubeVideo))).isNotNull
+    }
+
+    @Test
+    fun `uploads captions to Kaltura`() {
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+
+        playbackRepository.uploadCaptions(playbackId, createCaptions())
+
+        assertThat(kalturaClient.getCaptionFilesByReferenceId("ref-id-1")).isNotEmpty
+    }
+
+    @Test
+    fun `throws on attempts to upload captions to youtube`() {
+        val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
+
+        assertThrows<UnsupportedOperationException> {
+            playbackRepository.uploadCaptions(youtubeVideo, createCaptions())
+        }
     }
 }

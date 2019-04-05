@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.playback
 
+import com.boclips.events.types.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
@@ -19,6 +20,10 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
     }
 
     override fun removePlayback(playbackId: PlaybackId) {
+    }
+
+    override fun uploadCaptions(playbackId: PlaybackId, captions: Captions) {
+        throw UnsupportedOperationException("Uploading captions to YouTube is not supported")
     }
 
     fun addVideo(youtubeId: String, thumbnailUrl: String, duration: Duration): TestYoutubePlaybackProvider {

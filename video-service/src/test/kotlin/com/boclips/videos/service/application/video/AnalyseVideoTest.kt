@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.event
+package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.VideoToAnalyse
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
