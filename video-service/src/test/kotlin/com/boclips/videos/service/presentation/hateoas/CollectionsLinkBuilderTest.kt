@@ -102,7 +102,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.projections().details()
 
-        val url = URL(link?.href)
+        val url = URL(link.href)
         assertThat(url).hasProtocol("https")
         assertThat(url).hasHost("localhost")
         assertThat(url).hasPath("/v1/collections")
@@ -113,7 +113,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasParameter("page", "0")
         assertThat(url).hasParameter("size", "2")
 
-        assertThat(link?.rel).isEqualTo("details")
+        assertThat(link.rel).isEqualTo("details")
     }
 
     @Test
@@ -124,7 +124,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.projections().list()
 
-        val url = URL(link?.href)
+        val url = URL(link.href)
         assertThat(url).hasProtocol("https")
         assertThat(url).hasHost("localhost")
         assertThat(url).hasPath("/v1/collections")
@@ -135,7 +135,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasParameter("page", "0")
         assertThat(url).hasParameter("size", "2")
 
-        assertThat(link?.rel).isEqualTo("list")
+        assertThat(link.rel).isEqualTo("list")
     }
 
     @Test

@@ -110,7 +110,7 @@ class BuildLegacySearchIndexTest {
     }
 
     fun getUpsertedVideos(): List<LegacyVideoMetadata> {
-        var upsertedVideos: List<LegacyVideoMetadata>? = null
+        var upsertedVideos: List<LegacyVideoMetadata>?
 
         argumentCaptor<Sequence<LegacyVideoMetadata>>().apply {
             verify(legacySearchService).upsert(capture(), anyOrNull())

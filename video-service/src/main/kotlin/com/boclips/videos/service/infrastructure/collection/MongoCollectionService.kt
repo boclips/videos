@@ -84,9 +84,9 @@ class MongoCollectionService(
         updateOne(id, updateBson)
     }
 
-    override fun delete(collectionId: CollectionId) {
-        dbCollection().deleteOne(CollectionDocument::id eq ObjectId(collectionId.value))
-        logger.info { "Deleted collection $collectionId" }
+    override fun delete(id: CollectionId) {
+        dbCollection().deleteOne(CollectionDocument::id eq ObjectId(id.value))
+        logger.info { "Deleted collection $id" }
     }
 
     private fun getPagedCollections(
