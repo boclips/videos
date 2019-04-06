@@ -264,4 +264,15 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
         assertThat(updatedAsset!!.topics).containsExactly(topic)
     }
+
+    @Test
+    fun `replaces keywords`() {
+        val asset = mongoVideoRepository.create(TestFactories.createVideoAsset(keywords = listOf("old")))
+
+        mongoVideoRepository.update(VideoUpdateCommand.ReplaceKeywords(asset.assetId, setOf("new")))
+
+        val updatedAsset = mongoVideoRepository.find(asset.assetId)
+
+        assertThat(updatedAsset!!.keywords).containsExactly("new")
+    }
 }

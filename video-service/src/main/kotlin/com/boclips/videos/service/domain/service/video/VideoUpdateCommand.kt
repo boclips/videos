@@ -14,5 +14,6 @@ sealed class VideoUpdateCommand(val assetId: AssetId) {
     class ReplaceLanguage(assetId: AssetId, val language: Locale) : VideoUpdateCommand(assetId)
     class ReplaceTranscript(assetId: AssetId, val transcript: String) : VideoUpdateCommand(assetId)
     class ReplaceTopics(assetId: AssetId, val topics: Set<Topic>) : VideoUpdateCommand(assetId)
+    class ReplaceKeywords(assetId: AssetId, val keywords: Set<String>) : VideoUpdateCommand(assetId)
 }
 

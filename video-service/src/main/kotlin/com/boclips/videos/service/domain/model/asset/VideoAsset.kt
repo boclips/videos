@@ -27,10 +27,3 @@ data class VideoAsset(
         return "VideoAsset(assetId=$assetId, title='$title', contentPartnerId='$contentPartnerId')"
     }
 }
-
-data class Topic(
-    val name: String,
-    val language: Locale,
-    val confidence: Double,
-    val parent: Topic?
-)
