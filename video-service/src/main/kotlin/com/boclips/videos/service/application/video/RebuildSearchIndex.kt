@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.videos.service.domain.model.asset.VideoAssetFilter.IsSearchable
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.video.SearchService
 import mu.KLogging
@@ -19,7 +20,7 @@ open class RebuildSearchIndex(
         val future = CompletableFuture<Unit>()
 
         try {
-            videoAssetRepository.streamAllSearchable { videos ->
+            videoAssetRepository.streamAll(IsSearchable) { videos ->
                 searchService.safeRebuildIndex(videos, notifier)
             }
 

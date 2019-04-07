@@ -3,10 +3,13 @@ package com.boclips.videos.service.infrastructure.video.mongo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.asset.VideoAssetFilter
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument.Source
+import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument.Source.ContentPartner
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
@@ -23,6 +26,7 @@ class MongoVideoAssetRepository(
     companion object : KLogging() {
 
         const val collectionName = "videos"
+
     }
 
     override fun find(assetId: AssetId): VideoAsset? {
@@ -46,8 +50,13 @@ class MongoVideoAssetRepository(
         return assetIds.mapNotNull { assetId -> assets[assetId] }
     }
 
-    override fun streamAllSearchable(consumer: (Sequence<VideoAsset>) -> Unit) {
-        val sequence = Sequence { getVideoCollection().find(VideoDocument::searchable eq true).iterator() }
+    override fun streamAll(filter: VideoAssetFilter, consumer: (Sequence<VideoAsset>) -> Unit) {
+        val filterBson = when (filter) {
+            is VideoAssetFilter.ContentPartnerIs -> VideoDocument::source.div(Source::contentPartner).div(ContentPartner::name) eq filter.contentPartnerId
+            VideoAssetFilter.IsSearchable -> VideoDocument::searchable eq true
+        }
+
+        val sequence = Sequence { getVideoCollection().find(filterBson).iterator() }
                 .map(VideoDocumentConverter::toAsset)
 
         consumer(sequence)

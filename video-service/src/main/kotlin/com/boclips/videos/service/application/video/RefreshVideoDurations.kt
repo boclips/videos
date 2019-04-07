@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.asset.VideoAssetFilter.IsSearchable
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -34,7 +35,7 @@ open class RefreshVideoDurations(
     }
 
     private fun refreshDurations(notifier: ProgressNotifier?) {
-        videoAssetRepository.streamAllSearchable { sequence ->
+        videoAssetRepository.streamAll(IsSearchable) { sequence ->
             var batch = 0
 
             sequence.chunked(size = 50).forEach { videos ->

@@ -77,7 +77,7 @@ class RefreshVideoDurationsTest : AbstractSpringIntegrationTest() {
 
         val mockVideoAssetRepository = mock<VideoAssetRepository> {
             on {
-                streamAllSearchable(any())
+                streamAll(any(), any())
             } doAnswer { invocations ->
                 val consumer = invocations.getArgument(0) as (Sequence<VideoAsset>) -> Unit
                 consumer(sequenceOf(asset))
@@ -96,7 +96,7 @@ class RefreshVideoDurationsTest : AbstractSpringIntegrationTest() {
     fun `the future surfaces any underlying exceptions`() {
         val videoAssetRepository = mock<VideoAssetRepository> {
             on {
-                streamAllSearchable(any())
+                streamAll(any(), any())
             } doThrow (MongoClientException("Boom"))
         }
 

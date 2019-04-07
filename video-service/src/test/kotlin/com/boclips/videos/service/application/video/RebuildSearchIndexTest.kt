@@ -4,14 +4,12 @@ import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.asset.VideoAssetFilter
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doThrow
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,9 +34,9 @@ class RebuildSearchIndexTest {
 
         val videoAssetRepository = mock<VideoAssetRepository> {
             on {
-                streamAllSearchable(any())
+                streamAll(eq(VideoAssetFilter.IsSearchable), any())
             } doAnswer { invocations ->
-                val consumer = invocations.getArgument(0) as (Sequence<VideoAsset>) -> Unit
+                val consumer = invocations.getArgument(1) as (Sequence<VideoAsset>) -> Unit
 
                 consumer(
                     sequenceOf(
@@ -61,7 +59,7 @@ class RebuildSearchIndexTest {
     fun `the future surfaces any underlying exceptions`() {
         val videoAssetRepository = mock<VideoAssetRepository> {
             on {
-                streamAllSearchable(any())
+                streamAll(any(), any())
             } doThrow (MongoClientException("Boom"))
         }
 

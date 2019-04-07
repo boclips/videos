@@ -1,11 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.Subject
-import com.boclips.videos.service.domain.model.asset.Topic
-import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.asset.*
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -80,9 +76,21 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         )
 
         var videos: List<VideoAsset> = emptyList()
-        mongoVideoRepository.streamAllSearchable { videos = it.toList() }
+        mongoVideoRepository.streamAll(VideoAssetFilter.IsSearchable) { videos = it.toList() }
 
         assertThat(videos).hasSize(3)
+    }
+
+    @Test
+    fun `stream all by content partner`() {
+        mongoVideoRepository.create(TestFactories.createVideoAsset(contentProvider = "TED"))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(contentProvider = "Bob"))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(contentProvider = "TED"))
+
+        var videos: List<VideoAsset> = emptyList()
+        mongoVideoRepository.streamAll(VideoAssetFilter.ContentPartnerIs("TED")) { videos = it.toList() }
+
+        assertThat(videos).hasSize(2)
     }
 
     @Test
