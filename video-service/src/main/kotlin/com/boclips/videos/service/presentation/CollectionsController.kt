@@ -100,15 +100,15 @@ class CollectionsController(
     }
 
     @PatchMapping("/{id}", params = ["bookmarked=true"])
-    fun patchBookmarkCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
+    fun patchBookmarkCollection(@PathVariable("id") id: String): Resource<CollectionResource> {
         bookmarkCollection(id)
-        return ResponseEntity(HttpStatus.NO_CONTENT)
+        return this.show(id)
     }
 
     @PatchMapping("/{id}", params = ["bookmarked=false"])
-    fun patchUnbookmarkCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
+    fun patchUnbookmarkCollection(@PathVariable("id") id: String): Resource<CollectionResource> {
         unbookmarkCollection(id)
-        return ResponseEntity(HttpStatus.NO_CONTENT)
+        return this.show(id)
     }
 
     @DeleteMapping("/{id}")

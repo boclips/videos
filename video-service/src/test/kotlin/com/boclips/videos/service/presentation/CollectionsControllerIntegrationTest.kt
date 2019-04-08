@@ -195,6 +195,41 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `bookmark collections returns updated collection`() {
+        val collectionId = createCollection("collection 1").apply {
+            updateCollectionToBePublic(this)
+        }
+
+        mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", not(isEmptyString())))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.title", equalTo("collection 1")))
+
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.unbookmark.href").exists())
+            .andExpect(jsonPath("$._links.bookmark").doesNotExist())
+    }
+
+    @Test
+    fun `unbookmark collections returns updated collection`() {
+        val collectionId = createCollection("collection 1").apply {
+            updateCollectionToBePublic(this)
+            bookmarkCollection(this, "notTheOwner@gmail.com")
+        }
+
+        mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=false").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", not(isEmptyString())))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.title", equalTo("collection 1")))
+
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.bookmark.href").exists())
+            .andExpect(jsonPath("$._links.unbookmark").doesNotExist())
+    }
+
+    @Test
     fun `collection includes an updatedAt timestamp`() {
         val collectionId = collectionService.create(
             owner = UserId("teacher@gmail.com"),
@@ -326,7 +361,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     private fun bookmarkCollection(collectionId: String, user: String) {
         mockMvc.perform(patch(bookmarkLink(collectionId, user)).contentType(MediaType.APPLICATION_JSON).asTeacher(user))
-            .andExpect(status().isNoContent)
+            .andExpect(status().isOk)
     }
 
     private fun updateCollectionToBePublicAndRename(collectionId: String, title: String) {
