@@ -61,8 +61,9 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
             return
         }
 
-        logger.info { "Uploading new ${captionAsset.language} captions for ref id ${playbackId.value}" }
-        kalturaClient.createCaptionsFile(playbackId.value, captionAsset, captions.content)
+        logger.info { "Uploading ${captionAsset.language} captions for ref id ${playbackId.value}" }
+        val uploadedAsset = kalturaClient.createCaptionsFile(playbackId.value, captionAsset, captions.content)
+        logger.info { "Uploaded ${captionAsset.language} captions for ref id ${playbackId.value}: ${uploadedAsset.id}" }
     }
 
     private fun filterValidMediaEntries(id: PlaybackId, mediaEntriesById: Map<String, List<MediaEntry>>) =
