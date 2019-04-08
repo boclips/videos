@@ -130,6 +130,11 @@ class ApplicationContext(
     }
 
     @Bean
+    fun analyseContentPartnerVideos(): AnalyseContentPartnerVideos {
+        return AnalyseContentPartnerVideos(videoAssetRepository, analyseVideo())
+    }
+
+    @Bean
     fun refreshVideoDurations(): RefreshVideoDurations {
         return RefreshVideoDurations(videoAssetRepository, playbackRepository)
     }

@@ -52,7 +52,7 @@ class MongoVideoAssetRepository(
 
     override fun streamAll(filter: VideoAssetFilter, consumer: (Sequence<VideoAsset>) -> Unit) {
         val filterBson = when (filter) {
-            is VideoAssetFilter.ContentPartnerIs -> VideoDocument::source.div(Source::contentPartner).div(ContentPartner::name) eq filter.contentPartnerId
+            is VideoAssetFilter.ContentPartnerIs -> VideoDocument::source.div(Source::contentPartner).div(ContentPartner::name) eq filter.contentPartnerName
             VideoAssetFilter.IsSearchable -> VideoDocument::searchable eq true
         }
 

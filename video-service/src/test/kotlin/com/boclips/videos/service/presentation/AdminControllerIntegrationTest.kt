@@ -59,7 +59,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `analyse video enqueues videos for analysis`() {
+    fun `analyse video publishes events`() {
         val assetId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123"))
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
@@ -81,6 +81,39 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `analyse video returns 403 when user is not allowed`() {
         val assetId = saveVideo()
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asTeacher())
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `analyse content partner videos publishes events`() {
+        saveVideo(contentProvider = "Ted")
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted").asOperator())
+            .andExpect(MockMvcResultMatchers.status().isAccepted)
+
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+
+        assertThat(message).isNotNull
+    }
+
+    @Test
+    fun `analyse content partner videos returns 400 for YouTube channels`() {
+        saveVideo(contentProvider = "TheYoutuber", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "id"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `analyse content partner videos returns 403 when user is not allowed`() {
+        saveVideo(contentProvider = "Ted")
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
         val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()

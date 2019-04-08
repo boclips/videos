@@ -35,6 +35,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .hasRole(UserRoles.REBUILD_SEARCH_INDEX)
             .antMatchers(HttpMethod.POST, "/v1/admin/actions/analyse_video/*")
             .hasRole(UserRoles.UPDATE_VIDEOS)
+            .antMatchers(HttpMethod.POST, "/v1/admin/actions/analyse_videos")
+            .hasRole(UserRoles.UPDATE_VIDEOS)
 
             .antMatchers(HttpMethod.POST, "/v1/admin/actions/refresh_video_durations")
             .hasRole(UserRoles.UPDATE_VIDEOS)
