@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.events.types.CaptionsFormat.VTT
 import com.boclips.kalturaclient.captionasset.CaptionFormat
+import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import org.assertj.core.api.Assertions.assertThat
@@ -11,11 +12,11 @@ class CaptionAssetConverterTest {
 
     @Test
     fun `sets language`() {
-        assertThat(getCaptionAsset(createCaptions(language = "en-US")).language).isEqualTo("English")
-        assertThat(getCaptionAsset(createCaptions(language = "en-UK")).language).isEqualTo("English")
-        assertThat(getCaptionAsset(createCaptions(language = "es-ES")).language).isEqualTo("Spanish")
-        assertThat(getCaptionAsset(createCaptions(language = "fr-FR")).language).isEqualTo("French")
-        assertThat(getCaptionAsset(createCaptions(language = "pl-PL")).language).isEqualTo("Polish")
+        assertThat(getCaptionAsset(createCaptions(language = "en-US")).language).isEqualTo(KalturaLanguage.ENGLISH)
+        assertThat(getCaptionAsset(createCaptions(language = "en-UK")).language).isEqualTo(KalturaLanguage.ENGLISH)
+        assertThat(getCaptionAsset(createCaptions(language = "es-ES")).language).isEqualTo(KalturaLanguage.SPANISH)
+        assertThat(getCaptionAsset(createCaptions(language = "fr-FR")).language).isEqualTo(KalturaLanguage.FRENCH)
+        assertThat(getCaptionAsset(createCaptions(language = "pl-PL")).language).isEqualTo(KalturaLanguage.POLISH)
     }
 
     @Test

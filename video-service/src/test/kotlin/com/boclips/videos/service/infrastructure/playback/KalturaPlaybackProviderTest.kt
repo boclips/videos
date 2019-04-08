@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.captionasset.CaptionFormat
+import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -55,7 +56,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `uploads captions if there are no captions in Kaltura already`() {
-        val existingArabicCaptions = createKalturaCaptionAsset(language = "Arabic")
+        val existingArabicCaptions = createKalturaCaptionAsset(language = KalturaLanguage.ARABIC)
         fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "ref-id"))
         fakeKalturaClient.createCaptionsFile("ref-id", existingArabicCaptions, "bla bla in arabic")
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id")
@@ -65,8 +66,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
         val allCaptions = fakeKalturaClient.getCaptionFilesByReferenceId("ref-id")
         assertThat(allCaptions).hasSize(2)
-        val englishCaptions = allCaptions.find { it.language != "Arabic" }!!
-        assertThat(englishCaptions.language).isEqualTo("English")
+        val englishCaptions = allCaptions.find { it.language != KalturaLanguage.ARABIC }!!
+        assertThat(englishCaptions.language).isEqualTo(KalturaLanguage.ENGLISH)
         assertThat(englishCaptions.label).isEqualTo("English (auto-generated)")
         assertThat(englishCaptions.fileType).isEqualTo(CaptionFormat.WEBVTT)
         assertThat(fakeKalturaClient.getCaptionContentByAssetId(englishCaptions.id)).isEqualTo("bla bla bla in english")
@@ -74,7 +75,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `does not upload captions if there are captions in Kaltura already`() {
-        val existingCaptions = createKalturaCaptionAsset(language = "English")
+        val existingCaptions = createKalturaCaptionAsset(language = KalturaLanguage.ENGLISH)
         fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "ref-id"))
         fakeKalturaClient.createCaptionsFile("ref-id", existingCaptions, "bla")
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id")

@@ -2,6 +2,7 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.events.types.*
 import com.boclips.kalturaclient.captionasset.CaptionAsset
+import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
@@ -226,7 +227,7 @@ object TestFactories {
                 .build()
     }
 
-    fun createKalturaCaptionAsset(language: String = "English"): CaptionAsset {
+    fun createKalturaCaptionAsset(language: KalturaLanguage = KalturaLanguage.ENGLISH): CaptionAsset {
         return CaptionAsset.builder()
                 .language(language)
                 .build()
