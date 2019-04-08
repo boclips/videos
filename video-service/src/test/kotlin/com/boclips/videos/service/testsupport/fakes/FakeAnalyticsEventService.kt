@@ -50,6 +50,14 @@ class FakeAnalyticsEventService : AnalyticsEventService {
         )
     }
 
+    override fun saveBookmarkCollectionEvent(collectionId: CollectionId) {
+        saveEvent(EventType.BOOKMARK, BookmarkEventData(collectionId.value))
+    }
+
+    override fun saveUnbookmarkCollectionEvent(collectionId: CollectionId) {
+        saveEvent(EventType.UNBOOKMARK, UnbookmarkEventData(collectionId.value))
+    }
+
     override fun savePlaybackEvent(
         videoId: AssetId,
         videoIndex: Int?,
@@ -104,6 +112,10 @@ class FakeAnalyticsEventService : AnalyticsEventService {
 
     fun searchEvent() = event<SearchEventData>()
 
+    fun bookmarkEvent() = event<BookmarkEventData>()
+
+    fun unbookmarkEvent() = event<UnbookmarkEventData>()
+
     fun playbackEvent() = event<PlaybackEventData>()
 
     fun addToCollectionEvent() = event<AddToCollectionEventData>()
@@ -133,6 +145,14 @@ data class SearchEventData(
 data class AddToCollectionEventData(
     val collectionId: String,
     val videoId: String
+)
+
+data class BookmarkEventData(
+   val collectionId: String
+)
+
+data class UnbookmarkEventData(
+   val collectionId: String
 )
 
 data class PlaybackEventData(

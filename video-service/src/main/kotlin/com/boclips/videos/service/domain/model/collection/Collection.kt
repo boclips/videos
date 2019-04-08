@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
+import getCurrentUserId
 import java.time.Instant
 
 data class Collection(
@@ -11,7 +12,8 @@ data class Collection(
     val videos: List<AssetId>,
     val updatedAt: Instant,
     val isPublic: Boolean,
-    val createdByBoclips: Boolean
+    val createdByBoclips: Boolean,
+    val bookmarks: Set<UserId>
 ) {
     fun createdBy(): String {
         return if (createdByBoclips) {
@@ -20,4 +22,8 @@ data class Collection(
             "Teacher"
         }
     }
+
+    fun isMine() = getCurrentUserId() == this.owner
+    fun isBookmarked() = bookmarks.contains(getCurrentUserId())
+
 }

@@ -17,11 +17,15 @@ import mu.KLogging
 import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.addToSet
+import org.litote.kmongo.and
 import org.litote.kmongo.combine
+import org.litote.kmongo.contains
 import org.litote.kmongo.descendingSort
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.pull
 import org.litote.kmongo.set
 import java.time.Instant
 
@@ -68,6 +72,14 @@ class MongoCollectionService(
         return getPagedCollections(pageRequest, criteria)
     }
 
+    override fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection> {
+        val criteria = and(
+            CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC,
+            CollectionDocument::bookmarks contains bookmarkedBy.value
+        )
+        return getPagedCollections(pageRequest, criteria)
+    }
+
     override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
         update(id, listOf(updateCommand))
     }
@@ -87,6 +99,14 @@ class MongoCollectionService(
     override fun delete(id: CollectionId) {
         dbCollection().deleteOne(CollectionDocument::id eq ObjectId(id.value))
         logger.info { "Deleted collection $id" }
+    }
+
+    override fun bookmark(id: CollectionId, user: UserId) {
+        updateOne(id, addToSet(CollectionDocument::bookmarks, user.value))
+    }
+
+    override fun unbookmark(id: CollectionId, user: UserId) {
+        updateOne(id, pull(CollectionDocument::bookmarks, user.value))
     }
 
     private fun getPagedCollections(
@@ -136,7 +156,8 @@ class MongoCollectionService(
             videos = assetIds,
             updatedAt = collectionDocument.updatedAt,
             isPublic = isPubliclyVisible,
-            createdByBoclips = collectionDocument.createdByBoclips ?: false
+            createdByBoclips = collectionDocument.createdByBoclips ?: false,
+            bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet()
         )
     }
 }

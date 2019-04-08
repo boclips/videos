@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.collections.CollectionResource
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.hateoas.Link
@@ -20,19 +21,42 @@ class UriComponentsBuilderFactory(val request: HttpServletRequest) {
 @Component
 class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
 
-    fun collection(
-        id: String?
-    ): Link {
+    fun collection(id: String?) = collectionResourceLink(id, "collection")
+
+    fun editCollection(collectionResource: CollectionResource) =
+        if (collectionResource.isMine) collectionResourceLink(collectionResource.id, "edit") else null
+
+    fun removeCollection(collectionResource: CollectionResource) =
+        if (collectionResource.isMine) collectionResourceLink(collectionResource.id, "remove") else null
+
+    fun addVideoToCollection(collectionResource: CollectionResource) =
+        if (collectionResource.isMine) Link(
+            getCollectionsRoot()
+                .pathSegment(collectionResource.id)
+                .pathSegment("videos")
+                .toUriString() + "/{video_id}", "addVideo"
+        ) else null
+
+    fun removeVideoFromCollection(collectionResource: CollectionResource) =
+        if (collectionResource.isMine) Link(
+            getCollectionsRoot()
+                .pathSegment(collectionResource.id)
+                .pathSegment("videos")
+                .toUriString() + "/{video_id}", "removeVideo"
+        ) else null
+
+    private fun collectionResourceLink(id: String?, rel: String): Link {
         return if (id == null) {
             Link(
                 getCollectionsRoot().toUriString() + "/{id}",
-                "collection"
+                rel
             )
         } else {
-            val href = getCollectionsRoot()
-                .pathSegment(id)
-                .toUriString()
-            Link(href, "collection")
+            Link(
+                getCollectionsRoot()
+                    .pathSegment(id)
+                    .toUriString(), rel
+            )
         }
     }
 
@@ -50,6 +74,21 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             .queryParam("size", size)
             .toUriString()
         return Link(href, "publicCollections")
+    }
+
+    fun bookmarkedCollections(
+        projection: Projection = Projection.list,
+        page: Int = 0,
+        size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
+    ): Link {
+        val href = getCollectionsRoot()
+            .queryParam("projection", projection)
+            .queryParam("public", true)
+            .queryParam("bookmarked", true)
+            .queryParam("page", page)
+            .queryParam("size", size)
+            .toUriString()
+        return Link(href, "bookmarkedCollections")
     }
 
     fun collectionsByUser(
@@ -84,6 +123,26 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             null
         }
     }
+
+    fun bookmark(collectionResource: CollectionResource) =
+        if (collectionResource.isBookmarked || collectionResource.isMine || !collectionResource.isPublic) {
+            null
+        } else {
+            val href = getCollectionsRoot().pathSegment(collectionResource.id)
+                .queryParam("bookmarked", "true")
+                .toUriString()
+            Link(href, "bookmark")
+        }
+
+    fun unbookmark(collectionResource: CollectionResource) =
+        if (!collectionResource.isBookmarked || collectionResource.isMine || !collectionResource.isPublic) {
+            null
+        } else {
+            val href = getCollectionsRoot().pathSegment(collectionResource.id)
+                .queryParam("bookmarked", "false")
+                .toUriString()
+            Link(href, "unbookmark")
+        }
 
     fun projections() =
         ProjectionsCollectionsLinkBuilder(

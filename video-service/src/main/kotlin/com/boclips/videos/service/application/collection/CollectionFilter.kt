@@ -4,13 +4,17 @@ import com.boclips.videos.service.presentation.Projection
 
 data class CollectionFilter(
     val projection: Projection,
-    val visibility: Boolean,
+    val visibility: Visibility,
     val owner: String?,
     val pageNumber: Int,
     val pageSize: Int
 ) {
+    enum class Visibility {
+        PUBLIC, PRIVATE, BOOKMARKED
+    }
+
     fun isPublicCollections(): Boolean {
-        return visibility
+        return visibility == Visibility.PUBLIC
     }
 
     fun isMyCollections(): Boolean {

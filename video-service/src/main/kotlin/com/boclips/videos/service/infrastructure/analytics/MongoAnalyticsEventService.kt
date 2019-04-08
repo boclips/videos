@@ -26,6 +26,18 @@ class MongoAnalyticsEventService(
         }
     }
 
+    override fun saveBookmarkCollectionEvent(collectionId: CollectionId) {
+        saveEvent(EventType.BOOKMARK) {
+            append("collectionId", collectionId.value)
+        }
+    }
+
+    override fun saveUnbookmarkCollectionEvent(collectionId: CollectionId) {
+        saveEvent(EventType.UNBOOKMARK) {
+            append("collectionId", collectionId.value)
+        }
+    }
+
     override fun savePlaybackEvent(
         videoId: AssetId,
         videoIndex: Int?,

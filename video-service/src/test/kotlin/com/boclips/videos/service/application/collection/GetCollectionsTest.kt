@@ -4,6 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.Page
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.domain.model.PageRequest
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -38,6 +39,40 @@ class GetCollectionsTest {
     }
 
     @Test
+    fun `fetches all bookmarked collections with skinny videos`() {
+        collectionService = mock {
+            on { getBookmarked(PageRequest(0, 1), UserId("me@me.com")) } doReturn Page(
+                listOf(
+                    TestFactories.createCollection(
+                        id = CollectionId("collection-id"),
+                        owner = "yoyoyo@public.com",
+                        title = "collection title",
+                        videos = listOf(video.asset.assetId),
+                        isPublic = true,
+                        bookmarks = setOf(UserId("me@me.com"))
+                    ),
+                    TestFactories.createCollection(
+                        isPublic = true,
+                        bookmarks = setOf(UserId("me@me.com"))
+                    )
+                ), PageInfo(true)
+            )
+        }
+
+        val collections = GetCollections(collectionService, collectionResourceFactory).invoke(
+            CollectionFilter(Projection.list, CollectionFilter.Visibility.BOOKMARKED, null, 0, 1)
+        )
+
+        assertThat(collections.elements).hasSize(2)
+        val collection = collections.elements.first()
+        assertThat(collection.id).isEqualTo("collection-id")
+        assertThat(collection.owner).isEqualTo("yoyoyo@public.com")
+        assertThat(collection.title).isEqualTo("collection title")
+        assertThat(collection.videos).hasSize(1)
+        assertThat(collection.isPublic).isEqualTo(true)
+    }
+
+    @Test
     fun `fetches all public collections with skinny videos`() {
         collectionService = mock {
             on { getPublic(PageRequest(0, 1)) } doReturn Page(
@@ -55,7 +90,7 @@ class GetCollectionsTest {
         }
 
         val collections = GetCollections(collectionService, collectionResourceFactory).invoke(
-            CollectionFilter(Projection.list, true, null, 0, 1)
+            CollectionFilter(Projection.list, CollectionFilter.Visibility.PUBLIC, null, 0, 1)
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -87,7 +122,7 @@ class GetCollectionsTest {
         val collections = GetCollections(collectionService, collectionResourceFactory).invoke(
             CollectionFilter(
                 projection = Projection.details,
-                visibility = true,
+                visibility = CollectionFilter.Visibility.PUBLIC,
                 owner = null,
                 pageNumber = 0,
                 pageSize = 1

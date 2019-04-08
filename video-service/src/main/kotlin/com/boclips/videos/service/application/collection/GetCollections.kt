@@ -15,11 +15,13 @@ class GetCollections(
     operator fun invoke(collectionFilter: CollectionFilter): Page<CollectionResource> {
         val pageRequest = PageRequest(collectionFilter.pageNumber, collectionFilter.pageSize)
 
-        return if (collectionFilter.isPublicCollections()) {
-            collectionService.getPublic(pageRequest)
-        } else {
-            throwIfUnauthorized(collectionFilter)
-            collectionService.getByOwner(getCurrentUserId(), pageRequest)
+        return when (collectionFilter.visibility) {
+            CollectionFilter.Visibility.PUBLIC -> collectionService.getPublic(pageRequest)
+            CollectionFilter.Visibility.BOOKMARKED -> collectionService.getBookmarked(pageRequest, getCurrentUserId())
+            CollectionFilter.Visibility.PRIVATE -> {
+                throwIfUnauthorized(collectionFilter)
+                collectionService.getByOwner(getCurrentUserId(), pageRequest)
+            }
         }.let { collection ->
             Page(
                 collection.elements.map {

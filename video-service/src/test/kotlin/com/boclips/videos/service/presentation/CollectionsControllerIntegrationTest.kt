@@ -150,8 +150,42 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next.href").exists())
+            .andExpect(jsonPath("$._embedded.collections[0]._links.bookmark.href").exists())
+            .andExpect(jsonPath("$._embedded.collections[0]._links.unbookmark").doesNotExist())
 
         mockMvc.perform(get("/v1/collections?projection=list&page=1&size=1&public=true").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
+
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.next").doesNotExist())
+    }
+
+    @Test
+    fun `get all bookmarked collections paginates`() {
+        createCollection("collection 2").apply {
+            updateCollectionToBePublic(this)
+            bookmarkCollection(this, "notTheOwner@gmail.com")
+        }
+        createCollection("collection 1").apply {
+            updateCollectionToBePublic(this)
+            bookmarkCollection(this, "notTheOwner@gmail.com")
+        }
+
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
+
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.next.href").exists())
+            .andExpect(jsonPath("$._embedded.collections[0]._links.unbookmark.href").exists())
+            .andExpect(jsonPath("$._embedded.collections[0]._links.bookmark").doesNotExist())
+
+        mockMvc.perform(get("/v1/collections?projection=list&page=1&size=1&bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
@@ -290,6 +324,11 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isNoContent)
     }
 
+    private fun bookmarkCollection(collectionId: String, user: String) {
+        mockMvc.perform(patch(bookmarkLink(collectionId, user)).contentType(MediaType.APPLICATION_JSON).asTeacher(user))
+            .andExpect(status().isNoContent)
+    }
+
     private fun updateCollectionToBePublicAndRename(collectionId: String, title: String) {
         mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"public": "true", "title": "$title"}""").asTeacher())
             .andExpect(status().isNoContent)
@@ -300,8 +339,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isCreated)
             .andReturn().response.getHeader("Location")!!.substringAfterLast("/")
 
-    private fun getCollection(collectionId: String): ResultActions {
-        return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+    private fun getCollection(collectionId: String, user: String = "teacher@gmail.com"): ResultActions {
+        return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(user))
             .andExpect(status().isOk)
     }
 
@@ -338,6 +377,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         return getCollection(collectionId)
             .andReturn()
             .extractLink("self")
+    }
+
+    private fun bookmarkLink(collectionId: String, user: String): URI {
+        return getCollection(collectionId, user)
+            .andReturn()
+            .extractLink("bookmark")
     }
 
     private fun MvcResult.extractLink(relName: String): URI {

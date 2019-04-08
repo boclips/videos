@@ -159,6 +159,38 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
     }
 
     @Test
+    fun `saving bookmark collection event`() {
+        val collectionId = TestFactories.aValidId()
+        mongoEventService.saveBookmarkCollectionEvent(
+            CollectionId(collectionId)
+        )
+
+        val event = getEvent()
+
+        assertThat(event["type"]).isEqualTo("BOOKMARK")
+        assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
+        assertThat(event["userId"]).isEqualTo("user@example.com")
+        assertThat(event["userIsBoclips"]).isEqualTo(false)
+        assertThat(event["collectionId"]).isEqualTo(collectionId)
+    }
+
+    @Test
+    fun `saving Unbookmark collection event`() {
+        val collectionId = TestFactories.aValidId()
+        mongoEventService.saveUnbookmarkCollectionEvent(
+            CollectionId(collectionId)
+        )
+
+        val event = getEvent()
+
+        assertThat(event["type"]).isEqualTo("UNBOOKMARK")
+        assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
+        assertThat(event["userId"]).isEqualTo("user@example.com")
+        assertThat(event["userIsBoclips"]).isEqualTo(false)
+        assertThat(event["collectionId"]).isEqualTo(collectionId)
+    }
+
+    @Test
     fun `saving change visibility event`() {
         val collectionId = TestFactories.aValidId()
         mongoEventService.saveUpdateCollectionEvent(

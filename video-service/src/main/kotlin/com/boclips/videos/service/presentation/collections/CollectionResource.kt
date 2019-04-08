@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.collections
 
 import com.boclips.videos.service.presentation.video.VideoResource
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.core.Relation
 import java.time.Instant
@@ -13,5 +14,9 @@ data class CollectionResource(
     val videos: List<Resource<VideoResource>>,
     val updatedAt: Instant,
     val isPublic: Boolean,
+    @get:JsonIgnore
+    val isBookmarked: Boolean,
+    @get:JsonIgnore
+    val isMine: Boolean,
     val createdBy: String
 )

@@ -11,5 +11,6 @@ data class CollectionDocument(
     val videos: List<String>,
     val updatedAt: Instant,
     val visibility: CollectionVisibilityDocument?,
-    val createdByBoclips: Boolean?
+    val createdByBoclips: Boolean?,
+    val bookmarks: Set<String> = emptySet()
 )

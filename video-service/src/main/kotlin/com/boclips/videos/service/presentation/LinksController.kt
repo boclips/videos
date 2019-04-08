@@ -24,6 +24,7 @@ class LinksController(
                 EventController.createNoResultsEventLink(),
                 collectionsLinkBuilder.publicCollections(),
 
+                addIfAuthenticated { collectionsLinkBuilder.bookmarkedCollections() },
                 addIfAuthenticated { VideoController.videosLink() },
                 addIfAuthenticated { VideoController.searchLink() },
                 addIfAuthenticated { collectionsLinkBuilder.collection(null) },

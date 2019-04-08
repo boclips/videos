@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -216,6 +217,37 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             assertThat(lastPage.elements).hasSize(1)
             assertThat(lastPage.elements.map { it.id }).contains(publicCollection1.id)
         }
+
+        @Test
+        fun `can retrieve bookmarked collections`() {
+            val publicBookmarkedCollection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            val publicCollection2 = collectionService.create(
+                owner = UserId(value = "user2"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            val privateCollection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            collectionService.update(publicBookmarkedCollection.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
+            collectionService.bookmark(publicBookmarkedCollection.id, UserId("bookmarker"))
+            collectionService.update(publicCollection2.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
+            collectionService.bookmark(privateCollection.id, UserId("bookmarker"))
+
+            val bookmarkedCollections = collectionService.getBookmarked(PageRequest(0, 10), UserId("bookmarker"))
+
+            assertThat(bookmarkedCollections.elements).hasSize(1)
+            assertThat(bookmarkedCollections.elements.map { it.id }).contains(publicBookmarkedCollection.id)
+        }
     }
 
     @Nested
@@ -237,6 +269,32 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             val collection = collectionService.getById(CollectionId(value = "5c55697860fef77aa4af323a"))!!
 
             assertThat(collection.isPublic).isEqualTo(false)
+        }
+    }
+
+    @Nested
+    inner class BookmarkingTests {
+        @Test
+        fun `can bookmark and unbookmark collections`() {
+            setSecurityContext("user2")
+            val collection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Collection vs Playlist",
+                createdByBoclips = false
+            )
+
+            collectionService.bookmark(collection.id, UserId("user2"))
+            collectionService.bookmark(collection.id, UserId("user3"))
+
+            assertThat(collectionService.getById(collection.id)!!.isBookmarked()).isEqualTo(true)
+
+            collectionService.unbookmark(collection.id, UserId("user2"))
+
+            assertThat(collectionService.getById(collection.id)!!.isBookmarked()).isEqualTo(false)
+
+            setSecurityContext("user3")
+            assertThat(collectionService.getById(collection.id)!!.isBookmarked()).isEqualTo(true)
+
         }
     }
 }

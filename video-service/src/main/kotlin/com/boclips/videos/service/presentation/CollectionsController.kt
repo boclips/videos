@@ -1,23 +1,22 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.collection.AddVideoToCollection
+import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CollectionFilter
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
+import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
-import getCurrentUserId
 import mu.KLogging
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -43,10 +42,46 @@ class CollectionsController(
     private val updateCollection: UpdateCollection,
     private val deleteCollection: DeleteCollection,
     private val getCollections: GetCollections,
+    private val bookmarkCollection: BookmarkCollection,
+    private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder
 ) {
     companion object : KLogging() {
         const val PUBLIC_COLLECTIONS_PAGE_SIZE = 30
+    }
+
+    @GetMapping
+    fun getFilteredCollections(
+        @RequestParam projection: Projection,
+        @RequestParam public: Boolean = false,
+        @RequestParam bookmarked: Boolean = false,
+        @RequestParam(required = false) owner: String?,
+        @RequestParam page: Int?,
+        @RequestParam size: Int?
+    ): Resources<Resource<CollectionResource>> {
+        val collectionFilter = CollectionFilter(
+            projection = projection,
+            visibility = when {
+                bookmarked -> CollectionFilter.Visibility.BOOKMARKED
+                public -> CollectionFilter.Visibility.PUBLIC
+                else -> CollectionFilter.Visibility.PRIVATE
+            },
+            owner = owner,
+            pageNumber = page?.let { it } ?: 0,
+            pageSize = size?.let { it } ?: PUBLIC_COLLECTIONS_PAGE_SIZE
+        )
+
+        val collections = getCollections(collectionFilter)
+
+        return Resources(
+            collections.elements.map(::wrapCollection),
+            listOfNotNull(
+                collectionsLinkBuilder.projections().list(),
+                collectionsLinkBuilder.projections().details(),
+                collectionsLinkBuilder.self(),
+                collectionsLinkBuilder.next(collections.pageInfo)
+            )
+        )
     }
 
     @PostMapping
@@ -64,39 +99,22 @@ class CollectionsController(
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
+    @PatchMapping("/{id}", params = ["bookmarked=true"])
+    fun patchBookmarkCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
+        bookmarkCollection(id)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
+    }
+
+    @PatchMapping("/{id}", params = ["bookmarked=false"])
+    fun patchUnbookmarkCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
+        unbookmarkCollection(id)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
+    }
+
     @DeleteMapping("/{id}")
     fun removeCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
         deleteCollection(id)
         return ResponseEntity(HttpStatus.NO_CONTENT)
-    }
-
-    @GetMapping
-    fun getFilteredCollections(
-        @RequestParam projection: Projection,
-        @RequestParam public: Boolean = false,
-        @RequestParam(required = false) owner: String?,
-        @RequestParam page: Int?,
-        @RequestParam size: Int?
-    ): Resources<Resource<CollectionResource>> {
-        val collectionFilter = CollectionFilter(
-            projection = projection,
-            visibility = public,
-            owner = owner,
-            pageNumber = page?.let { it } ?: 0,
-            pageSize = size?.let { it } ?: PUBLIC_COLLECTIONS_PAGE_SIZE
-        )
-
-        val collections = getCollections(collectionFilter)
-
-        return Resources(
-            collections.elements.map(::wrapCollection),
-            listOfNotNull(
-                collectionsLinkBuilder.projections().list(),
-                collectionsLinkBuilder.projections().details(),
-                collectionsLinkBuilder.self(),
-                collectionsLinkBuilder.next(collections.pageInfo)
-            )
-        )
     }
 
     @GetMapping("/{id}")
@@ -118,39 +136,16 @@ class CollectionsController(
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
-    private fun wrapCollection(collection: CollectionResource): Resource<CollectionResource> {
-        val links = mutableListOf(collectionsLinkBuilder.self())
-
-        if (collection.isOwnedByCurrentUser()) {
-            links.add(
-                linkTo(
-                    methodOn(CollectionsController::class.java).patchCollection(id = collection.id, request = null)
-                ).withRel("edit")
+    private fun wrapCollection(collection: CollectionResource) =
+        Resource(
+            collection, listOfNotNull(
+                collectionsLinkBuilder.self(),
+                collectionsLinkBuilder.editCollection(collection),
+                collectionsLinkBuilder.removeCollection(collection),
+                collectionsLinkBuilder.addVideoToCollection(collection),
+                collectionsLinkBuilder.removeVideoFromCollection(collection),
+                collectionsLinkBuilder.bookmark(collection),
+                collectionsLinkBuilder.unbookmark(collection)
             )
-            links.add(
-                linkTo(
-                    methodOn(CollectionsController::class.java).removeCollection(id = collection.id)
-                ).withRel("remove")
-            )
-
-            links.add(
-                linkTo(
-                    methodOn(CollectionsController::class.java).addVideo(collectionId = collection.id, videoId = null)
-                ).withRel("addVideo")
-            )
-
-            links.add(
-                linkTo(
-                    methodOn(CollectionsController::class.java).removeVideo(
-                        collectionId = collection.id,
-                        videoId = null
-                    )
-                ).withRel("removeVideo")
-            )
-        }
-
-        return Resource(collection, links)
-    }
+        )
 }
-
-private fun CollectionResource.isOwnedByCurrentUser() = this.owner == getCurrentUserId().value

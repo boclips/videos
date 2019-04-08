@@ -1,6 +1,10 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.events.types.*
+import com.boclips.events.types.AnalysedVideo
+import com.boclips.events.types.AnalysedVideoKeyword
+import com.boclips.events.types.AnalysedVideoTopic
+import com.boclips.events.types.Captions
+import com.boclips.events.types.CaptionsFormat
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
@@ -20,9 +24,12 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
+import com.boclips.videos.service.presentation.video.VideoResource
 import org.bson.types.ObjectId
+import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -154,7 +161,8 @@ object TestFactories {
         videos: List<AssetId> = listOf(createVideo().asset.assetId),
         updatedAt: Instant = Instant.now(),
         isPublic: Boolean = false,
-        createdByBoclips: Boolean = false
+        createdByBoclips: Boolean = false,
+        bookmarks: Set<UserId> = emptySet()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
@@ -162,7 +170,30 @@ object TestFactories {
         videos = videos,
         updatedAt = updatedAt,
         isPublic = isPublic,
-        createdByBoclips = createdByBoclips
+        createdByBoclips = createdByBoclips,
+        bookmarks = bookmarks
+    )
+
+    fun createCollectionResource(
+        id: String = "collection-id",
+        owner: String = "collection owner",
+        title: String = "collection title",
+        videos: List<Resource<VideoResource>> = emptyList(),
+        updatedAt: Instant = Instant.now(),
+        isPublic: Boolean = false,
+        isBookmarked: Boolean = false,
+        isMine: Boolean = false,
+        createdBy: String = "Johnny Bravo"
+    ) = CollectionResource(
+            id = id,
+            owner = owner,
+            title = title,
+            videos = videos,
+            updatedAt = updatedAt,
+            isPublic = isPublic,
+            isMine = isMine,
+            isBookmarked = isBookmarked,
+            createdBy = createdBy
     )
 
     fun aValidId(): String {

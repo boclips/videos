@@ -14,6 +14,10 @@ interface AnalyticsEventService {
 
     fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands :List<CollectionUpdateCommand>)
 
+    fun saveBookmarkCollectionEvent(collectionId: CollectionId)
+
+    fun saveUnbookmarkCollectionEvent(collectionId: CollectionId)
+
     fun savePlaybackEvent(
         videoId: AssetId,
         videoIndex: Int?,

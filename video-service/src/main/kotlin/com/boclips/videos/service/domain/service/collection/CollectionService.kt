@@ -14,4 +14,7 @@ interface CollectionService {
     fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>)
     fun delete(id: CollectionId)
     fun getPublic(pageRequest: PageRequest): Page<Collection>
+    fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
+    fun bookmark(id: CollectionId, user: UserId)
+    fun unbookmark(id: CollectionId, user: UserId)
 }

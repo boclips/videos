@@ -17,6 +17,8 @@ class CollectionResourceFactory(
             videos = videoToResourceConverter.fromVideos(videoService.get(collection.videos)),
             updatedAt = collection.updatedAt,
             isPublic = collection.isPublic,
+            isMine = collection.isMine(),
+            isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy()
         )
     }
@@ -29,6 +31,8 @@ class CollectionResourceFactory(
             videos = videoToResourceConverter.fromAssetIds(collection.videos),
             updatedAt = collection.updatedAt,
             isPublic = collection.isPublic,
+            isMine = collection.isMine(),
+            isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy()
         )
     }
@@ -38,4 +42,5 @@ class CollectionResourceFactory(
             Projection.list -> buildCollectionListResource(collection)
             Projection.details -> buildCollectionDetailsResource(collection)
         }
+
 }
