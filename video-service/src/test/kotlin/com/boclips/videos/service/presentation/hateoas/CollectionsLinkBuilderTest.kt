@@ -15,7 +15,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when public collections`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.publicCollections(
@@ -31,7 +31,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when bookmarked collections`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.bookmarkedCollections(
@@ -47,7 +47,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when collections of a user`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.collectionsByUser(
@@ -64,7 +64,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when collections`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.collections()
@@ -76,7 +76,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when collection`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.collection(id = "c123")
@@ -88,7 +88,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when edit and owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.editCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
@@ -101,7 +101,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when remove and owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.removeCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
@@ -114,7 +114,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when addVideo and owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.addVideoToCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
@@ -127,7 +127,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when removeVideo and owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=hello"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.removeVideoFromCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
@@ -140,7 +140,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when edit and not owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.editCollection(TestFactories.createCollectionResource(id = "c123"))
@@ -151,7 +151,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when remove and not owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.removeCollection(TestFactories.createCollectionResource(id = "c123"))
@@ -162,7 +162,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when addVideo and not owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.addVideoToCollection(TestFactories.createCollectionResource(id = "c123"))
@@ -173,7 +173,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when removeVideo and not owner`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.removeVideoFromCollection(TestFactories.createCollectionResource(id = "c123"))
@@ -184,7 +184,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when templated collection`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.collection(id = null)

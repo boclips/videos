@@ -149,7 +149,9 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             uriComponentsBuilderFactory
         )
 
-    private fun getCollectionsRoot() = uriComponentsBuilderFactory.getInstance().replacePath("/v1/collections")
+    private fun getCollectionsRoot() = uriComponentsBuilderFactory.getInstance()
+            .replacePath("/v1/collections")
+            .replaceQueryParams(null)
 
     class ProjectionsCollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
         fun list() =
