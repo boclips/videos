@@ -104,6 +104,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     fun `includes educational content when category is classroom`() {
         val videoId = saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
         saveVideo(title = "banana", typeId = LegacyVideoType.STOCK.id)
+        saveVideo(title = "banana", contentProvider = "AP")
 
         val videos = searchVideo.byQuery(
             query = "banana",
@@ -139,6 +140,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "banana", typeId = LegacyVideoType.STOCK.id)
         val newsAndClassroomVideoId = saveVideo(title = "banana", typeId = LegacyVideoType.NEWS.id)
         saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
+        saveVideo(title = "banana", typeId = LegacyVideoType.NEWS.id, contentProvider = "AP")
 
         val videos = searchVideo.byQuery(
             query = "banana",

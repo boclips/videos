@@ -9,8 +9,41 @@ import org.junit.jupiter.api.Test
 class ContentEnrichersTest {
 
     @Test
-    fun `non stock content is matched as classroom`() {
-        assertThat(isClassroom(createVideoAsset(type = LegacyVideoType.INSTRUCTIONAL_CLIPS))).isTrue()
+    fun `blacklisted content partners of any type are not classroom`() {
+        val blackListedContentPartners = listOf(
+            "AP",
+            "numberock",
+            "Siren Films",
+            "StoryFul",
+            "Singapore Press Holdings",
+            "Mage Math",
+            "engVid",
+            "1 Minute in a Museum",
+            "British Movietone"
+
+        )
+
+        blackListedContentPartners.forEach {
+            assertThat(
+                isClassroom(
+                    createVideoAsset(
+                        contentPartnerId = it
+                    )
+                )
+            ).withFailMessage("Expected $it to be excluded").isFalse()
+        }
+    }
+
+    @Test
+    fun `non stock content is matched as classroom for non-blacklisted content partners`() {
+        assertThat(
+            isClassroom(
+                createVideoAsset(
+                    type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+                    contentPartnerId = "Reuters"
+                )
+            )
+        ).isTrue()
     }
 
     @Test

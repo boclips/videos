@@ -16,7 +16,7 @@ class VideoMetadataConverterTest {
             videoId = videoAssetId,
             title = "asset title",
             description = "asset description",
-            contentProvider = "content partner",
+            contentPartnerId = "content partner",
             keywords = listOf("k1"),
             type = LegacyVideoType.INSTRUCTIONAL_CLIPS
         )

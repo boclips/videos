@@ -83,9 +83,9 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `stream all by content partner`() {
-        mongoVideoRepository.create(TestFactories.createVideoAsset(contentProvider = "TED"))
-        mongoVideoRepository.create(TestFactories.createVideoAsset(contentProvider = "Bob"))
-        mongoVideoRepository.create(TestFactories.createVideoAsset(contentProvider = "TED"))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(contentPartnerId = "TED"))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(contentPartnerId = "Bob"))
+        mongoVideoRepository.create(TestFactories.createVideoAsset(contentPartnerId = "TED"))
 
         var videos: List<VideoAsset> = emptyList()
         mongoVideoRepository.streamAll(VideoAssetFilter.ContentPartnerIs("TED")) { videos = it.toList() }
@@ -99,7 +99,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
             TestFactories.createVideoAsset(
                 title = "title",
                 description = "description",
-                contentProvider = "AP",
+                contentPartnerId = "AP",
                 contentPartnerVideoId = "cp-id-123",
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
                 type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
@@ -211,7 +211,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val asset = TestFactories.createVideoAsset(
             videoId = TestFactories.aValidId(),
             contentPartnerVideoId = "ted-id-1",
-            contentProvider = "TED Talks"
+            contentPartnerId = "TED Talks"
         )
 
         mongoVideoRepository.create(asset)

@@ -19,7 +19,7 @@ internal class VideoToResourceConverterTest {
         videoAsset = createVideoAsset(
             title = "Do what you love",
             description = "Best bottle slogan",
-            contentProvider = "WeWork",
+            contentPartnerId = "WeWork",
             contentPartnerVideoId = "111",
             type = LegacyVideoType.TED_TALKS,
             subjects = setOf(Subject("Maths")),
@@ -33,7 +33,7 @@ internal class VideoToResourceConverterTest {
         videoAsset = createVideoAsset(
             title = "Do what you love on youtube",
             description = "Best bottle slogan",
-            contentProvider = "JacekWork",
+            contentPartnerId = "JacekWork",
             contentPartnerVideoId = "222",
             type = LegacyVideoType.OTHER,
             subjects = setOf(Subject("Biology")),

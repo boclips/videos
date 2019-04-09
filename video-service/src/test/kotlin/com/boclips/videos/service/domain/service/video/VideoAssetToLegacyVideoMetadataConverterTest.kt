@@ -18,7 +18,7 @@ class VideoAssetToLegacyVideoMetadataConverterTest {
             description = "the description",
             keywords = listOf("keyword"),
             duration = Duration.ofSeconds(10),
-            contentProvider = "Reuters",
+            contentPartnerId = "Reuters",
             contentPartnerVideoId = "r001",
             releasedOn = LocalDate.parse("2019-01-17"),
             type = LegacyVideoType.TED_TALKS

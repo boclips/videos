@@ -20,7 +20,7 @@ class VideoDocumentConverterTest {
             videoId = "5c1786db5236de0001d77747",
             title = "the title",
             description = "the description",
-            contentProvider = "the contentPartner",
+            contentPartnerId = "the contentPartner",
             contentPartnerVideoId = "the contentPartnerVideoId",
             playbackId = PlaybackId(PlaybackProviderType.KALTURA, "the playbackId"),
             type = LegacyVideoType.NEWS,

@@ -123,7 +123,7 @@ abstract class AbstractSpringIntegrationTest {
         description: String = "Some description!",
         date: String = "2018-01-01",
         duration: Duration = Duration.ofSeconds(10),
-        contentProvider: String = "AP",
+        contentProvider: String = "Reuters",
         contentProviderId: String = "content-partner-video-id-${playbackId.value}",
         typeId: Int = 3,
         keywords: List<String> = emptyList(),
