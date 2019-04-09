@@ -17,24 +17,24 @@ class ExceptionHandling {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Provided query is invalid")
     @ExceptionHandler(SearchRequestValidationException::class)
     fun handleIOException(ex: SearchRequestValidationException) {
-        logger.error { "Provided query is invalid $ex" }
+        logger.info { "Provided query is invalid $ex" }
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The requested asset does not exist")
     @ExceptionHandler(VideoAssetNotFoundException::class)
     fun handleVideoNotFoundException(ex: VideoAssetNotFoundException) {
-        logger.error { "Video not found $ex" }
+        logger.info { "Video not found $ex" }
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No or malformed event data was presented")
     @ExceptionHandler(InvalidEventException::class)
     fun handleInvalidEventException(ex: InvalidEventException) {
-        logger.error { "Event data malformed or invalid: $ex" }
+        logger.info { "Event data malformed or invalid: $ex" }
     }
 
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Not authorized")
     @ExceptionHandler(UnauthorizedException::class)
     fun handleNotAuthorizedException(ex: UnauthorizedException) {
-        logger.error { "Unauthorized: $ex" }
+        logger.info { "Unauthorized: $ex" }
     }
 }

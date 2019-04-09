@@ -32,7 +32,7 @@ class VideoService(
         val videoPlaybacks = playbackRepository.find(allVideoAssets.map { it.playbackId })
 
         if (assetIds.size != videoPlaybacks.size) {
-            logger.warn { "Found ${assetIds.size} videos with ${videoPlaybacks.size} playbacks for query ${query.text}" }
+            logger.info { "Found ${assetIds.size} videos with ${videoPlaybacks.size} playbacks for query ${query.text}" }
         }
 
         val videos = allVideoAssets.mapNotNull { videoAsset ->
@@ -66,7 +66,7 @@ class VideoService(
         val videoAssets = videoAssetRepository.findAll(assetIds)
 
         if (assetIds.size != videoAssets.size) {
-            logger.warn {
+            logger.info {
                 val assetsNotFound = assetIds - videoAssets.map { it.assetId }
                 "Some of the requested video assets could not be found. Ids found: $assetsNotFound"
             }
@@ -79,7 +79,7 @@ class VideoService(
             val videoPlayback = videoPlaybacks[videoAsset.playbackId]
 
             if (videoPlayback == null) {
-                logger.warn { "Failed to find playback for video ${videoAsset.assetId}" }
+                logger.info { "Failed to find playback for video ${videoAsset.assetId}" }
                 return@mapNotNull null
             }
 
