@@ -16,7 +16,10 @@ class AnalyseVideoIntegrationTest(
 
     @Test
     fun `sends an event`() {
-        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id")).value
+        val videoId = saveVideo(
+                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+                searchable = true
+        ).value
 
         analyseVideo(videoId)
 
@@ -24,6 +27,20 @@ class AnalyseVideoIntegrationTest(
         val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
+    }
+
+    @Test
+    fun `does not send events for non searchable videos`() {
+        val videoId = saveVideo(
+                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+                searchable = false
+        ).value
+
+        analyseVideo(videoId)
+
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+
+        assertThat(message).isNull()
     }
 
     @Test

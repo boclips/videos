@@ -20,6 +20,11 @@ class AnalyseVideo(
         val video = videoService.get(assetId = AssetId(value = videoId))
         val playback = video.playback as? StreamPlayback ?: throw VideoNotAnalysableException()
 
+        if(!video.asset.searchable) {
+            logger.info { "Video $videoId NOT published to $VIDEOS_TO_ANALYSE_TOPIC because it is not searchable" }
+            return
+        }
+
         val videoToAnalyse = VideoToAnalyse.builder()
             .videoId(video.asset.assetId.value)
             .videoUrl(playback.downloadUrl)
