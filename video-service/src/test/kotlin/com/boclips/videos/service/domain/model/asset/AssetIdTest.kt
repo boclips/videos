@@ -10,6 +10,7 @@ class AssetIdTest {
     @Test
     fun `valid asset ids consist of hex strings`() {
         assertDoesNotThrow { TestFactories.aValidId() }
+        assertDoesNotThrow { AssetId(value = "5c9e5e38aa25da28896c9956\uFEFF") }
     }
 
     @Test

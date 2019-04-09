@@ -7,8 +7,9 @@ class AssetId(value: String) {
 
     init {
         try {
-            ObjectId(value)
-            this.value = value
+            val cleanedId = value.replace(Regex("\uFEFF"), "")
+            ObjectId(cleanedId)
+            this.value = cleanedId
         } catch (e: IllegalArgumentException) {
             throw IllegalVideoIdentifierException("$value is not a valid ID")
         }
