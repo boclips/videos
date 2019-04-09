@@ -258,9 +258,13 @@ object TestFactories {
                 .build()
     }
 
-    fun createKalturaCaptionAsset(language: KalturaLanguage = KalturaLanguage.ENGLISH): CaptionAsset {
+    fun createKalturaCaptionAsset(
+            language: KalturaLanguage = KalturaLanguage.ENGLISH,
+            label: String = language.getName()
+    ): CaptionAsset {
         return CaptionAsset.builder()
                 .language(language)
+                .label(label)
                 .build()
     }
 }
