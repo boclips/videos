@@ -80,6 +80,27 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `collection is mine if I created it`() {
+        val collectionId = createCollection("collection from a teacher")
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$.mine", equalTo(true)))
+    }
+
+    @Test
+    fun `collection is not mine if I did not create it`() {
+        val collectionId = createCollection("collection from a teacher")
+        updateCollectionToBePublic(collectionId)
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$.mine", equalTo(false)))
+    }
+
+    @Test
     fun `gets all user collections with full details`() {
         val collectionId = createCollection("collection 1")
         createCollection("collection 2")
@@ -115,6 +136,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(true)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(savedVideoAssetId.value)))
@@ -146,6 +168,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
 
             .andExpect(jsonPath("$._links.self.href").exists())
@@ -178,6 +201,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
 
             .andExpect(jsonPath("$._links.self.href").exists())
@@ -204,6 +228,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.mine", equalTo(false)))
             .andExpect(jsonPath("$.title", equalTo("collection 1")))
 
             .andExpect(jsonPath("$._links.self.href").exists())
@@ -222,6 +247,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.mine", equalTo(false)))
             .andExpect(jsonPath("$.title", equalTo("collection 1")))
 
             .andExpect(jsonPath("$._links.self.href").exists())

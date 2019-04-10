@@ -16,7 +16,6 @@ data class CollectionResource(
     val isPublic: Boolean,
     @get:JsonIgnore
     val isBookmarked: Boolean,
-    @get:JsonIgnore
     val isMine: Boolean,
     val createdBy: String
 )
