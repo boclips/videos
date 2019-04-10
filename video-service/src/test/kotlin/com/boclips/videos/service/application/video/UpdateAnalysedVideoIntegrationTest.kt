@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -7,6 +8,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createAnalysedVideo
 import com.boclips.videos.service.testsupport.TestFactories.createAnalysedVideoKeyword
 import com.boclips.videos.service.testsupport.TestFactories.createAnalysedVideoTopic
+import com.boclips.videos.service.testsupport.TestFactories.createKalturaCaptionAsset
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +28,32 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
         subscriptions.analysedVideos().send(MessageBuilder.withPayload(analysedVideo).build())
 
         assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isNotEmpty
+    }
+
+    @Test
+    fun `does NOT upload captions to Kaltura when transcript has no words`() {
+        val assetId = saveVideo(playbackId = PlaybackId(type = KALTURA, value = "reference-id"))
+        val analysedVideo = createAnalysedVideo(videoId = assetId.value, transcript = "\n")
+
+        subscriptions.analysedVideos().send(MessageBuilder.withPayload(analysedVideo).build())
+
+        assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isEmpty()
+    }
+
+    @Test
+    fun `deletes existing auto-generated captions when transcript has no words`() {
+        val existingCaptions = createKalturaCaptionAsset(
+                language = KalturaLanguage.ENGLISH,
+                label = "English (auto-generated)"
+        )
+        fakeKalturaClient.createCaptionsFile("reference-id", existingCaptions, "bla bla bla")
+
+        val assetId = saveVideo(playbackId = PlaybackId(type = KALTURA, value = "reference-id"))
+        val analysedVideo = createAnalysedVideo(videoId = assetId.value, transcript = "\n")
+
+        subscriptions.analysedVideos().send(MessageBuilder.withPayload(analysedVideo).build())
+
+        assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isEmpty()
     }
 
     @Test

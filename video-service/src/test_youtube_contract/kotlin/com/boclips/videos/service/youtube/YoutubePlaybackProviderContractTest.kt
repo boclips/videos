@@ -83,7 +83,7 @@ class YoutubePlaybackProviderContractTest {
         val exception = assertThrows<UnsupportedOperationException> {
             playbackProvider.uploadCaptions(playbackIds.first(), captions)
         }
-        assertThat(exception).hasMessage("Uploading captions to YouTube is not supported")
+        assertThat(exception).hasMessage("YouTube captions not supported")
     }
 }
 
