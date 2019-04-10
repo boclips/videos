@@ -113,7 +113,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `filters out non classroom results when filter param set`() {
         val excludedVideoId =
-            saveVideo(title = "Non educational video about elephants", typeId = LegacyVideoType.STOCK.id)
+            saveVideo(title = "Non educational video about elephants", legacyType = LegacyVideoType.STOCK)
 
         mockMvc.perform(get("/v1/videos?query=elephant&include_tag=classroom").asTeacher())
             .andExpect(status().isOk)
@@ -122,7 +122,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can exclude results for a particular tag`() {
-        val excludedVideoId = saveVideo(title = "Elephant news", typeId = LegacyVideoType.NEWS.id)
+        val excludedVideoId = saveVideo(title = "Elephant news", legacyType = LegacyVideoType.NEWS)
 
         mockMvc.perform(get("/v1/videos?query=elephant&exclude_tag=news").asTeacher())
             .andExpect(status().isOk)
@@ -131,9 +131,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can find videos by tags`() {
-        val newsAndClassroomVideoId = saveVideo(title = "ben poos elephants", typeId = LegacyVideoType.NEWS.id)
+        val newsAndClassroomVideoId = saveVideo(title = "ben poos elephants", legacyType = LegacyVideoType.NEWS)
         val classroomVideoId =
-            saveVideo(title = "Video about elephants", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
+            saveVideo(title = "Video about elephants", legacyType = LegacyVideoType.INSTRUCTIONAL_CLIPS)
 
         mockMvc.perform(get("/v1/videos?query=elephants&include_tag=news&include_tag=classroom").asTeacher())
             .andExpect(status().isOk)

@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.VideoToAnalyse
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -34,6 +35,21 @@ class AnalyseVideoIntegrationTest(
         val videoId = saveVideo(
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
                 searchable = false
+        ).value
+
+        analyseVideo(videoId)
+
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `does not send events for non instructional videos`() {
+        val videoId = saveVideo(
+                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+                searchable = true,
+                legacyType = LegacyVideoType.NEWS
         ).value
 
         analyseVideo(videoId)

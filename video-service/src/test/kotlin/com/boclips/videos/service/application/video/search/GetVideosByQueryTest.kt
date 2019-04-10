@@ -102,8 +102,8 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `includes educational content when category is classroom`() {
-        val videoId = saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
-        saveVideo(title = "banana", typeId = LegacyVideoType.STOCK.id)
+        val videoId = saveVideo(title = "banana", legacyType = LegacyVideoType.INSTRUCTIONAL_CLIPS)
+        saveVideo(title = "banana", legacyType = LegacyVideoType.STOCK)
         saveVideo(title = "banana", contentProvider = "AP")
 
         val videos = searchVideo.byQuery(
@@ -120,8 +120,8 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `shows only news when category is news`() {
-        val newsVideoId = saveVideo(title = "banana", typeId = LegacyVideoType.NEWS.id)
-        saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
+        val newsVideoId = saveVideo(title = "banana", legacyType = LegacyVideoType.NEWS)
+        saveVideo(title = "banana", legacyType = LegacyVideoType.INSTRUCTIONAL_CLIPS)
 
         val videos = searchVideo.byQuery(
             query = "banana",
@@ -137,10 +137,10 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns videos with multiple categories`() {
-        saveVideo(title = "banana", typeId = LegacyVideoType.STOCK.id)
-        val newsAndClassroomVideoId = saveVideo(title = "banana", typeId = LegacyVideoType.NEWS.id)
-        saveVideo(title = "banana", typeId = LegacyVideoType.INSTRUCTIONAL_CLIPS.id)
-        saveVideo(title = "banana", typeId = LegacyVideoType.NEWS.id, contentProvider = "AP")
+        saveVideo(title = "banana", legacyType = LegacyVideoType.STOCK)
+        val newsAndClassroomVideoId = saveVideo(title = "banana", legacyType = LegacyVideoType.NEWS)
+        saveVideo(title = "banana", legacyType = LegacyVideoType.INSTRUCTIONAL_CLIPS)
+        saveVideo(title = "banana", legacyType = LegacyVideoType.NEWS, contentProvider = "AP")
 
         val videos = searchVideo.byQuery(
             query = "banana",
