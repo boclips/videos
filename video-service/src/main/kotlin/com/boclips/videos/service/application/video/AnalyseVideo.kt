@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.types.Topics.VIDEOS_TO_ANALYSE_TOPIC
+import com.boclips.events.config.Topics.VIDEOS_TO_ANALYSE_TOPIC
 import com.boclips.events.types.VideoToAnalyse
 import com.boclips.videos.service.config.messaging.Topics
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException

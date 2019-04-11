@@ -61,7 +61,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val assetId = saveVideo(playbackId = PlaybackId(type = KALTURA, value = "reference-id"))
         val analysedVideo = createAnalysedVideo(
                 videoId = assetId.value,
-                language = "it-IT"
+                language = Locale.ITALY
         )
 
         subscriptions.analysedVideos().send(MessageBuilder.withPayload(analysedVideo).build())

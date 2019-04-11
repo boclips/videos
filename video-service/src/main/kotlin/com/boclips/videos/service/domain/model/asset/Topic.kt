@@ -14,7 +14,7 @@ data class Topic(
         fun fromAnalysedVideoTopic(assignedTopic: AnalysedVideoTopic): Topic {
             return Topic(
                     name = assignedTopic.name,
-                    language = Locale.forLanguageTag(assignedTopic.language),
+                    language = assignedTopic.language,
                     confidence = assignedTopic.confidence,
                     parent = assignedTopic.parent?.let(this::fromAnalysedVideoTopic)
             )

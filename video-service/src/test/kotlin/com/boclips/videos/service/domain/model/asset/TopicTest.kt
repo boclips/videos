@@ -18,7 +18,7 @@ class TopicTest {
 
     @Test
     fun `copies the language from assigned topic`() {
-        val assignedTopic = createAnalysedVideoTopic(language = "zh-CN")
+        val assignedTopic = createAnalysedVideoTopic(language = Locale.CHINA)
 
         val topic = Topic.fromAnalysedVideoTopic(assignedTopic)
 
