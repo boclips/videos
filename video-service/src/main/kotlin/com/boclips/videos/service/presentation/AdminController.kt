@@ -9,6 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -51,9 +52,9 @@ class AdminController(
     }
 
     @PostMapping("/analyse_video/{videoId}")
-    fun postAnalyseVideo(@PathVariable videoId: String): ResponseEntity<Void> {
+    fun postAnalyseVideo(@PathVariable videoId: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
-            analyseVideo(videoId)
+            analyseVideo(videoId, language = language)
         }
         catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
@@ -63,9 +64,9 @@ class AdminController(
     }
 
     @PostMapping("/analyse_videos")
-    fun postAnalyseVideos(@RequestParam contentPartner: String): ResponseEntity<Void> {
+    fun postAnalyseVideos(@RequestParam contentPartner: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
-            analyseContentPartnerVideos(contentPartner)
+            analyseContentPartnerVideos(contentPartner, language = language)
         }
         catch(e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)

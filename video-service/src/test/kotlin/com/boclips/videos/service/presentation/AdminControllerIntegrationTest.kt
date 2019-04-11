@@ -61,13 +61,14 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `analyse video publishes events`() {
         val assetId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123"))
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asOperator())
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId?language=en_US").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
         val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
 
         assertThat(message.payload.toString()).contains(assetId.value)
         assertThat(message.payload.toString()).contains("https://download/video-entry-123.mp4")
+        assertThat(message.payload.toString()).contains("en_US")
     }
 
     @Test
@@ -91,12 +92,13 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `analyse content partner videos publishes events`() {
         saveVideo(contentProvider = "Ted")
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted").asOperator())
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
         val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
 
         assertThat(message).isNotNull
+        assertThat(message.payload.toString()).contains("es_ES")
     }
 
     @Test

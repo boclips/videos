@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
+import java.util.*
 
 class AnalyseVideoIntegrationTest(
     @Autowired val analyseVideo: AnalyseVideo
@@ -24,12 +25,13 @@ class AnalyseVideoIntegrationTest(
                 duration = Duration.ofSeconds(70)
         ).value
 
-        analyseVideo(videoId)
+        analyseVideo(videoId, language = Locale.GERMAN)
 
         val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
         val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
+        assertThat(event.language).isEqualTo(Locale.GERMAN)
     }
 
     @Test
@@ -39,7 +41,7 @@ class AnalyseVideoIntegrationTest(
                 searchable = false
         ).value
 
-        analyseVideo(videoId)
+        analyseVideo(videoId, language = null)
 
         val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
 
@@ -54,7 +56,7 @@ class AnalyseVideoIntegrationTest(
                 duration = Duration.ofSeconds(20)
         ).value
 
-        analyseVideo(videoId)
+        analyseVideo(videoId, language = null)
 
         val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
 
@@ -69,7 +71,7 @@ class AnalyseVideoIntegrationTest(
                 legacyType = LegacyVideoType.NEWS
         ).value
 
-        analyseVideo(videoId)
+        analyseVideo(videoId, language = null)
 
         val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
 
@@ -80,6 +82,6 @@ class AnalyseVideoIntegrationTest(
     fun `throws on youtube videos`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "youtube-id")).value
 
-        assertThrows<VideoNotAnalysableException> { analyseVideo(videoId) }
+        assertThrows<VideoNotAnalysableException> { analyseVideo(videoId, language = null) }
     }
 }

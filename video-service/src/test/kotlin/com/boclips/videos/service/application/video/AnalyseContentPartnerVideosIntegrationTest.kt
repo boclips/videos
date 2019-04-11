@@ -16,7 +16,7 @@ class AnalyseContentPartnerVideosIntegrationTest(
         saveVideo(contentProvider = "Ted")
         saveVideo(contentProvider = "Bob")
 
-        analyseContentPartnerVideos("Ted")
+        analyseContentPartnerVideos("Ted", language = null)
 
         val messages = mutableListOf<Message<*>>().apply {
             messageCollector.forChannel(topics.videosToAnalyse()).drainTo(this)

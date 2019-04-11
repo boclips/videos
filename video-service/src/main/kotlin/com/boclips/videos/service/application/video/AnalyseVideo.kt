@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.service.video.VideoService
 import mu.KLogging
 import org.springframework.messaging.support.MessageBuilder
+import java.util.*
 
 class AnalyseVideo(
         private val videoService: VideoService,
@@ -17,7 +18,7 @@ class AnalyseVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(videoId: String) {
+    operator fun invoke(videoId: String, language: Locale?) {
         val video = videoService.get(assetId = AssetId(value = videoId))
         val playback = video.playback as? StreamPlayback ?: throw VideoNotAnalysableException()
 
@@ -39,6 +40,7 @@ class AnalyseVideo(
         val videoToAnalyse = VideoToAnalyse.builder()
                 .videoId(video.asset.assetId.value)
                 .videoUrl(playback.downloadUrl)
+                .language(language)
                 .build()
 
         topics.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
