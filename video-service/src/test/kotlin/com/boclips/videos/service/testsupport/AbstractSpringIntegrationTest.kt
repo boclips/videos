@@ -122,7 +122,7 @@ abstract class AbstractSpringIntegrationTest {
         title: String = "Some title!",
         description: String = "Some description!",
         date: String = "2018-01-01",
-        duration: Duration = Duration.ofSeconds(10),
+        duration: Duration = Duration.ofSeconds(120),
         contentProvider: String = "Reuters",
         contentProviderId: String = "content-partner-video-id-${playbackId.value}",
         legacyType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,

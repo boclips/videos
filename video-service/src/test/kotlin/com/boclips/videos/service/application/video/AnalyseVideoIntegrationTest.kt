@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 
 class AnalyseVideoIntegrationTest(
     @Autowired val analyseVideo: AnalyseVideo
@@ -19,7 +20,8 @@ class AnalyseVideoIntegrationTest(
     fun `sends an event`() {
         val videoId = saveVideo(
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                searchable = true
+                searchable = true,
+                duration = Duration.ofSeconds(70)
         ).value
 
         analyseVideo(videoId)
@@ -35,6 +37,21 @@ class AnalyseVideoIntegrationTest(
         val videoId = saveVideo(
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
                 searchable = false
+        ).value
+
+        analyseVideo(videoId)
+
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `does not send events for videos not longer than 20s`() {
+        val videoId = saveVideo(
+                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+                searchable = true,
+                duration = Duration.ofSeconds(20)
         ).value
 
         analyseVideo(videoId)
