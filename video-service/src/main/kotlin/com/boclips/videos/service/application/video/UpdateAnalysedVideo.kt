@@ -21,6 +21,14 @@ class UpdateAnalysedVideo(
 
     @StreamListener(Topics.ANALYSED_VIDEOS_SUBSCRIPTION)
     operator fun invoke(analysedVideo: AnalysedVideo) {
+        try {
+            doUpdateVideo(analysedVideo)
+        } catch(e: Exception) {
+            logger.error(e) { "Error updating video ${analysedVideo.videoId}" }
+        }
+    }
+
+    private fun doUpdateVideo(analysedVideo: AnalysedVideo) {
         val videoId = analysedVideo.videoId
         logger.info { "Updating analysed video $videoId" }
         val video = try {
