@@ -9,7 +9,7 @@ data class ElasticSearchVideo @JsonCreator constructor(
     @param:JsonProperty(TITLE) val title: String,
     @param:JsonProperty(DESCRIPTION) val description: String,
     @param:JsonProperty(CONTENT_PROVIDER) val contentProvider: String,
-    @param:JsonProperty(RELEASE_DATE) val releaseDate: LocalDate,
+    @param:JsonProperty(RELEASE_DATE) val releaseDate: LocalDate?,
     @param:JsonProperty(KEYWORDS) val keywords: List<String>,
     @param:JsonProperty(TAGS) val tags: List<String>
 

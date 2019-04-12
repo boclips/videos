@@ -4,8 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.Month
 
 class ElasticSearchResultConverterTest {
 
@@ -22,7 +20,6 @@ class ElasticSearchResultConverterTest {
                 "description": "The description",
                 "contentProvider": "TED Talks",
                 "price_category": "expensive",
-                "releaseDate": "2014-05-13",
                 "duration": "02:01:20",
                 "keywords": ["k1","k2"],
                 "tags": ["news", "classroom"]
@@ -39,7 +36,7 @@ class ElasticSearchResultConverterTest {
                 title = "The title",
                 description = "The description",
                 contentProvider = "TED Talks",
-                releaseDate = LocalDate.of(2014, Month.MAY, 13),
+                releaseDate = null,
                 keywords = listOf("k1", "k2"),
                 tags = listOf("news", "classroom")
             )
