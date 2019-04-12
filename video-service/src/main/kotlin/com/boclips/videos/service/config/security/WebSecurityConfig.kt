@@ -30,6 +30,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(HttpMethod.POST, "/v1/events/*").permitAll()
 
             .antMatchers(HttpMethod.GET, "/v1/subjects").permitAll()
+            .antMatchers(HttpMethod.POST, "/v1/subjects")
+            .hasRole(UserRoles.CREATE_SUBJECT)
 
             .antMatchers(HttpMethod.POST, "/v1/admin/actions/rebuild_search_index")
             .hasRole(UserRoles.REBUILD_SEARCH_INDEX)

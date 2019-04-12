@@ -10,6 +10,7 @@ import com.boclips.videos.service.application.collection.GetCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
@@ -172,6 +173,11 @@ class ApplicationContext(
     @Bean
     fun getSubjects(): GetSubjects {
         return GetSubjects(subjectRepository)
+    }
+
+    @Bean
+    fun createSubject(): CreateSubject {
+        return CreateSubject(subjectRepository)
     }
 
     private fun getVideoById() =

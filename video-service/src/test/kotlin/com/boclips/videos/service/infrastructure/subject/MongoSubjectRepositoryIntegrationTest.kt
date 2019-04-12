@@ -16,18 +16,23 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find all subjects`() {
-        val subjectDocuments = listOf(
-            SubjectDocument(id = ObjectId(), name = "Mathematics"),
-            SubjectDocument(id = ObjectId(), name = "French")
-        )
-
-        mongoClient.getDatabase(DATABASE_NAME)
-            .getCollection<SubjectDocument>(MongoSubjectRepository.collectionName)
-            .insertMany(subjectDocuments)
+        mongoSubjectRepository.create(name = "Mathematics")
+        mongoSubjectRepository.create(name = "French")
 
         val subjects = mongoSubjectRepository.findAll()
 
         assertThat(subjects).hasSize(2)
+        assertThat(subjects.first().id).isNotNull
+        assertThat(subjects.first().name).isEqualTo("Mathematics")
+    }
+
+    @Test
+    fun `create a subject`() {
+        mongoSubjectRepository.create(name = "Mathematics")
+
+        val subjects = mongoSubjectRepository.findAll()
+
+        assertThat(subjects).hasSize(1)
         assertThat(subjects.first().id).isNotNull
         assertThat(subjects.first().name).isEqualTo("Mathematics")
     }

@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import mu.KLogging
+import org.bson.types.ObjectId
 import org.litote.kmongo.getCollection
 
 class MongoSubjectRepository(
@@ -20,6 +21,12 @@ class MongoSubjectRepository(
             .find()
             .map(this::toSubject)
             .toList()
+    }
+
+    override fun create(name: String): Subject {
+        val id = ObjectId()
+        getSubjectCollection().insertOne(SubjectDocument(id = id, name = name))
+        return Subject(id = SubjectId(value = id.toHexString()), name = name)
     }
 
     private fun toSubject(subjectDocument: SubjectDocument): Subject {
