@@ -20,7 +20,7 @@ class E2EControllerTest : AbstractSpringIntegrationTest() {
     lateinit var videoAssetRepository: VideoAssetRepository
 
     @Test
-    fun `resets database and both search indices`() {
+    fun `resets videos`() {
         val videoId = saveVideo().value
 
         assertThat(fakeSearchService.count(Query(ids = listOf(videoId)))).isEqualTo(1)

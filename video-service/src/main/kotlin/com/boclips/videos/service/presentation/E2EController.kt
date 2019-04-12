@@ -4,6 +4,8 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.collection.CollectionDocument
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionService
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
@@ -31,6 +33,7 @@ class E2EController(
     @PostMapping("/reset_all")
     fun resetAll(): ResponseEntity<Any> {
         cleanVideos()
+        cleanCollections()
         cleanSubjects()
 
         return ResponseEntity(HttpStatus.OK)
@@ -40,6 +43,13 @@ class E2EController(
         mongoClient
             .getDatabase(DATABASE_NAME)
             .getCollection<SubjectDocument>(MongoSubjectRepository.collectionName)
+            .drop()
+    }
+
+    private fun cleanCollections() {
+        mongoClient
+            .getDatabase(DATABASE_NAME)
+            .getCollection<CollectionDocument>(MongoCollectionService.collectionName)
             .drop()
     }
 

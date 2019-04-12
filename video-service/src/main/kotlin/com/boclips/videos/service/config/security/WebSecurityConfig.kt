@@ -46,7 +46,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .hasRole(UserRoles.UPDATE_VIDEOS)
 
             .antMatchers(HttpMethod.POST, "/v1/e2e/actions/reset_all")
-            .hasRole(UserRoles.REMOVE_VIDEOS)
+            .hasAnyRole(UserRoles.E2E)
 
             .antMatchers(HttpMethod.DELETE, "/v1/videos/*")
             .hasRole(UserRoles.REMOVE_VIDEOS)
@@ -58,7 +58,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .hasRole(UserRoles.VIEW_DISABLED_VIDEOS)
             .antMatchers(HttpMethod.POST, "/v1/videos/*")
             .hasRole(UserRoles.UPDATE_VIDEOS)
-            .antMatchers(HttpMethod.GET, "/v1/videos*").hasAnyRole(UserRoles.VIEW_VIDEOS)
+            .antMatchers(HttpMethod.GET, "/v1/videos*")
+            .hasAnyRole(UserRoles.VIEW_VIDEOS)
             .antMatchers(HttpMethod.GET, "/v1/videos/*").permitAll()
 
             .antMatchers(HttpMethod.POST, "/v1/collections")
@@ -76,7 +77,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(HttpMethod.DELETE, "/v1/collections/*/videos/*")
             .hasRole(UserRoles.UPDATE_COLLECTIONS)
 
-            .antMatchers(HttpMethod.HEAD, "/v1/content-partners/*/videos/*").hasAnyRole(UserRoles.INSERT_VIDEOS)
+            .antMatchers(HttpMethod.HEAD, "/v1/content-partners/*/videos/*")
+            .hasAnyRole(UserRoles.INSERT_VIDEOS)
 
             .anyRequest().denyAll()
     }
