@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
+import java.time.LocalDate
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
@@ -92,7 +93,7 @@ abstract class AbstractSpringIntegrationTest {
         playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-$videoId"),
         title: String = "Some title!",
         description: String = "Some description!",
-        date: String = "2018-01-01",
+        releaseDate: LocalDate = LocalDate.now(),
         duration: Duration = Duration.ofSeconds(10),
         contentProvider: String = "AP",
         contentProviderId: String = "provider-id-$videoId",
@@ -106,6 +107,7 @@ abstract class AbstractSpringIntegrationTest {
                     title = title,
                     description = description,
                     contentProvider = contentProvider,
+                    releaseDate = releaseDate,
                     keywords = emptyList(),
                     tags = listOf("classroom")
                 )

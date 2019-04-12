@@ -11,6 +11,7 @@ object VideoMetadataConverter {
             title = video.title,
             description = video.description,
             contentProvider = video.contentPartnerId,
+            releaseDate = video.releasedOn,
             keywords = video.keywords,
             tags = tagsFrom(video)
         )

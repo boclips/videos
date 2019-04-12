@@ -4,6 +4,7 @@ import com.boclips.search.service.infrastructure.InMemorySearchService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class TestSearchService(query: GenericSearchService, admin: GenericSearchServiceAdmin<VideoMetadata>) :
     SearchServiceAdapter<String>(query, admin) {
@@ -13,6 +14,7 @@ class TestSearchService(query: GenericSearchService, admin: GenericSearchService
             title = document,
             description = "",
             contentProvider = "",
+            releaseDate = LocalDate.now(),
             keywords = emptyList(),
             tags = listOf("classroom")
         )

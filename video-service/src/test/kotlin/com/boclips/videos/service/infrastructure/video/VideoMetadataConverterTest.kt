@@ -6,6 +6,8 @@ import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.Month
 
 class VideoMetadataConverterTest {
     @Test
@@ -17,6 +19,7 @@ class VideoMetadataConverterTest {
             title = "asset title",
             description = "asset description",
             contentPartnerId = "content partner",
+            releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             keywords = listOf("k1"),
             type = LegacyVideoType.INSTRUCTIONAL_CLIPS
         )
@@ -29,6 +32,7 @@ class VideoMetadataConverterTest {
                 title = "asset title",
                 description = "asset description",
                 contentProvider = "content partner",
+                releaseDate = LocalDate.of(2019, Month.APRIL, 19),
                 keywords = listOf("k1"),
                 tags = listOf("classroom")
             )

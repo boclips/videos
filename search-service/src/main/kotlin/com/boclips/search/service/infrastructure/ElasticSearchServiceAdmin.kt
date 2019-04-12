@@ -149,6 +149,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
                         title = video.title,
                         description = video.description,
                         contentProvider = video.contentProvider,
+                        releaseDate = video.releaseDate,
                         keywords = video.keywords,
                         tags = video.tags
                 )

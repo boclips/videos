@@ -125,11 +125,15 @@ class IndexConfiguration {
                 "analyzer" to Analyzers.ENGLISH,
                 "position_increment_gap" to 100
         )
+        val dateField = mapOf(
+                "type" to "date"
+        )
         return mapOf(
                 "properties" to mapOf(
                         "title" to freeTextField,
                         "description" to freeTextField,
                         "contentProvider" to contentPartnerField,
+                        "releaseDate" to dateField,
                         "keywords" to keywordField
                 )
         )
