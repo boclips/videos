@@ -13,8 +13,11 @@ import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
+import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus

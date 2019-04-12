@@ -10,6 +10,7 @@ import com.boclips.videos.service.application.collection.GetCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
@@ -28,6 +29,7 @@ import com.boclips.videos.service.config.messaging.Topics
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -41,38 +43,39 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ApplicationContext(
-        val videoService: VideoService,
-        val videoAssetRepository: VideoAssetRepository,
-        val searchService: SearchService,
-        val playbackRepository: PlaybackRepository,
-        val legacySearchService: LegacySearchService,
-        val collectionService: CollectionService,
-        val analyticsEventService: AnalyticsEventService,
-        val videoAccessService: VideoAccessService,
-        val topics: Topics
+    val videoService: VideoService,
+    val videoAssetRepository: VideoAssetRepository,
+    val searchService: SearchService,
+    val playbackRepository: PlaybackRepository,
+    val legacySearchService: LegacySearchService,
+    val collectionService: CollectionService,
+    val analyticsEventService: AnalyticsEventService,
+    val videoAccessService: VideoAccessService,
+    val topics: Topics,
+    val subjectRepository: SubjectRepository
 ) {
 
     @Bean
     fun searchVideo() = SearchVideo(
-            getVideoById(),
-            getAllVideosById(),
-            getVideosByQuery(),
-            videoAssetRepository
+        getVideoById(),
+        getAllVideosById(),
+        getVideosByQuery(),
+        videoAssetRepository
     )
 
     @Bean
     fun createVideo(
-            searchVideo: SearchVideo,
-            videoCounter: Counter
+        searchVideo: SearchVideo,
+        videoCounter: Counter
     ): CreateVideo {
         return CreateVideo(
-                videoAssetRepository,
-                searchVideo,
-                CreateVideoRequestToAssetConverter(),
-                searchService,
-                playbackRepository,
-                videoCounter,
-                legacySearchService
+            videoAssetRepository,
+            searchVideo,
+            CreateVideoRequestToAssetConverter(),
+            searchService,
+            playbackRepository,
+            videoCounter,
+            legacySearchService
         )
     }
 
@@ -166,23 +169,28 @@ class ApplicationContext(
         return RefreshVideoDurations(videoAssetRepository, playbackRepository)
     }
 
+    @Bean
+    fun getSubjects(): GetSubjects {
+        return GetSubjects(subjectRepository)
+    }
+
     private fun getVideoById() =
-            GetVideoById(
-                    videoService,
-                    videoToResourceConverter()
-            )
+        GetVideoById(
+            videoService,
+            videoToResourceConverter()
+        )
 
     private fun getVideosByQuery() =
-            GetVideosByQuery(
-                    videoService,
-                    videoToResourceConverter(),
-                    analyticsEventService
-            )
+        GetVideosByQuery(
+            videoService,
+            videoToResourceConverter(),
+            analyticsEventService
+        )
 
     private fun getAllVideosById(): GetAllVideosById {
         return GetAllVideosById(
-                videoService,
-                videoToResourceConverter()
+            videoService,
+            videoToResourceConverter()
         )
     }
 

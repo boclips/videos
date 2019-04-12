@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.security.UserRoles.VIEW_DISABLED_VIDEOS
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import getCurrentUserIfNotAnonymous
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1")
 class LinksController(
-    private val collectionsLinkBuilder: CollectionsLinkBuilder
+    private val collectionsLinkBuilder: CollectionsLinkBuilder,
+    private val subjectsLinkBuilder: SubjectsLinkBuilder
 ) {
     @GetMapping
     fun search(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
@@ -23,6 +25,7 @@ class LinksController(
                 EventController.createPlaybackEventLink(),
                 EventController.createNoResultsEventLink(),
                 collectionsLinkBuilder.publicCollections(),
+                subjectsLinkBuilder.subjects(),
 
                 addIfAuthenticated { collectionsLinkBuilder.bookmarkedCollections() },
                 addIfAuthenticated { VideoController.videosLink() },
