@@ -4,6 +4,8 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
 import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
 import com.mongodb.MongoClient
@@ -28,6 +30,20 @@ class E2EController(
 
     @PostMapping("/reset_all")
     fun resetAll(): ResponseEntity<Any> {
+        cleanVideos()
+        cleanSubjects()
+
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    private fun cleanSubjects() {
+        mongoClient
+            .getDatabase(DATABASE_NAME)
+            .getCollection<SubjectDocument>(MongoSubjectRepository.collectionName)
+            .drop()
+    }
+
+    private fun cleanVideos() {
         val collection = mongoClient
             .getDatabase(DATABASE_NAME)
             .getCollection<VideoDocument>(MongoVideoAssetRepository.collectionName)
@@ -55,7 +71,5 @@ class E2EController(
             logger.error { "Failed to reset video-service state" }
             throw IllegalStateException("Failed to reset video-service state", ex)
         }
-
-        return ResponseEntity(HttpStatus.OK)
     }
 }
