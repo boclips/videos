@@ -9,9 +9,11 @@ import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
+import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
 import com.mongodb.MongoClient
 import org.springframework.context.annotation.Bean
@@ -47,6 +49,11 @@ class DomainContext(val mongoClient: MongoClient) {
     @Bean
     fun videoRepository(): VideoAssetRepository {
         return MongoVideoAssetRepository(mongoClient)
+    }
+
+    @Bean
+    fun subjectRepository(): SubjectRepository {
+        return MongoSubjectRepository(mongoClient)
     }
 
     @Bean
