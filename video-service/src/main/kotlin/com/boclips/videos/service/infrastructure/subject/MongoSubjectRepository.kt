@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.subject
 
-import com.boclips.videos.service.domain.service.subject.Subject
-import com.boclips.videos.service.domain.service.subject.SubjectId
+import com.boclips.videos.service.domain.model.Subject
+import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -30,7 +30,10 @@ class MongoSubjectRepository(
     }
 
     private fun toSubject(subjectDocument: SubjectDocument): Subject {
-        return Subject(id = SubjectId(value = subjectDocument.id.toHexString()), name = subjectDocument.name)
+        return Subject(
+            id = SubjectId(value = subjectDocument.id.toHexString()),
+            name = subjectDocument.name
+        )
     }
 
     private fun getSubjectCollection() =
