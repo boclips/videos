@@ -1,21 +1,20 @@
 package com.boclips.videos.service.client.internal;
 
-import com.boclips.videos.service.client.CreateVideoRequest;
-import com.boclips.videos.service.client.VideoId;
-import com.boclips.videos.service.client.VideoServiceClient;
+import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
 import com.boclips.videos.service.client.internal.resources.Link;
 import com.boclips.videos.service.client.internal.resources.LinksResource;
+import com.boclips.videos.service.client.internal.resources.SubjectsResource;
 import com.boclips.videos.service.client.internal.resources.VideoResource;
-import com.boclips.videos.service.client.spring.Video;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.*;
@@ -26,7 +25,7 @@ public class ApiClient implements VideoServiceClient {
 
     private final RestTemplate restTemplate;
 
-    private Link linkTemplate = null;
+    private LinksResource linkTemplate;
 
     public ApiClient(String baseUrl, RestTemplate restTemplate) {
         this.baseUrl = baseUrl;
@@ -86,13 +85,27 @@ public class ApiClient implements VideoServiceClient {
     @Override
     @SneakyThrows
     public VideoId rawIdToVideoId(String rawId) {
-        if (linkTemplate == null) {
-            val links = restTemplate.getForObject(baseUrl + "/v1", LinksResource.class);
-            linkTemplate = links.get_links().getVideo();
-        }
+        this.linkTemplate = getLinks();
+        val videoLinkTemplate = linkTemplate.get_links().getVideo();
         val params = new HashMap<String, Object>();
         params.put("id", rawId);
-        Link videoLink = linkTemplate.interpolate(params);
+        Link videoLink = videoLinkTemplate.interpolate(params);
         return new VideoId(videoLink.toUri());
+    }
+
+    @Override
+    public List<Subject> getSubjects() {
+        this.linkTemplate = getLinks();
+        return restTemplate.getForObject(
+                linkTemplate.get_links().getSubjects().toUri(), SubjectsResource.class)
+                .toSubjects();
+    }
+
+    private LinksResource getLinks() {
+        if (linkTemplate == null) {
+            linkTemplate = restTemplate.getForObject(baseUrl + "/v1", LinksResource.class);
+        }
+
+        return linkTemplate;
     }
 }

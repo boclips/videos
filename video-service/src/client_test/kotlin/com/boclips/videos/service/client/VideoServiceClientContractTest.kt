@@ -137,11 +137,22 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
             getClient().setSubjects(nonExistingId, setOf("maths"))
         }
     }
+
+    @Test
+    fun `obtain subjects`() {
+
+
+        val subjects: List<Subject> = getClient().subjects
+
+        assertThat(subjects).hasSize(2)
+    }
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
     val fakeClient = VideoServiceClient.getFakeClient().apply {
         addIllegalPlaybackId("illegal-video")
+        addSubject("Maths")
+        addSubject("French")
     }
 
     override fun getClient() = fakeClient
@@ -160,6 +171,9 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
             )
         )
         fakeYoutubePlaybackProvider.addVideo("ref-id-123", "http://my-little-pony.com", Duration.ZERO)
+
+        subjectRepository.create("Maths")
+        subjectRepository.create("French")
     }
 
     override fun getClient() = realClient

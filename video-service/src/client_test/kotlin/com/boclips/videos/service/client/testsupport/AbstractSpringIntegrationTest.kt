@@ -6,6 +6,7 @@ import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.VideoServiceApplication
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
@@ -48,6 +49,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var mongoClient: MongoClient
+
+    @Autowired
+    lateinit var subjectRepository: SubjectRepository
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null
