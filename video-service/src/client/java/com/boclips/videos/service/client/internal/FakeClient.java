@@ -83,16 +83,24 @@ public class FakeClient implements VideoServiceClient {
         createRequests.clear();
         videos.clear();
         illegalPlaybackIds.clear();
+        subjects.clear();
     }
 
     public void addIllegalPlaybackId(String playbackId) {
         illegalPlaybackIds.add(playbackId);
     }
 
-    public void addSubject(String subject) {
-        subjects.add(Subject.builder()
-                .id(UUID.randomUUID().toString())
-                .name(subject)
-                .build());
+    public Subject addSubject(String subjectName) {
+        return addSubject(
+                Subject.builder()
+                        .id(this.nextId())
+                        .name(subjectName)
+                        .build()
+        );
+    }
+
+    public Subject addSubject(Subject subject) {
+        subjects.add(subject);
+        return subject;
     }
 }
