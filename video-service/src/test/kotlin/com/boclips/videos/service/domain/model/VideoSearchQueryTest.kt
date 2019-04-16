@@ -1,5 +1,7 @@
 package com.boclips.videos.service.domain.model
 
+import com.boclips.search.service.domain.SortOrder
+import com.boclips.search.service.domain.VideoMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -73,5 +75,36 @@ class VideoSearchQueryTest {
             .toSearchQuery()
 
         assertThat(searchQuery.excludeTags).contains("classroom")
+    }
+
+    @Test
+    fun `allows ordering of results by releaseDate descending`() {
+        val searchQuery = VideoSearchQuery(
+            text = "testing",
+            includeTags = emptyList(),
+            excludeTags = listOf("classroom"),
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.RELEASE_DATE
+        )
+            .toSearchQuery()
+
+        assertThat(searchQuery.sort!!.order).isEqualTo(SortOrder.DESC)
+        assertThat(searchQuery.sort!!.fieldName).isEqualTo(VideoMetadata::releaseDate)
+    }
+
+    @Test
+    fun `does not sort the results without a sortBy`() {
+        val searchQuery = VideoSearchQuery(
+            text = "id:11,12,13",
+            includeTags = emptyList(),
+            excludeTags = listOf("classroom"),
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = null
+        )
+            .toSearchQuery()
+
+        assertThat(searchQuery.sort).isNull()
     }
 }

@@ -6,33 +6,21 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asIngestor
-import com.boclips.videos.service.testsupport.asOperator
-import com.boclips.videos.service.testsupport.asSubjectClassifier
-import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.*
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasItem
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
+import java.time.LocalDate
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -528,6 +516,43 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.status", equalTo(status)))
         }
+    }
+
+    @Test
+    fun `it sorts news by releaseDate descending`() {
+        val today = saveVideo(
+            title = "Today Video",
+            searchable = true,
+            date = LocalDate.now().toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+        val yesterday = saveVideo(
+            title = "Yesterday Video",
+            searchable = true,
+            date = LocalDate.now().minusDays(1).toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+        val tomorrow = saveVideo(
+            title = "Tomorrow Video",
+            searchable = true,
+            date = LocalDate.now().plusDays(1).toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+
+        val resultActions = mockMvc.perform(
+            get("/v1/videos?query=video&sort_by=RELEASE_DATE")
+                .contentType(MediaType.APPLICATION_JSON).asBoclipsEmployee()
+        )
+
+        resultActions
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(tomorrow)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(today)))
+            .andExpect(jsonPath("$._embedded.videos[2].id", equalTo(yesterday)))
+
+            .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(3)))
+            .andExpect(jsonPath("$.page.totalPages", Matchers.equalTo(1)))
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)

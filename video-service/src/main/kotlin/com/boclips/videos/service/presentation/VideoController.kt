@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.video.AdminSearchRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
@@ -21,15 +22,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v1/videos")
@@ -44,7 +37,7 @@ class VideoController(
     companion object : KLogging() {
         fun searchLink() = linkTo(
             methodOn(VideoController::class.java)
-                .search(null, null, null, null, null)
+                .search(null, null, null, null, null, null)
         ).withRel("search")
 
         fun videoLink(videoResource: VideoResource? = null, rel: String = "video") = linkTo(
@@ -64,16 +57,20 @@ class VideoController(
     @GetMapping
     fun search(
         @RequestParam("query") query: String?,
+        @RequestParam(name = "sort_by", required = false) sortBy: SortKey?,
         @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
         @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
         @RequestParam("size") size: Int?,
         @RequestParam("page") page: Int?
     ): ResponseEntity<PagedResources<*>> {
-        val videosResource = searchVideo.byQuery(query = query,
+        val videosResource = searchVideo.byQuery(
+            query = query,
+            sortBy = sortBy,
             includeTags = includeTags?.let { includeTags } ?: emptyList(),
             excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
             pageSize = size ?: DEFAULT_PAGE_SIZE,
-            pageNumber = page ?: DEFAULT_PAGE_INDEX)
+            pageNumber = page ?: DEFAULT_PAGE_INDEX
+        )
 
         val videoResources = videosResource
             .videos

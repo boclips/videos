@@ -1,6 +1,12 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.*
+import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.Sort
+import com.boclips.search.service.domain.SortOrder
+import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -9,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import java.time.LocalDate
 import java.util.stream.Stream
 
 class SearchServiceProvider : ArgumentsProvider {
@@ -247,5 +254,72 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 2))
         assertThat(searchResults).containsExactly("1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns a sorted list by ReleaseDate ascending`(
+            queryService: GenericSearchService,
+            adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                                id = "today",
+                                title = "Beautiful Boy Dancing",
+                                releaseDate = LocalDate.now()
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                                id = "yesterday",
+                                title = "Beautiful Girl Dancing",
+                                releaseDate = LocalDate.now().minusDays(1)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                                id = "tomorrow",
+                                title = "Beautiful Dog Dancing",
+                                releaseDate = LocalDate.now().plusDays(1)
+                        )
+                )
+        )
+
+        val query = Query(phrase = "dancing", sort = Sort(fieldName = VideoMetadata::releaseDate, order = SortOrder.ASC))
+        assertThat(queryService.count(query)).isEqualTo(3)
+
+        val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 3))
+        assertThat(searchResults).containsExactly("yesterday", "today", "tomorrow")
+    }
+
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns a sorted list by ReleaseDate descending`(
+            queryService: GenericSearchService,
+            adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+                sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                                id = "today",
+                                title = "Beautiful Boy Dancing",
+                                releaseDate = LocalDate.now()
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                                id = "yesterday",
+                                title = "Beautiful Girl Dancing",
+                                releaseDate = LocalDate.now().minusDays(1)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                                id = "tomorrow",
+                                title = "Beautiful Dog Dancing",
+                                releaseDate = LocalDate.now().plusDays(1)
+                        )
+                )
+        )
+
+        val query = Query(phrase = "dancing", sort = Sort(fieldName = VideoMetadata::releaseDate, order = SortOrder.DESC))
+        assertThat(queryService.count(query)).isEqualTo(3)
+
+        val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 3))
+        assertThat(searchResults).containsExactly("tomorrow", "today", "yesterday")
     }
 }

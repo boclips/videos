@@ -5,10 +5,7 @@ import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.CoreMatchers.endsWith
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.startsWith
+import org.hamcrest.CoreMatchers.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
@@ -53,7 +50,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1").asTeacher(userId))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
-            .andExpect(jsonPath("$._links.search.href", containsString("{&include_tag,exclude_tag}")))
+            .andExpect(jsonPath("$._links.search.href", containsString("{&sort_by,include_tag,exclude_tag}")))
             .andExpect(jsonPath("$._links.search.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.videos.href", endsWith("/videos")))
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))

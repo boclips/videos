@@ -1,15 +1,46 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.*
+import com.boclips.search.service.domain.GenericSearchService
+import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.SortOrder
+import com.boclips.search.service.domain.VideoMetadata
 
 class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<VideoMetadata> {
     private val index = mutableMapOf<String, VideoMetadata>()
 
     override fun count(query: Query): Long = idsMatching(query).size.toLong()
 
-    override fun search(searchRequest: PaginatedSearchRequest): List<String> = idsMatching(searchRequest.query)
-        .drop(searchRequest.startIndex)
-        .take(searchRequest.windowSize)
+    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
+        val idsMatching = idsMatching(searchRequest.query)
+
+        return sort(idsMatching, searchRequest.query)
+            .drop(searchRequest.startIndex)
+            .take(searchRequest.windowSize)
+    }
+
+    private fun sort(ids: List<String>, query: Query): List<String> {
+        query.sort ?: return ids
+
+        val sortedIds = ids.sortedBy {
+            val value: Comparable<*> = query.sort.fieldName.get(index[it]!!)
+            /**
+             * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
+             * littering the entire code base with the Sort generic type.
+             *
+             * We cannot define sort.fieldName as a Comparable<Any> as it won't then allow us to reference Comparables
+             */
+            @Suppress("UNCHECKED_CAST")
+            value as Comparable<Any>
+        }
+
+        return when (query.sort.order) {
+            SortOrder.ASC -> sortedIds
+            SortOrder.DESC -> sortedIds.reversed()
+        }
+    }
 
     private fun idsMatching(query: Query): List<String> {
         val (phrase, ids) = query

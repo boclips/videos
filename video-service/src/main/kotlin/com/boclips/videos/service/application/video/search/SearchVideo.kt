@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 
@@ -21,11 +22,12 @@ class SearchVideo(
 
     fun byQuery(
         query: String?,
+        sortBy: SortKey? = null,
         includeTags: List<String>,
         excludeTags: List<String>,
         pageSize: Int,
         pageNumber: Int
-    ) = getVideosByQuery(getOrThrow(query), includeTags, excludeTags, pageSize, pageNumber)
+    ) = getVideosByQuery(getOrThrow(query), sortBy, includeTags, excludeTags, pageSize, pageNumber)
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): AssetId? {
         val videoId = getOrThrow(videoIdParam)

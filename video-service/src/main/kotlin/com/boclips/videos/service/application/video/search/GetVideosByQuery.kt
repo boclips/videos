@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -18,6 +19,7 @@ class GetVideosByQuery(
 
     operator fun invoke(
         query: String,
+        sortBy: SortKey?,
         includeTags: List<String>,
         excludeTags: List<String>,
         pageSize: Int,
@@ -28,6 +30,7 @@ class GetVideosByQuery(
 
         val videoSearchQuery = VideoSearchQuery(
             text = query,
+            sortBy = sortBy,
             pageIndex = pageNumber,
             pageSize = pageSize,
             includeTags = includeTags,
