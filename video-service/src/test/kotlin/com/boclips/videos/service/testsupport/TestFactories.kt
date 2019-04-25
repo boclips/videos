@@ -131,7 +131,8 @@ object TestFactories {
         contentType: String? = "NEWS",
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
-        subjects: Set<String>? = emptySet()
+        subjects: Set<String>? = emptySet(),
+        analyseVideo: Boolean = false
     ) = CreateVideoRequest(
         provider = provider,
         providerVideoId = providerVideoId,
@@ -143,7 +144,8 @@ object TestFactories {
         videoType = contentType,
         playbackId = playbackId,
         playbackProvider = playbackProvider,
-        subjects = subjects
+        subjects = subjects,
+        analyseVideo = analyseVideo
     )
 
     fun createCollectionRequest(

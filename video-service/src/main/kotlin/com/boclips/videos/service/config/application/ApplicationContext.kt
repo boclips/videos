@@ -67,7 +67,8 @@ class ApplicationContext(
     @Bean
     fun createVideo(
         searchVideo: SearchVideo,
-        videoCounter: Counter
+        videoCounter: Counter,
+        analyseVideo: AnalyseVideo
     ): CreateVideo {
         return CreateVideo(
             videoAssetRepository,
@@ -76,7 +77,8 @@ class ApplicationContext(
             searchService,
             playbackRepository,
             videoCounter,
-            legacySearchService
+            legacySearchService,
+            analyseVideo
         )
     }
 

@@ -1,10 +1,12 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.events.types.VideoToAnalyse
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
@@ -17,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.Resource
 import java.time.Duration
 
 class CreateVideoTest : AbstractSpringIntegrationTest() {
@@ -187,5 +190,30 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         )
 
         verifyZeroInteractions(legacySearchService)
+    }
+
+    @Test
+    fun `it requests that the video is analysed`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        val video: Resource<VideoResource> = createVideo(
+            TestFactories.createCreateVideoRequest(
+                playbackId = "1234",
+                contentType = "INSTRUCTIONAL_CLIPS",
+                analyseVideo = true
+            )
+        )
+
+        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
+
+        assertThat(event.videoId).isEqualTo(video.content.id)
+        assertThat(event.videoUrl).isEqualTo("https://download/video-entry-$123.mp4")
     }
 }

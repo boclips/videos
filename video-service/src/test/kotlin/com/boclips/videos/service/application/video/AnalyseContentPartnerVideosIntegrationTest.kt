@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.Message
 
 class AnalyseContentPartnerVideosIntegrationTest(
-        @Autowired val analyseContentPartnerVideos: AnalyseContentPartnerVideos
+    @Autowired val analyseContentPartnerVideos: AnalyseContentPartnerVideos
 ) : AbstractSpringIntegrationTest() {
 
     @Test
-    fun `sends events`() {
+    fun `it should only send analyse messages for Ted`() {
         saveVideo(contentProvider = "Ted")
         saveVideo(contentProvider = "Ted")
         saveVideo(contentProvider = "Bob")
