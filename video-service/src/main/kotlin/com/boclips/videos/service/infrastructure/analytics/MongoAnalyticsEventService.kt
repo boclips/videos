@@ -14,9 +14,9 @@ class MongoAnalyticsEventService(
     private val mongoClient: MongoClient
 ) : AnalyticsEventService {
     companion object {
+
         const val collectionName = "event-log"
     }
-
     override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
         saveEvent(EventType.SEARCH) {
             append("query", query)

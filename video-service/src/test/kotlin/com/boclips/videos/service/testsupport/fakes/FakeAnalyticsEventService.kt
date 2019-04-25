@@ -104,6 +104,12 @@ class FakeAnalyticsEventService : AnalyticsEventService {
                 EventType.REMOVE_FROM_COLLECTION,
                 RemoveFromCollectionEventData(collectionId = collectionId.value, videoId = updateCommand.videoId.value)
             )
+            is CollectionUpdateCommand.ReplaceSubjectsCommand -> saveEvent(
+                EventType.UPDATE_SUBJECTS,
+                UpdatedCollectionSubjectsEventData(
+                    collectionId = collectionId.value,
+                    updatedSubjects = updateCommand.subjects.map { it.id.value })
+            )
         }
     }
 
@@ -148,11 +154,11 @@ data class AddToCollectionEventData(
 )
 
 data class BookmarkEventData(
-   val collectionId: String
+    val collectionId: String
 )
 
 data class UnbookmarkEventData(
-   val collectionId: String
+    val collectionId: String
 )
 
 data class PlaybackEventData(
@@ -177,4 +183,9 @@ data class RenameCollectionEvent(
 data class ChangeVisibilityOfCollectionEvent(
     val collectionId: String,
     val isPublic: Boolean
+)
+
+data class UpdatedCollectionSubjectsEventData(
+    val collectionId: String,
+    val updatedSubjects: List<String>
 )

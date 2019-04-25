@@ -173,7 +173,8 @@ object TestFactories {
         updatedAt = updatedAt,
         isPublic = isPublic,
         createdByBoclips = createdByBoclips,
-        bookmarks = bookmarks
+        bookmarks = bookmarks,
+        subjects = emptySet()
     )
 
     fun createCollectionResource(

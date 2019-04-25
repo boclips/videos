@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.Subject
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -21,7 +22,15 @@ class CollectionUpdates {
             is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> removeVideo(id, anyUpdateCommand.videoId)
             is CollectionUpdateCommand.RenameCollectionCommand -> renameCollection(id, anyUpdateCommand.title)
             is CollectionUpdateCommand.ChangeVisibilityCommand -> changeVisibility(id, anyUpdateCommand.isPublic)
+            is CollectionUpdateCommand.ReplaceSubjectsCommand -> replaceSubjects(id, anyUpdateCommand.subjects)
         }
+    }
+
+    private fun replaceSubjects(collectionId: CollectionId, subjects: List<Subject>): Bson {
+        MongoCollectionService.logger.info { "Prepare replacing subjects for collection $collectionId" }
+        return set(
+            CollectionDocument::subjects,
+            subjects.map { subject -> CollectionSubjectDocument(id = subject.id.value, name = subject.name) })
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {

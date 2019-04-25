@@ -2,6 +2,8 @@ package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.PageRequest
+import com.boclips.videos.service.domain.model.Subject
+import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -86,6 +88,30 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             val updatedCollection = collectionService.getById(collection.id)!!
 
             assertThat(updatedCollection.isPublic).isEqualTo(true)
+        }
+
+        @Test
+        fun `can create a collection and replace subjects`() {
+            val collection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Alex's Amazing Collection",
+                createdByBoclips = false
+            )
+
+            collectionService.update(
+                collection.id,
+                CollectionUpdateCommand.ReplaceSubjectsCommand(listOf(Subject(id = SubjectId("2"), name = "French")))
+            )
+
+            val updatedSubject = Subject(id = SubjectId("1"), name = "Maths")
+            collectionService.update(
+                collection.id,
+                CollectionUpdateCommand.ReplaceSubjectsCommand(listOf(updatedSubject))
+            )
+
+            val updatedCollection = collectionService.getById(collection.id)
+
+            assertThat(updatedCollection!!.subjects).containsExactly(updatedSubject)
         }
     }
 
@@ -238,7 +264,10 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
                 createdByBoclips = false
             )
 
-            collectionService.update(publicBookmarkedCollection.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
+            collectionService.update(
+                publicBookmarkedCollection.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(true)
+            )
             collectionService.bookmark(publicBookmarkedCollection.id, UserId("bookmarker"))
             collectionService.update(publicCollection2.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
             collectionService.bookmark(privateCollection.id, UserId("bookmarker"))
@@ -294,7 +323,6 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
             setSecurityContext("user3")
             assertThat(collectionService.getById(collection.id)!!.isBookmarked()).isEqualTo(true)
-
         }
     }
 }

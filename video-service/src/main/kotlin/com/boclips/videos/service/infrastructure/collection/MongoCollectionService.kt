@@ -3,6 +3,8 @@ package com.boclips.videos.service.infrastructure.collection
 import com.boclips.videos.service.domain.model.Page
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.domain.model.PageRequest
+import com.boclips.videos.service.domain.model.Subject
+import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -157,7 +159,13 @@ class MongoCollectionService(
             updatedAt = collectionDocument.updatedAt,
             isPublic = isPubliclyVisible,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
-            bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet()
+            bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
+            subjects = collectionDocument.subjects.orEmpty().map { collectionSubjectDocument ->
+                Subject(
+                    id = SubjectId(value = collectionSubjectDocument.id),
+                    name = collectionSubjectDocument.name
+                )
+            }.toSet()
         )
     }
 }

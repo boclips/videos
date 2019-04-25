@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
+import com.boclips.videos.service.domain.model.Subject
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import getCurrentUserId
@@ -13,7 +14,8 @@ data class Collection(
     val updatedAt: Instant,
     val isPublic: Boolean,
     val createdByBoclips: Boolean,
-    val bookmarks: Set<UserId>
+    val bookmarks: Set<UserId>,
+    val subjects: Set<Subject>
 ) {
     fun createdBy(): String {
         return if (createdByBoclips) {
