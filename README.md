@@ -1,3 +1,5 @@
+[![concourse](https://concourse.devboclips.net/api/v1/pipelines/boclips/jobs/build-video-service/badge)]()
+
 # Video Service
 
 > A core service powering the educational video revolution by serving videos and collections.
