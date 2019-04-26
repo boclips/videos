@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.LegacySubject
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -22,7 +22,7 @@ internal class VideoToResourceConverterTest {
             contentPartnerId = "WeWork",
             contentPartnerVideoId = "111",
             type = LegacyVideoType.TED_TALKS,
-            subjects = setOf(Subject("Maths")),
+            subjects = setOf(LegacySubject("Maths")),
             searchable = true,
             legalRestrictions = "None"
         ),
@@ -36,7 +36,7 @@ internal class VideoToResourceConverterTest {
             contentPartnerId = "JacekWork",
             contentPartnerVideoId = "222",
             type = LegacyVideoType.OTHER,
-            subjects = setOf(Subject("Biology")),
+            subjects = setOf(LegacySubject("Biology")),
             searchable = false,
             legalRestrictions = "Many"
         ),

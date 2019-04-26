@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.LegacySubject
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.TestFactories
@@ -29,6 +29,6 @@ class VideoUpdatesConverterTest {
 
         val replaceSubjects = updates.first() as VideoUpdateCommand.ReplaceSubjects
 
-        assertThat(replaceSubjects.subjects).isEqualTo(listOf(Subject("Maths")))
+        assertThat(replaceSubjects.subjects).isEqualTo(listOf(LegacySubject("Maths")))
     }
 }

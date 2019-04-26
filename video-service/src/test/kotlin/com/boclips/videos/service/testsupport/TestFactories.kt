@@ -14,7 +14,8 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.LegacySubject
+import com.boclips.videos.service.domain.model.Subject
 import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -26,6 +27,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
+import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
 import org.bson.types.ObjectId
@@ -51,7 +53,7 @@ object TestFactories {
         playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
         type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = listOf("keyword"),
-        subjects: Set<Subject> = emptySet(),
+        subjects: Set<LegacySubject> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         duration: Duration = Duration.ZERO,
         legalRestrictions: String = "",
@@ -164,7 +166,8 @@ object TestFactories {
         updatedAt: Instant = Instant.now(),
         isPublic: Boolean = false,
         createdByBoclips: Boolean = false,
-        bookmarks: Set<UserId> = emptySet()
+        bookmarks: Set<UserId> = emptySet(),
+        subjects: Set<Subject> = emptySet()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
@@ -174,7 +177,7 @@ object TestFactories {
         isPublic = isPublic,
         createdByBoclips = createdByBoclips,
         bookmarks = bookmarks,
-        subjects = emptySet()
+        subjects = subjects
     )
 
     fun createCollectionResource(
@@ -186,7 +189,8 @@ object TestFactories {
         isPublic: Boolean = false,
         isBookmarked: Boolean = false,
         isMine: Boolean = false,
-        createdBy: String = "Johnny Bravo"
+        createdBy: String = "Johnny Bravo",
+        subjects: Set<Resource<SubjectResource>> = emptySet()
     ) = CollectionResource(
             id = id,
             owner = owner,
@@ -196,7 +200,8 @@ object TestFactories {
             isPublic = isPublic,
             isMine = isMine,
             isBookmarked = isBookmarked,
-            createdBy = createdBy
+            createdBy = createdBy,
+            subjects = subjects
     )
 
     fun aValidId(): String {

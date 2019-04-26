@@ -3,10 +3,12 @@ package com.boclips.videos.service.presentation.collections
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 
 class CollectionResourceFactory(
     private val videoToResourceConverter: VideoToResourceConverter,
+    private val subjectToResourceConverter: SubjectToResourceConverter,
     private val videoService: VideoService
 ) {
     fun buildCollectionDetailsResource(collection: Collection): CollectionResource {
@@ -19,7 +21,8 @@ class CollectionResourceFactory(
             isPublic = collection.isPublic,
             isMine = collection.isMine(),
             isBookmarked = collection.isBookmarked(),
-            createdBy = collection.createdBy()
+            createdBy = collection.createdBy(),
+            subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects)
         )
     }
 
@@ -33,7 +36,8 @@ class CollectionResourceFactory(
             isPublic = collection.isPublic,
             isMine = collection.isMine(),
             isBookmarked = collection.isBookmarked(),
-            createdBy = collection.createdBy()
+            createdBy = collection.createdBy(),
+            subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects)
         )
     }
 

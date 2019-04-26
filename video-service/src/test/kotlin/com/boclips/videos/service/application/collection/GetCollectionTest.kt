@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionNotFoundExce
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
@@ -32,7 +33,7 @@ class GetCollectionTest {
                 TestFactories.createVideo()
             )
         }
-        collectionResourceFactory = CollectionResourceFactory(VideoToResourceConverter(), videoService)
+        collectionResourceFactory = CollectionResourceFactory(VideoToResourceConverter(), SubjectToResourceConverter() ,videoService)
     }
 
     @Test

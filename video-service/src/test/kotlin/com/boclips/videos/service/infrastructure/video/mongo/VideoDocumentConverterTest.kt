@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.LegacySubject
 import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -25,7 +25,7 @@ class VideoDocumentConverterTest {
             playbackId = PlaybackId(PlaybackProviderType.KALTURA, "the playbackId"),
             type = LegacyVideoType.NEWS,
             keywords = listOf("keyword1", "keyword2"),
-            subjects = setOf(Subject("subject1"), Subject("subject2")),
+            subjects = setOf(LegacySubject("subject1"), LegacySubject("subject2")),
             releasedOn = LocalDate.ofYearDay(2018, 10),
             duration = Duration.ofSeconds(97),
             language = Locale.GERMANY,

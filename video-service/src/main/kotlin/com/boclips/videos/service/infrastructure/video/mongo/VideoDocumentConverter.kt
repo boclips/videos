@@ -2,13 +2,11 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.Subject
+import com.boclips.videos.service.domain.model.asset.LegacySubject
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.set
 import java.time.Duration
 import java.time.ZoneOffset
 import java.util.Date
@@ -27,7 +25,7 @@ object VideoDocumentConverter {
             playback = VideoDocument.Playback(id = asset.playbackId.value, type = asset.playbackId.type.name),
             legacy = VideoDocument.Legacy(type = asset.type.name),
             keywords = asset.keywords,
-            subjects = asset.subjects.map(Subject::name),
+            subjects = asset.subjects.map(LegacySubject::name),
             releaseDate = Date.from(asset.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             durationSeconds = asset.duration.seconds.toInt(),
             legalRestrictions = asset.legalRestrictions,
@@ -51,7 +49,7 @@ object VideoDocumentConverter {
             ),
             type = LegacyVideoType.valueOf(document.legacy.type),
             keywords = document.keywords,
-            subjects = document.subjects.map(::Subject).toSet(),
+            subjects = document.subjects.map(::LegacySubject).toSet(),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             duration = Duration.ofSeconds(document.durationSeconds.toLong()),
             legalRestrictions = document.legalRestrictions,

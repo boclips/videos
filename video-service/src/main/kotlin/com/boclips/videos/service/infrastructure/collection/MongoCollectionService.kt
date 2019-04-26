@@ -160,10 +160,10 @@ class MongoCollectionService(
             isPublic = isPubliclyVisible,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
             bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
-            subjects = collectionDocument.subjects.orEmpty().map { collectionSubjectDocument ->
+            subjects = collectionDocument.subjects.orEmpty().map { subjectDocument ->
                 Subject(
-                    id = SubjectId(value = collectionSubjectDocument.id),
-                    name = collectionSubjectDocument.name
+                    id = SubjectId(value = subjectDocument.id.toHexString()),
+                    name = subjectDocument.name
                 )
             }.toSet()
         )

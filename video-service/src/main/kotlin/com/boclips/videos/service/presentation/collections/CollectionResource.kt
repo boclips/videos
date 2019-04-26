@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.collections
 
+import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.Resource
@@ -17,5 +18,6 @@ data class CollectionResource(
     @get:JsonIgnore
     val isBookmarked: Boolean,
     val isMine: Boolean,
-    val createdBy: String
+    val createdBy: String,
+    val subjects: Set<Resource<SubjectResource>>
 )

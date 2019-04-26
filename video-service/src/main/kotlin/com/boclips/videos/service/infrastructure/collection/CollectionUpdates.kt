@@ -4,7 +4,9 @@ import com.boclips.videos.service.domain.model.Subject
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.conversions.Bson
+import org.bson.types.ObjectId
 import org.litote.kmongo.addToSet
 import org.litote.kmongo.pull
 import org.litote.kmongo.set
@@ -30,7 +32,7 @@ class CollectionUpdates {
         MongoCollectionService.logger.info { "Prepare replacing subjects for collection $collectionId" }
         return set(
             CollectionDocument::subjects,
-            subjects.map { subject -> CollectionSubjectDocument(id = subject.id.value, name = subject.name) })
+            subjects.map { subject -> SubjectDocument(id = ObjectId(subject.id.value), name = subject.name) })
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {

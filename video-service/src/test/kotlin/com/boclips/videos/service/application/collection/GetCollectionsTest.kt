@@ -4,6 +4,8 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.Page
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.domain.model.PageRequest
+import com.boclips.videos.service.domain.model.Subject
+import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -11,6 +13,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.doReturn
@@ -35,7 +38,7 @@ class GetCollectionsTest {
                 TestFactories.createVideo()
             )
         }
-        collectionResourceFactory = CollectionResourceFactory(VideoToResourceConverter(), videoService)
+        collectionResourceFactory = CollectionResourceFactory(VideoToResourceConverter(), SubjectToResourceConverter(), videoService)
     }
 
     @Test
@@ -138,5 +141,43 @@ class GetCollectionsTest {
         assertThat(collection.videos).hasSize(1)
         assertThat(collection.isPublic).isEqualTo(true)
         assertThat(collection.videos.first().content.title).isEqualTo(video.asset.title)
+    }
+
+    @Test
+    fun `fetches collections with their subjects`() {
+        collectionService = mock {
+            on { getPublic(PageRequest(0, 1)) } doReturn Page(
+                listOf(
+                    TestFactories.createCollection(
+                        id = CollectionId("collection-id"),
+                        owner = "yoyoyo@public.com",
+                        title = "collection title",
+                        videos = listOf(video.asset.assetId),
+                        isPublic = true,
+                        subjects = setOf(Subject(id = SubjectId("1"), name = "Maths"))
+                    ),
+                    TestFactories.createCollection(isPublic = true)
+                ), PageInfo(true)
+            )
+        }
+
+        val collections = GetCollections(collectionService, collectionResourceFactory).invoke(
+            CollectionFilter(
+                projection = Projection.details,
+                visibility = CollectionFilter.Visibility.PUBLIC,
+                owner = null,
+                pageNumber = 0,
+                pageSize = 1
+            )
+        )
+
+        assertThat(collections.elements).hasSize(2)
+
+        val collection = collections.elements.first()
+        assertThat(collection.id).isEqualTo("collection-id")
+        assertThat(collection.subjects).hasSize(1)
+        val subject = collection.subjects.first()
+        assertThat(subject.content.name).isEqualTo("Maths")
+        assertThat(subject.content.id).isEqualTo("1")
     }
 }

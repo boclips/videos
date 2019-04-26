@@ -17,7 +17,7 @@ data class VideoAsset(
     val type: LegacyVideoType,
     val duration: Duration,
     val legalRestrictions: String,
-    val subjects: Set<Subject>,
+    val subjects: Set<LegacySubject>,
     val topics: Set<Topic>,
     val language: Locale?,
     val transcript: String?,

@@ -128,19 +128,19 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideoAsset(
                 title = "original title",
-                subjects = setOf(Subject("Maths"))
+                subjects = setOf(LegacySubject("Maths"))
             )
         )
 
         val updatedAsset = mongoVideoRepository.update(
             VideoUpdateCommand.ReplaceSubjects(
                 originalAsset.assetId,
-                listOf(Subject("Biology"))
+                listOf(LegacySubject("Biology"))
             )
         )
 
         assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects")
-        assertThat(updatedAsset.subjects).containsOnly(Subject("Biology"))
+        assertThat(updatedAsset.subjects).containsOnly(LegacySubject("Biology"))
     }
 
     @Test
@@ -161,7 +161,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
             TestFactories.createVideoAsset(
                 title = "original title 1",
                 duration = Duration.ofMinutes(1),
-                subjects = setOf(Subject("German"))
+                subjects = setOf(LegacySubject("German"))
             )
         )
 
@@ -169,7 +169,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
             TestFactories.createVideoAsset(
                 title = "original title 2",
                 duration = Duration.ofMinutes(99),
-                subjects = setOf(Subject("Maths"))
+                subjects = setOf(LegacySubject("Maths"))
             )
         )
 
@@ -184,7 +184,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
             ),
             VideoUpdateCommand.ReplaceSubjects(
                 assetId = originalAsset2.assetId,
-                subjects = listOf(Subject("French"))
+                subjects = listOf(LegacySubject("French"))
             ),
             VideoUpdateCommand.ReplaceDuration(
                 assetId = originalAsset2.assetId,
@@ -203,7 +203,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
 
         assertThat(updatedAsset2).isEqualToIgnoringGivenFields(originalAsset2, "subjects", "duration")
         assertThat(updatedAsset2.duration).isEqualTo(Duration.ofMinutes(11))
-        assertThat(updatedAsset2.subjects).isEqualTo(setOf(Subject("French")))
+        assertThat(updatedAsset2.subjects).isEqualTo(setOf(LegacySubject("French")))
     }
 
     @Test
