@@ -2,7 +2,6 @@ package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.PageRequest
-import com.boclips.videos.service.domain.model.Subject
 import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -100,13 +99,14 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
             collectionService.update(
                 collection.id,
-                CollectionUpdateCommand.ReplaceSubjectsCommand(listOf(Subject(id = SubjectId("2"), name = "French")))
+                CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(SubjectId("2")))
             )
 
-            val updatedSubject = Subject(id = SubjectId("1"), name = "Maths")
+            val updatedSubject = SubjectId("1")
+
             collectionService.update(
                 collection.id,
-                CollectionUpdateCommand.ReplaceSubjectsCommand(listOf(updatedSubject))
+                CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(updatedSubject))
             )
 
             val updatedCollection = collectionService.getById(collection.id)

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import org.assertj.core.api.Assertions.assertThat
@@ -45,5 +46,23 @@ internal class CollectionUpdatesConverterTest {
             CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title", isPublic = true))
 
         assertThat(commands).hasSize(2)
+    }
+
+    @Test
+    fun `turn subjects update to command`() {
+        val commands = CollectionUpdatesConverter.convert(
+            UpdateCollectionRequest(
+                subjects = setOf(
+                    "SubjectOneId",
+                    "SubjectTwoId"
+                )
+            )
+        )
+
+        assertThat(commands).hasSize(1)
+        assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.ReplaceSubjectsCommand::class.java)
+        val command = commands.first() as CollectionUpdateCommand.ReplaceSubjectsCommand
+
+        assertThat(command.subjects).isEqualTo(setOf(SubjectId("SubjectOneId"), SubjectId("SubjectTwoId")))
     }
 }

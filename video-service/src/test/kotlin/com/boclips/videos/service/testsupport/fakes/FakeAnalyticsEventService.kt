@@ -108,7 +108,7 @@ class FakeAnalyticsEventService : AnalyticsEventService {
                 EventType.UPDATE_SUBJECTS,
                 UpdatedCollectionSubjectsEventData(
                     collectionId = collectionId.value,
-                    updatedSubjects = updateCommand.subjects.map { it.id.value })
+                    updatedSubjects = updateCommand.subjects.map { it.value })
             )
         }
     }

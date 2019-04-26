@@ -3,7 +3,6 @@ package com.boclips.videos.service.infrastructure.collection
 import com.boclips.videos.service.domain.model.Page
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.domain.model.PageRequest
-import com.boclips.videos.service.domain.model.Subject
 import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -149,6 +148,7 @@ class MongoCollectionService(
     private fun toCollection(collectionDocument: CollectionDocument?): Collection? {
         if (collectionDocument == null) return null
         val assetIds = collectionDocument.videos.map { AssetId(value = it) }
+        val subjectIds = collectionDocument.subjects.orEmpty().map { SubjectId(value = it) }.toSet()
         val isPubliclyVisible = collectionDocument.visibility == CollectionVisibilityDocument.PUBLIC
 
         return Collection(
@@ -160,12 +160,7 @@ class MongoCollectionService(
             isPublic = isPubliclyVisible,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
             bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
-            subjects = collectionDocument.subjects.orEmpty().map { subjectDocument ->
-                Subject(
-                    id = SubjectId(value = subjectDocument.id.toHexString()),
-                    name = subjectDocument.name
-                )
-            }.toSet()
+            subjects = subjectIds
         )
     }
 }

@@ -1,12 +1,9 @@
 package com.boclips.videos.service.presentation.subject
 
-import com.boclips.videos.service.domain.model.Subject
+import com.boclips.videos.service.domain.model.SubjectId
 import org.springframework.hateoas.Resource
 
 class SubjectToResourceConverter {
-    fun wrapSubjectsInResource(subjects: Set<Subject>): Set<Resource<SubjectResource>> =
-        subjects.map { fromSubject(it) }.toSet()
-
-    private fun fromSubject(subject: Subject): Resource<SubjectResource> =
-        Resource(SubjectResource(subject.id.value, subject.name))
+    fun wrapSubjectsInResource(subjects: Set<SubjectId>): Set<Resource<SubjectResource>> =
+        subjects.map { Resource(SubjectResource(it.value)) }.toSet()
 }

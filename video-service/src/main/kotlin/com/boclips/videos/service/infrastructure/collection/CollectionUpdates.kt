@@ -1,12 +1,10 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.videos.service.domain.model.Subject
+import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.conversions.Bson
-import org.bson.types.ObjectId
 import org.litote.kmongo.addToSet
 import org.litote.kmongo.pull
 import org.litote.kmongo.set
@@ -17,10 +15,7 @@ class CollectionUpdates {
         anyUpdateCommand: CollectionUpdateCommand
     ): Bson {
         return when (anyUpdateCommand) {
-            is CollectionUpdateCommand.AddVideoToCollectionCommand -> addVideo(
-                id,
-                anyUpdateCommand.videoId
-            )
+            is CollectionUpdateCommand.AddVideoToCollectionCommand -> addVideo(id, anyUpdateCommand.videoId)
             is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> removeVideo(id, anyUpdateCommand.videoId)
             is CollectionUpdateCommand.RenameCollectionCommand -> renameCollection(id, anyUpdateCommand.title)
             is CollectionUpdateCommand.ChangeVisibilityCommand -> changeVisibility(id, anyUpdateCommand.isPublic)
@@ -28,11 +23,12 @@ class CollectionUpdates {
         }
     }
 
-    private fun replaceSubjects(collectionId: CollectionId, subjects: List<Subject>): Bson {
+    private fun replaceSubjects(collectionId: CollectionId, subjects: Set<SubjectId>): Bson {
         MongoCollectionService.logger.info { "Prepare replacing subjects for collection $collectionId" }
         return set(
             CollectionDocument::subjects,
-            subjects.map { subject -> SubjectDocument(id = ObjectId(subject.id.value), name = subject.name) })
+            subjects.map { subjectId -> subjectId.value }
+        )
     }
 
     private fun removeVideo(collectionId: CollectionId, assetId: AssetId): Bson {

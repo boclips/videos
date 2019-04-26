@@ -4,7 +4,6 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.Page
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.domain.model.PageRequest
-import com.boclips.videos.service.domain.model.Subject
 import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -38,7 +37,8 @@ class GetCollectionsTest {
                 TestFactories.createVideo()
             )
         }
-        collectionResourceFactory = CollectionResourceFactory(VideoToResourceConverter(), SubjectToResourceConverter(), videoService)
+        collectionResourceFactory =
+            CollectionResourceFactory(VideoToResourceConverter(), SubjectToResourceConverter(), videoService)
     }
 
     @Test
@@ -154,7 +154,7 @@ class GetCollectionsTest {
                         title = "collection title",
                         videos = listOf(video.asset.assetId),
                         isPublic = true,
-                        subjects = setOf(Subject(id = SubjectId("1"), name = "Maths"))
+                        subjects = setOf(SubjectId("1"))
                     ),
                     TestFactories.createCollection(isPublic = true)
                 ), PageInfo(true)
@@ -177,7 +177,6 @@ class GetCollectionsTest {
         assertThat(collection.id).isEqualTo("collection-id")
         assertThat(collection.subjects).hasSize(1)
         val subject = collection.subjects.first()
-        assertThat(subject.content.name).isEqualTo("Maths")
         assertThat(subject.content.id).isEqualTo("1")
     }
 }

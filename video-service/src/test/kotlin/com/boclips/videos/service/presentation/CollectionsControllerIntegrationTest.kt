@@ -13,6 +13,7 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
+import org.hamcrest.collection.IsIn
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
@@ -84,9 +85,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val collectionId = createCollection("collection from a teacher")
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                .andExpect(jsonPath("$.mine", equalTo(true)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.mine", equalTo(true)))
     }
 
     @Test
@@ -95,9 +96,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         updateCollectionToBePublic(collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                .andExpect(jsonPath("$.mine", equalTo(false)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.mine", equalTo(false)))
     }
 
     @Test
@@ -358,6 +359,45 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isNoContent)
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `adds two subjects to the existing collection`() {
+        val collectionId = createCollectionWithTitle("My Collection for Subjects")
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.subjects", hasSize<Any>(0)))
+
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["SubjectOneId", "SubjectTwoId"]}""").asTeacher()
+        )
+            .andExpect(status().isNoContent)
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
+            // Sets are unordered.
+            .andExpect(jsonPath("$.subjects[0].id", IsIn(listOf("SubjectOneId", "SubjectTwoId"))))
+            .andExpect(jsonPath("$.subjects[1].id", IsIn(listOf("SubjectOneId", "SubjectTwoId"))))
+    }
+
+    @Test
+    fun `adds two subjects to the existing collection, then rename the collection`() {
+        val collectionId = createCollectionWithTitle("My Collection for Subjects")
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.subjects", hasSize<Any>(0)))
+
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["SubjectOneId", "SubjectTwoId"]}""").asTeacher()
+        )
+            .andExpect(status().isNoContent)
+
+        updateCollectionToBePublicAndRename(collectionId, "My new shiny title")
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
     }
 
     private fun createCollectionWithTitle(title: String): String {
