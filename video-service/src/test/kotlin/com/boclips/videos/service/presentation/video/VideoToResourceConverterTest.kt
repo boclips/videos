@@ -46,7 +46,7 @@ internal class VideoToResourceConverterTest {
     @Test
     fun `converts a video from AssetId`() {
         val videoId = ObjectId().toHexString()
-        val videoResource = VideoToResourceConverter().fromAssetIds(listOf(AssetId(videoId))).first().content
+        val videoResource = VideoToResourceConverter().wrapVideoAssetIdsInResource(listOf(AssetId(videoId))).first().content
 
         assertThat(videoResource.id).isEqualTo(videoId)
         assertThat(videoResource.title).isNull()
@@ -105,7 +105,7 @@ internal class VideoToResourceConverterTest {
     @Test
     fun `converts heterogenous video lists`() {
         val resultResource = VideoToResourceConverter()
-            .fromVideos(videos = listOf(youtubeVideo, kalturaVideo))
+            .wrapVideosInResource(videos = listOf(youtubeVideo, kalturaVideo))
 
         assertThat(resultResource.map { it.content.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
     }

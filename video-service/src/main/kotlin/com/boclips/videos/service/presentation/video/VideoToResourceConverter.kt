@@ -11,11 +11,11 @@ import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackRes
 import org.springframework.hateoas.Resource
 
 class VideoToResourceConverter {
-    fun fromVideos(videos: List<Video>): List<Resource<VideoResource>> {
+    fun wrapVideosInResource(videos: List<Video>): List<Resource<VideoResource>> {
         return videos.map { video -> fromVideo(video) }
     }
 
-    fun fromAssetIds(assetIds: List<AssetId>): List<Resource<VideoResource>> {
+    fun wrapVideoAssetIdsInResource(assetIds: List<AssetId>): List<Resource<VideoResource>> {
         return assetIds.map { assetId -> wrapResourceWithHateoas(VideoResource(id = assetId.value)) }
     }
 

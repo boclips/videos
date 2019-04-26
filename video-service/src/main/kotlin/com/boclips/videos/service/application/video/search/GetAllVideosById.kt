@@ -13,6 +13,6 @@ class GetAllVideosById(
 
     operator fun invoke(videoIds: List<AssetId>): List<Resource<VideoResource>> {
         return videoService.get(videoIds.toSet().toList())
-            .let(videoToResourceConverter::fromVideos)
+            .let(videoToResourceConverter::wrapVideosInResource)
     }
 }

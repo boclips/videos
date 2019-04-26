@@ -43,7 +43,7 @@ class GetVideosByQuery(
         val videos: List<Video> = videoService.search(videoSearchQuery)
         logger.info { "Return ${videos.size} out of $pageSize results for query $videoSearchQuery" }
 
-        val videoResources = videoToResourceConverter.fromVideos(videos)
+        val videoResources = videoToResourceConverter.wrapVideosInResource(videos)
 
         analyticsEventService.saveSearchEvent(
             query = query,
