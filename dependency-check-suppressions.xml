@@ -35,4 +35,11 @@
         <gav regex="true">^org\.springframework:spring-tuple:.*$</gav>
         <cve>CVE-2011-2730</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+      file name: tomcat-embed-websocket-9.0.16.jar & tomcat-embed-core-9.0.16.jar
+      ]]></notes>
+        <cpe>cpe:/a:apache:tomcat:9.0.16</cpe>
+        <cve>CVE-2019-0232</cve>
+    </suppress>
 </suppressions>
