@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
     id 'org.jetbrains.kotlin.jvm' version '1.3.21'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.3.21'
     id 'com.adarshr.test-logger' version '1.2.0'
@@ -192,9 +192,9 @@ dependencies {
 
     clientCompileOnly('org.projectlombok:lombok:1.18.4')
     clientApt('org.projectlombok:lombok:1.18.4')
-    clientCompileOnly('org.springframework.security.oauth:spring-security-oauth2:2.1.3.RELEASE')
+    clientCompileOnly('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
     clientCompileOnly("org.springframework.boot:spring-boot-starter-test")
-    client_testImplementation('org.springframework.security.oauth:spring-security-oauth2:2.1.3.RELEASE')
+    client_testImplementation('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
     clientCompileOnly("org.springframework.boot:spring-boot-actuator")
     client_testImplementation("org.springframework.boot:spring-boot-actuator")
 
