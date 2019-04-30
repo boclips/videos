@@ -19,5 +19,11 @@ data class CollectionResource(
     val isBookmarked: Boolean,
     val isMine: Boolean,
     val createdBy: String,
-    val subjects: Set<Resource<SubjectResource>>
+    val subjects: Set<Resource<SubjectResource>>,
+    val ageRanges: List<AgeRangeResource>
+)
+
+data class AgeRangeResource(
+    val value: List<Int>,
+    val label: String
 )

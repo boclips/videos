@@ -16,7 +16,7 @@ internal class CollectionUpdatesConverterTest {
 
     @Test
     fun `turn title change to command`() {
-        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title"))
+        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title", ageRange = "not quite valid"))
 
         assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.RenameCollectionCommand::class.java)
         assertThat(commands).hasSize(1)
@@ -24,7 +24,7 @@ internal class CollectionUpdatesConverterTest {
 
     @Test
     fun `change public visibility of collection to command`() {
-        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = true))
+        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = true, ageRange = "not quite valid"))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibilityCommand
         assertThat(command.isPublic).isEqualTo(true)
@@ -33,7 +33,7 @@ internal class CollectionUpdatesConverterTest {
 
     @Test
     fun `change private visibility of collection to command`() {
-        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = false))
+        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = false, ageRange = "not quite valid"))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibilityCommand
         assertThat(command.isPublic).isEqualTo(false)
@@ -43,7 +43,7 @@ internal class CollectionUpdatesConverterTest {
     @Test
     fun `converts multiple changes to commands`() {
         val commands =
-            CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title", isPublic = true))
+            CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title", isPublic = true, ageRange = "not quite valid"))
 
         assertThat(commands).hasSize(2)
     }
@@ -55,7 +55,8 @@ internal class CollectionUpdatesConverterTest {
                 subjects = setOf(
                     "SubjectOneId",
                     "SubjectTwoId"
-                )
+                ),
+                ageRange = "not quite valid"
             )
         )
 

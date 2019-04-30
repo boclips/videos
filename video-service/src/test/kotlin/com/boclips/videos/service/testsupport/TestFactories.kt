@@ -25,8 +25,10 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.presentation.collections.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
+import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -190,7 +192,8 @@ object TestFactories {
         isBookmarked: Boolean = false,
         isMine: Boolean = false,
         createdBy: String = "Johnny Bravo",
-        subjects: Set<Resource<SubjectResource>> = emptySet()
+        subjects: Set<Resource<SubjectResource>> = emptySet(),
+        ageRanges: List<AgeRangeResource> = emptyList()
     ) = CollectionResource(
         id = id,
         owner = owner,
@@ -201,7 +204,8 @@ object TestFactories {
         isMine = isMine,
         isBookmarked = isBookmarked,
         createdBy = createdBy,
-        subjects = subjects
+        subjects = subjects,
+        ageRanges = ageRanges
     )
 
     fun aValidId(): String {
@@ -274,6 +278,20 @@ object TestFactories {
             .language(language)
             .label(label)
             .build()
+    }
+
+    fun createUpdateCollectionRequest(
+        title: String = "collection title",
+        isPublic: Boolean = true,
+        subjects: Set<String> = emptySet(),
+        ageRange: String = "3-5"
+    ): UpdateCollectionRequest {
+        return UpdateCollectionRequest(
+            title = title,
+            isPublic = isPublic,
+            subjects = subjects,
+            ageRange = ageRange
+        )
     }
 }
 

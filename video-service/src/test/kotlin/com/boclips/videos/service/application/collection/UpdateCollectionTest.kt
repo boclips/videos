@@ -39,7 +39,7 @@ class UpdateCollectionTest {
         val renameCollection = UpdateCollection(collectionService, FakeAnalyticsEventService())
         val collectionId = TestFactories.aValidId()
 
-        renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
+        renameCollection(collectionId, UpdateCollectionRequest(title = "new title", ageRange = "not quite valid"))
 
         argumentCaptor<CollectionUpdateCommand.RenameCollectionCommand>().apply {
             verify(collectionService).update(eq(CollectionId(collectionId)), any<List<CollectionUpdateCommand>>())
@@ -56,7 +56,7 @@ class UpdateCollectionTest {
         val renameCollection = UpdateCollection(collectionService, eventService)
         val collectionId = TestFactories.aValidId()
 
-        renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
+        renameCollection(collectionId, UpdateCollectionRequest(title = "new title", ageRange = "not quite valid"))
 
         assertThat(eventService.renameCollectionEvent().data.collectionId).isEqualTo(collectionId)
         assertThat(eventService.renameCollectionEvent().user.id).isEqualTo("me@me.com")
@@ -73,7 +73,7 @@ class UpdateCollectionTest {
         val renameCollection = UpdateCollection(collectionService, eventService)
         val collectionId = TestFactories.aValidId()
 
-        renameCollection(collectionId, UpdateCollectionRequest(isPublic = true))
+        renameCollection(collectionId, UpdateCollectionRequest(isPublic = true, ageRange = "not quite valid"))
 
         assertThat(eventService.changeVisibilityOfCollectionEvent().data.collectionId).isEqualTo(collectionId)
         assertThat(eventService.changeVisibilityOfCollectionEvent().user.id).isEqualTo("me@me.com")
@@ -96,7 +96,7 @@ class UpdateCollectionTest {
         assertThrows<CollectionAccessNotAuthorizedException> {
             renameCollection(
                 collectionId = collectionId.value,
-                updateCollectionRequest = UpdateCollectionRequest(title = "new title")
+                updateCollectionRequest = UpdateCollectionRequest(title = "new title", ageRange = "not quite valid")
             )
         }
         verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
@@ -118,7 +118,7 @@ class UpdateCollectionTest {
         assertThrows<CollectionNotFoundException> {
             renameCollection(
                 collectionId = collectionId.value,
-                updateCollectionRequest = UpdateCollectionRequest(title = "new title")
+                updateCollectionRequest = UpdateCollectionRequest(title = "new title", ageRange = "not quite valid")
             )
         }
         verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
