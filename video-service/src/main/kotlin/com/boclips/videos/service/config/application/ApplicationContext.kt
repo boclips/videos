@@ -18,6 +18,7 @@ import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
+import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.application.video.RefreshVideoDurations
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
@@ -181,6 +182,11 @@ class ApplicationContext(
     @Bean
     fun createSubject(): CreateSubject {
         return CreateSubject(subjectRepository)
+    }
+
+    @Bean
+    fun getVideoTranscript() : GetVideoTranscript {
+        return GetVideoTranscript(videoAssetRepository)
     }
 
     private fun getVideoById() =

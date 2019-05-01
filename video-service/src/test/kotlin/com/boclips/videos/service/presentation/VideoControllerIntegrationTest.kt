@@ -6,17 +6,33 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
-import com.boclips.videos.service.testsupport.*
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asIngestor
+import com.boclips.videos.service.testsupport.asOperator
+import com.boclips.videos.service.testsupport.asSubjectClassifier
+import com.boclips.videos.service.testsupport.asTeacher
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasItem
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.not
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
@@ -553,6 +569,77 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(3)))
             .andExpect(jsonPath("$.page.totalPages", Matchers.equalTo(1)))
+    }
+
+    @Test
+    fun `going to the transcripts endpoint for a video with transcripts returns the transcripts`() {
+        val videoId = saveVideo(
+            title = "Today Video?",
+            searchable = true,
+            date = LocalDate.now().toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+
+        assertNotNull(
+            mongoVideosCollection().findOneAndUpdate(
+                eq("title", "Today Video?"),
+                set("transcript", "Some content in the video")
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+            .andExpect(content().string(equalTo("Some content in the video")))
+            .andExpect(header().string("Content-Disposition", equalTo("attachment; filename=\"Today_Video_.txt\"")))
+    }
+
+    @Test
+    fun `going to the transcripts endpoint for a video without transcripts returns 400`() {
+        val videoId = saveVideo(
+            title = "Today Video",
+            searchable = true,
+            date = LocalDate.now().toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+
+        mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `it returns a transcript uri when there is a transcript to download`() {
+        val videoId = saveVideo(
+            title = "Today Video",
+            searchable = true,
+            date = LocalDate.now().toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+
+        mongoVideosCollection().findOneAndUpdate(
+            eq("title", "Today Video"),
+            set("transcript", "Some content in the video")
+        )
+
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(videoId)))
+            .andExpect(jsonPath("$._links.transcript.href", containsString("/videos/$videoId/transcript")))
+    }
+
+    @Test
+    fun `it does not return a transcript uri when there is no transcript`() {
+        val videoId = saveVideo(
+            title = "Today Video",
+            searchable = true,
+            date = LocalDate.now().toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(videoId)))
+            .andExpect(jsonPath("$._links.transcript.href").doesNotHaveJsonPath())
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)

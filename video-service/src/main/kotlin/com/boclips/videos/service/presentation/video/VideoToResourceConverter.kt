@@ -38,7 +38,8 @@ class VideoToResourceConverter {
                 type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
                 status = getStatus(video),
                 legalRestrictions = video.asset.legalRestrictions
-            )
+            ),
+            withTranscripts = video.asset.transcript != null
         )
     }
 
@@ -70,6 +71,15 @@ class VideoToResourceConverter {
         }
     }
 
-    private fun wrapResourceWithHateoas(videoResource: VideoResource) =
-        Resource(videoResource, VideoController.videoLink(videoResource, "self"))
+    private fun wrapResourceWithHateoas(
+        videoResource: VideoResource,
+        withTranscripts: Boolean = false
+    ) =
+        Resource(
+            videoResource,
+            listOfNotNull(
+                VideoController.videoLink(videoResource, "self"),
+                if (withTranscripts) VideoController.videoTranscriptLink(videoResource) else null
+            )
+        )
 }

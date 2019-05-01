@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
+import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
 import com.boclips.videos.service.application.video.search.SearchVideo
@@ -22,7 +23,15 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/videos")
@@ -32,6 +41,7 @@ class VideoController(
     private val createVideo: CreateVideo,
     private val updateVideo: UpdateVideo,
     private val bulkUpdateVideo: BulkUpdateVideo,
+    private val getVideoTranscript: GetVideoTranscript,
     private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
@@ -48,6 +58,12 @@ class VideoController(
         fun videosLink() = linkTo(methodOn(VideoController::class.java).patchMultipleVideos(null)).withRel("videos")
 
         fun adminSearchLink() = linkTo(methodOn(VideoController::class.java).adminSearch(null)).withRel("adminSearch")
+
+        fun videoTranscriptLink(videoResource: VideoResource) =
+            linkTo(
+                methodOn(VideoController::class.java)
+                    .getTranscript(videoResource.id)
+            ).withRel("transcript")
 
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
@@ -103,6 +119,17 @@ class VideoController(
     @DeleteMapping("/{id}")
     fun deleteVideo(@PathVariable("id") id: String?) {
         deleteVideos(id)
+    }
+
+    @GetMapping("/{id}/transcript")
+    fun getTranscript(@PathVariable("id") id: String?): ResponseEntity<String> {
+        val videoTranscript = getVideoTranscript(id)
+        val videoTitle = searchVideo.byId(id).content.title!!.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+
+        val headers = HttpHeaders()
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$videoTitle.txt\"")
+
+        return ResponseEntity(videoTranscript, headers, HttpStatus.OK)
     }
 
     @PostMapping

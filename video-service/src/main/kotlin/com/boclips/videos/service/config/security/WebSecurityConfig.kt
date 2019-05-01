@@ -60,6 +60,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .hasRole(UserRoles.UPDATE_VIDEOS)
             .antMatchers(HttpMethod.GET, "/v1/videos*")
             .hasAnyRole(UserRoles.VIEW_VIDEOS)
+            .antMatchers(HttpMethod.GET, "/v1/videos/*/transcript")
+            .hasAnyRole(UserRoles.VIEW_VIDEOS)
             .antMatchers(HttpMethod.GET, "/v1/videos/*").permitAll()
 
             .antMatchers(HttpMethod.POST, "/v1/collections")
