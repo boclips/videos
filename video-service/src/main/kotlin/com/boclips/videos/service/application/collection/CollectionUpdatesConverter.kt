@@ -9,40 +9,41 @@ class CollectionUpdatesConverter {
         fun convert(updateCollectionRequest: UpdateCollectionRequest?): List<CollectionUpdateCommand> {
             updateCollectionRequest ?: return emptyList()
 
-            val updates = mutableListOf<CollectionUpdateCommand>()
+            return listOfNotNull(
+                buildRenameTitleCommand(updateCollectionRequest),
+                buildChangeVisibilityCommand(updateCollectionRequest),
+                buildReplaceSubjectCommand(updateCollectionRequest),
+                buildChangeAgeRangeCommand(updateCollectionRequest)
+            )
+        }
 
-            if (updateCollectionRequest.title != null) {
-                updates.add(CollectionUpdateCommand.RenameCollectionCommand(title = updateCollectionRequest.title!!))
+        private fun buildRenameTitleCommand(updateCollectionRequest: UpdateCollectionRequest) =
+            updateCollectionRequest.title?.let { CollectionUpdateCommand.RenameCollectionCommand(title = it) }
+
+        private fun buildChangeVisibilityCommand(updateCollectionRequest: UpdateCollectionRequest) =
+            updateCollectionRequest.isPublic?.let { CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = it) }
+
+        private fun buildReplaceSubjectCommand(updateCollectionRequest: UpdateCollectionRequest) =
+            updateCollectionRequest.subjects?.let {
+                CollectionUpdateCommand.ReplaceSubjectsCommand(subjects = it.map { subjectId ->
+                    SubjectId(subjectId)
+                }.toSet())
             }
 
-            if (updateCollectionRequest.isPublic != null) {
-                updates.add(CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = updateCollectionRequest.isPublic!!))
-            }
-
-            if (updateCollectionRequest.subjects != null) {
-                updates.add(CollectionUpdateCommand.ReplaceSubjectsCommand(subjects = updateCollectionRequest.subjects!!.map {
-                    SubjectId(
-                        it
-                    )
-                }.toSet()))
-            }
-
-            val ageRange = updateCollectionRequest.ageRange
-            if (ageRange != null) {
+        private fun buildChangeAgeRangeCommand(updateCollectionRequest: UpdateCollectionRequest) =
+            updateCollectionRequest.ageRange?.let {
                 val minAge: Int
                 var maxAge: Int? = null
 
-                if (ageRange.contains('+')) {
-                    minAge = ageRange.split('+')[0].toInt()
+                if (it.contains('+')) {
+                    minAge = it.split('+')[0].toInt()
                 } else {
-                    val split = ageRange.split("-")
+                    val split = it.split("-")
                     minAge = Math.min(split[0].toInt(), split[1].toInt())
                     maxAge = Math.max(split[0].toInt(), split[1].toInt())
                 }
-                updates.add(CollectionUpdateCommand.ChangeAgeRangeCommand(minAge, maxAge))
-            }
 
-            return updates
-        }
+                CollectionUpdateCommand.ChangeAgeRangeCommand(minAge, maxAge)
+            }
     }
 }
