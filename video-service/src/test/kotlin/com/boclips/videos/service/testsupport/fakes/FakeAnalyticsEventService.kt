@@ -110,6 +110,14 @@ class FakeAnalyticsEventService : AnalyticsEventService {
                     collectionId = collectionId.value,
                     updatedSubjects = updateCommand.subjects.map { it.value })
             )
+            is CollectionUpdateCommand.ChangeAgeRangeCommand -> saveEvent(
+                EventType.UPDATE_AGE_RANGE,
+                UpdatedAgeRangeEventData(
+                    collectionId = collectionId.value,
+                    minAge = updateCommand.minAge,
+                    maxAge = updateCommand.maxAge
+                )
+            )
         }
     }
 
@@ -188,4 +196,10 @@ data class ChangeVisibilityOfCollectionEvent(
 data class UpdatedCollectionSubjectsEventData(
     val collectionId: String,
     val updatedSubjects: List<String>
+)
+
+data class UpdatedAgeRangeEventData(
+    val collectionId: String,
+    val minAge: Int,
+    val maxAge: Int
 )

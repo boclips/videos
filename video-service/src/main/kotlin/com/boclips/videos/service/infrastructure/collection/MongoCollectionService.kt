@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.Page
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.domain.model.PageRequest
@@ -160,7 +161,11 @@ class MongoCollectionService(
             isPublic = isPubliclyVisible,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
             bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
-            subjects = subjectIds
+            subjects = subjectIds,
+            ageRange = if (collectionDocument.ageRangeMin !== null && collectionDocument.ageRangeMax !== null) AgeRange.bounded(
+                min = collectionDocument.ageRangeMin,
+                max = collectionDocument.ageRangeMax
+            ) else AgeRange.unbounded()
         )
     }
 }

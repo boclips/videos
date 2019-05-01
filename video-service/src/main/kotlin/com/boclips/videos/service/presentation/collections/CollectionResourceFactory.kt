@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation.collections
 
+import com.boclips.videos.service.domain.model.BoundedAgeRange
+import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
@@ -23,7 +25,7 @@ class CollectionResourceFactory(
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
-            ageRanges = emptyList()
+            ageRange = ageRangeToResource(collection)
         )
     }
 
@@ -39,7 +41,7 @@ class CollectionResourceFactory(
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
-            ageRanges = emptyList()
+            ageRange = ageRangeToResource(collection)
         )
     }
 
@@ -49,4 +51,12 @@ class CollectionResourceFactory(
             Projection.details -> buildCollectionDetailsResource(collection)
         }
 
+    private fun ageRangeToResource(
+        collection: Collection
+    ): AgeRangeResource? {
+        return when (collection.ageRange) {
+            is BoundedAgeRange -> AgeRangeResource(collection.ageRange.min, collection.ageRange.max)
+            is UnboundedAgeRange -> null
+        }
+    }
 }

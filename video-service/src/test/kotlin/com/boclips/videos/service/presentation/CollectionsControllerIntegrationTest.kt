@@ -15,7 +15,6 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
 import org.hamcrest.collection.IsIn
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
@@ -61,6 +60,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
             .andExpect(jsonPath("$.title", equalTo("a collection")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
+            .andExpect(jsonPath("$.ageRange").doesNotExist())
+            .andExpect(jsonPath("$.subjects").isEmpty)
             .andReturn()
     }
 
@@ -396,7 +397,6 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun `adds two age groups to the existing collection`() {
         val collectionId = createCollectionWithTitle("My Collection for ages")
 
@@ -410,7 +410,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isNoContent)
 
         getCollection(collectionId)
-            .andExpect(jsonPath("$.ageRange", equalTo("3-9")))
+            .andExpect(jsonPath("$.ageRange.min", equalTo(3)))
+            .andExpect(jsonPath("$.ageRange.max", equalTo(9)))
+            .andExpect(jsonPath("$.ageRange.label", equalTo("3-9")))
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import org.bson.conversions.Bson
 import org.litote.kmongo.addToSet
+import org.litote.kmongo.combine
 import org.litote.kmongo.pull
 import org.litote.kmongo.set
 
@@ -20,7 +21,26 @@ class CollectionUpdates {
             is CollectionUpdateCommand.RenameCollectionCommand -> renameCollection(id, anyUpdateCommand.title)
             is CollectionUpdateCommand.ChangeVisibilityCommand -> changeVisibility(id, anyUpdateCommand.isPublic)
             is CollectionUpdateCommand.ReplaceSubjectsCommand -> replaceSubjects(id, anyUpdateCommand.subjects)
+            is CollectionUpdateCommand.ChangeAgeRangeCommand -> replaceAgeRange(
+                id,
+                anyUpdateCommand.minAge,
+                anyUpdateCommand.maxAge
+            )
         }
+    }
+
+    private fun replaceAgeRange(collectionId: CollectionId, min: Int, max: Int): Bson {
+        MongoCollectionService.logger.info { "Prepare replacing age range for collection $collectionId" }
+        return combine(
+            set(
+                CollectionDocument::ageRangeMin,
+                min
+            ),
+            set(
+                CollectionDocument::ageRangeMax,
+                max
+            )
+        )
     }
 
     private fun replaceSubjects(collectionId: CollectionId, subjects: Set<SubjectId>): Bson {

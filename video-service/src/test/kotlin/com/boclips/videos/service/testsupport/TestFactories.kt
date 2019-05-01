@@ -10,6 +10,7 @@ import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.Video
@@ -179,7 +180,8 @@ object TestFactories {
         isPublic = isPublic,
         createdByBoclips = createdByBoclips,
         bookmarks = bookmarks,
-        subjects = subjects
+        subjects = subjects,
+        ageRange = AgeRange.unbounded()
     )
 
     fun createCollectionResource(
@@ -193,7 +195,7 @@ object TestFactories {
         isMine: Boolean = false,
         createdBy: String = "Johnny Bravo",
         subjects: Set<Resource<SubjectResource>> = emptySet(),
-        ageRanges: List<AgeRangeResource> = emptyList()
+        ageRange: AgeRangeResource? = null
     ) = CollectionResource(
         id = id,
         owner = owner,
@@ -205,7 +207,7 @@ object TestFactories {
         isBookmarked = isBookmarked,
         createdBy = createdBy,
         subjects = subjects,
-        ageRanges = ageRanges
+        ageRange = ageRange
     )
 
     fun aValidId(): String {

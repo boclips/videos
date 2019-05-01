@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.PageRequest
 import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
@@ -56,6 +57,7 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             assertThat(updatedCollection.videos).hasSize(1)
             assertThat(updatedCollection.videos).contains(videoAsset2)
             assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
+            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.unbounded())
         }
 
         @Test
@@ -112,6 +114,21 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
             val updatedCollection = collectionService.getById(collection.id)
 
             assertThat(updatedCollection!!.subjects).containsExactly(updatedSubject)
+        }
+
+        @Test
+        fun `can create and then change age range`() {
+            val collection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            collectionService.update(collection.id, CollectionUpdateCommand.ChangeAgeRangeCommand(3, 5))
+
+            val updatedCollection = collectionService.getById(collection.id)!!
+
+            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, 5))
         }
     }
 

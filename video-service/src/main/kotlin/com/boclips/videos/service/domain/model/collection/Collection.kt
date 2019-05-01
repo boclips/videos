@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.asset.AssetId
@@ -15,7 +16,8 @@ data class Collection(
     val isPublic: Boolean,
     val createdByBoclips: Boolean,
     val bookmarks: Set<UserId>,
-    val subjects: Set<SubjectId>
+    val subjects: Set<SubjectId>,
+    val ageRange: AgeRange
 ) {
     fun createdBy(): String {
         return if (createdByBoclips) {

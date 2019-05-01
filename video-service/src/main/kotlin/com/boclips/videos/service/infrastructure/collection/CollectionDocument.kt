@@ -13,5 +13,7 @@ data class CollectionDocument(
     val visibility: CollectionVisibilityDocument?,
     val createdByBoclips: Boolean?,
     val bookmarks: Set<String> = emptySet(),
-    val subjects: Set<String>? = emptySet()
+    val subjects: Set<String>? = emptySet(),
+    val ageRangeMin: Int? = null,
+    val ageRangeMax: Int? = null
 )

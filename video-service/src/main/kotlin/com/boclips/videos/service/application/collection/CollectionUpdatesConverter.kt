@@ -27,6 +27,13 @@ class CollectionUpdatesConverter {
                 }.toSet()))
             }
 
+            if (updateCollectionRequest.ageRange !== null) {
+                val split = updateCollectionRequest.ageRange?.split("-")
+                val minAge = Math.min(split!![0].toInt(), split[1].toInt())
+                val maxAge = Math.max(split[0].toInt(), split[1].toInt())
+                updates.add(CollectionUpdateCommand.ChangeAgeRangeCommand(minAge, maxAge))
+            }
+
             return updates
         }
     }
