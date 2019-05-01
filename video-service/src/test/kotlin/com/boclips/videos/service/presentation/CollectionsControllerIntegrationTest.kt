@@ -9,11 +9,7 @@ import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.isEmptyString
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.hamcrest.collection.IsIn
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -393,7 +389,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.errors[0].field", equalTo("ageRange")))
-            .andExpect(jsonPath("$.errors[0].message", equalTo("Invalid age range. Example: 3-5. Ranges from 0-19.")))
+            .andExpect(jsonPath("$.errors[0].message", containsString("Invalid age range")))
     }
 
     @Test
@@ -401,7 +397,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val collectionId = createCollectionWithTitle("My Collection for ages")
 
         getCollection(collectionId)
-            .andExpect(jsonPath("$.ageRange", Matchers.nullValue()))
+            .andExpect(jsonPath("$.ageRange", nullValue()))
 
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
@@ -413,6 +409,25 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.ageRange.min", equalTo(3)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(9)))
             .andExpect(jsonPath("$.ageRange.label", equalTo("3-9")))
+    }
+
+    @Test
+    fun `supports N+ age ranges`() {
+        val collectionId = createCollectionWithTitle("My Collection for ages")
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.ageRange", nullValue()))
+
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"ageRange": "5+"}""").asTeacher()
+        )
+            .andExpect(status().isNoContent)
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
+            .andExpect(jsonPath("$.ageRange.max", nullValue()))
+            .andExpect(jsonPath("$.ageRange.label", equalTo("5+")))
     }
 
     @Test

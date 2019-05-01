@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.analytics
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.domain.model.SubjectId
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -206,6 +207,43 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(event["userIsBoclips"]).isEqualTo(false)
         assertThat(event["collectionId"]).isEqualTo(collectionId)
         assertThat(event["isPublic"]).isEqualTo(false)
+    }
+
+    @Test
+    fun `saving change age range event`() {
+        val collectionId = TestFactories.aValidId()
+        mongoEventService.saveUpdateCollectionEvent(
+            CollectionId(collectionId),
+            listOf(CollectionUpdateCommand.ChangeAgeRangeCommand(minAge = 11, maxAge = 15))
+        )
+
+        val event = getEvent()
+
+        assertThat(event["type"]).isEqualTo("CHANGE_AGE_RANGE")
+        assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
+        assertThat(event["userId"]).isEqualTo("user@example.com")
+        assertThat(event["userIsBoclips"]).isEqualTo(false)
+        assertThat(event["collectionId"]).isEqualTo(collectionId)
+        assertThat(event["minAgeRange"]).isEqualTo(11)
+        assertThat(event["maxAgeRange"]).isEqualTo(15)
+    }
+
+    @Test
+    fun `saving replace subjects event`() {
+        val collectionId = TestFactories.aValidId()
+        mongoEventService.saveUpdateCollectionEvent(
+            CollectionId(collectionId),
+            listOf(CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(SubjectId("2"))))
+        )
+
+        val event = getEvent()
+
+        assertThat(event["type"]).isEqualTo("REPLACE_SUBJECTS")
+        assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
+        assertThat(event["userId"]).isEqualTo("user@example.com")
+        assertThat(event["userIsBoclips"]).isEqualTo(false)
+        assertThat(event["collectionId"]).isEqualTo(collectionId)
+        assertThat(event["subjects"]).isEqualTo(listOf("2"))
     }
 
     private fun getEvent(): Document {

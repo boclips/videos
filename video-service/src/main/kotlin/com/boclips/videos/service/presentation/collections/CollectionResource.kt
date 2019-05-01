@@ -25,8 +25,8 @@ data class CollectionResource(
 
 data class AgeRangeResource(
     val min: Int,
-    val max: Int
+    val max: Int?
 ) {
 
-    fun getLabel() = "$min-$max"
+    fun getLabel() = max?.let { "$min-$max" } ?: "$min+"
 }

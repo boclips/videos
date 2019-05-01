@@ -58,6 +58,15 @@ internal class CollectionUpdatesConverterTest {
     }
 
     @Test
+    fun `change age range of collection command with unbounded upper bound`() {
+        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(ageRange = "18+"))
+
+        val command = commands.first() as CollectionUpdateCommand.ChangeAgeRangeCommand
+        assertThat(command.minAge).isEqualTo(18)
+        assertThat(command.maxAge).isNull()
+    }
+
+    @Test
     fun `turn subjects update to command`() {
         val commands = CollectionUpdatesConverter.convert(
             UpdateCollectionRequest(

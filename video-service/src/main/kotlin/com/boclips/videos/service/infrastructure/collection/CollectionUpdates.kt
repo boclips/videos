@@ -29,7 +29,7 @@ class CollectionUpdates {
         }
     }
 
-    private fun replaceAgeRange(collectionId: CollectionId, min: Int, max: Int): Bson {
+    private fun replaceAgeRange(collectionId: CollectionId, min: Int, max: Int?): Bson {
         MongoCollectionService.logger.info { "Prepare replacing age range for collection $collectionId" }
         return combine(
             set(

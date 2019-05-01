@@ -15,11 +15,11 @@ class CollectionUpdatesConverter {
                 updates.add(CollectionUpdateCommand.RenameCollectionCommand(title = updateCollectionRequest.title!!))
             }
 
-            if (updateCollectionRequest.isPublic !== null) {
+            if (updateCollectionRequest.isPublic != null) {
                 updates.add(CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = updateCollectionRequest.isPublic!!))
             }
 
-            if (updateCollectionRequest.subjects !== null) {
+            if (updateCollectionRequest.subjects != null) {
                 updates.add(CollectionUpdateCommand.ReplaceSubjectsCommand(subjects = updateCollectionRequest.subjects!!.map {
                     SubjectId(
                         it
@@ -27,10 +27,18 @@ class CollectionUpdatesConverter {
                 }.toSet()))
             }
 
-            if (updateCollectionRequest.ageRange !== null) {
-                val split = updateCollectionRequest.ageRange?.split("-")
-                val minAge = Math.min(split!![0].toInt(), split[1].toInt())
-                val maxAge = Math.max(split[0].toInt(), split[1].toInt())
+            val ageRange = updateCollectionRequest.ageRange
+            if (ageRange != null) {
+                val minAge: Int
+                var maxAge: Int? = null
+
+                if (ageRange.contains('+')) {
+                    minAge = ageRange.split('+')[0].toInt()
+                } else {
+                    val split = ageRange.split("-")
+                    minAge = Math.min(split[0].toInt(), split[1].toInt())
+                    maxAge = Math.max(split[0].toInt(), split[1].toInt())
+                }
                 updates.add(CollectionUpdateCommand.ChangeAgeRangeCommand(minAge, maxAge))
             }
 

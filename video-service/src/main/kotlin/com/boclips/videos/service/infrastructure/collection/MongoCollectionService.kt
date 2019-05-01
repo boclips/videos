@@ -162,7 +162,7 @@ class MongoCollectionService(
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
             bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
             subjects = subjectIds,
-            ageRange = if (collectionDocument.ageRangeMin !== null && collectionDocument.ageRangeMax !== null) AgeRange.bounded(
+            ageRange = if (collectionDocument.ageRangeMin !== null) AgeRange.bounded(
                 min = collectionDocument.ageRangeMin,
                 max = collectionDocument.ageRangeMax
             ) else AgeRange.unbounded()

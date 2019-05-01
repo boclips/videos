@@ -130,6 +130,21 @@ class MongoCollectionServiceTest : AbstractSpringIntegrationTest() {
 
             assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, 5))
         }
+
+        @Test
+        fun `max age range can be null`() {
+            val collection = collectionService.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            collectionService.update(collection.id, CollectionUpdateCommand.ChangeAgeRangeCommand(3, null))
+
+            val updatedCollection = collectionService.getById(collection.id)!!
+
+            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, null))
+        }
     }
 
     @Test

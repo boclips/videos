@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.security.utils.User
+import com.boclips.videos.service.common.Do
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -83,7 +84,7 @@ class FakeAnalyticsEventService : AnalyticsEventService {
     }
 
     private fun saveEvent(collectionId: CollectionId, updateCommand: CollectionUpdateCommand) {
-        return when (updateCommand) {
+        Do exhaustive when (updateCommand) {
             is CollectionUpdateCommand.RenameCollectionCommand -> saveEvent(
                 EventType.RENAME_COLLECTION, RenameCollectionEvent(
                     collectionId = collectionId.value,
@@ -201,5 +202,5 @@ data class UpdatedCollectionSubjectsEventData(
 data class UpdatedAgeRangeEventData(
     val collectionId: String,
     val minAge: Int,
-    val maxAge: Int
+    val maxAge: Int?
 )

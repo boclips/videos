@@ -9,6 +9,6 @@ sealed class CollectionUpdateCommand {
     data class RenameCollectionCommand(val title: String) : CollectionUpdateCommand()
     data class ChangeVisibilityCommand(val isPublic: Boolean) : CollectionUpdateCommand()
     data class ReplaceSubjectsCommand(val subjects: Set<SubjectId>) : CollectionUpdateCommand()
-    data class ChangeAgeRangeCommand(val minAge: Int, val maxAge: Int) : CollectionUpdateCommand()
+    data class ChangeAgeRangeCommand(val minAge: Int, val maxAge: Int?) : CollectionUpdateCommand()
 }
 

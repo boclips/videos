@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.analytics
 
+import com.boclips.videos.service.common.Do
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -17,6 +18,7 @@ class MongoAnalyticsEventService(
 
         const val collectionName = "event-log"
     }
+
     override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
         saveEvent(EventType.SEARCH) {
             append("query", query)
@@ -58,7 +60,7 @@ class MongoAnalyticsEventService(
 
     override fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
         updateCommands.forEach { updateCommand ->
-            when (updateCommand) {
+            Do exhaustive when (updateCommand) {
                 is CollectionUpdateCommand.RenameCollectionCommand -> saveEvent(EventType.RENAME_COLLECTION) {
                     append("title", updateCommand.title)
                     append("collectionId", collectionId.value)
@@ -74,6 +76,15 @@ class MongoAnalyticsEventService(
                 is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> saveEvent(EventType.REMOVE_FROM_COLLECTION) {
                     append("assetId", updateCommand.videoId.value)
                     append("collectionId", collectionId.value)
+                }
+                is CollectionUpdateCommand.ReplaceSubjectsCommand -> saveEvent(EventType.REPLACE_SUBJECTS) {
+                    append("collectionId", collectionId.value)
+                    append("subjects", updateCommand.subjects.map { it.value })
+                }
+                is CollectionUpdateCommand.ChangeAgeRangeCommand -> saveEvent(EventType.CHANGE_AGE_RANGE) {
+                    append("collectionId", collectionId.value)
+                    append("minAgeRange", updateCommand.minAge)
+                    append("maxAgeRange", updateCommand.maxAge)
                 }
             }
         }

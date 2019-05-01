@@ -24,12 +24,26 @@ class UpdateCollectionRequestTest {
     }
 
     @Test
+    fun `validates a 18+ as valid`() {
+        val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "18+")
+        val violations = validator.validate(validRequest)
+        Assertions.assertThat(violations).hasSize(0)
+    }
+
+    @Test
+    fun `validates a 3+ as valid`() {
+        val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "3+")
+        val violations = validator.validate(validRequest)
+        Assertions.assertThat(violations).hasSize(0)
+    }
+
+    @Test
     fun `invalidates non integer age range`() {
         val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "garbage-range")
         val violations = validator.validate(validRequest)
         Assertions.assertThat(violations).hasSize(1)
         Assertions.assertThat(violations.first().message)
-            .isEqualTo("Invalid age range. Example: 3-5. Ranges from 0-19.")
+            .isEqualTo("Invalid age range. Example: 3-5, or 16+. Ranges no bigger than 18.")
     }
 
     @Test
@@ -37,8 +51,6 @@ class UpdateCollectionRequestTest {
         val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "-1-5")
         val violations = validator.validate(validRequest)
         Assertions.assertThat(violations).hasSize(1)
-        Assertions.assertThat(violations.first().message)
-            .isEqualTo("Invalid age range. Example: 3-5. Ranges from 0-19.")
     }
 
     @Test
@@ -46,8 +58,6 @@ class UpdateCollectionRequestTest {
         val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "3-4000")
         val violations = validator.validate(validRequest)
         Assertions.assertThat(violations).hasSize(1)
-        Assertions.assertThat(violations.first().message)
-            .isEqualTo("Invalid age range. Example: 3-5. Ranges from 0-19.")
     }
 
     @Test
@@ -55,7 +65,19 @@ class UpdateCollectionRequestTest {
         val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "4000-3")
         val violations = validator.validate(validRequest)
         Assertions.assertThat(violations).hasSize(1)
-        Assertions.assertThat(violations.first().message)
-            .isEqualTo("Invalid age range. Example: 3-5. Ranges from 0-19.")
+    }
+
+    @Test
+    fun `invalidates unreasonable age range with plus`() {
+        val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "329+")
+        val violations = validator.validate(validRequest)
+        Assertions.assertThat(violations).hasSize(1)
+    }
+
+    @Test
+    fun `invalidates a single digit`() {
+        val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = "3")
+        val violations = validator.validate(validRequest)
+        Assertions.assertThat(violations).hasSize(1)
     }
 }
