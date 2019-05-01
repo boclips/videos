@@ -595,6 +595,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `going to the transcripts endpoint returns unauthorised when without the download transcript role`() {
+        val videoId = saveVideo(
+            title = "Today Video?",
+            searchable = true,
+            date = LocalDate.now().toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+
+        mockMvc.perform(get("/v1/videos/$videoId/transcript"))
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
     fun `going to the transcripts endpoint for a video without transcripts returns 400`() {
         val videoId = saveVideo(
             title = "Today Video",

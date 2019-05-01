@@ -61,7 +61,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(HttpMethod.GET, "/v1/videos*")
             .hasAnyRole(UserRoles.VIEW_VIDEOS)
             .antMatchers(HttpMethod.GET, "/v1/videos/*/transcript")
-            .hasAnyRole(UserRoles.VIEW_VIDEOS)
+            .hasAnyRole(UserRoles.DOWNLOAD_TRANSCRIPT)
             .antMatchers(HttpMethod.GET, "/v1/videos/*").permitAll()
 
             .antMatchers(HttpMethod.POST, "/v1/collections")

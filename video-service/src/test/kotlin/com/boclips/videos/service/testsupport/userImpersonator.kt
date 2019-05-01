@@ -10,6 +10,7 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
             .user(email)
             .roles(
                 UserRoles.VIEW_VIDEOS,
+                UserRoles.DOWNLOAD_TRANSCRIPT,
                 UserRoles.VIEW_COLLECTIONS,
                 UserRoles.UPDATE_COLLECTIONS,
                 UserRoles.DELETE_COLLECTIONS,
@@ -24,6 +25,7 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "teacher@boc
             .user(email)
             .roles(
                 UserRoles.VIEW_VIDEOS,
+                UserRoles.DOWNLOAD_TRANSCRIPT,
                 UserRoles.VIEW_DISABLED_VIDEOS,
                 UserRoles.INSERT_EVENTS,
                 UserRoles.UPDATE_VIDEOS,
@@ -75,7 +77,10 @@ fun MockHttpServletRequestBuilder.asVideoAnalyser() =
     this.with(
         SecurityMockMvcRequestPostProcessors
             .user("videoAnalyser")
-            .roles(UserRoles.VIEW_VIDEOS, UserRoles.DOWNLOAD_VIDEOS)
+            .roles(
+                UserRoles.VIEW_VIDEOS,
+                UserRoles.DOWNLOAD_VIDEOS
+            )
     )
 
 fun MockHttpServletRequestBuilder.asUserWithRoles(vararg roles: String) =
