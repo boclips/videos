@@ -65,6 +65,20 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
+    fun `teachers can download transcripts`() {
+        val videoId = saveVideo()
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}/transcript"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}/transcript").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}/transcript").asTeacher())
+            .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
     fun `only teachers can get videos`() {
         saveVideo()
 
