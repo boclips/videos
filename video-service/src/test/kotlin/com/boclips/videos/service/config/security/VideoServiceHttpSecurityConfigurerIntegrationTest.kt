@@ -264,15 +264,6 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
         mockMvc.perform(post("/v1/admin/actions/rebuild_search_index").asOperator())
             .andExpect(status().is2xxSuccessful)
     }
-
-    @Test
-    fun `only operator can access reset-all`() {
-        mockMvc.perform(post("/v1/e2e/actions/reset_all").asTeacher())
-            .andExpect(status().isForbidden)
-
-        mockMvc.perform(post("/v1/e2e/actions/reset_all").asOperator())
-            .andExpect(status().is2xxSuccessful)
-    }
 }
 
 private fun not401Or403(): Matcher<Int> {
