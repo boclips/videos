@@ -1,7 +1,2 @@
 keycloak:
   configurationFile: 'classpath:keycloak-production.json'
-
-
-pubsub:
-  topic:
-    suffix: production

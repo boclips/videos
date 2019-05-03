@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.AnalysedVideo
 import com.boclips.events.types.AnalysedVideoTopic
 import com.boclips.events.config.Topics
@@ -19,7 +20,7 @@ class UpdateAnalysedVideo(
 ) {
     companion object : KLogging()
 
-    @StreamListener(Topics.ANALYSED_VIDEOS_SUBSCRIPTION)
+    @StreamListener(Subscriptions.ANALYSED_VIDEOS)
     operator fun invoke(analysedVideo: AnalysedVideo) {
         val videoId = analysedVideo.videoId
         logger.info { "Updating analysed video $videoId" }

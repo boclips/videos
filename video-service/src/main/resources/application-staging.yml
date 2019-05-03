@@ -1,6 +1,2 @@
 keycloak:
   configurationFile: 'classpath:keycloak-staging.json'
-
-pubsub:
-  topic:
-    suffix: staging

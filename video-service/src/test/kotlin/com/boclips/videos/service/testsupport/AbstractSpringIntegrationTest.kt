@@ -1,23 +1,20 @@
 package com.boclips.videos.service.testsupport
 
+import com.boclips.events.config.Subscriptions
+import com.boclips.events.config.Topics
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.config.messaging.Subscriptions
-import com.boclips.videos.service.config.messaging.Topics
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
-import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
-import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
-import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus

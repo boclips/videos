@@ -1,6 +1,2 @@
 keycloak:
   configurationFile: 'classpath:keycloak-testing.json'
-
-pubsub:
-  topic:
-    suffix: testing

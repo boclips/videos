@@ -33,7 +33,3 @@ spring:
     gcp:
       pubsub:
         enabled: false
-
-pubsub:
-  topic:
-    suffix: test

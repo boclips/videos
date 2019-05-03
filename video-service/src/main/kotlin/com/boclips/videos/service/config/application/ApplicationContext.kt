@@ -1,5 +1,6 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.events.config.Topics
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
@@ -27,7 +28,6 @@ import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.config.messaging.Topics
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService
