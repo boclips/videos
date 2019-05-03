@@ -33,6 +33,10 @@ import com.boclips.videos.service.presentation.collections.UpdateCollectionReque
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
+import com.boclips.videos.service.presentation.video.VideoResourceStatus
+import com.boclips.videos.service.presentation.video.VideoTypeResource
+import com.boclips.videos.service.presentation.video.playback.PlaybackResource
+import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import org.bson.types.ObjectId
 import org.springframework.hateoas.Resource
 import java.time.Duration
@@ -297,3 +301,42 @@ object TestFactories {
     }
 }
 
+object PlaybackResourceFactory {
+    fun sample(type: String = "STREAM") = StreamPlaybackResource(type, "http://example.com")
+}
+
+object VideoTypeResourceFactory {
+    fun sample(id: Int = 0, name: String = "name") = VideoTypeResource(id, name)
+}
+
+object VideoResourceFactory {
+    fun sample(
+        id: String = ObjectId().toHexString(),
+        title: String = "title",
+        description: String = "description",
+        contentPartnerVideoId: String = "cp-id-$id",
+        playback: PlaybackResource = PlaybackResourceFactory.sample(),
+        type: VideoTypeResource = VideoTypeResourceFactory.sample(),
+        subjects: Set<String> = emptySet(),
+        releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
+        legalRestrictions: String = "",
+        contentPartner: String = "Content Partner",
+        badges: Set<String> = emptySet(),
+        status: VideoResourceStatus = VideoResourceStatus.SEARCHABLE,
+        hasTranscripts: Boolean = true
+    ) = VideoResource(
+        id = id,
+        playback = playback,
+        title = title,
+        description = description,
+        releasedOn = releasedOn,
+        contentPartnerVideoId = contentPartnerVideoId,
+        type = type,
+        legalRestrictions = legalRestrictions,
+        subjects = subjects,
+        contentPartner = contentPartner,
+        badges = badges,
+        status = status,
+        hasTranscripts = hasTranscripts
+    )
+}

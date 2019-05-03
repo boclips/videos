@@ -37,6 +37,7 @@ import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -59,10 +60,10 @@ class ApplicationContext(
 ) {
 
     @Bean
-    fun searchVideo() = SearchVideo(
-        getVideoById(),
-        getAllVideosById(),
-        getVideosByQuery(),
+    fun searchVideo(videosLinkBuilder: VideosLinkBuilder) = SearchVideo(
+        getVideoById(videosLinkBuilder),
+        getAllVideosById(videosLinkBuilder),
+        getVideosByQuery(videosLinkBuilder),
         videoAssetRepository
     )
 
@@ -110,13 +111,13 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getCollection(): GetCollection {
-        return GetCollection(collectionService, CollectionResourceFactory(VideoToResourceConverter(), SubjectToResourceConverter(), videoService))
+    fun getCollection(videosLinkBuilder: VideosLinkBuilder): GetCollection {
+        return GetCollection(collectionService, CollectionResourceFactory(VideoToResourceConverter(videosLinkBuilder), SubjectToResourceConverter(), videoService))
     }
 
     @Bean
-    fun getPublicCollections(): GetCollections {
-        return GetCollections(collectionService, CollectionResourceFactory(VideoToResourceConverter(), SubjectToResourceConverter(), videoService))
+    fun getPublicCollections(videosLinkBuilder: VideosLinkBuilder): GetCollections {
+        return GetCollections(collectionService, CollectionResourceFactory(VideoToResourceConverter(videosLinkBuilder), SubjectToResourceConverter(), videoService))
     }
 
     @Bean
@@ -189,27 +190,27 @@ class ApplicationContext(
         return GetVideoTranscript(videoAssetRepository)
     }
 
-    private fun getVideoById() =
+    private fun getVideoById(videosLinkBuilder: VideosLinkBuilder) =
         GetVideoById(
             videoService,
-            videoToResourceConverter()
+            videoToResourceConverter(videosLinkBuilder)
         )
 
-    private fun getVideosByQuery() =
+    private fun getVideosByQuery(videosLinkBuilder: VideosLinkBuilder) =
         GetVideosByQuery(
             videoService,
-            videoToResourceConverter(),
+            videoToResourceConverter(videosLinkBuilder),
             analyticsEventService
         )
 
-    private fun getAllVideosById(): GetAllVideosById {
+    private fun getAllVideosById(videosLinkBuilder: VideosLinkBuilder): GetAllVideosById {
         return GetAllVideosById(
             videoService,
-            videoToResourceConverter()
+            videoToResourceConverter(videosLinkBuilder)
         )
     }
 
-    private fun videoToResourceConverter(): VideoToResourceConverter {
-        return VideoToResourceConverter()
+    private fun videoToResourceConverter(videosLinkBuilder: VideosLinkBuilder): VideoToResourceConverter {
+        return VideoToResourceConverter(videosLinkBuilder)
     }
 }

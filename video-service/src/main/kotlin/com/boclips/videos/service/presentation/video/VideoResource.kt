@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.core.Relation
 import java.time.LocalDate
 
@@ -17,5 +18,7 @@ data class VideoResource(
     val badges: Set<String> = emptySet(),
     val type: VideoTypeResource? = null,
     val status: VideoResourceStatus? = null,
-    val legalRestrictions: String? = null
+    val legalRestrictions: String? = null,
+    @get:JsonIgnore
+    val hasTranscripts: Boolean? = null
 )

@@ -1,19 +1,32 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.LegacySubject
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
 import com.boclips.videos.service.testsupport.TestFactories.createYoutubePlayback
+import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 
 internal class VideoToResourceConverterTest {
+
+    lateinit var videosLinkBuilder: VideosLinkBuilder
+    lateinit var videoToResourceConverter: VideoToResourceConverter
+
+    @BeforeEach
+    fun setUp() {
+        videosLinkBuilder = mock()
+        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder)
+
+    }
 
     val kalturaVideo = createVideo(
         videoAsset = createVideoAsset(
@@ -46,7 +59,7 @@ internal class VideoToResourceConverterTest {
     @Test
     fun `converts a video from AssetId`() {
         val videoId = ObjectId().toHexString()
-        val videoResource = VideoToResourceConverter().wrapVideoAssetIdsInResource(listOf(AssetId(videoId))).first().content
+        val videoResource = videoToResourceConverter.wrapVideoAssetIdsInResource(listOf(AssetId(videoId))).first().content
 
         assertThat(videoResource.id).isEqualTo(videoId)
         assertThat(videoResource.title).isNull()
@@ -62,7 +75,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Kaltura`() {
-        val videoResource = VideoToResourceConverter().fromVideo(kalturaVideo).content
+        val videoResource = videoToResourceConverter.fromVideo(kalturaVideo).content
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -84,7 +97,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Youtube`() {
-        val videoResource = VideoToResourceConverter().fromVideo(youtubeVideo).content
+        val videoResource = videoToResourceConverter.fromVideo(youtubeVideo).content
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -104,7 +117,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts heterogenous video lists`() {
-        val resultResource = VideoToResourceConverter()
+        val resultResource = videoToResourceConverter
             .wrapVideosInResource(videos = listOf(youtubeVideo, kalturaVideo))
 
         assertThat(resultResource.map { it.content.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")

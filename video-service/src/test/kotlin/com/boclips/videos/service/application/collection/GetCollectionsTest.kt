@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
@@ -26,6 +27,7 @@ class GetCollectionsTest {
     lateinit var collectionResourceFactory: CollectionResourceFactory
     lateinit var videoService: VideoService
     lateinit var collectionService: CollectionService
+    lateinit var videosLinkBuilder: VideosLinkBuilder
 
     val video = TestFactories.createVideo()
 
@@ -37,8 +39,9 @@ class GetCollectionsTest {
                 TestFactories.createVideo()
             )
         }
+        videosLinkBuilder = mock()
         collectionResourceFactory =
-            CollectionResourceFactory(VideoToResourceConverter(), SubjectToResourceConverter(), videoService)
+            CollectionResourceFactory(VideoToResourceConverter(videosLinkBuilder), SubjectToResourceConverter(), videoService)
     }
 
     @Test

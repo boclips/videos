@@ -18,8 +18,6 @@ import mu.KLogging
 import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -45,26 +43,6 @@ class VideoController(
     private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
-        fun searchLink() = linkTo(
-            methodOn(VideoController::class.java)
-                .search(null, null, null, null, null, null)
-        ).withRel("search")
-
-        fun videoLink(videoResource: VideoResource? = null, rel: String = "video") = linkTo(
-            methodOn(VideoController::class.java)
-                .getVideo(videoResource?.id)
-        ).withRel(rel)
-
-        fun videosLink() = linkTo(methodOn(VideoController::class.java).patchMultipleVideos(null)).withRel("videos")
-
-        fun adminSearchLink() = linkTo(methodOn(VideoController::class.java).adminSearch(null)).withRel("adminSearch")
-
-        fun videoTranscriptLink(videoResource: VideoResource) =
-            linkTo(
-                methodOn(VideoController::class.java)
-                    .getTranscript(videoResource.id)
-            ).withRel("transcript")
-
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
         const val DEFAULT_PAGE_INDEX = 0

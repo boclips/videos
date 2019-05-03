@@ -196,7 +196,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 200 for valid video`() {
-        mockMvc.perform(get("/v1/videos/${kalturaVideoId}").asTeacher())
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
             .andExpect(jsonPath("$.title", equalTo("powerful asset about elephants")))
@@ -213,6 +213,26 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
             .andExpect(jsonPath("$.status", equalTo("SEARCHABLE")))
             .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+    }
+
+    @Test
+    fun `transcript link is not present when not authenticated`() {
+        val videoId = saveVideoWithTranscript()
+
+        mockMvc.perform(get("/v1/videos/$videoId"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.transcript").doesNotExist())
+    }
+
+    @Test
+    fun `transcript link is present when authenticated`() {
+        val videoId = saveVideoWithTranscript()
+
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.transcript.href").exists())
     }
 
     @Test
@@ -573,19 +593,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `going to the transcripts endpoint for a video with transcripts returns the transcripts`() {
-        val videoId = saveVideo(
-            title = "Today Video?",
-            searchable = true,
-            date = LocalDate.now().toString(),
-            legacyType = LegacyVideoType.NEWS
-        ).value
-
-        assertNotNull(
-            mongoVideosCollection().findOneAndUpdate(
-                eq("title", "Today Video?"),
-                set("transcript", "Some content in the video")
-            )
-        )
+        val videoId = saveVideoWithTranscript()
 
         mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
             .andExpect(status().isOk)
@@ -609,17 +617,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `it returns a transcript uri when there is a transcript to download`() {
-        val videoId = saveVideo(
-            title = "Today Video",
-            searchable = true,
-            date = LocalDate.now().toString(),
-            legacyType = LegacyVideoType.NEWS
-        ).value
-
-        mongoVideosCollection().findOneAndUpdate(
-            eq("title", "Today Video"),
-            set("transcript", "Some content in the video")
-        )
+        val videoId = saveVideoWithTranscript()
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
@@ -640,6 +638,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo(videoId)))
             .andExpect(jsonPath("$._links.transcript.href").doesNotHaveJsonPath())
+    }
+
+    private fun saveVideoWithTranscript(): String {
+        val videoId = saveVideo(
+            title = "Today Video?",
+            searchable = true,
+            date = LocalDate.now().toString(),
+            legacyType = LegacyVideoType.NEWS
+        ).value
+
+        assertNotNull(
+            mongoVideosCollection().findOneAndUpdate(
+                eq("title", "Today Video?"),
+                set("transcript", "Some content in the video")
+            )
+        )
+        return videoId
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)

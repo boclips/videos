@@ -1,0 +1,91 @@
+package com.boclips.videos.service.presentation.hateoas
+
+import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.testsupport.VideoResourceFactory
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
+import org.springframework.security.core.context.SecurityContextHolder
+
+class VideosLinkBuilderTest {
+
+    @AfterEach
+    fun setUp() {
+        SecurityContextHolder.clearContext()
+    }
+
+    @Test
+    fun `self link`() {
+        val link = VideosLinkBuilder().self(VideoResourceFactory.sample(id = "self-test"))
+
+        assertThat(link.href).isEqualTo("/v1/videos/self-test")
+        assertThat(link.rel).isEqualTo("self")
+        assertThat(link.isTemplated).isFalse()
+    }
+
+    @Test
+    fun `video link`() {
+        val link = VideosLinkBuilder().videoLink()
+
+        assertThat(link.href).isEqualTo("/v1/videos/{id}")
+        assertThat(link.rel).isEqualTo("video")
+        assertThat(link.isTemplated).isTrue()
+    }
+
+    @Test
+    fun `search link`() {
+        val link = VideosLinkBuilder().searchLink()
+
+        assertThat(link.href).isEqualTo("/v1/videos?query={query}&size={size}&page={page}{&sort_by,include_tag,exclude_tag}")
+        assertThat(link.rel).isEqualTo("search")
+        assertThat(link.isTemplated).isTrue()
+    }
+
+    @Test
+    fun `videos link`() {
+        val link = VideosLinkBuilder().videosLink()
+
+        assertThat(link.href).isEqualTo("/v1/videos")
+        assertThat(link.rel).isEqualTo("videos")
+        assertThat(link.isTemplated).isFalse()
+    }
+
+    @Test
+    fun `adminSearch link`() {
+        val link = VideosLinkBuilder().adminSearchLink()
+
+        assertThat(link.href).isEqualTo("/v1/videos/search")
+        assertThat(link.rel).isEqualTo("adminSearch")
+        assertThat(link.isTemplated).isFalse()
+    }
+
+    @Test
+    fun `transcript link returns a link when authenticated`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
+
+        val link = VideosLinkBuilder().transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
+
+        assertThat(link).isNotNull
+
+        assertThat(link!!.href).isEqualTo("/v1/videos/transcript-test/transcript")
+        assertThat(link.rel).isEqualTo("transcript")
+        assertThat(link.isTemplated).isFalse()
+    }
+
+    @Test
+    fun `transcript link returns null when video has no transcripts`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
+
+        val link = VideosLinkBuilder().transcriptLink(VideoResourceFactory.sample(id = "transcript-test", hasTranscripts = false))
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `transcript link returns null when not authenticated`() {
+        val link = VideosLinkBuilder().transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
+
+        assertThat(link).isNull()
+    }
+}

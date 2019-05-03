@@ -1,5 +1,6 @@
 import com.boclips.security.utils.User
 import com.boclips.security.utils.UserExtractor
+import com.boclips.security.utils.hasRole
 import com.boclips.videos.service.domain.model.UserId
 
 fun getCurrentUserId() = UserId(value = getCurrentUser().id)
@@ -15,3 +16,5 @@ fun getCurrentUserIfNotAnonymous() : User? {
 
     return user
 }
+
+fun currentUserHasRole(role: String) = UserExtractor.getCurrentUser().hasRole(role)

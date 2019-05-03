@@ -4,13 +4,13 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
-import com.boclips.videos.service.presentation.VideoController
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import org.springframework.hateoas.Resource
 
-class VideoToResourceConverter {
+class VideoToResourceConverter(private val videosLinkBuilder: VideosLinkBuilder) {
     fun wrapVideosInResource(videos: List<Video>): List<Resource<VideoResource>> {
         return videos.map { video -> fromVideo(video) }
     }
@@ -37,15 +37,14 @@ class VideoToResourceConverter {
                 badges = getBadges(video),
                 type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
                 status = getStatus(video),
-                legalRestrictions = video.asset.legalRestrictions
-            ),
-            withTranscripts = video.asset.transcript != null
+                legalRestrictions = video.asset.legalRestrictions,
+                hasTranscripts = video.asset.transcript != null
+            )
         )
     }
 
     private fun getPlayback(video: Video): PlaybackResource {
-        val playback = video.playback
-        val playbackResource = when (playback) {
+        val playbackResource = when (val playback = video.playback) {
             is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.streamUrl)
             is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE")
             else -> throw Exception()
@@ -72,14 +71,12 @@ class VideoToResourceConverter {
     }
 
     private fun wrapResourceWithHateoas(
-        videoResource: VideoResource,
-        withTranscripts: Boolean = false
-    ) =
-        Resource(
-            videoResource,
-            listOfNotNull(
-                VideoController.videoLink(videoResource, "self"),
-                if (withTranscripts) VideoController.videoTranscriptLink(videoResource) else null
-            )
+        videoResource: VideoResource
+    ) = Resource(
+        videoResource,
+        listOfNotNull(
+            videosLinkBuilder.self(videoResource),
+            videosLinkBuilder.transcriptLink(videoResource)
         )
+    )
 }
