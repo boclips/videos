@@ -1,10 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.events.types.AnalysedVideo
-import com.boclips.events.types.AnalysedVideoKeyword
-import com.boclips.events.types.AnalysedVideoTopic
-import com.boclips.events.types.Captions
-import com.boclips.events.types.CaptionsFormat
+import com.boclips.events.types.*
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
@@ -233,14 +229,14 @@ object TestFactories {
             .build()
     }
 
-    fun createAnalysedVideo(
+    fun createVideoAnalysed(
         videoId: String = aValidId(),
         language: Locale = Locale.US,
         transcript: String = "the transcript",
-        topics: List<AnalysedVideoTopic> = emptyList(),
-        keywords: List<AnalysedVideoKeyword> = emptyList()
-    ): AnalysedVideo {
-        return AnalysedVideo
+        topics: List<VideoAnalysedTopic> = emptyList(),
+        keywords: List<VideoAnalysedKeyword> = emptyList()
+    ): VideoAnalysed {
+        return VideoAnalysed
             .builder()
             .videoId(videoId)
             .language(language)
@@ -251,13 +247,13 @@ object TestFactories {
             .build()
     }
 
-    fun createAnalysedVideoTopic(
+    fun createVideoAnalysedTopic(
         name: String = "Statistics",
         language: Locale = Locale.UK,
         confidence: Double = 0.7,
-        parent: AnalysedVideoTopic? = null
-    ): AnalysedVideoTopic {
-        return AnalysedVideoTopic.builder()
+        parent: VideoAnalysedTopic? = null
+    ): VideoAnalysedTopic {
+        return VideoAnalysedTopic.builder()
             .confidence(confidence)
             .segments(emptyList())
             .language(language)
@@ -266,10 +262,10 @@ object TestFactories {
             .build()
     }
 
-    fun createAnalysedVideoKeyword(
+    fun createVideoAnalysedKeyword(
         name: String = "pH"
-    ): AnalysedVideoKeyword {
-        return AnalysedVideoKeyword.builder()
+    ): VideoAnalysedKeyword {
+        return VideoAnalysedKeyword.builder()
             .name(name)
             .confidence(0.5)
             .language(Locale.US)

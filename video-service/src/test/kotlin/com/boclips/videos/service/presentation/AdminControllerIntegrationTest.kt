@@ -64,7 +64,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId?language=en_US").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message.payload.toString()).contains(assetId.value)
         assertThat(message.payload.toString()).contains("https://download/video-entry-123.mp4")
@@ -84,7 +84,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message).isNull()
     }
@@ -95,7 +95,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message).isNotNull
         assertThat(message.payload.toString()).contains("es_ES")
@@ -107,7 +107,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator())
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message).isNull()
     }
@@ -118,7 +118,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message).isNull()
     }

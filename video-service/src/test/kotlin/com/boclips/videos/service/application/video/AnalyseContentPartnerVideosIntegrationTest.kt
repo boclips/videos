@@ -19,7 +19,7 @@ class AnalyseContentPartnerVideosIntegrationTest(
         analyseContentPartnerVideos("Ted", language = null)
 
         val messages = mutableListOf<Message<*>>().apply {
-            messageCollector.forChannel(topics.videosToAnalyse()).drainTo(this)
+            messageCollector.forChannel(topics.videoAnalysisRequested()).drainTo(this)
         }
 
         assertThat(messages).hasSize(2)

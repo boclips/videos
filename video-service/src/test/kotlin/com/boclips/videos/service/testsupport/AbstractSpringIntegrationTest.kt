@@ -113,7 +113,7 @@ abstract class AbstractSpringIntegrationTest {
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
         analyticsEventService.clear()
-        messageCollector.forChannel(topics.videosToAnalyse()).clear()
+        messageCollector.forChannel(topics.videoAnalysisRequested()).clear()
 
         reset(legacySearchService)
     }

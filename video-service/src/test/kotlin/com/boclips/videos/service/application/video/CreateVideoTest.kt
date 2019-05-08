@@ -210,7 +210,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
         val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
 
         assertThat(event.videoId).isEqualTo(video.content.id)

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.asset
 
-import com.boclips.videos.service.testsupport.TestFactories.createAnalysedVideoTopic
+import com.boclips.videos.service.testsupport.TestFactories.createVideoAnalysedTopic
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -9,7 +9,7 @@ class TopicTest {
 
     @Test
     fun `copies the name from assigned topic`() {
-        val assignedTopic = createAnalysedVideoTopic(name = "the name")
+        val assignedTopic = createVideoAnalysedTopic(name = "the name")
 
         val topic = Topic.fromAnalysedVideoTopic(assignedTopic)
 
@@ -18,7 +18,7 @@ class TopicTest {
 
     @Test
     fun `copies the language from assigned topic`() {
-        val assignedTopic = createAnalysedVideoTopic(language = Locale.CHINA)
+        val assignedTopic = createVideoAnalysedTopic(language = Locale.CHINA)
 
         val topic = Topic.fromAnalysedVideoTopic(assignedTopic)
 
@@ -27,7 +27,7 @@ class TopicTest {
 
     @Test
     fun `copies confidence from assigned topic`() {
-        val assignedTopic = createAnalysedVideoTopic(confidence = 0.67)
+        val assignedTopic = createVideoAnalysedTopic(confidence = 0.67)
 
         val topic = Topic.fromAnalysedVideoTopic(assignedTopic)
 
@@ -36,7 +36,7 @@ class TopicTest {
 
     @Test
     fun `parent is null when assigned topic has no parent`() {
-        val assignedTopic = createAnalysedVideoTopic(parent = null)
+        val assignedTopic = createVideoAnalysedTopic(parent = null)
 
         val topic = Topic.fromAnalysedVideoTopic(assignedTopic)
 
@@ -45,7 +45,7 @@ class TopicTest {
 
     @Test
     fun `parent is set when assigned topic has a parent`() {
-        val assignedTopic = createAnalysedVideoTopic(parent = createAnalysedVideoTopic(name = "parent"))
+        val assignedTopic = createVideoAnalysedTopic(parent = createVideoAnalysedTopic(name = "parent"))
 
         val topic = Topic.fromAnalysedVideoTopic(assignedTopic)
 

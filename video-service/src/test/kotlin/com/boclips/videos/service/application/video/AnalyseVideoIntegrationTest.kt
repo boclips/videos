@@ -27,7 +27,7 @@ class AnalyseVideoIntegrationTest(
 
         analyseVideo(videoId, language = Locale.GERMAN)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
         val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
@@ -43,7 +43,7 @@ class AnalyseVideoIntegrationTest(
 
         analyseVideo(videoId, language = null)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message).isNull()
     }
@@ -58,7 +58,7 @@ class AnalyseVideoIntegrationTest(
 
         analyseVideo(videoId, language = null)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message).isNull()
     }
@@ -73,7 +73,7 @@ class AnalyseVideoIntegrationTest(
 
         analyseVideo(videoId, language = null)
 
-        val message = messageCollector.forChannel(topics.videosToAnalyse()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
         assertThat(message).isNull()
     }

@@ -27,7 +27,7 @@ class UpdateAnalysedVideoTest {
         whenever(videoAssetRepository.find(any())).thenThrow(RuntimeException::class.java)
 
         assertDoesNotThrow {
-            updateAnalysedVideo(TestFactories.createAnalysedVideo())
+            updateAnalysedVideo(TestFactories.createVideoAnalysed())
         }
     }
 
@@ -37,7 +37,7 @@ class UpdateAnalysedVideoTest {
         whenever(playbackRepository.uploadCaptions(any(), any())).thenThrow(RuntimeException::class.java)
 
         assertDoesNotThrow {
-            updateAnalysedVideo(TestFactories.createAnalysedVideo())
+            updateAnalysedVideo(TestFactories.createVideoAnalysed())
         }
     }
 
@@ -47,7 +47,7 @@ class UpdateAnalysedVideoTest {
         whenever(videoAssetRepository.bulkUpdate(any())).thenThrow(RuntimeException::class.java)
 
         assertDoesNotThrow {
-            updateAnalysedVideo(TestFactories.createAnalysedVideo())
+            updateAnalysedVideo(TestFactories.createVideoAnalysed())
         }
     }
 }

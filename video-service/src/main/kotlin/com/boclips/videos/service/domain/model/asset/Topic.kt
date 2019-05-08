@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.asset
 
-import com.boclips.events.types.AnalysedVideoTopic
+import com.boclips.events.types.VideoAnalysedTopic
 import java.util.*
 
 data class Topic(
@@ -11,7 +11,7 @@ data class Topic(
 ) {
     companion object {
 
-        fun fromAnalysedVideoTopic(assignedTopic: AnalysedVideoTopic): Topic {
+        fun fromAnalysedVideoTopic(assignedTopic: VideoAnalysedTopic): Topic {
             return Topic(
                     name = assignedTopic.name,
                     language = assignedTopic.language,
