@@ -7,7 +7,7 @@ import java.time.format.DateTimeParseException
 class StringToDurationConverter {
     fun convertToDuration(duration: String?): Duration? {
         return try {
-            duration?.let { Duration.parse(it) }
+            duration?.let { if (duration.isNotEmpty()) Duration.parse(it) else null}
         } catch (e: DateTimeParseException) {
             throw InvalidDurationException(duration!!)
         }

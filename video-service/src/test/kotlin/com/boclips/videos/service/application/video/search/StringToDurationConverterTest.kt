@@ -17,6 +17,13 @@ internal class StringToDurationConverterTest {
     }
 
     @Test
+    fun `Converting empty string, returns a null`() {
+        val actual = durationConverter.convertToDuration("")
+
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `converts a valid iso string to a duration`() {
         val duration = durationConverter.convertToDuration(Duration.ofSeconds(5).toString())
 
