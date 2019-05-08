@@ -189,6 +189,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns video within specified duration`() {
+        mockMvc.perform(get("/v1/videos?query=powerful&min_duration=PT20S&max_duration=PT24S").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+
+    @Test
     fun `returns 400 for invalid search request`() {
         mockMvc.perform(get("/v1/videos").asTeacher())
             .andExpect(status().`is`(400))

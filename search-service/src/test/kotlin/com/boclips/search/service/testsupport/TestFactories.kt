@@ -13,7 +13,8 @@ object SearchableVideoMetadataFactory {
         contentProvider: String = "",
         releaseDate: LocalDate = LocalDate.now(),
         keywords: List<String> = emptyList(),
-        tags: List<String> = emptyList()
+        tags: List<String> = emptyList(),
+        durationSeconds: Long = 0
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -21,7 +22,8 @@ object SearchableVideoMetadataFactory {
         contentProvider = contentProvider,
         releaseDate = releaseDate,
         keywords = keywords,
-        tags = tags
+        tags = tags,
+        durationSeconds = durationSeconds
     )
 }
 

@@ -28,6 +28,7 @@ import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.application.video.search.StringToDurationConverter
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -60,10 +61,13 @@ class ApplicationContext(
 ) {
 
     @Bean
-    fun searchVideo(videosLinkBuilder: VideosLinkBuilder) = SearchVideo(
+    fun searchVideo(
+        videosLinkBuilder: VideosLinkBuilder,
+        stringToDurationConverter: StringToDurationConverter
+    ) = SearchVideo(
         getVideoById(videosLinkBuilder),
         getAllVideosById(videosLinkBuilder),
-        getVideosByQuery(videosLinkBuilder),
+        getVideosByQuery(videosLinkBuilder, stringToDurationConverter),
         videoAssetRepository
     )
 
@@ -190,17 +194,26 @@ class ApplicationContext(
         return GetVideoTranscript(videoAssetRepository)
     }
 
+    @Bean
+    fun stringToDurationConverter() : StringToDurationConverter {
+        return StringToDurationConverter()
+    }
+
     private fun getVideoById(videosLinkBuilder: VideosLinkBuilder) =
         GetVideoById(
             videoService,
             videoToResourceConverter(videosLinkBuilder)
         )
 
-    private fun getVideosByQuery(videosLinkBuilder: VideosLinkBuilder) =
+    private fun getVideosByQuery(
+        videosLinkBuilder: VideosLinkBuilder,
+        stringToDurationConverter: StringToDurationConverter
+    ) =
         GetVideosByQuery(
             videoService,
             videoToResourceConverter(videosLinkBuilder),
-            analyticsEventService
+            analyticsEventService,
+            stringToDurationConverter
         )
 
     private fun getAllVideosById(videosLinkBuilder: VideosLinkBuilder): GetAllVideosById {

@@ -34,7 +34,8 @@ class VideoMetadataConverterTest {
                 contentProvider = "content partner",
                 releaseDate = LocalDate.of(2019, Month.APRIL, 19),
                 keywords = listOf("k1"),
-                tags = listOf("classroom")
+                tags = listOf("classroom"),
+                durationSeconds = 0
             )
         )
     }

@@ -13,7 +13,8 @@ import mu.KLogging
 class GetVideosByQuery(
     private val videoService: VideoService,
     private val videoToResourceConverter: VideoToResourceConverter,
-    private val analyticsEventService: AnalyticsEventService
+    private val analyticsEventService: AnalyticsEventService,
+    private val stringToDurationConverter: StringToDurationConverter
 ) {
     companion object : KLogging()
 
@@ -22,6 +23,8 @@ class GetVideosByQuery(
         sortBy: SortKey?,
         includeTags: List<String>,
         excludeTags: List<String>,
+        minDurationString: String?,
+        maxDurationString: String?,
         pageSize: Int,
         pageNumber: Int
     ): VideosResource {
@@ -34,7 +37,9 @@ class GetVideosByQuery(
             pageIndex = pageNumber,
             pageSize = pageSize,
             includeTags = includeTags,
-            excludeTags = excludeTags
+            excludeTags = excludeTags,
+            minDuration = stringToDurationConverter.convertToDuration(minDurationString),
+            maxDuration = stringToDurationConverter.convertToDuration(maxDurationString)
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)

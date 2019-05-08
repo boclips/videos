@@ -23,7 +23,7 @@ class VideosLinkBuilder {
 
     fun searchLink(): Link = ControllerLinkBuilder.linkTo(
         ControllerLinkBuilder.methodOn(VideoController::class.java)
-            .search(null, null, null, null, null, null)
+            .search(null, null, null, null, null, null, null, null)
     ).withRel("search")
 
     fun videosLink(): Link = ControllerLinkBuilder.linkTo(

@@ -113,7 +113,8 @@ abstract class AbstractSpringIntegrationTest {
                     contentProvider = contentProvider,
                     releaseDate = releaseDate,
                     keywords = emptyList(),
-                    tags = listOf("classroom")
+                    tags = listOf("classroom"),
+                    durationSeconds = duration.seconds
                 )
             )
         )

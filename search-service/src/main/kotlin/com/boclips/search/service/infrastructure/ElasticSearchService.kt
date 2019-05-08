@@ -19,11 +19,13 @@ import org.elasticsearch.index.query.IdsQueryBuilder
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 import org.elasticsearch.search.sort.SortOrder
+import java.time.Duration
 
 class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService {
     companion object : KLogging();
@@ -117,10 +119,24 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         return QueryBuilders
             .boolQuery()
             .must(matchTitleDescriptionKeyword(query.phrase))
+            .apply {
+                if (listOfNotNull(query.minDuration, query.maxDuration).isNotEmpty()) {
+                    must(beWithinDuration(query.minDuration, query.maxDuration))
+                }
+            }
             .should(boostTitleMatch(query.phrase))
             .should(boostDescriptionMatch(query.phrase))
             .mustNot(matchTags(query.excludeTags))
             .filter(filterByTag(query.includeTags))
+    }
+
+    private fun beWithinDuration(min: Duration?, max: Duration?): RangeQueryBuilder {
+        val queryBuilder = QueryBuilders.rangeQuery(ElasticSearchVideo.DURATION_SECONDS)
+
+        min?.let { queryBuilder.from(it.seconds) }
+        max?.let { queryBuilder.to(it.seconds) }
+
+        return queryBuilder
     }
 
     private fun matchTags(excludeTags: List<String>) =

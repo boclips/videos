@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import java.time.Duration
 import java.time.LocalDate
 import java.util.stream.Stream
 
@@ -321,5 +322,68 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 3))
         assertThat(searchResults).containsExactly("tomorrow", "today", "yesterday")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by duration bound`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", durationSeconds = 1),
+                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", durationSeconds = 5),
+                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", durationSeconds = 10),
+                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", durationSeconds = 15)
+            )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", minDuration = Duration.ofSeconds(5), maxDuration = Duration.ofSeconds(10))))
+
+        assertThat(results).containsAll(listOf("1", "2"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("0","3"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by duration lower bound`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", durationSeconds = 1),
+                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", durationSeconds = 5),
+                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", durationSeconds = 10),
+                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", durationSeconds = 15)
+            )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", minDuration = Duration.ofSeconds(10))))
+
+        assertThat(results).containsAll(listOf("2", "3"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("0","1"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by duration upper bound`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", durationSeconds = 1),
+                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", durationSeconds = 5),
+                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", durationSeconds = 10),
+                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", durationSeconds = 15)
+            )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", maxDuration = Duration.ofSeconds(9))))
+
+        assertThat(results).containsAll(listOf("0", "1"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("2","3"))
     }
 }

@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 
 class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
@@ -171,5 +172,27 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         assertThat(analyticsEventService.searchEvent().data.pageIndex).isEqualTo(1)
         assertThat(analyticsEventService.searchEvent().data.pageSize).isEqualTo(2)
         assertThat(analyticsEventService.searchEvent().data.totalResults).isEqualTo(3L)
+    }
+
+    @Test
+    fun `can filter by duration between 0 and 10 seconds`() {
+        saveVideo(title = "why are camels so tall 1", duration = Duration.ofSeconds(5))
+        saveVideo(title = "why are camels so tall 2", duration = Duration.ofSeconds(10))
+        saveVideo(title = "why are camels so tall 3", duration = Duration.ofSeconds(15))
+
+        val videos = searchVideo.byQuery(
+            query = "why are camels so tall",
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            minDuration = "PT0S",
+            maxDuration = "PT10S",
+            pageSize = 20,
+            pageNumber = 0
+        )
+
+        assertThat(videos.totalVideos).isEqualTo(2)
+        assertThat(videos.videos.size).isEqualTo(2)
+        assertThat(videos.videos[0].content.title).isEqualTo("why are camels so tall 1")
+        assertThat(videos.videos[1].content.title).isEqualTo("why are camels so tall 2")
     }
 }

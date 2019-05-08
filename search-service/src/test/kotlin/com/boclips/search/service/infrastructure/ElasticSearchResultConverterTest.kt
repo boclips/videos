@@ -22,7 +22,8 @@ class ElasticSearchResultConverterTest {
                 "price_category": "expensive",
                 "duration": "02:01:20",
                 "keywords": ["k1","k2"],
-                "tags": ["news", "classroom"]
+                "tags": ["news", "classroom"],
+                "durationSeconds": 10
             }
         """.trimIndent()
             )
@@ -38,7 +39,8 @@ class ElasticSearchResultConverterTest {
                 contentProvider = "TED Talks",
                 releaseDate = null,
                 keywords = listOf("k1", "k2"),
-                tags = listOf("news", "classroom")
+                tags = listOf("news", "classroom"),
+                durationSeconds = 10
             )
         )
     }

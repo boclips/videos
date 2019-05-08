@@ -54,6 +54,8 @@ class VideoController(
         @RequestParam(name = "sort_by", required = false) sortBy: SortKey?,
         @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
         @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
+        @RequestParam(name = "min_duration", required = false) minDuration: String?,
+        @RequestParam(name = "max_duration", required = false) maxDuration: String?,
         @RequestParam("size") size: Int?,
         @RequestParam("page") page: Int?
     ): ResponseEntity<PagedResources<*>> {
@@ -63,7 +65,9 @@ class VideoController(
             includeTags = includeTags?.let { includeTags } ?: emptyList(),
             excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
             pageSize = size ?: DEFAULT_PAGE_SIZE,
-            pageNumber = page ?: DEFAULT_PAGE_INDEX
+            pageNumber = page ?: DEFAULT_PAGE_INDEX,
+            minDuration = minDuration,
+            maxDuration = maxDuration
         )
 
         val videoResources = videosResource

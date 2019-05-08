@@ -37,7 +37,7 @@ class VideosLinkBuilderTest {
     fun `search link`() {
         val link = VideosLinkBuilder().searchLink()
 
-        assertThat(link.href).isEqualTo("/v1/videos?query={query}&size={size}&page={page}{&sort_by,include_tag,exclude_tag}")
+        assertThat(link.href).isEqualTo("/v1/videos?query={query}&size={size}&page={page}{&sort_by,include_tag,exclude_tag,min_duration,max_duration}")
         assertThat(link.rel).isEqualTo("search")
         assertThat(link.isTemplated).isTrue()
     }
@@ -77,7 +77,12 @@ class VideosLinkBuilderTest {
     fun `transcript link returns null when video has no transcripts`() {
         setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
 
-        val link = VideosLinkBuilder().transcriptLink(VideoResourceFactory.sample(id = "transcript-test", hasTranscripts = false))
+        val link = VideosLinkBuilder().transcriptLink(
+            VideoResourceFactory.sample(
+                id = "transcript-test",
+                hasTranscripts = false
+            )
+        )
 
         assertThat(link).isNull()
     }

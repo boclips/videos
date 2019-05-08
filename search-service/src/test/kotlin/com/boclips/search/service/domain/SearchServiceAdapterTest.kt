@@ -16,7 +16,8 @@ class TestSearchService(query: GenericSearchService, admin: GenericSearchService
             contentProvider = "",
             releaseDate = LocalDate.now(),
             keywords = emptyList(),
-            tags = listOf("classroom")
+            tags = listOf("classroom"),
+            durationSeconds = 0
         )
     }
 }

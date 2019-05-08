@@ -17,7 +17,8 @@ class ElasticObjectMapperTest {
                         contentProvider = "contentProvider",
                         keywords = listOf("keywords"),
                         tags = listOf("tags"),
-                        releaseDate = LocalDate.of(2015, Month.MAY, 21)
+                        releaseDate = LocalDate.of(2015, Month.MAY, 21),
+                        durationSeconds = 10
                 )
         )
 

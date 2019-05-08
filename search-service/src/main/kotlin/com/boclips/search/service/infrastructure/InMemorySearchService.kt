@@ -44,6 +44,10 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
 
     private fun idsMatching(query: Query): List<String> {
         val (phrase, ids) = query
+
+        val minDuration: Long = if (query.minDuration != null) query.minDuration.seconds else 0
+        val maxDuration: Long = if (query.maxDuration != null) query.maxDuration.seconds else Long.MAX_VALUE
+
         return when {
             !ids.isEmpty() -> index.filter { ids.contains(it.key) }
                 .map { video -> video.key }
@@ -55,6 +59,9 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
                 }
                 .filter { entry ->
                     entry.value.tags.containsAll(query.includeTags)
+                }
+                .filter { entry ->
+                    entry.value.durationSeconds?.let { (minDuration..maxDuration).contains(it) }
                 }
                 .filter { entry ->
                     entry.value.tags.none { query.excludeTags.contains(it) }

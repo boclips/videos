@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.Sort
 import com.boclips.search.service.domain.SortOrder
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.domain.model.SortKey.RELEASE_DATE
+import java.time.Duration
 
 enum class SortKey {
     RELEASE_DATE
@@ -15,6 +16,8 @@ class VideoSearchQuery(
     val sortBy: SortKey? = null,
     val includeTags: List<String>,
     val excludeTags: List<String>,
+    val minDuration: Duration? = null,
+    val maxDuration: Duration? = null,
     val pageSize: Int,
     val pageIndex: Int
 ) {
@@ -27,6 +30,8 @@ class VideoSearchQuery(
         return parse(this.text).copy(
             includeTags = includeTags,
             excludeTags = excludeTags,
+            minDuration = minDuration,
+            maxDuration = maxDuration,
             sort = sort
         )
     }
