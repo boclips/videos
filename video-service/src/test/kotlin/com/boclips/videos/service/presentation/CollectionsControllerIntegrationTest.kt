@@ -8,8 +8,12 @@ import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.isEmptyString
+import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.nullValue
 import org.hamcrest.collection.IsIn
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -381,19 +385,19 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `validates collection update request`() {
-        createCollectionWithTitle("My Collection for ages")
+        val collectionId = createCollectionWithTitle("My Collection for ages")
 
         mockMvc.perform(
-            patch(selfLink(createCollectionWithTitle("My Collection for ages"))).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"ageRange": "10000-0"}""").asTeacher()
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"ageRange": {"min": 10000, "max": 0}}""").asTeacher()
         )
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.errors[0].field", equalTo("ageRange")))
-            .andExpect(jsonPath("$.errors[0].message", containsString("Invalid age range")))
+            .andExpect(jsonPath("$.errors[0].field", equalTo("ageRange.min")))
+            .andExpect(jsonPath("$.errors[0].message", containsString("Age range min must be less than or equal to 19")))
     }
 
     @Test
-    fun `adds two age groups to the existing collection`() {
+    fun `adds age range to the existing collection`() {
         val collectionId = createCollectionWithTitle("My Collection for ages")
 
         getCollection(collectionId)
@@ -401,33 +405,13 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"ageRange": "3-9"}""").asTeacher()
+                .content("""{"ageRange": {"min": 3, "max": 9}}""").asTeacher()
         )
             .andExpect(status().isNoContent)
 
         getCollection(collectionId)
             .andExpect(jsonPath("$.ageRange.min", equalTo(3)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(9)))
-            .andExpect(jsonPath("$.ageRange.label", equalTo("3-9")))
-    }
-
-    @Test
-    fun `supports N+ age ranges`() {
-        val collectionId = createCollectionWithTitle("My Collection for ages")
-
-        getCollection(collectionId)
-            .andExpect(jsonPath("$.ageRange", nullValue()))
-
-        mockMvc.perform(
-            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"ageRange": "5+"}""").asTeacher()
-        )
-            .andExpect(status().isNoContent)
-
-        getCollection(collectionId)
-            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
-            .andExpect(jsonPath("$.ageRange.max", nullValue()))
-            .andExpect(jsonPath("$.ageRange.label", equalTo("5+")))
     }
 
     @Test

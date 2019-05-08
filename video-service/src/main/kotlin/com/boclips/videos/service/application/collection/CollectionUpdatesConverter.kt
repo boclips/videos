@@ -32,18 +32,7 @@ class CollectionUpdatesConverter {
 
         private fun buildChangeAgeRangeCommand(updateCollectionRequest: UpdateCollectionRequest) =
             updateCollectionRequest.ageRange?.let {
-                val minAge: Int
-                var maxAge: Int? = null
-
-                if (it.contains('+')) {
-                    minAge = it.split('+')[0].toInt()
-                } else {
-                    val split = it.split("-")
-                    minAge = Math.min(split[0].toInt(), split[1].toInt())
-                    maxAge = Math.max(split[0].toInt(), split[1].toInt())
-                }
-
-                CollectionUpdateCommand.ChangeAgeRangeCommand(minAge, maxAge)
+                CollectionUpdateCommand.ChangeAgeRangeCommand(it.min, it.max)
             }
     }
 }

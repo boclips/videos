@@ -26,6 +26,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.presentation.collections.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
@@ -290,7 +291,7 @@ object TestFactories {
         title: String = "collection title",
         isPublic: Boolean = true,
         subjects: Set<String> = emptySet(),
-        ageRange: String = "3-5"
+        ageRange: AgeRangeRequest = AgeRangeRequest(min = 3, max = 5)
     ): UpdateCollectionRequest {
         return UpdateCollectionRequest(
             title = title,

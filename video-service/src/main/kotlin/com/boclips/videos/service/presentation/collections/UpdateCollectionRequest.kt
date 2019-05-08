@@ -1,19 +1,25 @@
 package com.boclips.videos.service.presentation.collections
 
-import javax.validation.constraints.Pattern
+import javax.validation.Valid
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotNull
 
 class UpdateCollectionRequest(
     var title: String? = null,
     var isPublic: Boolean? = null,
     var subjects: Set<String>? = null,
-    @field:Pattern(
-        regexp = "$BOUNDED_RANGE|$UNBOUNDED_RANGE",
-        message = "Invalid age range. Example: 3-5, or 16+. Ranges no bigger than 18."
-    )
-    var ageRange: String? = null
-) {
-    companion object {
-        const val BOUNDED_RANGE = "([1]?[0-9]-[1]?[0-9])"
-        const val UNBOUNDED_RANGE = "([1]?[0-9]\\+)"
-    }
-}
+
+    @field:Valid
+    var ageRange: AgeRangeRequest? = null
+)
+
+class AgeRangeRequest(
+    @field:NotNull(message = "Age range min must not be null")
+    @field:Min(value = 3, message = "Age range min must be at least 3")
+    @field:Max(value = 19, message = "Age range min must be less than or equal to 19")
+    var min: Int,
+
+    @field:Max(value = 19, message = "Age range max must be less than or equal to 19")
+    var max: Int?
+)
