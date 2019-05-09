@@ -7,6 +7,8 @@ class StreamPlayback(
     thumbnailUrl: String,
     duration: Duration,
     val appleHlsStreamUrl: String,
+    val mpegDashStreamUrl: String,
+    val progressiveDownloadStreamUrl: String,
     val downloadUrl: String
 ) : VideoPlayback(id = id, thumbnailUrl = thumbnailUrl, duration = duration) {
 

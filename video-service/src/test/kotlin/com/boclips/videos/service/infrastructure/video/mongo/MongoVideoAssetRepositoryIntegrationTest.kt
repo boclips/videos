@@ -122,7 +122,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
                         downloadUrl = "download-url",
                         playbackId = "ref-123",
                         duration = Duration.ZERO,
-                        thumbnailurl = "thumbnailUrl-url",
+                        thumbnailUrl = "thumbnailUrl-url",
                         streamUrl = "stream-url"
                     )
                 )

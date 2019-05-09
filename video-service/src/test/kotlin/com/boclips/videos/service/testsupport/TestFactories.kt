@@ -113,13 +113,15 @@ object TestFactories {
         duration: Duration = Duration.ofSeconds(11),
         downloadUrl: String = "kaltura-download",
         playbackId: String = "555",
-        thumbnailurl: String = "kaltura-thumbnailUrl",
+        thumbnailUrl: String = "kaltura-thumbnailUrl",
         streamUrl: String = "kaltura-stream"
     ): StreamPlayback {
         return StreamPlayback(
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackId),
             appleHlsStreamUrl = streamUrl,
-            thumbnailUrl = thumbnailurl,
+            mpegDashStreamUrl = streamUrl,
+            progressiveDownloadStreamUrl = streamUrl,
+            thumbnailUrl = thumbnailUrl,
             downloadUrl = downloadUrl,
             duration = duration
         )
