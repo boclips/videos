@@ -25,7 +25,7 @@ class PlaybackRepositoryTest {
 
         val kalturaPlaybackProvider = KalturaPlaybackProvider(kalturaClient)
         val youtubePlaybackProvider = TestYoutubePlaybackProvider()
-        youtubePlaybackProvider.addVideo("yt-123", "thumbnail", Duration.ZERO)
+        youtubePlaybackProvider.addVideo("yt-123", "thumbnailUrl", Duration.ZERO)
 
         playbackRepository = PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
     }

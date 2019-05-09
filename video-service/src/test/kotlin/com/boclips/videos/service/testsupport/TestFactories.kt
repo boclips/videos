@@ -1,6 +1,10 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.events.types.*
+import com.boclips.events.types.Captions
+import com.boclips.events.types.CaptionsFormat
+import com.boclips.events.types.VideoAnalysed
+import com.boclips.events.types.VideoAnalysedKeyword
+import com.boclips.events.types.VideoAnalysedTopic
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
@@ -55,6 +59,7 @@ object TestFactories {
         contentPartnerId: String = "Reuters",
         contentPartnerVideoId: String = "cp-id-$videoId",
         playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
+        playback: VideoPlayback? = null,
         type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = listOf("keyword"),
         subjects: Set<LegacySubject> = emptySet(),
@@ -69,6 +74,7 @@ object TestFactories {
         return VideoAsset(
             assetId = AssetId(value = ObjectId(videoId).toHexString()),
             playbackId = playbackId,
+            playback = playback,
             title = title,
             description = description,
             keywords = keywords,
@@ -105,13 +111,15 @@ object TestFactories {
 
     fun createKalturaPlayback(
         duration: Duration = Duration.ofSeconds(11),
-        downloadUrl: String = "kaltura-download"
+        downloadUrl: String = "kaltura-download",
+        playbackId: String = "555",
+        thumbnailurl: String = "kaltura-thumbnailUrl",
+        streamUrl: String = "kaltura-stream"
     ): StreamPlayback {
-        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "555")
         return StreamPlayback(
-            id = playbackId,
-            streamUrl = "kaltura-stream",
-            thumbnailUrl = "kaltura-thumbnail",
+            id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackId),
+            streamUrl = streamUrl,
+            thumbnailUrl = thumbnailurl,
             downloadUrl = downloadUrl,
             duration = duration
         )

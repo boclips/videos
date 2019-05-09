@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.Message
 
-class AnalyseContentPartnerVideosIntegrationTest(
+class AnalyseContentPartnerDocumentVideosIntegrationTest(
     @Autowired val analyseContentPartnerVideos: AnalyseContentPartnerVideos
 ) : AbstractSpringIntegrationTest() {
 

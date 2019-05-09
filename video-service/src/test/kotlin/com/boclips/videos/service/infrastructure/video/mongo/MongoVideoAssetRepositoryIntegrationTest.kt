@@ -1,18 +1,29 @@
 package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
-import com.boclips.videos.service.domain.model.asset.*
+import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.asset.LegacySubject
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.asset.Topic
+import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.asset.VideoAssetFilter
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.Document
+import org.bson.types.ObjectId
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.time.LocalDate
+import java.util.Date
 import java.util.Locale
 
 class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
@@ -94,33 +105,38 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
-    fun `can update duration`() {
+    @Disabled
+    fun `can update playback`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideoAsset(
-                title = "title",
-                description = "description",
-                contentPartnerId = "AP",
-                contentPartnerVideoId = "cp-id-123",
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
-                type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
-                keywords = listOf("keywords"),
-                subjects = emptySet(),
-                releasedOn = LocalDate.parse("2018-01-01"),
-                duration = Duration.ZERO,
-                legalRestrictions = "",
-                searchable = true
+                playback = null
             )
         )
 
-        val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceDuration(
-                originalAsset.assetId,
-                Duration.ofMinutes(5)
+        mongoVideoRepository.bulkUpdate(
+            listOf(
+                VideoUpdateCommand.ReplacePlayback(
+                    originalAsset.assetId,
+                    TestFactories.createKalturaPlayback(
+                        downloadUrl = "download-url",
+                        playbackId = "ref-123",
+                        duration = Duration.ZERO,
+                        thumbnailurl = "thumbnailUrl-url",
+                        streamUrl = "stream-url"
+                    )
+                )
             )
         )
 
-        assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "duration")
-        assertThat(updatedAsset.duration).isEqualTo(Duration.ofMinutes(5))
+        val updatedAsset = mongoVideoRepository.find(originalAsset.assetId)
+
+        assertThat(updatedAsset!!.playbackId).isNotNull
+        assertThat(updatedAsset.playback!!.id).isEqualTo("ref-123")
+        assertThat(updatedAsset.playback!!.thumbnailUrl).isEqualTo("thumnbnail-url")
+        assertThat(updatedAsset.playback!!.duration).isEqualTo(Duration.ZERO)
+        assertThat((updatedAsset.playback!! as StreamPlayback).downloadUrl).isEqualTo("download-url")
+        assertThat((updatedAsset.playback!! as StreamPlayback).streamUrl).isEqualTo("stream-url")
     }
 
     @Test
@@ -282,5 +298,42 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         val updatedAsset = mongoVideoRepository.find(asset.assetId)
 
         assertThat(updatedAsset!!.keywords).containsExactly("new")
+    }
+
+    @Nested
+    inner class MigrationTests {
+        @Test
+        fun `can retrieve legacy video documents`() {
+            mongoClient
+                .getDatabase(DATABASE_NAME)
+                .getCollection(MongoVideoAssetRepository.collectionName)
+                .insertOne(
+                    Document()
+                        .append("_id", ObjectId("5c55697860fef77aa4af323a"))
+                        .append("title", "Mah Video")
+                        .append("description", "Ain't no video like this one")
+                        .append(
+                            "source", Document()
+                                .append("contentPartner", Document().append("name", "cp-name"))
+                                .append("videoReference", "ref")
+                        )
+                        .append("playback", Document().append("id", "some-id").append("type", "KALTURA"))
+                        .append("legacy", Document().append("type", LegacyVideoType.NEWS.name))
+                        .append("keywords", emptyList<String>())
+                        .append("subjects", emptyList<String>())
+                        .append("releaseDate", Date())
+                        .append("durationSeconds", 10)
+                        .append("legalRestrictions", "Some restrictions")
+                        .append("language", "en")
+                        .append("searchable", true)
+                )
+
+            val video = mongoVideoRepository.find(AssetId(value = "5c55697860fef77aa4af323a"))!!
+
+            assertThat(video.title).isEqualTo("Mah Video")
+            assertThat(video.description).isEqualTo("Ain't no video like this one")
+            assertThat(video.playbackId.value).isEqualTo("some-id")
+            assertThat(video.playbackId.type.name).isEqualTo("KALTURA")
+        }
     }
 }

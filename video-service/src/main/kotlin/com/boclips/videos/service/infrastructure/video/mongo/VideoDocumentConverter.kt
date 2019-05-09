@@ -1,11 +1,14 @@
 package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.LegacySubject
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import org.bson.types.ObjectId
 import java.time.Duration
 import java.time.ZoneOffset
@@ -18,12 +21,24 @@ object VideoDocumentConverter {
             id = ObjectId(asset.assetId.value),
             title = asset.title,
             description = asset.description,
-            source = VideoDocument.Source(
-                contentPartner = VideoDocument.Source.ContentPartner(name = asset.contentPartnerId),
+            source = SourceDocument(
+                contentPartner = ContentPartnerDocument(
+                    name = asset.contentPartnerId
+                ),
                 videoReference = asset.contentPartnerVideoId
             ),
-            playback = VideoDocument.Playback(id = asset.playbackId.value, type = asset.playbackId.type.name),
-            legacy = VideoDocument.Legacy(type = asset.type.name),
+            playback = PlaybackDocument(
+                id = asset.playbackId.value,
+                type = asset.playbackId.type.name,
+                downloadUrl = null,
+                dashStreamUrl = null,
+                hdsStreamUrl = null,
+                progressiveStreamUrl = null,
+                duration = null,
+                thumbnailUrl = null,
+                lastVerified = null
+            ),
+            legacy = LegacyDocument(type = asset.type.name),
             keywords = asset.keywords,
             subjects = asset.subjects.map(LegacySubject::name),
             releaseDate = Date.from(asset.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
@@ -47,6 +62,7 @@ object VideoDocumentConverter {
                 type = PlaybackProviderType.valueOf(document.playback.type),
                 value = document.playback.id
             ),
+            playback = null,
             type = LegacyVideoType.valueOf(document.legacy.type),
             keywords = document.keywords,
             subjects = document.subjects.map(::LegacySubject).toSet(),
@@ -58,5 +74,37 @@ object VideoDocumentConverter {
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
             searchable = document.searchable
         )
+    }
+
+    fun toPlaybackDocument(videoPlayback: VideoPlayback): PlaybackDocument {
+        return when (videoPlayback) {
+            is StreamPlayback -> PlaybackDocument(
+                id = videoPlayback.id.value,
+                type = "KALTURA",
+                thumbnailUrl = null,
+                downloadUrl = null,
+                hdsStreamUrl = null,
+                dashStreamUrl = null,
+                progressiveStreamUrl = null,
+                lastVerified = null,
+                duration = null
+            )
+            is YoutubePlayback -> PlaybackDocument(
+                id = videoPlayback.id.value,
+                type = "YOUTUBE",
+                thumbnailUrl = null,
+                downloadUrl = null,
+                hdsStreamUrl = null,
+                dashStreamUrl = null,
+                progressiveStreamUrl = null,
+                lastVerified = null,
+                duration = null
+            )
+            else -> throw IllegalStateException("Stream format not recognised.")
+        }
+    }
+
+    fun toPlayback(playbackDocument: PlaybackDocument): VideoPlayback {
+        TODO()
     }
 }

@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType as VideoServiceVideoType
 
-class LegacyVideoTypeTest {
+class LegacyDocumentVideoTypeTest {
 
     @Test
     fun `client video types match video service video types`() {

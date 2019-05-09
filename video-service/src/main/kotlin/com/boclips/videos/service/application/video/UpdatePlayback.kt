@@ -10,7 +10,7 @@ import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
 
-open class RefreshVideoDurations(
+open class UpdatePlayback(
     private val videoAssetRepository: VideoAssetRepository,
     private val playbackRepository: PlaybackRepository
 ) {
@@ -18,53 +18,49 @@ open class RefreshVideoDurations(
 
     @Async
     open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
-        logger.info("Starting a refresh of video durations")
+        logger.info("Starting a refresh of video playbacks")
         val future = CompletableFuture<Unit>()
 
         try {
-            refreshDurations(notifier)
+            refreshPlaybacks(notifier)
 
-            logger.info("Completed refresh of video durations")
+            logger.info("Completed refresh of video playbacks")
             future.complete(null)
         } catch (e: Exception) {
-            logger.error("Error refreshing video durations", e)
+            logger.error("Error refreshing video playbacks", e)
             future.completeExceptionally(e)
         }
 
         return future
     }
 
-    private fun refreshDurations(notifier: ProgressNotifier?) {
+    private fun refreshPlaybacks(notifier: ProgressNotifier?) {
         videoAssetRepository.streamAll(IsSearchable) { sequence ->
             var batch = 0
 
             sequence.chunked(size = 50).forEach { videos ->
-                notifier?.send("Processing durations updates batch ${batch++}")
+                notifier?.send("Processing playback updates batch ${batch++}")
 
-                val updatesByAssetId = durationsToUpdate(videos)
+                val updatesByAssetId = playbackUpdates(videos)
                 if (updatesByAssetId.isNotEmpty()) {
-                    logger.info("Updating durations for ${updatesByAssetId.size} videos")
-                    notifier?.send("Updating durations for ${updatesByAssetId.size} videos")
+                    logger.info("Updating playback for ${updatesByAssetId.size} videos")
+                    notifier?.send("Updating playback for ${updatesByAssetId.size} videos")
                     videoAssetRepository.bulkUpdate(updatesByAssetId)
                 }
             }
         }
     }
 
-    private fun durationsToUpdate(videos: List<VideoAsset>): List<VideoUpdateCommand.ReplaceDuration> {
+    private fun playbackUpdates(videos: List<VideoAsset>): List<VideoUpdateCommand.ReplacePlayback> {
         val playbackIds = videos.map(VideoAsset::playbackId).toList()
         val playbacksById = playbackRepository.find(playbackIds)
 
-        return videos.mapNotNull { video ->
+        return videos.mapNotNull { video: VideoAsset ->
             playbacksById[video.playbackId]?.let { playback ->
-                if (playback.duration != video.duration) {
-                    VideoUpdateCommand.ReplaceDuration(
-                        video.assetId,
-                        duration = playback.duration
-                    )
-                } else {
-                    null
-                }
+                VideoUpdateCommand.ReplacePlayback(
+                    assetId = video.assetId,
+                    playback = playback
+                )
             }
         }.toList()
     }

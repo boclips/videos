@@ -8,9 +8,9 @@ data class VideoDocument(
     @BsonId val id: ObjectId,
     val title: String,
     val description: String,
-    val source: Source,
-    val playback: Playback,
-    val legacy: Legacy,
+    val source: SourceDocument,
+    val playback: PlaybackDocument,
+    val legacy: LegacyDocument,
     val keywords: List<String>,
     val subjects: List<String>,
     val releaseDate: Date,
@@ -20,10 +20,4 @@ data class VideoDocument(
     val transcript: String?,
     val topics: List<TopicDocument>?,
     val searchable: Boolean
-) {
-    data class Source(val contentPartner: ContentPartner, val videoReference: String) {
-        data class ContentPartner(val name: String)
-    }
-    data class Playback(val id: String, val type: String)
-    data class Legacy(val type: String)
-}
+)

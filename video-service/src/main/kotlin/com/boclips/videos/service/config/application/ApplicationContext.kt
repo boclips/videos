@@ -21,7 +21,7 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RebuildSearchIndex
-import com.boclips.videos.service.application.video.RefreshVideoDurations
+import com.boclips.videos.service.application.video.UpdatePlayback
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.search.GetAllVideosById
@@ -175,8 +175,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun refreshVideoDurations(): RefreshVideoDurations {
-        return RefreshVideoDurations(videoAssetRepository, playbackRepository)
+    fun refreshVideoDurations(): UpdatePlayback {
+        return UpdatePlayback(videoAssetRepository, playbackRepository)
     }
 
     @Bean

@@ -42,7 +42,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(HttpMethod.POST, "/v1/admin/actions/analyse_videos")
             .hasRole(UserRoles.UPDATE_VIDEOS)
 
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/refresh_video_durations")
+            .antMatchers(HttpMethod.POST, "/v1/admin/actions/refresh_playbacks")
             .hasRole(UserRoles.UPDATE_VIDEOS)
 
             .antMatchers(HttpMethod.POST, "/v1/e2e/actions/reset_all")

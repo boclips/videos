@@ -30,7 +30,7 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 class AdminController(
     private val rebuildSearchIndex: RebuildSearchIndex,
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
-    private val refreshVideoDurations: RefreshVideoDurations,
+    private val updatePlayback: UpdatePlayback,
     private val analyseVideo: AnalyseVideo,
     private val analyseContentPartnerVideos: AnalyseContentPartnerVideos
 ) {
@@ -46,9 +46,9 @@ class AdminController(
         return asyncWithNotifier(buildLegacySearchIndex::invoke)
     }
 
-    @PostMapping("/refresh_video_durations")
+    @PostMapping("/refresh_playbacks")
     fun refreshVideoDurations(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(refreshVideoDurations::invoke)
+        return asyncWithNotifier(updatePlayback::invoke)
     }
 
     @PostMapping("/analyse_video/{videoId}")

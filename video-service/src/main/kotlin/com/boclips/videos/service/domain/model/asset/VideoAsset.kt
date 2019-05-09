@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.asset
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import java.time.Duration
 import java.time.LocalDate
 import java.util.Locale
@@ -8,6 +9,7 @@ import java.util.Locale
 data class VideoAsset(
     val assetId: AssetId,
     val playbackId: PlaybackId,
+    val playback: VideoPlayback?,
     val title: String,
     val description: String,
     val keywords: List<String>,

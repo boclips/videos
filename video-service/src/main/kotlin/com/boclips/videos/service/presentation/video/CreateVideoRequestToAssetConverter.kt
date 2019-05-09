@@ -2,8 +2,8 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
 import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.LegacySubject
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.VideoAsset
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -22,6 +22,7 @@ class CreateVideoRequestToAssetConverter {
                 PlaybackProviderType.valueOf(getOrThrow(createVideoRequest.playbackProvider, "playback provider")),
                 getOrThrow(createVideoRequest.playbackId, "playback id")
             ),
+            playback = null,
             title = getOrThrow(createVideoRequest.title, "title"),
             description = getOrThrow(createVideoRequest.description, "description"),
             keywords = getOrThrow(createVideoRequest.keywords, "keywords"),

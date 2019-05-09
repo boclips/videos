@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
 
-class VideoAssetToLegacyVideoMetadataConverterTest {
+class VideoAssetToLegacyDocumentVideoMetadataConverterTest {
 
     @Test
     fun convert() {

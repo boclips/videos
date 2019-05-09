@@ -1,12 +1,13 @@
 package com.boclips.videos.service.infrastructure.video.mongo
 
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.LegacySubject
+import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -50,5 +51,24 @@ class VideoDocumentConverterTest {
         val reconvertedAsset = VideoDocumentConverter.toAsset(document)
 
         assertThat(reconvertedAsset).isEqualTo(originalAsset)
+    }
+
+    @Test
+    @Disabled
+    fun `converts a Kaltura playback to a document`() {
+        val originalPlayback = TestFactories.createKalturaPlayback()
+
+        val playbackDocument = VideoDocumentConverter.toPlaybackDocument(originalPlayback)
+        assertThat(playbackDocument.id).isEqualTo("xxx")
+        assertThat(playbackDocument.thumbnailUrl).isEqualTo("xxx")
+        assertThat(playbackDocument.downloadUrl).isEqualTo("xxx")
+        assertThat(playbackDocument.hdsStreamUrl).isEqualTo("xxx")
+        assertThat(playbackDocument.dashStreamUrl).isEqualTo("xxx")
+        assertThat(playbackDocument.progressiveStreamUrl).isEqualTo("xxx")
+        assertThat(playbackDocument.duration).isEqualTo("xxx")
+        assertThat(playbackDocument.lastVerified).isEqualTo("xxx")
+
+        val convertedPlayback = VideoDocumentConverter.toPlayback(playbackDocument)
+        assertThat(convertedPlayback).isEqualTo(originalPlayback)
     }
 }
