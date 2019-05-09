@@ -18,7 +18,7 @@ class TestSearchService(query: GenericSearchService, admin: GenericSearchService
             keywords = emptyList(),
             tags = listOf("classroom"),
             durationSeconds = 0,
-            source = ""
+            source = SourceType.YOUTUBE
         )
     }
 }

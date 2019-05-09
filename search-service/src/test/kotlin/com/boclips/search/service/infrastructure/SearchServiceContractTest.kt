@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.Sort
 import com.boclips.search.service.domain.SortOrder
+import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -395,14 +396,14 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     ) {
         adminService.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", source = "boclips"),
-                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", source = "youtube"),
-                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", source = "boclips"),
-                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", source = "youtube")
+                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", source = SourceType.BOCLIPS),
+                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", source = SourceType.YOUTUBE),
+                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", source = SourceType.BOCLIPS),
+                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", source = SourceType.YOUTUBE)
             )
         )
 
-        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", source = "boclips")))
+        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", source = SourceType.BOCLIPS)))
 
         assertThat(results).containsAll(listOf("0", "2"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("1","3"))

@@ -11,5 +11,5 @@ data class VideoMetadata(
     val keywords: List<String>,
     val tags: List<String>,
     val durationSeconds: Long,
-    val source: String
+    val source: SourceType
 )

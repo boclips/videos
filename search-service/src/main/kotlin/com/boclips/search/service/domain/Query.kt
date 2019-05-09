@@ -21,5 +21,5 @@ data class Query constructor(
     val excludeTags: List<String> = emptyList(),
     val minDuration: Duration? = null,
     val maxDuration: Duration? = null,
-    val source: String? = null
+    val source: SourceType? = null
 )

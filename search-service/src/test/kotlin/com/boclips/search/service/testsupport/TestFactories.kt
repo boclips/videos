@@ -1,5 +1,6 @@
 package com.boclips.search.service.testsupport
 
+import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import java.time.Duration
@@ -15,7 +16,7 @@ object SearchableVideoMetadataFactory {
         keywords: List<String> = emptyList(),
         tags: List<String> = emptyList(),
         durationSeconds: Long = 0,
-        source: String = ""
+        source: SourceType = SourceType.YOUTUBE
     ) = VideoMetadata(
         id = id,
         title = title,

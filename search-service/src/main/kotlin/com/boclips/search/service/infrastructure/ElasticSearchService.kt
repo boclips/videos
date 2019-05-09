@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure
 import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
 import org.apache.http.HttpHost
@@ -135,10 +136,10 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
             .filter(filterByTag(query.includeTags))
     }
 
-    private fun matchSource(source: String): TermQueryBuilder {
+    private fun matchSource(source: SourceType): TermQueryBuilder {
         return QueryBuilders.termQuery(
             ElasticSearchVideo.SOURCE,
-            source
+            source.name.toLowerCase()
         )
     }
 

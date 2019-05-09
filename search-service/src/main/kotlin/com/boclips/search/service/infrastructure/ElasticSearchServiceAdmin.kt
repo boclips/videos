@@ -153,7 +153,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
                         keywords = video.keywords,
                         tags = video.tags,
                         durationSeconds = video.durationSeconds,
-                        source = video.source
+                        source = video.source.name
                 )
         )
 

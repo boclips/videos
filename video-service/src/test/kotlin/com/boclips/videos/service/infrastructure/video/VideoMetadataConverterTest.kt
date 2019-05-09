@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -39,7 +40,7 @@ class VideoMetadataConverterTest {
                 keywords = listOf("k1"),
                 tags = listOf("classroom"),
                 durationSeconds = 0,
-                source = "YOUTUBE"
+                source = SourceType.YOUTUBE
             )
         )
     }
@@ -89,5 +90,27 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video)
 
         assertThat(videoMetadata.tags).isEmpty()
+    }
+
+    @Test
+    fun `converts youtube playback to youtube source type`() {
+        val video = TestFactories.createVideoAsset(
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123")
+        )
+
+        val videoMetadata = VideoMetadataConverter.convert(video)
+
+        assertThat(videoMetadata.source).isEqualTo(SourceType.YOUTUBE)
+    }
+
+    @Test
+    fun `converts kaltura playback to boclips source type`() {
+        val video = TestFactories.createVideoAsset(
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123")
+        )
+
+        val videoMetadata = VideoMetadataConverter.convert(video)
+
+        assertThat(videoMetadata.source).isEqualTo(SourceType.BOCLIPS)
     }
 }

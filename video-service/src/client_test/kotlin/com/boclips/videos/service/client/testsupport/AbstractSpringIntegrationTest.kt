@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.testsupport
 
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.VideoServiceApplication
@@ -115,7 +116,7 @@ abstract class AbstractSpringIntegrationTest {
                     keywords = emptyList(),
                     tags = listOf("classroom"),
                     durationSeconds = duration.seconds,
-                    source = "boclips"
+                    source = SourceType.YOUTUBE
                 )
             )
         )
