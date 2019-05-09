@@ -22,7 +22,7 @@ class CreateVideoRequestToAssetConverter {
                 PlaybackProviderType.valueOf(getOrThrow(createVideoRequest.playbackProvider, "playback provider")),
                 getOrThrow(createVideoRequest.playbackId, "playback id")
             ),
-            playback = null,
+            playback = videoPlayback,
             title = getOrThrow(createVideoRequest.title, "title"),
             description = getOrThrow(createVideoRequest.description, "description"),
             keywords = getOrThrow(createVideoRequest.keywords, "keywords"),

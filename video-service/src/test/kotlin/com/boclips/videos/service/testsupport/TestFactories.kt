@@ -118,7 +118,7 @@ object TestFactories {
     ): StreamPlayback {
         return StreamPlayback(
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackId),
-            streamUrl = streamUrl,
+            appleHlsStreamUrl = streamUrl,
             thumbnailUrl = thumbnailurl,
             downloadUrl = downloadUrl,
             duration = duration

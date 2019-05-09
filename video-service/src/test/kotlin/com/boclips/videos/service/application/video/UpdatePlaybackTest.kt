@@ -52,7 +52,7 @@ class UpdatePlaybackTest : AbstractSpringIntegrationTest() {
         assertThat(updatedAsset.playback!!.thumbnailUrl).isEqualTo("x")
         assertThat(updatedAsset.playback!!.id).isEqualTo("ref-id-100")
         assertThat((updatedAsset.playback!! as StreamPlayback).downloadUrl).isNotEmpty()
-        assertThat((updatedAsset.playback!! as StreamPlayback).streamUrl).isNotEmpty()
+        assertThat((updatedAsset.playback!! as StreamPlayback).appleHlsStreamUrl).isNotEmpty()
     }
 
     @Test

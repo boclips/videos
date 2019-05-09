@@ -136,7 +136,7 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
         assertThat(updatedAsset.playback!!.thumbnailUrl).isEqualTo("thumnbnail-url")
         assertThat(updatedAsset.playback!!.duration).isEqualTo(Duration.ZERO)
         assertThat((updatedAsset.playback!! as StreamPlayback).downloadUrl).isEqualTo("download-url")
-        assertThat((updatedAsset.playback!! as StreamPlayback).streamUrl).isEqualTo("stream-url")
+        assertThat((updatedAsset.playback!! as StreamPlayback).appleHlsStreamUrl).isEqualTo("stream-url")
     }
 
     @Test

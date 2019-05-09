@@ -33,7 +33,7 @@ class CreateVideo(
     companion object : KLogging()
 
     operator fun invoke(createRequest: CreateVideoRequest): Resource<VideoResource> {
-        val videoPlayback = ensureVideoPlaybackExists(createRequest)
+        val videoPlayback = getPlayback(createRequest)
         val assetToBeCreated = createVideoRequestToAssetConverter.convert(createRequest, videoPlayback)
 
         ensureVideoIsUnique(assetToBeCreated)
@@ -65,7 +65,7 @@ class CreateVideo(
         }
     }
 
-    private fun ensureVideoPlaybackExists(createRequest: CreateVideoRequest): VideoPlayback {
+    private fun getPlayback(createRequest: CreateVideoRequest): VideoPlayback {
         return playbackRepository.find(buildPlaybackId(createRequest)) ?: throw VideoPlaybackNotFound(createRequest)
     }
 

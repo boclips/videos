@@ -30,6 +30,14 @@ class CreateVideoRequestToAssetConverterTest {
     }
 
     @Test
+    fun `uses the playback`() {
+        val playback = TestFactories.createKalturaPlayback()
+        val asset = converter.convert(TestFactories.createCreateVideoRequest(), playback)
+
+        assertThat(asset.playback).isEqualTo(playback)
+    }
+
+    @Test
     fun `throws when playback provider is null`() {
         assertThatThrownBy {
             converter.convert(

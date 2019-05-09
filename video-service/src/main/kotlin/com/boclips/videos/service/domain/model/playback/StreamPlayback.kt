@@ -6,7 +6,7 @@ class StreamPlayback(
     id: PlaybackId,
     thumbnailUrl: String,
     duration: Duration,
-    val streamUrl: String,
+    val appleHlsStreamUrl: String,
     val downloadUrl: String
 ) : VideoPlayback(id = id, thumbnailUrl = thumbnailUrl, duration = duration) {
 
@@ -17,14 +17,14 @@ class StreamPlayback(
 
         other as StreamPlayback
 
-        if (streamUrl != other.streamUrl) return false
+        if (appleHlsStreamUrl != other.appleHlsStreamUrl) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + streamUrl.hashCode()
+        result = 31 * result + appleHlsStreamUrl.hashCode()
         return result
     }
 }
