@@ -195,4 +195,23 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
         assertThat(videos.videos[0].content.title).isEqualTo("why are camels so tall 1")
         assertThat(videos.videos[1].content.title).isEqualTo("why are camels so tall 2")
     }
+
+    @Test
+    fun `can filter by source`() {
+        saveVideo(title = "why are camels so tall 1", playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.KALTURA))
+        saveVideo(title = "why are camels so tall 2", playbackId = PlaybackId(value = "1234", type = PlaybackProviderType.YOUTUBE))
+
+        val results = searchVideo.byQuery(
+            query = "why are camels so tall",
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            pageSize = 20,
+            pageNumber = 0,
+            source = "youtube"
+        )
+
+        assertThat(results.totalVideos).isEqualTo(1)
+        assertThat(results.videos.size).isEqualTo(1)
+        assertThat(results.videos[0].content.title).isEqualTo("why are camels so tall 2")
+    }
 }

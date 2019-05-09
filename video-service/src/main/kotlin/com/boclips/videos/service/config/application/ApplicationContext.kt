@@ -28,7 +28,7 @@ import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.application.video.search.StringToDurationConverter
+import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -63,11 +63,11 @@ class ApplicationContext(
     @Bean
     fun searchVideo(
         videosLinkBuilder: VideosLinkBuilder,
-        stringToDurationConverter: StringToDurationConverter
+        searchQueryConverter: SearchQueryConverter
     ) = SearchVideo(
         getVideoById(videosLinkBuilder),
         getAllVideosById(videosLinkBuilder),
-        getVideosByQuery(videosLinkBuilder, stringToDurationConverter),
+        getVideosByQuery(videosLinkBuilder, searchQueryConverter),
         videoAssetRepository
     )
 
@@ -195,8 +195,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun stringToDurationConverter() : StringToDurationConverter {
-        return StringToDurationConverter()
+    fun stringToDurationConverter() : SearchQueryConverter {
+        return SearchQueryConverter()
     }
 
     private fun getVideoById(videosLinkBuilder: VideosLinkBuilder) =
@@ -207,13 +207,13 @@ class ApplicationContext(
 
     private fun getVideosByQuery(
         videosLinkBuilder: VideosLinkBuilder,
-        stringToDurationConverter: StringToDurationConverter
+        searchQueryConverter: SearchQueryConverter
     ) =
         GetVideosByQuery(
             videoService,
             videoToResourceConverter(videosLinkBuilder),
             analyticsEventService,
-            stringToDurationConverter
+            searchQueryConverter
         )
 
     private fun getAllVideosById(videosLinkBuilder: VideosLinkBuilder): GetAllVideosById {

@@ -2,10 +2,13 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.UnauthorizedException
 import com.boclips.videos.service.application.analytics.InvalidEventException
+import com.boclips.videos.service.application.video.exceptions.InvalidDurationException
+import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
 import mu.KLogging
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -38,4 +41,21 @@ class ExceptionHandlingControllerAdvice {
         logger.info { "Unauthorized: $ex" }
     }
 
+    @ExceptionHandler(InvalidSourceException::class)
+    fun handleInvalidSourceException(ex: InvalidSourceException): ResponseEntity<String> {
+        logger.info { "Invalid source: $ex" }
+
+        return ResponseEntity
+            .badRequest()
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(InvalidDurationException::class)
+    fun handleInvalidDurationException(ex: InvalidDurationException): ResponseEntity<String> {
+        logger.info { "Invalid duration: $ex" }
+
+        return ResponseEntity
+            .badRequest()
+            .body(ex.message)
+    }
 }

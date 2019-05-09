@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.search.service.domain.SortOrder
+import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -106,5 +107,21 @@ class VideoSearchQueryTest {
             .toSearchQuery()
 
         assertThat(searchQuery.sort).isNull()
+    }
+
+    @Test
+    fun `allows filtering of source`() {
+        val searchQuery = VideoSearchQuery(
+            text = "testing",
+            includeTags = emptyList(),
+            excludeTags = listOf("classroom"),
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.RELEASE_DATE,
+            source = SourceType.YOUTUBE
+        )
+            .toSearchQuery()
+
+        assertThat(searchQuery.source).isEqualTo(SourceType.YOUTUBE)
     }
 }

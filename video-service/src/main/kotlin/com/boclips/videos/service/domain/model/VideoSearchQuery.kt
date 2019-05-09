@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.model
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.Sort
 import com.boclips.search.service.domain.SortOrder
+import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.domain.model.SortKey.RELEASE_DATE
 import java.time.Duration
@@ -19,7 +20,8 @@ class VideoSearchQuery(
     val minDuration: Duration? = null,
     val maxDuration: Duration? = null,
     val pageSize: Int,
-    val pageIndex: Int
+    val pageIndex: Int,
+    val source: SourceType? = null
 ) {
     fun toSearchQuery(): Query {
         val sort = sortBy?.let {
@@ -32,6 +34,7 @@ class VideoSearchQuery(
             excludeTags = excludeTags,
             minDuration = minDuration,
             maxDuration = maxDuration,
+            source = source,
             sort = sort
         )
     }

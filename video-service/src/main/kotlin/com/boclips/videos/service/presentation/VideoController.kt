@@ -56,6 +56,7 @@ class VideoController(
         @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
         @RequestParam(name = "min_duration", required = false) minDuration: String?,
         @RequestParam(name = "max_duration", required = false) maxDuration: String?,
+        @RequestParam(name = "source", required = false) source: String?,
         @RequestParam("size") size: Int?,
         @RequestParam("page") page: Int?
     ): ResponseEntity<PagedResources<*>> {
@@ -67,7 +68,8 @@ class VideoController(
             pageSize = size ?: DEFAULT_PAGE_SIZE,
             pageNumber = page ?: DEFAULT_PAGE_INDEX,
             minDuration = minDuration,
-            maxDuration = maxDuration
+            maxDuration = maxDuration,
+            source = source
         )
 
         val videoResources = videosResource
