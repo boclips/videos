@@ -12,7 +12,8 @@ data class ElasticSearchVideo @JsonCreator constructor(
     @param:JsonProperty(RELEASE_DATE) val releaseDate: LocalDate?,
     @param:JsonProperty(KEYWORDS) val keywords: List<String>,
     @param:JsonProperty(TAGS) val tags: List<String>,
-    @param:JsonProperty(DURATION_SECONDS) val durationSeconds: Long?
+    @param:JsonProperty(DURATION_SECONDS) val durationSeconds: Long?,
+    @param:JsonProperty(SOURCE) val source: String?
 
 ) {
     companion object {
@@ -24,5 +25,6 @@ data class ElasticSearchVideo @JsonCreator constructor(
         const val KEYWORDS = "keywords"
         const val TAGS = "tags"
         const val DURATION_SECONDS = "durationSeconds"
+        const val SOURCE = "source"
     }
 }

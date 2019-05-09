@@ -61,10 +61,13 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
                     entry.value.tags.containsAll(query.includeTags)
                 }
                 .filter { entry ->
-                    entry.value.durationSeconds?.let { (minDuration..maxDuration).contains(it) }
+                    entry.value.durationSeconds.let { (minDuration..maxDuration).contains(it) }
                 }
                 .filter { entry ->
                     entry.value.tags.none { query.excludeTags.contains(it) }
+                }
+                .filter { entry ->
+                    query.source?.let { it == entry.value.source} ?: true
                 }
                 .map { video -> video.key }
         }

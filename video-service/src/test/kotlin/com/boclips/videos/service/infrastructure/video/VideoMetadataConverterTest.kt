@@ -2,6 +2,8 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +23,8 @@ class VideoMetadataConverterTest {
             contentPartnerId = "content partner",
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             keywords = listOf("k1"),
-            type = LegacyVideoType.INSTRUCTIONAL_CLIPS
+            type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123")
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -35,7 +38,8 @@ class VideoMetadataConverterTest {
                 releaseDate = LocalDate.of(2019, Month.APRIL, 19),
                 keywords = listOf("k1"),
                 tags = listOf("classroom"),
-                durationSeconds = 0
+                durationSeconds = 0,
+                source = "YOUTUBE"
             )
         )
     }

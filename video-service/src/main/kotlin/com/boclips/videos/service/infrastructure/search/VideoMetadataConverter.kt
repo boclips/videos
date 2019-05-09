@@ -14,7 +14,8 @@ object VideoMetadataConverter {
             releaseDate = video.releasedOn,
             keywords = video.keywords,
             tags = tagsFrom(video),
-            durationSeconds = video.duration.seconds
+            durationSeconds = video.duration.seconds,
+            source = video.playbackId.type.name
         )
     }
 

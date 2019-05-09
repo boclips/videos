@@ -386,4 +386,25 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         assertThat(results).containsAll(listOf("0", "1"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("2","3"))
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by source`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", source = "boclips"),
+                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", source = "youtube"),
+                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", source = "boclips"),
+                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", source = "youtube")
+            )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", source = "boclips")))
+
+        assertThat(results).containsAll(listOf("0", "2"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("1","3"))
+    }
 }

@@ -114,7 +114,8 @@ abstract class AbstractSpringIntegrationTest {
                     releaseDate = releaseDate,
                     keywords = emptyList(),
                     tags = listOf("classroom"),
-                    durationSeconds = duration.seconds
+                    durationSeconds = duration.seconds,
+                    source = "boclips"
                 )
             )
         )

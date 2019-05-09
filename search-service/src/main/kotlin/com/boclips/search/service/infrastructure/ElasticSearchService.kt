@@ -20,6 +20,7 @@ import org.elasticsearch.index.query.MatchPhraseQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.RangeQueryBuilder
+import org.elasticsearch.index.query.TermQueryBuilder
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
@@ -123,11 +124,22 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 if (listOfNotNull(query.minDuration, query.maxDuration).isNotEmpty()) {
                     must(beWithinDuration(query.minDuration, query.maxDuration))
                 }
+            }.apply {
+                if (query.source != null) {
+                    filter(matchSource(query.source))
+                }
             }
             .should(boostTitleMatch(query.phrase))
             .should(boostDescriptionMatch(query.phrase))
             .mustNot(matchTags(query.excludeTags))
             .filter(filterByTag(query.includeTags))
+    }
+
+    private fun matchSource(source: String): TermQueryBuilder {
+        return QueryBuilders.termQuery(
+            ElasticSearchVideo.SOURCE,
+            source
+        )
     }
 
     private fun beWithinDuration(min: Duration?, max: Duration?): RangeQueryBuilder {

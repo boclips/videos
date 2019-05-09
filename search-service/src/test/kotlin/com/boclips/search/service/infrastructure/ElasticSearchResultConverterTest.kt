@@ -23,7 +23,8 @@ class ElasticSearchResultConverterTest {
                 "duration": "02:01:20",
                 "keywords": ["k1","k2"],
                 "tags": ["news", "classroom"],
-                "durationSeconds": 10
+                "durationSeconds": 10,
+                "source": "Boclips"
             }
         """.trimIndent()
             )
@@ -40,7 +41,8 @@ class ElasticSearchResultConverterTest {
                 releaseDate = null,
                 keywords = listOf("k1", "k2"),
                 tags = listOf("news", "classroom"),
-                durationSeconds = 10
+                durationSeconds = 10,
+                source = "Boclips"
             )
         )
     }
