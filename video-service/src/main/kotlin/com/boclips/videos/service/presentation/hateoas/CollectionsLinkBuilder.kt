@@ -1,17 +1,17 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
-import org.bouncycastle.asn1.x500.style.RFC4519Style.owner
 import org.springframework.hateoas.Link
 import org.springframework.stereotype.Component
 
 @Component
 class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
 
-    fun collection(id: String?) = addIfAuthenticated { collectionResourceLink(id, "collection") }
+    fun collection(id: String?) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { collectionResourceLink(id, "collection") }
 
     fun editCollection(collectionResource: CollectionResource) =
         if (collectionResource.isMine) collectionResourceLink(collectionResource.id, "edit") else null
@@ -50,42 +50,38 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
-    fun collections() = addIfAuthenticated { Link(getCollectionsRoot().toUriString(), "collections") }
+    fun createCollection() = getIfHasRole(UserRoles.INSERT_COLLECTIONS) { Link(getCollectionsRoot().toUriString(), "createCollection") }
 
     fun publicCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
-    ): Link {
-        val href = getCollectionsRoot()
+    ) = Link(
+        getCollectionsRoot()
             .queryParam("projection", projection)
             .queryParam("public", true)
             .queryParam("page", page)
             .queryParam("size", size)
-            .toUriString()
-        return Link(href, "publicCollections")
-    }
+            .toUriString(), "publicCollections")
 
     fun bookmarkedCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
-    ): Link? {
-        val href = getCollectionsRoot()
+    ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { Link(
+        getCollectionsRoot()
             .queryParam("projection", projection)
             .queryParam("public", true)
             .queryParam("bookmarked", true)
             .queryParam("page", page)
             .queryParam("size", size)
-            .toUriString()
-        return addIfAuthenticated { Link(href, "bookmarkedCollections") }
-    }
+            .toUriString(), "bookmarkedCollections") }
 
     fun collectionsByUser(
         projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
-    ) = addIfAuthenticated { currentUser ->
+    ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
         Link(
             getCollectionsRoot()
                 .queryParam("projection", projection)

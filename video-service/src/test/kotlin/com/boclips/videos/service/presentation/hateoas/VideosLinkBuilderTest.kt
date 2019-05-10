@@ -35,7 +35,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `search link when authenticated`() {
-        setSecurityContext("teacher@boclips.com")
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
 
         val link = VideosLinkBuilder().searchLink()!!
 

@@ -39,7 +39,7 @@ class CollectionsLinkBuilderTest {
 
     @Test
     fun `bookmarked collections when authenticated`() {
-        setSecurityContext("teacher@boclips.com")
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
 
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
@@ -68,7 +68,7 @@ class CollectionsLinkBuilderTest {
 
     @Test
     fun `collections of a user when authenticated`() {
-        setSecurityContext("user1")
+        setSecurityContext("user1", UserRoles.VIEW_COLLECTIONS)
 
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
@@ -96,26 +96,26 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
-    fun `collections when authenticated`() {
-        setSecurityContext("teacher@boclips.com")
+    fun `createCollection when authenticated`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.INSERT_COLLECTIONS)
 
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.collections()!!
+        val link = collectionsLinkBuilder.createCollection()!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections")
-        assertThat(link.rel).isEqualTo("collections")
+        assertThat(link.rel).isEqualTo("createCollection")
     }
 
     @Test
-    fun `collections when not authenticated`() {
+    fun `createCollection when not authenticated`() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.collections()
+        val link = collectionsLinkBuilder.createCollection()
 
         assertThat(link).isNull()
     }
@@ -133,7 +133,7 @@ class CollectionsLinkBuilderTest {
 
     @Test
     fun `collection when authenticated`() {
-        setSecurityContext("teacher@boclips.com")
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
 
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
@@ -147,7 +147,7 @@ class CollectionsLinkBuilderTest {
 
     @Test
     fun `when templated collection`() {
-        setSecurityContext("teacher@boclips.com")
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
 
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))

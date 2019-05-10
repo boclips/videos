@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.video.VideoResource
-import currentUserHasAnyRole
 import currentUserHasRole
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
@@ -22,29 +21,23 @@ class VideosLinkBuilder {
             .getVideo(null)
     ).withRel("video")
 
-    fun searchLink() = addIfAuthenticated {
+    fun searchLink() = getIfHasRole(UserRoles.VIEW_VIDEOS) {
         ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .search(null, null, null, null, null, null, null, null, null)
         ).withRel("search")
     }
 
-    fun videosLink(): Link? {
-        if (!currentUserHasAnyRole(UserRoles.UPDATE_VIDEOS, UserRoles.INSERT_VIDEOS)) {
-            return null
-        }
-        return ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .patchMultipleVideos(null)
-        ).withRel("videos")
-    }
-
-    fun adminSearchLink(): Link? {
-        if (!currentUserHasRole(UserRoles.VIEW_DISABLED_VIDEOS)) {
-            return null
+    fun videosLink() =
+        getIfHasAnyRole(UserRoles.UPDATE_VIDEOS, UserRoles.INSERT_VIDEOS) {
+            ControllerLinkBuilder.linkTo(
+                ControllerLinkBuilder.methodOn(VideoController::class.java)
+                    .patchMultipleVideos(null)
+            ).withRel("videos")
         }
 
-        return ControllerLinkBuilder.linkTo(
+    fun adminSearchLink() = getIfHasRole(UserRoles.VIEW_DISABLED_VIDEOS) {
+        ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .adminSearch(null)
         ).withRel("adminSearch")

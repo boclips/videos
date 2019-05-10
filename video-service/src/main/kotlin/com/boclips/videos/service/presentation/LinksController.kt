@@ -4,9 +4,6 @@ import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.addIfAuthenticated
-import getCurrentUserIfNotAnonymous
-import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,7 +34,7 @@ class LinksController(
                 videosLinkBuilder.searchLink(),
                 collectionsLinkBuilder.collection(null),
                 collectionsLinkBuilder.collectionsByUser() ,
-                collectionsLinkBuilder.collections()
+                collectionsLinkBuilder.createCollection()
 
             )
         )
