@@ -43,13 +43,13 @@ open class RequestVideoPlaybackUpdate(
         val actualAsset = videoAssetRepository.find(potentialAssetToBeUpdated)
 
         if (actualAsset == null) {
-            logger.error { "Could find video $potentialAssetToBeUpdated" }
+            logger.info { "Could find video $potentialAssetToBeUpdated" }
             return
         }
 
         val playback = playbackRepository.find(actualAsset.playbackId)
         if (playback == null) {
-            logger.error { "Could not find playback information for $potentialAssetToBeUpdated" }
+            logger.info { "Could not find playback information for $potentialAssetToBeUpdated" }
             return
         }
 
@@ -62,7 +62,7 @@ open class RequestVideoPlaybackUpdate(
             videoAssetRepository.update(replacePlayback)
             logger.info { "Updated playback information for video ${actualAsset.assetId} successfully" }
         } catch (ex: Exception) {
-            logger.error { "Did not update playback for video ${actualAsset.assetId}" }
+            logger.info { "Did not update playback for video ${actualAsset.assetId}" }
         }
     }
 }
