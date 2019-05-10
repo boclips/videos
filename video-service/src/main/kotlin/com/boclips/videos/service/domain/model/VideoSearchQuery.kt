@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import com.boclips.videos.service.domain.model.SortKey.RELEASE_DATE
 import java.time.Duration
+import java.time.LocalDate
 
 enum class SortKey {
     RELEASE_DATE
@@ -19,6 +20,8 @@ class VideoSearchQuery(
     val excludeTags: List<String>,
     val minDuration: Duration? = null,
     val maxDuration: Duration? = null,
+    val releaseDateFrom: LocalDate? = null,
+    val releaseDateTo: LocalDate? = null,
     val pageSize: Int,
     val pageIndex: Int,
     val source: SourceType? = null
@@ -35,7 +38,9 @@ class VideoSearchQuery(
             minDuration = minDuration,
             maxDuration = maxDuration,
             source = source,
-            sort = sort
+            sort = sort,
+            releaseDateFrom = releaseDateFrom,
+            releaseDateTo = releaseDateTo
         )
     }
 

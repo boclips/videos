@@ -39,7 +39,7 @@ class VideosLinkBuilderTest {
 
         val link = VideosLinkBuilder().searchLink()!!
 
-        assertThat(link.href).isEqualTo("/v1/videos?query={query}&size={size}&page={page}{&sort_by,include_tag,exclude_tag,min_duration,max_duration,source}")
+        assertThat(link.href).isEqualTo("/v1/videos?query={query}&size={size}&page={page}{&sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source}")
         assertThat(link.rel).isEqualTo("search")
         assertThat(link.isTemplated).isTrue()
     }

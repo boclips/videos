@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.UnauthorizedException
 import com.boclips.videos.service.application.analytics.InvalidEventException
+import com.boclips.videos.service.application.video.exceptions.InvalidDateException
 import com.boclips.videos.service.application.video.exceptions.InvalidDurationException
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
@@ -57,5 +58,12 @@ class ExceptionHandlingControllerAdvice {
         return ResponseEntity
             .badRequest()
             .body(ex.message)
+    }
+
+    @ExceptionHandler(InvalidDateException::class)
+    fun handleInvalidDateException(ex: InvalidDateException): ResponseEntity<String> {
+        logger.info { " Invalid date: $ex" }
+
+        return ResponseEntity.badRequest().body(ex.message)
     }
 }

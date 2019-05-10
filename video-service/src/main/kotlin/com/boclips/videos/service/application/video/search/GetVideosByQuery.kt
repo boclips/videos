@@ -25,6 +25,8 @@ class GetVideosByQuery(
         excludeTags: List<String>,
         minDurationString: String?,
         maxDurationString: String?,
+        releasedDateFrom: String?,
+        releasedDateTo: String?,
         pageSize: Int,
         pageNumber: Int,
         source: String?
@@ -41,7 +43,9 @@ class GetVideosByQuery(
             excludeTags = excludeTags,
             minDuration = searchQueryConverter.convertDuration(minDurationString),
             maxDuration = searchQueryConverter.convertDuration(maxDurationString),
-            source = searchQueryConverter.convertSource(source)
+            source = searchQueryConverter.convertSource(source),
+            releaseDateFrom = searchQueryConverter.convertDate(releasedDateFrom),
+            releaseDateTo = searchQueryConverter.convertDate(releasedDateTo)
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)

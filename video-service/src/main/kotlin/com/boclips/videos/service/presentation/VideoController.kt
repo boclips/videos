@@ -56,6 +56,8 @@ class VideoController(
         @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
         @RequestParam(name = "min_duration", required = false) minDuration: String?,
         @RequestParam(name = "max_duration", required = false) maxDuration: String?,
+        @RequestParam(name = "released_date_from", required = false) releasedDateFrom: String?,
+        @RequestParam(name = "released_date_to", required = false) releasedDateTo: String?,
         @RequestParam(name = "source", required = false) source: String?,
         @RequestParam("size") size: Int?,
         @RequestParam("page") page: Int?
@@ -65,6 +67,8 @@ class VideoController(
             sortBy = sortBy,
             includeTags = includeTags?.let { includeTags } ?: emptyList(),
             excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
+            releasedDateFrom = releasedDateFrom,
+            releasedDateTo = releasedDateTo,
             pageSize = size ?: DEFAULT_PAGE_SIZE,
             pageNumber = page ?: DEFAULT_PAGE_INDEX,
             minDuration = minDuration,

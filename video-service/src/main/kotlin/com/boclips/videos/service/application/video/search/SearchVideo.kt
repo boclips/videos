@@ -27,10 +27,24 @@ class SearchVideo(
         excludeTags: List<String>,
         minDuration: String? = null,
         maxDuration: String? = null,
+        releasedDateFrom: String? = null,
+        releasedDateTo: String? = null,
         pageSize: Int,
         pageNumber: Int,
         source: String? = null
-    ) = getVideosByQuery(getOrThrow(query), sortBy, includeTags, excludeTags, minDuration, maxDuration, pageSize, pageNumber, source)
+    ) = getVideosByQuery(
+        query = getOrThrow(query),
+        sortBy = sortBy,
+        includeTags = includeTags,
+        excludeTags = excludeTags,
+        minDurationString = minDuration,
+        maxDurationString = maxDuration,
+        releasedDateFrom = releasedDateFrom,
+        releasedDateTo = releasedDateTo,
+        pageSize = pageSize,
+        pageNumber = pageNumber,
+        source = source
+    )
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): AssetId? {
         val videoId = getOrThrow(videoIdParam)

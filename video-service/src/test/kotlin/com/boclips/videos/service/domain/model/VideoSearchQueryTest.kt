@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.SourceType
 import com.boclips.search.service.domain.VideoMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class VideoSearchQueryTest {
 
@@ -123,5 +124,22 @@ class VideoSearchQueryTest {
             .toSearchQuery()
 
         assertThat(searchQuery.source).isEqualTo(SourceType.YOUTUBE)
+    }
+
+    @Test
+    fun `allows filtering of release date`() {
+        val searchQuery = VideoSearchQuery(
+            text = "testing",
+            includeTags = emptyList(),
+            excludeTags = listOf("classroom"),
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.RELEASE_DATE,
+            releaseDateFrom = LocalDate.of(2000, 1, 1),
+            releaseDateTo = LocalDate.of(2001, 1, 1)
+        ).toSearchQuery()
+
+        assertThat(searchQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
+        assertThat(searchQuery.releaseDateFrom).isEqualTo(LocalDate.of(2000, 1, 1))
     }
 }

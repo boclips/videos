@@ -215,6 +215,20 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns video within specified released data`() {
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=2018-01-11&released_date_to=2018-03-11").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+    @Test
+    fun `returns 400 with invalid date filter`() {
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=invalidoops").asTeacher()).andExpect(status().isBadRequest)
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_to=invalidoops").asTeacher()).andExpect(status().isBadRequest)
+    }
+
+
+    @Test
     fun `returns 400 for invalid search request`() {
         mockMvc.perform(get("/v1/videos").asTeacher())
             .andExpect(status().`is`(400))
