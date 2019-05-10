@@ -28,6 +28,7 @@ import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 import org.elasticsearch.search.sort.SortOrder
 import java.time.Duration
+import java.time.LocalDate
 
 class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService {
     companion object : KLogging();
@@ -129,6 +130,10 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 if (query.source != null) {
                     filter(matchSource(query.source))
                 }
+            }.apply {
+                if (listOfNotNull(query.releaseDateFrom, query.releaseDateTo).isNotEmpty()) {
+                    must(beWithinReleaseDate(query.releaseDateFrom, query.releaseDateTo))
+                }
             }
             .should(boostTitleMatch(query.phrase))
             .should(boostDescriptionMatch(query.phrase))
@@ -148,6 +153,15 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
 
         min?.let { queryBuilder.from(it.seconds) }
         max?.let { queryBuilder.to(it.seconds) }
+
+        return queryBuilder
+    }
+
+    private fun beWithinReleaseDate(from: LocalDate?, to: LocalDate?): RangeQueryBuilder {
+        val queryBuilder = QueryBuilders.rangeQuery(ElasticSearchVideo.RELEASE_DATE)
+
+        from?.let { queryBuilder.from(it)}
+        to?.let { queryBuilder.to(it)}
 
         return queryBuilder
     }

@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.SortOrder
 import com.boclips.search.service.domain.VideoMetadata
+import java.time.LocalDate
 
 class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<VideoMetadata> {
     private val index = mutableMapOf<String, VideoMetadata>()
@@ -48,6 +49,9 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
         val minDuration: Long = if (query.minDuration != null) query.minDuration.seconds else 0
         val maxDuration: Long = if (query.maxDuration != null) query.maxDuration.seconds else Long.MAX_VALUE
 
+        val releaseDateFrom: LocalDate = if (query.releaseDateFrom != null) query.releaseDateFrom else LocalDate.MIN
+        val releaseDateTo: LocalDate = if (query.releaseDateTo != null) query.releaseDateTo else LocalDate.MAX
+
         return when {
             !ids.isEmpty() -> index.filter { ids.contains(it.key) }
                 .map { video -> video.key }
@@ -68,6 +72,8 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
                 }
                 .filter { entry ->
                     query.source?.let { it == entry.value.source} ?: true
+                }.filter {
+                    entry -> (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
                 }
                 .map { video -> video.key }
         }

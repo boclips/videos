@@ -1,6 +1,7 @@
 package com.boclips.search.service.domain
 
 import java.time.Duration
+import java.time.LocalDate
 import kotlin.reflect.KProperty1
 
 data class Sort(
@@ -21,5 +22,7 @@ data class Query constructor(
     val excludeTags: List<String> = emptyList(),
     val minDuration: Duration? = null,
     val maxDuration: Duration? = null,
-    val source: SourceType? = null
+    val source: SourceType? = null,
+    val releaseDateFrom: LocalDate? = null,
+    val releaseDateTo: LocalDate? = null
 )

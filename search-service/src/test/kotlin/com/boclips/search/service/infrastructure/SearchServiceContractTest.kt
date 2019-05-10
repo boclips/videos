@@ -261,64 +261,65 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns a sorted list by ReleaseDate ascending`(
-            queryService: GenericSearchService,
-            adminService: GenericSearchServiceAdmin<VideoMetadata>
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
-                sequenceOf(
-                        SearchableVideoMetadataFactory.create(
-                                id = "today",
-                                title = "Beautiful Boy Dancing",
-                                releaseDate = LocalDate.now()
-                        ),
-                        SearchableVideoMetadataFactory.create(
-                                id = "yesterday",
-                                title = "Beautiful Girl Dancing",
-                                releaseDate = LocalDate.now().minusDays(1)
-                        ),
-                        SearchableVideoMetadataFactory.create(
-                                id = "tomorrow",
-                                title = "Beautiful Dog Dancing",
-                                releaseDate = LocalDate.now().plusDays(1)
-                        )
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "today",
+                    title = "Beautiful Boy Dancing",
+                    releaseDate = LocalDate.now()
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "yesterday",
+                    title = "Beautiful Girl Dancing",
+                    releaseDate = LocalDate.now().minusDays(1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "tomorrow",
+                    title = "Beautiful Dog Dancing",
+                    releaseDate = LocalDate.now().plusDays(1)
                 )
+            )
         )
 
-        val query = Query(phrase = "dancing", sort = Sort(fieldName = VideoMetadata::releaseDate, order = SortOrder.ASC))
+        val query =
+            Query(phrase = "dancing", sort = Sort(fieldName = VideoMetadata::releaseDate, order = SortOrder.ASC))
         assertThat(queryService.count(query)).isEqualTo(3)
 
         val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 3))
         assertThat(searchResults).containsExactly("yesterday", "today", "tomorrow")
     }
 
-
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns a sorted list by ReleaseDate descending`(
-            queryService: GenericSearchService,
-            adminService: GenericSearchServiceAdmin<VideoMetadata>
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
-                sequenceOf(
-                        SearchableVideoMetadataFactory.create(
-                                id = "today",
-                                title = "Beautiful Boy Dancing",
-                                releaseDate = LocalDate.now()
-                        ),
-                        SearchableVideoMetadataFactory.create(
-                                id = "yesterday",
-                                title = "Beautiful Girl Dancing",
-                                releaseDate = LocalDate.now().minusDays(1)
-                        ),
-                        SearchableVideoMetadataFactory.create(
-                                id = "tomorrow",
-                                title = "Beautiful Dog Dancing",
-                                releaseDate = LocalDate.now().plusDays(1)
-                        )
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "today",
+                    title = "Beautiful Boy Dancing",
+                    releaseDate = LocalDate.now()
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "yesterday",
+                    title = "Beautiful Girl Dancing",
+                    releaseDate = LocalDate.now().minusDays(1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "tomorrow",
+                    title = "Beautiful Dog Dancing",
+                    releaseDate = LocalDate.now().plusDays(1)
                 )
+            )
         )
 
-        val query = Query(phrase = "dancing", sort = Sort(fieldName = VideoMetadata::releaseDate, order = SortOrder.DESC))
+        val query =
+            Query(phrase = "dancing", sort = Sort(fieldName = VideoMetadata::releaseDate, order = SortOrder.DESC))
         assertThat(queryService.count(query)).isEqualTo(3)
 
         val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 3))
@@ -340,10 +341,18 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", minDuration = Duration.ofSeconds(5), maxDuration = Duration.ofSeconds(10))))
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = Query(
+                    "World war",
+                    minDuration = Duration.ofSeconds(5),
+                    maxDuration = Duration.ofSeconds(10)
+                )
+            )
+        )
 
         assertThat(results).containsAll(listOf("1", "2"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("0","3"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("0", "3"))
     }
 
     @ParameterizedTest
@@ -361,10 +370,17 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", minDuration = Duration.ofSeconds(10))))
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = Query(
+                    "World war",
+                    minDuration = Duration.ofSeconds(10)
+                )
+            )
+        )
 
         assertThat(results).containsAll(listOf("2", "3"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("0","1"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("0", "1"))
     }
 
     @ParameterizedTest
@@ -382,10 +398,11 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", maxDuration = Duration.ofSeconds(9))))
+        val results =
+            queryService.search(PaginatedSearchRequest(query = Query("World war", maxDuration = Duration.ofSeconds(9))))
 
         assertThat(results).containsAll(listOf("0", "1"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("2","3"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("2", "3"))
     }
 
     @ParameterizedTest
@@ -396,16 +413,148 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     ) {
         adminService.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", source = SourceType.BOCLIPS),
-                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", source = SourceType.YOUTUBE),
-                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", source = SourceType.BOCLIPS),
-                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", source = SourceType.YOUTUBE)
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    source = SourceType.BOCLIPS
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    source = SourceType.YOUTUBE
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Second world war",
+                    source = SourceType.BOCLIPS
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Third world war",
+                    source = SourceType.YOUTUBE
+                )
             )
         )
 
-        val results = queryService.search(PaginatedSearchRequest(query = Query("World war", source = SourceType.BOCLIPS)))
+        val results =
+            queryService.search(PaginatedSearchRequest(query = Query("World war", source = SourceType.BOCLIPS)))
 
         assertThat(results).containsAll(listOf("0", "2"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("1","3"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("1", "3"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by release date range`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    releaseDate = LocalDate.of(2000, 1, 10)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    releaseDate = LocalDate.of(2002, 1, 1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Second world war",
+                    releaseDate = LocalDate.of(2003, 1, 1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Third world war",
+                    releaseDate = LocalDate.of(2004, 1, 1)
+                )
+            )
+        )
+
+        val results =
+            queryService.search(PaginatedSearchRequest(query = Query("World war", releaseDateFrom = LocalDate.of(1999, 1, 10), releaseDateTo = LocalDate.of(2002, 1, 10))))
+
+        assertThat(results).containsAll(listOf("0", "1"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("2", "3"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by release date lower bound`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    releaseDate = LocalDate.of(2000, 1, 10)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    releaseDate = LocalDate.of(2002, 1, 1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Second world war",
+                    releaseDate = LocalDate.of(2003, 1, 1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Third world war",
+                    releaseDate = LocalDate.of(2004, 1, 1)
+                )
+            )
+        )
+
+        val results =
+            queryService.search(PaginatedSearchRequest(query = Query("World war", releaseDateFrom = LocalDate.of(2002, 5, 5) )))
+
+        assertThat(results).containsAll(listOf("2", "3"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("1", "0"))
+    }
+
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by release date upper bound`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    releaseDate = LocalDate.of(2000, 1, 10)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    releaseDate = LocalDate.of(2002, 1, 1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Second world war",
+                    releaseDate = LocalDate.of(2003, 1, 1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Third world war",
+                    releaseDate = LocalDate.of(2004, 1, 1)
+                )
+            )
+        )
+
+        val results =
+            queryService.search(PaginatedSearchRequest(query = Query("World war", releaseDateTo = LocalDate.of(2002, 5, 5) )))
+
+        assertThat(results).containsAll(listOf("1", "0"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("2", "3"))
     }
 }
