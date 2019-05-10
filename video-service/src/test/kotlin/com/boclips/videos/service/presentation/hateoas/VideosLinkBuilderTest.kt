@@ -52,21 +52,32 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `videos link when authenticated`() {
-        setSecurityContext("teacher@boclips.com")
+    fun `videos link when update - insert role`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.INSERT_VIDEOS)
 
         val link = VideosLinkBuilder().videosLink()!!
 
         assertThat(link.href).isEqualTo("/v1/videos")
         assertThat(link.rel).isEqualTo("videos")
         assertThat(link.isTemplated).isFalse()
+
+        setSecurityContext("teacher@boclips.com", UserRoles.UPDATE_VIDEOS)
+        assertThat(VideosLinkBuilder().videosLink()).isNotNull
+
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
+        assertThat(VideosLinkBuilder().videosLink()).isNull()
+    }
+
+    @Test
+    fun `videos link when authenticated`() {
+        setSecurityContext("teacher@boclips.com")
+
+        assertThat(VideosLinkBuilder().videosLink()).isNull()
     }
 
     @Test
     fun `videos link when not authenticated`() {
-        val link = VideosLinkBuilder().videosLink()
-
-        assertThat(link).isNull()
+        assertThat(VideosLinkBuilder().videosLink()).isNull()
     }
 
     @Test

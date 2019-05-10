@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.video.VideoResource
+import currentUserHasAnyRole
 import currentUserHasRole
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
@@ -28,8 +29,11 @@ class VideosLinkBuilder {
         ).withRel("search")
     }
 
-    fun videosLink() = addIfAuthenticated {
-        ControllerLinkBuilder.linkTo(
+    fun videosLink(): Link? {
+        if (!currentUserHasAnyRole(UserRoles.UPDATE_VIDEOS, UserRoles.INSERT_VIDEOS)) {
+            return null
+        }
+        return ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .patchMultipleVideos(null)
         ).withRel("videos")

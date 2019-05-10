@@ -18,3 +18,4 @@ fun getCurrentUserIfNotAnonymous() : User? {
 }
 
 fun currentUserHasRole(role: String) = UserExtractor.getCurrentUser().hasRole(role)
+fun currentUserHasAnyRole(vararg roles: String) = roles.any { role -> UserExtractor.getCurrentUser().hasRole(role) }
