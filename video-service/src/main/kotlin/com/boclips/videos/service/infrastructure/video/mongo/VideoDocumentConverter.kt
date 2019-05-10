@@ -53,7 +53,7 @@ object VideoDocumentConverter {
                 type = PlaybackProviderType.valueOf(document.playback!!.type),
                 value = document.playback.id
             ),
-            playback = null,
+            playback = toPlayback(document.playback),
             type = LegacyVideoType.valueOf(document.legacy.type),
             keywords = document.keywords,
             subjects = document.subjects.map(::LegacySubject).toSet(),
@@ -112,7 +112,9 @@ object VideoDocumentConverter {
         }
     }
 
-    fun toPlayback(playbackDocument: PlaybackDocument): VideoPlayback {
+    fun toPlayback(playbackDocument: PlaybackDocument): VideoPlayback? {
+        if (playbackDocument.thumbnailUrl == null || playbackDocument.duration == null) return null
+
         val thumbnailUrl = playbackDocument.thumbnailUrl!!.first()
         val duration = Duration.ofSeconds(playbackDocument.duration!!.toLong())
 

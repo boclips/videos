@@ -190,7 +190,7 @@ class ApplicationContext(
 
     @Bean
     fun refreshVideoDurations(): RequestVideoPlaybackUpdate {
-        return RequestVideoPlaybackUpdate(videoAssetRepository, topics)
+        return RequestVideoPlaybackUpdate(videoAssetRepository, playbackRepository, topics)
     }
 
     @Bean

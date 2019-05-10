@@ -1,13 +1,19 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.VideoPlaybackSyncRequested
+import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
+import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.messaging.support.MessageBuilder
 
 open class RequestVideoPlaybackUpdate(
     private val videoAssetRepository: VideoAssetRepository,
+    private val playbackRepository: PlaybackRepository,
     private val topics: Topics
 ) {
     companion object : KLogging()
@@ -28,6 +34,34 @@ open class RequestVideoPlaybackUpdate(
             }
         } catch (ex: Exception) {
             logger.error { "Failed to publish (some) events to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+        }
+    }
+
+    @StreamListener(Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED)
+    operator fun invoke(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
+        val potentialAssetToBeUpdated = AssetId(value = videoPlaybackSyncRequestedEvent.videoId)
+        val actualAsset = videoAssetRepository.find(potentialAssetToBeUpdated)
+
+        if (actualAsset == null) {
+            logger.error { "Could find video $potentialAssetToBeUpdated" }
+            return
+        }
+
+        val playback = playbackRepository.find(actualAsset.playbackId)
+        if (playback == null) {
+            logger.error { "Could not find playback information for $potentialAssetToBeUpdated" }
+            return
+        }
+
+        val replacePlayback = VideoUpdateCommand.ReplacePlayback(
+            assetId = actualAsset.assetId,
+            playback = playback
+        )
+
+        try {
+            videoAssetRepository.update(replacePlayback)
+        } catch (ex: Exception) {
+            logger.error { "Did not update playback for video ${actualAsset.assetId}" }
         }
     }
 }
