@@ -89,7 +89,7 @@ class CollectionsController(
     fun postCollection(@RequestBody createCollectionRequest: CreateCollectionRequest?): ResponseEntity<Void> {
         val collection = createCollection(createCollectionRequest)
         val headers = HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, collectionsLinkBuilder.collection(collection.id.value).href)
+            set(HttpHeaders.LOCATION, collectionsLinkBuilder.collection(collection.id.value)?.href)
         }
         return ResponseEntity(headers, HttpStatus.CREATED)
     }

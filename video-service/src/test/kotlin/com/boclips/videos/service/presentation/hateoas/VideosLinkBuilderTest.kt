@@ -34,8 +34,10 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `search link`() {
-        val link = VideosLinkBuilder().searchLink()
+    fun `search link when authenticated`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val link = VideosLinkBuilder().searchLink()!!
 
         assertThat(link.href).isEqualTo("/v1/videos?query={query}&size={size}&page={page}{&sort_by,include_tag,exclude_tag,min_duration,max_duration,source}")
         assertThat(link.rel).isEqualTo("search")
@@ -43,8 +45,17 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `videos link`() {
-        val link = VideosLinkBuilder().videosLink()
+    fun `search link when not authenticated`() {
+        val link = VideosLinkBuilder().searchLink()
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `videos link when authenticated`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val link = VideosLinkBuilder().videosLink()!!
 
         assertThat(link.href).isEqualTo("/v1/videos")
         assertThat(link.rel).isEqualTo("videos")
@@ -52,12 +63,28 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `adminSearch link`() {
+    fun `videos link when not authenticated`() {
+        val link = VideosLinkBuilder().videosLink()
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `adminSearch link when user can search disabled videos`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISABLED_VIDEOS)
+
         val link = VideosLinkBuilder().adminSearchLink()
 
-        assertThat(link.href).isEqualTo("/v1/videos/search")
-        assertThat(link.rel).isEqualTo("adminSearch")
-        assertThat(link.isTemplated).isFalse()
+        assertThat(link?.href).isEqualTo("/v1/videos/search")
+        assertThat(link?.rel).isEqualTo("adminSearch")
+        assertThat(link?.isTemplated).isFalse()
+    }
+
+    @Test
+    fun `adminSearch link returns null when user can't search disabled videos`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
+
+        assertThat(VideosLinkBuilder().adminSearchLink()).isNull()
     }
 
     @Test

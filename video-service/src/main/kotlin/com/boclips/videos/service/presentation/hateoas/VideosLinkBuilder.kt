@@ -21,20 +21,30 @@ class VideosLinkBuilder {
             .getVideo(null)
     ).withRel("video")
 
-    fun searchLink(): Link = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(VideoController::class.java)
-            .search(null, null, null, null, null, null, null, null, null)
-    ).withRel("search")
+    fun searchLink() = addIfAuthenticated {
+        ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .search(null, null, null, null, null, null, null, null, null)
+        ).withRel("search")
+    }
 
-    fun videosLink(): Link = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(VideoController::class.java)
-            .patchMultipleVideos(null)
-    ).withRel("videos")
+    fun videosLink() = addIfAuthenticated {
+        ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .patchMultipleVideos(null)
+        ).withRel("videos")
+    }
 
-    fun adminSearchLink(): Link = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(VideoController::class.java)
-            .adminSearch(null)
-    ).withRel("adminSearch")
+    fun adminSearchLink(): Link? {
+        if (!currentUserHasRole(UserRoles.VIEW_DISABLED_VIDEOS)) {
+            return null
+        }
+
+        return ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .adminSearch(null)
+        ).withRel("adminSearch")
+    }
 
     fun transcriptLink(videoResource: VideoResource): Link? {
         if (!currentUserHasRole(UserRoles.DOWNLOAD_TRANSCRIPT)) {
@@ -50,5 +60,4 @@ class VideosLinkBuilder {
                 .getTranscript(videoResource.id)
         ).withRel("transcript")
     }
-
 }

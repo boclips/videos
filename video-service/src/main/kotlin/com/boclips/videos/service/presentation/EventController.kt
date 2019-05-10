@@ -18,15 +18,6 @@ class EventController(
     private val savePlaybackEvent: SavePlaybackEvent,
     private val reportNoResults: ReportNoResults
 ) {
-    companion object {
-        fun createPlaybackEventLink() = ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(EventController::class.java).logPlaybackEvent(null)
-        ).withRel("createPlaybackEvent")
-
-        fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)
-        ).withRel("createNoSearchResultsEvent")
-    }
 
     @PostMapping("/playback")
     fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?): ResponseEntity<Void> {

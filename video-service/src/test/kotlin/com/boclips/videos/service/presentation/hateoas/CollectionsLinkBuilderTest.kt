@@ -1,16 +1,25 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URL
 
 class CollectionsLinkBuilderTest {
+
+    @AfterEach
+    fun setUp() {
+        SecurityContextHolder.clearContext()
+    }
 
     @Test
     fun `when public collections`() {
@@ -29,7 +38,9 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
-    fun `when bookmarked collections`() {
+    fun `bookmarked collections when authenticated`() {
+        setSecurityContext("teacher@boclips.com")
+
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
@@ -38,51 +49,115 @@ class CollectionsLinkBuilderTest {
             projection = Projection.details,
             page = 0,
             size = 2
-        )
+        )!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&public=true&bookmarked=true&page=0&size=2")
         assertThat(link.rel).isEqualTo("bookmarkedCollections")
     }
 
     @Test
-    fun `when collections of a user`() {
+    fun `bookmarked collections when anonymous`() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.bookmarkedCollections()
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `collections of a user when authenticated`() {
+        setSecurityContext("user1")
+
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.collectionsByUser(
-            owner = "user1",
             projection = Projection.list,
             page = 0,
             size = 2
-        )
+        )!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&owner=user1&page=0&size=2")
         assertThat(link.rel).isEqualTo("myCollections")
     }
 
     @Test
-    fun `when collections`() {
+    fun `collections of a user when not authenticated`() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.collections()
+        val link = collectionsLinkBuilder.collectionsByUser()
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `collections when authenticated`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.collections()!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections")
         assertThat(link.rel).isEqualTo("collections")
     }
 
     @Test
-    fun `when collection`() {
+    fun `collections when not authenticated`() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.collections()
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `collection when not authenticated`() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.collection(id = "c123")
 
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `collection when authenticated`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.collection(id = "c123")!!
+
         assertThat(link.href).isEqualTo("https://localhost/v1/collections/c123")
         assertThat(link.rel).isEqualTo("collection")
+    }
+
+    @Test
+    fun `when templated collection`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.collection(id = null)!!
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections/{id}")
+        assertThat(link.rel).isEqualTo("collection")
+        assertThat(link.isTemplated).isTrue()
     }
 
     @Test
@@ -179,19 +254,6 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.removeVideoFromCollection(TestFactories.createCollectionResource(id = "c123"))
 
         assertThat(link).isNull()
-    }
-
-    @Test
-    fun `when templated collection`() {
-        val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
-        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
-
-        val link = collectionsLinkBuilder.collection(id = null)
-
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections/{id}")
-        assertThat(link.rel).isEqualTo("collection")
-        assertThat(link.isTemplated).isTrue()
     }
 
     @Test
