@@ -43,7 +43,7 @@ class MongoVideoAssetRepository(
         val videoAssetOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(assetId.value))
             ?.let(VideoDocumentConverter::toVideoAsset)
 
-        logger.info { "Found ${assetId.value}" }
+        logger.info { "Found video ${assetId.value}" }
 
         return videoAssetOrNull
     }

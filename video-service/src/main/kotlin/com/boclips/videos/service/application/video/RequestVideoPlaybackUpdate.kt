@@ -39,6 +39,14 @@ open class RequestVideoPlaybackUpdate(
 
     @StreamListener(Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED)
     operator fun invoke(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
+        try {
+            handleUpdate(videoPlaybackSyncRequestedEvent)
+        } catch (ex: Exception) {
+            logger.info { "Failed to process ${Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED} for ${videoPlaybackSyncRequestedEvent.videoId}" }
+        }
+    }
+
+    private fun handleUpdate(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
         val potentialAssetToBeUpdated = AssetId(value = videoPlaybackSyncRequestedEvent.videoId)
         val actualAsset = videoAssetRepository.find(potentialAssetToBeUpdated)
 
