@@ -29,7 +29,7 @@ open class RequestVideoPlaybackUpdate(
                         .build()
 
                     topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
-                    AnalyseVideo.logger.info { "Video ${video.assetId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+                    logger.info { "Video ${video.assetId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
                 }
             }
         } catch (ex: Exception) {
@@ -60,6 +60,7 @@ open class RequestVideoPlaybackUpdate(
 
         try {
             videoAssetRepository.update(replacePlayback)
+            logger.info { "Updated playback information for video ${actualAsset.assetId} successfully" }
         } catch (ex: Exception) {
             logger.error { "Did not update playback for video ${actualAsset.assetId}" }
         }
