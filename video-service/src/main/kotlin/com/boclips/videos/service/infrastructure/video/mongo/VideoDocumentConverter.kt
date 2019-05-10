@@ -11,12 +11,13 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import org.bson.types.ObjectId
 import java.time.Duration
+import java.time.Instant
 import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
 
 object VideoDocumentConverter {
-    fun toDocument(asset: VideoAsset): VideoDocument {
+    fun toVideoDocument(asset: VideoAsset): VideoDocument {
         return VideoDocument(
             id = ObjectId(asset.assetId.value),
             title = asset.title,
@@ -27,17 +28,7 @@ object VideoDocumentConverter {
                 ),
                 videoReference = asset.contentPartnerVideoId
             ),
-            playback = PlaybackDocument(
-                id = asset.playbackId.value,
-                type = asset.playbackId.type.name,
-                downloadUrl = null,
-                dashStreamUrl = null,
-                hdsStreamUrl = null,
-                progressiveStreamUrl = null,
-                duration = null,
-                thumbnailUrl = null,
-                lastVerified = null
-            ),
+            playback = toPlaybackDocument(videoPlayback = asset.playback, legacyPlaybackId = asset.playbackId),
             legacy = LegacyDocument(type = asset.type.name),
             keywords = asset.keywords,
             subjects = asset.subjects.map(LegacySubject::name),
@@ -51,7 +42,7 @@ object VideoDocumentConverter {
         )
     }
 
-    fun toAsset(document: VideoDocument): VideoAsset {
+    fun toVideoAsset(document: VideoDocument): VideoAsset {
         return VideoAsset(
             assetId = AssetId(document.id.toHexString()),
             title = document.title,
@@ -59,7 +50,7 @@ object VideoDocumentConverter {
             contentPartnerId = document.source.contentPartner.name,
             contentPartnerVideoId = document.source.videoReference,
             playbackId = PlaybackId(
-                type = PlaybackProviderType.valueOf(document.playback.type),
+                type = PlaybackProviderType.valueOf(document.playback!!.type),
                 value = document.playback.id
             ),
             playback = null,
@@ -76,35 +67,73 @@ object VideoDocumentConverter {
         )
     }
 
-    fun toPlaybackDocument(videoPlayback: VideoPlayback): PlaybackDocument {
-        return when (videoPlayback) {
-            is StreamPlayback -> PlaybackDocument(
-                id = videoPlayback.id.value,
-                type = "KALTURA",
+    fun toPlaybackDocument(
+        videoPlayback: VideoPlayback?,
+        legacyPlaybackId: PlaybackId
+    ): PlaybackDocument {
+        if (videoPlayback == null) {
+            return PlaybackDocument(
+                id = legacyPlaybackId.value,
+                type = legacyPlaybackId.type.name,
                 thumbnailUrl = null,
                 downloadUrl = null,
-                hdsStreamUrl = null,
+                hlsStreamUrl = null,
                 dashStreamUrl = null,
                 progressiveStreamUrl = null,
                 lastVerified = null,
                 duration = null
             )
+        }
+
+        return when (videoPlayback) {
+            is StreamPlayback -> PlaybackDocument(
+                id = videoPlayback.id.value,
+                type = "KALTURA",
+                thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
+                downloadUrl = videoPlayback.downloadUrl,
+                hlsStreamUrl = videoPlayback.appleHlsStreamUrl,
+                dashStreamUrl = videoPlayback.mpegDashStreamUrl,
+                progressiveStreamUrl = videoPlayback.progressiveDownloadStreamUrl,
+                lastVerified = Instant.now(),
+                duration = videoPlayback.duration.seconds.toInt()
+            )
             is YoutubePlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
                 type = "YOUTUBE",
-                thumbnailUrl = null,
+                thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = null,
-                hdsStreamUrl = null,
+                hlsStreamUrl = null,
                 dashStreamUrl = null,
                 progressiveStreamUrl = null,
-                lastVerified = null,
-                duration = null
+                lastVerified = Instant.now(),
+                duration = videoPlayback.duration.seconds.toInt()
             )
             else -> throw IllegalStateException("Stream format not recognised.")
         }
     }
 
     fun toPlayback(playbackDocument: PlaybackDocument): VideoPlayback {
-        TODO()
+        val thumbnailUrl = playbackDocument.thumbnailUrl!!.first()
+        val duration = Duration.ofSeconds(playbackDocument.duration!!.toLong())
+
+        return when (playbackDocument.type) {
+            "KALTURA" -> {
+                StreamPlayback(
+                    id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id),
+                    thumbnailUrl = thumbnailUrl,
+                    duration = duration,
+                    appleHlsStreamUrl = playbackDocument.hlsStreamUrl!!,
+                    mpegDashStreamUrl = playbackDocument.dashStreamUrl!!,
+                    progressiveDownloadStreamUrl = playbackDocument.progressiveStreamUrl!!,
+                    downloadUrl = playbackDocument.downloadUrl!!
+                )
+            }
+            "YOUTUBE" -> YoutubePlayback(
+                id = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = playbackDocument.id),
+                thumbnailUrl = thumbnailUrl,
+                duration = duration
+            )
+            else -> throw java.lang.IllegalStateException("Could not find video provider ${playbackDocument.type}")
+        }
     }
 }

@@ -9,7 +9,7 @@ data class VideoDocument(
     val title: String,
     val description: String,
     val source: SourceDocument,
-    val playback: PlaybackDocument,
+    val playback: PlaybackDocument?,
     val legacy: LegacyDocument,
     val keywords: List<String>,
     val subjects: List<String>,

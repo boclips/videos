@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -47,28 +46,28 @@ class VideoDocumentConverterTest {
             legalRestrictions = "legal restrictions"
         )
 
-        val document = VideoDocumentConverter.toDocument(originalAsset)
-        val reconvertedAsset = VideoDocumentConverter.toAsset(document)
+        val document = VideoDocumentConverter.toVideoDocument(originalAsset)
+        val reconvertedAsset = VideoDocumentConverter.toVideoAsset(document)
 
         assertThat(reconvertedAsset).isEqualTo(originalAsset)
     }
 
-    @Test
-    @Disabled
-    fun `converts a Kaltura playback to a document`() {
-        val originalPlayback = TestFactories.createKalturaPlayback()
-
-        val playbackDocument = VideoDocumentConverter.toPlaybackDocument(originalPlayback)
-        assertThat(playbackDocument.id).isEqualTo("xxx")
-        assertThat(playbackDocument.thumbnailUrl).isEqualTo("xxx")
-        assertThat(playbackDocument.downloadUrl).isEqualTo("xxx")
-        assertThat(playbackDocument.hdsStreamUrl).isEqualTo("xxx")
-        assertThat(playbackDocument.dashStreamUrl).isEqualTo("xxx")
-        assertThat(playbackDocument.progressiveStreamUrl).isEqualTo("xxx")
-        assertThat(playbackDocument.duration).isEqualTo("xxx")
-        assertThat(playbackDocument.lastVerified).isEqualTo("xxx")
-
-        val convertedPlayback = VideoDocumentConverter.toPlayback(playbackDocument)
-        assertThat(convertedPlayback).isEqualTo(originalPlayback)
-    }
+//    @Test
+//    @Disabled
+//    fun `converts a Kaltura playback to a document`() {
+//        val originalPlayback = TestFactories.createKalturaPlayback()
+//
+//        val playbackDocument = VideoDocumentConverter.toPlaybackDocument(originalPlayback)
+//        assertThat(playbackDocument.id).isEqualTo("xxx")
+//        assertThat(playbackDocument.thumbnailUrl).isEqualTo("xxx")
+//        assertThat(playbackDocument.downloadUrl).isEqualTo("xxx")
+//        assertThat(playbackDocument.hdsStreamUrl).isEqualTo("xxx")
+//        assertThat(playbackDocument.dashStreamUrl).isEqualTo("xxx")
+//        assertThat(playbackDocument.progressiveStreamUrl).isEqualTo("xxx")
+//        assertThat(playbackDocument.duration).isEqualTo("xxx")
+//        assertThat(playbackDocument.lastVerified).isEqualTo("xxx")
+//
+//        val convertedPlayback = VideoDocumentConverter.toPlayback(playbackDocument)
+//        assertThat(convertedPlayback).isEqualTo(originalPlayback)
+//    }
 }

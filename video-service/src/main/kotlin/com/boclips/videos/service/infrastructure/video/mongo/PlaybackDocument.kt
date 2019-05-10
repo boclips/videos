@@ -7,7 +7,7 @@ data class PlaybackDocument(
     val id: String,
     val thumbnailUrl: List<String>?,
     val downloadUrl: String?,
-    val hdsStreamUrl: String?,
+    val hlsStreamUrl: String?,
     val dashStreamUrl: String?,
     val progressiveStreamUrl: String?,
     val lastVerified: Instant?,

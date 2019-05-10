@@ -41,7 +41,7 @@ class MongoVideoAssetRepository(
 
     override fun find(assetId: AssetId): VideoAsset? {
         val videoAssetOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(assetId.value))
-            ?.let(VideoDocumentConverter::toAsset)
+            ?.let(VideoDocumentConverter::toVideoAsset)
 
         logger.info { "Found ${assetId.value}" }
 
@@ -53,7 +53,7 @@ class MongoVideoAssetRepository(
 
         val assets = getVideoCollection()
             .find(VideoDocument::id `in` objectIds)
-            .map(VideoDocumentConverter::toAsset)
+            .map(VideoDocumentConverter::toVideoAsset)
             .map { it.assetId to it }
             .toMap()
 
@@ -69,7 +69,7 @@ class MongoVideoAssetRepository(
         }
 
         val sequence = Sequence { getVideoCollection().find(filterBson).iterator() }
-            .map(VideoDocumentConverter::toAsset)
+            .map(VideoDocumentConverter::toVideoAsset)
 
         consumer(sequence)
     }
@@ -82,7 +82,7 @@ class MongoVideoAssetRepository(
     }
 
     override fun create(videoAsset: VideoAsset): VideoAsset {
-        val document = VideoDocumentConverter.toDocument(videoAsset)
+        val document = VideoDocumentConverter.toVideoDocument(videoAsset)
 
         getVideoCollection().insertOne(document)
 
@@ -161,7 +161,10 @@ class MongoVideoAssetRepository(
                 updateCommand.keywords
             )
             is ReplacePlayback -> set(
-                VideoDocument::playback, VideoDocumentConverter.toPlaybackDocument(updateCommand.playback)
+                VideoDocument::playback, VideoDocumentConverter.toPlaybackDocument(
+                    updateCommand.playback,
+                    updateCommand.playback.id
+                )
             )
         }
     }
