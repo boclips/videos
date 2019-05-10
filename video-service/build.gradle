@@ -152,7 +152,7 @@ dependencies {
     implementation('com.github.boclips:boclips-spring-web:0.1.0')
     implementation('com.github.boclips:boclips-spring-security:0.88.0')
     implementation("com.github.boclips:kaltura-client:0.65.0")
-    implementation("com.github.boclips:events:0.22.0")
+    implementation("com.github.boclips:events:0.27.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     implementation("io.github.microutils:kotlin-logging:1.4.9")

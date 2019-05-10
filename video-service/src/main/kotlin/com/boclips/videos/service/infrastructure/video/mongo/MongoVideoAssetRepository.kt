@@ -60,6 +60,13 @@ class MongoVideoAssetRepository(
         return assetIds.mapNotNull { assetId -> assets[assetId] }
     }
 
+    override fun streamAll(consumer: (Sequence<VideoAsset>) -> Unit) {
+        val sequence = Sequence { getVideoCollection().find().iterator() }
+            .map(VideoDocumentConverter::toVideoAsset)
+
+        consumer(sequence)
+    }
+
     override fun streamAll(filter: VideoAssetFilter, consumer: (Sequence<VideoAsset>) -> Unit) {
         val filterBson = when (filter) {
             is VideoAssetFilter.ContentPartnerIs -> VideoDocument::source.div(SourceDocument::contentPartner).div(

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.types.VideoToAnalyse
+import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
@@ -211,7 +211,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         )
 
         val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-        val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
+        val event = objectMapper.readValue(message.payload.toString(), VideoAnalysisRequested::class.java)
 
         assertThat(event.videoId).isEqualTo(video.content.id)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-$123.mp4")

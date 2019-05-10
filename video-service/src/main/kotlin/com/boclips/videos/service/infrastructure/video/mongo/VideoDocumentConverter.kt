@@ -108,7 +108,7 @@ object VideoDocumentConverter {
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt()
             )
-            else -> throw IllegalStateException("Stream format not recognised.")
+            else -> throw IllegalStateException("Stream class ${videoPlayback.javaClass.name} not supported.")
         }
     }
 

@@ -1,15 +1,23 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
+import com.boclips.videos.service.application.video.AnalyseVideo
+import com.boclips.videos.service.application.video.BuildLegacySearchIndex
+import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -30,7 +38,7 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 class AdminController(
     private val rebuildSearchIndex: RebuildSearchIndex,
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
-    private val updatePlayback: UpdatePlayback,
+    private val requestVideoPlaybackUpdate: RequestVideoPlaybackUpdate,
     private val analyseVideo: AnalyseVideo,
     private val analyseContentPartnerVideos: AnalyseContentPartnerVideos
 ) {
@@ -47,16 +55,16 @@ class AdminController(
     }
 
     @PostMapping("/refresh_playbacks")
-    fun refreshVideoDurations(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(updatePlayback::invoke)
+    fun refreshVideoDurations(): ResponseEntity<Void> {
+        requestVideoPlaybackUpdate()
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @PostMapping("/analyse_video/{videoId}")
     fun postAnalyseVideo(@PathVariable videoId: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
             analyseVideo(videoId, language = language)
-        }
-        catch (e: VideoNotAnalysableException) {
+        } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
 
@@ -67,8 +75,7 @@ class AdminController(
     fun postAnalyseVideos(@RequestParam contentPartner: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
             analyseContentPartnerVideos(contentPartner, language = language)
-        }
-        catch(e: VideoNotAnalysableException) {
+        } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
         return ResponseEntity(HttpStatus.ACCEPTED)

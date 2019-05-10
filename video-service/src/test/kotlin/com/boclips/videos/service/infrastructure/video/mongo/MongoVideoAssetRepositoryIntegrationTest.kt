@@ -73,6 +73,28 @@ class MongoVideoAssetRepositoryIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
+    fun `stream all`() {
+        mongoVideoRepository.create(
+            TestFactories.createVideoAsset(
+                videoId = TestFactories.aValidId(),
+                searchable = false
+            )
+        )
+        mongoVideoRepository.create(
+            TestFactories.createVideoAsset(
+                videoId = TestFactories.aValidId(),
+                searchable = true
+            )
+        )
+
+        var videos: List<VideoAsset> = emptyList()
+
+        mongoVideoRepository.streamAll { videos = it.toList() }
+
+        assertThat(videos).hasSize(2)
+    }
+
+    @Test
     fun `stream all searchable videos`() {
         mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))
         mongoVideoRepository.create(TestFactories.createVideoAsset(videoId = TestFactories.aValidId()))

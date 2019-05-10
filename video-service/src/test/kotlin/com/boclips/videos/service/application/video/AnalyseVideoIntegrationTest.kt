@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.types.VideoToAnalyse
+import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -28,7 +28,7 @@ class AnalyseVideoIntegrationTest(
         analyseVideo(videoId, language = Locale.GERMAN)
 
         val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-        val event = objectMapper.readValue(message.payload.toString(), VideoToAnalyse::class.java)
+        val event = objectMapper.readValue(message.payload.toString(), VideoAnalysisRequested::class.java)
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
         assertThat(event.language).isEqualTo(Locale.GERMAN)

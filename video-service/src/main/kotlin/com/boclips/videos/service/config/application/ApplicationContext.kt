@@ -21,14 +21,14 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RebuildSearchIndex
-import com.boclips.videos.service.application.video.UpdatePlayback
+import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
-import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
+import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -116,12 +116,26 @@ class ApplicationContext(
 
     @Bean
     fun getCollection(videosLinkBuilder: VideosLinkBuilder): GetCollection {
-        return GetCollection(collectionService, CollectionResourceFactory(VideoToResourceConverter(videosLinkBuilder), SubjectToResourceConverter(), videoService))
+        return GetCollection(
+            collectionService,
+            CollectionResourceFactory(
+                VideoToResourceConverter(videosLinkBuilder),
+                SubjectToResourceConverter(),
+                videoService
+            )
+        )
     }
 
     @Bean
     fun getPublicCollections(videosLinkBuilder: VideosLinkBuilder): GetCollections {
-        return GetCollections(collectionService, CollectionResourceFactory(VideoToResourceConverter(videosLinkBuilder), SubjectToResourceConverter(), videoService))
+        return GetCollections(
+            collectionService,
+            CollectionResourceFactory(
+                VideoToResourceConverter(videosLinkBuilder),
+                SubjectToResourceConverter(),
+                videoService
+            )
+        )
     }
 
     @Bean
@@ -175,8 +189,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun refreshVideoDurations(): UpdatePlayback {
-        return UpdatePlayback(videoAssetRepository, playbackRepository)
+    fun refreshVideoDurations(): RequestVideoPlaybackUpdate {
+        return RequestVideoPlaybackUpdate(videoAssetRepository, topics)
     }
 
     @Bean
@@ -190,12 +204,12 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoTranscript() : GetVideoTranscript {
+    fun getVideoTranscript(): GetVideoTranscript {
         return GetVideoTranscript(videoAssetRepository)
     }
 
     @Bean
-    fun stringToDurationConverter() : SearchQueryConverter {
+    fun stringToDurationConverter(): SearchQueryConverter {
         return SearchQueryConverter()
     }
 
