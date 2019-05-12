@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.analytics
 
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
 interface AnalyticsEventService {
@@ -12,14 +12,14 @@ interface AnalyticsEventService {
         totalResults: Long
     )
 
-    fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands :List<CollectionUpdateCommand>)
+    fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>)
 
     fun saveBookmarkCollectionEvent(collectionId: CollectionId)
 
     fun saveUnbookmarkCollectionEvent(collectionId: CollectionId)
 
     fun savePlaybackEvent(
-        videoId: AssetId,
+        videoId: VideoId,
         videoIndex: Int?,
         playerId: String,
         segmentStartSeconds: Long,

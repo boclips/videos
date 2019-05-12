@@ -1,39 +1,41 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 
 class DeleteVideos(
-    private val videoAssetRepository: VideoAssetRepository,
+    private val videoRepository: VideoRepository,
     private val searchService: SearchService,
     private val playbackRepository: PlaybackRepository
 ) {
     operator fun invoke(id: String?) {
         if (id == null || id.isBlank()) {
-            throw VideoAssetNotFoundException()
+            throw VideoNotFoundException()
         }
 
-        val assetId = AssetId(value = id)
-        val videoAsset = videoAssetRepository.find(assetId) ?: throw VideoAssetNotFoundException(assetId)
+        val videoId = VideoId(value = id)
+        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
-        removeVideo(videoAsset)
+        removeVideo(video)
     }
 
-    private fun removeVideo(videoAsset: VideoAsset) {
-        val assetIdToBeDeleted = videoAsset.assetId
+    private fun removeVideo(video: Video) {
+        val videoIdToBeDeleted = video.videoId
 
-        searchService.removeFromSearch(assetIdToBeDeleted.value)
-        VideoService.logger.info { "Removed asset $assetIdToBeDeleted from search index" }
+        searchService.removeFromSearch(videoIdToBeDeleted.value)
+        VideoService.logger.info { "Removed video $videoIdToBeDeleted from search index" }
 
-        videoAssetRepository.delete(assetIdToBeDeleted)
-        VideoService.logger.info { "Removed asset $assetIdToBeDeleted from asset repository" }
+        videoRepository.delete(videoIdToBeDeleted)
+        VideoService.logger.info { "Removed video $videoIdToBeDeleted from video repository" }
 
-        playbackRepository.remove(videoAsset.playbackId)
-        VideoService.logger.info { "Removed asset $assetIdToBeDeleted from asset host" }
+        if (video.isPlayable()) {
+            playbackRepository.remove(video.playback.id)
+            VideoService.logger.info { "Removed video $videoIdToBeDeleted from video host" }
+        }
     }
 }

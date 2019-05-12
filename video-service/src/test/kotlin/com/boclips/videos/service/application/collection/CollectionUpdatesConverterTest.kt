@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.domain.model.SubjectId
+import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.presentation.collections.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
@@ -51,7 +51,8 @@ internal class CollectionUpdatesConverterTest {
 
     @Test
     fun `change age range of collection to command`() {
-        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)))
+        val commands =
+            CollectionUpdatesConverter.convert(UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeAgeRangeCommand
         assertThat(command.minAge).isEqualTo(3)
@@ -60,7 +61,14 @@ internal class CollectionUpdatesConverterTest {
 
     @Test
     fun `change age range of collection command with unbounded upper bound`() {
-        val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 18, max = null)))
+        val commands = CollectionUpdatesConverter.convert(
+            UpdateCollectionRequest(
+                ageRange = AgeRangeRequest(
+                    min = 18,
+                    max = null
+                )
+            )
+        )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeAgeRangeCommand
         assertThat(command.minAge).isEqualTo(18)
@@ -82,6 +90,11 @@ internal class CollectionUpdatesConverterTest {
         assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.ReplaceSubjectsCommand::class.java)
         val command = commands.first() as CollectionUpdateCommand.ReplaceSubjectsCommand
 
-        assertThat(command.subjects).isEqualTo(setOf(SubjectId("SubjectOneId"), SubjectId("SubjectTwoId")))
+        assertThat(command.subjects).isEqualTo(
+            setOf(
+                SubjectId("SubjectOneId"),
+                SubjectId("SubjectTwoId")
+            )
+        )
     }
 }

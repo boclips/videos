@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -50,7 +50,8 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
-    fun createCollection() = getIfHasRole(UserRoles.INSERT_COLLECTIONS) { Link(getCollectionsRoot().toUriString(), "createCollection") }
+    fun createCollection() =
+        getIfHasRole(UserRoles.INSERT_COLLECTIONS) { Link(getCollectionsRoot().toUriString(), "createCollection") }
 
     fun publicCollections(
         projection: Projection = Projection.list,
@@ -62,20 +63,24 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             .queryParam("public", true)
             .queryParam("page", page)
             .queryParam("size", size)
-            .toUriString(), "publicCollections")
+            .toUriString(), "publicCollections"
+    )
 
     fun bookmarkedCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
-    ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { Link(
-        getCollectionsRoot()
-            .queryParam("projection", projection)
-            .queryParam("public", true)
-            .queryParam("bookmarked", true)
-            .queryParam("page", page)
-            .queryParam("size", size)
-            .toUriString(), "bookmarkedCollections") }
+    ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
+        Link(
+            getCollectionsRoot()
+                .queryParam("projection", projection)
+                .queryParam("public", true)
+                .queryParam("bookmarked", true)
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .toUriString(), "bookmarkedCollections"
+        )
+    }
 
     fun collectionsByUser(
         projection: Projection = Projection.list,
@@ -136,8 +141,8 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         )
 
     private fun getCollectionsRoot() = uriComponentsBuilderFactory.getInstance()
-            .replacePath("/v1/collections")
-            .replaceQueryParams(null)
+        .replacePath("/v1/collections")
+        .replaceQueryParams(null)
 
     class ProjectionsCollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
         fun list() =

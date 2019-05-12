@@ -4,7 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.assertThrows
 
 class UpdateCollectionTest {
 
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
 
     @BeforeEach
     fun setUp() {
@@ -32,28 +32,28 @@ class UpdateCollectionTest {
 
     @Test
     fun `updates on collection delegate`() {
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val renameCollection = UpdateCollection(collectionService, FakeAnalyticsEventService())
+        val renameCollection = UpdateCollection(collectionRepository, FakeAnalyticsEventService())
         val collectionId = TestFactories.aValidId()
 
         renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
 
         argumentCaptor<CollectionUpdateCommand.RenameCollectionCommand>().apply {
-            verify(collectionService).update(eq(CollectionId(collectionId)), any<List<CollectionUpdateCommand>>())
+            verify(collectionRepository).update(eq(CollectionId(collectionId)), any<List<CollectionUpdateCommand>>())
         }
     }
 
     @Test
     fun `logs an event for renaming`() {
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
         val eventService = FakeAnalyticsEventService()
-        val renameCollection = UpdateCollection(collectionService, eventService)
+        val renameCollection = UpdateCollection(collectionRepository, eventService)
         val collectionId = TestFactories.aValidId()
 
         renameCollection(collectionId, UpdateCollectionRequest(title = "new title"))
@@ -65,12 +65,12 @@ class UpdateCollectionTest {
 
     @Test
     fun `logs an event for changing visiblity`() {
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
         val eventService = FakeAnalyticsEventService()
-        val renameCollection = UpdateCollection(collectionService, eventService)
+        val renameCollection = UpdateCollection(collectionRepository, eventService)
         val collectionId = TestFactories.aValidId()
 
         renameCollection(collectionId, UpdateCollectionRequest(isPublic = true))
@@ -87,11 +87,11 @@ class UpdateCollectionTest {
         val collectionId = CollectionId("collection-123")
         val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com")
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val renameCollection = UpdateCollection(collectionService, FakeAnalyticsEventService())
+        val renameCollection = UpdateCollection(collectionRepository, FakeAnalyticsEventService())
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             renameCollection(
@@ -99,7 +99,7 @@ class UpdateCollectionTest {
                 updateCollectionRequest = UpdateCollectionRequest(title = "new title")
             )
         }
-        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
     }
 
     @Test
@@ -109,11 +109,11 @@ class UpdateCollectionTest {
         val collectionId = CollectionId("collection-123")
         val onGetCollection: Collection? = null
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val renameCollection = UpdateCollection(collectionService, FakeAnalyticsEventService())
+        val renameCollection = UpdateCollection(collectionRepository, FakeAnalyticsEventService())
 
         assertThrows<CollectionNotFoundException> {
             renameCollection(
@@ -121,6 +121,6 @@ class UpdateCollectionTest {
                 updateCollectionRequest = UpdateCollectionRequest(title = "new title")
             )
         }
-        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
     }
 }

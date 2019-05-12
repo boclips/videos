@@ -2,7 +2,7 @@ package com.boclips.videos.service.client
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType as VideoServiceVideoType
+import com.boclips.videos.service.domain.model.video.LegacyVideoType as VideoServiceVideoType
 
 class LegacyDocumentVideoTypeTest {
 

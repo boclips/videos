@@ -1,11 +1,10 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
-import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
@@ -21,7 +20,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
         saveVideo(
-            title = "a kaltura asset",
+            title = "a kaltura video",
             playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         )
 
@@ -36,14 +35,14 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(videos).isNotEmpty
-        assertThat(videos.first().asset.title).isEqualTo("a kaltura asset")
-        assertThat(videos.first().playback.thumbnailUrl).isNotBlank()
+        assertThat(videos.first().title).isEqualTo("a kaltura video")
+        assertThat(videos.first().playback!!.thumbnailUrl).isNotBlank()
     }
 
     @Test
     fun `retrieve videos by query returns Youtube videos`() {
         saveVideo(
-            title = "a youtube asset",
+            title = "a youtube video",
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123")
         )
 
@@ -58,14 +57,14 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(videos).isNotEmpty
-        assertThat(videos.first().asset.title).isEqualTo("a youtube asset")
-        assertThat(videos.first().playback.thumbnailUrl).isNotBlank()
+        assertThat(videos.first().title).isEqualTo("a youtube video")
+        assertThat(videos.first().playback!!.thumbnailUrl).isNotBlank()
     }
 
     @Test
     fun `count videos`() {
         saveVideo(
-            title = "a youtube asset",
+            title = "a youtube video",
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123")
         )
 
@@ -86,10 +85,10 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `look up video by id`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "abc"))
 
-        val video = videoService.get(videoId)
+        val video = videoService.getPlayableVideo(videoId)
 
         assertThat(video).isNotNull
-        assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-abc.mp4")
+        assertThat(video.playback!!.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-abc.mp4")
     }
 
     @Test
@@ -98,24 +97,15 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         saveVideo()
         val videoId2 = saveVideo()
 
-        val video = videoService.get(listOf(videoId1, videoId2))
+        val video = videoService.getPlayableVideo(listOf(videoId1, videoId2))
 
         assertThat(video).hasSize(2)
-        assertThat(video.map { it.asset.assetId }).containsExactly(videoId1, videoId2)
-    }
-
-    @Test
-    fun `look up video by id throws if no playback information if present`() {
-        val videoId = saveVideo(playbackId = PlaybackId(value = "1111", type = PlaybackProviderType.KALTURA))
-
-        fakeKalturaClient.clear()
-
-        Assertions.assertThatThrownBy { videoService.get(videoId) }.isInstanceOf(VideoPlaybackNotFound::class.java)
+        assertThat(video.map { it.videoId }).containsExactly(videoId1, videoId2)
     }
 
     @Test
     fun `look up by id throws if video does not exist`() {
-        Assertions.assertThatThrownBy { videoService.get(AssetId(value = TestFactories.aValidId())) }
-            .isInstanceOf(VideoAssetNotFoundException::class.java)
+        Assertions.assertThatThrownBy { videoService.getPlayableVideo(VideoId(value = TestFactories.aValidId())) }
+            .isInstanceOf(VideoNotFoundException::class.java)
     }
 }

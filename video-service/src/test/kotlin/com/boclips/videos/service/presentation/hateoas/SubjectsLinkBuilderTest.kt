@@ -3,10 +3,8 @@ package com.boclips.videos.service.presentation.hateoas
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.hateoas.Link
 import org.springframework.web.util.UriComponentsBuilder
 

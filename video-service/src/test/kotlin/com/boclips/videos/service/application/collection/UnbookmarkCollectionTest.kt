@@ -1,11 +1,11 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.nhaarman.mockito_kotlin.any
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.assertThrows
 
 class UnunbookmarkCollectionTest {
 
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
     val eventService = FakeAnalyticsEventService()
 
     @BeforeEach
@@ -32,17 +32,23 @@ class UnunbookmarkCollectionTest {
 
     @Test
     fun `updates on collection delegate`() {
-            val collection = TestFactories.createCollection(owner = "other@me.com", isPublic = true)
-        collectionService = mock {
+        val collection = TestFactories.createCollection(owner = "other@me.com", isPublic = true)
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(collection)
         }
 
-        val unbookmark = UnbookmarkCollection(collectionService, eventService)
+        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
 
         unbookmark(collection.id.value)
 
         argumentCaptor<String>().apply {
-            verify(collectionService).unbookmark(eq(collection.id), eq(UserId("me@me.com")))
+            verify(collectionRepository).unbookmark(
+                eq(collection.id), eq(
+                    UserId(
+                        "me@me.com"
+                    )
+                )
+            )
         }
     }
 
@@ -51,20 +57,21 @@ class UnunbookmarkCollectionTest {
         setSecurityContext("me@example.com")
 
         val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "me@example.com", isPublic = true)
+        val onGetCollection =
+            TestFactories.createCollection(id = collectionId, owner = "me@example.com", isPublic = true)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val unbookmark = UnbookmarkCollection(collectionService, eventService)
+        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
 
         assertThrows<CollectionIllegalOperationException> {
             unbookmark(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).unbookmark(any(), any())
+        verify(collectionRepository, never()).unbookmark(any(), any())
     }
 
     @Test
@@ -72,20 +79,21 @@ class UnunbookmarkCollectionTest {
         setSecurityContext("me@example.com")
 
         val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "other@example.com", isPublic = false)
+        val onGetCollection =
+            TestFactories.createCollection(id = collectionId, owner = "other@example.com", isPublic = false)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val unbookmark = UnbookmarkCollection(collectionService, eventService)
+        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             unbookmark(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).unbookmark(any(), any())
+        verify(collectionRepository, never()).unbookmark(any(), any())
     }
 
     @Test
@@ -95,28 +103,28 @@ class UnunbookmarkCollectionTest {
         val collectionId = CollectionId("collection-123")
         val onGetCollection: Collection? = null
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val unbookmark = UnbookmarkCollection(collectionService, eventService)
+        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
 
         assertThrows<CollectionNotFoundException> {
             unbookmark(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).unbookmark(any(), any())
+        verify(collectionRepository, never()).unbookmark(any(), any())
     }
 
     @Test
     fun `logs an event`() {
         val collection = TestFactories.createCollection(owner = "other@me.com", isPublic = true)
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(collection)
         }
 
-        val unbookmark = UnbookmarkCollection(collectionService, eventService)
+        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
 
         unbookmark(collection.id.value)
 

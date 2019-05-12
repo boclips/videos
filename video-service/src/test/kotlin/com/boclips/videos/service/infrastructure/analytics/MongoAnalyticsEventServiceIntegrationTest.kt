@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.analytics
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.model.SubjectId
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.SubjectId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -84,7 +84,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
     fun `saving playback events`() {
         val videoId = TestFactories.aValidId()
         mongoEventService.savePlaybackEvent(
-            videoId = AssetId(videoId),
+            videoId = VideoId(videoId),
             videoIndex = 6,
             playerId = "player id",
             segmentStartSeconds = 10,
@@ -96,7 +96,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
 
         assertThat(event["type"]).isEqualTo("PLAYBACK")
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
-        assertThat(event["assetId"]).isEqualTo(videoId)
+        assertThat(event["videoId"]).isEqualTo(videoId)
         assertThat(event["playerId"]).isEqualTo("player id")
         assertThat(event["segmentStartSeconds"]).isEqualTo(10L)
         assertThat(event["segmentEndSeconds"]).isEqualTo(20L)
@@ -110,7 +110,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = TestFactories.aValidId()
         mongoEventService.saveUpdateCollectionEvent(
             CollectionId("collection id"),
-            listOf(CollectionUpdateCommand.AddVideoToCollectionCommand(AssetId(videoId)))
+            listOf(CollectionUpdateCommand.AddVideoToCollectionCommand(VideoId(videoId)))
         )
 
         val event = getEvent()
@@ -119,7 +119,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
         assertThat(event["userId"]).isEqualTo("user@example.com")
         assertThat(event["userIsBoclips"]).isEqualTo(false)
-        assertThat(event["assetId"]).isEqualTo(videoId)
+        assertThat(event["videoId"]).isEqualTo(videoId)
         assertThat(event["collectionId"]).isEqualTo("collection id")
     }
 
@@ -128,7 +128,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = TestFactories.aValidId()
         mongoEventService.saveUpdateCollectionEvent(
             CollectionId("collection id"),
-            listOf(CollectionUpdateCommand.RemoveVideoFromCollectionCommand(AssetId(videoId)))
+            listOf(CollectionUpdateCommand.RemoveVideoFromCollectionCommand(VideoId(videoId)))
         )
 
         val event = getEvent()
@@ -137,7 +137,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
         assertThat(event["userId"]).isEqualTo("user@example.com")
         assertThat(event["userIsBoclips"]).isEqualTo(false)
-        assertThat(event["assetId"]).isEqualTo(videoId)
+        assertThat(event["videoId"]).isEqualTo(videoId)
         assertThat(event["collectionId"]).isEqualTo("collection id")
     }
 
@@ -233,7 +233,15 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
         val collectionId = TestFactories.aValidId()
         mongoEventService.saveUpdateCollectionEvent(
             CollectionId(collectionId),
-            listOf(CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(SubjectId("2"))))
+            listOf(
+                CollectionUpdateCommand.ReplaceSubjectsCommand(
+                    setOf(
+                        SubjectId(
+                            "2"
+                        )
+                    )
+                )
+            )
         )
 
         val event = getEvent()

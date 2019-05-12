@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -26,20 +26,20 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos(videoId.value)
 
-        assertThatThrownBy { videoService.get(videoId) }
-            .isInstanceOf(VideoAssetNotFoundException::class.java)
+        assertThatThrownBy { videoService.getPlayableVideo(videoId) }
+            .isInstanceOf(VideoNotFoundException::class.java)
     }
 
     @Test
     fun `requesting deletion with blank video ID throws an exception`() {
         assertThatThrownBy { deleteVideos("   ") }
-            .isInstanceOf(VideoAssetNotFoundException::class.java)
+            .isInstanceOf(VideoNotFoundException::class.java)
     }
 
     @Test
     fun `requesting deletion with null video ID throws an exception`() {
         assertThatThrownBy { deleteVideos(null) }
-            .isInstanceOf(VideoAssetNotFoundException::class.java)
+            .isInstanceOf(VideoNotFoundException::class.java)
     }
 
     @Test
@@ -48,8 +48,8 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos(videoId.value)
 
-        assertThatThrownBy { videoService.get(videoId) }
-            .isInstanceOf(VideoAssetNotFoundException::class.java)
+        assertThatThrownBy { videoService.getPlayableVideo(videoId) }
+            .isInstanceOf(VideoNotFoundException::class.java)
     }
 
     @Test

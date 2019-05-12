@@ -1,22 +1,19 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
+// TODO: Rename VideoSearchService
 class VideoService(
-    private val videoAssetRepository: VideoAssetRepository,
-    private val searchService: SearchService,
-    private val playbackRepository: PlaybackRepository
+    private val videoRepository: VideoRepository,
+    private val searchService: SearchService
 ) {
     companion object : KLogging()
 
@@ -26,65 +23,39 @@ class VideoService(
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
-        val assetIds = searchService.search(searchRequest).map { AssetId(value = it) }
+        val videoIds = searchService.search(searchRequest).map { VideoId(value = it) }
+        val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
 
-        val allVideoAssets = videoAssetRepository.findAll(assetIds = assetIds)
-        val videoPlaybacks = playbackRepository.find(allVideoAssets.map { it.playbackId })
+        logger.info { "Returning ${playableVideos.size} videos for query $query" }
 
-        if (assetIds.size != videoPlaybacks.size) {
-            logger.info { "Found ${assetIds.size} videos with ${videoPlaybacks.size} playbacks for query ${query.text}" }
-        }
-
-        val videos = allVideoAssets.mapNotNull { videoAsset ->
-            val videoPlayback = videoPlaybacks[videoAsset.playbackId] ?: return@mapNotNull null
-            Video(videoAsset, videoPlayback)
-        }
-
-        logger.info { "Returning ${videos.size} videos for query $query" }
-
-        return videos
+        return playableVideos
     }
 
+    // TODO this returns all videos matched by query, does not take into account whether video is playable
     fun count(videoSearchQuery: VideoSearchQuery): Long {
         logger.info { "Counted videos for query $videoSearchQuery" }
         return searchService.count(videoSearchQuery.toSearchQuery())
     }
 
-    fun get(assetId: AssetId): Video {
-        val videoAsset = videoAssetRepository
-            .find(assetId) ?: throw VideoAssetNotFoundException(assetId)
+    fun getPlayableVideo(videoId: VideoId): Video {
+        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
+        if (!video.isPlayable()) throw VideoPlaybackNotFound()
 
-        val videoPlayback = playbackRepository
-            .find(videoAsset.playbackId) ?: throw VideoPlaybackNotFound()
-
-        logger.info { "Retrieved video $assetId" }
-
-        return Video(videoAsset, videoPlayback)
+        logger.info { "Retrieved playable video $videoId" }
+        return video
     }
 
-    fun get(assetIds: List<AssetId>): List<Video> {
-        val videoAssets = videoAssetRepository.findAll(assetIds)
+    fun getPlayableVideo(videoIds: List<VideoId>): List<Video> {
+        val videos = videoRepository.findAll(videoIds)
 
-        if (assetIds.size != videoAssets.size) {
+        if (videoIds.size != videos.size) {
             logger.info {
-                val assetsNotFound = assetIds - videoAssets.map { it.assetId }
-                "Some of the requested video assets could not be found. Ids found: $assetsNotFound"
+                val videosNotFound = videoIds - videos.map { it.videoId }
+                "Some of the requested video videos could not be found. Ids found: $videosNotFound"
             }
         }
 
-        val playbackIds = videoAssets.map { asset -> asset.playbackId }
-        val videoPlaybacks: Map<PlaybackId, VideoPlayback> = playbackRepository.find(playbackIds)
-
-        return videoAssets.mapNotNull { videoAsset ->
-            val videoPlayback = videoPlaybacks[videoAsset.playbackId]
-
-            if (videoPlayback == null) {
-                logger.info { "Failed to find playback for video ${videoAsset.assetId}" }
-                return@mapNotNull null
-            }
-
-            Video(videoAsset, videoPlayback)
-        }
+        return videos.filter { it.isPlayable() }
     }
 }
 

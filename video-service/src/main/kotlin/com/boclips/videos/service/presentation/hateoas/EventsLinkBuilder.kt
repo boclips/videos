@@ -14,5 +14,4 @@ class EventsLinkBuilder {
     fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(
         ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)
     ).withRel("createNoSearchResultsEvent")
-
 }

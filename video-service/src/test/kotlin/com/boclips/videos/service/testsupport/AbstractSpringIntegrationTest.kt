@@ -8,11 +8,11 @@ import com.boclips.search.service.infrastructure.InMemorySearchService
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
@@ -131,7 +131,7 @@ abstract class AbstractSpringIntegrationTest {
         subjects: Set<String> = emptySet(),
         searchable: Boolean = true,
         legalRestrictions: String = ""
-    ): AssetId {
+    ): VideoId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(
                 createMediaEntry(
@@ -165,7 +165,7 @@ abstract class AbstractSpringIntegrationTest {
             )
         ).content.id
 
-        return AssetId(id!!)
+        return VideoId(id!!)
     }
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {

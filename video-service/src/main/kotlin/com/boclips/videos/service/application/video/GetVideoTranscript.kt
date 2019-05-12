@@ -1,26 +1,25 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoTranscriptNotFound
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 
 class GetVideoTranscript(
-    private val videoAssetRepository: VideoAssetRepository
-    ) {
-    operator fun invoke(id: String?) : String {
+    private val videoRepository: VideoRepository
+) {
+    operator fun invoke(id: String?): String {
         if (id == null || id.isBlank()) {
-            throw VideoAssetNotFoundException()
+            throw VideoNotFoundException()
         }
 
-        val assetId = AssetId(value = id)
-        val videoAsset = videoAssetRepository.find(assetId) ?: throw VideoAssetNotFoundException(assetId)
+        val videoId = VideoId(value = id)
+        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
-        if (videoAsset.transcript == null) {
-            throw VideoTranscriptNotFound(assetId)
+        if (video.transcript == null) {
+            throw VideoTranscriptNotFound(videoId)
         }
 
-        return videoAsset.transcript
+        return video.transcript
     }
-
 }

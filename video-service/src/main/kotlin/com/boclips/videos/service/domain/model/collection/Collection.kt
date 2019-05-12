@@ -1,9 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.SubjectId
-import com.boclips.videos.service.domain.model.UserId
-import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.video.VideoId
 import getCurrentUserId
 import java.time.Instant
 
@@ -11,7 +8,7 @@ data class Collection(
     val id: CollectionId,
     val owner: UserId,
     val title: String,
-    val videos: List<AssetId>,
+    val videos: List<VideoId>,
     val updatedAt: Instant,
     val isPublic: Boolean,
     val createdByBoclips: Boolean,

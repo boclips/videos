@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation.collections
 
-import com.boclips.videos.service.domain.model.BoundedAgeRange
-import com.boclips.videos.service.domain.model.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.collection.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.UnboundedAgeRange
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
@@ -18,7 +18,7 @@ class CollectionResourceFactory(
             id = collection.id.value,
             owner = collection.owner.value,
             title = collection.title,
-            videos = videoToResourceConverter.wrapVideosInResource(videoService.get(collection.videos)),
+            videos = videoToResourceConverter.wrapVideosInResource(videoService.getPlayableVideo(collection.videos)),
             updatedAt = collection.updatedAt,
             isPublic = collection.isPublic,
             isMine = collection.isMine(),
@@ -34,7 +34,7 @@ class CollectionResourceFactory(
             id = collection.id.value,
             owner = collection.owner.value,
             title = collection.title,
-            videos = videoToResourceConverter.wrapVideoAssetIdsInResource(collection.videos),
+            videos = videoToResourceConverter.wrapVideoIdsInResource(collection.videos),
             updatedAt = collection.updatedAt,
             isPublic = collection.isPublic,
             isMine = collection.isMine(),

@@ -3,67 +3,71 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.infrastructure.InMemorySearchService
-import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoAssetFilter
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
+import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.VideoFilter
+import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.infrastructure.search.VideoSearchService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doAnswer
+import com.nhaarman.mockito_kotlin.doThrow
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class RebuildSearchIndexTest {
 
-    lateinit var searchService: VideoAssetSearchService
+    lateinit var searchService: VideoSearchService
 
     @BeforeEach
     fun setUp() {
         val inMemorySearchService = InMemorySearchService()
-        searchService = VideoAssetSearchService(inMemorySearchService, inMemorySearchService)
+        searchService = VideoSearchService(inMemorySearchService, inMemorySearchService)
     }
 
     @Test
     fun `execute rebuilds search index`() {
-        val videoAssetId1 = TestFactories.aValidId()
-        val videoAssetId2 = TestFactories.aValidId()
-        val videoAssetId3 = TestFactories.aValidId()
+        val videoId1 = TestFactories.aValidId()
+        val videoId2 = TestFactories.aValidId()
+        val videoId3 = TestFactories.aValidId()
 
-        searchService.upsert(sequenceOf(TestFactories.createVideoAsset(videoId = videoAssetId1)))
+        searchService.upsert(sequenceOf(TestFactories.createVideo(videoId = videoId1)))
 
-        val videoAssetRepository = mock<VideoAssetRepository> {
+        val videoRepository = mock<VideoRepository> {
             on {
-                streamAll(eq(VideoAssetFilter.IsSearchable), any())
+                streamAll(eq(VideoFilter.IsSearchable), any())
             } doAnswer { invocations ->
-                val consumer = invocations.getArgument(1) as (Sequence<VideoAsset>) -> Unit
+                val consumer = invocations.getArgument(1) as (Sequence<Video>) -> Unit
 
                 consumer(
                     sequenceOf(
-                        TestFactories.createVideoAsset(videoId = videoAssetId2),
-                        TestFactories.createVideoAsset(videoId = videoAssetId3)
+                        TestFactories.createVideo(videoId = videoId2),
+                        TestFactories.createVideo(videoId = videoId3)
                     )
                 )
             }
         }
 
-        val rebuildSearchIndex = RebuildSearchIndex(videoAssetRepository, searchService)
+        val rebuildSearchIndex = RebuildSearchIndex(videoRepository, searchService)
 
         assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
-        val searchRequest = PaginatedSearchRequest(Query(ids = listOf(videoAssetId1, videoAssetId2, videoAssetId3)))
-        assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(videoAssetId2, videoAssetId3)
+        val searchRequest = PaginatedSearchRequest(Query(ids = listOf(videoId1, videoId2, videoId3)))
+        assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(videoId2, videoId3)
     }
 
     @Test
     fun `the future surfaces any underlying exceptions`() {
-        val videoAssetRepository = mock<VideoAssetRepository> {
+        val videoRepository = mock<VideoRepository> {
             on {
                 streamAll(any(), any())
             } doThrow (MongoClientException("Boom"))
         }
 
-        val rebuildSearchIndex = RebuildSearchIndex(videoAssetRepository, searchService)
+        val rebuildSearchIndex = RebuildSearchIndex(videoRepository, searchService)
 
         assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }

@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.assertThrows
 
 class AddVideoToCollectionTest {
 
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
 
     @BeforeEach
     fun setUp() {
@@ -29,30 +29,30 @@ class AddVideoToCollectionTest {
 
     @Test
     fun `creates a collection if it doesn't exist`() {
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val addVideoToCollection = AddVideoToCollection(collectionService, mock())
+        val addVideoToCollection = AddVideoToCollection(collectionRepository, mock())
         val collectionId = TestFactories.aValidId()
         val videoId = TestFactories.aValidId()
 
         addVideoToCollection(collectionId, videoId)
 
         argumentCaptor<CollectionUpdateCommand.AddVideoToCollectionCommand>().apply {
-            verify(collectionService).update(eq(CollectionId(collectionId)), capture())
+            verify(collectionRepository).update(eq(CollectionId(collectionId)), capture())
             assertThat(firstValue.videoId.value).isEqualTo(videoId)
         }
     }
 
     @Test
     fun `logs an event`() {
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
         val eventService = FakeAnalyticsEventService()
-        val addVideoToCollection = AddVideoToCollection(collectionService, eventService)
+        val addVideoToCollection = AddVideoToCollection(collectionRepository, eventService)
         val collectionId = TestFactories.aValidId()
         val videoId = TestFactories.aValidId()
 
@@ -70,11 +70,11 @@ class AddVideoToCollectionTest {
         val collectionId = CollectionId("collection-123")
         val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com")
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val addToCollection = AddVideoToCollection(collectionService, FakeAnalyticsEventService())
+        val addToCollection = AddVideoToCollection(collectionRepository, FakeAnalyticsEventService())
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             addToCollection(
@@ -82,6 +82,6 @@ class AddVideoToCollectionTest {
                 videoId = TestFactories.aValidId()
             )
         }
-        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
     }
 }

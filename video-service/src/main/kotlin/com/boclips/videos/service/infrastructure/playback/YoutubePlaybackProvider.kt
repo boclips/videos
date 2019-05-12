@@ -11,7 +11,7 @@ import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeRequestInitializer
 import com.google.api.services.youtube.model.Video
 import java.time.Duration
-import java.util.*
+import java.util.Locale
 
 class YoutubePlaybackProvider(youtubeApiKey: String) :
     PlaybackProvider {
@@ -19,10 +19,12 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
 
         const val IDS_PER_QUERY_LIMIT = 50
     }
+
     private val youtube = YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory(), null)
         .setYouTubeRequestInitializer(YouTubeRequestInitializer(youtubeApiKey))
         .setApplicationName("boclips-video-service")
         .build()
+
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
         if (playbackIds.isEmpty()) {
             return emptyMap()

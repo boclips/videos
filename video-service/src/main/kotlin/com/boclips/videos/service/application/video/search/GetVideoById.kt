@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
@@ -11,8 +11,8 @@ class GetVideoById(
     private val videoToResourceConverter: VideoToResourceConverter
 ) {
 
-    operator fun invoke(assetId: AssetId): Resource<VideoResource> {
-        return videoService.get(assetId)
+    operator fun invoke(videoId: VideoId): Resource<VideoResource> {
+        return videoService.getPlayableVideo(videoId)
             .let(videoToResourceConverter::fromVideo)
     }
 }

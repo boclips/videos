@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.PageInfo
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.mock
@@ -166,7 +166,8 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.editCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
+        val link =
+            collectionsLinkBuilder.editCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123")
         assertThat(link.rel).isEqualTo("edit")
@@ -179,7 +180,8 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.removeCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
+        val link =
+            collectionsLinkBuilder.removeCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123")
         assertThat(link.rel).isEqualTo("remove")
@@ -192,7 +194,12 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.addVideoToCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
+        val link = collectionsLinkBuilder.addVideoToCollection(
+            TestFactories.createCollectionResource(
+                id = "c123",
+                isMine = true
+            )
+        )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123/videos/{video_id}")
         assertThat(link.rel).isEqualTo("addVideo")
@@ -205,7 +212,12 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=hello"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.removeVideoFromCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
+        val link = collectionsLinkBuilder.removeVideoFromCollection(
+            TestFactories.createCollectionResource(
+                id = "c123",
+                isMine = true
+            )
+        )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123/videos/{video_id}")
         assertThat(link.rel).isEqualTo("removeVideo")
@@ -371,7 +383,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.bookmark(TestFactories.createCollectionResource(isPublic = true, isBookmarked = false, isMine = false))
+        val link = collectionsLinkBuilder.bookmark(
+            TestFactories.createCollectionResource(
+                isPublic = true,
+                isBookmarked = false,
+                isMine = false
+            )
+        )
 
         val url = URL(link?.href)
         assertThat(url).hasProtocol("https")
@@ -387,7 +405,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.bookmark(TestFactories.createCollectionResource(isPublic = false, isBookmarked = false, isMine = false))
+        val link = collectionsLinkBuilder.bookmark(
+            TestFactories.createCollectionResource(
+                isPublic = false,
+                isBookmarked = false,
+                isMine = false
+            )
+        )
 
         assertThat(link).isNull()
     }
@@ -398,7 +422,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.bookmark(TestFactories.createCollectionResource(isPublic = true, isBookmarked = false, isMine = true))
+        val link = collectionsLinkBuilder.bookmark(
+            TestFactories.createCollectionResource(
+                isPublic = true,
+                isBookmarked = false,
+                isMine = true
+            )
+        )
 
         assertThat(link).isNull()
     }
@@ -409,7 +439,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.bookmark(TestFactories.createCollectionResource(isPublic = true, isBookmarked = true, isMine = false))
+        val link = collectionsLinkBuilder.bookmark(
+            TestFactories.createCollectionResource(
+                isPublic = true,
+                isBookmarked = true,
+                isMine = false
+            )
+        )
 
         assertThat(link).isNull()
     }
@@ -420,7 +456,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.unbookmark(TestFactories.createCollectionResource(isPublic = true, isBookmarked = true, isMine = false))
+        val link = collectionsLinkBuilder.unbookmark(
+            TestFactories.createCollectionResource(
+                isPublic = true,
+                isBookmarked = true,
+                isMine = false
+            )
+        )
 
         val url = URL(link?.href)
         assertThat(url).hasProtocol("https")
@@ -436,7 +478,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.unbookmark(TestFactories.createCollectionResource(isPublic = false, isBookmarked = true, isMine = false))
+        val link = collectionsLinkBuilder.unbookmark(
+            TestFactories.createCollectionResource(
+                isPublic = false,
+                isBookmarked = true,
+                isMine = false
+            )
+        )
 
         assertThat(link).isNull()
     }
@@ -447,7 +495,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.unbookmark(TestFactories.createCollectionResource(isPublic = true, isBookmarked = true, isMine = true))
+        val link = collectionsLinkBuilder.unbookmark(
+            TestFactories.createCollectionResource(
+                isPublic = true,
+                isBookmarked = true,
+                isMine = true
+            )
+        )
 
         assertThat(link).isNull()
     }
@@ -458,7 +512,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.unbookmark(TestFactories.createCollectionResource(isPublic = true, isBookmarked = false, isMine = false))
+        val link = collectionsLinkBuilder.unbookmark(
+            TestFactories.createCollectionResource(
+                isPublic = true,
+                isBookmarked = false,
+                isMine = false
+            )
+        )
 
         assertThat(link).isNull()
     }

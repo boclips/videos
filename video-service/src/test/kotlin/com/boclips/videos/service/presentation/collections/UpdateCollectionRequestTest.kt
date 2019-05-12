@@ -60,7 +60,8 @@ class UpdateCollectionRequestTest {
 
     @Test
     fun `invalidates unreasonable age range with plus`() {
-        val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = AgeRangeRequest(min = 329, max = null))
+        val validRequest =
+            TestFactories.createUpdateCollectionRequest(ageRange = AgeRangeRequest(min = 329, max = null))
         val violations = validator.validate(validRequest)
         Assertions.assertThat(violations).hasSize(1)
     }

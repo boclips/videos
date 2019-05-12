@@ -2,19 +2,19 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.config.properties.YoutubeProperties
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.infrastructure.collection.MongoCollectionService
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
-import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository
+import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository
 import com.mongodb.MongoClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,30 +25,29 @@ class DomainContext(val mongoClient: MongoClient) {
 
     @Bean
     fun videoService(
-        videoAssetRepository: VideoAssetRepository,
+        videoRepository: VideoRepository,
         searchService: SearchService,
         playbackRepository: PlaybackRepository
     ): VideoService {
         return VideoService(
-            videoAssetRepository,
-            searchService,
-            playbackRepository
+            videoRepository,
+            searchService
         )
     }
 
     @Bean
-    fun videoAccessService(videoAssetRepository: VideoAssetRepository): VideoAccessService {
-        return VideoAccessService(videoAssetRepository = videoAssetRepository)
+    fun videoAccessService(videoRepository: VideoRepository): VideoAccessService {
+        return VideoAccessService(videoRepository = videoRepository)
     }
 
     @Bean
-    fun collectionService(videoService: VideoService): CollectionService {
-        return MongoCollectionService(mongoClient)
+    fun collectionService(videoService: VideoService): CollectionRepository {
+        return MongoCollectionRepository(mongoClient)
     }
 
     @Bean
-    fun videoRepository(): VideoAssetRepository {
-        return MongoVideoAssetRepository(mongoClient)
+    fun videoRepository(): VideoRepository {
+        return MongoVideoRepository(mongoClient)
     }
 
     @Bean

@@ -4,7 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.assertThrows
 
 class DeleteCollectionTest {
 
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
 
     @BeforeEach
     fun setUp() {
@@ -28,16 +28,16 @@ class DeleteCollectionTest {
 
     @Test
     fun `deletes collection`() {
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val deleteCollection = DeleteCollection(collectionService)
+        val deleteCollection = DeleteCollection(collectionRepository)
         val collectionId = TestFactories.aValidId()
 
         deleteCollection(collectionId)
 
-        verify(collectionService).delete(eq(CollectionId(collectionId)))
+        verify(collectionRepository).delete(eq(CollectionId(collectionId)))
     }
 
     @Test
@@ -45,20 +45,21 @@ class DeleteCollectionTest {
         setSecurityContext("attacker@example.com")
 
         val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = false)
+        val onGetCollection =
+            TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = false)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val deleteCollection = DeleteCollection(collectionService)
+        val deleteCollection = DeleteCollection(collectionRepository)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             deleteCollection(
-                    collectionId = collectionId.value
+                collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
     }
 
     @Test
@@ -66,22 +67,22 @@ class DeleteCollectionTest {
         setSecurityContext("attacker@example.com")
 
         val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = true)
+        val onGetCollection =
+            TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = true)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val deleteCollection = DeleteCollection(collectionService)
+        val deleteCollection = DeleteCollection(collectionRepository)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             deleteCollection(
-                    collectionId = collectionId.value
+                collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
     }
-
 
     @Test
     fun `throws when collection doesn't exist`() {
@@ -90,17 +91,17 @@ class DeleteCollectionTest {
         val collectionId = CollectionId("collection-123")
         val onGetCollection: Collection? = null
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val deleteCollection = DeleteCollection(collectionService)
+        val deleteCollection = DeleteCollection(collectionRepository)
 
         assertThrows<CollectionNotFoundException> {
             deleteCollection(
-                    collectionId = collectionId.value
+                collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
     }
 }

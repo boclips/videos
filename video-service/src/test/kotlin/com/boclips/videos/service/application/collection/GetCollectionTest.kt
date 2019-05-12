@@ -1,10 +1,10 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.assertThrows
 
 class GetCollectionTest {
 
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
     lateinit var collectionResourceFactory: CollectionResourceFactory
     lateinit var videoService: VideoService
     lateinit var videosLinkBuilder: VideosLinkBuilder
@@ -31,12 +31,16 @@ class GetCollectionTest {
     fun setUp() {
         setSecurityContext("me@me.com")
         videoService = mock {
-            on { get(any<List<AssetId>>()) } doReturn listOf(
+            on { getPlayableVideo(any<List<VideoId>>()) } doReturn listOf(
                 TestFactories.createVideo()
             )
         }
         videosLinkBuilder = mock()
-        collectionResourceFactory = CollectionResourceFactory(VideoToResourceConverter(videosLinkBuilder), SubjectToResourceConverter() ,videoService)
+        collectionResourceFactory = CollectionResourceFactory(
+            VideoToResourceConverter(videosLinkBuilder),
+            SubjectToResourceConverter(),
+            videoService
+        )
     }
 
     @Test
@@ -48,11 +52,11 @@ class GetCollectionTest {
             title = "Freshly found"
         )
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val collection = GetCollection(collectionService, collectionResourceFactory).invoke(collectionId.value)
+        val collection = GetCollection(collectionRepository, collectionResourceFactory).invoke(collectionId.value)
 
         assertThat(collection.id).isEqualTo(onGetCollection.id.value)
         assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
@@ -61,11 +65,11 @@ class GetCollectionTest {
 
     @Test
     fun `throws not found error when collection doesn't exist`() {
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) } doAnswer { null }
         }
 
-        val getCollection = GetCollection(collectionService, collectionResourceFactory)
+        val getCollection = GetCollection(collectionRepository, collectionResourceFactory)
 
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = "123") }
     }
@@ -76,11 +80,11 @@ class GetCollectionTest {
 
         val privateCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = false)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(privateCollection.id) } doReturn privateCollection
         }
 
-        val getCollection = GetCollection(collectionService, collectionResourceFactory)
+        val getCollection = GetCollection(collectionRepository, collectionResourceFactory)
 
         assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId = privateCollection.id.value) }
     }
@@ -91,11 +95,12 @@ class GetCollectionTest {
 
         val publicCollection = TestFactories.createCollection(owner = "owner@example.com", isPublic = true)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(publicCollection.id) } doReturn publicCollection
         }
 
-        val collection = GetCollection(collectionService, collectionResourceFactory).invoke(publicCollection.id.value)
+        val collection =
+            GetCollection(collectionRepository, collectionResourceFactory).invoke(publicCollection.id.value)
 
         assertThat(collection.id).isEqualTo(publicCollection.id.value)
     }

@@ -1,9 +1,9 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
@@ -15,8 +15,8 @@ class VideoToResourceConverter(private val videosLinkBuilder: VideosLinkBuilder)
         return videos.map { video -> fromVideo(video) }
     }
 
-    fun wrapVideoAssetIdsInResource(assetIds: List<AssetId>): List<Resource<VideoResource>> {
-        return assetIds.map { assetId -> wrapResourceWithHateoas(VideoResource(id = assetId.value)) }
+    fun wrapVideoIdsInResource(videoIds: List<VideoId>): List<Resource<VideoResource>> {
+        return videoIds.map { videoId -> wrapResourceWithHateoas(VideoResource(id = videoId.value)) }
     }
 
     fun fromVideo(video: Video): Resource<VideoResource> {
@@ -26,19 +26,19 @@ class VideoToResourceConverter(private val videosLinkBuilder: VideosLinkBuilder)
     private fun toResource(video: Video): Resource<VideoResource> {
         return wrapResourceWithHateoas(
             VideoResource(
-                id = video.asset.assetId.value,
-                title = video.asset.title,
-                description = video.asset.description,
-                contentPartner = video.asset.contentPartnerId,
-                contentPartnerVideoId = video.asset.contentPartnerVideoId,
-                releasedOn = video.asset.releasedOn,
+                id = video.videoId.value,
+                title = video.title,
+                description = video.description,
+                contentPartner = video.contentPartnerId,
+                contentPartnerVideoId = video.contentPartnerVideoId,
+                releasedOn = video.releasedOn,
                 playback = getPlayback(video),
-                subjects = video.asset.subjects.map { it.name }.toSet(),
+                subjects = video.subjects.map { it.name }.toSet(),
                 badges = getBadges(video),
-                type = VideoTypeResource(id = video.asset.type.id, name = video.asset.type.title),
+                type = VideoTypeResource(id = video.type.id, name = video.type.title),
                 status = getStatus(video),
-                legalRestrictions = video.asset.legalRestrictions,
-                hasTranscripts = video.asset.transcript != null
+                legalRestrictions = video.legalRestrictions,
+                hasTranscripts = video.transcript != null
             )
         )
     }
@@ -63,7 +63,7 @@ class VideoToResourceConverter(private val videosLinkBuilder: VideosLinkBuilder)
     }
 
     private fun getStatus(video: Video): VideoResourceStatus {
-        return if (video.asset.searchable) {
+        return if (video.searchable) {
             VideoResourceStatus.SEARCHABLE
         } else {
             VideoResourceStatus.SEARCH_DISABLED

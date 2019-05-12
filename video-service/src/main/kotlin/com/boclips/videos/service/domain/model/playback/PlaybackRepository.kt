@@ -1,9 +1,10 @@
 package com.boclips.videos.service.domain.model.playback
 
 import com.boclips.events.types.Captions
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.*
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
-import java.util.*
+import java.util.Locale
 
 class PlaybackRepository(
     private val kalturaPlaybackProvider: PlaybackProvider,
@@ -42,7 +43,7 @@ class PlaybackRepository(
     }
 
     private fun getProvider(playbackId: PlaybackId): PlaybackProvider {
-        return when(playbackId.type) {
+        return when (playbackId.type) {
             KALTURA -> kalturaPlaybackProvider
             YOUTUBE -> youtubePlaybackProvider
         }

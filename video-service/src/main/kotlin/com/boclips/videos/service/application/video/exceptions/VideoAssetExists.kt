@@ -1,3 +1,3 @@
 package com.boclips.videos.service.application.video.exceptions
 
-class VideoAssetExists(val contentPartnerId: String, val contentPartnerVideoId: String) : RuntimeException()
+class VideoExists(val contentPartnerId: String, val contentPartnerVideoId: String) : RuntimeException()

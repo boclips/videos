@@ -2,16 +2,15 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.videos.service.domain.model.asset.VideoAssetFilter.IsSearchable
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.service.video.VideoAssetToLegacyVideoMetadataConverter
+import com.boclips.videos.service.domain.model.video.VideoFilter.IsSearchable
+import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
 
 open class BuildLegacySearchIndex(
-    private val videoAssetRepository: VideoAssetRepository,
+    private val videoRepository: VideoRepository,
     private val legacySearchService: LegacySearchService
 ) {
     companion object : KLogging()
@@ -22,13 +21,14 @@ open class BuildLegacySearchIndex(
         val future = CompletableFuture<Unit>()
 
         try {
-            videoAssetRepository.streamAll(IsSearchable) { videos ->
-                val videoAssets = videos
+            videoRepository.streamAll(IsSearchable) { videos ->
+                val filteredVideos = videos
                     .filter { it.title.isNotEmpty() }
-                    .filter { it.playbackId.type == PlaybackProviderType.KALTURA }
-                    .map(VideoAssetToLegacyVideoMetadataConverter::convert)
+                    .filter { it.isPlayable() }
+                    .filter { it.isBoclipsHosted() }
+                    .map(VideoToLegacyVideoMetadataConverter::convert)
 
-                legacySearchService.upsert(videoAssets, notifier)
+                legacySearchService.upsert(filteredVideos, notifier)
             }
 
             logger.info("Building a legacy index done.")

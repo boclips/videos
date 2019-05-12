@@ -1,34 +1,34 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.video.VideoResource
 
 class UpdateVideo(
-    private val videoAssetRepository: VideoAssetRepository
+    private val videoRepository: VideoRepository
 ) {
     operator fun invoke(id: String?, patch: VideoResource) {
-        val assetId = try {
+        val videoId = try {
             resolveToAssetId(id)
         } catch (ex: Exception) {
-            throw VideoAssetNotFoundException()
+            throw VideoNotFoundException()
         }
 
-        val updateCommands = VideoUpdatesConverter.convert(assetId, patch)
+        val updateCommands = VideoUpdatesConverter.convert(videoId, patch)
 
-        videoAssetRepository.bulkUpdate(updateCommands)
+        videoRepository.bulkUpdate(updateCommands)
     }
 
-    private fun resolveToAssetId(idOrAlias: String?): AssetId {
-        if (idOrAlias == null) throw VideoAssetNotFoundException()
+    private fun resolveToAssetId(idOrAlias: String?): VideoId {
+        if (idOrAlias == null) throw VideoNotFoundException()
 
         return if (SearchVideo.isAlias(idOrAlias)) {
-            videoAssetRepository.resolveAlias(idOrAlias) ?: throw VideoAssetNotFoundException()
+            videoRepository.resolveAlias(idOrAlias) ?: throw VideoNotFoundException()
         } else {
-            videoAssetRepository.find(AssetId(value = idOrAlias))?.assetId
-                ?: throw VideoAssetNotFoundException()
+            videoRepository.find(VideoId(value = idOrAlias))?.videoId
+                ?: throw VideoNotFoundException()
         }
     }
 }

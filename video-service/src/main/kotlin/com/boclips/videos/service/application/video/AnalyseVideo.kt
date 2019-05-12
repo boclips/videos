@@ -3,9 +3,9 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.config.Topics
 import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
 import mu.KLogging
 import org.springframework.messaging.support.MessageBuilder
@@ -18,16 +18,16 @@ class AnalyseVideo(
     companion object : KLogging()
 
     operator fun invoke(videoId: String, language: Locale?) {
-        val video = videoService.get(assetId = AssetId(value = videoId))
+        val video = videoService.getPlayableVideo(videoId = VideoId(value = videoId))
         val playback = video.playback as? StreamPlayback ?: throw VideoNotAnalysableException()
 
-        if (!video.asset.searchable) {
+        if (!video.searchable) {
             logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because it is not searchable" }
             return
         }
 
-        if (video.asset.type != LegacyVideoType.INSTRUCTIONAL_CLIPS) {
-            logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because its legacy type is ${video.asset.type.name}" }
+        if (video.type != LegacyVideoType.INSTRUCTIONAL_CLIPS) {
+            logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because its legacy type is ${video.type.name}" }
             return
         }
 
@@ -37,7 +37,7 @@ class AnalyseVideo(
         }
 
         val videoToAnalyse = VideoAnalysisRequested.builder()
-            .videoId(video.asset.assetId.value)
+            .videoId(video.videoId.value)
             .videoUrl(playback.downloadUrl)
             .language(language)
             .build()

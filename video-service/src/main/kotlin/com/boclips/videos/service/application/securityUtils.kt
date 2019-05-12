@@ -1,13 +1,13 @@
 import com.boclips.security.utils.User
 import com.boclips.security.utils.UserExtractor
 import com.boclips.security.utils.hasRole
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.collection.UserId
 
 fun getCurrentUserId() = UserId(value = getCurrentUser().id)
 
 fun getCurrentUser() = UserExtractor.getCurrentUser() ?: User(false, "anonymous", emptySet())
 
-fun getCurrentUserIfNotAnonymous() : User? {
+fun getCurrentUserIfNotAnonymous(): User? {
     val user = UserExtractor.getCurrentUser()
 
     if (user?.id == "anonymousUser") {

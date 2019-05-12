@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
-import com.boclips.videos.service.domain.model.PageRequest
-import com.boclips.videos.service.domain.model.UserId
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -16,7 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser
 class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
 
     @Test
     @WithMockUser("this-user")
@@ -41,7 +41,10 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         assertThat(collection.videos.first().value).isEqualTo(videoId1)
         assertThat(collection.createdByBoclips).isFalse()
 
-        val allCollections = collectionService.getByOwner(UserId("this-user"), PageRequest(0, 10)).elements
+        val allCollections = collectionRepository.getByOwner(
+            UserId("this-user"),
+            PageRequest(0, 10)
+        ).elements
         assertThat(allCollections).contains(collection)
     }
 

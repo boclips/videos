@@ -2,16 +2,16 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.util.*
+import java.util.Locale
 
 class AnalyseVideoIntegrationTest(
     @Autowired val analyseVideo: AnalyseVideo
@@ -20,9 +20,9 @@ class AnalyseVideoIntegrationTest(
     @Test
     fun `sends an event`() {
         val videoId = saveVideo(
-                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                searchable = true,
-                duration = Duration.ofSeconds(70)
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+            searchable = true,
+            duration = Duration.ofSeconds(70)
         ).value
 
         analyseVideo(videoId, language = Locale.GERMAN)
@@ -37,8 +37,8 @@ class AnalyseVideoIntegrationTest(
     @Test
     fun `does not send events for non searchable videos`() {
         val videoId = saveVideo(
-                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                searchable = false
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+            searchable = false
         ).value
 
         analyseVideo(videoId, language = null)
@@ -51,9 +51,9 @@ class AnalyseVideoIntegrationTest(
     @Test
     fun `does not send events for videos not longer than 20s`() {
         val videoId = saveVideo(
-                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                searchable = true,
-                duration = Duration.ofSeconds(20)
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+            searchable = true,
+            duration = Duration.ofSeconds(20)
         ).value
 
         analyseVideo(videoId, language = null)
@@ -66,9 +66,9 @@ class AnalyseVideoIntegrationTest(
     @Test
     fun `does not send events for non instructional videos`() {
         val videoId = saveVideo(
-                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                searchable = true,
-                legacyType = LegacyVideoType.NEWS
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
+            searchable = true,
+            legacyType = LegacyVideoType.NEWS
         ).value
 
         analyseVideo(videoId, language = null)
@@ -80,7 +80,8 @@ class AnalyseVideoIntegrationTest(
 
     @Test
     fun `throws on youtube videos`() {
-        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "youtube-id")).value
+        val videoId =
+            saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "youtube-id")).value
 
         assertThrows<VideoNotAnalysableException> { analyseVideo(videoId, language = null) }
     }

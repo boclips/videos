@@ -1,21 +1,21 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
-import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.Video
 
-object VideoAssetToLegacyVideoMetadataConverter {
+object VideoToLegacyVideoMetadataConverter {
 
-    fun convert(asset: VideoAsset): LegacyVideoMetadata {
+    fun convert(video: Video): LegacyVideoMetadata {
         return LegacyVideoMetadata(
-            id = asset.assetId.value,
-            title = asset.title,
-            description = asset.description,
-            keywords = asset.keywords,
-            duration = asset.duration,
-            contentPartnerName = asset.contentPartnerId,
-            contentPartnerVideoId = asset.contentPartnerVideoId,
-            releaseDate = asset.releasedOn,
-            videoTypeTitle = asset.type.title
+            id = video.videoId.value,
+            title = video.title,
+            description = video.description,
+            keywords = video.keywords,
+            duration = video.playback.duration,
+            contentPartnerName = video.contentPartnerId,
+            contentPartnerVideoId = video.contentPartnerVideoId,
+            releaseDate = video.releasedOn,
+            videoTypeTitle = video.type.title
         )
     }
 }

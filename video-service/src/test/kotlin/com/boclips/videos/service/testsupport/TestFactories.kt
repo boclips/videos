@@ -10,22 +10,21 @@ import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
-import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.SubjectId
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacySubject
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.Topic
-import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.collection.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.SubjectId
+import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.domain.model.video.LegacySubject
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.collections.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -48,32 +47,24 @@ import java.util.Locale
 object TestFactories {
 
     fun createVideo(
-        videoAsset: VideoAsset = createVideoAsset(),
-        videoPlayback: VideoPlayback = createKalturaPlayback()
-    ) = Video(asset = videoAsset, playback = videoPlayback)
-
-    fun createVideoAsset(
         videoId: String = ObjectId().toHexString(),
         title: String = "title",
         description: String = "description",
         contentPartnerId: String = "Reuters",
         contentPartnerVideoId: String = "cp-id-$videoId",
-        playbackId: PlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
-        playback: VideoPlayback? = null,
+        playback: VideoPlayback = createKalturaPlayback(),
         type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = listOf("keyword"),
         subjects: Set<LegacySubject> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
-        duration: Duration = Duration.ZERO,
         legalRestrictions: String = "",
         language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
         searchable: Boolean = true
-    ): VideoAsset {
-        return VideoAsset(
-            assetId = AssetId(value = ObjectId(videoId).toHexString()),
-            playbackId = playbackId,
+    ): Video {
+        return Video(
+            videoId = VideoId(value = ObjectId(videoId).toHexString()),
             playback = playback,
             title = title,
             description = description,
@@ -82,7 +73,6 @@ object TestFactories {
             contentPartnerId = contentPartnerId,
             contentPartnerVideoId = contentPartnerVideoId,
             type = type,
-            duration = duration,
             legalRestrictions = legalRestrictions,
             subjects = subjects,
             language = language,
@@ -101,7 +91,7 @@ object TestFactories {
         return MediaEntry.builder()
             .id(id)
             .referenceId(referenceId)
-            .streams(StreamUrls("https://stream/[FORMAT]/asset-$id.mp4"))
+            .streams(StreamUrls("https://stream/[FORMAT]/video-$id.mp4"))
             .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
             .downloadUrl("https://download/video-$id.mp4")
             .duration(duration)
@@ -114,25 +104,33 @@ object TestFactories {
         downloadUrl: String = "kaltura-download",
         playbackId: String = "555",
         thumbnailUrl: String = "kaltura-thumbnailUrl",
-        streamUrl: String = "kaltura-stream"
+        hlsStreamUrl: String = "hls-stream",
+        dashStreamUrl: String = "dash-stream",
+        progressiveStreamUrl: String = "progressive-stream"
     ): StreamPlayback {
         return StreamPlayback(
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackId),
-            appleHlsStreamUrl = streamUrl,
-            mpegDashStreamUrl = streamUrl,
-            progressiveDownloadStreamUrl = streamUrl,
+            appleHlsStreamUrl = hlsStreamUrl,
+            mpegDashStreamUrl = dashStreamUrl,
+            progressiveDownloadStreamUrl = progressiveStreamUrl,
             thumbnailUrl = thumbnailUrl,
             downloadUrl = downloadUrl,
             duration = duration
         )
     }
 
-    fun createYoutubePlayback(): YoutubePlayback {
-        val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "444")
+    fun createYoutubePlayback(
+        playbackId: PlaybackId = PlaybackId(
+            type = PlaybackProviderType.YOUTUBE,
+            value = "444"
+        ),
+        duration: Duration = Duration.ofSeconds(21),
+        thumbnailUrl: String = "youtube-thumbnail"
+    ): YoutubePlayback {
         return YoutubePlayback(
             id = playbackId,
-            thumbnailUrl = "youtube-thumbnail",
-            duration = Duration.ofSeconds(21)
+            thumbnailUrl = thumbnailUrl,
+            duration = duration
         )
     }
 
@@ -176,7 +174,7 @@ object TestFactories {
         id: CollectionId = CollectionId("collection-id"),
         owner: String = "collection owner",
         title: String = "collection title",
-        videos: List<AssetId> = listOf(createVideo().asset.assetId),
+        videos: List<VideoId> = listOf(createVideo().videoId),
         updatedAt: Instant = Instant.now(),
         isPublic: Boolean = false,
         createdByBoclips: Boolean = false,

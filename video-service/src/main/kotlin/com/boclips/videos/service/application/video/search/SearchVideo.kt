@@ -1,16 +1,16 @@
 package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.SortKey
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 
 class SearchVideo(
     private val getVideoById: GetVideoById,
     private val getAllVideosById: GetAllVideosById,
     private val getVideosByQuery: GetVideosByQuery,
-    private val videoAssetRepository: VideoAssetRepository
+    private val videoRepository: VideoRepository
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
@@ -46,14 +46,14 @@ class SearchVideo(
         source = source
     )
 
-    private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): AssetId? {
+    private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): VideoId? {
         val videoId = getOrThrow(videoIdParam)
 
         return try {
             if (isAlias(videoId)) {
-                videoAssetRepository.resolveAlias(videoId) ?: throw VideoAssetNotFoundException()
+                videoRepository.resolveAlias(videoId) ?: throw VideoNotFoundException()
             } else {
-                AssetId(value = videoId)
+                VideoId(value = videoId)
             }
         } catch (e: Exception) {
             if (throwIfDoesNotExist)

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.UserId
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
@@ -40,7 +40,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Autowired
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
 
     @Test
     fun `create a collection`() {
@@ -132,8 +132,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `gets all user collections with basic video details`() {
         val collectionId = createCollection("collection 1")
         createCollection("collection 2")
-        val savedVideoAssetId = saveVideo(title = "a video title")
-        addVideo(collectionId, savedVideoAssetId.value)
+        val savedVideoId = saveVideo(title = "a video title")
+        addVideo(collectionId, savedVideoId.value)
 
         mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
@@ -143,7 +143,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(true)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(savedVideoAssetId.value)))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(savedVideoId.value)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
@@ -261,7 +261,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `collection includes an updatedAt timestamp`() {
-        val collectionId = collectionService.create(
+        val collectionId = collectionRepository.create(
             owner = UserId("teacher@gmail.com"),
             title = "Collection",
             createdByBoclips = false
@@ -315,7 +315,11 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val email = "teacher@gmail.com"
         val videoId = saveVideo(title = "a video title").value
         val collectionId =
-            collectionService.create(owner = UserId(email), title = "My Special Collection", createdByBoclips = false)
+            collectionRepository.create(
+                owner = UserId(email),
+                title = "My Special Collection",
+                createdByBoclips = false
+            )
                 .id.value
 
         assertCollectionSize(collectionId, 0)
@@ -393,7 +397,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.errors[0].field", equalTo("ageRange.min")))
-            .andExpect(jsonPath("$.errors[0].message", containsString("Age range min must be less than or equal to 19")))
+            .andExpect(
+                jsonPath(
+                    "$.errors[0].message",
+                    containsString("Age range min must be less than or equal to 19")
+                )
+            )
     }
 
     @Test
@@ -435,7 +444,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     private fun createCollectionWithTitle(title: String): String {
         val email = "teacher@gmail.com"
-        return collectionService.create(owner = UserId(email), title = title, createdByBoclips = false).id.value
+        return collectionRepository.create(owner = UserId(email), title = title, createdByBoclips = false).id.value
     }
 
     private fun addVideo(collectionId: String, videoId: String) {

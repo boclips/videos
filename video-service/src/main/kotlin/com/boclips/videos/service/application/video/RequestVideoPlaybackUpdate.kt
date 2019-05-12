@@ -3,16 +3,16 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.VideoPlaybackSyncRequested
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.messaging.support.MessageBuilder
 
 open class RequestVideoPlaybackUpdate(
-    private val videoAssetRepository: VideoAssetRepository,
+    private val videoRepository: VideoRepository,
     private val playbackRepository: PlaybackRepository,
     private val topics: Topics
 ) {
@@ -22,14 +22,14 @@ open class RequestVideoPlaybackUpdate(
         logger.info("Requesting video playback synchronization for all videos")
 
         try {
-            videoAssetRepository.streamAll { sequence ->
+            videoRepository.streamAll { sequence ->
                 sequence.forEach { video ->
                     val videoToBeUpdated = VideoPlaybackSyncRequested.builder()
-                        .videoId(video.assetId.value)
+                        .videoId(video.videoId.value)
                         .build()
 
                     topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
-                    logger.info { "Video ${video.assetId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+                    logger.info { "Video ${video.videoId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
                 }
             }
         } catch (ex: Exception) {
@@ -47,30 +47,35 @@ open class RequestVideoPlaybackUpdate(
     }
 
     private fun handleUpdate(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
-        val potentialAssetToBeUpdated = AssetId(value = videoPlaybackSyncRequestedEvent.videoId)
-        val actualAsset = videoAssetRepository.find(potentialAssetToBeUpdated)
+        val potentialVideoToBeUpdated = VideoId(value = videoPlaybackSyncRequestedEvent.videoId)
+        val actualVideo = videoRepository.find(potentialVideoToBeUpdated)
 
-        if (actualAsset == null) {
-            logger.info { "Could find video $potentialAssetToBeUpdated" }
+        if (actualVideo == null) {
+            logger.info { "Could find video $potentialVideoToBeUpdated" }
             return
         }
 
-        val playback = playbackRepository.find(actualAsset.playbackId)
+        if (!actualVideo.isPlayable()) {
+            logger.info { "Video $potentialVideoToBeUpdated has no playback information associated with it." }
+            return
+        }
+
+        val playback = playbackRepository.find(actualVideo.playback.id)
         if (playback == null) {
-            logger.info { "Could not find playback information for $potentialAssetToBeUpdated" }
+            logger.info { "Could not find playback information for $potentialVideoToBeUpdated" }
             return
         }
 
         val replacePlayback = VideoUpdateCommand.ReplacePlayback(
-            assetId = actualAsset.assetId,
+            videoId = actualVideo.videoId,
             playback = playback
         )
 
         try {
-            videoAssetRepository.update(replacePlayback)
-            logger.info { "Updated playback information for video ${actualAsset.assetId} successfully" }
+            videoRepository.update(replacePlayback)
+            logger.info { "Updated playback information for video ${actualVideo.videoId} successfully" }
         } catch (ex: Exception) {
-            logger.info { "Did not update playback for video ${actualAsset.assetId}" }
+            logger.info { "Did not update playback for video ${actualVideo.videoId}" }
         }
     }
 }

@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.exceptions.VideoAssetExists
+import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
@@ -124,7 +124,7 @@ class VideoController(
     fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
             createVideo(createVideoRequest)
-        } catch (e: VideoAssetExists) {
+        } catch (e: VideoExists) {
             val errorDetails =
                 mapOf("error" to "video from provider \"${e.contentPartnerId}\" and provider id \"${e.contentPartnerVideoId}\" already exists")
             return ResponseEntity(errorDetails, HttpStatus.CONFLICT)

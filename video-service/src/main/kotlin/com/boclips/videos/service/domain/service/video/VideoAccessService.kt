@@ -1,23 +1,23 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoAssetNotFoundException
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 
 class VideoAccessService(
-        private val videoAssetRepository: VideoAssetRepository
+    private val videoRepository: VideoRepository
 ) {
-    fun accessible(assetId: AssetId): Boolean {
-        val videoAsset = videoAssetRepository.find(assetId)
+    fun accessible(videoId: VideoId): Boolean {
+        val video = videoRepository.find(videoId)
 
-        videoAsset?.let { return it.searchable } ?: throw VideoAssetNotFoundException()
+        video?.let { return it.searchable } ?: throw VideoNotFoundException()
     }
 
-    fun grantAccess(assetIds: List<AssetId>) {
-        videoAssetRepository.bulkUpdate(assetIds.map(VideoUpdateCommand::MakeSearchable))
+    fun grantAccess(videoIds: List<VideoId>) {
+        videoRepository.bulkUpdate(videoIds.map(VideoUpdateCommand::MakeSearchable))
     }
 
-    fun revokeAccess(assetIds: List<AssetId>) {
-        videoAssetRepository.bulkUpdate(assetIds.map(VideoUpdateCommand::HideFromSearch))
+    fun revokeAccess(videoIds: List<VideoId>) {
+        videoRepository.bulkUpdate(videoIds.map(VideoUpdateCommand::HideFromSearch))
     }
 }

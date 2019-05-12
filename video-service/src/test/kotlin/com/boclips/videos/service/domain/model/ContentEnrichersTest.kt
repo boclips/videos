@@ -1,8 +1,8 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.videos.service.domain.model.ContentEnrichers.Companion.isClassroom
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -27,7 +27,7 @@ class ContentEnrichersTest {
         blackListedContentPartners.forEach {
             assertThat(
                 isClassroom(
-                    createVideoAsset(
+                    createVideo(
                         contentPartnerId = it
                     )
                 )
@@ -39,7 +39,7 @@ class ContentEnrichersTest {
     fun `non stock content is matched as classroom for non-blacklisted content partners`() {
         assertThat(
             isClassroom(
-                createVideoAsset(
+                createVideo(
                     type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
                     contentPartnerId = "Reuters"
                 )
@@ -51,7 +51,7 @@ class ContentEnrichersTest {
     fun `stock content with the word "speech" is matched as classroom`() {
         assertThat(
             isClassroom(
-                createVideoAsset(
+                createVideo(
                     type = LegacyVideoType.STOCK,
                     title = "jfk state of union speech"
                 )
@@ -59,7 +59,7 @@ class ContentEnrichersTest {
         ).isTrue()
         assertThat(
             isClassroom(
-                createVideoAsset(
+                createVideo(
                     type = LegacyVideoType.STOCK,
                     description = "jfk state of union Speech"
                 )
@@ -71,7 +71,7 @@ class ContentEnrichersTest {
     fun `stock content without the word "speech" is NOT matched as classroom`() {
         assertThat(
             isClassroom(
-                createVideoAsset(
+                createVideo(
                     type = LegacyVideoType.STOCK,
                     title = "Family left speechless by bride's wedding dress"
                 )
@@ -83,7 +83,7 @@ class ContentEnrichersTest {
     fun `stock content with the phrase "archive public information film" is matched as classroom`() {
         assertThat(
             isClassroom(
-                createVideoAsset(
+                createVideo(
                     type = LegacyVideoType.STOCK,
                     title = "Archive public information film: Woman throwing grain (to chickens)"
                 )
@@ -95,7 +95,7 @@ class ContentEnrichersTest {
     fun `stock content containing words "biology" and "animation" is matched as classroom`() {
         assertThat(
             isClassroom(
-                createVideoAsset(
+                createVideo(
                     type = LegacyVideoType.STOCK,
                     title = "Animation explaining all about biology"
                 )
@@ -107,7 +107,7 @@ class ContentEnrichersTest {
     fun `stock content containing words "space" and "animation" is matched as classroom`() {
         assertThat(
             isClassroom(
-                createVideoAsset(
+                createVideo(
                     type = LegacyVideoType.STOCK,
                     title = "Animation explaining all about space"
                 )
@@ -138,7 +138,7 @@ class ContentEnrichersTest {
             val title = "biology space animation $it"
             assertThat(
                 isClassroom(
-                    createVideoAsset(
+                    createVideo(
                         type = LegacyVideoType.STOCK,
                         title = title
                     )
@@ -159,7 +159,7 @@ class ContentEnrichersTest {
         excludedTitles.forEach {
             assertThat(
                 isClassroom(
-                    createVideoAsset(
+                    createVideo(
                         type = LegacyVideoType.STOCK,
                         title = it
                     )
@@ -179,7 +179,7 @@ class ContentEnrichersTest {
             val title = "biology space animation $it"
             assertThat(
                 isClassroom(
-                    createVideoAsset(
+                    createVideo(
                         type = LegacyVideoType.STOCK,
                         title = title
                     )

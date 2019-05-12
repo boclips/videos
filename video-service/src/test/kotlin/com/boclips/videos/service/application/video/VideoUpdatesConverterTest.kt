@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacySubject
+import com.boclips.videos.service.domain.model.video.LegacySubject
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.TestFactories
@@ -12,20 +12,20 @@ class VideoUpdatesConverterTest {
 
     @Test
     fun `no subjects to be updated`() {
-        val assetId = AssetId(value = TestFactories.aValidId())
+        val videoId = VideoId(value = TestFactories.aValidId())
         val videoResource = VideoResource(id = TestFactories.aValidId())
 
-        val updates = VideoUpdatesConverter.convert(assetId, videoResource)
+        val updates = VideoUpdatesConverter.convert(videoId, videoResource)
 
         assertThat(updates).isEmpty()
     }
 
     @Test
     fun `convert video resource to video update for subjects`() {
-        val assetId = AssetId(value = TestFactories.aValidId())
+        val videoId = VideoId(value = TestFactories.aValidId())
         val videoResource = VideoResource(id = TestFactories.aValidId(), subjects = setOf("Maths"))
 
-        val updates = VideoUpdatesConverter.convert(assetId, videoResource)
+        val updates = VideoUpdatesConverter.convert(videoId, videoResource)
 
         val replaceSubjects = updates.first() as VideoUpdateCommand.ReplaceSubjects
 

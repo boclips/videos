@@ -33,7 +33,7 @@ class LinksController(
                 videosLinkBuilder.videosLink(),
                 videosLinkBuilder.searchLink(),
                 collectionsLinkBuilder.collection(null),
-                collectionsLinkBuilder.collectionsByUser() ,
+                collectionsLinkBuilder.collectionsByUser(),
                 collectionsLinkBuilder.createCollection()
 
             )

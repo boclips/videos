@@ -2,8 +2,8 @@ package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.security.utils.User
 import com.boclips.videos.service.common.Do
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.infrastructure.analytics.EventType
@@ -60,7 +60,7 @@ class FakeAnalyticsEventService : AnalyticsEventService {
     }
 
     override fun savePlaybackEvent(
-        videoId: AssetId,
+        videoId: VideoId,
         videoIndex: Int?,
         playerId: String,
         segmentStartSeconds: Long,

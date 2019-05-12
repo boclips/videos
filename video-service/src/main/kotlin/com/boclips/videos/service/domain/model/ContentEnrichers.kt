@@ -1,23 +1,22 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
-import com.boclips.videos.service.domain.model.asset.VideoAsset
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
 
 class ContentEnrichers {
     companion object {
-        fun isClassroom(videoAsset: VideoAsset): Boolean {
-            val lowercaseTextFragments = listOf(videoAsset.title, videoAsset.description).map(String::toLowerCase)
+        fun isClassroom(video: Video): Boolean {
+            val lowercaseTextFragments = listOf(video.title, video.description).map(String::toLowerCase)
             val lowercaseText = lowercaseTextFragments.joinToString("\n")
             val bagOfWords = wordChars.findAll(lowercaseText).mapTo(mutableSetOf(), MatchResult::value).toSet()
 
             return when {
                 contentPartnersExcluded.any {
-                    videoAsset.contentPartnerId.equals(
+                    video.contentPartnerId.equals(
                         other = it,
                         ignoreCase = true
                     )
                 } -> false
-                videoAsset.type != LegacyVideoType.STOCK -> true
+                video.type != LegacyVideoType.STOCK -> true
                 classroomExcludedWords.any { bagOfWords.contains(it) } -> false
                 classroomExcludedPhrases.any { lowercaseText.contains(it) } -> false
                 classroomPermittedPhrases.any { lowercaseText.contains(it) } -> true
@@ -26,8 +25,8 @@ class ContentEnrichers {
             }
         }
 
-        fun isNews(videoAsset: VideoAsset): Boolean {
-            return videoAsset.type == LegacyVideoType.NEWS
+        fun isNews(video: Video): Boolean {
+            return video.type == LegacyVideoType.NEWS
         }
 
         private val classroomExcludedWords = listOf(

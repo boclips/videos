@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.subject
 
-import com.boclips.videos.service.domain.model.SubjectId
+import com.boclips.videos.service.domain.model.collection.SubjectId
 import org.springframework.hateoas.Resource
 
 class SubjectToResourceConverter {

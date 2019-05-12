@@ -27,7 +27,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     private val client: RestHighLevelClient
 
     companion object : KLogging() {
-        private const val ES_TYPE = "asset"
+        private const val ES_TYPE = "video"
         private const val UPSERT_BATCH_SIZE = 2000
     }
 
@@ -90,7 +90,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         val indexConfiguration = IndexConfiguration()
         val createIndexRequest = CreateIndexRequest(indexName)
                 .settings(indexConfiguration.generateIndexSettings())
-                .mapping("asset", indexConfiguration.generateVideoMapping())
+                .mapping("video", indexConfiguration.generateVideoMapping())
 
         logger.info("Creating index $indexName")
         client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
@@ -123,7 +123,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     }
 
     private fun upsertBatch(batchIndex: Int, videos: List<VideoMetadata>, indexName: String) {
-        logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s)" }
+        logger.info { "[Batch $batchIndex] Indexing ${videos.size} video(s)" }
 
         val request = videos
                 .map { indexRequest(it, indexName) }
@@ -139,7 +139,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
         if (result.hasFailures()) {
             throw Error("Batch indexing failed: ${result.buildFailureMessage()}")
         }
-        logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} asset(s)" }
+        logger.info { "[Batch $batchIndex] Successfully indexed ${result.items.size} video(s)" }
     }
 
     private fun indexRequest(video: VideoMetadata, indexName: String): IndexRequest {

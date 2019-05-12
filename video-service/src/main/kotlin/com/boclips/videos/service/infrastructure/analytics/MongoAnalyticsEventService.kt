@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.analytics
 
 import com.boclips.videos.service.common.Do
-import com.boclips.videos.service.domain.model.asset.AssetId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -41,7 +41,7 @@ class MongoAnalyticsEventService(
     }
 
     override fun savePlaybackEvent(
-        videoId: AssetId,
+        videoId: VideoId,
         videoIndex: Int?,
         playerId: String,
         segmentStartSeconds: Long,
@@ -49,7 +49,7 @@ class MongoAnalyticsEventService(
         videoDurationSeconds: Long
     ) {
         saveEvent(EventType.PLAYBACK) {
-            append("assetId", videoId.value)
+            append("videoId", videoId.value)
             append("videoIndex", videoIndex)
             append("playerId", playerId)
             append("segmentStartSeconds", segmentStartSeconds)
@@ -70,11 +70,11 @@ class MongoAnalyticsEventService(
                     append("isPublic", updateCommand.isPublic)
                 }
                 is CollectionUpdateCommand.AddVideoToCollectionCommand -> saveEvent(EventType.ADD_TO_COLLECTION) {
-                    append("assetId", updateCommand.videoId.value)
+                    append("videoId", updateCommand.videoId.value)
                     append("collectionId", collectionId.value)
                 }
                 is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> saveEvent(EventType.REMOVE_FROM_COLLECTION) {
-                    append("assetId", updateCommand.videoId.value)
+                    append("videoId", updateCommand.videoId.value)
                     append("collectionId", collectionId.value)
                 }
                 is CollectionUpdateCommand.ReplaceSubjectsCommand -> saveEvent(EventType.REPLACE_SUBJECTS) {

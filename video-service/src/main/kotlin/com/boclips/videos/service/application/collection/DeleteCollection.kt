@@ -2,15 +2,15 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.collection.security.getOwnedCollectionOrThrow
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 
 class DeleteCollection(
-        private val collectionService: CollectionService
+    private val collectionRepository: CollectionRepository
 ) {
     operator fun invoke(collectionId: String) {
-        collectionService.getOwnedCollectionOrThrow(collectionId)
+        collectionRepository.getOwnedCollectionOrThrow(collectionId)
 
-        collectionService
-                .delete(CollectionId(collectionId))
+        collectionRepository
+            .delete(CollectionId(collectionId))
     }
 }

@@ -60,28 +60,28 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `analyse video publishes events`() {
-        val assetId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123"))
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId?language=en_US").asOperator())
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
         val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
 
-        assertThat(message.payload.toString()).contains(assetId.value)
+        assertThat(message.payload.toString()).contains(videoId.value)
         assertThat(message.payload.toString()).contains("https://download/video-entry-123.mp4")
         assertThat(message.payload.toString()).contains("en_US")
     }
 
     @Test
     fun `analyse video returns 400 for youtube videos`() {
-        val assetId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123"))
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asOperator())
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId").asOperator())
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
     fun `analyse video returns 403 when user is not allowed`() {
-        val assetId = saveVideo()
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$assetId").asTeacher())
+        val videoId = saveVideo()
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
         val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
@@ -103,7 +103,10 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `analyse content partner videos returns 400 for YouTube channels`() {
-        saveVideo(contentProvider = "TheYoutuber", playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "id"))
+        saveVideo(
+            contentProvider = "TheYoutuber",
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "id")
+        )
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator())
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
 

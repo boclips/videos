@@ -4,19 +4,23 @@ import com.boclips.videos.service.application.collection.CollectionAccessNotAuth
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import getCurrentUserId
 
-fun CollectionService.getOwnedCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(collectionId = collectionId, collectionService = this, isForReading = false)
+fun CollectionRepository.getOwnedCollectionOrThrow(collectionId: String) =
+    getCollectionOrThrow(collectionId = collectionId, collectionRepository = this, isForReading = false)
 
-fun CollectionService.getReadableCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(collectionId = collectionId, collectionService = this, isForReading = true)
+fun CollectionRepository.getReadableCollectionOrThrow(collectionId: String) =
+    getCollectionOrThrow(collectionId = collectionId, collectionRepository = this, isForReading = true)
 
-private fun getCollectionOrThrow(collectionId: String, collectionService: CollectionService, isForReading: Boolean): Collection {
+private fun getCollectionOrThrow(
+    collectionId: String,
+    collectionRepository: CollectionRepository,
+    isForReading: Boolean
+): Collection {
     val userId = getCurrentUserId()
-    val collection = collectionService.getById(CollectionId(collectionId))
-            ?: throw CollectionNotFoundException(collectionId)
+    val collection = collectionRepository.getById(CollectionId(collectionId))
+        ?: throw CollectionNotFoundException(collectionId)
 
     return when {
         isForReading && collection.isPublic -> collection

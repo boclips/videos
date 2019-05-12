@@ -1,14 +1,12 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacySubject
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.LegacySubject
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
-import com.boclips.videos.service.testsupport.TestFactories.createVideoAsset
-import com.boclips.videos.service.testsupport.TestFactories.createYoutubePlayback
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -18,48 +16,43 @@ import java.time.Duration
 
 internal class VideoToResourceConverterTest {
 
-    lateinit var videosLinkBuilder: VideosLinkBuilder
-    lateinit var videoToResourceConverter: VideoToResourceConverter
+    private lateinit var videosLinkBuilder: VideosLinkBuilder
+    private lateinit var videoToResourceConverter: VideoToResourceConverter
 
     @BeforeEach
     fun setUp() {
         videosLinkBuilder = mock()
         videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder)
-
     }
 
     val kalturaVideo = createVideo(
-        videoAsset = createVideoAsset(
-            title = "Do what you love",
-            description = "Best bottle slogan",
-            contentPartnerId = "WeWork",
-            contentPartnerVideoId = "111",
-            type = LegacyVideoType.TED_TALKS,
-            subjects = setOf(LegacySubject("Maths")),
-            searchable = true,
-            legalRestrictions = "None"
-        ),
-        videoPlayback = TestFactories.createKalturaPlayback()
+        title = "Do what you love",
+        description = "Best bottle slogan",
+        contentPartnerId = "WeWork",
+        contentPartnerVideoId = "111",
+        type = LegacyVideoType.TED_TALKS,
+        subjects = setOf(LegacySubject("Maths")),
+        searchable = true,
+        legalRestrictions = "None"
     )
 
     val youtubeVideo = createVideo(
-        videoAsset = createVideoAsset(
-            title = "Do what you love on youtube",
-            description = "Best bottle slogan",
-            contentPartnerId = "JacekWork",
-            contentPartnerVideoId = "222",
-            type = LegacyVideoType.OTHER,
-            subjects = setOf(LegacySubject("Biology")),
-            searchable = false,
-            legalRestrictions = "Many"
-        ),
-        videoPlayback = createYoutubePlayback()
+        title = "Do what you love on youtube",
+        description = "Best bottle slogan",
+        contentPartnerId = "JacekWork",
+        contentPartnerVideoId = "222",
+        type = LegacyVideoType.OTHER,
+        subjects = setOf(LegacySubject("Biology")),
+        searchable = false,
+        legalRestrictions = "Many",
+        playback = TestFactories.createYoutubePlayback()
     )
 
     @Test
     fun `converts a video from AssetId`() {
         val videoId = ObjectId().toHexString()
-        val videoResource = videoToResourceConverter.wrapVideoAssetIdsInResource(listOf(AssetId(videoId))).first().content
+        val videoResource =
+            videoToResourceConverter.wrapVideoIdsInResource(listOf(VideoId(videoId))).first().content
 
         assertThat(videoResource.id).isEqualTo(videoId)
         assertThat(videoResource.title).isNull()
@@ -92,7 +85,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("kaltura-thumbnailUrl")
         assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(videoResource.playback!!.id).isEqualTo("555")
-        assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("kaltura-stream")
+        assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
     }
 
     @Test

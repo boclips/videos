@@ -13,7 +13,7 @@ import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.infrastructure.email.EmailClient
-import com.boclips.videos.service.infrastructure.search.VideoAssetSearchService
+import com.boclips.videos.service.infrastructure.search.VideoSearchService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -43,7 +43,7 @@ class SearchContext {
         videoMetadataSearchService: GenericSearchService,
         videoSearchServiceAdmin: GenericSearchServiceAdmin<VideoMetadata>
     ): SearchService {
-        return VideoAssetSearchService(videoMetadataSearchService, videoSearchServiceAdmin)
+        return VideoSearchService(videoMetadataSearchService, videoSearchServiceAdmin)
     }
 
     @Bean

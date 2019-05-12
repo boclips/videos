@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -71,19 +71,19 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns paginated results`() {
         saveVideo(
-            title = "a youtube asset",
+            title = "a youtube video",
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1")
         )
         saveVideo(
-            title = "a youtube asset",
+            title = "a youtube video",
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-2")
         )
         saveVideo(
-            title = "a another asset",
+            title = "a another video",
             playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-3")
         )
         saveVideo(
-            title = "a youtube asset",
+            title = "a youtube video",
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-4")
         )
 
@@ -198,8 +198,14 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can filter by source`() {
-        saveVideo(title = "why are camels so tall 1", playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.KALTURA))
-        saveVideo(title = "why are camels so tall 2", playbackId = PlaybackId(value = "1234", type = PlaybackProviderType.YOUTUBE))
+        saveVideo(
+            title = "why are camels so tall 1",
+            playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.KALTURA)
+        )
+        saveVideo(
+            title = "why are camels so tall 2",
+            playbackId = PlaybackId(value = "1234", type = PlaybackProviderType.YOUTUBE)
+        )
 
         val results = searchVideo.byQuery(
             query = "why are camels so tall",

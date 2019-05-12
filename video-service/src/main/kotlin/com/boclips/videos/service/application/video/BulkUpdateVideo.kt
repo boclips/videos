@@ -4,19 +4,18 @@ import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.VideoAsset
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoAccessService
-import com.boclips.videos.service.domain.service.video.VideoAssetToLegacyVideoMetadataConverter
+import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
 
 open class BulkUpdateVideo(
-    private val videoAssetRepository: VideoAssetRepository,
-    private val searchAdminService: GenericSearchServiceAdmin<VideoAsset>,
+    private val videoRepository: VideoRepository,
+    private val searchAdminService: GenericSearchServiceAdmin<Video>,
     private val legacySearchService: LegacySearchService,
     private val videoAccessService: VideoAccessService
 ) {
@@ -32,8 +31,8 @@ open class BulkUpdateVideo(
     }
 
     private fun disableFromSearch(bulkUpdateRequest: BulkUpdateRequest) {
-        val assetIds = bulkUpdateRequest.ids.map { AssetId(value = it) }
-        videoAccessService.revokeAccess(assetIds)
+        val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
+        videoAccessService.revokeAccess(videoIds)
 
         bulkUpdateRequest.ids.forEach {
             searchAdminService.removeFromSearch(it)
@@ -47,15 +46,15 @@ open class BulkUpdateVideo(
     }
 
     private fun makeSearchable(bulkUpdateRequest: BulkUpdateRequest) {
-        val assetIds = bulkUpdateRequest.ids.map { AssetId(value = it) }
-        videoAccessService.grantAccess(assetIds)
+        val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
+        videoAccessService.grantAccess(videoIds)
 
-        videoAssetRepository.findAll(assetIds).let { assetId ->
-            searchAdminService.upsert(assetId.asSequence())
+        videoRepository.findAll(videoIds).let { videoId ->
+            searchAdminService.upsert(videoId.asSequence())
 
-            legacySearchService.upsert(assetId
-                .filter { asset -> asset.playbackId.type == PlaybackProviderType.KALTURA }
-                .map { asset -> VideoAssetToLegacyVideoMetadataConverter.convert(asset) }
+            legacySearchService.upsert(videoId
+                .filter { it.isBoclipsHosted() }
+                .map { video -> VideoToLegacyVideoMetadataConverter.convert(video) }
                 .asSequence())
         }
     }

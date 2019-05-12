@@ -1,11 +1,11 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.nhaarman.mockito_kotlin.any
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.assertThrows
 
 class BookmarkCollectionTest {
 
-    lateinit var collectionService: CollectionService
+    lateinit var collectionRepository: CollectionRepository
     val eventService = FakeAnalyticsEventService()
 
     @BeforeEach
@@ -33,16 +33,22 @@ class BookmarkCollectionTest {
     @Test
     fun `updates on collection delegate`() {
         val collection = TestFactories.createCollection(owner = "other@me.com", isPublic = true)
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(collection)
         }
 
-        val bookmark = BookmarkCollection(collectionService, eventService)
+        val bookmark = BookmarkCollection(collectionRepository, eventService)
 
         bookmark(collection.id.value)
 
         argumentCaptor<String>().apply {
-            verify(collectionService).bookmark(eq(collection.id), eq(UserId("me@me.com")))
+            verify(collectionRepository).bookmark(
+                eq(collection.id), eq(
+                    UserId(
+                        "me@me.com"
+                    )
+                )
+            )
         }
     }
 
@@ -54,18 +60,18 @@ class BookmarkCollectionTest {
         val onGetCollection =
             TestFactories.createCollection(id = collectionId, owner = "me@example.com", isPublic = true)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val bookmark = BookmarkCollection(collectionService, eventService)
+        val bookmark = BookmarkCollection(collectionRepository, eventService)
 
         assertThrows<CollectionIllegalOperationException> {
             bookmark(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).bookmark(any(), any())
+        verify(collectionRepository, never()).bookmark(any(), any())
     }
 
     @Test
@@ -76,18 +82,18 @@ class BookmarkCollectionTest {
         val onGetCollection =
             TestFactories.createCollection(id = collectionId, owner = "other@example.com", isPublic = false)
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val bookmark = BookmarkCollection(collectionService, eventService)
+        val bookmark = BookmarkCollection(collectionRepository, eventService)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             bookmark(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).bookmark(any(), any())
+        verify(collectionRepository, never()).bookmark(any(), any())
     }
 
     @Test
@@ -97,28 +103,28 @@ class BookmarkCollectionTest {
         val collectionId = CollectionId("collection-123")
         val onGetCollection: Collection? = null
 
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(collectionId) } doReturn onGetCollection
         }
 
-        val bookmark = BookmarkCollection(collectionService, eventService)
+        val bookmark = BookmarkCollection(collectionRepository, eventService)
 
         assertThrows<CollectionNotFoundException> {
             bookmark(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionService, never()).bookmark(any(), any())
+        verify(collectionRepository, never()).bookmark(any(), any())
     }
 
     @Test
     fun `logs an event`() {
         val collection = TestFactories.createCollection(owner = "other@me.com", isPublic = true)
-        collectionService = mock {
+        collectionRepository = mock {
             on { getById(any()) }.thenReturn(collection)
         }
 
-        val bookmark = BookmarkCollection(collectionService, eventService)
+        val bookmark = BookmarkCollection(collectionRepository, eventService)
 
         bookmark(collection.id.value)
 

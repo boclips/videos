@@ -1,8 +1,7 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
-
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 
 class CreateSubject(

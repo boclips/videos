@@ -1,10 +1,10 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoAssetRepository.Companion.collectionName
+import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -50,7 +50,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun setUp() {
         kalturaVideoId = saveVideo(
             playbackId = PlaybackId(value = "ref-id-123", type = PlaybackProviderType.KALTURA),
-            title = "powerful asset about elephants",
+            title = "powerful video about elephants",
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
@@ -71,7 +71,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         youtubeVideoId = saveVideo(
             playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
             title = "elephants took out jobs",
-            description = "it's a asset from youtube",
+            description = "it's a video from youtube",
             date = "2017-02-11",
             duration = Duration.ofSeconds(56),
             contentProvider = "cp2"
@@ -83,7 +83,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
-            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful asset about elephants")))
+            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
             .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp")))
@@ -93,7 +93,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._embedded.videos[0].playback.streamUrl",
-                    equalTo("https://stream/applehttp/asset-entry-ref-id-123.mp4")
+                    equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")
                 )
             )
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
@@ -152,7 +152,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants took out jobs")))
-            .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a asset from youtube")))
+            .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a video from youtube")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2017-02-11")))
             .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp2")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
@@ -206,12 +206,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 400 with invalid source`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&source=invalidoops").asTeacher()).andExpect(status().isBadRequest)
+        mockMvc.perform(get("/v1/videos?query=elephants&source=invalidoops").asTeacher())
+            .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `returns 400 with invalid duration`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&min_duration=invalidoops").asTeacher()).andExpect(status().isBadRequest)
+        mockMvc.perform(get("/v1/videos?query=elephants&min_duration=invalidoops").asTeacher())
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -221,12 +223,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
     }
+
     @Test
     fun `returns 400 with invalid date filter`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=invalidoops").asTeacher()).andExpect(status().isBadRequest)
-        mockMvc.perform(get("/v1/videos?query=elephants&released_date_to=invalidoops").asTeacher()).andExpect(status().isBadRequest)
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=invalidoops").asTeacher())
+            .andExpect(status().isBadRequest)
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_to=invalidoops").asTeacher())
+            .andExpect(status().isBadRequest)
     }
-
 
     @Test
     fun `returns 400 for invalid search request`() {
@@ -239,7 +243,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
-            .andExpect(jsonPath("$.title", equalTo("powerful asset about elephants")))
+            .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
             .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
             .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
@@ -247,7 +251,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback.id").exists())
             .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
             .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/asset-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")))
             .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
             .andExpect(jsonPath("$.type.id", equalTo(3)))
             .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
@@ -279,7 +283,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 200 for valid video alias`() {
         val title = "Back to the Future II"
         val alias = "123123"
-        val assetId = saveVideo(title = title)
+        val videoId = saveVideo(title = title)
 
         mongoVideosCollection().findOneAndUpdate(
             eq("title", title),
@@ -288,7 +292,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos/$alias").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", equalTo(assetId.value)))
+            .andExpect(jsonPath("$.id", equalTo(videoId.value)))
     }
 
     @Test
@@ -353,7 +357,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error", containsString("not found")))
+            .andExpect(jsonPath("$.error", containsString("Illegal playback id")))
     }
 
     @Test
@@ -622,13 +626,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         resultActions
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(tomorrow)))
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(today)))
             .andExpect(jsonPath("$._embedded.videos[2].id", equalTo(yesterday)))
-
-            .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(3)))
-            .andExpect(jsonPath("$.page.totalPages", Matchers.equalTo(1)))
     }
 
     @Test

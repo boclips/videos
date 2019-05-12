@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.analytics
 
-import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 
@@ -14,7 +14,7 @@ class SavePlaybackEvent(
 
         analyticsEventService.savePlaybackEvent(
             playerId = event.playerId!!,
-            videoId = AssetId(event.videoId!!),
+            videoId = VideoId(event.videoId!!),
             videoIndex = event.videoIndex,
             segmentStartSeconds = event.segmentStartSeconds!!,
             segmentEndSeconds = event.segmentEndSeconds!!,

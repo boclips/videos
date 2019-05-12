@@ -3,9 +3,9 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
@@ -29,13 +29,13 @@ import java.util.UUID
 class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var videoAssetRepository: VideoAssetRepository
+    lateinit var videoRepository: VideoRepository
 
     @Autowired
     lateinit var searchService: SearchService
 
     @Test
-    fun `disableFromSearch sets searchable field on video asset to false and removes from search indices`() {
+    fun `disableFromSearch sets searchable field on video video to false and removes from search indices`() {
         val videoIds = listOf(saveVideo(searchable = true), saveVideo(searchable = true))
         bulkUpdateVideo(
             BulkUpdateRequest(
@@ -44,7 +44,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(videoAssetRepository.findAll(videoIds)).allMatch { it.searchable == false }
+        assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == false }
 
         assertThat(searchService.count(Query(ids = videoIds.map { it.value }))).isEqualTo(0)
         videoIds.forEach { verify(legacySearchService).removeFromSearch(it.value) }
@@ -65,7 +65,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `makeSearchable sets searchable field on video asset to true and registers in search indices`() {
+    fun `makeSearchable sets searchable field on video video to true and registers in search indices`() {
         val videoIds = listOf(saveVideo(searchable = false), saveVideo(searchable = false))
         bulkUpdateVideo(
             BulkUpdateRequest(
@@ -76,13 +76,13 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         bulkUpdateVideo(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
 
-        assertThat(videoAssetRepository.findAll(videoIds)).allMatch { it.searchable == true }
+        assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == true }
         assertThat(searchService.count(Query(ids = videoIds.map { it.value }))).isEqualTo(2)
         verify(legacySearchService, times(3)).upsert(any(), anyOrNull())
     }
 
     @Test
-    fun `makeSearchable sets searchable field on video asset to true and does not register youtube videos in legacy search index`() {
+    fun `makeSearchable sets searchable field on video video to true and does not register youtube videos in legacy search index`() {
         val videoId = saveVideo(
             searchable = false,
             playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}")

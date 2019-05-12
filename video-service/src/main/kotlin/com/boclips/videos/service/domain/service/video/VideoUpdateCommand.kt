@@ -1,21 +1,21 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.asset.AssetId
-import com.boclips.videos.service.domain.model.asset.LegacySubject
-import com.boclips.videos.service.domain.model.asset.Topic
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.LegacySubject
+import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.Duration
 import java.util.Locale
 
-sealed class VideoUpdateCommand(val assetId: AssetId) {
-    class ReplaceSubjects(assetId: AssetId, val subjects: List<LegacySubject>) : VideoUpdateCommand(assetId)
-    class ReplaceDuration(assetId: AssetId, val duration: Duration) : VideoUpdateCommand(assetId)
-    class ReplacePlayback(assetId: AssetId, val playback: VideoPlayback) : VideoUpdateCommand(assetId)
-    class MakeSearchable(assetId: AssetId) : VideoUpdateCommand(assetId)
-    class HideFromSearch(assetId: AssetId) : VideoUpdateCommand(assetId)
-    class ReplaceLanguage(assetId: AssetId, val language: Locale) : VideoUpdateCommand(assetId)
-    class ReplaceTranscript(assetId: AssetId, val transcript: String) : VideoUpdateCommand(assetId)
-    class ReplaceTopics(assetId: AssetId, val topics: Set<Topic>) : VideoUpdateCommand(assetId)
-    class ReplaceKeywords(assetId: AssetId, val keywords: Set<String>) : VideoUpdateCommand(assetId)
+sealed class VideoUpdateCommand(val videoId: VideoId) {
+    class ReplaceSubjects(videoId: VideoId, val subjects: List<LegacySubject>) : VideoUpdateCommand(videoId)
+    class ReplaceDuration(videoId: VideoId, val duration: Duration) : VideoUpdateCommand(videoId)
+    class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)
+    class MakeSearchable(videoId: VideoId) : VideoUpdateCommand(videoId)
+    class HideFromSearch(videoId: VideoId) : VideoUpdateCommand(videoId)
+    class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)
+    class ReplaceTranscript(videoId: VideoId, val transcript: String) : VideoUpdateCommand(videoId)
+    class ReplaceTopics(videoId: VideoId, val topics: Set<Topic>) : VideoUpdateCommand(videoId)
+    class ReplaceKeywords(videoId: VideoId, val keywords: Set<String>) : VideoUpdateCommand(videoId)
 }
 

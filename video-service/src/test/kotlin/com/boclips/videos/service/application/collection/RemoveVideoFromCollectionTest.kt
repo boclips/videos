@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
@@ -26,7 +26,7 @@ internal class RemoveVideoFromCollectionTest {
 
     @Test
     fun `removes the video using the collection service`() {
-        val collectionService = mock<CollectionService> {
+        val collectionService = mock<CollectionRepository> {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
@@ -43,7 +43,7 @@ internal class RemoveVideoFromCollectionTest {
 
     @Test
     fun `logs an event`() {
-        val collectionService = mock<CollectionService> {
+        val collectionService = mock<CollectionRepository> {
             on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
@@ -65,7 +65,7 @@ internal class RemoveVideoFromCollectionTest {
         val collectionId = CollectionId("collection-123")
         val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com")
 
-        val collectionService = mock<CollectionService> {
+        val collectionService = mock<CollectionRepository> {
             on { getById(any()) }.thenReturn(onGetCollection)
         }
 

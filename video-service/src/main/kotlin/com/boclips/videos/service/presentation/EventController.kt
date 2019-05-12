@@ -4,7 +4,6 @@ import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
-import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

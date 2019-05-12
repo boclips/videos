@@ -32,10 +32,10 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
     }
 
     private fun upsertBatch(batchIndex: Int, videos: List<LegacyVideoMetadata>) {
-        logger.info { "[Batch $batchIndex] Indexing ${videos.size} asset(s) in Solr" }
+        logger.info { "[Batch $batchIndex] Indexing ${videos.size} video(s) in Solr" }
         videos.map(LegacyVideoMetadataToSolrInputDocumentConverter::convert).forEach { client.add(it) }
         client.commit()
-        logger.info { "[Batch $batchIndex] Successfully indexed ${videos.size} asset(s) in Solr" }
+        logger.info { "[Batch $batchIndex] Successfully indexed ${videos.size} video(s) in Solr" }
     }
 
     override fun search(searchRequest: PaginatedSearchRequest): List<String> {

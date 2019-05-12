@@ -4,7 +4,7 @@ import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.model.asset.AssetId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -42,7 +42,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
 
-        assertThat(videoService.get(AssetId(resource.content.id!!))).isNotNull
+        assertThat(videoService.getPlayableVideo(VideoId(resource.content.id!!))).isNotNull
     }
 
     @Test
@@ -52,7 +52,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         val resource =
             createVideo(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))
 
-        assertThat(videoService.get(AssetId(resource.content.id!!))).isNotNull
+        assertThat(videoService.getPlayableVideo(VideoId(resource.content.id!!))).isNotNull
     }
 
     @Test
@@ -99,7 +99,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         )
 
         val firstVideoInResults = results.first()
-        assertThat(firstVideoInResults.asset.title).isEqualTo("the latest Bloomberg video")
+        assertThat(firstVideoInResults.title).isEqualTo("the latest Bloomberg video")
     }
 
     @Test
@@ -118,7 +118,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `created video asset uses the duration specified by the playback provider`() {
+    fun `created video video uses the duration specified by the playback provider`() {
         val playbackProviderDuration = Duration.ofMinutes(2)
 
         fakeKalturaClient.addMediaEntry(
@@ -131,9 +131,9 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
 
-        val video = videoService.get(AssetId(resource.content.id!!))
+        val video = videoService.getPlayableVideo(VideoId(resource.content.id!!))
 
-        assertThat(video.asset.duration).isEqualTo(playbackProviderDuration)
+        assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
         assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
     }
 

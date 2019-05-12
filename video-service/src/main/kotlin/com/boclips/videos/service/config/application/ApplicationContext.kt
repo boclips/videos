@@ -29,9 +29,9 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.asset.VideoAssetRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
@@ -40,7 +40,7 @@ import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
-import com.boclips.videos.service.presentation.video.CreateVideoRequestToAssetConverter
+import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
@@ -49,11 +49,11 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class ApplicationContext(
     val videoService: VideoService,
-    val videoAssetRepository: VideoAssetRepository,
+    val videoRepository: VideoRepository,
     val searchService: SearchService,
     val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
-    val collectionService: CollectionService,
+    val collectionRepository: CollectionRepository,
     val analyticsEventService: AnalyticsEventService,
     val videoAccessService: VideoAccessService,
     val topics: Topics,
@@ -68,7 +68,7 @@ class ApplicationContext(
         getVideoById(videosLinkBuilder),
         getAllVideosById(videosLinkBuilder),
         getVideosByQuery(videosLinkBuilder, searchQueryConverter),
-        videoAssetRepository
+        videoRepository
     )
 
     @Bean
@@ -78,9 +78,9 @@ class ApplicationContext(
         analyseVideo: AnalyseVideo
     ): CreateVideo {
         return CreateVideo(
-            videoAssetRepository,
+            videoRepository,
             searchVideo,
-            CreateVideoRequestToAssetConverter(),
+            CreateVideoRequestToVideoConverter(),
             searchService,
             playbackRepository,
             videoCounter,
@@ -91,33 +91,33 @@ class ApplicationContext(
 
     @Bean
     fun updateVideo(): UpdateVideo {
-        return UpdateVideo(videoAssetRepository)
+        return UpdateVideo(videoRepository)
     }
 
     @Bean
     fun updateAnalysedVideo(): UpdateAnalysedVideo {
-        return UpdateAnalysedVideo(playbackRepository, videoAssetRepository)
+        return UpdateAnalysedVideo(playbackRepository, videoRepository)
     }
 
     @Bean
     fun bulkUpdate(): BulkUpdateVideo {
-        return BulkUpdateVideo(videoAssetRepository, searchService, legacySearchService, videoAccessService)
+        return BulkUpdateVideo(videoRepository, searchService, legacySearchService, videoAccessService)
     }
 
     @Bean
     fun deleteVideos(): DeleteVideos {
-        return DeleteVideos(videoAssetRepository, searchService, playbackRepository)
+        return DeleteVideos(videoRepository, searchService, playbackRepository)
     }
 
     @Bean
     fun createCollection(addVideoToCollection: AddVideoToCollection): CreateCollection {
-        return CreateCollection(collectionService, addVideoToCollection)
+        return CreateCollection(collectionRepository, addVideoToCollection)
     }
 
     @Bean
     fun getCollection(videosLinkBuilder: VideosLinkBuilder): GetCollection {
         return GetCollection(
-            collectionService,
+            collectionRepository,
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder),
                 SubjectToResourceConverter(),
@@ -129,7 +129,7 @@ class ApplicationContext(
     @Bean
     fun getPublicCollections(videosLinkBuilder: VideosLinkBuilder): GetCollections {
         return GetCollections(
-            collectionService,
+            collectionRepository,
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder),
                 SubjectToResourceConverter(),
@@ -140,42 +140,42 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionService, analyticsEventService)
+        return AddVideoToCollection(collectionRepository, analyticsEventService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionService, analyticsEventService)
+        return RemoveVideoFromCollection(collectionRepository, analyticsEventService)
     }
 
     @Bean
     fun updateCollection(): UpdateCollection {
-        return UpdateCollection(collectionService, analyticsEventService)
+        return UpdateCollection(collectionRepository, analyticsEventService)
     }
 
     @Bean
     fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionService, analyticsEventService)
+        return BookmarkCollection(collectionRepository, analyticsEventService)
     }
 
     @Bean
     fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionService, analyticsEventService)
+        return UnbookmarkCollection(collectionRepository, analyticsEventService)
     }
 
     @Bean
     fun deleteCollection(): DeleteCollection {
-        return DeleteCollection(collectionService)
+        return DeleteCollection(collectionRepository)
     }
 
     @Bean
     fun rebuildSearchIndex(): RebuildSearchIndex {
-        return RebuildSearchIndex(videoAssetRepository, searchService)
+        return RebuildSearchIndex(videoRepository, searchService)
     }
 
     @Bean
     fun buildLegacySearchIndex(): BuildLegacySearchIndex {
-        return BuildLegacySearchIndex(videoAssetRepository, legacySearchService)
+        return BuildLegacySearchIndex(videoRepository, legacySearchService)
     }
 
     @Bean
@@ -185,12 +185,12 @@ class ApplicationContext(
 
     @Bean
     fun analyseContentPartnerVideos(): AnalyseContentPartnerVideos {
-        return AnalyseContentPartnerVideos(videoAssetRepository, analyseVideo())
+        return AnalyseContentPartnerVideos(videoRepository, analyseVideo())
     }
 
     @Bean
     fun refreshVideoDurations(): RequestVideoPlaybackUpdate {
-        return RequestVideoPlaybackUpdate(videoAssetRepository, playbackRepository, topics)
+        return RequestVideoPlaybackUpdate(videoRepository, playbackRepository, topics)
     }
 
     @Bean
@@ -205,7 +205,7 @@ class ApplicationContext(
 
     @Bean
     fun getVideoTranscript(): GetVideoTranscript {
-        return GetVideoTranscript(videoAssetRepository)
+        return GetVideoTranscript(videoRepository)
     }
 
     @Bean

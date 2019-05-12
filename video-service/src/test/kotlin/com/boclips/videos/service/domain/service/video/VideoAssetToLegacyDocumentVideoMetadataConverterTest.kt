@@ -1,32 +1,32 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.asset.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
 
-class VideoAssetToLegacyDocumentVideoMetadataConverterTest {
+class VideoToLegacyDocumentVideoMetadataConverterTest {
 
     @Test
     fun convert() {
-        val videoAssetId = TestFactories.aValidId()
-        val asset = TestFactories.createVideoAsset(
-            videoId = videoAssetId,
+        val videoId = TestFactories.aValidId()
+        val video = TestFactories.createVideo(
+            videoId = videoId,
             title = "the title",
             description = "the description",
             keywords = listOf("keyword"),
-            duration = Duration.ofSeconds(10),
             contentPartnerId = "Reuters",
             contentPartnerVideoId = "r001",
             releasedOn = LocalDate.parse("2019-01-17"),
-            type = LegacyVideoType.TED_TALKS
+            type = LegacyVideoType.TED_TALKS,
+            playback = TestFactories.createKalturaPlayback(duration = Duration.ofSeconds(10))
         )
 
-        val legacyMetadata = VideoAssetToLegacyVideoMetadataConverter.convert(asset)
+        val legacyMetadata = VideoToLegacyVideoMetadataConverter.convert(video)
 
-        assertThat(legacyMetadata.id).isEqualTo(videoAssetId)
+        assertThat(legacyMetadata.id).isEqualTo(videoId)
         assertThat(legacyMetadata.title).isEqualTo("the title")
         assertThat(legacyMetadata.description).isEqualTo("the description")
         assertThat(legacyMetadata.keywords).containsExactly("keyword")
