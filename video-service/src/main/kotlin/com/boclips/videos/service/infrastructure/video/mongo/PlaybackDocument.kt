@@ -5,7 +5,7 @@ import java.time.Instant
 data class PlaybackDocument(
     val type: String,
     val id: String,
-    val thumbnailUrls: List<String>?,
+    val thumbnailUrl: List<String>?,
     val downloadUrl: String?,
     val hlsStreamUrl: String?,
     val dashStreamUrl: String?,
@@ -22,7 +22,7 @@ data class PlaybackDocument(
     fun isCompleteKalturaPlayback(): Boolean {
         return type == PLAYBACK_TYPE_KALTURA &&
             id.isNotEmpty() &&
-            thumbnailUrls != null &&
+            thumbnailUrl != null &&
             hlsStreamUrl != null && hlsStreamUrl.isNotEmpty() &&
             dashStreamUrl != null && dashStreamUrl.isNotEmpty() &&
             progressiveStreamUrl != null && progressiveStreamUrl.isNotEmpty() &&
@@ -33,7 +33,7 @@ data class PlaybackDocument(
     fun isCompleteYoutubePlayback(): Boolean {
         return type == PLAYBACK_TYPE_YOUTUBE &&
             id.isNotEmpty() &&
-            thumbnailUrls != null &&
+            thumbnailUrl != null &&
             duration != null
     }
 }

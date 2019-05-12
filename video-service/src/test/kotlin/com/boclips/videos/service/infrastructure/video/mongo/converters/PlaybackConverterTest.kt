@@ -23,7 +23,7 @@ class PlaybackConverterTest {
 
         val playbackDocument = PlaybackConverter.toDocument(originalPlayback)!!
         assertThat(playbackDocument.id).isEqualTo("1234")
-        assertThat(playbackDocument.thumbnailUrls).containsExactly("thumbnail")
+        assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail")
         assertThat(playbackDocument.downloadUrl).isEqualTo("download")
         assertThat(playbackDocument.hlsStreamUrl).isEqualTo("hls")
         assertThat(playbackDocument.dashStreamUrl).isEqualTo("dash")
@@ -45,7 +45,7 @@ class PlaybackConverterTest {
 
         val playbackDocument = PlaybackConverter.toDocument(originalPlayback)!!
         assertThat(playbackDocument.id).isEqualTo("some-yt-id")
-        assertThat(playbackDocument.thumbnailUrls).containsExactly("thumbnail-url")
+        assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail-url")
         assertThat(playbackDocument.downloadUrl).isNull()
         assertThat(playbackDocument.hlsStreamUrl).isNull()
         assertThat(playbackDocument.dashStreamUrl).isNull()

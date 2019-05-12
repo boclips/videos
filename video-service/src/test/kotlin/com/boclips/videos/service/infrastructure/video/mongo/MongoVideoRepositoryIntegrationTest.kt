@@ -378,7 +378,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                             "playback", Document()
                                 .append("id", "some-id")
                                 .append("type", "KALTURA")
-                                .append("thumbnailUrls", listOf("thumbnail"))
+                                .append("thumbnailUrl", listOf("thumbnail"))
                                 .append("downloadUrl", "x")
                                 .append("dashStreamUrl", "x")
                                 .append("hlsStreamUrl", "x")

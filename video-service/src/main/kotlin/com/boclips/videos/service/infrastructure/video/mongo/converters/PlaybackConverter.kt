@@ -19,7 +19,7 @@ object PlaybackConverter : KLogging() {
             is StreamPlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
                 type = "KALTURA",
-                thumbnailUrls = listOf(videoPlayback.thumbnailUrl),
+                thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = videoPlayback.downloadUrl,
                 hlsStreamUrl = videoPlayback.appleHlsStreamUrl,
                 dashStreamUrl = videoPlayback.mpegDashStreamUrl,
@@ -30,7 +30,7 @@ object PlaybackConverter : KLogging() {
             is YoutubePlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
                 type = "YOUTUBE",
-                thumbnailUrls = listOf(videoPlayback.thumbnailUrl),
+                thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = null,
                 hlsStreamUrl = null,
                 dashStreamUrl = null,
@@ -59,7 +59,7 @@ object PlaybackConverter : KLogging() {
 
                 StreamPlayback(
                     id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id),
-                    thumbnailUrl = playbackDocument.thumbnailUrls!!.first(),
+                    thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     appleHlsStreamUrl = playbackDocument.hlsStreamUrl!!,
                     mpegDashStreamUrl = playbackDocument.dashStreamUrl!!,
@@ -78,7 +78,7 @@ object PlaybackConverter : KLogging() {
 
                 YoutubePlayback(
                     id = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = playbackDocument.id),
-                    thumbnailUrl = playbackDocument.thumbnailUrls!!.first(),
+                    thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong())
                 )
             }
