@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
-import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
+import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

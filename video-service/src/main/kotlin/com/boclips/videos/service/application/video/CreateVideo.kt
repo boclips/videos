@@ -4,7 +4,7 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.exceptions.VideoNotAnalysableException
+import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
