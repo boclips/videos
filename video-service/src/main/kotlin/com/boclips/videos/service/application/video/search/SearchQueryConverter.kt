@@ -22,7 +22,7 @@ class SearchQueryConverter {
             when (source) {
                 "youtube" -> SourceType.YOUTUBE
                 "boclips" -> SourceType.BOCLIPS
-                else -> throw InvalidSourceException(source)
+                else -> throw InvalidSourceException(source, listOf("youtube", "boclips"))
             }
         }
     }

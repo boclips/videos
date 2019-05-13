@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.VideoPlaybackSyncRequested
+import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -18,18 +19,22 @@ open class RequestVideoPlaybackUpdate(
 ) {
     companion object : KLogging()
 
-    open operator fun invoke() {
+    open operator fun invoke(source: String? = null) {
         logger.info("Requesting video playback synchronization for all videos")
+
+        validateSource(source)
 
         try {
             videoRepository.streamAll { sequence ->
                 sequence.forEach { video ->
-                    val videoToBeUpdated = VideoPlaybackSyncRequested.builder()
-                        .videoId(video.videoId.value)
-                        .build()
+                    if (source == null || video.playback.id.type.name.equals(source, ignoreCase = true)) {
+                        val videoToBeUpdated = VideoPlaybackSyncRequested.builder()
+                            .videoId(video.videoId.value)
+                            .build()
 
-                    topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
-                    logger.info { "Video ${video.videoId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+                        topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
+                        logger.info { "Video ${video.videoId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+                    }
                 }
             }
         } catch (ex: Exception) {
@@ -76,6 +81,14 @@ open class RequestVideoPlaybackUpdate(
             logger.info { "Updated playback information for video ${actualVideo.videoId} successfully" }
         } catch (ex: Exception) {
             logger.info { "Did not update playback for video ${actualVideo.videoId}" }
+        }
+    }
+
+    private fun validateSource(source: String?) {
+        val validSources = listOf("youtube", "kaltura")
+
+        if (source != null && !validSources.contains(source.toLowerCase())) {
+            throw InvalidSourceException(source, validSources)
         }
     }
 }

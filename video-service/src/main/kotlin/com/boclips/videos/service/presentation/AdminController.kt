@@ -1,12 +1,12 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildSearchIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
-import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -55,8 +55,8 @@ class AdminController(
     }
 
     @PostMapping("/refresh_playbacks")
-    fun refreshVideoDurations(): ResponseEntity<Void> {
-        requestVideoPlaybackUpdate()
+    fun refreshVideoDurations(@RequestParam source: String?): ResponseEntity<Void> {
+        requestVideoPlaybackUpdate(source)
         return ResponseEntity(HttpStatus.OK)
     }
 
