@@ -8,7 +8,7 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import mu.KLogging

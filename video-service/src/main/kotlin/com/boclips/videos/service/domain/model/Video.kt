@@ -1,7 +1,5 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.videos.service.domain.model.playback.FaultyPlayback
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -28,11 +26,11 @@ data class Video(
     val searchable: Boolean
 ) {
     fun isPlayable(): Boolean {
-        return playback !is FaultyPlayback
+        return playback !is VideoPlayback.FaultyPlayback
     }
 
     fun isBoclipsHosted(): Boolean {
-        return playback.id.type == PlaybackProviderType.KALTURA
+        return playback is VideoPlayback.StreamPlayback
     }
 
     override fun toString(): String {

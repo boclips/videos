@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.config.Topics
 import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -19,7 +19,7 @@ class AnalyseVideo(
 
     operator fun invoke(videoId: String, language: Locale?) {
         val video = videoService.getPlayableVideo(videoId = VideoId(value = videoId))
-        val playback = video.playback as? StreamPlayback ?: throw VideoNotAnalysableException()
+        val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 
         if (!video.searchable) {
             logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because it is not searchable" }

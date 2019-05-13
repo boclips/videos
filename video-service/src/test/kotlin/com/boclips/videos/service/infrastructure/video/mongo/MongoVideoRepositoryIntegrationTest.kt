@@ -2,7 +2,8 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.*
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic

@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
-import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
@@ -44,15 +44,20 @@ class VideoToResourceConverter(private val videosLinkBuilder: VideosLinkBuilder)
     }
 
     private fun getPlayback(video: Video): PlaybackResource {
-        val playbackResource = when (val playback = video.playback) {
-            is StreamPlayback -> StreamPlaybackResource(type = "STREAM", streamUrl = playback.appleHlsStreamUrl)
-            is YoutubePlayback -> YoutubePlaybackResource(type = "YOUTUBE")
+        return when (val playback = video.playback) {
+            is StreamPlayback -> StreamPlaybackResource(
+                streamUrl = playback.appleHlsStreamUrl,
+                thumbnailUrl = video.playback.thumbnailUrl,
+                duration = video.playback.duration,
+                id = video.playback.id.value
+            )
+            is YoutubePlayback -> YoutubePlaybackResource(
+                thumbnailUrl = video.playback.thumbnailUrl,
+                duration = video.playback.duration,
+                id = video.playback.id.value
+            )
             else -> throw Exception()
         }
-        playbackResource.id = video.playback.id.value
-        playbackResource.thumbnailUrl = video.playback.thumbnailUrl
-        playbackResource.duration = video.playback.duration
-        return playbackResource
     }
 
     private fun getBadges(video: Video): Set<String> {

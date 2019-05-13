@@ -2,28 +2,31 @@ package com.boclips.videos.service.domain.model.playback
 
 import java.time.Duration
 
-abstract class VideoPlayback(
-    val id: PlaybackId,
-    val thumbnailUrl: String,
-    val duration: Duration
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+sealed class VideoPlayback {
+    abstract val id: PlaybackId
+    abstract val thumbnailUrl: String
+    abstract val duration: Duration
 
-        other as VideoPlayback
+    data class YoutubePlayback(
+        override val id: PlaybackId,
+        override val thumbnailUrl: String,
+        override val duration: Duration
+    ) : VideoPlayback()
 
-        if (id != other.id) return false
-        if (thumbnailUrl != other.thumbnailUrl) return false
-        if (duration != other.duration) return false
 
-        return true
-    }
+    data class StreamPlayback(
+        override val id: PlaybackId,
+        override val thumbnailUrl: String,
+        override val duration: Duration,
+        val appleHlsStreamUrl: String,
+        val mpegDashStreamUrl: String,
+        val progressiveDownloadStreamUrl: String,
+        val downloadUrl: String
+    ) : VideoPlayback()
 
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + thumbnailUrl.hashCode()
-        result = 31 * result + duration.hashCode()
-        return result
-    }
+    data class FaultyPlayback(
+        override val id: PlaybackId,
+        override val thumbnailUrl: String = "",
+        override val duration: Duration = Duration.ZERO
+    ) : VideoPlayback()
 }

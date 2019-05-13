@@ -3,7 +3,7 @@ package com.boclips.videos.service.infrastructure.playback
 import com.boclips.events.types.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory

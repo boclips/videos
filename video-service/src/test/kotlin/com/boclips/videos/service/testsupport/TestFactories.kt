@@ -18,9 +18,9 @@ import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
@@ -348,7 +348,8 @@ object TestFactories {
 }
 
 object PlaybackResourceFactory {
-    fun sample(type: String = "STREAM") = StreamPlaybackResource(type, "http://example.com")
+    fun sample(type: String = "STREAM") =
+        StreamPlaybackResource(type, "http://example.com", "thumbnail-url", Duration.ZERO, streamUrl = "stream-url")
 }
 
 object VideoTypeResourceFactory {

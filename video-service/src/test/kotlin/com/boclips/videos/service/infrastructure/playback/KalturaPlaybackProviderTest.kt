@@ -7,7 +7,8 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.*
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaCaptionAsset

@@ -2,8 +2,24 @@ package com.boclips.videos.service.presentation.video.playback
 
 import java.time.Duration
 
-abstract class PlaybackResource(val type: String) {
-    var id: String? = null
-    var thumbnailUrl: String? = null
-    var duration: Duration? = null
+sealed class PlaybackResource {
+    abstract var id: String?
+    abstract var thumbnailUrl: String?
+    abstract var duration: Duration?
+    abstract val type: String
 }
+
+data class StreamPlaybackResource(
+    override val type: String = "STREAM",
+    override var id: String?,
+    override var thumbnailUrl: String?,
+    override var duration: Duration?,
+    val streamUrl: String
+) : PlaybackResource()
+
+data class YoutubePlaybackResource(
+    override val type: String= "YOUTUBE",
+    override var id: String?,
+    override var thumbnailUrl: String?,
+    override var duration: Duration?
+) : PlaybackResource()

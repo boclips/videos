@@ -1,12 +1,9 @@
 package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.playback.FaultyPlayback
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.playback.YoutubePlayback
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
 import mu.KLogging
 import java.time.Duration
@@ -16,7 +13,7 @@ object PlaybackConverter : KLogging() {
 
     fun toDocument(videoPlayback: VideoPlayback): PlaybackDocument {
         return when (videoPlayback) {
-            is StreamPlayback -> PlaybackDocument(
+            is VideoPlayback.StreamPlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
                 type = "KALTURA",
                 thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
@@ -27,7 +24,7 @@ object PlaybackConverter : KLogging() {
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt()
             )
-            is YoutubePlayback -> PlaybackDocument(
+            is VideoPlayback.YoutubePlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
                 type = "YOUTUBE",
                 thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
@@ -52,12 +49,12 @@ object PlaybackConverter : KLogging() {
                 if (!playbackDocument.isCompleteKalturaPlayback()) {
                     logger.info { "Failed to convert $playbackDocument" }
 
-                    return FaultyPlayback(
+                    return VideoPlayback.FaultyPlayback(
                         id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id)
                     )
                 }
 
-                StreamPlayback(
+                VideoPlayback.StreamPlayback(
                     id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id),
                     thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
@@ -71,12 +68,12 @@ object PlaybackConverter : KLogging() {
                 if (!playbackDocument.isCompleteYoutubePlayback()) {
                     logger.info { "Failed to convert $playbackDocument" }
 
-                    return FaultyPlayback(
+                    return VideoPlayback.FaultyPlayback(
                         id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id)
                     )
                 }
 
-                YoutubePlayback(
+                VideoPlayback.YoutubePlayback(
                     id = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = playbackDocument.id),
                     thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong())

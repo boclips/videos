@@ -4,7 +4,7 @@ import com.boclips.events.types.Captions
 import com.boclips.events.types.CaptionsFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.YoutubePlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
@@ -19,7 +19,7 @@ import org.springframework.util.ResourceUtils
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStream
 import java.time.Duration
-import java.util.*
+import java.util.Locale
 import java.util.stream.Stream
 
 class YoutubePlaybackProviderContractTest {
