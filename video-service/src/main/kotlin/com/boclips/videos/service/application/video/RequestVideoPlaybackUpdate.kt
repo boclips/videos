@@ -4,7 +4,9 @@ import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
+import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -17,7 +19,10 @@ open class RequestVideoPlaybackUpdate(
     private val playbackRepository: PlaybackRepository,
     private val topics: Topics
 ) {
-    companion object : KLogging()
+    companion object : KLogging() {
+        const val KALTURA_FILTER = "kaltura"
+        const val YOUTUBE_FILTER = "youtube"
+    }
 
     open operator fun invoke(source: String? = null) {
         logger.info("Requesting video playback synchronization for all videos")
@@ -25,17 +30,10 @@ open class RequestVideoPlaybackUpdate(
         validateSource(source)
 
         try {
-            videoRepository.streamAll { sequence ->
-                sequence.forEach { video ->
-                    if (source == null || video.playback.id.type.name.equals(source, ignoreCase = true)) {
-                        val videoToBeUpdated = VideoPlaybackSyncRequested.builder()
-                            .videoId(video.videoId.value)
-                            .build()
-
-                        topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
-                        logger.info { "Video ${video.videoId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
-                    }
-                }
+            when (source) {
+                KALTURA_FILTER -> videoRepository.streamAll(VideoFilter.IsKaltura, publishToTopic())
+                YOUTUBE_FILTER -> videoRepository.streamAll(VideoFilter.IsYoutube, publishToTopic())
+                else -> videoRepository.streamAll(publishToTopic())
             }
         } catch (ex: Exception) {
             logger.error { "Failed to publish (some) events to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
@@ -48,6 +46,19 @@ open class RequestVideoPlaybackUpdate(
             handleUpdate(videoPlaybackSyncRequestedEvent)
         } catch (ex: Exception) {
             logger.info { "Failed to process ${Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED} for ${videoPlaybackSyncRequestedEvent.videoId}" }
+        }
+    }
+
+    private fun publishToTopic(): (Sequence<Video>) -> Unit {
+        return { sequence ->
+            sequence.forEach { video ->
+                val videoToBeUpdated = VideoPlaybackSyncRequested.builder()
+                    .videoId(video.videoId.value)
+                    .build()
+
+                topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
+                logger.info { "Video ${video.videoId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+            }
         }
     }
 
@@ -85,7 +96,7 @@ open class RequestVideoPlaybackUpdate(
     }
 
     private fun validateSource(source: String?) {
-        val validSources = listOf("youtube", "kaltura")
+        val validSources = listOf(YOUTUBE_FILTER, KALTURA_FILTER)
 
         if (source != null && !validSources.contains(source.toLowerCase())) {
             throw InvalidSourceException(source, validSources)

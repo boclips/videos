@@ -76,6 +76,8 @@ class MongoVideoRepository(
                 ContentPartnerDocument::name
             ) eq filter.contentPartnerName
             VideoFilter.IsSearchable -> VideoDocument::searchable eq true
+            VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
+            VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
         }
 
         val sequence = Sequence { getVideoCollection().find(filterBson).iterator() }

@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.*
 import com.boclips.videos.service.domain.model.video.LegacySubject
@@ -123,6 +124,30 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.streamAll(VideoFilter.ContentPartnerIs("TED")) { videos = it.toList() }
 
         assertThat(videos).hasSize(2)
+    }
+
+    @Test
+    fun `stream all by youtube`() {
+        mongoVideoRepository.create(TestFactories.createVideo(playback = TestFactories.createYoutubePlayback()))
+        mongoVideoRepository.create(TestFactories.createVideo(playback = TestFactories.createKalturaPlayback()))
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.IsYoutube) { videos = it.toList() }
+
+        assertThat(videos).hasSize(1)
+        assertThat(videos.first().playback.id.type).isEqualTo(PlaybackProviderType.YOUTUBE)
+    }
+
+    @Test
+    fun `stream all by kaltura`() {
+        mongoVideoRepository.create(TestFactories.createVideo(playback = TestFactories.createYoutubePlayback()))
+        mongoVideoRepository.create(TestFactories.createVideo(playback = TestFactories.createKalturaPlayback()))
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.IsKaltura) { videos = it.toList() }
+
+        assertThat(videos).hasSize(1)
+        assertThat(videos.first().playback.id.type).isEqualTo(PlaybackProviderType.KALTURA)
     }
 
     @Test
