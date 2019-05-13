@@ -82,6 +82,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns Kaltura videos when query matches`() {
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
@@ -242,6 +243,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 200 for valid video`() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
             .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
@@ -526,6 +528,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""").asBoclipsEmployee()
         )
             .andExpect(status().isCreated)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))

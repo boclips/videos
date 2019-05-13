@@ -55,6 +55,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get(collectionUrl).asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
@@ -112,6 +113,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
@@ -137,6 +139,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
@@ -169,6 +172,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&public=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
@@ -202,6 +206,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
@@ -215,6 +220,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections?projection=list&page=1&size=1&bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
 
@@ -230,6 +236,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))
@@ -249,6 +256,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=false").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", not(isEmptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))
@@ -280,6 +288,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
             .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.remove.href", not(isEmptyString())))
@@ -302,6 +311,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
             .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
             .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.remove").doesNotExist())

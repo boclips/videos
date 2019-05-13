@@ -99,7 +99,7 @@ class VideoController(
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = ["/{id}"], produces = ["application/hal+json"])
     fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {
         return searchVideo.byId(id)
     }
