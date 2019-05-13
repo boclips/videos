@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import java.time.Instant
 
-data class PlaybackDocument(
+data class PlaybackDocument (
     val type: String,
     val id: String,
     val thumbnailUrl: List<String>?,
@@ -22,18 +22,18 @@ data class PlaybackDocument(
     fun isCompleteKalturaPlayback(): Boolean {
         return type == PLAYBACK_TYPE_KALTURA &&
             id.isNotEmpty() &&
-            thumbnailUrl != null &&
-            hlsStreamUrl != null && hlsStreamUrl.isNotEmpty() &&
-            dashStreamUrl != null && dashStreamUrl.isNotEmpty() &&
-            progressiveStreamUrl != null && progressiveStreamUrl.isNotEmpty() &&
-            downloadUrl != null && downloadUrl.isNotEmpty() &&
+            !thumbnailUrl.isNullOrEmpty() &&
+            !hlsStreamUrl.isNullOrEmpty() &&
+            !dashStreamUrl.isNullOrEmpty() &&
+            !progressiveStreamUrl.isNullOrEmpty() &&
+            !downloadUrl.isNullOrEmpty() &&
             duration != null
     }
 
     fun isCompleteYoutubePlayback(): Boolean {
         return type == PLAYBACK_TYPE_YOUTUBE &&
             id.isNotEmpty() &&
-            thumbnailUrl != null &&
+            !thumbnailUrl.isNullOrEmpty() &&
             duration != null
     }
 }

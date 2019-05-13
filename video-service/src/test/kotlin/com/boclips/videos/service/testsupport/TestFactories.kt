@@ -25,6 +25,7 @@ import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
 import com.boclips.videos.service.presentation.collections.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -302,6 +303,46 @@ object TestFactories {
             isPublic = isPublic,
             subjects = subjects,
             ageRange = ageRange
+        )
+    }
+
+    fun createKalturaPlaybackDocument(
+        id: String = "valid-id",
+        thumbnailUrl: List<String>? = listOf("thumbnail.com"),
+        hlsStreamUrl: String? = null,
+        dashStreamUrl: String? = null,
+        progressiveStreamUrl: String? = null,
+        downloadUrl: String? = null,
+        lastVerified: Instant? = null,
+        duration: Int? = null
+    ): PlaybackDocument {
+        return PlaybackDocument(
+            type = "KALTURA",
+            id = id,
+            thumbnailUrl = thumbnailUrl,
+            downloadUrl = downloadUrl,
+            hlsStreamUrl = hlsStreamUrl,
+            dashStreamUrl = dashStreamUrl,
+            progressiveStreamUrl = progressiveStreamUrl,
+            lastVerified = lastVerified,
+            duration = duration
+        )
+    }
+
+    fun createYoutubePlaybackDocument(
+        id: String = "valid-id",
+        duration: Int? = null
+    ): PlaybackDocument {
+        return PlaybackDocument(
+            type = "YOUTUBE",
+            id = id,
+            thumbnailUrl = null,
+            downloadUrl = null,
+            hlsStreamUrl = null,
+            dashStreamUrl = null,
+            progressiveStreamUrl = null,
+            lastVerified = null,
+            duration = duration
         )
     }
 }
