@@ -62,7 +62,7 @@ open class RequestVideoPlaybackUpdate(
 
         val playback = playbackRepository.find(actualVideo.playback.id)
         if (playback == null) {
-            logger.info { "Could not find playback information for $potentialVideoToBeUpdated" }
+            logger.info { "Could not find playback information for $potentialVideoToBeUpdated (Playback Id: ${actualVideo.playback.id})" }
             return
         }
 
