@@ -219,7 +219,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
 
         val event = getEvent()
 
-        assertThat(event["type"]).isEqualTo("CHANGE_AGE_RANGE")
+        assertThat(event["type"]).isEqualTo("CHANGE_COLLECTION_AGE_RANGE")
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
         assertThat(event["userId"]).isEqualTo("user@example.com")
         assertThat(event["userIsBoclips"]).isEqualTo(false)
@@ -246,7 +246,7 @@ class MongoAnalyticsEventServiceIntegrationTest : AbstractSpringIntegrationTest(
 
         val event = getEvent()
 
-        assertThat(event["type"]).isEqualTo("REPLACE_SUBJECTS")
+        assertThat(event["type"]).isEqualTo("REPLACE_COLLECTION_SUBJECTS")
         assertThat(event["timestamp"] as Date).isAfter("2019-02-10")
         assertThat(event["userId"]).isEqualTo("user@example.com")
         assertThat(event["userIsBoclips"]).isEqualTo(false)

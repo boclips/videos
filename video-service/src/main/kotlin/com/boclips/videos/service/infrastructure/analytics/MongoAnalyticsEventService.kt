@@ -77,11 +77,11 @@ class MongoAnalyticsEventService(
                     append("videoId", updateCommand.videoId.value)
                     append("collectionId", collectionId.value)
                 }
-                is CollectionUpdateCommand.ReplaceSubjectsCommand -> saveEvent(EventType.REPLACE_SUBJECTS) {
+                is CollectionUpdateCommand.ReplaceSubjectsCommand -> saveEvent(EventType.REPLACE_COLLECTION_SUBJECTS) {
                     append("collectionId", collectionId.value)
                     append("subjects", updateCommand.subjects.map { it.value })
                 }
-                is CollectionUpdateCommand.ChangeAgeRangeCommand -> saveEvent(EventType.CHANGE_AGE_RANGE) {
+                is CollectionUpdateCommand.ChangeAgeRangeCommand -> saveEvent(EventType.CHANGE_COLLECTION_AGE_RANGE) {
                     append("collectionId", collectionId.value)
                     append("minAgeRange", updateCommand.minAge)
                     append("maxAgeRange", updateCommand.maxAge)

@@ -106,13 +106,13 @@ class FakeAnalyticsEventService : AnalyticsEventService {
                 RemoveFromCollectionEventData(collectionId = collectionId.value, videoId = updateCommand.videoId.value)
             )
             is CollectionUpdateCommand.ReplaceSubjectsCommand -> saveEvent(
-                EventType.UPDATE_SUBJECTS,
+                EventType.REPLACE_COLLECTION_SUBJECTS,
                 UpdatedCollectionSubjectsEventData(
                     collectionId = collectionId.value,
                     updatedSubjects = updateCommand.subjects.map { it.value })
             )
             is CollectionUpdateCommand.ChangeAgeRangeCommand -> saveEvent(
-                EventType.UPDATE_AGE_RANGE,
+                EventType.CHANGE_COLLECTION_AGE_RANGE,
                 UpdatedAgeRangeEventData(
                     collectionId = collectionId.value,
                     minAge = updateCommand.minAge,
