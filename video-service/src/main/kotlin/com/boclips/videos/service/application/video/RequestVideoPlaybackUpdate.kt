@@ -91,7 +91,7 @@ open class RequestVideoPlaybackUpdate(
             videoRepository.update(replacePlayback)
             logger.info { "Updated playback information for video ${actualVideo.videoId} successfully" }
         } catch (ex: Exception) {
-            logger.info { "Did not update playback for video ${actualVideo.videoId}" }
+            logger.info { "Did not update playback for video ${actualVideo.videoId}: $ex" }
         }
     }
 
