@@ -6,7 +6,8 @@ spring:
     gcp:
       pubsub:
         subscriber:
-          max-ack-extension-period: 60
+          flow-control:
+            max-outstanding-element-count: 1
 
 logging:
   config: "classpath:logback.xml"
