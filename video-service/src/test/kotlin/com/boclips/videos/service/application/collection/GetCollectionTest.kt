@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
+import com.boclips.videos.service.presentation.video.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.assertThrows
 
 class GetCollectionTest {
 
+    lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     lateinit var collectionRepository: CollectionRepository
     lateinit var collectionResourceFactory: CollectionResourceFactory
     lateinit var videoService: VideoService
@@ -36,8 +38,9 @@ class GetCollectionTest {
             )
         }
         videosLinkBuilder = mock()
+        playbackToResourceConverter = mock()
         collectionResourceFactory = CollectionResourceFactory(
-            VideoToResourceConverter(videosLinkBuilder),
+            VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
             SubjectToResourceConverter(),
             videoService
         )

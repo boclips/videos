@@ -373,7 +373,7 @@ object VideoResourceFactory {
         hasTranscripts: Boolean = true
     ) = VideoResource(
         id = id,
-        playback = playback,
+        playback = Resource(playback),
         title = title,
         description = description,
         releasedOn = releasedOn,

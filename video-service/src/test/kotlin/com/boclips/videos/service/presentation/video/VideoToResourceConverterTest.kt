@@ -16,13 +16,15 @@ import java.time.Duration
 
 internal class VideoToResourceConverterTest {
 
+    private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
 
     @BeforeEach
     fun setUp() {
         videosLinkBuilder = mock()
-        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder)
+        playbackToResourceConverter = PlaybackToResourceConverter(mock())
+        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
     }
 
     val kalturaVideo = createVideo(
@@ -81,11 +83,11 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCHABLE)
         assertThat(videoResource.legalRestrictions).isEqualTo("None")
 
-        assertThat(videoResource.playback!!.type).isEqualTo("STREAM")
-        assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("kaltura-thumbnailUrl")
-        assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(11))
-        assertThat(videoResource.playback!!.id).isEqualTo("555")
-        assertThat((videoResource.playback!! as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
+        assertThat(videoResource.playback!!.content.type).isEqualTo("STREAM")
+        assertThat(videoResource.playback!!.content.thumbnailUrl).isEqualTo("kaltura-thumbnailUrl")
+        assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(11))
+        assertThat(videoResource.playback!!.content.id).isEqualTo("555")
+        assertThat((videoResource.playback!!.content as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
     }
 
     @Test
@@ -99,10 +101,10 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.subjects).containsExactly("Biology")
         assertThat(videoResource.type!!.id).isEqualTo(0)
         assertThat(videoResource.type!!.name).isEqualTo("Other")
-        assertThat(videoResource.playback!!.type).isEqualTo("YOUTUBE")
-        assertThat(videoResource.playback!!.thumbnailUrl).isEqualTo("youtube-thumbnail")
-        assertThat(videoResource.playback!!.duration).isEqualTo(Duration.ofSeconds(21))
-        assertThat(videoResource.playback!!.id).isEqualTo("444")
+        assertThat(videoResource.playback!!.content.type).isEqualTo("YOUTUBE")
+        assertThat(videoResource.playback!!.content.thumbnailUrl).isEqualTo("youtube-thumbnail")
+        assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(21))
+        assertThat(videoResource.playback!!.content.id).isEqualTo("444")
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
         assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCH_DISABLED)
         assertThat(videoResource.legalRestrictions).isEqualTo("Many")
@@ -113,6 +115,6 @@ internal class VideoToResourceConverterTest {
         val resultResource = videoToResourceConverter
             .wrapVideosInResource(videos = listOf(youtubeVideo, kalturaVideo))
 
-        assertThat(resultResource.map { it.content.playback!!.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
+        assertThat(resultResource.map { it.content.playback!!.content.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
     }
 }

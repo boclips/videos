@@ -41,6 +41,7 @@ import com.boclips.videos.service.presentation.collections.CollectionResourceFac
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
+import com.boclips.videos.service.presentation.video.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
@@ -63,11 +64,12 @@ class ApplicationContext(
     @Bean
     fun searchVideo(
         videosLinkBuilder: VideosLinkBuilder,
-        searchQueryConverter: SearchQueryConverter
+        searchQueryConverter: SearchQueryConverter,
+        playbackToResourceConverter: PlaybackToResourceConverter
     ) = SearchVideo(
-        getVideoById(videosLinkBuilder),
-        getAllVideosById(videosLinkBuilder),
-        getVideosByQuery(videosLinkBuilder, searchQueryConverter),
+        getVideoById(videosLinkBuilder, playbackToResourceConverter),
+        getAllVideosById(videosLinkBuilder, playbackToResourceConverter),
+        getVideosByQuery(videosLinkBuilder, searchQueryConverter, playbackToResourceConverter),
         videoRepository
     )
 
@@ -115,11 +117,14 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getCollection(videosLinkBuilder: VideosLinkBuilder): GetCollection {
+    fun getCollection(
+        videosLinkBuilder: VideosLinkBuilder,
+        playbackToResourceConverter: PlaybackToResourceConverter
+    ): GetCollection {
         return GetCollection(
             collectionRepository,
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder),
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
                 videoService
             )
@@ -127,11 +132,14 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getPublicCollections(videosLinkBuilder: VideosLinkBuilder): GetCollections {
+    fun getPublicCollections(
+        videosLinkBuilder: VideosLinkBuilder,
+        playbackToResourceConverter: PlaybackToResourceConverter
+    ): GetCollections {
         return GetCollections(
             collectionRepository,
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder),
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
                 videoService
             )
@@ -213,31 +221,40 @@ class ApplicationContext(
         return SearchQueryConverter()
     }
 
-    private fun getVideoById(videosLinkBuilder: VideosLinkBuilder) =
+    private fun getVideoById(
+        videosLinkBuilder: VideosLinkBuilder,
+        playbackToResourceConverter: PlaybackToResourceConverter
+    ) =
         GetVideoById(
             videoService,
-            videoToResourceConverter(videosLinkBuilder)
+            videoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
         )
 
     private fun getVideosByQuery(
         videosLinkBuilder: VideosLinkBuilder,
-        searchQueryConverter: SearchQueryConverter
+        searchQueryConverter: SearchQueryConverter, playbackToResourceConverter: PlaybackToResourceConverter
     ) =
         GetVideosByQuery(
             videoService,
-            videoToResourceConverter(videosLinkBuilder),
+            videoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
             analyticsEventService,
             searchQueryConverter
         )
 
-    private fun getAllVideosById(videosLinkBuilder: VideosLinkBuilder): GetAllVideosById {
+    private fun getAllVideosById(
+        videosLinkBuilder: VideosLinkBuilder,
+        playbackToResourceConverter: PlaybackToResourceConverter
+    ): GetAllVideosById {
         return GetAllVideosById(
             videoService,
-            videoToResourceConverter(videosLinkBuilder)
+            videoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
         )
     }
 
-    private fun videoToResourceConverter(videosLinkBuilder: VideosLinkBuilder): VideoToResourceConverter {
-        return VideoToResourceConverter(videosLinkBuilder)
+    private fun videoToResourceConverter(
+        videosLinkBuilder: VideosLinkBuilder,
+        playbackToResourceConverter: PlaybackToResourceConverter
+    ): VideoToResourceConverter {
+        return VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
     }
 }

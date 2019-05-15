@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.springframework.hateoas.Resource
 import org.springframework.hateoas.core.Relation
 import java.time.LocalDate
 
@@ -13,7 +14,7 @@ data class VideoResource(
     val releasedOn: LocalDate? = null,
     val contentPartner: String? = null,
     val contentPartnerVideoId: String? = null,
-    val playback: PlaybackResource? = null,
+    val playback: Resource<PlaybackResource>? = null,
     val subjects: Set<String>? = null,
     val badges: Set<String> = emptySet(),
     val type: VideoTypeResource? = null,
