@@ -65,11 +65,12 @@ class ApplicationContext(
     fun searchVideo(
         videosLinkBuilder: VideosLinkBuilder,
         searchQueryConverter: SearchQueryConverter,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        playbackToResourceConverter: PlaybackToResourceConverter,
+        videoToResourceConverter: VideoToResourceConverter
     ) = SearchVideo(
-        getVideoById(videosLinkBuilder, playbackToResourceConverter),
-        getAllVideosById(videosLinkBuilder, playbackToResourceConverter),
-        getVideosByQuery(videosLinkBuilder, searchQueryConverter, playbackToResourceConverter),
+        getVideoById(videoToResourceConverter),
+        getAllVideosById(videoToResourceConverter),
+        getVideosByQuery(searchQueryConverter, videoToResourceConverter),
         videoRepository
     )
 
@@ -222,39 +223,30 @@ class ApplicationContext(
     }
 
     private fun getVideoById(
-        videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        videoToResourceConverter: VideoToResourceConverter
     ) =
         GetVideoById(
             videoService,
-            videoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
+            videoToResourceConverter
         )
 
     private fun getVideosByQuery(
-        videosLinkBuilder: VideosLinkBuilder,
-        searchQueryConverter: SearchQueryConverter, playbackToResourceConverter: PlaybackToResourceConverter
+        searchQueryConverter: SearchQueryConverter,
+        videoToResourceConverter: VideoToResourceConverter
     ) =
         GetVideosByQuery(
             videoService,
-            videoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+            videoToResourceConverter,
             analyticsEventService,
             searchQueryConverter
         )
 
     private fun getAllVideosById(
-        videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        videoToResourceConverter: VideoToResourceConverter
     ): GetAllVideosById {
         return GetAllVideosById(
             videoService,
-            videoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
+            videoToResourceConverter
         )
-    }
-
-    private fun videoToResourceConverter(
-        videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter
-    ): VideoToResourceConverter {
-        return VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
     }
 }
