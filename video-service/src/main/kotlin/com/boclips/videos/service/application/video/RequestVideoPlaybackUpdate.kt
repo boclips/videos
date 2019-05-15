@@ -45,7 +45,7 @@ open class RequestVideoPlaybackUpdate(
         try {
             handleUpdate(videoPlaybackSyncRequestedEvent)
         } catch (ex: Exception) {
-            logger.info { "Failed to process ${Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED} for ${videoPlaybackSyncRequestedEvent.videoId}" }
+            logger.info { "Failed to process ${Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED} for ${videoPlaybackSyncRequestedEvent.videoId}: $ex" }
         }
     }
 
