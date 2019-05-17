@@ -4,8 +4,9 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.eq
@@ -16,67 +17,53 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
 
-internal class RemoveVideoFromCollectionTest {
+class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
 
-    @BeforeEach
-    fun setUp() {
-        setSecurityContext("me@me.com")
-    }
+    @Autowired
+    lateinit var collectionRepository: CollectionRepository
+
+    @Autowired
+    lateinit var removeVideoFromCollection: RemoveVideoFromCollection
 
     @Test
     fun `removes the video using the collection service`() {
-        val collectionService = mock<CollectionRepository> {
-            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
-        }
+        val videoId = saveVideo()
+        val collectionId = saveCollection(owner = "owner@collections.com", videos = listOf(videoId.value))
 
-        val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, FakeAnalyticsEventService())
+        assertThat(collectionRepository.getById(collectionId)?.videos).isNotEmpty
 
-        val videoId = TestFactories.aValidId()
-        removeVideoFromCollection("col-id", videoId)
+        removeVideoFromCollection(collectionId.value, videoId.value)
 
-        argumentCaptor<CollectionUpdateCommand.RemoveVideoFromCollectionCommand>().apply {
-            verify(collectionService).update(eq(CollectionId("col-id")), capture())
-            assertThat(firstValue.videoId.value).isEqualTo(videoId)
-        }
+        assertThat(collectionRepository.getById(collectionId)?.videos).isEmpty()
     }
 
     @Test
     fun `logs an event`() {
-        val collectionService = mock<CollectionRepository> {
-            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
-        }
+        val videoId = saveVideo()
+        val collectionId = saveCollection(owner = "owner@collection.com", videos = listOf(videoId.value))
 
-        val eventService = FakeAnalyticsEventService()
-        val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, eventService)
+        removeVideoFromCollection(collectionId.value, videoId.value)
 
-        val videoId = TestFactories.aValidId()
-        removeVideoFromCollection("col-id", videoId)
+        val message = messageCollector.forChannel(topics.videoRemovedFromCollection()).poll()
 
-        assertThat(eventService.removeFromCollectionEvent().data.videoId).isEqualTo(videoId)
-        assertThat(eventService.removeFromCollectionEvent().data.collectionId).isEqualTo("col-id")
-        assertThat(eventService.removeFromCollectionEvent().user.id).isEqualTo("me@me.com")
+        assertThat(message).isNotNull
+        assertThat(message.payload.toString()).contains(videoId.value)
+        assertThat(message.payload.toString()).contains(collectionId.value)
+        assertThat(message.payload.toString()).contains("owner@collection.com")
     }
 
     @Test
-    fun `throws error when user doesn't own the collection`() {
+    fun `throws an exception when user doesn't own the collection`() {
+        val videoId = saveVideo()
+        val collectionId = saveCollection(owner = "owner@collections.com", videos = listOf(videoId.value))
+
         setSecurityContext("attacker@example.com")
 
-        val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(id = collectionId, owner = "innocent@example.com")
-
-        val collectionService = mock<CollectionRepository> {
-            on { getById(any()) }.thenReturn(onGetCollection)
-        }
-
-        val removeVideoFromCollection = RemoveVideoFromCollection(collectionService, FakeAnalyticsEventService())
-
         assertThrows<CollectionAccessNotAuthorizedException> {
-            removeVideoFromCollection(
-                collectionId = collectionId.value,
-                videoId = TestFactories.aValidId()
-            )
+            removeVideoFromCollection(collectionId.value, videoId.value)
         }
-        verify(collectionService, never()).update(any(), any<CollectionUpdateCommand>())
+        assertThat(collectionRepository.getById(collectionId)?.videos).isNotEmpty
     }
 }

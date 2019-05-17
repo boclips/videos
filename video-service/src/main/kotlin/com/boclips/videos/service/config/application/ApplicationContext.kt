@@ -32,11 +32,11 @@ import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
@@ -55,7 +55,7 @@ class ApplicationContext(
     val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
     val collectionRepository: CollectionRepository,
-    val analyticsEventService: AnalyticsEventService,
+    val eventService: EventService,
     val videoAccessService: VideoAccessService,
     val topics: Topics,
     val subjectRepository: SubjectRepository
@@ -149,27 +149,27 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionRepository, analyticsEventService)
+        return AddVideoToCollection(collectionRepository, eventService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionRepository, analyticsEventService)
+        return RemoveVideoFromCollection(collectionRepository, eventService)
     }
 
     @Bean
     fun updateCollection(): UpdateCollection {
-        return UpdateCollection(collectionRepository, analyticsEventService)
+        return UpdateCollection(collectionRepository, eventService)
     }
 
     @Bean
     fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionRepository, analyticsEventService)
+        return BookmarkCollection(collectionRepository, eventService)
     }
 
     @Bean
     fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionRepository, analyticsEventService)
+        return UnbookmarkCollection(collectionRepository, eventService)
     }
 
     @Bean
@@ -237,7 +237,7 @@ class ApplicationContext(
         GetVideosByQuery(
             videoService,
             videoToResourceConverter,
-            analyticsEventService,
+            eventService,
             searchQueryConverter
         )
 

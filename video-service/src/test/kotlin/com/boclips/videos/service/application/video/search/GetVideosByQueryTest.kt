@@ -155,7 +155,7 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `saves a search event`() {
+    fun `publishes a VIDEOS_SEARCHED event`() {
         saveVideo(title = "why are camels so tall 1")
         saveVideo(title = "why are camels so tall 2")
         saveVideo(title = "why are camels so tall 3")
@@ -168,10 +168,9 @@ class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 1
         )
 
-        assertThat(analyticsEventService.searchEvent().data.query).isEqualTo("why are camels so tall")
-        assertThat(analyticsEventService.searchEvent().data.pageIndex).isEqualTo(1)
-        assertThat(analyticsEventService.searchEvent().data.pageSize).isEqualTo(2)
-        assertThat(analyticsEventService.searchEvent().data.totalResults).isEqualTo(3L)
+        val message = messageCollector.forChannel(topics.videosSearched()).poll()
+        assertThat(message).isNotNull
+        assertThat(message.payload.toString()).contains("why are camels so tall")
     }
 
     @Test

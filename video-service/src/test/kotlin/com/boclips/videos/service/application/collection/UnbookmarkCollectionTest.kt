@@ -1,134 +1,58 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.BeforeEach
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
 
-class UnunbookmarkCollectionTest {
+class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
+    @Autowired
     lateinit var collectionRepository: CollectionRepository
-    val eventService = FakeAnalyticsEventService()
 
-    @BeforeEach
-    fun setUp() {
+    @Autowired
+    lateinit var unbookmarkCollection: UnbookmarkCollection
+
+    @Test
+    fun `the bookmark gets deleted`() {
+        val collectionId = saveCollection(owner = "owner@example.com", public = true, bookmarkedBy = "me@me.com")
+
+        assertThat(collectionRepository.getById(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
+
         setSecurityContext("me@me.com")
-    }
+        unbookmarkCollection(collectionId.value)
 
-    @Test
-    fun `updates on collection delegate`() {
-        val collection = TestFactories.createCollection(owner = "other@me.com", isPublic = true)
-        collectionRepository = mock {
-            on { getById(any()) }.thenReturn(collection)
-        }
-
-        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
-
-        unbookmark(collection.id.value)
-
-        argumentCaptor<String>().apply {
-            verify(collectionRepository).unbookmark(
-                eq(collection.id), eq(
-                    UserId(
-                        "me@me.com"
-                    )
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `throws error when user owns the collection`() {
-        setSecurityContext("me@example.com")
-
-        val collectionId = CollectionId("collection-123")
-        val onGetCollection =
-            TestFactories.createCollection(id = collectionId, owner = "me@example.com", isPublic = true)
-
-        collectionRepository = mock {
-            on { getById(collectionId) } doReturn onGetCollection
-        }
-
-        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
-
-        assertThrows<CollectionIllegalOperationException> {
-            unbookmark(
-                collectionId = collectionId.value
-            )
-        }
-        verify(collectionRepository, never()).unbookmark(any(), any())
-    }
-
-    @Test
-    fun `throws error when collection is not public`() {
-        setSecurityContext("me@example.com")
-
-        val collectionId = CollectionId("collection-123")
-        val onGetCollection =
-            TestFactories.createCollection(id = collectionId, owner = "other@example.com", isPublic = false)
-
-        collectionRepository = mock {
-            on { getById(collectionId) } doReturn onGetCollection
-        }
-
-        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
-
-        assertThrows<CollectionAccessNotAuthorizedException> {
-            unbookmark(
-                collectionId = collectionId.value
-            )
-        }
-        verify(collectionRepository, never()).unbookmark(any(), any())
+        assertThat(collectionRepository.getById(collectionId)!!.bookmarks).isEmpty()
     }
 
     @Test
     fun `throws when collection doesn't exist`() {
-        setSecurityContext("attacker@example.com")
-
-        val collectionId = CollectionId("collection-123")
-        val onGetCollection: Collection? = null
-
-        collectionRepository = mock {
-            on { getById(collectionId) } doReturn onGetCollection
-        }
-
-        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
-
+        setSecurityContext("me@me.com")
         assertThrows<CollectionNotFoundException> {
-            unbookmark(
-                collectionId = collectionId.value
+            unbookmarkCollection(
+                collectionId = TestFactories.aValidId()
             )
         }
-        verify(collectionRepository, never()).unbookmark(any(), any())
     }
 
     @Test
     fun `logs an event`() {
-        val collection = TestFactories.createCollection(owner = "other@me.com", isPublic = true)
-        collectionRepository = mock {
-            on { getById(any()) }.thenReturn(collection)
-        }
+        val collectionId = saveCollection(owner = "owner@example.com", public = true, bookmarkedBy = "me@me.com")
 
-        val unbookmark = UnbookmarkCollection(collectionRepository, eventService)
+        setSecurityContext("me@me.com")
+        unbookmarkCollection(collectionId.value)
 
-        unbookmark(collection.id.value)
+        val message = messageCollector.forChannel(topics.collectionBookmarkChanged()).poll()
 
-        Assertions.assertThat(eventService.unbookmarkEvent().data.collectionId).isEqualTo(collection.id.value)
-        Assertions.assertThat(eventService.unbookmarkEvent().user.id).isEqualTo("me@me.com")
+        assertThat(message).isNotNull
+        assertThat(message.payload.toString()).contains(collectionId.value)
+        assertThat(message.payload.toString()).contains("me@me.com")
+        assertThat(message.payload.toString()).contains("false")
     }
 }

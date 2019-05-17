@@ -2,12 +2,12 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.collection.security.getReadableCollectionOrThrow
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
-import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
+import com.boclips.videos.service.domain.service.events.EventService
 import getCurrentUserId
 
 class BookmarkCollection(
     private val collectionRepository: CollectionRepository,
-    private val analyticsEventService: AnalyticsEventService
+    private val eventService: EventService
 ) {
     operator fun invoke(collectionId: String) {
         val collection = collectionRepository.getReadableCollectionOrThrow(collectionId)
@@ -18,6 +18,6 @@ class BookmarkCollection(
         )
 
         collectionRepository.bookmark(collection.id, getCurrentUserId())
-        analyticsEventService.saveBookmarkCollectionEvent(collection.id)
+        eventService.saveBookmarkCollectionEvent(collection.id)
     }
 }

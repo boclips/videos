@@ -5,11 +5,11 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
+import com.boclips.videos.service.domain.service.events.EventService
 
 class RemoveVideoFromCollection(
     private val collectionRepository: CollectionRepository,
-    private val analyticsEventService: AnalyticsEventService
+    private val eventService: EventService
 ) {
     operator fun invoke(collectionId: String?, videoId: String?) {
         collectionId ?: throw Exception("Collection id cannot be null")
@@ -22,7 +22,7 @@ class RemoveVideoFromCollection(
             updateCommand = CollectionUpdateCommand.RemoveVideoFromCollectionCommand(VideoId(videoId))
         )
 
-        analyticsEventService.saveUpdateCollectionEvent(
+        eventService.saveUpdateCollectionEvent(
             CollectionId(collectionId),
             listOf(CollectionUpdateCommand.RemoveVideoFromCollectionCommand(VideoId(videoId)))
         )

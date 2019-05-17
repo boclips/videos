@@ -4,7 +4,7 @@ import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
+import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.presentation.video.VideosResource
@@ -13,7 +13,7 @@ import mu.KLogging
 class GetVideosByQuery(
     private val videoService: VideoService,
     private val videoToResourceConverter: VideoToResourceConverter,
-    private val analyticsEventService: AnalyticsEventService,
+    private val eventService: EventService,
     private val searchQueryConverter: SearchQueryConverter
 ) {
     companion object : KLogging()
@@ -56,7 +56,7 @@ class GetVideosByQuery(
 
         val videoResources = videoToResourceConverter.wrapVideosInResource(videos)
 
-        analyticsEventService.saveSearchEvent(
+        eventService.saveSearchEvent(
             query = query,
             pageIndex = pageNumber,
             pageSize = pageSize,

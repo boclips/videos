@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
-import com.boclips.events.types.VideoPlaybackSyncRequested
+import com.boclips.events.types.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository

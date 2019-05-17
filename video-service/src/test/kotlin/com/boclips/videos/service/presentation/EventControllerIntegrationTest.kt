@@ -23,30 +23,33 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val content = """{
             "videoId":"$videoId",
-            "videoIndex":3,
+            "videoIndex":135,
             "captureTime":"2019-02-21T15:34:37.186Z",
             "playerId":"f249f486-fc04-48f7-7361-4413c13a4183",
-            "segmentStartSeconds":0,
-            "segmentEndSeconds":0.728248,
+            "segmentStartSeconds":1469.128248,
+            "segmentEndSeconds":1470.728248,
             "videoDurationSeconds":610
         }""".trimIndent()
 
         mockMvc.perform(
             post("/v1/events/playback")
-                .asBoclipsEmployee()
+                .asTeacher(email = "teacher@gmail.com")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Referer", "https://teachers.boclips.com/videos?q=abc")
                 .content(content)
         )
             .andExpect(status().isCreated)
 
-        val event = analyticsEventService.playbackEvent()
-        assertThat(event.timestamp).isNotNull()
-        assertThat(event.type).isNotNull()
-        assertThat(event.user.boclipsEmployee).isTrue()
-        assertThat(event.data.videoId).isEqualTo(videoId)
-        assertThat(event.data.videoIndex).isEqualTo(3)
-        assertThat(event.url).contains("https://teachers.boclips.com/videos?q=abc")
+        val message = messageCollector.forChannel(topics.videoSegmentPlayed()).poll()
+        assertThat(message).isNotNull
+        assertThat(message.payload.toString()).contains(videoId)
+        assertThat(message.payload.toString()).contains("teacher@gmail.com")
+        assertThat(message.payload.toString()).contains("135")
+        assertThat(message.payload.toString()).contains("f249f486-fc04-48f7-7361-4413c13a4183")
+        assertThat(message.payload.toString()).contains("1469")
+        assertThat(message.payload.toString()).contains("1470")
+        assertThat(message.payload.toString()).contains("610")
+        assertThat(message.payload.toString()).contains("https://teachers.boclips.com/videos?q=abc")
     }
 
     @Test

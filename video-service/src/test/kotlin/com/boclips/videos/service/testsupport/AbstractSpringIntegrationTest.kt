@@ -5,9 +5,13 @@ import com.boclips.events.config.Topics
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
+import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -15,11 +19,11 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
+import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
-import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
@@ -32,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.stream.test.binder.MessageCollector
+import org.springframework.messaging.MessageChannel
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
@@ -41,7 +46,7 @@ import java.util.UUID
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "fake-security", "fake-event-service")
+@ActiveProfiles("test", "fakes", "fake-kaltura", "fake-search", "fake-youtube", "fake-security")
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
@@ -60,13 +65,16 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var kalturaPlaybackProvider: KalturaPlaybackProvider
 
     @Autowired
-    lateinit var analyticsEventService: FakeAnalyticsEventService
-
-    @Autowired
     lateinit var createVideo: CreateVideo
 
     @Autowired
     lateinit var createCollection: CreateCollection
+
+    @Autowired
+    lateinit var updateCollection: UpdateCollection
+
+    @Autowired
+    lateinit var bookmarkCollection: BookmarkCollection
 
     @Autowired
     lateinit var bulkUpdateVideo: BulkUpdateVideo
@@ -82,6 +90,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var messageCollector: MessageCollector
+
+    @Autowired
+    lateinit var messageChannels: List<MessageChannel>
 
     @Autowired
     lateinit var objectMapper: ObjectMapper
@@ -112,8 +123,12 @@ abstract class AbstractSpringIntegrationTest {
         fakeSearchService.safeRebuildIndex(emptySequence())
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
-        analyticsEventService.clear()
-        messageCollector.forChannel(topics.videoAnalysisRequested()).clear()
+
+        messageChannels.forEach { channel ->
+            try {
+                messageCollector.forChannel(channel).clear()
+            } catch (e: Exception) { }
+        }
 
         reset(legacySearchService)
     }
@@ -166,6 +181,23 @@ abstract class AbstractSpringIntegrationTest {
         ).content.id
 
         return VideoId(id!!)
+    }
+
+    fun saveCollection(owner: String = "owner@me.com", title: String = "collection title", videos: List<String> = emptyList(), public: Boolean = false, bookmarkedBy: String? = null): CollectionId {
+        setSecurityContext(owner)
+
+        val collectionId = createCollection(TestFactories.createCollectionRequest(title = title, videos = videos)).id
+
+        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = public))
+        messageCollector.forChannel(topics.collectionVisibilityChanged()).clear()
+
+        bookmarkedBy?.let {
+            setSecurityContext(it)
+            bookmarkCollection(collectionId.value)
+            messageCollector.forChannel(topics.collectionBookmarkChanged()).clear()
+        }
+
+        return collectionId
     }
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {

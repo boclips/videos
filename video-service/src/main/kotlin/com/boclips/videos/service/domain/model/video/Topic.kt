@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.events.types.VideoAnalysedTopic
+import com.boclips.events.types.video.VideoAnalysedTopic
 import java.util.Locale
 
 data class Topic(

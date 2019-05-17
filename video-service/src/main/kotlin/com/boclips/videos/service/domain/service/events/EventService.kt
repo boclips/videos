@@ -1,10 +1,10 @@
-package com.boclips.videos.service.infrastructure.analytics
+package com.boclips.videos.service.domain.service.events
 
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
-interface AnalyticsEventService {
+interface EventService {
     fun saveSearchEvent(
         query: String,
         pageIndex: Int,

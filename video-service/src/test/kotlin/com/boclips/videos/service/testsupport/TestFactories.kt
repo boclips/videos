@@ -2,9 +2,9 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.events.types.Captions
 import com.boclips.events.types.CaptionsFormat
-import com.boclips.events.types.VideoAnalysed
-import com.boclips.events.types.VideoAnalysedKeyword
-import com.boclips.events.types.VideoAnalysedTopic
+import com.boclips.events.types.video.VideoAnalysed
+import com.boclips.events.types.video.VideoAnalysedKeyword
+import com.boclips.events.types.video.VideoAnalysedTopic
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry

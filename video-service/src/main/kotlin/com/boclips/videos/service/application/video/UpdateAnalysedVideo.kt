@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.events.config.Subscriptions
-import com.boclips.events.types.VideoAnalysed
-import com.boclips.events.types.VideoAnalysedTopic
+import com.boclips.events.types.video.VideoAnalysed
+import com.boclips.events.types.video.VideoAnalysedTopic
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Topic

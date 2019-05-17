@@ -1,13 +1,16 @@
 package com.boclips.videos.service.application.analytics
 
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.fakes.FakeAnalyticsEventService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 
-class SavePlaybackEventTest {
+class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
+
+    @Autowired
+    lateinit var savePlaybackEvent: SavePlaybackEvent
 
     private val payload = CreatePlaybackEventCommand(
         playerId = "player-id",
@@ -18,21 +21,16 @@ class SavePlaybackEventTest {
         videoDurationSeconds = 60
     )
 
-    lateinit var savePlaybackEvent: SavePlaybackEvent
-    lateinit var eventService: FakeAnalyticsEventService
-
-    @BeforeEach
-    fun setUp() {
-        eventService = FakeAnalyticsEventService()
-        savePlaybackEvent = SavePlaybackEvent(eventService)
-    }
-
     @Test
     fun `saves the event`() {
         savePlaybackEvent.execute(payload)
 
-        val event = eventService.playbackEvent()
+        val event = messageCollector.forChannel(topics.videoSegmentPlayed()).poll()
 
-        assertThat(event.data.segmentStartSeconds).isEqualTo(10)
+        assertThat(event).isNotNull
+        assertThat(event.payload.toString()).contains("player-id")
+        assertThat(event.payload.toString()).contains("10")
+        assertThat(event.payload.toString()).contains("20")
+        assertThat(event.payload.toString()).contains("60")
     }
 }

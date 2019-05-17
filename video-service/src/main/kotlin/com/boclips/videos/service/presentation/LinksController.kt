@@ -19,7 +19,7 @@ class LinksController(
     private val eventsLinkBuilder: EventsLinkBuilder
 ) {
     @GetMapping
-    fun search(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
+    fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
         return Resource(
             "", listOfNotNull(
                 videosLinkBuilder.videoLink(),

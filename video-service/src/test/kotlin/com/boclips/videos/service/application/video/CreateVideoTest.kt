@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.types.VideoAnalysisRequested
+import com.boclips.events.types.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery

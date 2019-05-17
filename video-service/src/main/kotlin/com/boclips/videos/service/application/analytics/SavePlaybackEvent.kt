@@ -1,18 +1,18 @@
 package com.boclips.videos.service.application.analytics
 
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.infrastructure.analytics.AnalyticsEventService
+import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 
 class SavePlaybackEvent(
-    private val analyticsEventService: AnalyticsEventService
+    private val eventService: EventService
 ) {
     fun execute(event: CreatePlaybackEventCommand?) {
 
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
 
-        analyticsEventService.savePlaybackEvent(
+        eventService.savePlaybackEvent(
             playerId = event.playerId!!,
             videoId = VideoId(event.videoId!!),
             videoIndex = event.videoIndex,
