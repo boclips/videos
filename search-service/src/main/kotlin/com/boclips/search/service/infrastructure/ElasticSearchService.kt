@@ -192,6 +192,7 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
                 "${ElasticSearchVideo.TITLE}.std",
                 ElasticSearchVideo.DESCRIPTION,
                 "${ElasticSearchVideo.DESCRIPTION}.std",
+                ElasticSearchVideo.TRANSCRIPT,
                 ElasticSearchVideo.KEYWORDS
             )
             .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)

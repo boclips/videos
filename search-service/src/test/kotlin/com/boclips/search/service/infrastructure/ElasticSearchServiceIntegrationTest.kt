@@ -144,12 +144,57 @@ class ElasticSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest
     }
 
     @Test
+    fun `returns documents where transcript matches`() {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    transcript = "game of thrones season 8 episode 6 online watch free no ads"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    transcript = "the big bang theory season 8 episode 6 online watch free no ads"
+                )
+            )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("thrones")))
+
+        assertThat(results).containsExactly("1")
+    }
+
+    @Test
+    fun `title match is ranked higher than transcript match`() {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    transcript = "game of thrones season 8 episode 6 online watch free no ads"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "game of thrones season 8 is the best one yet"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    transcript = "game of thrones season 8 is the worst one yet"
+                )
+            )
+        )
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("thrones")))
+
+        assertThat(results).hasSize(3)
+        assertThat(results).startsWith("2")
+    }
+
+    @Test
     fun `takes stopwords into account for queries like "I have a dream"`() {
         adminService.upsert(
-                sequenceOf(
-                        SearchableVideoMetadataFactory.create(id = "1", description = "dream clouds dream sweet"),
-                        SearchableVideoMetadataFactory.create(id = "2", description = "i have a dream")
-                )
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", description = "dream clouds dream sweet"),
+                SearchableVideoMetadataFactory.create(id = "2", description = "i have a dream")
+            )
         )
 
         val results = queryService.search(PaginatedSearchRequest(query = Query("i have a dream")))
