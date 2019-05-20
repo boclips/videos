@@ -1,6 +1,8 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
+import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.Query
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -121,5 +123,16 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val video = videoRepository.find(videoId)!!
 
         assertThat(video.keywords).containsExactlyInAnyOrder("old keyword 1", "old keyword 2", "new keyword")
+    }
+
+    @Test
+    fun `updates the video in the search index`() {
+        val videoId = saveVideo()
+
+        val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "the transcript")
+
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
+
+        assertThat(fakeSearchService.search(PaginatedSearchRequest(query = Query("transcript")))).containsExactly(videoId.value)
     }
 }

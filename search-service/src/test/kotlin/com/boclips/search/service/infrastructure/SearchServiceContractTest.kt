@@ -117,6 +117,21 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `searches in transcripts`(
+        queryService: GenericSearchService,
+        adminService: GenericSearchServiceAdmin<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(sequenceOf(
+            SearchableVideoMetadataFactory.create(id = "1", transcript = "the video transcript")
+        ))
+
+        val results = queryService.search(PaginatedSearchRequest(query = Query("video")))
+
+        assertThat(results).containsExactly("1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `paginates results`(
         queryService: GenericSearchService,
         adminService: GenericSearchServiceAdmin<VideoMetadata>

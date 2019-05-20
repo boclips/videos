@@ -99,7 +99,7 @@ class ApplicationContext(
 
     @Bean
     fun updateAnalysedVideo(): UpdateAnalysedVideo {
-        return UpdateAnalysedVideo(playbackRepository, videoRepository)
+        return UpdateAnalysedVideo(playbackRepository, videoRepository, searchService)
     }
 
     @Bean

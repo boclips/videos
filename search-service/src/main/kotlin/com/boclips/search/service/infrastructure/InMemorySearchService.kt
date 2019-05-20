@@ -49,17 +49,18 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
         val minDuration: Long = if (query.minDuration != null) query.minDuration.seconds else 0
         val maxDuration: Long = if (query.maxDuration != null) query.maxDuration.seconds else Long.MAX_VALUE
 
-        val releaseDateFrom: LocalDate = if (query.releaseDateFrom != null) query.releaseDateFrom else LocalDate.MIN
-        val releaseDateTo: LocalDate = if (query.releaseDateTo != null) query.releaseDateTo else LocalDate.MAX
+        val releaseDateFrom: LocalDate = query.releaseDateFrom ?: LocalDate.MIN
+        val releaseDateTo: LocalDate = query.releaseDateTo ?: LocalDate.MAX
 
         return when {
-            !ids.isEmpty() -> index.filter { ids.contains(it.key) }
+            ids.isNotEmpty() -> index.filter { ids.contains(it.key) }
                 .map { video -> video.key }
             else -> index
                 .filter { entry ->
                     entry.value.title.contains(phrase!!, ignoreCase = true)
                         || entry.value.description.contains(phrase, ignoreCase = true)
                         || entry.value.contentProvider.contains(phrase, ignoreCase = true)
+                        || entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
                 }
                 .filter { entry ->
                     entry.value.tags.containsAll(query.includeTags)
