@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -208,13 +209,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns 400 with invalid source`() {
         mockMvc.perform(get("/v1/videos?query=elephants&source=invalidoops").asTeacher())
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
     }
 
     @Test
     fun `returns 400 with invalid duration`() {
         mockMvc.perform(get("/v1/videos?query=elephants&min_duration=invalidoops").asTeacher())
             .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -229,14 +233,17 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 400 with invalid date filter`() {
         mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=invalidoops").asTeacher())
             .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
         mockMvc.perform(get("/v1/videos?query=elephants&released_date_to=invalidoops").asTeacher())
             .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
     }
 
     @Test
     fun `returns 400 for invalid search request`() {
         mockMvc.perform(get("/v1/videos").asTeacher())
             .andExpect(status().`is`(400))
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -302,6 +309,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 404 for nonexistent video`() {
         mockMvc.perform(get("/v1/videos/9999").asTeacher())
             .andExpect(status().`is`(404))
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -360,7 +368,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error", containsString("Illegal playback id")))
+            .andExpect(jsonPath("$.message", containsString("Illegal playback id")))
     }
 
     @Test
@@ -397,10 +405,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isConflict)
             .andExpect(
                 jsonPath(
-                    "$.error",
+                    "$.message",
                     containsString("""video from provider "AP" and provider id "1" already exists""")
                 )
             )
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -423,6 +432,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
             .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -435,6 +445,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `return BAD_REQUEST when content is invalid`() {
         mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content("{}"))
             .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -508,6 +519,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType(MediaType.APPLICATION_JSON).content(mathsPatch)
         )
             .andExpect(status().isNotFound)
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -519,6 +531,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType(MediaType.APPLICATION_JSON).content(mathsPatch)
         )
             .andExpect(status().isNotFound)
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -657,6 +670,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
             .andExpect(status().isNotFound)
+            .andExpectApiErrorPayload()
     }
 
     @Test

@@ -3,11 +3,15 @@ package com.boclips.videos.service.presentation.video
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.web.exceptions.BoclipsApiException
+import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Condition
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.util.function.Predicate
 
 class CreateVideoRequestToVideoConverterTest {
 
@@ -41,7 +45,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when title is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(title = null), videoPlayback) }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("title cannot be null")
+            .hasBoclipsApiErrorMessage("title cannot be null")
     }
 
     @Test
@@ -53,14 +57,14 @@ class CreateVideoRequestToVideoConverterTest {
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("description cannot be null")
+            .hasBoclipsApiErrorMessage("description cannot be null")
     }
 
     @Test
     fun `throws when keywords is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(keywords = null), videoPlayback) }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("keywords cannot be null")
+            .hasBoclipsApiErrorMessage("keywords cannot be null")
     }
 
     @Test
@@ -72,14 +76,14 @@ class CreateVideoRequestToVideoConverterTest {
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("releasedOn cannot be null")
+            .hasBoclipsApiErrorMessage("releasedOn cannot be null")
     }
 
     @Test
     fun `throws when contentProvider is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(provider = null), videoPlayback) }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("contentPartnerId cannot be null")
+            .hasBoclipsApiErrorMessage("contentPartnerId cannot be null")
     }
 
     @Test
@@ -91,7 +95,7 @@ class CreateVideoRequestToVideoConverterTest {
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("contentPartnerVideoId cannot be null")
+            .hasBoclipsApiErrorMessage("contentPartnerVideoId cannot be null")
     }
 
     @Test
@@ -103,7 +107,7 @@ class CreateVideoRequestToVideoConverterTest {
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("content type cannot be null")
+            .hasBoclipsApiErrorMessage("content type cannot be null")
     }
 
     @Test
@@ -120,6 +124,10 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when subjects is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(subjects = null), videoPlayback) }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasMessage("subjects cannot be null")
+            .hasBoclipsApiErrorMessage("subjects cannot be null")
     }
+}
+
+private fun AbstractThrowableAssert<*,*>.hasBoclipsApiErrorMessage(s: String) {
+    this.has(Condition(Predicate { t -> (t as BoclipsApiException).exceptionDetails.message == s }, "cannot find exception message"))
 }

@@ -406,10 +406,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .content("""{"ageRange": {"min": 10000, "max": 0}}""").asTeacher()
         )
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.errors[0].field", equalTo("ageRange.min")))
             .andExpect(
                 jsonPath(
-                    "$.errors[0].message",
+                    "$.message",
                     containsString("Age range min must be less than or equal to 19")
                 )
             )

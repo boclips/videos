@@ -13,6 +13,8 @@ import com.boclips.videos.service.presentation.video.AdminSearchRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
+import com.boclips.web.exceptions.ExceptionDetails
+import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
 import org.springframework.hateoas.PagedResources
@@ -125,18 +127,34 @@ class VideoController(
         val resource = try {
             createVideo(createVideoRequest)
         } catch (e: VideoExists) {
-            val errorDetails =
-                mapOf("error" to "video from provider \"${e.contentPartnerId}\" and provider id \"${e.contentPartnerVideoId}\" already exists")
-            return ResponseEntity(errorDetails, HttpStatus.CONFLICT)
+            throw InvalidRequestApiException(
+                ExceptionDetails(
+                    "Error creating video",
+                    "video from provider \"${e.contentPartnerId}\" and provider id \"${e.contentPartnerVideoId}\" already exists",
+                    HttpStatus.CONFLICT
+                )
+            )
         } catch (e: Exception) {
-            val errorDetails = mapOf("error" to e.message, "processed request" to createVideoRequest)
-            logger.error(objectMapper.writeValueAsString(errorDetails))
-            return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)
+            logger.error(
+                objectMapper.writeValueAsString(
+                    mapOf(
+                        "error" to e.message,
+                        "processed request" to createVideoRequest
+                    )
+                )
+            )
+            throw InvalidRequestApiException(
+                ExceptionDetails(
+                    "Error creating video",
+                    e.message.orEmpty(),
+                    HttpStatus.BAD_REQUEST
+                )
+            )
         }
 
-        val headers = HttpHeaders()
-        headers.set(HttpHeaders.LOCATION, resource.getLink("self").href)
-        return ResponseEntity(headers, HttpStatus.CREATED)
+        return ResponseEntity(HttpHeaders().apply {
+            set(HttpHeaders.LOCATION, resource.getLink("self").href)
+        }, HttpStatus.CREATED)
     }
 
     @PostMapping("/{id}")

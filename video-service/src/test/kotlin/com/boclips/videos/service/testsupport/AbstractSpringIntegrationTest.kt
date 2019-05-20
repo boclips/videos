@@ -39,6 +39,8 @@ import org.springframework.cloud.stream.test.binder.MessageCollector
 import org.springframework.messaging.MessageChannel
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
 import java.util.UUID
@@ -202,5 +204,13 @@ abstract class AbstractSpringIntegrationTest {
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {
         bulkUpdateVideo(BulkUpdateRequest(listOf(id), status))
+    }
+
+    fun ResultActions.andExpectApiErrorPayload(): ResultActions {
+        return this.andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").exists())
+            .andExpect(jsonPath("$.error").exists())
+            .andExpect(jsonPath("$.message").exists())
+            .andExpect(jsonPath("$.path").exists())
     }
 }
