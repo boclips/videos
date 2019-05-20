@@ -21,7 +21,7 @@ class PlaybackConverterTest {
             progressiveStreamUrl = "progressive"
         )
 
-        val playbackDocument = PlaybackConverter.toDocument(originalPlayback)!!
+        val playbackDocument = PlaybackConverter.toDocument(originalPlayback)
         assertThat(playbackDocument.id).isEqualTo("1234")
         assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail")
         assertThat(playbackDocument.downloadUrl).isEqualTo("download")
@@ -43,7 +43,7 @@ class PlaybackConverterTest {
             thumbnailUrl = "thumbnail-url"
         )
 
-        val playbackDocument = PlaybackConverter.toDocument(originalPlayback)!!
+        val playbackDocument = PlaybackConverter.toDocument(originalPlayback)
         assertThat(playbackDocument.id).isEqualTo("some-yt-id")
         assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail-url")
         assertThat(playbackDocument.downloadUrl).isNull()

@@ -116,7 +116,8 @@ abstract class AbstractSpringIntegrationTest {
                     keywords = emptyList(),
                     tags = listOf("classroom"),
                     durationSeconds = duration.seconds,
-                    source = SourceType.YOUTUBE
+                    source = SourceType.YOUTUBE,
+                    transcript = null
                 )
             )
         )

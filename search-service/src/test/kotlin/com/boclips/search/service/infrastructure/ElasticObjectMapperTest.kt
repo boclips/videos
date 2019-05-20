@@ -19,7 +19,8 @@ class ElasticObjectMapperTest {
                         tags = listOf("tags"),
                         releaseDate = LocalDate.of(2015, Month.MAY, 21),
                         durationSeconds = 10,
-                        source = "Boclips"
+                        source = "Boclips",
+                        transcript = null
                 )
         )
 

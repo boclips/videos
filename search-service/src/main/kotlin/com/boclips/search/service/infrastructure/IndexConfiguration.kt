@@ -134,6 +134,7 @@ class IndexConfiguration {
                         "description" to freeTextField,
                         "contentProvider" to contentPartnerField,
                         "releaseDate" to dateField,
+                        "transcript" to freeTextField,
                         "keywords" to keywordField
                 )
         )

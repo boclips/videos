@@ -16,7 +16,8 @@ object SearchableVideoMetadataFactory {
         keywords: List<String> = emptyList(),
         tags: List<String> = emptyList(),
         durationSeconds: Long = 0,
-        source: SourceType = SourceType.YOUTUBE
+        source: SourceType = SourceType.YOUTUBE,
+        transcript: String? = null
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -26,7 +27,8 @@ object SearchableVideoMetadataFactory {
         keywords = keywords,
         tags = tags,
         durationSeconds = durationSeconds,
-        source = source
+        source = source,
+        transcript = transcript
     )
 }
 

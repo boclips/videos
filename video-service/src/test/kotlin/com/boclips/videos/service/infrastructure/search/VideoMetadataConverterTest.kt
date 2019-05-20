@@ -27,7 +27,8 @@ class VideoMetadataConverterTest {
             type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
             playback = TestFactories.createYoutubePlayback(
                 duration = Duration.ofSeconds(10)
-            )
+            ),
+            transcript = "a great transcript"
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -42,7 +43,8 @@ class VideoMetadataConverterTest {
                 keywords = listOf("k1"),
                 tags = listOf("classroom"),
                 durationSeconds = 10,
-                source = SourceType.YOUTUBE
+                source = SourceType.YOUTUBE,
+                transcript = "a great transcript"
             )
         )
     }

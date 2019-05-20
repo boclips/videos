@@ -36,7 +36,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().title).isEqualTo("a kaltura video")
-        assertThat(videos.first().playback!!.thumbnailUrl).isNotBlank()
+        assertThat(videos.first().playback.thumbnailUrl).isNotBlank()
     }
 
     @Test
@@ -58,7 +58,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(videos).isNotEmpty
         assertThat(videos.first().title).isEqualTo("a youtube video")
-        assertThat(videos.first().playback!!.thumbnailUrl).isNotBlank()
+        assertThat(videos.first().playback.thumbnailUrl).isNotBlank()
     }
 
     @Test
@@ -88,7 +88,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         val video = videoService.getPlayableVideo(videoId)
 
         assertThat(video).isNotNull
-        assertThat(video.playback!!.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-abc.mp4")
+        assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-entry-abc.mp4")
     }
 
     @Test

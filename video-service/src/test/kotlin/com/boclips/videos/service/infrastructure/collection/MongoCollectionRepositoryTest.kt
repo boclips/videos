@@ -185,6 +185,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
 
+        Thread.sleep(1)
+
         collectionRepository.update(
             collectionV1.id,
             CollectionUpdateCommand.AddVideoToCollectionCommand(video1)
@@ -193,6 +195,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         val collectionV2 = collectionRepository.getById(collectionV1.id)!!
 
         assertThat(collectionV2.updatedAt).isAfter(collectionV1.updatedAt)
+
+        Thread.sleep(1)
 
         collectionRepository.update(
             collectionV2.id,
