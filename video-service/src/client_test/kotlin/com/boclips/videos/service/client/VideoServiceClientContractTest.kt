@@ -3,21 +3,27 @@ package com.boclips.videos.service.client
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException
-import com.boclips.videos.service.client.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.client.testsupport.AbstractVideoServiceClientSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.URI
 import java.time.Duration
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrationTest() {
+
+internal abstract class VideoServiceClientContractTest : AbstractVideoServiceClientSpringIntegrationTest() {
 
     abstract fun getClient(): VideoServiceClient
+
+    @Autowired
+    lateinit var subjectRepository: SubjectRepository
 
     @Test
     fun `get VideoId for raw identifier`() {
@@ -140,7 +146,6 @@ internal abstract class VideoServiceClientContractTest : AbstractSpringIntegrati
 
     @Test
     fun `obtain subjects`() {
-
 
         val subjects: List<Subject> = getClient().subjects
 
