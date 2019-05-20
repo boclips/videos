@@ -14,6 +14,7 @@ import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import mu.KLogging
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -59,7 +60,7 @@ class CollectionsController(
         @RequestParam(required = false) owner: String?,
         @RequestParam page: Int?,
         @RequestParam size: Int?
-    ): Resources<Resource<CollectionResource>> {
+    ): Resources<*> {
         val collectionFilter = CollectionFilter(
             projection = projection,
             visibility = when {
@@ -74,8 +75,11 @@ class CollectionsController(
 
         val collections = getCollections(collectionFilter)
 
+        val collectionResources = collections.elements.map(::wrapCollection)
+            .let(HateoasEmptyCollection::fixIfEmptyCollection)
+
         return Resources(
-            collections.elements.map(::wrapCollection),
+            collectionResources,
             listOfNotNull(
                 collectionsLinkBuilder.projections().list(),
                 collectionsLinkBuilder.projections().details(),

@@ -158,6 +158,13 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `getting user collections when empty`() {
+        mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(0)))
+    }
+
+    @Test
     fun `cannot fetch collection when owner does not match user`() {
         createCollection("collection 1")
 
