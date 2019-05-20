@@ -475,7 +475,15 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results =
-            queryService.search(PaginatedSearchRequest(query = Query("World war", releaseDateFrom = LocalDate.of(1999, 1, 10), releaseDateTo = LocalDate.of(2002, 1, 10))))
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = Query(
+                        "World war",
+                        releaseDateFrom = LocalDate.of(1999, 1, 10),
+                        releaseDateTo = LocalDate.of(2002, 1, 10)
+                    )
+                )
+            )
 
         assertThat(results).containsAll(listOf("0", "1"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("2", "3"))
@@ -513,12 +521,18 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results =
-            queryService.search(PaginatedSearchRequest(query = Query("World war", releaseDateFrom = LocalDate.of(2002, 5, 5) )))
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = Query(
+                        "World war",
+                        releaseDateFrom = LocalDate.of(2002, 5, 5)
+                    )
+                )
+            )
 
         assertThat(results).containsAll(listOf("2", "3"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("1", "0"))
     }
-
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
@@ -552,7 +566,14 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results =
-            queryService.search(PaginatedSearchRequest(query = Query("World war", releaseDateTo = LocalDate.of(2002, 5, 5) )))
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = Query(
+                        "World war",
+                        releaseDateTo = LocalDate.of(2002, 5, 5)
+                    )
+                )
+            )
 
         assertThat(results).containsAll(listOf("1", "0"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("2", "3"))

@@ -71,9 +71,9 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
                     entry.value.tags.none { query.excludeTags.contains(it) }
                 }
                 .filter { entry ->
-                    query.source?.let { it == entry.value.source} ?: true
-                }.filter {
-                    entry -> (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
+                    query.source?.let { it == entry.value.source } ?: true
+                }.filter { entry ->
+                    (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
                 }
                 .map { video -> video.key }
         }

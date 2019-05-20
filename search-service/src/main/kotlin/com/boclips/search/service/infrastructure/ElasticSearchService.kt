@@ -160,8 +160,8 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
     private fun beWithinReleaseDate(from: LocalDate?, to: LocalDate?): RangeQueryBuilder {
         val queryBuilder = QueryBuilders.rangeQuery(ElasticSearchVideo.RELEASE_DATE)
 
-        from?.let { queryBuilder.from(it)}
-        to?.let { queryBuilder.to(it)}
+        from?.let { queryBuilder.from(it) }
+        to?.let { queryBuilder.to(it) }
 
         return queryBuilder
     }

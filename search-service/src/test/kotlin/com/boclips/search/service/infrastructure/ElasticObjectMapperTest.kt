@@ -10,18 +10,18 @@ class ElasticObjectMapperTest {
     @Test
     fun `writes dates as strings in ES default format`() {
         val serialisedVideo = ElasticObjectMapper.get().writeValueAsString(
-                ElasticSearchVideo(
-                        id = "1",
-                        title = "title",
-                        description = "description",
-                        contentProvider = "contentProvider",
-                        keywords = listOf("keywords"),
-                        tags = listOf("tags"),
-                        releaseDate = LocalDate.of(2015, Month.MAY, 21),
-                        durationSeconds = 10,
-                        source = "Boclips",
-                        transcript = null
-                )
+            ElasticSearchVideo(
+                id = "1",
+                title = "title",
+                description = "description",
+                contentProvider = "contentProvider",
+                keywords = listOf("keywords"),
+                tags = listOf("tags"),
+                releaseDate = LocalDate.of(2015, Month.MAY, 21),
+                durationSeconds = 10,
+                source = "Boclips",
+                transcript = null
+            )
         )
 
         assertThat(serialisedVideo).contains("2015-05-21")
