@@ -1,7 +1,7 @@
 package com.boclips.videos.service.client.internal.resources;
 
-import com.boclips.videos.service.client.VideoId;
 import com.boclips.videos.service.client.Video;
+import com.boclips.videos.service.client.VideoId;
 import lombok.Data;
 
 import java.util.Set;

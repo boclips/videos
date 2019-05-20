@@ -4,10 +4,7 @@ import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
-import com.boclips.videos.service.client.internal.resources.Link;
-import com.boclips.videos.service.client.internal.resources.LinksResource;
-import com.boclips.videos.service.client.internal.resources.SubjectsResource;
-import com.boclips.videos.service.client.internal.resources.VideoResource;
+import com.boclips.videos.service.client.internal.resources.*;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
@@ -16,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -99,6 +97,16 @@ public class ApiClient implements VideoServiceClient {
         return restTemplate.getForObject(
                 linkTemplate.get_links().getSubjects().toUri(), SubjectsResource.class)
                 .toSubjects();
+    }
+
+    @Override
+    public List<Collection> getMyCollections() {
+        this.linkTemplate = getLinks();
+        return restTemplate.getForObject(
+                linkTemplate.get_links().getMyCollections().toUri(), CollectionsResource.class)
+                .getCollections().stream()
+                .map(CollectionResource::toCollection)
+                .collect(Collectors.toList());
     }
 
     private LinksResource getLinks() {

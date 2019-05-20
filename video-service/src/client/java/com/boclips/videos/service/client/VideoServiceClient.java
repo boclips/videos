@@ -2,6 +2,7 @@ package com.boclips.videos.service.client;
 
 import com.boclips.videos.service.client.internal.ApiClient;
 import com.boclips.videos.service.client.internal.FakeClient;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.web.client.RestTemplate;
@@ -26,7 +27,10 @@ public interface VideoServiceClient {
     }
 
     static VideoServiceClient getUnauthorisedApiClient(String baseUrl) {
-        return new ApiClient(baseUrl, new RestTemplate());
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(
+                new BasicAuthenticationInterceptor("user@boclips.com", "reallySecurePassword123"));
+        return new ApiClient(baseUrl, restTemplate);
     }
 
     VideoId create(CreateVideoRequest request);
@@ -40,4 +44,6 @@ public interface VideoServiceClient {
     VideoId rawIdToVideoId(String rawId);
 
     List<Subject> getSubjects();
+
+    List<Collection> getMyCollections();
 }

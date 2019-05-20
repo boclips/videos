@@ -1,5 +1,6 @@
 package com.boclips.videos.service.client.internal;
 
+import com.boclips.videos.service.client.Collection;
 import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
@@ -16,6 +17,7 @@ public class FakeClient implements VideoServiceClient {
     private Map<VideoId, Video> videos = new HashMap<>();
     private Set<String> illegalPlaybackIds = new HashSet<>();
     private Set<Subject> subjects = new HashSet<>();
+    private List<Collection> userCollections = new ArrayList<>();
 
     @Override
     public VideoId create(CreateVideoRequest request) {
@@ -69,6 +71,15 @@ public class FakeClient implements VideoServiceClient {
     @Override
     public List<Subject> getSubjects() {
         return new ArrayList(subjects);
+    }
+
+    @Override
+    public List<Collection> getMyCollections() {
+        return Collections.unmodifiableList(userCollections);
+    }
+
+    public void addCollection(Collection collection) {
+        userCollections.add(collection);
     }
 
     private String nextId() {

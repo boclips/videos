@@ -6,4 +6,5 @@ import lombok.Data;
 public class Links {
     private Link video;
     private Link subjects;
+    private Link myCollections;
 }

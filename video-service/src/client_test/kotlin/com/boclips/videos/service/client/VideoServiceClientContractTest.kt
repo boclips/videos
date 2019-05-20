@@ -1,22 +1,22 @@
 package com.boclips.videos.service.client
 
+import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
 import com.boclips.videos.service.client.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.testsupport.AbstractVideoServiceClientSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
+import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.net.URI
 import java.time.Duration
-
 
 internal abstract class VideoServiceClientContractTest : AbstractVideoServiceClientSpringIntegrationTest() {
 
@@ -146,10 +146,30 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `obtain subjects`() {
-
         val subjects: List<Subject> = getClient().subjects
 
         assertThat(subjects).hasSize(2)
+    }
+
+    @Test
+    fun `can fetch my collections`() {
+        val videoId = saveVideo()
+
+        setSecurityContext("user@boclips.com")
+        val collection = createCollection(
+            CreateCollectionRequest(
+                title = "a collection",
+                videos = listOf(videoId.value)
+            )
+        )
+
+        updateCollection(collection.id.value, UpdateCollectionRequest(subjects = setOf("Math")))
+
+        val collections: List<Collection> = getClient().myCollections
+
+        assertThat(collections).hasSize(1)
+        assertThat(collections[0].videos[0].uri.toString()).isNotBlank()
+        assertThat(collections[0].subjects).containsExactly(SubjectId("Math"))
     }
 }
 
@@ -158,6 +178,11 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         addIllegalPlaybackId("illegal-video")
         addSubject("Maths")
         addSubject("French")
+
+        val subjects = setOf(SubjectId("Math"))
+        val videos = listOf(VideoId(URI.create("hello")))
+
+        addCollection(Collection.builder().subjects(subjects).videos(videos).build())
     }
 
     override fun getClient() = fakeClient
