@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation.collections
 
-import com.boclips.videos.service.domain.model.collection.BoundedAgeRange
+import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.collection.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter

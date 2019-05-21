@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -34,7 +35,9 @@ object VideoDocumentConverter {
             language = video.language?.toLanguageTag(),
             transcript = video.transcript,
             topics = video.topics.map(TopicDocumentConverter::toDocument),
-            searchable = video.searchable
+            searchable = video.searchable,
+            ageRangeMin = video.ageRange.min(),
+            ageRangeMax = video.ageRange.max()
         )
     }
 
@@ -54,7 +57,11 @@ object VideoDocumentConverter {
             language = document.language?.let(Locale::forLanguageTag),
             transcript = document.transcript,
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
-            searchable = document.searchable
+            searchable = document.searchable,
+            ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
+                min = document.ageRangeMin,
+                max = document.ageRangeMax
+            ) else AgeRange.unbounded()
         )
     }
 }

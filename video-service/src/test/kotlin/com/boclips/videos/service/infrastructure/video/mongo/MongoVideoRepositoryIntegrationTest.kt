@@ -2,8 +2,8 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.*
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -203,6 +203,19 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects")
         assertThat(updatedAsset.subjects).containsOnly(LegacySubject("Biology"))
+    }
+
+    @Test
+    fun `can update age range`() {
+        val originalAsset = mongoVideoRepository.create(
+            TestFactories.createVideo(
+                title = "original title"
+            )
+        )
+
+        val updatedAsset = mongoVideoRepository.update(VideoUpdateCommand.ReplaceAgeRange(originalAsset.videoId, 3, 5))
+
+        assertThat(updatedAsset.ageRange).isEqualTo(AgeRange.bounded(3, 5))
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.common.PageRequest
-import com.boclips.videos.service.domain.model.collection.AgeRange
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId

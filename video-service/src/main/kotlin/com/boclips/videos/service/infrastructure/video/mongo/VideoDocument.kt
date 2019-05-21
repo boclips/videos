@@ -18,5 +18,7 @@ data class VideoDocument(
     val language: String?,
     val transcript: String?,
     val topics: List<TopicDocument>?,
-    val searchable: Boolean
+    val searchable: Boolean,
+    val ageRangeMin: Int? = null,
+    val ageRangeMax: Int? = null
 )

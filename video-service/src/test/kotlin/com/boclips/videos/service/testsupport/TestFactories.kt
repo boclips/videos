@@ -11,7 +11,7 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.collection.AgeRange
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.SubjectId
@@ -62,7 +62,8 @@ object TestFactories {
         language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
-        searchable: Boolean = true
+        searchable: Boolean = true,
+        ageRange: AgeRange = AgeRange.bounded(5, 12)
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -79,7 +80,8 @@ object TestFactories {
             language = language,
             transcript = transcript,
             topics = topics,
-            searchable = searchable
+            searchable = searchable,
+            ageRange = ageRange
         )
     }
 

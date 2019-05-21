@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.HideFromSearch
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MakeSearchable
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
@@ -27,6 +28,7 @@ import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
+import org.litote.kmongo.combine
 import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -162,6 +164,16 @@ class MongoVideoRepository(
             is ReplaceTopics -> set(VideoDocument::topics, updateCommand.topics.map(TopicDocumentConverter::toDocument))
             is ReplaceKeywords -> set(VideoDocument::keywords, updateCommand.keywords)
             is ReplacePlayback -> set(VideoDocument::playback, PlaybackConverter.toDocument(updateCommand.playback))
+            is ReplaceAgeRange -> combine(
+                set(
+                    VideoDocument::ageRangeMin,
+                    updateCommand.minAge
+                ),
+                set(
+                    VideoDocument::ageRangeMax,
+                    updateCommand.maxAge
+                )
+            )
         }
     }
 

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.collection
+package com.boclips.videos.service.domain.model.ageRange
 
 sealed class AgeRange {
     companion object {
@@ -7,6 +7,16 @@ sealed class AgeRange {
 
         fun unbounded() =
             UnboundedAgeRange
+    }
+
+    fun min() = when (this) {
+        is BoundedAgeRange -> this.min
+        UnboundedAgeRange -> null
+    }
+
+    fun max() = when (this) {
+        is BoundedAgeRange -> this.max
+        UnboundedAgeRange -> null
     }
 }
 

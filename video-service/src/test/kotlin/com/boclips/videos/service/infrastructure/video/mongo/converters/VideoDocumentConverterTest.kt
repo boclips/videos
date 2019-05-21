@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.mongo.converters
 
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
@@ -37,7 +38,8 @@ class VideoDocumentConverterTest {
                     )
                 )
             ),
-            legalRestrictions = "legal restrictions"
+            legalRestrictions = "legal restrictions",
+            ageRange = AgeRange.bounded(11, 16)
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalAsset)

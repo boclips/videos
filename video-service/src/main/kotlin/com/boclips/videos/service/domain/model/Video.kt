@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model
 
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -23,7 +24,8 @@ data class Video(
     val topics: Set<Topic>,
     val language: Locale?,
     val transcript: String?,
-    val searchable: Boolean
+    val searchable: Boolean,
+    val ageRange: AgeRange
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

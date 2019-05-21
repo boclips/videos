@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -29,7 +30,12 @@ class CreateVideoRequestToVideoConverter {
             language = null,
             transcript = null,
             topics = emptySet(),
-            searchable = createVideoRequest.searchable ?: true
+            searchable = createVideoRequest.searchable ?: true,
+            ageRange = if (createVideoRequest.ageRangeMin !== null) {
+                AgeRange.bounded(createVideoRequest.ageRangeMin, createVideoRequest.ageRangeMax)
+            } else {
+                AgeRange.unbounded()
+            }
         )
     }
 }
