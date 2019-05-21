@@ -16,6 +16,8 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -345,6 +347,18 @@ object TestFactories {
             progressiveStreamUrl = null,
             lastVerified = null,
             duration = duration
+        )
+    }
+
+    fun createContentPartner(
+        id: ContentPartnerId = ContentPartnerId(ObjectId().toHexString()),
+        name: String = "TED",
+        ageRange: AgeRange = AgeRange.bounded(5, 11)
+    ): ContentPartner {
+        return ContentPartner(
+            contentPartnerId = id,
+            name = name,
+            ageRange = ageRange
         )
     }
 }
