@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
@@ -45,6 +46,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.bookmarkedCollections").doesNotExist())
             .andExpect(jsonPath("$._links.collection").doesNotExist())
             .andExpect(jsonPath("$._links.collections").doesNotExist())
+    }
+
+    @Test
+    fun `when subject classifier`() {
+        mockMvc.perform(get("/v1").asSubjectClassifier())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._links.myCollections.href", containsString("/col")))
     }
 
     @Test

@@ -102,8 +102,12 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public List<Collection> getMyCollections() {
         this.linkTemplate = getLinks();
+        Link collectionsLink = linkTemplate.get_links().getMyCollections();
+        if(collectionsLink == null) {
+            throw new UnsupportedOperationException("No 'my collections' link. Check user roles.");
+        }
         return restTemplate.getForObject(
-                linkTemplate.get_links().getMyCollections().toUri(), CollectionsResource.class)
+                collectionsLink.toUri(), CollectionsResource.class)
                 .getCollections().stream()
                 .map(CollectionResource::toCollection)
                 .collect(Collectors.toList());
