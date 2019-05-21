@@ -49,13 +49,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `when subject classifier`() {
-        mockMvc.perform(get("/v1").asSubjectClassifier())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$._links.myCollections.href", containsString("/col")))
-    }
-
-    @Test
     fun `when authenticated user`() {
         val userId = "teacher@teacher.com"
         mockMvc.perform(get("/v1").asTeacher(userId))
