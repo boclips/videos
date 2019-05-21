@@ -26,6 +26,22 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     lateinit var subjectRepository: SubjectRepository
 
     @Test
+    fun `get a video`() {
+        val id = getClient().create(
+                TestFactories.createCreateVideoRequest(
+                        title = "the title",
+                        description = "the description",
+                        playbackId = "ref-id-123"
+                )
+        )
+
+        val video = getClient().get(id)
+
+        assertThat(video.title).isEqualTo("the title")
+        assertThat(video.description).isEqualTo("the description")
+    }
+
+    @Test
     fun `get VideoId for raw identifier`() {
         val rawId = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")).uri.toString()
             .split('/').last()

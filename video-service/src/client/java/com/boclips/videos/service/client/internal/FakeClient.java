@@ -32,6 +32,8 @@ public class FakeClient implements VideoServiceClient {
         val videoId = rawIdToVideoId(nextId());
         val video = Video.builder()
                 .videoId(videoId)
+                .title(request.getTitle())
+                .description(request.getDescription())
                 .subjects(request.getSubjects())
                 .contentPartnerId(request.getProvider())
                 .contentPartnerVideoId(request.getProviderVideoId())
