@@ -5,13 +5,15 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
-// TODO: Rename VideoSearchService
 class VideoService(
+    private val contentPartnerRepository: ContentPartnerRepository,
     private val videoRepository: VideoRepository,
     private val searchService: SearchService
 ) {
@@ -56,6 +58,17 @@ class VideoService(
         }
 
         return videos.filter { it.isPlayable() }
+    }
+
+    fun create(videoToBeCreated: Video): Video {
+        var ageRange = videoToBeCreated.ageRange
+
+        if(videoToBeCreated.ageRange is UnboundedAgeRange) {
+            contentPartnerRepository.findByName(videoToBeCreated.contentPartnerName)
+                ?.apply { ageRange = this.ageRange }
+
+        }
+        return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
     }
 }
 

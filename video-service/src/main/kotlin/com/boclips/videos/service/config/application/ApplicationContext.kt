@@ -81,6 +81,7 @@ class ApplicationContext(
         analyseVideo: AnalyseVideo
     ): CreateVideo {
         return CreateVideo(
+            videoService,
             videoRepository,
             searchVideo,
             CreateVideoRequestToVideoConverter(),

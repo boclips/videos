@@ -1,16 +1,17 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
@@ -20,6 +21,7 @@ import mu.KLogging
 import org.springframework.hateoas.Resource
 
 class CreateVideo(
+    private val videoService: VideoService,
     private val videoRepository: VideoRepository,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
@@ -35,7 +37,7 @@ class CreateVideo(
         val videoPlayback = findVideoPlayback(createRequest)
         val videoToBeCreated = createVideoRequestToVideoConverter.convert(createRequest, videoPlayback)
         ensureVideoIsUnique(videoToBeCreated)
-        val createdVideo = videoRepository.create(videoToBeCreated)
+        val createdVideo = videoService.create(videoToBeCreated)
 
         searchServiceAdmin.upsert(sequenceOf(createdVideo), null)
 

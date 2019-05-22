@@ -27,11 +27,13 @@ class DomainContext(val mongoClient: MongoClient) {
 
     @Bean
     fun videoService(
+        contentPartnerRepository: ContentPartnerRepository,
         videoRepository: VideoRepository,
         searchService: SearchService,
         playbackRepository: PlaybackRepository
     ): VideoService {
         return VideoService(
+            contentPartnerRepository,
             videoRepository,
             searchService
         )

@@ -2,6 +2,8 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoSearchQuery
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -16,6 +18,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoService: VideoService
+
+    @Autowired
+    lateinit var contentPartnerRepository : ContentPartnerRepository
 
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
@@ -107,5 +112,23 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     fun `look up by id throws if video does not exist`() {
         Assertions.assertThatThrownBy { videoService.getPlayableVideo(VideoId(value = TestFactories.aValidId())) }
             .isInstanceOf(VideoNotFoundException::class.java)
+    }
+
+    @Test
+    fun `create video with an age range`() {
+        val ageRange = AgeRange.bounded(2, 5)
+        val video = videoService.create(TestFactories.createVideo(ageRange = ageRange))
+
+        assertThat(videoService.getPlayableVideo(video.videoId).ageRange).isEqualTo(ageRange)
+    }
+
+    @Test
+    fun `create video with no age range`() {
+        contentPartnerRepository.create(contentPartner = TestFactories.createContentPartner(name = "Our content partner", ageRange = AgeRange.bounded(3, 7)))
+
+        val video = videoService.create(TestFactories.createVideo(ageRange = AgeRange.unbounded(), contentPartnerName = "Our content partner"))
+
+        assertThat(video.ageRange.min()).isEqualTo(3)
+        assertThat(video.ageRange.max()).isEqualTo(7)
     }
 }
