@@ -184,6 +184,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val collections: List<Collection> = getClient().myCollections
 
         assertThat(collections).hasSize(1)
+        assertThat(collections[0].title).isEqualTo("a collection")
         assertThat(collections[0].videos[0].uri.toString()).isNotBlank()
         assertThat(collections[0].subjects).containsExactly(SubjectId("Math"))
     }
@@ -219,8 +220,8 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         val subjects = setOf(SubjectId("Math"))
         val videos = listOf(VideoId(URI.create("hello")))
 
-        addCollection(Collection.builder().subjects(subjects).videos(videos).build());
-        addCollection(Collection.builder().subjects(subjects).videos(videos).build(), "anotheruser@boclips.com");
+        addCollection(Collection.builder().title("a collection").subjects(subjects).videos(videos).build());
+        addCollection(Collection.builder().title("another user's collection").subjects(subjects).videos(videos).build(), "anotheruser@boclips.com");
     }
 
     override fun getClient() = fakeClient

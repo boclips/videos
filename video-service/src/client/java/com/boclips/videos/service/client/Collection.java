@@ -11,6 +11,8 @@ import java.util.Set;
 @Data
 public class Collection {
     @NonNull
+    private final String title;
+    @NonNull
     private final List<VideoId> videos;
     @NonNull
     private final Set<SubjectId> subjects;

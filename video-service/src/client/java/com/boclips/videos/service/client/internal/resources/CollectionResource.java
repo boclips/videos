@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Data
 public class CollectionResource {
 
+    private String title;
+
     private Set<SubjectResource> subjects;
 
     private List<VideoResource> videos;
@@ -26,6 +28,7 @@ public class CollectionResource {
                 .collect(Collectors.toList());
 
         return Collection.builder()
+                .title(title)
                 .videos(videos)
                 .subjects(subjects)
                 .build();
