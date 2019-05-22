@@ -5,6 +5,7 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.UUID
 
 class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -26,6 +27,18 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val retrievedAsset = mongoContentPartnerRespository.find(originalContentPartner.contentPartnerId)
+
+        assertThat(retrievedAsset).isEqualTo(originalContentPartner)
+    }
+
+    @Test
+    fun findByName() {
+        val contentPartnerName = UUID.randomUUID().toString()
+        val originalContentPartner = mongoContentPartnerRespository.create(
+            TestFactories.createContentPartner(name = contentPartnerName)
+        )
+
+        val retrievedAsset = mongoContentPartnerRespository.findByName(contentPartnerName)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
     }
