@@ -43,6 +43,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.search").doesNotExist())
             .andExpect(jsonPath("$._links.videos").doesNotExist())
             .andExpect(jsonPath("$._links.myCollections").doesNotExist())
+            .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())
             .andExpect(jsonPath("$._links.bookmarkedCollections").doesNotExist())
             .andExpect(jsonPath("$._links.collection").doesNotExist())
             .andExpect(jsonPath("$._links.collections").doesNotExist())
@@ -77,9 +78,10 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.myCollections.href",
-                    endsWith("collections?projection=list&owner=teacher@teacher.com&page=0&size=30")
+                    endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com")
                 )
             )
+            .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())
             .andExpect(jsonPath("$._links.collection.href", endsWith("collections/{id}")))
             .andExpect(jsonPath("$._links.collection.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.createCollection.href", endsWith("collections")))
@@ -93,6 +95,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
+    }
+
+    @Test
+    fun `link to any users collection included when user has access rights`() {
+        mockMvc.perform(get("/v1").asSubjectClassifier())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.collectionsByOwner.href", containsString("/collections?")))
     }
 
     @Test

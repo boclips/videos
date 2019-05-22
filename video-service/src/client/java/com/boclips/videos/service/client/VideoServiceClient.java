@@ -46,4 +46,6 @@ public interface VideoServiceClient {
     List<Subject> getSubjects();
 
     List<Collection> getMyCollections();
+
+    List<Collection> getCollectionsByOwner(String owner);
 }

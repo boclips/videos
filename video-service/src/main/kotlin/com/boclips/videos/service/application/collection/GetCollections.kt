@@ -3,9 +3,12 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.application.UnauthorizedException
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import currentUserHasRole
 import getCurrentUserId
 
 class GetCollections(
@@ -23,8 +26,8 @@ class GetCollections(
                 getCurrentUserId()
             )
             CollectionFilter.Visibility.PRIVATE -> {
-                throwIfUnauthorized(collectionFilter)
-                collectionRepository.getByOwner(getCurrentUserId(), pageRequest)
+                val owner = validatePrivateCollectionsOwnerOrThrow(collectionFilter)
+                collectionRepository.getByOwner(owner, pageRequest)
             }
         }.let { collection ->
             Page(
@@ -39,10 +42,14 @@ class GetCollections(
         }
     }
 
-    private fun throwIfUnauthorized(collectionFilter: CollectionFilter) {
+    private fun validatePrivateCollectionsOwnerOrThrow(collectionFilter: CollectionFilter): UserId {
+        val owner = collectionFilter.owner ?: throw UnauthorizedException("owner must be specified for private collections access")
         val authenticatedUserId = getCurrentUserId().value
-        if (collectionFilter.owner == null || collectionFilter.owner != authenticatedUserId) {
-            throw UnauthorizedException("$authenticatedUserId is not authorized to access ${collectionFilter.owner}")
+
+        if (owner == authenticatedUserId || currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION)) {
+            return UserId(owner)
         }
+
+        throw UnauthorizedException("$authenticatedUserId is not authorized to access $owner")
     }
 }

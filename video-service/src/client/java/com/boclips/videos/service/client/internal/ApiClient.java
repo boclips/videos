@@ -10,6 +10,7 @@ import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -106,8 +107,21 @@ public class ApiClient implements VideoServiceClient {
         if(collectionsLink == null) {
             throw new UnsupportedOperationException("No 'my collections' link. Check user roles.");
         }
-        return restTemplate.getForObject(
-                collectionsLink.toUri(), CollectionsResource.class)
+        return getCollections(collectionsLink.toUri());
+    }
+
+    @Override
+    public List<Collection> getCollectionsByOwner(String owner) {
+        this.linkTemplate = getLinks();
+        Link collectionsLink = linkTemplate.get_links().getCollectionsByOwner();
+        if(collectionsLink == null) {
+            throw new UnsupportedOperationException("No 'collections by owner' link. Check user roles.");
+        }
+        return getCollections(URI.create(collectionsLink.getHref() + "&owner=" + owner));
+    }
+
+    private List<Collection> getCollections(URI uri) {
+        return restTemplate.getForObject(uri, CollectionsResource.class)
                 .getCollections().stream()
                 .map(CollectionResource::toCollection)
                 .collect(Collectors.toList());

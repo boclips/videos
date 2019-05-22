@@ -17,7 +17,7 @@ public class FakeClient implements VideoServiceClient {
     private Map<VideoId, Video> videos = new HashMap<>();
     private Set<String> illegalPlaybackIds = new HashSet<>();
     private Set<Subject> subjects = new HashSet<>();
-    private List<Collection> userCollections = new ArrayList<>();
+    private Map<String, List<Collection>> collectionsByUser = new HashMap<>();
 
     @Override
     public VideoId create(CreateVideoRequest request) {
@@ -77,11 +77,24 @@ public class FakeClient implements VideoServiceClient {
 
     @Override
     public List<Collection> getMyCollections() {
-        return Collections.unmodifiableList(userCollections);
+        return getCollectionsByOwner("user@boclips.com");
+    }
+
+    @Override
+    public List<Collection> getCollectionsByOwner(String owner) {
+        return Collections.unmodifiableList(getCollections(owner));
     }
 
     public void addCollection(Collection collection) {
-        userCollections.add(collection);
+        addCollection(collection, "user@boclips.com");
+    }
+
+    public void addCollection(Collection collection, String owner) {
+        getCollections(owner).add(collection);
+    }
+
+    private List<Collection> getCollections(String user) {
+        return collectionsByUser.computeIfAbsent(user, u -> new ArrayList<>());
     }
 
     private String nextId() {

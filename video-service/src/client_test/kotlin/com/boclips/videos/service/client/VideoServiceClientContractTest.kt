@@ -168,7 +168,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
-    fun `can fetch my collections`() {
+    fun `fetch own collections`() {
         val videoId = saveVideo()
 
         setSecurityContext("user@boclips.com")
@@ -187,6 +187,27 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(collections[0].videos[0].uri.toString()).isNotBlank()
         assertThat(collections[0].subjects).containsExactly(SubjectId("Math"))
     }
+
+    @Test
+    fun `fetch another users collections`() {
+        val videoId = saveVideo()
+
+        setSecurityContext("anotheruser@boclips.com")
+        val collection = createCollection(
+            CreateCollectionRequest(
+                title = "a collection",
+                videos = listOf(videoId.value)
+            )
+        )
+
+        updateCollection(collection.id.value, UpdateCollectionRequest(subjects = setOf("Math")))
+
+        val collections: List<Collection> = getClient().getCollectionsByOwner("anotheruser@boclips.com")
+
+        assertThat(collections).hasSize(1)
+        assertThat(collections[0].videos[0].uri.toString()).isNotBlank()
+        assertThat(collections[0].subjects).containsExactly(SubjectId("Math"))
+    }
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
@@ -198,7 +219,8 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         val subjects = setOf(SubjectId("Math"))
         val videos = listOf(VideoId(URI.create("hello")))
 
-        addCollection(Collection.builder().subjects(subjects).videos(videos).build())
+        addCollection(Collection.builder().subjects(subjects).videos(videos).build());
+        addCollection(Collection.builder().subjects(subjects).videos(videos).build(), "anotheruser@boclips.com");
     }
 
     override fun getClient() = fakeClient

@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
@@ -155,6 +156,22 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.details.href").exists())
             .andExpect(jsonPath("$._links.list.href").exists())
             .andReturn()
+    }
+
+    @Test
+    fun `get another users private collections`() {
+        val savedVideoId = saveVideo()
+        val collectionId = createCollection()
+        addVideo(collectionId, savedVideoId.value)
+
+        mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asSubjectClassifier())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
+            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
     }
 
     @Test

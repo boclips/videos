@@ -74,13 +74,13 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.collectionsByUser(
+        val link = collectionsLinkBuilder.myCollections(
             projection = Projection.list,
             page = 0,
             size = 2
         )!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&owner=user1&page=0&size=2")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&page=0&size=2&owner=user1")
         assertThat(link.rel).isEqualTo("myCollections")
     }
 
@@ -90,7 +90,7 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.collectionsByUser()
+        val link = collectionsLinkBuilder.myCollections()
 
         assertThat(link).isNull()
     }

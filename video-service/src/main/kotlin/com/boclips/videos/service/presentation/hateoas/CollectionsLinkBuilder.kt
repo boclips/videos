@@ -82,20 +82,35 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         )
     }
 
-    fun collectionsByUser(
+    fun myCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
     ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
         Link(
-            getCollectionsRoot()
-                .queryParam("projection", projection)
+            collectionsLink(projection = projection, page = page, size = size)
                 .queryParam("owner", currentUser)
-                .queryParam("page", page)
-                .queryParam("size", size)
-                .toUriString(), "myCollections"
+                .toUriString(),
+            "myCollections"
         )
     }
+
+    fun collectionsByOwner(
+        projection: Projection = Projection.list,
+        page: Int = 0,
+        size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
+    ) = getIfHasRole(UserRoles.VIEW_ANY_COLLECTION) {
+        Link(
+            collectionsLink(projection = projection, page = page, size = size)
+                .toUriString(),
+            "collectionsByOwner"
+        )
+    }
+
+    private fun collectionsLink(projection: Projection, page: Int, size: Int) = getCollectionsRoot()
+        .queryParam("projection", projection)
+        .queryParam("page", page)
+        .queryParam("size", size)
 
     fun self(): Link {
         return Link(uriComponentsBuilderFactory.getInstance().toUriString())
