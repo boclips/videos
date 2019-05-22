@@ -16,7 +16,7 @@ data class Video(
     val description: String,
     val keywords: List<String>,
     val releasedOn: LocalDate,
-    val contentPartnerId: String,
+    val contentPartnerName: String,
     val contentPartnerVideoId: String,
     val type: LegacyVideoType,
     val legalRestrictions: String,
@@ -36,6 +36,6 @@ data class Video(
     }
 
     override fun toString(): String {
-        return "Video(videoId=$videoId, title='$title', contentPartnerId='$contentPartnerId')"
+        return "Video(videoId=$videoId, title='$title', contentPartnerName='$contentPartnerName')"
     }
 }

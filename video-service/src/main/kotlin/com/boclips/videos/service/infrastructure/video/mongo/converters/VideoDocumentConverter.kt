@@ -22,7 +22,7 @@ object VideoDocumentConverter {
             description = video.description,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
-                    name = video.contentPartnerId
+                    name = video.contentPartnerName
                 ),
                 videoReference = video.contentPartnerVideoId
             ),
@@ -46,7 +46,7 @@ object VideoDocumentConverter {
             videoId = VideoId(document.id.toHexString()),
             title = document.title,
             description = document.description,
-            contentPartnerId = document.source.contentPartner.name,
+            contentPartnerName = document.source.contentPartner.name,
             contentPartnerVideoId = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
             type = LegacyVideoType.valueOf(document.legacy.type),

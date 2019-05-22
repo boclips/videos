@@ -205,7 +205,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         val video: Resource<VideoResource> = createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = "1234",
-                contentType = "INSTRUCTIONAL_CLIPS",
+                videoType = "INSTRUCTIONAL_CLIPS",
                 analyseVideo = true
             )
         )

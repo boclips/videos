@@ -28,7 +28,7 @@ class ContentEnrichersTest {
             assertThat(
                 isClassroom(
                     createVideo(
-                        contentPartnerId = it
+                        contentPartnerName = it
                     )
                 )
             ).withFailMessage("Expected $it to be excluded").isFalse()
@@ -41,7 +41,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
-                    contentPartnerId = "Reuters"
+                    contentPartnerName = "Reuters"
                 )
             )
         ).isTrue()

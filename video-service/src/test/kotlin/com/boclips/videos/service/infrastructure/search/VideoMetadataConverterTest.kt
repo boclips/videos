@@ -21,7 +21,7 @@ class VideoMetadataConverterTest {
             videoId = videoId,
             title = "video title",
             description = "video description",
-            contentPartnerId = "content partner",
+            contentPartnerName = "content partner",
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             keywords = listOf("k1"),
             type = LegacyVideoType.INSTRUCTIONAL_CLIPS,

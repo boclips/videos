@@ -65,8 +65,8 @@ class CreateVideo(
     }
 
     private fun ensureVideoIsUnique(video: Video) {
-        if (videoRepository.existsVideoFromContentPartner(video.contentPartnerId, video.contentPartnerVideoId)) {
-            throw VideoExists(video.contentPartnerId, video.contentPartnerVideoId)
+        if (videoRepository.existsVideoFromContentPartner(video.contentPartnerName, video.contentPartnerVideoId)) {
+            throw VideoExists(video.contentPartnerName, video.contentPartnerVideoId)
         }
     }
 }

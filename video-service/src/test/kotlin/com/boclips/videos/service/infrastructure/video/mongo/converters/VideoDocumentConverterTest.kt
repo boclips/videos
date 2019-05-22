@@ -17,7 +17,7 @@ class VideoDocumentConverterTest {
             videoId = "5c1786db5236de0001d77747",
             title = "the title",
             description = "the description",
-            contentPartnerId = "the contentPartner",
+            contentPartnerName = "the contentPartner",
             contentPartnerVideoId = "the contentPartnerVideoId",
             type = LegacyVideoType.NEWS,
             keywords = listOf("keyword1", "keyword2"),

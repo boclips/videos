@@ -30,7 +30,7 @@ internal class VideoToResourceConverterTest {
     val kalturaVideo = createVideo(
         title = "Do what you love",
         description = "Best bottle slogan",
-        contentPartnerId = "WeWork",
+        contentPartnerName = "WeWork",
         contentPartnerVideoId = "111",
         type = LegacyVideoType.TED_TALKS,
         subjects = setOf(LegacySubject("Maths")),
@@ -41,7 +41,7 @@ internal class VideoToResourceConverterTest {
     val youtubeVideo = createVideo(
         title = "Do what you love on youtube",
         description = "Best bottle slogan",
-        contentPartnerId = "JacekWork",
+        contentPartnerName = "JacekWork",
         contentPartnerVideoId = "222",
         type = LegacyVideoType.OTHER,
         subjects = setOf(LegacySubject("Biology")),

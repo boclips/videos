@@ -83,7 +83,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when contentProvider is null`() {
         assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(provider = null), videoPlayback) }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasBoclipsApiErrorMessage("contentPartnerId cannot be null")
+            .hasBoclipsApiErrorMessage("provider cannot be null")
     }
 
     @Test
@@ -95,19 +95,19 @@ class CreateVideoRequestToVideoConverterTest {
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasBoclipsApiErrorMessage("contentPartnerVideoId cannot be null")
+            .hasBoclipsApiErrorMessage("providerVideoId cannot be null")
     }
 
     @Test
     fun `throws when content type is null`() {
         assertThatThrownBy {
             converter.convert(
-                TestFactories.createCreateVideoRequest(contentType = null),
+                TestFactories.createCreateVideoRequest(videoType = null),
                 videoPlayback
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasBoclipsApiErrorMessage("content type cannot be null")
+            .hasBoclipsApiErrorMessage("videoType cannot be null")
     }
 
     @Test

@@ -116,9 +116,9 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `stream all by content partner`() {
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = "TED"))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = "Bob"))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = "TED"))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "TED"))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "Bob"))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "TED"))
 
         var videos: List<Video> = emptyList()
         mongoVideoRepository.streamAll(VideoFilter.ContentPartnerIs("TED")) { videos = it.toList() }
@@ -290,7 +290,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val video = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
             contentPartnerVideoId = "ted-id-1",
-            contentPartnerId = "TED Talks"
+            contentPartnerName = "TED Talks"
         )
 
         mongoVideoRepository.create(video)
