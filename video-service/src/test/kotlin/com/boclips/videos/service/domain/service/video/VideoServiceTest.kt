@@ -131,4 +131,16 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         assertThat(video.ageRange.min()).isEqualTo(3)
         assertThat(video.ageRange.max()).isEqualTo(7)
     }
+
+    @Test
+    fun `set default age range for video with no age range`() {
+        val videoId = saveVideo()
+
+        videoService.setDefaultAgeRange(videoId = videoId, ageRange = AgeRange.bounded(5, 11))
+
+        val video = videoService.getPlayableVideo(videoId = videoId)
+
+        assertThat(video.ageRange.min()).isEqualTo(5)
+        assertThat(video.ageRange.max()).isEqualTo(11)
+    }
 }

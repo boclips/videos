@@ -167,11 +167,11 @@ class MongoVideoRepository(
             is ReplaceAgeRange -> combine(
                 set(
                     VideoDocument::ageRangeMin,
-                    updateCommand.minAge
+                    updateCommand.ageRange.min()
                 ),
                 set(
                     VideoDocument::ageRangeMax,
-                    updateCommand.maxAge
+                    updateCommand.ageRange.max()
                 )
             )
         }
