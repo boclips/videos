@@ -169,24 +169,19 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `fetch own collections`() {
-        val videoId = saveVideo()
-
-        setSecurityContext("user@boclips.com")
-        val collection = createCollection(
-            CreateCollectionRequest(
-                title = "a collection",
-                videos = listOf(videoId.value)
-            )
-        )
-
-        updateCollection(collection.id.value, UpdateCollectionRequest(subjects = setOf("Math")))
-
         val collections: List<Collection> = getClient().myCollections
 
-        assertThat(collections).hasSize(1)
-        assertThat(collections[0].title).isEqualTo("a collection")
+        assertThat(collections).hasSize(2)
+        assertThat(collections[0].title).endsWith("collection")
         assertThat(collections[0].videos[0].uri.toString()).isNotBlank()
-        assertThat(collections[0].subjects).containsExactly(SubjectId("Math"))
+        assertThat(collections[0].subjects).containsAnyOf(SubjectId("Math"), SubjectId("French"))
+    }
+
+    @Test
+    fun `specify page size when fetching collections`() {
+        val collections: List<Collection> = getClient().getMyCollections(VideoServiceClient.PageSpec.builder().pageSize(1).build())
+
+        assertThat(collections).hasSize(1)
     }
 
     @Test
@@ -220,8 +215,9 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         val subjects = setOf(SubjectId("Math"))
         val videos = listOf(VideoId(URI.create("hello")))
 
-        addCollection(Collection.builder().title("a collection").subjects(subjects).videos(videos).build());
-        addCollection(Collection.builder().title("another user's collection").subjects(subjects).videos(videos).build(), "anotheruser@boclips.com");
+        addCollection(Collection.builder().title("first collection").subjects(subjects).videos(videos).build())
+        addCollection(Collection.builder().title("second collection").subjects(emptySet()).videos(videos).build())
+        addCollection(Collection.builder().title("another user's collection").subjects(subjects).videos(videos).build(), "anotheruser@boclips.com")
     }
 
     override fun getClient() = fakeClient
@@ -243,6 +239,16 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
 
         subjectRepository.create("Maths")
         subjectRepository.create("French")
+
+        val videoId = saveVideo()
+
+        setSecurityContext("user@boclips.com")
+        createCollection(CreateCollectionRequest(title = "first collection", videos = listOf(videoId.value))).apply {
+            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf("Math")))
+        }
+        createCollection(CreateCollectionRequest(title = "second collection", videos = listOf(videoId.value))).apply {
+            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf("French")))
+        }
     }
 
     override fun getClient() = realClient

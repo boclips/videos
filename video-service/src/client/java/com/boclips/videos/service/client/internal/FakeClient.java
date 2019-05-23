@@ -76,13 +76,15 @@ public class FakeClient implements VideoServiceClient {
     }
 
     @Override
-    public List<Collection> getMyCollections() {
-        return getCollectionsByOwner("user@boclips.com");
+    public List<Collection> getMyCollections(PageSpec pageSpec) {
+        return getCollectionsByOwner("user@boclips.com", pageSpec);
     }
 
     @Override
-    public List<Collection> getCollectionsByOwner(String owner) {
-        return Collections.unmodifiableList(getCollections(owner));
+    public List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec) {
+        List<Collection> allUserCollections = getCollections(owner);
+        int pageSize = pageSpec.getPageSize() != null ? pageSpec.getPageSize() : Math.min(30, allUserCollections.size());
+        return Collections.unmodifiableList(allUserCollections.subList(0, pageSize));
     }
 
     public void addCollection(Collection collection) {
@@ -110,6 +112,7 @@ public class FakeClient implements VideoServiceClient {
         videos.clear();
         illegalPlaybackIds.clear();
         subjects.clear();
+        collectionsByUser.clear();
     }
 
     public void addIllegalPlaybackId(String playbackId) {

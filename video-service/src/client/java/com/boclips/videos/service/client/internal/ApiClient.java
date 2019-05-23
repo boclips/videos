@@ -9,8 +9,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -101,30 +101,38 @@ public class ApiClient implements VideoServiceClient {
     }
 
     @Override
-    public List<Collection> getMyCollections() {
+    public List<Collection> getMyCollections(PageSpec pageSpec) {
         this.linkTemplate = getLinks();
         Link collectionsLink = linkTemplate.get_links().getMyCollections();
         if(collectionsLink == null) {
             throw new UnsupportedOperationException("No 'my collections' link. Check user roles.");
         }
-        return getCollections(collectionsLink.toUri());
+        return getCollections(uri(collectionsLink), pageSpec);
     }
 
     @Override
-    public List<Collection> getCollectionsByOwner(String owner) {
+    public List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec) {
         this.linkTemplate = getLinks();
         Link collectionsLink = linkTemplate.get_links().getCollectionsByOwner();
         if(collectionsLink == null) {
             throw new UnsupportedOperationException("No 'collections by owner' link. Check user roles.");
         }
-        return getCollections(URI.create(collectionsLink.getHref() + "&owner=" + owner));
+        return getCollections(uri(collectionsLink).queryParam("owner", owner), pageSpec);
     }
 
-    private List<Collection> getCollections(URI uri) {
-        return restTemplate.getForObject(uri, CollectionsResource.class)
+    private List<Collection> getCollections(UriComponentsBuilder uri, PageSpec pageSpec) {
+        if(pageSpec.getPageSize() != null) {
+            uri.replaceQueryParam("size", pageSpec.getPageSize());
+        }
+
+        return restTemplate.getForObject(uri.build().toUri(), CollectionsResource.class)
                 .getCollections().stream()
                 .map(CollectionResource::toCollection)
                 .collect(Collectors.toList());
+    }
+
+    private UriComponentsBuilder uri(Link link) {
+        return UriComponentsBuilder.fromUri(link.toUri());
     }
 
     private LinksResource getLinks() {

@@ -2,6 +2,10 @@ package com.boclips.videos.service.client;
 
 import com.boclips.videos.service.client.internal.ApiClient;
 import com.boclips.videos.service.client.internal.FakeClient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
@@ -45,7 +49,23 @@ public interface VideoServiceClient {
 
     List<Subject> getSubjects();
 
-    List<Collection> getMyCollections();
+    default List<Collection> getMyCollections() {
+        return getMyCollections(new PageSpec());
+    }
 
-    List<Collection> getCollectionsByOwner(String owner);
+    List<Collection> getMyCollections(PageSpec pageSpec);
+
+    default List<Collection> getCollectionsByOwner(String owner) {
+        return getCollectionsByOwner(owner, new PageSpec());
+    }
+
+    List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec);
+
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class PageSpec {
+        private Integer pageSize;
+    }
 }
