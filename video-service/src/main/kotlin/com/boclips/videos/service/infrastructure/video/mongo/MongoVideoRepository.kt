@@ -42,8 +42,8 @@ class MongoVideoRepository(
     companion object : KLogging() {
 
         const val collectionName = "videos"
-    }
 
+    }
     override fun find(videoId: VideoId): Video? {
         val videoOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(videoId.value))
             ?.let(VideoDocumentConverter::toVideo)
@@ -63,6 +63,13 @@ class MongoVideoRepository(
             .toMap()
 
         return videoIds.mapNotNull { videoId -> videos[videoId] }
+    }
+
+    override fun findByContentPartner(contentPartnerName: String): List<Video> {
+        return getVideoCollection()
+            .find(VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::name) eq contentPartnerName)
+            .map(VideoDocumentConverter::toVideo)
+            .toList()
     }
 
     override fun streamAll(consumer: (Sequence<Video>) -> Unit) {

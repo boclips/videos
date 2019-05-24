@@ -363,6 +363,19 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedAsset!!.keywords).containsExactly("new")
     }
 
+    @Test
+    fun `finds videos by content partner`() {
+        val video1 = mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerName = "TED"))
+        val video2 = mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerName = "TED"))
+        val video3 = mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerName = "Reuters"))
+
+        val videos = mongoVideoRepository.findByContentPartner(contentPartnerName = "TED")
+
+        assertThat(videos).contains(video1)
+        assertThat(videos).contains(video2)
+        assertThat(videos).doesNotContain(video3)
+    }
+
     @Nested
     @DisplayName(value = "Migration Tests")
     inner class MigrationTests {

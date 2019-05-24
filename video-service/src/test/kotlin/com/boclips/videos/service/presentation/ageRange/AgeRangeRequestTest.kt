@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.collections
+package com.boclips.videos.service.presentation.ageRange
 
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import javax.validation.Validation
 import javax.validation.Validator
 
-class UpdateCollectionRequestTest {
+class AgeRangeRequestTest {
     lateinit var validator: Validator
 
     @BeforeEach

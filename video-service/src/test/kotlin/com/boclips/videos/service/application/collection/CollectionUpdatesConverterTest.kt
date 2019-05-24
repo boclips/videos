@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.presentation.collections.AgeRangeRequest
+import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

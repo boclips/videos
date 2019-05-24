@@ -11,6 +11,7 @@ import com.boclips.videos.service.application.collection.GetCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
@@ -29,6 +30,7 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
@@ -58,7 +60,8 @@ class ApplicationContext(
     val eventService: EventService,
     val videoAccessService: VideoAccessService,
     val topics: Topics,
-    val subjectRepository: SubjectRepository
+    val subjectRepository: SubjectRepository,
+    val contentPartnerRepository: ContentPartnerRepository
 ) {
 
     @Bean
@@ -221,6 +224,11 @@ class ApplicationContext(
     @Bean
     fun stringToDurationConverter(): SearchQueryConverter {
         return SearchQueryConverter()
+    }
+
+    @Bean
+    fun createContentPartner(): CreateContentPartner {
+        return CreateContentPartner(contentPartnerRepository, videoService)
     }
 
     private fun getVideoById(

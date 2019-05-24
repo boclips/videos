@@ -14,5 +14,6 @@ interface VideoRepository {
     fun bulkUpdate(commands: List<VideoUpdateCommand>)
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): VideoId?
+    fun findByContentPartner(contentPartnerName: String): List<Video>
 }
 

@@ -72,8 +72,12 @@ class VideoService(
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
     }
 
-    fun setDefaultAgeRange(videoId: VideoId, ageRange: AgeRange) : Video {
+    fun setDefaultAgeRange(videoId: VideoId, ageRange: AgeRange): Video {
         return videoRepository.update(VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange))
+    }
+
+    fun getVideosByContentPartner(contentPartnerName: String): List<Video> {
+        return videoRepository.findByContentPartner(contentPartnerName)
     }
 }
 

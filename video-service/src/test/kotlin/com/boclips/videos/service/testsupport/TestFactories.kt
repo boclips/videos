@@ -28,11 +28,12 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
-import com.boclips.videos.service.presentation.collections.AgeRangeRequest
+import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.presentation.contentPartner.CreateContentPartnerRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -357,6 +358,16 @@ object TestFactories {
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
+            name = name,
+            ageRange = ageRange
+        )
+    }
+
+    fun createCreateContentPartnerRequest(
+        name: String = "TED",
+        ageRange: AgeRangeRequest = AgeRangeRequest(min = 5, max = 11)
+    ) : CreateContentPartnerRequest {
+        return CreateContentPartnerRequest(
             name = name,
             ageRange = ageRange
         )
