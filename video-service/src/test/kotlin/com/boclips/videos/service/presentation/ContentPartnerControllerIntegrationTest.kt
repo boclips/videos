@@ -1,6 +1,9 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import org.junit.jupiter.api.Test
@@ -15,6 +18,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Test
     fun `video lookup by provider id returns 200 when video exists`() {
@@ -44,6 +50,25 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         """
 
         mockMvc.perform(post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content))
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `updating a content partner`() {
+        contentPartnerRepository.create(TestFactories.createContentPartner(name = "TED", ageRange = AgeRange.bounded(min = 14, max = 16)))
+
+        val requestContent = """
+            {
+                "name": "TED-ED",
+                "ageRange":
+                    {
+                        "min": 11,
+                        "max": 18
+                    }
+            }
+        """
+
+        mockMvc.perform(post("/v1/content-partners/ted").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(requestContent))
             .andExpect(status().isCreated)
     }
 }

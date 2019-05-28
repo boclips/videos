@@ -23,7 +23,7 @@ class CreateContentPartnerTest : AbstractSpringIntegrationTest() {
     fun `creates a content partner and sets the default age for their videos`() {
         val videoId = saveVideo(contentProvider = "My content partner")
 
-        createContentPartner(TestFactories.createCreateContentPartnerRequest(
+        createContentPartner(TestFactories.createContentPartnerRequest(
             name = "My content partner",
             ageRange = AgeRangeRequest(min = 7, max = 11)
         ))

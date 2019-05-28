@@ -12,6 +12,7 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
+import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
@@ -232,6 +233,11 @@ class ApplicationContext(
     @Bean
     fun createContentPartner(): CreateContentPartner {
         return CreateContentPartner(contentPartnerRepository, videoService)
+    }
+
+    @Bean
+    fun updateContentPartner(): UpdateContentPartner {
+        return UpdateContentPartner(contentPartnerRepository, videoService)
     }
 
     @Bean

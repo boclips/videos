@@ -35,10 +35,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
         return findByQuery(ContentPartnerDocument::name eq contentPartnerName)
     }
 
-    override fun update(contentPartner: ContentPartner): ContentPartner {
-        getContentPartnerCollection().deleteOne(ContentPartnerDocument::name eq contentPartner.name)
+    override fun update(existingContentPartnerName: String, newContentPartner: ContentPartner): ContentPartner {
+        getContentPartnerCollection().deleteOne(ContentPartnerDocument::name eq existingContentPartnerName)
 
-        return create(contentPartner)
+        return create(newContentPartner)
     }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {

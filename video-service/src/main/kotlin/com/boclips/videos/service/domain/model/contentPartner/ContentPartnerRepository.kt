@@ -4,5 +4,5 @@ interface ContentPartnerRepository {
     fun create(contentPartner: ContentPartner): ContentPartner
     fun find(contentPartnerId: ContentPartnerId): ContentPartner?
     fun findByName(contentPartnerName: String): ContentPartner?
-    fun update(contentPartner: ContentPartner): ContentPartner
+    fun update(existingContentPartnerName: String, newContentPartner: ContentPartner): ContentPartner
 }
