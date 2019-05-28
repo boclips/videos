@@ -29,7 +29,7 @@ import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.collections.AgeRangeResource
+import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest

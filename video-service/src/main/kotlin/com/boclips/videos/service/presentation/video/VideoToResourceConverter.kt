@@ -3,6 +3,8 @@ package com.boclips.videos.service.presentation.video
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
+import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import org.springframework.hateoas.Resource
@@ -11,7 +13,8 @@ import org.springframework.stereotype.Component
 @Component
 class VideoToResourceConverter(
     private val videosLinkBuilder: VideosLinkBuilder,
-    private val playbackToResourceConverter: PlaybackToResourceConverter
+    private val playbackToResourceConverter: PlaybackToResourceConverter,
+    private val ageRangeToResourceConverter: AgeRangeToResourceConverter
 ) {
     fun wrapVideosInResource(videos: List<Video>): List<Resource<VideoResource>> {
         return videos.map { video -> fromVideo(video) }
@@ -40,9 +43,14 @@ class VideoToResourceConverter(
                 type = VideoTypeResource(id = video.type.id, name = video.type.title),
                 status = getStatus(video),
                 legalRestrictions = video.legalRestrictions,
-                hasTranscripts = video.transcript != null
+                hasTranscripts = video.transcript != null,
+                ageRange = getAgeRange(video)
             )
         )
+    }
+
+    private fun getAgeRange(video: Video) : AgeRangeResource? {
+        return ageRangeToResourceConverter.convert(video.ageRange)
     }
 
     private fun getPlayback(video: Video): Resource<PlaybackResource> {

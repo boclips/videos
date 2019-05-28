@@ -1,8 +1,10 @@
 package com.boclips.videos.service.presentation.video
 
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
@@ -24,7 +26,7 @@ internal class VideoToResourceConverterTest {
     fun setUp() {
         videosLinkBuilder = mock()
         playbackToResourceConverter = PlaybackToResourceConverter(mock())
-        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
+        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter, AgeRangeToResourceConverter())
     }
 
     val kalturaVideo = createVideo(
@@ -35,7 +37,8 @@ internal class VideoToResourceConverterTest {
         type = LegacyVideoType.TED_TALKS,
         subjects = setOf(LegacySubject("Maths")),
         searchable = true,
-        legalRestrictions = "None"
+        legalRestrictions = "None",
+        ageRange = AgeRange.bounded(min = 5, max = 11)
     )
 
     val youtubeVideo = createVideo(
@@ -88,6 +91,8 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(videoResource.playback!!.content.id).isEqualTo("555")
         assertThat((videoResource.playback!!.content as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
+        assertThat(videoResource.ageRange!!.min).isEqualTo(5)
+        assertThat(videoResource.ageRange!!.max).isEqualTo(11)
     }
 
     @Test

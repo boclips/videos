@@ -11,6 +11,7 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -148,7 +149,9 @@ abstract class AbstractSpringIntegrationTest {
         keywords: List<String> = emptyList(),
         subjects: Set<String> = emptySet(),
         searchable: Boolean = true,
-        legalRestrictions: String = ""
+        legalRestrictions: String = "",
+        ageRangeMin: Int = 7,
+        ageRangeMax: Int = 11
     ): VideoId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(
@@ -179,7 +182,9 @@ abstract class AbstractSpringIntegrationTest {
                 playbackProvider = playbackId.type.name,
                 subjects = subjects,
                 searchable = searchable,
-                analyseVideo = false
+                analyseVideo = false,
+                ageRangeMin = ageRangeMin,
+                ageRangeMax = ageRangeMax
             )
         ).content.id
 

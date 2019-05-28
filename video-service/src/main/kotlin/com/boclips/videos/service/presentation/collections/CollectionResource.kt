@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.collections
 
+import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -22,11 +23,3 @@ data class CollectionResource(
     val subjects: Set<Resource<SubjectResource>>,
     val ageRange: AgeRangeResource?
 )
-
-data class AgeRangeResource(
-    val min: Int,
-    val max: Int?
-) {
-
-    fun getLabel() = max?.let { "$min-$max" } ?: "$min+"
-}

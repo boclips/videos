@@ -39,6 +39,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
@@ -129,9 +130,10 @@ class ApplicationContext(
         return GetCollection(
             collectionRepository,
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter, AgeRangeToResourceConverter()),
                 SubjectToResourceConverter(),
-                videoService
+                videoService,
+                AgeRangeToResourceConverter()
             )
         )
     }
@@ -144,9 +146,10 @@ class ApplicationContext(
         return GetCollections(
             collectionRepository,
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter, AgeRangeToResourceConverter()),
                 SubjectToResourceConverter(),
-                videoService
+                videoService,
+                AgeRangeToResourceConverter()
             )
         )
     }
@@ -229,6 +232,11 @@ class ApplicationContext(
     @Bean
     fun createContentPartner(): CreateContentPartner {
         return CreateContentPartner(contentPartnerRepository, videoService)
+    }
+
+    @Bean
+    fun ageRangeToResourceConverter(): AgeRangeToResourceConverter {
+        return AgeRangeToResourceConverter()
     }
 
     private fun getVideoById(

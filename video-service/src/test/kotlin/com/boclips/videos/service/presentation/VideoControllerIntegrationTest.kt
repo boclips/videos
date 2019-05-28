@@ -56,7 +56,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
             contentProvider = "cp",
-            legalRestrictions = "None"
+            legalRestrictions = "None",
+            ageRangeMin = 5,
+            ageRangeMax = 7
         ).value
 
         disabledVideoId = saveVideo(
@@ -267,6 +269,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
             .andExpect(jsonPath("$.status", equalTo("SEARCHABLE")))
             .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
+            .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
     }
 
     @Test

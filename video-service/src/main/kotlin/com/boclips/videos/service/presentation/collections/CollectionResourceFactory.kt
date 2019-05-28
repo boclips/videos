@@ -1,17 +1,17 @@
 package com.boclips.videos.service.presentation.collections
 
-import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 
 class CollectionResourceFactory(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val subjectToResourceConverter: SubjectToResourceConverter,
-    private val videoService: VideoService
+    private val videoService: VideoService,
+    private val ageRangeToResourceConverter: AgeRangeToResourceConverter
 ) {
     fun buildCollectionDetailsResource(collection: Collection): CollectionResource {
         return CollectionResource(
@@ -25,7 +25,7 @@ class CollectionResourceFactory(
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
-            ageRange = ageRangeToResource(collection)
+            ageRange = ageRangeToResourceConverter.convert(collection.ageRange)
         )
     }
 
@@ -41,7 +41,7 @@ class CollectionResourceFactory(
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
-            ageRange = ageRangeToResource(collection)
+            ageRange = ageRangeToResourceConverter.convert(collection.ageRange)
         )
     }
 
@@ -50,13 +50,4 @@ class CollectionResourceFactory(
             Projection.list -> buildCollectionListResource(collection)
             Projection.details -> buildCollectionDetailsResource(collection)
         }
-
-    private fun ageRangeToResource(
-        collection: Collection
-    ): AgeRangeResource? {
-        return when (collection.ageRange) {
-            is BoundedAgeRange -> AgeRangeResource(collection.ageRange.min, collection.ageRange.max)
-            is UnboundedAgeRange -> null
-        }
-    }
 }

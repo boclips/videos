@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
@@ -45,9 +46,10 @@ class GetCollectionsTest {
         playbackToResourceConverter = mock()
         collectionResourceFactory =
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter, AgeRangeToResourceConverter()),
                 SubjectToResourceConverter(),
-                videoService
+                videoService,
+                AgeRangeToResourceConverter()
             )
     }
 
