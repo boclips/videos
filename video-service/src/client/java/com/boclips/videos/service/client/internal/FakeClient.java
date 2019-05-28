@@ -83,8 +83,10 @@ public class FakeClient implements VideoServiceClient {
     @Override
     public List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec) {
         List<Collection> allUserCollections = getCollections(owner);
-        int pageSize = pageSpec.getPageSize() != null ? pageSpec.getPageSize() : Math.min(30, allUserCollections.size());
-        return Collections.unmodifiableList(allUserCollections.subList(0, pageSize));
+
+        int pageSize = pageSpec.getPageSize() != null ? pageSpec.getPageSize() : 30;
+        int itemsToRemove = Math.min(pageSize, allUserCollections.size());
+        return Collections.unmodifiableList(allUserCollections.subList(0, itemsToRemove));
     }
 
     public void addCollection(Collection collection) {
