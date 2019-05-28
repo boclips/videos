@@ -66,4 +66,16 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         assertThat(mongoContentPartnerRespository.find(contentPartner.contentPartnerId)).isNotNull()
     }
+
+    @Test
+    fun `find all content partners`() {
+        mongoContentPartnerRespository.create(
+            TestFactories.createContentPartner(name = "my bloody valentine")
+        )
+
+        val retrievedAsset = mongoContentPartnerRespository.findAll()
+
+        assertThat(retrievedAsset).hasSize(1)
+        assertThat(retrievedAsset.first()!!.name).isEqualTo("my bloody valentine")
+    }
 }

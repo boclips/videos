@@ -82,6 +82,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(HttpMethod.HEAD, "/v1/content-partners/*/videos/*")
             .hasRole(UserRoles.INSERT_VIDEOS)
             .antMatchers(HttpMethod.POST, "/v1/content-partners")
+            .hasRole(UserRoles.VIEW_CONTENT_PARTNERS)
+            .antMatchers(HttpMethod.GET, "/v1/content-partners")
             .hasRole(UserRoles.INSERT_CONTENT_PARTNERS)
             .antMatchers(HttpMethod.PUT, "/v1/content-partners/*")
             .hasRole(UserRoles.UPDATE_CONTENT_PARTNERS)

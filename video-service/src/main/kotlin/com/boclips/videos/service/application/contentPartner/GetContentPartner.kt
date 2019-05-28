@@ -2,8 +2,8 @@ package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
-import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerResource
+import com.boclips.videos.service.presentation.contentPartner.ContentPartnerToResourceConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class GetContentPartner(
@@ -16,9 +16,6 @@ class GetContentPartner(
                 message = "No content partner found for this id: $contentPartnerId"
             )
 
-        return ContentPartnerResource(
-            name = contentPartner.name,
-            ageRange = AgeRangeToResourceConverter.convert(contentPartner.ageRange)
-        )
+        return ContentPartnerToResourceConverter.convert(contentPartner)
     }
 }

@@ -17,6 +17,7 @@ import org.litote.kmongo.updateOne
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartnerRepository {
     companion object : KLogging() {
+
         const val collectionName = "contentPartner"
     }
 
@@ -32,6 +33,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
 
         return createdContentPartner
     }
+
+    override fun findAll() =
+        getContentPartnerCollection().find()
+            .map { ContentPartnerDocumentConverter.toContentPartner(it) }
 
     override fun find(contentPartnerId: ContentPartnerId): ContentPartner? {
         return findByQuery(ContentPartnerDocument::id eq ObjectId(contentPartnerId.value))

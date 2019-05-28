@@ -13,6 +13,7 @@ import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
+import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
@@ -43,6 +44,7 @@ import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
@@ -64,7 +66,8 @@ class ApplicationContext(
     val videoAccessService: VideoAccessService,
     val topics: Topics,
     val subjectRepository: SubjectRepository,
-    val contentPartnerRepository: ContentPartnerRepository
+    val contentPartnerRepository: ContentPartnerRepository,
+    val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
 ) {
 
     @Bean
@@ -247,6 +250,11 @@ class ApplicationContext(
     @Bean
     fun getContentPartner(): GetContentPartner {
         return GetContentPartner(contentPartnerRepository)
+    }
+
+    @Bean
+    fun getContentPartners(): GetContentPartners {
+        return GetContentPartners(contentPartnerRepository, contentPartnersLinkBuilder)
     }
 
     private fun getVideoById(

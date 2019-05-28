@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepo
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
+import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -92,5 +93,26 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$.name", equalTo("TED")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(11)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(18)))
+    }
+
+    @Test
+    fun `get all content partners`() {
+        val originalContent = """
+            {
+                "name": "TED-ED",
+                "ageRange":
+                    {
+                        "min": 10,
+                        "max": 19
+                    }
+            }"""
+
+        mockMvc.perform(post("/v1/content-partners").asBoclipsEmployee()
+            .contentType(MediaType.APPLICATION_JSON).content(originalContent))
+
+        mockMvc.perform(get("/v1/content-partners").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED-ED")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0]._links.self.href", containsString("/content-partners/")))
     }
 }
