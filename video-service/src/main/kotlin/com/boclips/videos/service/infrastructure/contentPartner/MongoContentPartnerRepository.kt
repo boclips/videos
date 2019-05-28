@@ -4,13 +4,16 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
+import com.mongodb.client.model.UpdateOptions
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.updateOne
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartnerRepository {
     companion object : KLogging() {
@@ -20,7 +23,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
     override fun create(contentPartner: ContentPartner): ContentPartner {
         getContentPartnerCollection().insertOne(ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner))
 
-        val createdContentPartner = find(contentPartner.contentPartnerId) ?: throw Exception()
+        val createdContentPartner = find(contentPartner.contentPartnerId) ?: throw ResourceNotFoundApiException(
+            error = "Content partner not found",
+            message = "There has been an error in creating the content partner.  Content partner id: ${contentPartner.contentPartnerId.value} could not be found."
+        )
 
         logger.info { "Created contentPartner ${createdContentPartner.contentPartnerId.value}" }
 
@@ -35,10 +41,21 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
         return findByQuery(ContentPartnerDocument::name eq contentPartnerName)
     }
 
-    override fun update(existingContentPartnerName: String, newContentPartner: ContentPartner): ContentPartner {
-        getContentPartnerCollection().deleteOne(ContentPartnerDocument::name eq existingContentPartnerName)
+    override fun update(contentPartner: ContentPartner): ContentPartner {
+        getContentPartnerCollection().updateOne(
+            ContentPartnerDocument::id eq ObjectId(contentPartner.contentPartnerId.value),
+            ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner),
+            UpdateOptions().upsert(true)
+        )
 
-        return create(newContentPartner)
+        val updatedContentPartner = find(contentPartner.contentPartnerId) ?: throw ResourceNotFoundApiException(
+            error = "Content partner not found",
+            message = "There has been an error in updating the content partner.  Content partner id: ${contentPartner.contentPartnerId.value} could not be found."
+        )
+
+        logger.info { "Updated contentPartner ${updatedContentPartner.contentPartnerId.value}" }
+
+        return updatedContentPartner
     }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {

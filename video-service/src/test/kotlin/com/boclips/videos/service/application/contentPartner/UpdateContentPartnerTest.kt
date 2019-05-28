@@ -26,14 +26,14 @@ class UpdateContentPartnerTest : AbstractSpringIntegrationTest() {
     fun `updating a content partner`() {
         val videoId = saveVideo(contentProvider = "My better content partner")
 
-        createContentPartner(
+        val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11)
             ))
 
         updateContentPartner(
-            existingContentPartnerName = "My content partner",
+            existingContentPartnerId = originalContentPartner.contentPartnerId.value,
             request =
             TestFactories.createContentPartnerRequest(
                 name = "My better content partner",

@@ -4,7 +4,6 @@ import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
@@ -26,7 +25,7 @@ internal class VideoToResourceConverterTest {
     fun setUp() {
         videosLinkBuilder = mock()
         playbackToResourceConverter = PlaybackToResourceConverter(mock())
-        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter, AgeRangeToResourceConverter())
+        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
     }
 
     val kalturaVideo = createVideo(

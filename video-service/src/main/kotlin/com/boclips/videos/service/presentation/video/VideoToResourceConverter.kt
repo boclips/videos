@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class VideoToResourceConverter(
     private val videosLinkBuilder: VideosLinkBuilder,
-    private val playbackToResourceConverter: PlaybackToResourceConverter,
-    private val ageRangeToResourceConverter: AgeRangeToResourceConverter
+    private val playbackToResourceConverter: PlaybackToResourceConverter
 ) {
     fun wrapVideosInResource(videos: List<Video>): List<Resource<VideoResource>> {
         return videos.map { video -> fromVideo(video) }
@@ -50,7 +49,7 @@ class VideoToResourceConverter(
     }
 
     private fun getAgeRange(video: Video) : AgeRangeResource? {
-        return ageRangeToResourceConverter.convert(video.ageRange)
+        return AgeRangeToResourceConverter.convert(video.ageRange)
     }
 
     private fun getPlayback(video: Video): Resource<PlaybackResource> {

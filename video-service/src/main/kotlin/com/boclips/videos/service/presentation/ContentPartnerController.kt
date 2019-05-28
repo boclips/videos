@@ -1,11 +1,16 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
+import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import com.boclips.videos.service.presentation.contentPartner.ContentPartnerResource
+import org.springframework.hateoas.mvc.ControllerLinkBuilder
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -20,7 +25,8 @@ import javax.validation.Valid
 class ContentPartnerController(
     private val videoRepository: VideoRepository,
     private val createContentPartner: CreateContentPartner,
-    private val updateContentPartner: UpdateContentPartner
+    private val updateContentPartner: UpdateContentPartner,
+    private val fetchContentPartner: GetContentPartner
 ) {
 
     @RequestMapping(
@@ -37,21 +43,34 @@ class ContentPartnerController(
         return ResponseEntity(status)
     }
 
-    @PostMapping
-    fun createAContentPartner(@Valid @RequestBody createContentPartnerRequest: ContentPartnerRequest) : ResponseEntity<Void> {
-        createContentPartner(createContentPartnerRequest)
+    @GetMapping("/{contentPartnerId}")
+    fun getContentPartner(@PathVariable("contentPartnerId") contentPartnerId: String): ContentPartnerResource {
+        return fetchContentPartner(contentPartnerId)
+    }
 
-        return ResponseEntity(HttpStatus.CREATED)
+    @PostMapping
+    fun postContentPartner(@Valid @RequestBody createContentPartnerRequest: ContentPartnerRequest): ResponseEntity<Void> {
+        val contentPartner = createContentPartner(createContentPartnerRequest)
+
+        return ResponseEntity(HttpHeaders().apply {
+            set(
+                "Location",
+                ControllerLinkBuilder.linkTo(
+                    ControllerLinkBuilder.methodOn(ContentPartnerController::class.java).getContentPartner(
+                        contentPartner.contentPartnerId.value
+                    )
+                ).toString()
+            )
+        }, HttpStatus.CREATED)
     }
 
     @PutMapping("/{contentPartnerId}")
-    fun updateAContentPartner(
+    fun putContentPartner(
         @PathVariable("contentPartnerId") contentPartnerId: String,
         @Valid @RequestBody updateContentPartnerRequest: ContentPartnerRequest
-    ) : ResponseEntity<Void> {
-        updateContentPartner(existingContentPartnerName = contentPartnerId, request = updateContentPartnerRequest)
+    ): ResponseEntity<Void> {
+        updateContentPartner(existingContentPartnerId = contentPartnerId, request = updateContentPartnerRequest)
 
-        return ResponseEntity(HttpStatus.CREATED)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 }
-

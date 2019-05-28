@@ -10,8 +10,7 @@ import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 class CollectionResourceFactory(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val subjectToResourceConverter: SubjectToResourceConverter,
-    private val videoService: VideoService,
-    private val ageRangeToResourceConverter: AgeRangeToResourceConverter
+    private val videoService: VideoService
 ) {
     fun buildCollectionDetailsResource(collection: Collection): CollectionResource {
         return CollectionResource(
@@ -25,7 +24,7 @@ class CollectionResourceFactory(
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
-            ageRange = ageRangeToResourceConverter.convert(collection.ageRange)
+            ageRange = AgeRangeToResourceConverter.convert(collection.ageRange)
         )
     }
 
@@ -41,7 +40,7 @@ class CollectionResourceFactory(
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
-            ageRange = ageRangeToResourceConverter.convert(collection.ageRange)
+            ageRange = AgeRangeToResourceConverter.convert(collection.ageRange)
         )
     }
 

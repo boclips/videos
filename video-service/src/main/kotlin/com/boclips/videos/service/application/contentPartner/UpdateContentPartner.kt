@@ -6,20 +6,17 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
-import org.bson.types.ObjectId
 
 class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val videoService: VideoService
 ) {
-    operator fun invoke(existingContentPartnerName: String, request: ContentPartnerRequest): ContentPartner {
+    operator fun invoke(existingContentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
         val ageRange = request.ageRange?.let { AgeRange.bounded(min = it.min, max = it.max) } ?: AgeRange.unbounded()
 
         val contentPartner = contentPartnerRepository.update(
-            existingContentPartnerName = existingContentPartnerName,
-            newContentPartner =
             ContentPartner(
-                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+                contentPartnerId = ContentPartnerId(existingContentPartnerId),
                 name = request.name,
                 ageRange = ageRange
             )

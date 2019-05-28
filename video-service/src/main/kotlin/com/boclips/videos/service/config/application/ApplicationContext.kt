@@ -12,6 +12,7 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
+import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
@@ -131,10 +132,9 @@ class ApplicationContext(
         return GetCollection(
             collectionRepository,
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter, AgeRangeToResourceConverter()),
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
-                videoService,
-                AgeRangeToResourceConverter()
+                videoService
             )
         )
     }
@@ -147,10 +147,9 @@ class ApplicationContext(
         return GetCollections(
             collectionRepository,
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter, AgeRangeToResourceConverter()),
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
-                videoService,
-                AgeRangeToResourceConverter()
+                videoService
             )
         )
     }
@@ -243,6 +242,11 @@ class ApplicationContext(
     @Bean
     fun ageRangeToResourceConverter(): AgeRangeToResourceConverter {
         return AgeRangeToResourceConverter()
+    }
+
+    @Bean
+    fun getContentPartner(): GetContentPartner {
+        return GetContentPartner(contentPartnerRepository)
     }
 
     private fun getVideoById(
