@@ -23,9 +23,7 @@ class CreateContentPartner(
             )
         )
 
-        videoService.getVideosByContentPartner(contentPartner.name).forEach {
-            videoService.setDefaultAgeRange(it.videoId, contentPartner.ageRange)
-        }
+        videoService.setDefaultAgeRange(contentPartner)
 
         return contentPartner
     }

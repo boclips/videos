@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -72,12 +73,16 @@ class VideoService(
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
     }
 
-    fun setDefaultAgeRange(videoId: VideoId, ageRange: AgeRange): Video {
-        return videoRepository.update(VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange))
+    fun setDefaultAgeRange(contentPartner: ContentPartner) : List<Video> {
+        return getVideosByContentPartner(contentPartner.name).map { setDefaultAgeRange(it.videoId, contentPartner.ageRange) }
     }
 
-    fun getVideosByContentPartner(contentPartnerName: String): List<Video> {
+    private fun getVideosByContentPartner(contentPartnerName: String): List<Video> {
         return videoRepository.findByContentPartner(contentPartnerName)
+    }
+
+    private fun setDefaultAgeRange(videoId: VideoId, ageRange: AgeRange): Video {
+        return videoRepository.update(VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange))
     }
 }
 

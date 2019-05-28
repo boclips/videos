@@ -16,7 +16,7 @@ class UpdateContentPartner(
         val ageRange = request.ageRange?.let { AgeRange.bounded(min = it.min, max = it.max) } ?: AgeRange.unbounded()
 
         val contentPartner = contentPartnerRepository.update(
-            oldContentPartnerName = existingContentPartnerName,
+            existingContentPartnerName = existingContentPartnerName,
             newContentPartner =
             ContentPartner(
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
@@ -25,9 +25,7 @@ class UpdateContentPartner(
             )
         )
 
-        videoService.getVideosByContentPartner(contentPartner.name).forEach {
-            videoService.setDefaultAgeRange(it.videoId, contentPartner.ageRange)
-        }
+        videoService.setDefaultAgeRange(contentPartner)
 
         return contentPartner
     }
