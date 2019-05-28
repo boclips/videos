@@ -12,6 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -68,7 +69,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             }
         """
 
-        mockMvc.perform(post("/v1/content-partners/ted").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(requestContent))
+        mockMvc.perform(put("/v1/content-partners/ted").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(requestContent))
             .andExpect(status().isCreated)
     }
 }
