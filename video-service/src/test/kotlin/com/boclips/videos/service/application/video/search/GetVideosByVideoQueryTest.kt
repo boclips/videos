@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class GetVideosByQueryTest : AbstractSpringIntegrationTest() {
+class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var searchVideo: SearchVideo

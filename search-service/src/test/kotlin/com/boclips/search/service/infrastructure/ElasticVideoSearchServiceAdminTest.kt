@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
@@ -16,40 +17,40 @@ import org.elasticsearch.rest.RestStatus
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class ElasticSearchServiceAdminTest : EmbeddedElasticSearchIntegrationTest() {
-    lateinit var searchService: ElasticSearchServiceAdmin
+class ElasticVideoSearchServiceAdminTest : EmbeddedElasticSearchIntegrationTest() {
+    lateinit var searchVideoService: ElasticSearchVideoServiceAdmin
     lateinit var client: RestHighLevelClient
 
     @BeforeEach
     fun setUp() {
         val config = EmbeddedElasticSearchIntegrationTest.CONFIG
-        searchService = ElasticSearchServiceAdmin(config)
+        searchVideoService = ElasticSearchVideoServiceAdmin(config)
         client = RestHighLevelClient(restClientBuilder(config))
     }
 
     @Test
     fun `rebuilding the index deletes previous index versions`() {
-        searchService.safeRebuildIndex(emptySequence())
+        searchVideoService.safeRebuildIndex(emptySequence())
 
         val previousIndices = getCurrentIndices()
 
         assertThat(previousIndices).isNotEmpty
 
-        searchService.safeRebuildIndex(emptySequence())
+        searchVideoService.safeRebuildIndex(emptySequence())
 
         assertThat(getCurrentIndices()).doesNotContain(*previousIndices)
     }
 
     @Test
     fun `rebuilding the index switches the alias to point to the new index only`() {
-        searchService.safeRebuildIndex(emptySequence())
+        searchVideoService.safeRebuildIndex(emptySequence())
 
         val aliasResponseOne = getAliases()
 
         assertThat(aliasResponseOne.status()).isEqualTo(RestStatus.OK)
         assertThat(aliasResponseOne.aliases.size).isEqualTo(1)
 
-        searchService.safeRebuildIndex(emptySequence())
+        searchVideoService.safeRebuildIndex(emptySequence())
 
         val aliasResponseTwo = getAliases()
 

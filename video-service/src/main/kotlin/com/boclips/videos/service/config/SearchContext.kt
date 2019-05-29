@@ -1,19 +1,18 @@
 package com.boclips.videos.service.config
 
-import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.videos.VideoMetadata
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.ElasticSearchService
-import com.boclips.search.service.infrastructure.ElasticSearchServiceAdmin
+import com.boclips.search.service.infrastructure.videos.ElasticVideoSearchService
+import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
 import com.boclips.search.service.infrastructure.legacy.SolrSearchService
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.infrastructure.email.EmailClient
-import com.boclips.videos.service.infrastructure.search.VideoSearchService
+import com.boclips.videos.service.infrastructure.search.VideoVideoSearchService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -22,8 +21,8 @@ import org.springframework.context.annotation.Profile
 class SearchContext {
     @Bean
     @Profile("!fake-search")
-    fun videoMetadataSearchService(elasticSearchConfig: ElasticSearchConfig): GenericSearchService {
-        return ElasticSearchService(elasticSearchConfig)
+    fun videoMetadataSearchService(elasticSearchConfig: ElasticSearchConfig): com.boclips.search.service.domain.videos.VideoSearchService {
+        return ElasticVideoSearchService(elasticSearchConfig)
     }
 
     @Bean
@@ -35,15 +34,15 @@ class SearchContext {
     @Bean
     @Profile("!fake-search")
     fun videoSearchServiceAdmin(elasticSearchConfig: ElasticSearchConfig): GenericSearchServiceAdmin<VideoMetadata> {
-        return ElasticSearchServiceAdmin(elasticSearchConfig)
+        return ElasticSearchVideoServiceAdmin(elasticSearchConfig)
     }
 
     @Bean
     fun searchService(
-        videoMetadataSearchService: GenericSearchService,
+        videoMetadataSearchService: com.boclips.search.service.domain.videos.VideoSearchService,
         videoSearchServiceAdmin: GenericSearchServiceAdmin<VideoMetadata>
     ): SearchService {
-        return VideoSearchService(videoMetadataSearchService, videoSearchServiceAdmin)
+        return VideoVideoSearchService(videoMetadataSearchService, videoSearchServiceAdmin)
     }
 
     @Bean

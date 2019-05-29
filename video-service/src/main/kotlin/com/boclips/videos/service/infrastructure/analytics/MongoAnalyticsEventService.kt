@@ -20,9 +20,9 @@
 //        const val collectionName = "event-log"
 //    }
 //
-//    override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
+//    override fun saveSearchEvent(videoQuery: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
 //        saveEvent(EventType.SEARCH) {
-//            append("query", query)
+//            append("videoQuery", videoQuery)
 //            append("pageIndex", pageIndex)
 //            append("pageSize", pageSize)
 //            append("totalResults", totalResults)

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.search.service.domain.SourceType
+import com.boclips.search.service.domain.videos.SourceType
 import com.boclips.videos.service.application.video.exceptions.InvalidDateException
 import com.boclips.videos.service.application.video.exceptions.InvalidDurationException
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException

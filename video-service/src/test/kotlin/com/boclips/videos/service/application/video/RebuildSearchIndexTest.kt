@@ -1,12 +1,12 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.infrastructure.search.VideoSearchService
+import com.boclips.videos.service.infrastructure.search.VideoVideoSearchService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockito_kotlin.any
@@ -20,12 +20,12 @@ import org.junit.jupiter.api.Test
 
 class RebuildSearchIndexTest {
 
-    lateinit var searchService: VideoSearchService
+    lateinit var searchService: VideoVideoSearchService
 
     @BeforeEach
     fun setUp() {
-        val inMemorySearchService = InMemorySearchService()
-        searchService = VideoSearchService(inMemorySearchService, inMemorySearchService)
+        val inMemorySearchService = InMemoryVideoSearchService()
+        searchService = VideoVideoSearchService(inMemorySearchService, inMemorySearchService)
     }
 
     @Test
@@ -55,7 +55,15 @@ class RebuildSearchIndexTest {
 
         assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
-        val searchRequest = PaginatedSearchRequest(Query(ids = listOf(videoId1, videoId2, videoId3)))
+        val searchRequest = PaginatedSearchRequest(
+            VideoQuery(
+                ids = listOf(
+                    videoId1,
+                    videoId2,
+                    videoId3
+                )
+            )
+        )
         assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(videoId2, videoId3)
     }
 

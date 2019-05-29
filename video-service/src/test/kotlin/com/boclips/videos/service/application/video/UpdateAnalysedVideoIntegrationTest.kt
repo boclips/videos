@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.videos.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -133,6 +133,9 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
-        assertThat(fakeSearchService.search(PaginatedSearchRequest(query = Query("transcript")))).containsExactly(videoId.value)
+        assertThat(fakeVideoSearchService.search(PaginatedSearchRequest(query = VideoQuery(
+            "transcript"
+        )
+        ))).containsExactly(videoId.value)
     }
 }

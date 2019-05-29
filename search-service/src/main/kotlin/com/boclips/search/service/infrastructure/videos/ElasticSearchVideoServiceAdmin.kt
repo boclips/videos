@@ -1,8 +1,12 @@
-package com.boclips.search.service.infrastructure
+package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.videos.VideoMetadata
+import com.boclips.search.service.infrastructure.ElasticObjectMapper
+import com.boclips.search.service.infrastructure.ElasticSearchConfig
+import com.boclips.search.service.infrastructure.ElasticSearchIndex
+import com.boclips.search.service.infrastructure.IndexConfiguration
 import mu.KLogging
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
@@ -23,7 +27,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
-class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearchServiceAdmin<VideoMetadata> {
+class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : GenericSearchServiceAdmin<VideoMetadata> {
     private val client: RestHighLevelClient
 
     companion object : KLogging() {
@@ -61,7 +65,9 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     }
 
     override fun removeFromSearch(videoId: String) {
-        val request = DeleteRequest(ElasticSearchIndex.ES_INDEX_ALIAS, ES_TYPE, videoId)
+        val request = DeleteRequest(
+            ElasticSearchIndex.ES_INDEX_ALIAS,
+            ES_TYPE, videoId)
         request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
         client.delete(request, RequestOptions.DEFAULT)
     }
@@ -93,7 +99,7 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
     private fun createIndex(indexName: String) {
         val indexConfiguration = IndexConfiguration()
         val createIndexRequest = CreateIndexRequest(indexName)
-            .settings(indexConfiguration.generateIndexSettings())
+            .settings(indexConfiguration.defaultEnglishSettings())
             .mapping("video", indexConfiguration.generateVideoMapping())
 
         logger.info("Creating index $indexName")
@@ -162,7 +168,8 @@ class ElasticSearchServiceAdmin(val config: ElasticSearchConfig) : GenericSearch
             )
         )
 
-        return IndexRequest(indexName, ES_TYPE, video.id)
+        return IndexRequest(indexName,
+            ES_TYPE, video.id)
             .source(document, XContentType.JSON)
     }
 

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.videos.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -58,7 +58,10 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos(videoId.value)
 
-        assertThat(fakeSearchService.search(PaginatedSearchRequest(query = Query("Some title")))).isEmpty()
+        assertThat(fakeVideoSearchService.search(PaginatedSearchRequest(query = VideoQuery(
+            "Some title"
+        )
+        ))).isEmpty()
     }
 
     @Test

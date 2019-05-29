@@ -2,11 +2,11 @@ package com.boclips.search.service.infrastructure.legacy
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.search.service.domain.Query
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.legacy.SolrException
+import com.boclips.search.service.domain.videos.VideoQuery
 import mu.KLogging
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.impl.HttpSolrClient
@@ -38,7 +38,7 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
         logger.info { "[Batch $batchIndex] Successfully indexed ${videos.size} video(s) in Solr" }
     }
 
-    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
         if (searchRequest.query.phrase != null) {
             throw java.lang.UnsupportedOperationException()
         }
@@ -46,7 +46,7 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
         return client.query(SolrQuery(query)).results.toList().map { it.getFieldValue("id").toString() }
     }
 
-    override fun count(query: Query): Long {
+    override fun count(videoQuery: VideoQuery): Long {
         throw java.lang.UnsupportedOperationException("Not supported by SOLR search service")
     }
 

@@ -1,9 +1,13 @@
-package com.boclips.search.service.domain
+package com.boclips.search.service.domain.videos
 
-abstract class SearchServiceAdapter<T>(
-    private val queryService: GenericSearchService,
+import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.ProgressNotifier
+
+abstract class VideoSearchServiceAdapter<T>(
+    private val queryService: VideoSearchService,
     private val adminService: GenericSearchServiceAdmin<VideoMetadata>
-) : GenericSearchService, GenericSearchServiceAdmin<T> {
+) : VideoSearchService, GenericSearchServiceAdmin<T> {
     override fun safeRebuildIndex(videos: Sequence<T>, notifier: ProgressNotifier?) {
         adminService.safeRebuildIndex(videos.map(::convert), notifier)
     }
@@ -12,12 +16,12 @@ abstract class SearchServiceAdapter<T>(
         adminService.upsert(videos.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
         return queryService.search(searchRequest)
     }
 
-    override fun count(query: Query): Long {
-        return queryService.count(query)
+    override fun count(videoQuery: VideoQuery): Long {
+        return queryService.count(videoQuery)
     }
 
     override fun removeFromSearch(videoId: String) {

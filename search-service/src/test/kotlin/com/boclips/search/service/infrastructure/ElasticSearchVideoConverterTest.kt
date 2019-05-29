@@ -1,13 +1,16 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.infrastructure.videos.ElasticSearchVideo
+import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoConverter
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
 
-class ElasticSearchResultConverterTest {
+class ElasticSearchVideoConverterTest {
 
-    private val elasticSearchResultConverter = ElasticSearchResultConverter()
+    private val elasticSearchResultConverter =
+        ElasticSearchVideoConverter()
 
     @Test
     fun `convert search hit`() {

@@ -4,14 +4,13 @@ import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -20,7 +19,6 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -54,7 +52,7 @@ import java.util.UUID
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
-    lateinit var fakeSearchService: InMemorySearchService
+    lateinit var fakeVideoSearchService: InMemoryVideoSearchService
 
     @Autowired
     lateinit var legacySearchService: LegacySearchService
@@ -124,7 +122,7 @@ abstract class AbstractSpringIntegrationTest {
                 }
         }
 
-        fakeSearchService.safeRebuildIndex(emptySequence())
+        fakeVideoSearchService.safeRebuildIndex(emptySequence())
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
 

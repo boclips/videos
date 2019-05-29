@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.infrastructure.videos.ElasticSearchVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

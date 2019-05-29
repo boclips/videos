@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.videos.VideoQuery
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var searchService: VideoSearchService
+    lateinit var searchService: VideoVideoSearchService
 
     @Test
     fun `upsert inserts videos`() {
@@ -32,7 +32,7 @@ class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
         assertThat(
             searchService.search(
                 PaginatedSearchRequest(
-                    query = Query("isNews"),
+                    query = VideoQuery("isNews"),
                     startIndex = 0,
                     windowSize = 10
                 )
@@ -41,7 +41,7 @@ class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
         assertThat(
             searchService.search(
                 PaginatedSearchRequest(
-                    query = Query("stock"),
+                    query = VideoQuery("stock"),
                     startIndex = 0,
                     windowSize = 10
                 )

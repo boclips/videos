@@ -33,7 +33,7 @@ class IndexConfiguration {
             .readText().trim().split("\n")
     }
 
-    fun generateIndexSettings(): Map<String, Any> {
+    fun defaultEnglishSettings(): Map<String, Any> {
         return mapOf(
             "analysis" to mapOf(
                 "filter" to mapOf(

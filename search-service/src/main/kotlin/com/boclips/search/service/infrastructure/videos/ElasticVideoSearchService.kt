@@ -1,9 +1,11 @@
-package com.boclips.search.service.infrastructure
+package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.SourceType
+import com.boclips.search.service.domain.videos.SourceType
+import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.VideoSearchService
+import com.boclips.search.service.infrastructure.ElasticSearchConfig
+import com.boclips.search.service.infrastructure.ElasticSearchIndex
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
 import org.apache.http.HttpHost
@@ -30,10 +32,12 @@ import org.elasticsearch.search.sort.SortOrder
 import java.time.Duration
 import java.time.LocalDate
 
-class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchService {
+class ElasticVideoSearchService(val config: ElasticSearchConfig) :
+    VideoSearchService {
     companion object : KLogging();
 
-    private val elasticSearchResultConverter = ElasticSearchResultConverter()
+    private val elasticSearchResultConverter =
+        ElasticSearchVideoConverter()
 
     private val client: RestHighLevelClient
 
@@ -48,21 +52,21 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         client = RestHighLevelClient(builder)
     }
 
-    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
         return searchElasticSearch(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
             .map(elasticSearchResultConverter::convert)
             .map { it.id }
     }
 
-    override fun count(query: Query): Long {
-        return searchElasticSearch(query = query, startIndex = 0, windowSize = 1).totalHits
+    override fun count(videoQuery: VideoQuery): Long {
+        return searchElasticSearch(videoQuery = videoQuery, startIndex = 0, windowSize = 1).totalHits
     }
 
-    private fun searchElasticSearch(query: Query, startIndex: Int, windowSize: Int): SearchHits {
-        val esQuery = if (isIdLookup(query)) {
-            buildIdLookupRequest(query.ids)
+    private fun searchElasticSearch(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchHits {
+        val esQuery = if (isIdLookup(videoQuery)) {
+            buildIdLookupRequest(videoQuery.ids)
         } else {
-            buildFuzzyRequest(query)
+            buildFuzzyRequest(videoQuery)
         }
 
         val request = SearchRequest(
@@ -74,14 +78,14 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         return client.search(request, RequestOptions.DEFAULT).hits
     }
 
-    private fun buildFuzzyRequest(query: Query): SearchSourceBuilder {
+    private fun buildFuzzyRequest(videoQuery: VideoQuery): SearchSourceBuilder {
         val esQuery = SearchSourceBuilder()
-            .query(fuzzyQuery(query))
+            .query(fuzzyQuery(videoQuery))
 
-        if (query.sort === null) {
-            esQuery.addRescorer(rescorer(query.phrase))
+        if (videoQuery.sort === null) {
+            esQuery.addRescorer(rescorer(videoQuery.phrase))
         } else {
-            esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
+            esQuery.sort(videoQuery.sort.fieldName.name, SortOrder.fromString(videoQuery.sort.order.toString()))
         }
 
         return esQuery
@@ -98,47 +102,47 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
         return QueryBuilders.boolQuery().should(findMatchesById)
     }
 
-    private fun fuzzyQuery(query: Query): BoolQueryBuilder? {
+    private fun fuzzyQuery(videoQuery: VideoQuery): BoolQueryBuilder? {
         return QueryBuilders
             .boolQuery()
-            .should(matchFieldsExceptContentPartner(query))
-            .should(matchContentPartnerAndTagsExactly(query).boost(1000.0F))
+            .should(matchFieldsExceptContentPartner(videoQuery))
+            .should(matchContentPartnerAndTagsExactly(videoQuery).boost(1000.0F))
     }
 
-    private fun matchContentPartnerAndTagsExactly(query: Query): BoolQueryBuilder {
+    private fun matchContentPartnerAndTagsExactly(videoQuery: VideoQuery): BoolQueryBuilder {
         return QueryBuilders
             .boolQuery()
             .must(
                 QueryBuilders.termQuery(
                     ElasticSearchVideo.CONTENT_PROVIDER,
-                    query.phrase
+                    videoQuery.phrase
                 )
             )
-            .mustNot(matchTags(query.excludeTags))
-            .filter(filterByTag(query.includeTags))
+            .mustNot(matchTags(videoQuery.excludeTags))
+            .filter(filterByTag(videoQuery.includeTags))
     }
 
-    private fun matchFieldsExceptContentPartner(query: Query): BoolQueryBuilder {
+    private fun matchFieldsExceptContentPartner(videoQuery: VideoQuery): BoolQueryBuilder {
         return QueryBuilders
             .boolQuery()
-            .must(matchTitleDescriptionKeyword(query.phrase))
+            .must(matchTitleDescriptionKeyword(videoQuery.phrase))
             .apply {
-                if (listOfNotNull(query.minDuration, query.maxDuration).isNotEmpty()) {
-                    must(beWithinDuration(query.minDuration, query.maxDuration))
+                if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
+                    must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
                 }
             }.apply {
-                if (query.source != null) {
-                    filter(matchSource(query.source))
+                if (videoQuery.source != null) {
+                    filter(matchSource(videoQuery.source))
                 }
             }.apply {
-                if (listOfNotNull(query.releaseDateFrom, query.releaseDateTo).isNotEmpty()) {
-                    must(beWithinReleaseDate(query.releaseDateFrom, query.releaseDateTo))
+                if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
+                    must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
                 }
             }
-            .should(boostTitleMatch(query.phrase))
-            .should(boostDescriptionMatch(query.phrase))
-            .mustNot(matchTags(query.excludeTags))
-            .filter(filterByTag(query.includeTags))
+            .should(boostTitleMatch(videoQuery.phrase))
+            .should(boostDescriptionMatch(videoQuery.phrase))
+            .mustNot(matchTags(videoQuery.excludeTags))
+            .filter(filterByTag(videoQuery.includeTags))
     }
 
     private fun matchSource(source: SourceType): TermQueryBuilder {
@@ -213,5 +217,5 @@ class ElasticSearchService(val config: ElasticSearchConfig) : GenericSearchServi
             .setScoreMode(QueryRescoreMode.Total)
     }
 
-    private fun isIdLookup(query: Query) = query.ids.isNotEmpty()
+    private fun isIdLookup(videoQuery: VideoQuery) = videoQuery.ids.isNotEmpty()
 }

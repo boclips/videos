@@ -1,13 +1,18 @@
 package com.boclips.search.service.domain
 
-import com.boclips.search.service.infrastructure.InMemorySearchService
+import com.boclips.search.service.domain.videos.SourceType
+import com.boclips.search.service.domain.videos.VideoMetadata
+import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.VideoSearchService
+import com.boclips.search.service.domain.videos.VideoSearchServiceAdapter
+import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class TestSearchService(query: GenericSearchService, admin: GenericSearchServiceAdmin<VideoMetadata>) :
-    SearchServiceAdapter<String>(query, admin) {
+class TestVideoSearchService(query: VideoSearchService, admin: GenericSearchServiceAdmin<VideoMetadata>) :
+    VideoSearchServiceAdapter<String>(query, admin) {
     override fun convert(document: String): VideoMetadata {
         return VideoMetadata(
             id = document.substring(0, 1).toUpperCase(),
@@ -24,20 +29,20 @@ class TestSearchService(query: GenericSearchService, admin: GenericSearchService
     }
 }
 
-class SearchServiceAdapterTest {
-    lateinit var searchService: TestSearchService
+class VideoSearchServiceAdapterTest {
+    lateinit var searchService: TestVideoSearchService
 
     @BeforeEach
     internal fun setUp() {
-        val inMemorySearchService = InMemorySearchService()
-        searchService = TestSearchService(inMemorySearchService, inMemorySearchService)
+        val inMemorySearchService = InMemoryVideoSearchService()
+        searchService = TestVideoSearchService(inMemorySearchService, inMemorySearchService)
     }
 
     @Test
     fun `upsert one video makes an insert`() {
         searchService.upsert(sequenceOf("hello"))
 
-        val result = searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1)).first()
+        val result = searchService.search(PaginatedSearchRequest(VideoQuery("hello"), 0, 1)).first()
 
         assertThat(result).isEqualTo("H")
     }
@@ -46,7 +51,7 @@ class SearchServiceAdapterTest {
     fun `upsert many videos makes an insert`() {
         searchService.upsert(sequenceOf("one", "two"))
 
-        val result = searchService.search(PaginatedSearchRequest(Query("two"), 0, 1)).first()
+        val result = searchService.search(PaginatedSearchRequest(VideoQuery("two"), 0, 1)).first()
 
         assertThat(result).isEqualTo("T")
     }
@@ -56,14 +61,14 @@ class SearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.safeRebuildIndex(emptySequence())
 
-        assertThat(searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1))).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(VideoQuery("hello"), 0, 1))).isEmpty()
     }
 
     @Test
     fun `count returns document count`() {
         searchService.upsert(sequenceOf("one", "two one"))
 
-        assertThat(searchService.count(Query("one"))).isEqualTo(2)
+        assertThat(searchService.count(VideoQuery("one"))).isEqualTo(2)
     }
 
     @Test
@@ -71,6 +76,6 @@ class SearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.removeFromSearch("H")
 
-        assertThat(searchService.search(PaginatedSearchRequest(Query("hello"), 0, 1))).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(VideoQuery("hello"), 0, 1))).isEmpty()
     }
 }

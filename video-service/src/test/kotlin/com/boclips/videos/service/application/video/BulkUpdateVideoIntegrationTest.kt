@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.Query
+import com.boclips.search.service.domain.videos.VideoQuery
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -46,7 +46,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == false }
 
-        assertThat(searchService.count(Query(ids = videoIds.map { it.value }))).isEqualTo(0)
+        assertThat(searchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
         videoIds.forEach { verify(legacySearchService).removeFromSearch(it.value) }
     }
 
@@ -77,7 +77,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         bulkUpdateVideo(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
 
         assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == true }
-        assertThat(searchService.count(Query(ids = videoIds.map { it.value }))).isEqualTo(2)
+        assertThat(searchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
         verify(legacySearchService, times(3)).upsert(any(), anyOrNull())
     }
 

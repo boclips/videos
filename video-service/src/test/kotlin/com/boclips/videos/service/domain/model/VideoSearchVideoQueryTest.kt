@@ -1,13 +1,13 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.search.service.domain.SortOrder
-import com.boclips.search.service.domain.SourceType
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.videos.SortOrder
+import com.boclips.search.service.domain.videos.SourceType
+import com.boclips.search.service.domain.videos.VideoMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class VideoSearchQueryTest {
+class VideoSearchVideoQueryTest {
 
     @Test
     fun `translate phrase query`() {

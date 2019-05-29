@@ -1,20 +1,20 @@
-package com.boclips.search.service.infrastructure
+package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.GenericSearchService
 import com.boclips.search.service.domain.GenericSearchServiceAdmin
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.SortOrder
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.videos.SortOrder
+import com.boclips.search.service.domain.videos.VideoMetadata
+import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.VideoSearchService
 import java.time.LocalDate
 
-class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<VideoMetadata> {
+class InMemoryVideoSearchService : VideoSearchService, GenericSearchServiceAdmin<VideoMetadata> {
     private val index = mutableMapOf<String, VideoMetadata>()
 
-    override fun count(query: Query): Long = idsMatching(query).size.toLong()
+    override fun count(videoQuery: VideoQuery): Long = idsMatching(videoQuery).size.toLong()
 
-    override fun search(searchRequest: PaginatedSearchRequest): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
         val idsMatching = idsMatching(searchRequest.query)
 
         return sort(idsMatching, searchRequest.query)
@@ -22,11 +22,11 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
             .take(searchRequest.windowSize)
     }
 
-    private fun sort(ids: List<String>, query: Query): List<String> {
-        query.sort ?: return ids
+    private fun sort(ids: List<String>, videoQuery: VideoQuery): List<String> {
+        videoQuery.sort ?: return ids
 
         val sortedIds = ids.sortedBy {
-            val value: Comparable<*> = query.sort.fieldName.get(index[it]!!)
+            val value: Comparable<*> = videoQuery.sort.fieldName.get(index[it]!!)
             /**
              * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
              * littering the entire code base with the Sort generic type.
@@ -37,20 +37,20 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
             value as Comparable<Any>
         }
 
-        return when (query.sort.order) {
+        return when (videoQuery.sort.order) {
             SortOrder.ASC -> sortedIds
             SortOrder.DESC -> sortedIds.reversed()
         }
     }
 
-    private fun idsMatching(query: Query): List<String> {
-        val (phrase, ids) = query
+    private fun idsMatching(videoQuery: VideoQuery): List<String> {
+        val (phrase, ids) = videoQuery
 
-        val minDuration: Long = if (query.minDuration != null) query.minDuration.seconds else 0
-        val maxDuration: Long = if (query.maxDuration != null) query.maxDuration.seconds else Long.MAX_VALUE
+        val minDuration: Long = if (videoQuery.minDuration != null) videoQuery.minDuration.seconds else 0
+        val maxDuration: Long = if (videoQuery.maxDuration != null) videoQuery.maxDuration.seconds else Long.MAX_VALUE
 
-        val releaseDateFrom: LocalDate = query.releaseDateFrom ?: LocalDate.MIN
-        val releaseDateTo: LocalDate = query.releaseDateTo ?: LocalDate.MAX
+        val releaseDateFrom: LocalDate = videoQuery.releaseDateFrom ?: LocalDate.MIN
+        val releaseDateTo: LocalDate = videoQuery.releaseDateTo ?: LocalDate.MAX
 
         return when {
             ids.isNotEmpty() -> index.filter { ids.contains(it.key) }
@@ -63,16 +63,16 @@ class InMemorySearchService : GenericSearchService, GenericSearchServiceAdmin<Vi
                         || entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
                 }
                 .filter { entry ->
-                    entry.value.tags.containsAll(query.includeTags)
+                    entry.value.tags.containsAll(videoQuery.includeTags)
                 }
                 .filter { entry ->
                     entry.value.durationSeconds.let { (minDuration..maxDuration).contains(it) }
                 }
                 .filter { entry ->
-                    entry.value.tags.none { query.excludeTags.contains(it) }
+                    entry.value.tags.none { videoQuery.excludeTags.contains(it) }
                 }
                 .filter { entry ->
-                    query.source?.let { it == entry.value.source } ?: true
+                    videoQuery.source?.let { it == entry.value.source } ?: true
                 }.filter { entry ->
                     (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
                 }

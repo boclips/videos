@@ -1,10 +1,10 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.search.service.domain.Query
-import com.boclips.search.service.domain.Sort
-import com.boclips.search.service.domain.SortOrder
-import com.boclips.search.service.domain.SourceType
-import com.boclips.search.service.domain.VideoMetadata
+import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.Sort
+import com.boclips.search.service.domain.videos.SortOrder
+import com.boclips.search.service.domain.videos.SourceType
+import com.boclips.search.service.domain.videos.VideoMetadata
 import com.boclips.videos.service.domain.model.SortKey.RELEASE_DATE
 import java.time.Duration
 import java.time.LocalDate
@@ -26,10 +26,13 @@ class VideoSearchQuery(
     val pageIndex: Int,
     val source: SourceType? = null
 ) {
-    fun toSearchQuery(): Query {
+    fun toSearchQuery(): VideoQuery {
         val sort = sortBy?.let {
             when (it) {
-                RELEASE_DATE -> Sort(order = SortOrder.DESC, fieldName = VideoMetadata::releaseDate)
+                RELEASE_DATE -> Sort(
+                    order = SortOrder.DESC,
+                    fieldName = VideoMetadata::releaseDate
+                )
             }
         }
         return parse(this.text).copy(
@@ -45,16 +48,16 @@ class VideoSearchQuery(
     }
 
     override fun toString(): String {
-        return "Query: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
+        return "VideoQuery: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
     }
 
-    private fun parse(query: String): Query {
+    private fun parse(query: String): VideoQuery {
         val idQueryRegex = "id:(\\S+)".toRegex()
         val match = idQueryRegex.matchEntire(query)
         if (match != null) {
             val ids = match.groupValues[1].split(',')
-            return Query(ids = ids)
+            return VideoQuery(ids = ids)
         }
-        return Query(phrase = query)
+        return VideoQuery(phrase = query)
     }
 }
