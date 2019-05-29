@@ -1,8 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.AdminSearchService
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.search.service.domain.videos.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.infrastructure.ElasticObjectMapper
 import com.boclips.search.service.infrastructure.ElasticSearchConfig
 import com.boclips.search.service.infrastructure.ElasticSearchIndex
@@ -27,7 +27,7 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
-class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : GenericSearchServiceAdmin<VideoMetadata> {
+class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : AdminSearchService<VideoMetadata> {
     private val client: RestHighLevelClient
 
     companion object : KLogging() {

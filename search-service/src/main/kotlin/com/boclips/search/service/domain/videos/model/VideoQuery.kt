@@ -1,4 +1,4 @@
-package com.boclips.search.service.domain.videos
+package com.boclips.search.service.domain.videos.model
 
 import java.time.Duration
 import java.time.LocalDate
@@ -14,7 +14,7 @@ enum class SortOrder {
     DESC
 }
 
-data class VideoQuery constructor(
+data class VideoQuery (
     val phrase: String? = null,
     val ids: List<String> = emptyList(),
     val sort: Sort? = null,

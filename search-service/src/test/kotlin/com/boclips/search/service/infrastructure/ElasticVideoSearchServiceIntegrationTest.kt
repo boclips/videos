@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
 import com.boclips.search.service.infrastructure.videos.ElasticVideoSearchService
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest

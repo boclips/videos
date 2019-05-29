@@ -1,4 +1,4 @@
-package com.boclips.search.service.domain.videos
+package com.boclips.search.service.domain.videos.model
 
 import java.time.LocalDate
 

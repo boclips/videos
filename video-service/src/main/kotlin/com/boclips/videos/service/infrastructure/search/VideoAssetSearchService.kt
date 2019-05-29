@@ -1,16 +1,16 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.AdminSearchService
 import com.boclips.search.service.domain.videos.VideoSearchServiceAdapter
-import com.boclips.search.service.domain.videos.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.VideoSearchService
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.service.video.SearchService
 
 class VideoVideoSearchService(
     videoSearchService: VideoSearchService,
-    genericSearchServiceAdmin: GenericSearchServiceAdmin<VideoMetadata>
-) : VideoSearchServiceAdapter<Video>(videoSearchService, genericSearchServiceAdmin),
+    adminSearchService: AdminSearchService<VideoMetadata>
+) : VideoSearchServiceAdapter<Video>(videoSearchService, adminSearchService),
     SearchService {
 
     override fun convert(document: Video): VideoMetadata {

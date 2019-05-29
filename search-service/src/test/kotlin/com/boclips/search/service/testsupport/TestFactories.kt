@@ -1,7 +1,7 @@
 package com.boclips.search.service.testsupport
 
-import com.boclips.search.service.domain.videos.SourceType
-import com.boclips.search.service.domain.videos.VideoMetadata
+import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import java.time.Duration
 import java.time.LocalDate

@@ -1,6 +1,6 @@
 package com.boclips.search.service.domain.legacy
 
 import com.boclips.search.service.domain.videos.VideoSearchService
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.AdminSearchService
 
-interface LegacySearchService : VideoSearchService, GenericSearchServiceAdmin<LegacyVideoMetadata>
+interface LegacySearchService : VideoSearchService, AdminSearchService<LegacyVideoMetadata>

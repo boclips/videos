@@ -1,8 +1,8 @@
 package com.boclips.search.service.domain
 
-import com.boclips.search.service.domain.videos.SourceType
-import com.boclips.search.service.domain.videos.VideoMetadata
-import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.VideoSearchService
 import com.boclips.search.service.domain.videos.VideoSearchServiceAdapter
 import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class TestVideoSearchService(query: VideoSearchService, admin: GenericSearchServiceAdmin<VideoMetadata>) :
+class TestVideoSearchService(query: VideoSearchService, admin: AdminSearchService<VideoMetadata>) :
     VideoSearchServiceAdapter<String>(query, admin) {
     override fun convert(document: String): VideoMetadata {
         return VideoMetadata(
@@ -42,7 +42,10 @@ class VideoSearchServiceAdapterTest {
     fun `upsert one video makes an insert`() {
         searchService.upsert(sequenceOf("hello"))
 
-        val result = searchService.search(PaginatedSearchRequest(VideoQuery("hello"), 0, 1)).first()
+        val result = searchService.search(PaginatedSearchRequest(
+            VideoQuery(
+                "hello"
+            ), 0, 1)).first()
 
         assertThat(result).isEqualTo("H")
     }
@@ -51,7 +54,10 @@ class VideoSearchServiceAdapterTest {
     fun `upsert many videos makes an insert`() {
         searchService.upsert(sequenceOf("one", "two"))
 
-        val result = searchService.search(PaginatedSearchRequest(VideoQuery("two"), 0, 1)).first()
+        val result = searchService.search(PaginatedSearchRequest(
+            VideoQuery(
+                "two"
+            ), 0, 1)).first()
 
         assertThat(result).isEqualTo("T")
     }
@@ -61,7 +67,10 @@ class VideoSearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.safeRebuildIndex(emptySequence())
 
-        assertThat(searchService.search(PaginatedSearchRequest(VideoQuery("hello"), 0, 1))).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(
+            VideoQuery(
+                "hello"
+            ), 0, 1))).isEmpty()
     }
 
     @Test
@@ -76,6 +85,9 @@ class VideoSearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.removeFromSearch("H")
 
-        assertThat(searchService.search(PaginatedSearchRequest(VideoQuery("hello"), 0, 1))).isEmpty()
+        assertThat(searchService.search(PaginatedSearchRequest(
+            VideoQuery(
+                "hello"
+            ), 0, 1))).isEmpty()
     }
 }

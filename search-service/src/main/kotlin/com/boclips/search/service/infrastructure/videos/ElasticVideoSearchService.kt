@@ -1,8 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.SourceType
-import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.VideoSearchService
 import com.boclips.search.service.infrastructure.ElasticSearchConfig
 import com.boclips.search.service.infrastructure.ElasticSearchIndex

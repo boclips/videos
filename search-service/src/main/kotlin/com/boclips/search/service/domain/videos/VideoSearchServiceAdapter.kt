@@ -1,13 +1,15 @@
 package com.boclips.search.service.domain.videos
 
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.AdminSearchService
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoQuery
 
 abstract class VideoSearchServiceAdapter<T>(
     private val queryService: VideoSearchService,
-    private val adminService: GenericSearchServiceAdmin<VideoMetadata>
-) : VideoSearchService, GenericSearchServiceAdmin<T> {
+    private val adminService: AdminSearchService<VideoMetadata>
+) : VideoSearchService, AdminSearchService<T> {
     override fun safeRebuildIndex(videos: Sequence<T>, notifier: ProgressNotifier?) {
         adminService.safeRebuildIndex(videos.map(::convert), notifier)
     }

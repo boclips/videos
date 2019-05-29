@@ -6,7 +6,7 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.legacy.SolrException
-import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import mu.KLogging
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.impl.HttpSolrClient

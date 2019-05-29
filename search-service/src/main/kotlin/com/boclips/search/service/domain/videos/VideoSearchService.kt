@@ -1,8 +1,6 @@
 package com.boclips.search.service.domain.videos
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.SearchService
+import com.boclips.search.service.domain.videos.model.VideoQuery
 
-interface VideoSearchService {
-    fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String>
-    fun count(videoQuery: VideoQuery): Long
-}
+interface VideoSearchService : SearchService<VideoQuery>

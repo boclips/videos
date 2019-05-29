@@ -1,12 +1,12 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.AdminSearchService
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.Sort
-import com.boclips.search.service.domain.videos.SortOrder
-import com.boclips.search.service.domain.videos.SourceType
-import com.boclips.search.service.domain.videos.VideoMetadata
-import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.model.Sort
+import com.boclips.search.service.domain.videos.model.SortOrder
+import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.VideoSearchService
 import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
 import com.boclips.search.service.infrastructure.videos.ElasticVideoSearchService
@@ -46,7 +46,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns empty collection for empty result`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -69,7 +69,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds a video matching metadata`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -104,7 +104,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds news videos`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -136,7 +136,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `searches in transcripts`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(sequenceOf(
             SearchableVideoMetadataFactory.create(id = "1", transcript = "the video transcript")
@@ -154,7 +154,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `paginates results`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -194,7 +194,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `counts all videos matching metadata`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -226,7 +226,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `removed videos are not searchable`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -249,7 +249,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and removes the outdated one`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -272,7 +272,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and upserts the videos provided`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
@@ -285,7 +285,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns existing ids`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -307,7 +307,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns a sorted list by ReleaseDate ascending`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -347,7 +347,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns a sorted list by ReleaseDate descending`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -387,7 +387,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by duration bound`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -416,7 +416,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by duration lower bound`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -444,7 +444,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by duration upper bound`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -470,7 +470,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by source`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -512,7 +512,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by release date range`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -558,7 +558,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by release date lower bound`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -603,7 +603,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by release date upper bound`(
         queryService: VideoSearchService,
-        adminService: GenericSearchServiceAdmin<VideoMetadata>
+        adminService: AdminSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(

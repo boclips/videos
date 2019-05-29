@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.legacy
 
 import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.legacy.SolrException
 import com.boclips.search.service.testsupport.LegacyVideoMetadataFactory

@@ -1,15 +1,15 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
+import com.boclips.search.service.domain.AdminSearchService
 import com.boclips.search.service.domain.PaginatedSearchRequest
 import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.search.service.domain.videos.SortOrder
-import com.boclips.search.service.domain.videos.VideoMetadata
-import com.boclips.search.service.domain.videos.VideoQuery
+import com.boclips.search.service.domain.videos.model.SortOrder
+import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.VideoSearchService
 import java.time.LocalDate
 
-class InMemoryVideoSearchService : VideoSearchService, GenericSearchServiceAdmin<VideoMetadata> {
+class InMemoryVideoSearchService : VideoSearchService, AdminSearchService<VideoMetadata> {
     private val index = mutableMapOf<String, VideoMetadata>()
 
     override fun count(videoQuery: VideoQuery): Long = idsMatching(videoQuery).size.toLong()

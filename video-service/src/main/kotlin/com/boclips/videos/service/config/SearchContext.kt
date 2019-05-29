@@ -1,12 +1,12 @@
 package com.boclips.videos.service.config
 
-import com.boclips.search.service.domain.GenericSearchServiceAdmin
-import com.boclips.search.service.domain.videos.VideoMetadata
+import com.boclips.search.service.domain.AdminSearchService
 import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.infrastructure.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.videos.ElasticVideoSearchService
-import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
 import com.boclips.search.service.infrastructure.legacy.SolrSearchService
+import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
+import com.boclips.search.service.infrastructure.videos.ElasticVideoSearchService
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
@@ -33,16 +33,16 @@ class SearchContext {
 
     @Bean
     @Profile("!fake-search")
-    fun videoSearchServiceAdmin(elasticSearchConfig: ElasticSearchConfig): GenericSearchServiceAdmin<VideoMetadata> {
+    fun videoSearchServiceAdmin(elasticSearchConfig: ElasticSearchConfig): AdminSearchService<VideoMetadata> {
         return ElasticSearchVideoServiceAdmin(elasticSearchConfig)
     }
 
     @Bean
     fun searchService(
         videoMetadataSearchService: com.boclips.search.service.domain.videos.VideoSearchService,
-        videoSearchServiceAdmin: GenericSearchServiceAdmin<VideoMetadata>
+        adminSearchService: AdminSearchService<VideoMetadata>
     ): SearchService {
-        return VideoVideoSearchService(videoMetadataSearchService, videoSearchServiceAdmin)
+        return VideoVideoSearchService(videoMetadataSearchService, adminSearchService)
     }
 
     @Bean
