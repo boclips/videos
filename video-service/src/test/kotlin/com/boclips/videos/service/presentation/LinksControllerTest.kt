@@ -88,6 +88,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$._links.videos").doesNotExist())
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
+            .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
+            .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
     }
 
     @Test
@@ -121,4 +123,14 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
 
         assertThat(searchUrl.toASCIIString()).endsWith("/videos?query=phrase&size=1&page=1")
     }
+
+    @Test
+    fun `can view content partners link with correct role`() {
+        mockMvc.perform(get("/v1").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
+            .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
+            .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
+    }
+
 }

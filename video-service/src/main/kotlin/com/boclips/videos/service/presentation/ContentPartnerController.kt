@@ -53,8 +53,8 @@ class ContentPartnerController(
         return fetchContentPartners()
     }
 
-    @GetMapping("/{contentPartnerId}")
-    fun getContentPartner(@PathVariable("contentPartnerId") contentPartnerId: String): ContentPartnerResource {
+    @GetMapping("/{id}")
+    fun getContentPartner(@PathVariable("id") contentPartnerId: String?): ContentPartnerResource {
         return fetchContentPartner(contentPartnerId)
     }
 
