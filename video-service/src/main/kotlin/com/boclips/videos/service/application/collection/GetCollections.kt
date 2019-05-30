@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.UnauthorizedException
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -20,7 +21,11 @@ class GetCollections(
             PageRequest(collectionFilter.pageNumber, collectionFilter.pageSize)
 
         return when (collectionFilter.visibility) {
-            CollectionFilter.Visibility.PUBLIC -> collectionRepository.getPublic(pageRequest)
+            CollectionFilter.Visibility.PUBLIC -> collectionRepository.getPublic(
+                pageRequest,
+                collectionFilter.subjects.map {
+                    SubjectId(it)
+                })
             CollectionFilter.Visibility.BOOKMARKED -> collectionRepository.getBookmarked(
                 pageRequest,
                 getCurrentUserId()
@@ -43,7 +48,8 @@ class GetCollections(
     }
 
     private fun validatePrivateCollectionsOwnerOrThrow(collectionFilter: CollectionFilter): UserId {
-        val owner = collectionFilter.owner ?: throw UnauthorizedException("owner must be specified for private collections access")
+        val owner = collectionFilter.owner
+            ?: throw UnauthorizedException("owner must be specified for private collections access")
         val authenticatedUserId = getCurrentUserId().value
 
         if (owner == authenticatedUserId || currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION)) {

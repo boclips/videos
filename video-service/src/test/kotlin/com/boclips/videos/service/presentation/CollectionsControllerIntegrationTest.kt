@@ -475,6 +475,24 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
     }
 
+    @Test
+    fun `can filter public collections by subjects`() {
+        val collectionWithSubjectsId = createCollectionWithTitle("My Collection for with Subjects")
+        val collectionWithoutSubjectsId = createCollectionWithTitle("My Collection for without Subjects")
+
+        mockMvc.perform(
+            patch(selfLink(collectionWithSubjectsId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["SubjectOneId"]}""").asTeacher()
+        )
+
+        updateCollectionToBePublic(collectionWithSubjectsId)
+        updateCollectionToBePublic(collectionWithoutSubjectsId)
+
+        mockMvc.perform(get("/v1/collections?subjects=SubjectOneId&projection=details&public=true").asTeacher("teacher@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+    }
+
     private fun createCollectionWithTitle(title: String): String {
         val email = "teacher@gmail.com"
         return collectionRepository.create(owner = UserId(email), title = title, createdByBoclips = false).id.value

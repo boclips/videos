@@ -69,8 +69,16 @@ class MongoCollectionRepository(
         return getPagedCollections(pageRequest, criteria)
     }
 
-    override fun getPublic(pageRequest: PageRequest): Page<Collection> {
-        val criteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
+    override fun getPublic(pageRequest: PageRequest, subjectsToFilter: List<SubjectId>): Page<Collection> {
+        val criteria = and(
+            CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC,
+            and(
+                subjectsToFilter.map {
+                    CollectionDocument::subjects contains it.value
+                }
+            )
+        )
+
         return getPagedCollections(pageRequest, criteria)
     }
 

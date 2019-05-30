@@ -59,7 +59,8 @@ class CollectionsController(
         @RequestParam bookmarked: Boolean = false,
         @RequestParam(required = false) owner: String?,
         @RequestParam page: Int?,
-        @RequestParam size: Int?
+        @RequestParam size: Int?,
+        @RequestParam(required = false) subjects: List<String>?
     ): Resources<*> {
         val collectionFilter = CollectionFilter(
             projection = projection,
@@ -70,7 +71,8 @@ class CollectionsController(
             },
             owner = owner,
             pageNumber = page?.let { it } ?: 0,
-            pageSize = size?.let { it } ?: PUBLIC_COLLECTIONS_PAGE_SIZE
+            pageSize = size?.let { it } ?: PUBLIC_COLLECTIONS_PAGE_SIZE,
+            subjects = subjects ?: emptyList()
         )
 
         val collections = getCollections(collectionFilter)

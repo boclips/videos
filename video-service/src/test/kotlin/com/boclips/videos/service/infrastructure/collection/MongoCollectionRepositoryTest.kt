@@ -336,6 +336,145 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(bookmarkedCollections.elements).hasSize(1)
             assertThat(bookmarkedCollections.elements.map { it.id }).contains(publicBookmarkedCollection.id)
         }
+
+        @Test
+        fun `can retrieve public collections filtered by subjects`() {
+            val publicCollectionWithSubjects = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            val publicCollectionWithoutSubjects = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            val publicCollectionWithDifferentSubject = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(true)
+            )
+
+            collectionRepository.update(
+                publicCollectionWithoutSubjects.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(true)
+            )
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(SubjectId(value = "subjectId1")))
+            )
+
+            collectionRepository.update(
+                publicCollectionWithDifferentSubject.id,
+                CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(SubjectId(value = "subjectId2")))
+            )
+
+            val collections = collectionRepository.getPublic(PageRequest(0, 5), listOf(SubjectId("subjectId1")))
+
+            assertThat(collections.elements).hasSize(1)
+            assertThat(collections.elements.toList()[0].id).isEqualTo(publicCollectionWithSubjects.id)
+        }
+
+        @Test
+        fun `collections with multiple subjects can be filtered by a subset of subjects`() {
+            val publicCollectionWithSubjects = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(true)
+            )
+
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ReplaceSubjectsCommand(
+                    setOf(
+                        SubjectId(value = "subjectId1"),
+                        SubjectId(value = "subjectId2")
+                    )
+                )
+            )
+
+            val collections = collectionRepository.getPublic(PageRequest(0, 5), listOf(SubjectId("subjectId2")))
+
+            assertThat(collections.elements).hasSize(1)
+            assertThat(collections.elements.toList()[0].id).isEqualTo(publicCollectionWithSubjects.id)
+        }
+
+        @Test
+        fun `multiple subject filtering is conjunctive`() {
+            val publicCollectionWithSubjects = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(true)
+            )
+
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(SubjectId(value = "subjectId1")))
+            )
+
+            val collections = collectionRepository.getPublic(
+                PageRequest(0, 5),
+                listOf(SubjectId("subjectId1"), SubjectId("subjectId2"))
+            )
+
+            assertThat(collections.elements).hasSize(0)
+        }
+
+        @Test
+        fun `empty subject filter returns all public collections`() {
+            val publicCollectionWithSubjects = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            val publicCollectionWithoutSubjects = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(true)
+            )
+
+            collectionRepository.update(
+                publicCollectionWithoutSubjects.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(true)
+            )
+
+            collectionRepository.update(
+                publicCollectionWithSubjects.id,
+                CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(SubjectId(value = "subjectId1")))
+            )
+
+            val collections = collectionRepository.getPublic(PageRequest(0, 5))
+
+            assertThat(collections.elements).hasSize(2)
+        }
     }
 
     @Nested

@@ -78,7 +78,14 @@ class GetCollectionsTest {
         }
 
         val collections = GetCollections(collectionRepository, collectionResourceFactory).invoke(
-            CollectionFilter(Projection.list, CollectionFilter.Visibility.BOOKMARKED, null, 0, 1)
+            CollectionFilter(
+                Projection.list,
+                CollectionFilter.Visibility.BOOKMARKED,
+                null,
+                0,
+                1,
+                subjects = emptyList()
+            )
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -115,7 +122,7 @@ class GetCollectionsTest {
         }
 
         val collections = GetCollections(collectionRepository, collectionResourceFactory).invoke(
-            CollectionFilter(Projection.list, CollectionFilter.Visibility.PUBLIC, null, 0, 1)
+            CollectionFilter(Projection.list, CollectionFilter.Visibility.PUBLIC, null, 0, 1, subjects = emptyList())
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -157,7 +164,8 @@ class GetCollectionsTest {
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 owner = null,
                 pageNumber = 0,
-                pageSize = 1
+                pageSize = 1,
+                subjects = emptyList()
             )
         )
 
@@ -203,7 +211,8 @@ class GetCollectionsTest {
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 owner = null,
                 pageNumber = 0,
-                pageSize = 1
+                pageSize = 1,
+                subjects = emptyList()
             )
         )
 

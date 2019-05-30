@@ -7,7 +7,8 @@ data class CollectionFilter(
     val visibility: Visibility,
     val owner: String?,
     val pageNumber: Int,
-    val pageSize: Int
+    val pageSize: Int,
+    val subjects: List<String>
 ) {
     enum class Visibility {
         PUBLIC, PRIVATE, BOOKMARKED

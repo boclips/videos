@@ -4,6 +4,7 @@ import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 
 interface CollectionRepository {
@@ -13,7 +14,7 @@ interface CollectionRepository {
     fun update(id: CollectionId, updateCommand: CollectionUpdateCommand)
     fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>)
     fun delete(id: CollectionId)
-    fun getPublic(pageRequest: PageRequest): Page<Collection>
+    fun getPublic(pageRequest: PageRequest, subjects: List<SubjectId> = emptyList()): Page<Collection>
     fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun bookmark(id: CollectionId, user: UserId)
     fun unbookmark(id: CollectionId, user: UserId)
