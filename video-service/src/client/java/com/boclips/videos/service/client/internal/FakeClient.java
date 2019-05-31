@@ -124,7 +124,7 @@ public class FakeClient implements VideoServiceClient {
     public Subject addSubject(String subjectName) {
         return addSubject(
                 Subject.builder()
-                        .id(this.nextId())
+                        .id(SubjectId.builder().value(this.nextId()).build())
                         .name(subjectName)
                         .build()
         );

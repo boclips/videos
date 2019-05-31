@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.internal.resources;
 
 import com.boclips.videos.service.client.Subject;
+import com.boclips.videos.service.client.SubjectId;
 import lombok.Data;
 
 import java.util.List;
@@ -12,7 +13,10 @@ public class SubjectsResource {
 
     public List<Subject> toSubjects() {
         return this._embedded.getSubjects().stream().map(subjectResource ->
-                Subject.builder().id(subjectResource.getId()).name(subjectResource.getName()).build()
+                Subject.builder()
+                        .id(SubjectId.builder().value(subjectResource.getId()).build())
+                        .name(subjectResource.getName())
+                        .build()
         ).collect(Collectors.toList());
     }
 }

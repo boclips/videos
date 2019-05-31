@@ -6,6 +6,6 @@ import lombok.Data;
 @Builder(toBuilder = true)
 @Data
 public class Subject {
-    private final String id;
+    private final SubjectId id;
     private final String name;
 }
