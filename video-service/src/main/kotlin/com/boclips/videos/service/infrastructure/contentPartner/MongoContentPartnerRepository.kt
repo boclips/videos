@@ -17,8 +17,7 @@ import org.litote.kmongo.updateOne
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartnerRepository {
     companion object : KLogging() {
-
-        const val collectionName = "contentPartner"
+        const val collectionName = "contentPartners"
     }
 
     override fun create(contentPartner: ContentPartner): ContentPartner {
