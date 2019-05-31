@@ -70,9 +70,9 @@ class ContentPartnerController(
         }, HttpStatus.CREATED)
     }
 
-    @PutMapping("/{contentPartnerId}")
+    @PutMapping("/{id}")
     fun putContentPartner(
-        @PathVariable("contentPartnerId") contentPartnerId: String,
+        @PathVariable("id") contentPartnerId: String,
         @Valid @RequestBody updateContentPartnerRequest: ContentPartnerRequest
     ): ResponseEntity<Void> {
         updateContentPartner(existingContentPartnerId = contentPartnerId, request = updateContentPartnerRequest)

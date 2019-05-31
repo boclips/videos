@@ -6,6 +6,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConver
 object ContentPartnerToResourceConverter {
     fun convert(contentPartner: ContentPartner): ContentPartnerResource {
         return ContentPartnerResource(
+            id = contentPartner.contentPartnerId.value,
             name = contentPartner.name,
             ageRange = AgeRangeToResourceConverter.convert(contentPartner.ageRange)
         )

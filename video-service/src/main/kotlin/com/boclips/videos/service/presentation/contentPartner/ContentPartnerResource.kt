@@ -5,6 +5,7 @@ import org.springframework.hateoas.core.Relation
 
 @Relation(collectionRelation = "contentPartners")
 open class ContentPartnerResource(
+    val id: String,
     val name: String,
     val ageRange: AgeRangeResource? = null
 )
