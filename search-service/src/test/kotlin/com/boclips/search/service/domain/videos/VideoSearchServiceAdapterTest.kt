@@ -1,7 +1,8 @@
-package com.boclips.search.service.domain
+package com.boclips.search.service.domain.videos
 
+import com.boclips.search.service.domain.ReadSearchService
+import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.VideoSearchServiceAdapter
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -35,7 +36,10 @@ class VideoSearchServiceAdapterTest {
     @BeforeEach
     internal fun setUp() {
         val inMemorySearchService = InMemoryVideoSearchService()
-        searchService = TestVideoSearchService(inMemorySearchService, inMemorySearchService)
+        searchService = TestVideoSearchService(
+            inMemorySearchService,
+            inMemorySearchService
+        )
     }
 
     @Test
