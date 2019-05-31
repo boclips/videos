@@ -6,8 +6,10 @@ import java.time.format.DateTimeFormatter
 
 interface ESIndex {
 
+    fun getESType() : String
     fun getIndexAlias() : String
     fun getIndexWildcard() : String
+    fun generateIndexName() : String
 
     companion object {
         fun generateIndexName(prefix: String): String {

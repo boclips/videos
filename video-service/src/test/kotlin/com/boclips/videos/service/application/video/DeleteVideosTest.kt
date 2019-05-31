@@ -58,7 +58,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos(videoId.value)
 
-        assertThat(fakeVideoReadSearchService.search(
+        assertThat(fakeVideoSearchService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "Some title"

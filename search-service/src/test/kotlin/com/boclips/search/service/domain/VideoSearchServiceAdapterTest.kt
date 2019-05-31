@@ -5,7 +5,7 @@ import com.boclips.search.service.domain.videos.VideoSearchServiceAdapter
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.infrastructure.videos.InMemoryVideoReadSearchService
+import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,7 +34,7 @@ class VideoSearchServiceAdapterTest {
 
     @BeforeEach
     internal fun setUp() {
-        val inMemorySearchService = InMemoryVideoReadSearchService()
+        val inMemorySearchService = InMemoryVideoSearchService()
         searchService = TestVideoSearchService(inMemorySearchService, inMemorySearchService)
     }
 

@@ -133,7 +133,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
-        assertThat(fakeVideoReadSearchService.search(
+        assertThat(fakeVideoSearchService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "transcript"

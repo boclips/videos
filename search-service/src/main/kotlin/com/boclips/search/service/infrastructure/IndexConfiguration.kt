@@ -1,6 +1,8 @@
 package com.boclips.search.service.infrastructure
 
-class IndexConfiguration {
+interface IndexConfiguration {
+
+    fun generateMapping(): Map<String, Any>
 
     companion object {
         const val FIELD_DESCRIPTOR_SHINGLES = "shingles"
@@ -31,6 +33,27 @@ class IndexConfiguration {
 
         private fun loadSynonyms(filename: String) = IndexConfiguration::class.java.getResource("/synonyms/$filename")
             .readText().trim().split("\n")
+
+    }
+
+    object Fields {
+
+        val freeText = mapOf(
+            "type" to "text",
+            "analyzer" to IndexConfiguration.Companion.Analyzers.ENGLISH,
+            "search_analyzer" to IndexConfiguration.Companion.Analyzers.ENGLISH_SEARCH,
+            "fields" to mapOf(
+                IndexConfiguration.FIELD_DESCRIPTOR_SHINGLES to mapOf(
+                    "type" to "text",
+                    "analyzer" to IndexConfiguration.Companion.Analyzers.SHINGLES
+                )
+            )
+        )
+
+        val date = mapOf(
+            "type" to "date"
+        )
+
     }
 
     fun defaultEnglishSettings(): Map<String, Any> {
@@ -106,37 +129,5 @@ class IndexConfiguration {
             )
         )
     }
-
-    fun generateVideoMapping(): Map<String, Any> {
-        val freeTextField = mapOf(
-            "type" to "text",
-            "analyzer" to Analyzers.ENGLISH,
-            "search_analyzer" to Analyzers.ENGLISH_SEARCH,
-            "fields" to mapOf(
-                FIELD_DESCRIPTOR_SHINGLES to mapOf("type" to "text", "analyzer" to Analyzers.SHINGLES)
-            )
-        )
-        val contentPartnerField = mapOf(
-            "type" to "keyword",
-            "normalizer" to Normalizers.LOWERCASE
-        )
-        val keywordField = mapOf(
-            "type" to "text",
-            "analyzer" to Analyzers.ENGLISH,
-            "position_increment_gap" to 100
-        )
-        val dateField = mapOf(
-            "type" to "date"
-        )
-        return mapOf(
-            "properties" to mapOf(
-                "title" to freeTextField,
-                "description" to freeTextField,
-                "contentProvider" to contentPartnerField,
-                "releaseDate" to dateField,
-                "transcript" to freeTextField,
-                "keywords" to keywordField
-            )
-        )
-    }
 }
+

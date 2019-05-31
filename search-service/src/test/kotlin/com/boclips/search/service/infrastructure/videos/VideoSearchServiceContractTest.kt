@@ -22,7 +22,7 @@ import java.util.stream.Stream
 
 class SearchServiceProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        val inMemorySearchService = InMemoryVideoReadSearchService()
+        val inMemorySearchService = InMemoryVideoSearchService()
         val esClient = EmbeddedElasticSearchIntegrationTest.CONFIG.buildClient()
         val elasticSearchService = ESVideoReadSearchService(esClient)
         val elasticSearchServiceAdmin = ESVideoWriteSearchService(esClient)
