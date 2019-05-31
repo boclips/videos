@@ -1,17 +1,17 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.infrastructure.videos.ElasticSearchVideo
+import com.boclips.search.service.infrastructure.videos.ESVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.Month
 
-class ElasticObjectMapperTest {
+class ESObjectMapperTest {
 
     @Test
     fun `writes dates as strings in ES default format`() {
-        val serialisedVideo = ElasticObjectMapper.get().writeValueAsString(
-            ElasticSearchVideo(
+        val serialisedVideo = ESObjectMapper.get().writeValueAsString(
+            ESVideo(
                 id = "1",
                 title = "title",
                 description = "description",

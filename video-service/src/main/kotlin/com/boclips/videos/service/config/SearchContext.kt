@@ -1,12 +1,12 @@
 package com.boclips.videos.service.config
 
-import com.boclips.search.service.domain.AdminSearchService
+import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.search.service.infrastructure.ElasticSearchConfig
+import com.boclips.search.service.infrastructure.ESConfig
 import com.boclips.search.service.infrastructure.legacy.SolrSearchService
-import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
-import com.boclips.search.service.infrastructure.videos.ElasticVideoSearchService
+import com.boclips.search.service.infrastructure.videos.ESVideoReadSearchService
+import com.boclips.search.service.infrastructure.videos.ESVideoWriteSearchService
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Profile
 class SearchContext {
     @Bean
     @Profile("!fake-search")
-    fun videoMetadataSearchService(elasticSearchConfig: ElasticSearchConfig): com.boclips.search.service.domain.videos.VideoSearchService {
-        return ElasticVideoSearchService(elasticSearchConfig)
+    fun videoMetadataSearchService(ESConfig: ESConfig): com.boclips.search.service.domain.videos.VideoSearchService {
+        return ESVideoReadSearchService(ESConfig)
     }
 
     @Bean
@@ -33,21 +33,21 @@ class SearchContext {
 
     @Bean
     @Profile("!fake-search")
-    fun videoSearchServiceAdmin(elasticSearchConfig: ElasticSearchConfig): AdminSearchService<VideoMetadata> {
-        return ElasticSearchVideoServiceAdmin(elasticSearchConfig)
+    fun videoSearchServiceAdmin(ESConfig: ESConfig): WriteSearchService<VideoMetadata> {
+        return ESVideoWriteSearchService(ESConfig)
     }
 
     @Bean
     fun searchService(
         videoMetadataSearchService: com.boclips.search.service.domain.videos.VideoSearchService,
-        adminSearchService: AdminSearchService<VideoMetadata>
+        writeSearchService: WriteSearchService<VideoMetadata>
     ): SearchService {
-        return VideoVideoSearchService(videoMetadataSearchService, adminSearchService)
+        return VideoVideoSearchService(videoMetadataSearchService, writeSearchService)
     }
 
     @Bean
-    fun elasticSearchConfig(elasticSearchProperties: ElasticSearchProperties): ElasticSearchConfig {
-        return ElasticSearchConfig(
+    fun elasticSearchConfig(elasticSearchProperties: ElasticSearchProperties): ESConfig {
+        return ESConfig(
             scheme = elasticSearchProperties.scheme,
             host = elasticSearchProperties.host,
             port = elasticSearchProperties.port,

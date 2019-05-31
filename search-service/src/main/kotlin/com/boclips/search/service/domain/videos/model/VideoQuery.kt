@@ -1,23 +1,14 @@
 package com.boclips.search.service.domain.videos.model
 
+import com.boclips.search.service.domain.model.SearchQuery
+import com.boclips.search.service.domain.model.Sort
 import java.time.Duration
 import java.time.LocalDate
-import kotlin.reflect.KProperty1
 
-data class Sort(
-    val fieldName: KProperty1<VideoMetadata, Comparable<*>>,
-    val order: SortOrder
-)
-
-enum class SortOrder {
-    ASC,
-    DESC
-}
-
-data class VideoQuery (
-    val phrase: String? = null,
+class VideoQuery(
+    phrase: String? = null,
+    sort: Sort<VideoMetadata>? = null,
     val ids: List<String> = emptyList(),
-    val sort: Sort? = null,
     val includeTags: List<String> = emptyList(),
     val excludeTags: List<String> = emptyList(),
     val minDuration: Duration? = null,
@@ -25,4 +16,4 @@ data class VideoQuery (
     val source: SourceType? = null,
     val releaseDateFrom: LocalDate? = null,
     val releaseDateTo: LocalDate? = null
-)
+) : SearchQuery<VideoMetadata>(phrase, sort)

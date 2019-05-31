@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.AdminSearchService
+import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
@@ -15,7 +15,7 @@ import mu.KLogging
 
 open class BulkUpdateVideo(
     private val videoRepository: VideoRepository,
-    private val adminSearchService: AdminSearchService<Video>,
+    private val writeSearchService: WriteSearchService<Video>,
     private val legacySearchService: LegacySearchService,
     private val videoAccessService: VideoAccessService
 ) {
@@ -35,7 +35,7 @@ open class BulkUpdateVideo(
         videoAccessService.revokeAccess(videoIds)
 
         bulkUpdateRequest.ids.forEach {
-            adminSearchService.removeFromSearch(it)
+            writeSearchService.removeFromSearch(it)
 
             try {
                 legacySearchService.removeFromSearch(it)
@@ -50,7 +50,7 @@ open class BulkUpdateVideo(
         videoAccessService.grantAccess(videoIds)
 
         videoRepository.findAll(videoIds).let { videoId ->
-            adminSearchService.upsert(videoId.asSequence())
+            writeSearchService.upsert(videoId.asSequence())
 
             legacySearchService.upsert(videoId
                 .filter { it.isBoclipsHosted() }

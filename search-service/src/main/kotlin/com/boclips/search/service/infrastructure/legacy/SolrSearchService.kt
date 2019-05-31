@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.legacy
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata

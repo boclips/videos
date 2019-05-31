@@ -1,20 +1,14 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.ReadSearchService
+import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.domain.videos.VideoSearchService
-import com.boclips.search.service.infrastructure.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.ElasticSearchIndex
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
-import org.apache.http.HttpHost
-import org.apache.http.auth.AuthScope
-import org.apache.http.auth.UsernamePasswordCredentials
-import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.BoolQueryBuilder
@@ -32,25 +26,12 @@ import org.elasticsearch.search.sort.SortOrder
 import java.time.Duration
 import java.time.LocalDate
 
-class ElasticVideoSearchService(val config: ElasticSearchConfig) :
-    VideoSearchService {
+class ESVideoReadSearchService(val client: RestHighLevelClient) :
+    ReadSearchService<VideoMetadata, VideoQuery> {
     companion object : KLogging();
 
     private val elasticSearchResultConverter =
-        ElasticSearchVideoConverter()
-
-    private val client: RestHighLevelClient
-
-    init {
-        val credentialsProvider = BasicCredentialsProvider()
-        credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(config.username, config.password))
-
-        val builder = RestClient.builder(HttpHost(config.host, config.port, config.scheme))
-            .setHttpClientConfigCallback { httpClientBuilder ->
-                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-            }
-        client = RestHighLevelClient(builder)
-    }
+        ESVideoConverter()
 
     override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
         return searchElasticSearch(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
@@ -70,7 +51,7 @@ class ElasticVideoSearchService(val config: ElasticSearchConfig) :
         }
 
         val request = SearchRequest(
-            arrayOf(ElasticSearchIndex.ES_INDEX_ALIAS),
+            arrayOf(ESVideosIndex.getIndexAlias()),
             esQuery
                 .from(startIndex)
                 .size(windowSize)
@@ -114,7 +95,7 @@ class ElasticVideoSearchService(val config: ElasticSearchConfig) :
             .boolQuery()
             .must(
                 QueryBuilders.termQuery(
-                    ElasticSearchVideo.CONTENT_PROVIDER,
+                    ESVideo.CONTENT_PROVIDER,
                     videoQuery.phrase
                 )
             )
@@ -147,13 +128,13 @@ class ElasticVideoSearchService(val config: ElasticSearchConfig) :
 
     private fun matchSource(source: SourceType): TermQueryBuilder {
         return QueryBuilders.termQuery(
-            ElasticSearchVideo.SOURCE,
+            ESVideo.SOURCE,
             source.name.toLowerCase()
         )
     }
 
     private fun beWithinDuration(min: Duration?, max: Duration?): RangeQueryBuilder {
-        val queryBuilder = QueryBuilders.rangeQuery(ElasticSearchVideo.DURATION_SECONDS)
+        val queryBuilder = QueryBuilders.rangeQuery(ESVideo.DURATION_SECONDS)
 
         min?.let { queryBuilder.from(it.seconds) }
         max?.let { queryBuilder.to(it.seconds) }
@@ -162,7 +143,7 @@ class ElasticVideoSearchService(val config: ElasticSearchConfig) :
     }
 
     private fun beWithinReleaseDate(from: LocalDate?, to: LocalDate?): RangeQueryBuilder {
-        val queryBuilder = QueryBuilders.rangeQuery(ElasticSearchVideo.RELEASE_DATE)
+        val queryBuilder = QueryBuilders.rangeQuery(ESVideo.RELEASE_DATE)
 
         from?.let { queryBuilder.from(it) }
         to?.let { queryBuilder.to(it) }
@@ -171,33 +152,33 @@ class ElasticVideoSearchService(val config: ElasticSearchConfig) :
     }
 
     private fun matchTags(excludeTags: List<String>) =
-        QueryBuilders.termsQuery(ElasticSearchVideo.TAGS, excludeTags)
+        QueryBuilders.termsQuery(ESVideo.TAGS, excludeTags)
 
     private fun filterByTag(includeTags: List<String>): BoolQueryBuilder? {
         return includeTags
             .fold(QueryBuilders.boolQuery()) { acc: BoolQueryBuilder, term: String ->
-                acc.must(QueryBuilders.termQuery(ElasticSearchVideo.TAGS, term))
+                acc.must(QueryBuilders.termQuery(ESVideo.TAGS, term))
             }
     }
 
     private fun boostDescriptionMatch(phrase: String?): MatchPhraseQueryBuilder {
-        return QueryBuilders.matchPhraseQuery(ElasticSearchVideo.DESCRIPTION, phrase)
+        return QueryBuilders.matchPhraseQuery(ESVideo.DESCRIPTION, phrase)
     }
 
     private fun boostTitleMatch(phrase: String?): MatchPhraseQueryBuilder {
-        return QueryBuilders.matchPhraseQuery(ElasticSearchVideo.TITLE, phrase)
+        return QueryBuilders.matchPhraseQuery(ESVideo.TITLE, phrase)
     }
 
     private fun matchTitleDescriptionKeyword(phrase: String?): MultiMatchQueryBuilder {
         return QueryBuilders
             .multiMatchQuery(
                 phrase,
-                ElasticSearchVideo.TITLE,
-                "${ElasticSearchVideo.TITLE}.std",
-                ElasticSearchVideo.DESCRIPTION,
-                "${ElasticSearchVideo.DESCRIPTION}.std",
-                ElasticSearchVideo.TRANSCRIPT,
-                ElasticSearchVideo.KEYWORDS
+                ESVideo.TITLE,
+                "${ESVideo.TITLE}.std",
+                ESVideo.DESCRIPTION,
+                "${ESVideo.DESCRIPTION}.std",
+                ESVideo.TRANSCRIPT,
+                ESVideo.KEYWORDS
             )
             .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
             .minimumShouldMatch("75%")

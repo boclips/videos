@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.legacy
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.legacy.SolrException
@@ -61,11 +61,13 @@ class SolrSearchServiceIntegrationTest {
 
     @Test
     fun `does not support searching by phrase`() {
-        assertThrows<UnsupportedOperationException> { solrSearchService.search(PaginatedSearchRequest(
-            VideoQuery(
-                phrase = "phrase"
+        assertThrows<UnsupportedOperationException> { solrSearchService.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    phrase = "phrase"
+                )
             )
-        )) }
+        ) }
     }
 
     @Test
@@ -78,11 +80,13 @@ class SolrSearchServiceIntegrationTest {
             )
         )
 
-        val results = solrSearchService.search(PaginatedSearchRequest(
-            VideoQuery(
-                ids = listOf("1", "2", "5")
+        val results = solrSearchService.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    ids = listOf("1", "2", "5")
+                )
             )
-        ))
+        )
         assertThat(results).containsExactlyInAnyOrder("1", "2")
     }
 
@@ -92,11 +96,13 @@ class SolrSearchServiceIntegrationTest {
 
         solrSearchService.removeFromSearch(videoId = "10")
 
-        val results = solrSearchService.search(PaginatedSearchRequest(
-            VideoQuery(
-                ids = listOf("10")
+        val results = solrSearchService.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    ids = listOf("10")
+                )
             )
-        ))
+        )
         assertThat(results).isEmpty()
     }
 

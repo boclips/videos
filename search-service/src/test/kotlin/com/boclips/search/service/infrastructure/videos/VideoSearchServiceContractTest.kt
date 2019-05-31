@@ -1,16 +1,13 @@
-package com.boclips.search.service.infrastructure
+package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.AdminSearchService
-import com.boclips.search.service.domain.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.Sort
-import com.boclips.search.service.domain.videos.model.SortOrder
+import com.boclips.search.service.domain.ReadSearchService
+import com.boclips.search.service.domain.WriteSearchService
+import com.boclips.search.service.domain.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.model.Sort
+import com.boclips.search.service.domain.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.domain.videos.VideoSearchService
-import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoServiceAdmin
-import com.boclips.search.service.infrastructure.videos.ElasticVideoSearchService
-import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -25,13 +22,10 @@ import java.util.stream.Stream
 
 class SearchServiceProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        val inMemorySearchService = InMemoryVideoSearchService()
-        val elasticSearchService = ElasticVideoSearchService(
-            EmbeddedElasticSearchIntegrationTest.CONFIG
-        )
-        val elasticSearchServiceAdmin = ElasticSearchVideoServiceAdmin(
-            EmbeddedElasticSearchIntegrationTest.CONFIG
-        )
+        val inMemorySearchService = InMemoryVideoReadSearchService()
+        val esClient = EmbeddedElasticSearchIntegrationTest.CONFIG.buildClient()
+        val elasticSearchService = ESVideoReadSearchService(esClient)
+        val elasticSearchServiceAdmin = ESVideoWriteSearchService(esClient)
 
         return Stream.of(
             Arguments.of(inMemorySearchService, inMemorySearchService),
@@ -45,8 +39,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns empty collection for empty result`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -57,10 +51,13 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val result = queryService.search(PaginatedSearchRequest(query = VideoQuery(
-            "videoQuery that matches nothing"
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    "videoQuery that matches nothing"
+                )
+            )
         )
-        ))
 
         assertThat(result).hasSize(0)
     }
@@ -68,8 +65,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds a video matching metadata`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -92,10 +89,13 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val result = queryService.search(PaginatedSearchRequest(query = VideoQuery(
-            "gentleman"
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    "gentleman"
+                )
+            )
         )
-        ))
 
         assertThat(result).containsExactlyInAnyOrder("1", "2", "4")
     }
@@ -103,8 +103,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `finds news videos`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -123,11 +123,14 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val result = queryService.search(PaginatedSearchRequest(query = VideoQuery(
-            "Trump",
-            includeTags = listOf("news")
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    "Trump",
+                    includeTags = listOf("news")
+                )
+            )
         )
-        ))
 
         assertThat(result).containsExactlyInAnyOrder("4")
     }
@@ -135,17 +138,22 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `searches in transcripts`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
-        adminService.safeRebuildIndex(sequenceOf(
-            SearchableVideoMetadataFactory.create(id = "1", transcript = "the video transcript")
-        ))
-
-        val results = queryService.search(PaginatedSearchRequest(query = VideoQuery(
-            "video"
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", transcript = "the video transcript")
+            )
         )
-        ))
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    "video"
+                )
+            )
+        )
 
         assertThat(results).containsExactly("1")
     }
@@ -153,8 +161,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `paginates results`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -178,13 +186,21 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val page1 =
-            queryService.search(PaginatedSearchRequest(query = VideoQuery(
-                "gentleman"
-            ), startIndex = 0, windowSize = 2))
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "gentleman"
+                    ), startIndex = 0, windowSize = 2
+                )
+            )
         val page2 =
-            queryService.search(PaginatedSearchRequest(query = VideoQuery(
-                "gentleman"
-            ), startIndex = 2, windowSize = 2))
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "gentleman"
+                    ), startIndex = 2, windowSize = 2
+                )
+            )
 
         assertThat(page1).hasSize(2)
         assertThat(page2).hasSize(1)
@@ -193,8 +209,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `counts all videos matching metadata`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -225,8 +241,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `removed videos are not searchable`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -239,17 +255,22 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         adminService.removeFromSearch("1")
 
-        assertThat(queryService.search(PaginatedSearchRequest(query = VideoQuery(
-            "gentleman"
+        assertThat(
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "gentleman"
+                    )
+                )
+            ).isEmpty()
         )
-        )).isEmpty())
     }
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and removes the outdated one`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -262,17 +283,22 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         adminService.safeRebuildIndex(emptySequence())
 
-        assertThat(queryService.search(PaginatedSearchRequest(query = VideoQuery(
-            "boy"
+        assertThat(
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "boy"
+                    )
+                )
+            ).isEmpty()
         )
-        )).isEmpty())
     }
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and upserts the videos provided`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
@@ -284,8 +310,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns existing ids`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -299,15 +325,21 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val query = VideoQuery(ids = listOf("1", "2", "3", "4"))
         assertThat(queryService.count(query)).isEqualTo(1)
 
-        val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 2))
+        val searchResults = queryService.search(
+            PaginatedSearchRequest(
+                query = query,
+                startIndex = 0,
+                windowSize = 2
+            )
+        )
         assertThat(searchResults).containsExactly("1")
     }
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns a sorted list by ReleaseDate ascending`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -339,15 +371,21 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         assertThat(queryService.count(query)).isEqualTo(3)
 
-        val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 3))
+        val searchResults = queryService.search(
+            PaginatedSearchRequest(
+                query = query,
+                startIndex = 0,
+                windowSize = 3
+            )
+        )
         assertThat(searchResults).containsExactly("yesterday", "today", "tomorrow")
     }
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `returns a sorted list by ReleaseDate descending`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
@@ -379,15 +417,21 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         assertThat(queryService.count(query)).isEqualTo(3)
 
-        val searchResults = queryService.search(PaginatedSearchRequest(query = query, startIndex = 0, windowSize = 3))
+        val searchResults = queryService.search(
+            PaginatedSearchRequest(
+                query = query,
+                startIndex = 0,
+                windowSize = 3
+            )
+        )
         assertThat(searchResults).containsExactly("tomorrow", "today", "yesterday")
     }
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by duration bound`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -415,8 +459,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by duration lower bound`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -443,8 +487,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by duration upper bound`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -456,11 +500,14 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results =
-            queryService.search(PaginatedSearchRequest(query = VideoQuery(
-                "World war",
-                maxDuration = Duration.ofSeconds(9)
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "World war",
+                        maxDuration = Duration.ofSeconds(9)
+                    )
+                )
             )
-            ))
 
         assertThat(results).containsAll(listOf("0", "1"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("2", "3"))
@@ -469,8 +516,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by source`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -498,11 +545,14 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results =
-            queryService.search(PaginatedSearchRequest(query = VideoQuery(
-                "World war",
-                source = SourceType.BOCLIPS
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "World war",
+                        source = SourceType.BOCLIPS
+                    )
+                )
             )
-            ))
 
         assertThat(results).containsAll(listOf("0", "2"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("1", "3"))
@@ -511,8 +561,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by release date range`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -557,8 +607,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by release date lower bound`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(
@@ -602,8 +652,8 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by release date upper bound`(
-        queryService: VideoSearchService,
-        adminService: AdminSearchService<VideoMetadata>
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
     ) {
         adminService.upsert(
             sequenceOf(

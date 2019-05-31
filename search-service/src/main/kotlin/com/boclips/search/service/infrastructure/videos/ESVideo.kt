@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
-data class ElasticSearchVideo @JsonCreator constructor(
+data class ESVideo @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(TITLE) val title: String,
     @param:JsonProperty(DESCRIPTION) val description: String,

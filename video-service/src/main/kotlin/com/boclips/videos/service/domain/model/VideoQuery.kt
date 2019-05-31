@@ -1,10 +1,10 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.domain.videos.model.Sort
-import com.boclips.search.service.domain.videos.model.SortOrder
+import com.boclips.search.service.domain.model.Sort
+import com.boclips.search.service.domain.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.SortKey.RELEASE_DATE
 import java.time.Duration
 import java.time.LocalDate
@@ -35,7 +35,9 @@ class VideoSearchQuery(
                 )
             }
         }
-        return parse(this.text).copy(
+        return parseIdsOrPhrase(this.text).let { VideoQuery(
+            ids = it.ids,
+            phrase = it.phrase,
             includeTags = includeTags,
             excludeTags = excludeTags,
             minDuration = minDuration,
@@ -44,14 +46,14 @@ class VideoSearchQuery(
             sort = sort,
             releaseDateFrom = releaseDateFrom,
             releaseDateTo = releaseDateTo
-        )
+        ) }
     }
 
     override fun toString(): String {
         return "VideoQuery: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
     }
 
-    private fun parse(query: String): VideoQuery {
+    private fun parseIdsOrPhrase(query: String): VideoQuery {
         val idQueryRegex = "id:(\\S+)".toRegex()
         val match = idQueryRegex.matchEntire(query)
         if (match != null) {

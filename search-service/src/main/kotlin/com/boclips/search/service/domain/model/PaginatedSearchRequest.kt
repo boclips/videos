@@ -1,4 +1,4 @@
-package com.boclips.search.service.domain
+package com.boclips.search.service.domain.model
 
 class PaginatedSearchRequest<T>(
     val query: T,

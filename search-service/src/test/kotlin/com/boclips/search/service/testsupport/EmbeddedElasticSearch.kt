@@ -1,6 +1,6 @@
 package com.boclips.search.service.testsupport
 
-import com.boclips.search.service.infrastructure.ElasticSearchConfig
+import com.boclips.search.service.infrastructure.ESConfig
 import org.apache.http.HttpHost
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.client.RequestOptions
@@ -16,7 +16,7 @@ const val port = 9350
 abstract class EmbeddedElasticSearchIntegrationTest {
 
     companion object {
-        val CONFIG = ElasticSearchConfig(
+        val CONFIG = ESConfig(
             scheme = "http",
             host = "localhost",
             port = port,

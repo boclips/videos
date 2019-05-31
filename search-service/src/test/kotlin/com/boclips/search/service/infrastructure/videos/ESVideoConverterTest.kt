@@ -1,16 +1,14 @@
-package com.boclips.search.service.infrastructure
+package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.infrastructure.videos.ElasticSearchVideo
-import com.boclips.search.service.infrastructure.videos.ElasticSearchVideoConverter
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
 
-class ElasticSearchVideoConverterTest {
+class ESVideoConverterTest {
 
     private val elasticSearchResultConverter =
-        ElasticSearchVideoConverter()
+        ESVideoConverter()
 
     @Test
     fun `convert search hit`() {
@@ -37,7 +35,7 @@ class ElasticSearchVideoConverterTest {
         val video = elasticSearchResultConverter.convert(searchHit)
 
         assertThat(video).isEqualTo(
-            ElasticSearchVideo(
+            ESVideo(
                 id = "14",
                 title = "The title",
                 description = "The description",

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.PaginatedSearchRequest
+import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest

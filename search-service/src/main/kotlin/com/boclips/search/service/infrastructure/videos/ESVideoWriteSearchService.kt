@@ -1,17 +1,11 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.AdminSearchService
 import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.search.service.infrastructure.ElasticObjectMapper
-import com.boclips.search.service.infrastructure.ElasticSearchConfig
-import com.boclips.search.service.infrastructure.ElasticSearchIndex
+import com.boclips.search.service.infrastructure.ESObjectMapper
 import com.boclips.search.service.infrastructure.IndexConfiguration
 import mu.KLogging
-import org.apache.http.HttpHost
-import org.apache.http.auth.AuthScope
-import org.apache.http.auth.UsernamePasswordCredentials
-import org.apache.http.impl.client.BasicCredentialsProvider
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
@@ -22,32 +16,18 @@ import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.support.IndicesOptions
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.RestClient
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
-class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : AdminSearchService<VideoMetadata> {
-    private val client: RestHighLevelClient
-
+class ESVideoWriteSearchService(val client: RestHighLevelClient) : WriteSearchService<VideoMetadata> {
     companion object : KLogging() {
         private const val ES_TYPE = "video"
         private const val UPSERT_BATCH_SIZE = 2000
     }
 
-    init {
-        val credentialsProvider = BasicCredentialsProvider()
-        credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(config.username, config.password))
-
-        val builder = RestClient.builder(HttpHost(config.host, config.port, config.scheme))
-            .setHttpClientConfigCallback { httpClientBuilder ->
-                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-            }
-        client = RestHighLevelClient(builder)
-    }
-
     override fun safeRebuildIndex(videos: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
-        val newIndexName = ElasticSearchIndex.generateIndexName()
+        val newIndexName = ESVideosIndex.generateIndexName()
 
         notifier?.send("Creating index...")
         createIndex(newIndexName)
@@ -55,10 +35,10 @@ class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : AdminSea
         upsertToIndex(videos, newIndexName, notifier)
 
         notifier?.send("Switching alias...")
-        switchAliasToIndex(indexName = newIndexName, alias = ElasticSearchIndex.ES_INDEX_ALIAS)
+        switchAliasToIndex(indexName = newIndexName, alias = ESVideosIndex.getIndexAlias())
 
         notifier?.send("Deleting previous aliases...")
-        val allVideoIndicesExceptNew = "${ElasticSearchIndex.ES_INDEX_WILDCARD},-$newIndexName"
+        val allVideoIndicesExceptNew = "${ESVideosIndex.getIndexWildcard()},-$newIndexName"
         deleteIndex(allVideoIndicesExceptNew)
 
         notifier?.complete()
@@ -66,7 +46,7 @@ class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : AdminSea
 
     override fun removeFromSearch(videoId: String) {
         val request = DeleteRequest(
-            ElasticSearchIndex.ES_INDEX_ALIAS,
+            ESVideosIndex.getIndexAlias(),
             ES_TYPE, videoId)
         request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
         client.delete(request, RequestOptions.DEFAULT)
@@ -74,13 +54,13 @@ class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : AdminSea
 
     override fun upsert(videos: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
         makeSureIndexIsThere()
-        upsertToIndex(videos, ElasticSearchIndex.ES_INDEX_ALIAS)
+        upsertToIndex(videos, ESVideosIndex.getIndexAlias())
     }
 
     @Synchronized
     private fun makeSureIndexIsThere() {
         if (!client.indices().exists(
-                GetIndexRequest().indices(ElasticSearchIndex.ES_INDEX_ALIAS),
+                GetIndexRequest().indices(ESVideosIndex.getIndexAlias()),
                 RequestOptions.DEFAULT
             )
         ) {
@@ -109,7 +89,7 @@ class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : AdminSea
     private fun switchAliasToIndex(indexName: String, alias: String) {
         val request = IndicesAliasesRequest()
         val removeAliases = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.REMOVE)
-            .indices(ElasticSearchIndex.ES_INDEX_WILDCARD)
+            .indices(ESVideosIndex.getIndexWildcard())
             .alias(alias)
         val addAliases = IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.ADD)
             .index(indexName)
@@ -153,8 +133,8 @@ class ElasticSearchVideoServiceAdmin(val config: ElasticSearchConfig) : AdminSea
     }
 
     private fun indexRequest(video: VideoMetadata, indexName: String): IndexRequest {
-        val document = ElasticObjectMapper.get().writeValueAsString(
-            ElasticSearchVideo(
+        val document = ESObjectMapper.get().writeValueAsString(
+            ESVideo(
                 id = video.id,
                 title = video.title,
                 description = video.description,
