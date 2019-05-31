@@ -17,7 +17,7 @@ import mu.KLogging
 class VideoService(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val videoRepository: VideoRepository,
-    private val searchService: SearchService
+    private val videoSearchService: VideoSearchService
 ) {
     companion object : KLogging()
 
@@ -27,7 +27,7 @@ class VideoService(
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
-        val videoIds = searchService.search(searchRequest).map { VideoId(value = it) }
+        val videoIds = videoSearchService.search(searchRequest).map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
 
         logger.info { "Returning ${playableVideos.size} videos for query $query" }
@@ -38,7 +38,7 @@ class VideoService(
     // TODO this returns all videos matched by query, does not take into account whether video is playable
     fun count(videoSearchQuery: VideoSearchQuery): Long {
         logger.info { "Counted videos for query $videoSearchQuery" }
-        return searchService.count(videoSearchQuery.toSearchQuery())
+        return videoSearchService.count(videoSearchQuery.toSearchQuery())
     }
 
     fun getPlayableVideo(videoId: VideoId): Video {

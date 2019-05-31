@@ -5,12 +5,12 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 
 class DeleteVideos(
     private val videoRepository: VideoRepository,
-    private val searchService: SearchService,
+    private val videoSearchService: VideoSearchService,
     private val playbackRepository: PlaybackRepository
 ) {
     operator fun invoke(id: String?) {
@@ -27,7 +27,7 @@ class DeleteVideos(
     private fun removeVideo(video: Video) {
         val videoIdToBeDeleted = video.videoId
 
-        searchService.removeFromSearch(videoIdToBeDeleted.value)
+        videoSearchService.removeFromSearch(videoIdToBeDeleted.value)
         VideoService.logger.info { "Removed video $videoIdToBeDeleted from search index" }
 
         videoRepository.delete(videoIdToBeDeleted)

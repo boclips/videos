@@ -6,7 +6,8 @@ import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchServi
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.infrastructure.search.VideoSearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.infrastructure.search.DefaultVideoSearchService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockito_kotlin.any
@@ -25,7 +26,7 @@ class RebuildSearchIndexTest {
     @BeforeEach
     fun setUp() {
         val inMemorySearchService = InMemoryVideoSearchService()
-        searchService = VideoSearchService(inMemorySearchService, inMemorySearchService)
+        searchService = DefaultVideoSearchService(inMemorySearchService, inMemorySearchService)
     }
 
     @Test

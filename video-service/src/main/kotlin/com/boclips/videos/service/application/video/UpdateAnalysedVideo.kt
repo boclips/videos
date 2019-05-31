@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
@@ -19,7 +19,7 @@ import org.springframework.cloud.stream.annotation.StreamListener
 class UpdateAnalysedVideo(
     private val playbackRepository: PlaybackRepository,
     private val videoRepository: VideoRepository,
-    private val searchService: SearchService
+    private val videoSearchService: VideoSearchService
 ) {
     companion object : KLogging()
 
@@ -80,7 +80,7 @@ class UpdateAnalysedVideo(
         )
 
         val updatedVideo = videoRepository.find(video.videoId)!!
-        searchService.upsert(sequenceOf(updatedVideo))
+        videoSearchService.upsert(sequenceOf(updatedVideo))
     }
 
     private fun uploadCaptions(video: Video, analysedVideo: VideoAnalysed) {

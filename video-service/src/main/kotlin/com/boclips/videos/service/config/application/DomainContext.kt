@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
@@ -29,13 +29,13 @@ class DomainContext(val mongoClient: MongoClient) {
     fun videoService(
         contentPartnerRepository: ContentPartnerRepository,
         videoRepository: VideoRepository,
-        searchService: SearchService,
+        videoSearchService: VideoSearchService,
         playbackRepository: PlaybackRepository
     ): VideoService {
         return VideoService(
             contentPartnerRepository,
             videoRepository,
-            searchService
+            videoSearchService
         )
     }
 

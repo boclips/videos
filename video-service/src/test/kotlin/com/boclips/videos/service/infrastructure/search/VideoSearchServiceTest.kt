@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat

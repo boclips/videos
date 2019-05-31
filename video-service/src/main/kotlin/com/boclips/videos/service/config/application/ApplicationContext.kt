@@ -39,7 +39,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
@@ -58,7 +58,7 @@ import org.springframework.context.annotation.Configuration
 class ApplicationContext(
     val videoService: VideoService,
     val videoRepository: VideoRepository,
-    val searchService: SearchService,
+    val videoSearchService: VideoSearchService,
     val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
     val collectionRepository: CollectionRepository,
@@ -94,7 +94,7 @@ class ApplicationContext(
             videoRepository,
             searchVideo,
             CreateVideoRequestToVideoConverter(),
-            searchService,
+            videoSearchService,
             playbackRepository,
             videoCounter,
             legacySearchService,
@@ -109,17 +109,17 @@ class ApplicationContext(
 
     @Bean
     fun updateAnalysedVideo(): UpdateAnalysedVideo {
-        return UpdateAnalysedVideo(playbackRepository, videoRepository, searchService)
+        return UpdateAnalysedVideo(playbackRepository, videoRepository, videoSearchService)
     }
 
     @Bean
     fun bulkUpdate(): BulkUpdateVideo {
-        return BulkUpdateVideo(videoRepository, searchService, legacySearchService, videoAccessService)
+        return BulkUpdateVideo(videoRepository, videoSearchService, legacySearchService, videoAccessService)
     }
 
     @Bean
     fun deleteVideos(): DeleteVideos {
-        return DeleteVideos(videoRepository, searchService, playbackRepository)
+        return DeleteVideos(videoRepository, videoSearchService, playbackRepository)
     }
 
     @Bean
@@ -189,7 +189,7 @@ class ApplicationContext(
 
     @Bean
     fun rebuildSearchIndex(): RebuildSearchIndex {
-        return RebuildSearchIndex(videoRepository, searchService)
+        return RebuildSearchIndex(videoRepository, videoSearchService)
     }
 
     @Bean

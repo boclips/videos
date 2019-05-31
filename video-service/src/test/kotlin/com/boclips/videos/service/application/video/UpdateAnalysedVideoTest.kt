@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -15,14 +15,14 @@ class UpdateAnalysedVideoTest {
     lateinit var playbackRepository: PlaybackRepository
     lateinit var videoRepository: VideoRepository
     lateinit var updateAnalysedVideo: UpdateAnalysedVideo
-    lateinit var searchService: SearchService
+    lateinit var videoSearchService: VideoSearchService
 
     @BeforeEach
     fun setUp() {
         playbackRepository = mock()
         videoRepository = mock()
-        searchService = mock()
-        updateAnalysedVideo = UpdateAnalysedVideo(playbackRepository, videoRepository, searchService)
+        videoSearchService = mock()
+        updateAnalysedVideo = UpdateAnalysedVideo(playbackRepository, videoRepository, videoSearchService)
     }
 
     @Test

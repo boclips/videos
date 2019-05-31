@@ -3,14 +3,14 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.domain.model.video.VideoFilter.IsSearchable
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
 
 open class RebuildSearchIndex(
     private val videoRepository: VideoRepository,
-    private val searchService: SearchService
+    private val videoSearchService: VideoSearchService
 ) {
     companion object : KLogging()
 
@@ -21,7 +21,7 @@ open class RebuildSearchIndex(
 
         try {
             videoRepository.streamAll(IsSearchable) { videos ->
-                searchService.safeRebuildIndex(videos, notifier)
+                videoSearchService.safeRebuildIndex(videos, notifier)
             }
 
             logger.info("Full reindex done")

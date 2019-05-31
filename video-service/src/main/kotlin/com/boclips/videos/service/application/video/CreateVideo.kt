@@ -10,7 +10,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -25,7 +25,7 @@ class CreateVideo(
     private val videoRepository: VideoRepository,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
-    private val searchServiceAdmin: SearchService,
+    private val videoSearchServiceAdmin: VideoSearchService,
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
     private val legacySearchService: LegacySearchService,
@@ -39,7 +39,7 @@ class CreateVideo(
         ensureVideoIsUnique(videoToBeCreated)
         val createdVideo = videoService.create(videoToBeCreated)
 
-        searchServiceAdmin.upsert(sequenceOf(createdVideo), null)
+        videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
 
         if (videoToBeCreated.isBoclipsHosted()) {
             legacySearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)), null)

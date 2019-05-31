@@ -12,9 +12,8 @@ import com.boclips.search.service.infrastructure.videos.ESVideoWriteSearchServic
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
-import com.boclips.videos.service.domain.service.video.SearchService
 import com.boclips.videos.service.infrastructure.email.EmailClient
-import com.boclips.videos.service.infrastructure.search.VideoSearchService
+import com.boclips.videos.service.infrastructure.search.DefaultVideoSearchService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -41,8 +40,8 @@ class SearchContext {
     fun searchService(
         videoMetadataSearchService: ReadSearchService<VideoMetadata, VideoQuery>,
         writeSearchService: WriteSearchService<VideoMetadata>
-    ): SearchService {
-        return VideoSearchService(videoMetadataSearchService, writeSearchService)
+    ): com.boclips.videos.service.domain.service.video.VideoSearchService {
+        return DefaultVideoSearchService(videoMetadataSearchService, writeSearchService)
     }
 
     @Bean

@@ -6,4 +6,4 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.Video
 
-interface SearchService :  ReadSearchService<VideoMetadata, VideoQuery>, WriteSearchService<Video>
+interface VideoSearchService :  ReadSearchService<VideoMetadata, VideoQuery>, WriteSearchService<Video>

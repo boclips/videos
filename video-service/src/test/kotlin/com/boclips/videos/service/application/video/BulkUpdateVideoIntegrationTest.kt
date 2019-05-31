@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdate
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.SearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -32,7 +32,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: VideoRepository
 
     @Autowired
-    lateinit var searchService: SearchService
+    lateinit var videoSearchService: VideoSearchService
 
     @Test
     fun `disableFromSearch sets searchable field on video video to false and removes from search indices`() {
@@ -46,7 +46,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == false }
 
-        assertThat(searchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
+        assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
         videoIds.forEach { verify(legacySearchService).removeFromSearch(it.value) }
     }
 
@@ -77,7 +77,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         bulkUpdateVideo(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
 
         assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == true }
-        assertThat(searchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
+        assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
         verify(legacySearchService, times(3)).upsert(any(), anyOrNull())
     }
 
