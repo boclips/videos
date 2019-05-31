@@ -6,7 +6,7 @@ import com.boclips.search.service.infrastructure.videos.InMemoryVideoReadSearchS
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.infrastructure.search.VideoVideoSearchService
+import com.boclips.videos.service.infrastructure.search.VideoSearchService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockito_kotlin.any
@@ -20,12 +20,12 @@ import org.junit.jupiter.api.Test
 
 class RebuildSearchIndexTest {
 
-    lateinit var searchService: VideoVideoSearchService
+    lateinit var searchService: VideoSearchService
 
     @BeforeEach
     fun setUp() {
         val inMemorySearchService = InMemoryVideoReadSearchService()
-        searchService = VideoVideoSearchService(inMemorySearchService, inMemorySearchService)
+        searchService = VideoSearchService(inMemorySearchService, inMemorySearchService)
     }
 
     @Test

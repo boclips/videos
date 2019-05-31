@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var searchService: VideoVideoSearchService
+    lateinit var searchService: VideoSearchService
 
     @Test
     fun `upsert inserts videos`() {
