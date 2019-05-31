@@ -1,20 +1,9 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,11 +21,11 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val collectionId = saveCollection(owner = "owner@collections.com", videos = listOf(videoId.value))
 
-        assertThat(collectionRepository.getById(collectionId)?.videos).isNotEmpty
+        assertThat(collectionRepository.find(collectionId)?.videos).isNotEmpty
 
         removeVideoFromCollection(collectionId.value, videoId.value)
 
-        assertThat(collectionRepository.getById(collectionId)?.videos).isEmpty()
+        assertThat(collectionRepository.find(collectionId)?.videos).isEmpty()
     }
 
     @Test
@@ -64,6 +53,6 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
         assertThrows<CollectionAccessNotAuthorizedException> {
             removeVideoFromCollection(collectionId.value, videoId.value)
         }
-        assertThat(collectionRepository.getById(collectionId)?.videos).isNotEmpty
+        assertThat(collectionRepository.find(collectionId)?.videos).isNotEmpty
     }
 }

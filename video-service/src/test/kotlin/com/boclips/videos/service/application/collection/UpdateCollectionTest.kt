@@ -1,8 +1,10 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.domain.model.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
@@ -16,13 +18,16 @@ class UpdateCollectionTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var collectionRepository: CollectionRepository
 
+    @Autowired
+    lateinit var collectionService: CollectionService
+
     @Test
     fun `rename collection`() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 
         updateCollection(collectionId.value, UpdateCollectionRequest(title = "new title"))
 
-        assertThat(collectionRepository.getById(collectionId)!!.title).isEqualTo("new title")
+        assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("new title")
     }
 
     @Test
@@ -62,7 +67,7 @@ class UpdateCollectionTest : AbstractSpringIntegrationTest() {
         assertThrows<CollectionAccessNotAuthorizedException> {
             updateCollection(collectionId.value, UpdateCollectionRequest(title = "you have been pwned"))
         }
-        assertThat(collectionRepository.getById(collectionId)!!.title).isEqualTo("original title")
+        assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("original title")
     }
 
     @Test
@@ -75,5 +80,25 @@ class UpdateCollectionTest : AbstractSpringIntegrationTest() {
                 updateCollectionRequest = UpdateCollectionRequest(title = "new title")
             )
         }
+    }
+
+    @Test
+    fun `makes searchable if public`() {
+        val collectionId = saveCollection(owner = "me@me.com", title = "title")
+
+        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
+        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
+
+        assertThat(collectionService.search(CollectionSearchQuery("title",1,0)).first().id).isEqualTo(collectionId)
+    }
+
+    @Test
+    fun `removes from search if not public`() {
+        val collectionId = saveCollection(owner = "me@me.com", title = "title")
+
+        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
+        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
+
+        assertThat(collectionService.search(CollectionSearchQuery("title",1,0))).isEmpty()
     }
 }

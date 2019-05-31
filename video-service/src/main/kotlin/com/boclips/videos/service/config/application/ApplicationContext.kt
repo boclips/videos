@@ -33,14 +33,16 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
@@ -61,6 +63,7 @@ class ApplicationContext(
     val videoSearchService: VideoSearchService,
     val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
+    val collectionService: CollectionService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
     val videoAccessService: VideoAccessService,
@@ -148,6 +151,7 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter
     ): GetCollections {
         return GetCollections(
+            collectionService,
             collectionRepository,
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
@@ -169,7 +173,7 @@ class ApplicationContext(
 
     @Bean
     fun updateCollection(): UpdateCollection {
-        return UpdateCollection(collectionRepository, eventService)
+        return UpdateCollection(collectionService, collectionRepository, eventService)
     }
 
     @Bean

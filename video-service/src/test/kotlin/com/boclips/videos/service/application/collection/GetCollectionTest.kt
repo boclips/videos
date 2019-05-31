@@ -4,7 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -56,7 +56,7 @@ class GetCollectionTest {
         )
 
         collectionRepository = mock {
-            on { getById(collectionId) } doReturn onGetCollection
+            on { find(collectionId) } doReturn onGetCollection
         }
 
         val collection = GetCollection(collectionRepository, collectionResourceFactory).invoke(collectionId.value)
@@ -69,7 +69,7 @@ class GetCollectionTest {
     @Test
     fun `throws not found error when collection doesn't exist`() {
         collectionRepository = mock {
-            on { getById(any()) } doAnswer { null }
+            on { find(any()) } doAnswer { null }
         }
 
         val getCollection = GetCollection(collectionRepository, collectionResourceFactory)
@@ -84,7 +84,7 @@ class GetCollectionTest {
         val privateCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = false)
 
         collectionRepository = mock {
-            on { getById(privateCollection.id) } doReturn privateCollection
+            on { find(privateCollection.id) } doReturn privateCollection
         }
 
         val getCollection = GetCollection(collectionRepository, collectionResourceFactory)
@@ -99,7 +99,7 @@ class GetCollectionTest {
         val publicCollection = TestFactories.createCollection(owner = "owner@example.com", isPublic = true)
 
         collectionRepository = mock {
-            on { getById(publicCollection.id) } doReturn publicCollection
+            on { find(publicCollection.id) } doReturn publicCollection
         }
 
         val collection =

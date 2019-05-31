@@ -1,18 +1,15 @@
-package com.boclips.videos.service.domain.service.collection
+package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
-import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.SubjectId
-import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
 interface CollectionRepository {
     fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection
-    fun getById(id: CollectionId): Collection?
+    fun find(id: CollectionId): Collection?
+    fun findAll(id: List<CollectionId>): List<Collection>
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
-    fun update(id: CollectionId, updateCommand: CollectionUpdateCommand)
-    fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>)
+    fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand)
     fun delete(id: CollectionId)
     fun getPublic(pageRequest: PageRequest, subjects: List<SubjectId> = emptyList()): Page<Collection>
     fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>

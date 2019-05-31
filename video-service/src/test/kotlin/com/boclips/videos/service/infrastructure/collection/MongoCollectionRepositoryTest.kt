@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -51,7 +51,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 CollectionUpdateCommand.RemoveVideoFromCollectionCommand(video1)
             )
 
-            val updatedCollection = collectionRepository.getById(collection.id)!!
+            val updatedCollection = collectionRepository.find(collection.id)!!
 
             assertThat(updatedCollection.owner).isEqualTo(
                 UserId(
@@ -74,7 +74,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             collectionRepository.update(collection.id, CollectionUpdateCommand.RenameCollectionCommand("New Title"))
 
-            val updatedCollection = collectionRepository.getById(collection.id)!!
+            val updatedCollection = collectionRepository.find(collection.id)!!
 
             assertThat(updatedCollection.title).isEqualTo("New Title")
         }
@@ -90,7 +90,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = true))
 
-            val updatedCollection = collectionRepository.getById(collection.id)!!
+            val updatedCollection = collectionRepository.find(collection.id)!!
 
             assertThat(updatedCollection.isPublic).isEqualTo(true)
         }
@@ -121,7 +121,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 CollectionUpdateCommand.ReplaceSubjectsCommand(setOf(updatedSubject))
             )
 
-            val updatedCollection = collectionRepository.getById(collection.id)
+            val updatedCollection = collectionRepository.find(collection.id)
 
             assertThat(updatedCollection!!.subjects).containsExactly(updatedSubject)
         }
@@ -136,7 +136,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeAgeRangeCommand(3, 5))
 
-            val updatedCollection = collectionRepository.getById(collection.id)!!
+            val updatedCollection = collectionRepository.find(collection.id)!!
 
             assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, 5))
         }
@@ -151,7 +151,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeAgeRangeCommand(3, null))
 
-            val updatedCollection = collectionRepository.getById(collection.id)!!
+            val updatedCollection = collectionRepository.find(collection.id)!!
 
             assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, null))
         }
@@ -167,7 +167,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
         collectionRepository.delete(collection.id)
 
-        val deletedCollection = collectionRepository.getById(collection.id)
+        val deletedCollection = collectionRepository.find(collection.id)
 
         assertThat(deletedCollection).isNull()
     }
@@ -192,7 +192,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             CollectionUpdateCommand.AddVideoToCollectionCommand(video1)
         )
 
-        val collectionV2 = collectionRepository.getById(collectionV1.id)!!
+        val collectionV2 = collectionRepository.find(collectionV1.id)!!
 
         assertThat(collectionV2.updatedAt).isAfter(collectionV1.updatedAt)
 
@@ -203,7 +203,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             CollectionUpdateCommand.RemoveVideoFromCollectionCommand(video1)
         )
 
-        val collectionV3 = collectionRepository.getById(collectionV1.id)!!
+        val collectionV3 = collectionRepository.find(collectionV1.id)!!
 
         assertThat(collectionV3.updatedAt).isAfter(collectionV2.updatedAt)
     }
@@ -493,7 +493,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                         .append("videos", emptyList<VideoId>())
                 )
 
-            val collection = collectionRepository.getById(CollectionId(value = "5c55697860fef77aa4af323a"))!!
+            val collection = collectionRepository.find(CollectionId(value = "5c55697860fef77aa4af323a"))!!
 
             assertThat(collection.isPublic).isEqualTo(false)
         }
@@ -519,17 +519,17 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 UserId("user3")
             )
 
-            assertThat(collectionRepository.getById(collection.id)!!.isBookmarked()).isEqualTo(true)
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
 
             collectionRepository.unbookmark(
                 collection.id,
                 UserId("user2")
             )
 
-            assertThat(collectionRepository.getById(collection.id)!!.isBookmarked()).isEqualTo(false)
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(false)
 
             setSecurityContext("user3")
-            assertThat(collectionRepository.getById(collection.id)!!.isBookmarked()).isEqualTo(true)
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
         }
     }
 }

@@ -7,10 +7,10 @@ import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -19,6 +19,7 @@ import mu.KLogging
 import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.`in`
 import org.litote.kmongo.addToSet
 import org.litote.kmongo.and
 import org.litote.kmongo.combine
@@ -53,15 +54,20 @@ class MongoCollectionRepository(
         )
 
         dbCollection().insertOne(document)
-        return getById(collectionId) ?: throw CollectionNotCreatedException("Failed to create collection $collectionId")
+        return find(collectionId) ?: throw CollectionNotCreatedException("Failed to create collection $collectionId")
     }
 
-    override fun getById(id: CollectionId): Collection? {
+    override fun find(id: CollectionId): Collection? {
         val collectionDocument = dbCollection().findOne(CollectionDocument::id eq ObjectId(id.value))
-
         logger.info { "Found collection ${id.value}: $collectionDocument" }
 
         return toCollection(collectionDocument)
+    }
+
+    override fun findAll(ids: List<CollectionId>): List<Collection> {
+        val objectIds = ids.map { ObjectId(it.value) }
+
+        return dbCollection().find(CollectionDocument::id `in` objectIds).mapNotNull { toCollection(it) }
     }
 
     override fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection> {
@@ -90,11 +96,7 @@ class MongoCollectionRepository(
         return getPagedCollections(pageRequest, criteria)
     }
 
-    override fun update(id: CollectionId, updateCommand: CollectionUpdateCommand) {
-        update(id, listOf(updateCommand))
-    }
-
-    override fun update(id: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
+    override fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand) {
         val updateBson = updateCommands
             .fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
                 combine(

@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.UserId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -23,12 +23,12 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
     fun `the bookmark gets deleted`() {
         val collectionId = saveCollection(owner = "owner@example.com", public = true, bookmarkedBy = "me@me.com")
 
-        assertThat(collectionRepository.getById(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
+        assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
 
         setSecurityContext("me@me.com")
         unbookmarkCollection(collectionId.value)
 
-        assertThat(collectionRepository.getById(collectionId)!!.bookmarks).isEmpty()
+        assertThat(collectionRepository.find(collectionId)!!.bookmarks).isEmpty()
     }
 
     @Test

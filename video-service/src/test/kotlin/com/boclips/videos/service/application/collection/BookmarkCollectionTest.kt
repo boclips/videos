@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.UserId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -23,7 +23,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
         setSecurityContext("me@me.com")
         bookmarkCollection(collectionId.value)
 
-        val collection = collectionRepository.getById(collectionId)
+        val collection = collectionRepository.find(collectionId)
         assertThat(collection).isNotNull
         assertThat(collection!!.bookmarks).containsExactly(UserId("me@me.com"))
     }
@@ -36,7 +36,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
             bookmarkCollection(collectionId.value)
         }
 
-        val collection = collectionRepository.getById(collectionId)
+        val collection = collectionRepository.find(collectionId)
         assertThat(collection!!.bookmarks).isEmpty()
     }
 
@@ -49,7 +49,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
             bookmarkCollection(collectionId.value)
         }
 
-        val collection = collectionRepository.getById(collectionId)
+        val collection = collectionRepository.find(collectionId)
         assertThat(collection!!.bookmarks).isEmpty()
     }
 

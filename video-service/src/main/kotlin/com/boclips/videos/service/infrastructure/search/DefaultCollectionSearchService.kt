@@ -6,7 +6,9 @@ import com.boclips.search.service.domain.collections.CollectionSearchServiceAdap
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import org.springframework.stereotype.Component
 
+@Component
 class DefaultCollectionSearchService(
     readSearchService: ReadSearchService<CollectionMetadata, CollectionQuery>,
     writeSearchService: WriteSearchService<CollectionMetadata>

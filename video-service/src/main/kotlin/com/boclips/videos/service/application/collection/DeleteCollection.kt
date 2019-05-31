@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.collection.security.getOwnedCollectionOrThrow
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 
 class DeleteCollection(
     private val collectionRepository: CollectionRepository

@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.collection.CollectionAccessNotAuth
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import getCurrentUserId
 
 fun CollectionRepository.getOwnedCollectionOrThrow(collectionId: String) =
@@ -19,7 +19,7 @@ private fun getCollectionOrThrow(
     isForReading: Boolean
 ): Collection {
     val userId = getCurrentUserId()
-    val collection = collectionRepository.getById(CollectionId(collectionId))
+    val collection = collectionRepository.find(CollectionId(collectionId))
         ?: throw CollectionNotFoundException(collectionId)
 
     return when {

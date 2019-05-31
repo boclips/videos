@@ -2,14 +2,14 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.config.properties.YoutubeProperties
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
-import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoAccessService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.contentPartner.MongoContentPartnerRepository
@@ -45,7 +45,7 @@ class DomainContext(val mongoClient: MongoClient) {
     }
 
     @Bean
-    fun collectionService(videoService: VideoService): CollectionRepository {
+    fun collectionRepository(videoService: VideoService): CollectionRepository {
         return MongoCollectionRepository(mongoClient)
     }
 

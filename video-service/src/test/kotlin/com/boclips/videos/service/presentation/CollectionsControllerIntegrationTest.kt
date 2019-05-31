@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.UserId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asSubjectClassifier
@@ -215,6 +215,18 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next").doesNotExist())
+    }
+
+    @Test
+    fun `search public collections`() {
+        updateCollectionToBePublic(createCollection("five ponies were eating grass"))
+        updateCollectionToBePublic(createCollection("while a car and a truck crashed"))
+
+        mockMvc.perform(get("/v1/collections?query=truck").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
     }
 
     @Test

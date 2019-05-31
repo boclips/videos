@@ -2,9 +2,8 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -25,7 +24,7 @@ class AddVideoToCollectionTest : AbstractSpringIntegrationTest() {
 
         addVideoToCollection(collectionId.value, videoId.value)
 
-        val collection = collectionRepository.getById(CollectionId(collectionId.value))!!
+        val collection = collectionRepository.find(CollectionId(collectionId.value))!!
         assertThat(collection.videos.map { it.value }).containsExactly(videoId.value)
     }
 

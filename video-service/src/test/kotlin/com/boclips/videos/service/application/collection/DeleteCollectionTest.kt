@@ -4,7 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
@@ -29,7 +29,7 @@ class DeleteCollectionTest {
     @Test
     fun `deletes collection`() {
         collectionRepository = mock {
-            on { getById(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
+            on { find(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
         val deleteCollection = DeleteCollection(collectionRepository)
@@ -49,7 +49,7 @@ class DeleteCollectionTest {
             TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = false)
 
         collectionRepository = mock {
-            on { getById(collectionId) } doReturn onGetCollection
+            on { find(collectionId) } doReturn onGetCollection
         }
 
         val deleteCollection = DeleteCollection(collectionRepository)
@@ -71,7 +71,7 @@ class DeleteCollectionTest {
             TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = true)
 
         collectionRepository = mock {
-            on { getById(collectionId) } doReturn onGetCollection
+            on { find(collectionId) } doReturn onGetCollection
         }
 
         val deleteCollection = DeleteCollection(collectionRepository)
@@ -92,7 +92,7 @@ class DeleteCollectionTest {
         val onGetCollection: Collection? = null
 
         collectionRepository = mock {
-            on { getById(collectionId) } doReturn onGetCollection
+            on { find(collectionId) } doReturn onGetCollection
         }
 
         val deleteCollection = DeleteCollection(collectionRepository)

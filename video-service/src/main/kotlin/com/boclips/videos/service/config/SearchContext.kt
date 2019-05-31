@@ -6,6 +6,8 @@ import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.ESConfig
+import com.boclips.search.service.infrastructure.collections.ESCollectionReadSearchService
+import com.boclips.search.service.infrastructure.collections.ESCollectionWriteSearchService
 import com.boclips.search.service.infrastructure.legacy.SolrSearchService
 import com.boclips.search.service.infrastructure.videos.ESVideoReadSearchService
 import com.boclips.search.service.infrastructure.videos.ESVideoWriteSearchService
@@ -26,14 +28,22 @@ class SearchContext {
 
     @Bean
     @Profile("!fake-search")
-    fun legacySearchService(solrProperties: SolrProperties): LegacySearchService {
-        return SolrSearchService(host = solrProperties.host, port = solrProperties.port)
+    fun videoSearchServiceAdmin(ESConfig: ESConfig): ESVideoWriteSearchService {
+        return ESVideoWriteSearchService(ESConfig.buildClient())
     }
 
     @Bean
     @Profile("!fake-search")
-    fun videoSearchServiceAdmin(ESConfig: ESConfig): WriteSearchService<VideoMetadata> {
-        return ESVideoWriteSearchService(ESConfig.buildClient())
+    fun collectionMetadataSearchService(ESConfig: ESConfig) = ESCollectionReadSearchService(ESConfig.buildClient())
+
+    @Bean
+    @Profile("!fake-search")
+    fun collectionSearchServiceAdmin(ESConfig: ESConfig) = ESCollectionWriteSearchService(ESConfig.buildClient())
+
+    @Bean
+    @Profile("!fake-search")
+    fun legacySearchService(solrProperties: SolrProperties): LegacySearchService {
+        return SolrSearchService(host = solrProperties.host, port = solrProperties.port)
     }
 
     @Bean

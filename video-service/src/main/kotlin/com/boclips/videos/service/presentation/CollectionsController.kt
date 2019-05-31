@@ -54,19 +54,21 @@ class CollectionsController(
 
     @GetMapping
     fun getFilteredCollections(
-        @RequestParam projection: Projection,
-        @RequestParam public: Boolean = false,
-        @RequestParam bookmarked: Boolean = false,
+        @RequestParam(required = false) query: String?,
+        @RequestParam(required = false) projection: Projection?,
+        @RequestParam(required = false) public: Boolean = false,
+        @RequestParam(required = false) bookmarked: Boolean = false,
         @RequestParam(required = false) owner: String?,
-        @RequestParam page: Int?,
-        @RequestParam size: Int?,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) subjects: List<String>?
     ): Resources<*> {
         val collectionFilter = CollectionFilter(
-            projection = projection,
+            query = query,
+            projection = projection ?: Projection.list,
             visibility = when {
                 bookmarked -> CollectionFilter.Visibility.BOOKMARKED
-                public -> CollectionFilter.Visibility.PUBLIC
+                public || query != null -> CollectionFilter.Visibility.PUBLIC
                 else -> CollectionFilter.Visibility.PRIVATE
             },
             owner = owner,
