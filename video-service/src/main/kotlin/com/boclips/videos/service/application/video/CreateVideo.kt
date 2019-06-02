@@ -6,6 +6,9 @@ import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -18,11 +21,13 @@ import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoCo
 import com.boclips.videos.service.presentation.video.VideoResource
 import io.micrometer.core.instrument.Counter
 import mu.KLogging
+import org.bson.types.ObjectId
 import org.springframework.hateoas.Resource
 
 class CreateVideo(
     private val videoService: VideoService,
     private val videoRepository: VideoRepository,
+    private val contentPartnerRepository: ContentPartnerRepository,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val videoSearchServiceAdmin: VideoSearchService,
@@ -36,8 +41,13 @@ class CreateVideo(
     operator fun invoke(createRequest: CreateVideoRequest): Resource<VideoResource> {
         val videoPlayback = findVideoPlayback(createRequest)
         val videoToBeCreated = createVideoRequestToVideoConverter.convert(createRequest, videoPlayback)
+
         ensureVideoIsUnique(videoToBeCreated)
+
+        createContentPartnerIfDoesNotExist(createRequest.provider!!)
+
         val createdVideo = videoService.create(videoToBeCreated)
+        videoCounter.increment()
 
         videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
 
@@ -53,7 +63,6 @@ class CreateVideo(
             }
         }
 
-        videoCounter.increment()
         return searchVideo.byId(createdVideo.videoId.value)
     }
 
@@ -70,5 +79,22 @@ class CreateVideo(
         if (videoRepository.existsVideoFromContentPartner(video.contentPartnerName, video.contentPartnerVideoId)) {
             throw VideoExists(video.contentPartnerName, video.contentPartnerVideoId)
         }
+    }
+
+    private fun createContentPartnerIfDoesNotExist(provider: String): ContentPartner {
+        val existingContentPartner = contentPartnerRepository.findByName(provider)
+
+        if (existingContentPartner == null) {
+            logger.info { "Create new content partner $provider" }
+            val contentPartner = ContentPartner(
+                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+                name = provider,
+                ageRange = null
+            )
+
+            return contentPartnerRepository.create(contentPartner)
+        }
+
+        return existingContentPartner
     }
 }

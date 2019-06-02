@@ -95,6 +95,7 @@ class ApplicationContext(
         return CreateVideo(
             videoService,
             videoRepository,
+            contentPartnerRepository,
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             videoSearchService,
