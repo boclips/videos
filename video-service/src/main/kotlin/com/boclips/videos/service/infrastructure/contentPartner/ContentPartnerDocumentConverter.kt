@@ -10,8 +10,8 @@ object ContentPartnerDocumentConverter {
         return ContentPartnerDocument(
             id = ObjectId(contentPartner.contentPartnerId.value),
             name = contentPartner.name,
-            ageRangeMax = contentPartner.ageRange.max(),
-            ageRangeMin = contentPartner.ageRange.min()
+            ageRangeMax = contentPartner.ageRange?.max(),
+            ageRangeMin = contentPartner.ageRange?.min()
         )
     }
 

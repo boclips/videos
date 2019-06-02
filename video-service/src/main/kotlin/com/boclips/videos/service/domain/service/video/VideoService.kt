@@ -65,16 +65,20 @@ class VideoService(
     fun create(videoToBeCreated: Video): Video {
         var ageRange = videoToBeCreated.ageRange
 
-        if(videoToBeCreated.ageRange is UnboundedAgeRange) {
+        if (videoToBeCreated.ageRange is UnboundedAgeRange) {
             contentPartnerRepository.findByName(videoToBeCreated.contentPartnerName)
-                ?.apply { ageRange = this.ageRange }
-
+                ?.apply { ageRange = this.ageRange ?: UnboundedAgeRange }
         }
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
     }
 
-    fun setDefaultAgeRange(contentPartner: ContentPartner) : List<Video> {
-        return getVideosByContentPartner(contentPartner.name).map { setDefaultAgeRange(it.videoId, contentPartner.ageRange) }
+    fun setDefaultAgeRange(contentPartner: ContentPartner): List<Video> {
+        return getVideosByContentPartner(contentPartner.name).map {
+            setDefaultAgeRange(
+                it.videoId,
+                contentPartner.ageRange ?: UnboundedAgeRange
+            )
+        }
     }
 
     private fun getVideosByContentPartner(contentPartnerName: String): List<Video> {

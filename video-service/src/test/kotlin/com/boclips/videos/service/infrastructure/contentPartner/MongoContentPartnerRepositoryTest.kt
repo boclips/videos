@@ -54,8 +54,8 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         val updatedContentPartner = mongoContentPartnerRespository.findByName(contentPartnerName = "New name")!!
 
-        assertThat(updatedContentPartner.ageRange.min()).isEqualTo(9)
-        assertThat(updatedContentPartner.ageRange.max()).isEqualTo(16)
+        assertThat(updatedContentPartner.ageRange!!.min()).isEqualTo(9)
+        assertThat(updatedContentPartner.ageRange!!.max()).isEqualTo(16)
 
         assertThat(mongoContentPartnerRespository.findByName(originalContentPartner.name)).isNull()
     }
