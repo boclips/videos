@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -57,8 +58,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofSeconds(23),
             contentProvider = "cp",
             legalRestrictions = "None",
-            ageRangeMin = 5,
-            ageRangeMax = 7
+            ageRange = BoundedAgeRange(min = 5, max = 7)
         ).value
 
         disabledVideoId = saveVideo(

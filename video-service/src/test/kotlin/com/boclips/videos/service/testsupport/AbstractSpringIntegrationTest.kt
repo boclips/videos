@@ -11,6 +11,8 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -129,7 +131,8 @@ abstract class AbstractSpringIntegrationTest {
         messageChannels.forEach { channel ->
             try {
                 messageCollector.forChannel(channel).clear()
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+            }
         }
 
         reset(legacySearchService)
@@ -148,8 +151,7 @@ abstract class AbstractSpringIntegrationTest {
         subjects: Set<String> = emptySet(),
         searchable: Boolean = true,
         legalRestrictions: String = "",
-        ageRangeMin: Int = 7,
-        ageRangeMax: Int = 11
+        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11)
     ): VideoId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(
@@ -181,15 +183,21 @@ abstract class AbstractSpringIntegrationTest {
                 subjects = subjects,
                 searchable = searchable,
                 analyseVideo = false,
-                ageRangeMin = ageRangeMin,
-                ageRangeMax = ageRangeMax
+                ageRangeMin = ageRange.min(),
+                ageRangeMax = ageRange.max()
             )
         ).content.id
 
         return VideoId(id!!)
     }
 
-    fun saveCollection(owner: String = "owner@me.com", title: String = "collection title", videos: List<String> = emptyList(), public: Boolean = false, bookmarkedBy: String? = null): CollectionId {
+    fun saveCollection(
+        owner: String = "owner@me.com",
+        title: String = "collection title",
+        videos: List<String> = emptyList(),
+        public: Boolean = false,
+        bookmarkedBy: String? = null
+    ): CollectionId {
         setSecurityContext(owner)
 
         val collectionId = createCollection(TestFactories.createCollectionRequest(title = title, videos = videos)).id

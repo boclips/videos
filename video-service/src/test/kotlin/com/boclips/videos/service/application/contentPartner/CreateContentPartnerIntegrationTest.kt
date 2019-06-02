@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.contentPartner
 
+import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
@@ -9,30 +10,34 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class CreateContentPartnerTest : AbstractSpringIntegrationTest() {
+class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Autowired
-    lateinit var videoService : VideoService
+    lateinit var videoService: VideoService
 
     @Autowired
     lateinit var createContentPartner: CreateContentPartner
 
     @Test
-    fun `creates a content partner and sets the default age for their videos`() {
-        val videoId = saveVideo(contentProvider = "My content partner")
+    fun `creates a content partner and does not overwrite video age ranges`() {
+        val videoId = saveVideo(
+            contentProvider = "My content partner",
+            ageRange = UnboundedAgeRange
+        )
 
-        createContentPartner(TestFactories.createContentPartnerRequest(
-            name = "My content partner",
-            ageRange = AgeRangeRequest(min = 7, max = 11)
-        ))
+        createContentPartner(
+            TestFactories.createContentPartnerRequest(
+                name = "My content partner",
+                ageRange = AgeRangeRequest(min = 7, max = 11)
+            )
+        )
 
         val contentPartner = contentPartnerRepository.findByName(contentPartnerName = "My content partner")
-        val video = videoService.getPlayableVideo(videoId = videoId)
 
+        val video = videoService.getPlayableVideo(videoId = videoId)
         assertThat(contentPartner!!.name).isEqualTo("My content partner")
-        assertThat(video.ageRange.min()).isEqualTo(7)
-        assertThat(video.ageRange.max()).isEqualTo(11)
+        assertThat(video.ageRange).isInstanceOf(UnboundedAgeRange::class.java)
     }
 }

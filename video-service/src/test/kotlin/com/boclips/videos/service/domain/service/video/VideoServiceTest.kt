@@ -20,7 +20,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     lateinit var videoService: VideoService
 
     @Autowired
-    lateinit var contentPartnerRepository : ContentPartnerRepository
+    lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
@@ -124,29 +124,21 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create video with no age range`() {
-        contentPartnerRepository.create(contentPartner = TestFactories.createContentPartner(name = "Our content partner", ageRange = AgeRange.bounded(3, 7)))
+        contentPartnerRepository.create(
+            contentPartner = TestFactories.createContentPartner(
+                name = "Our content partner",
+                ageRange = AgeRange.bounded(3, 7)
+            )
+        )
 
-        val video = videoService.create(TestFactories.createVideo(ageRange = AgeRange.unbounded(), contentPartnerName = "Our content partner"))
+        val video = videoService.create(
+            TestFactories.createVideo(
+                ageRange = AgeRange.unbounded(),
+                contentPartnerName = "Our content partner"
+            )
+        )
 
         assertThat(video.ageRange.min()).isEqualTo(3)
         assertThat(video.ageRange.max()).isEqualTo(7)
-    }
-
-    @Test
-    fun `set default age range for multiple videos`() {
-        val contentPartner = contentPartnerRepository.create(contentPartner = TestFactories.createContentPartner(name = "Our content partner", ageRange = AgeRange.bounded(11, 16)))
-
-        saveVideo(contentProvider = "Our content partner")
-        saveVideo(contentProvider = "Our content partner")
-        saveVideo(contentProvider = "Our content partner")
-
-        val videos = videoService.setDefaultAgeRange(contentPartner)
-
-        assertThat(videos).hasSize(3)
-
-        videos.forEach {
-            assertThat(it.ageRange.min()).isEqualTo(11)
-            assertThat(it.ageRange.max()).isEqualTo(16)
-        }
     }
 }

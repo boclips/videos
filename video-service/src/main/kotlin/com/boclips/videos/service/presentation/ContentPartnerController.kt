@@ -75,7 +75,7 @@ class ContentPartnerController(
         @PathVariable("id") contentPartnerId: String,
         @Valid @RequestBody updateContentPartnerRequest: ContentPartnerRequest
     ): ResponseEntity<Void> {
-        updateContentPartner(existingContentPartnerId = contentPartnerId, request = updateContentPartnerRequest)
+        updateContentPartner(contentPartnerId = contentPartnerId, request = updateContentPartnerRequest)
 
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }

@@ -239,12 +239,12 @@ class ApplicationContext(
 
     @Bean
     fun createContentPartner(): CreateContentPartner {
-        return CreateContentPartner(contentPartnerRepository, videoService)
+        return CreateContentPartner(contentPartnerRepository)
     }
 
     @Bean
     fun updateContentPartner(): UpdateContentPartner {
-        return UpdateContentPartner(contentPartnerRepository, videoService)
+        return UpdateContentPartner(contentPartnerRepository, videoRepository)
     }
 
     @Bean
