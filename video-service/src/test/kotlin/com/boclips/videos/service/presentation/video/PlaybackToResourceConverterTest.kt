@@ -24,11 +24,10 @@ internal class PlaybackToResourceConverterTest {
 
     val youtubePlayback = TestFactories.createYoutubePlayback()
 
-
-
     @Test
     fun `converts a resource from a Kaltura playback`() {
-        val resource = this.playbackToResourceConverter.wrapPlaybackInResource(kalturaPlayback).content as StreamPlaybackResource
+        val resource =
+            this.playbackToResourceConverter.wrapPlaybackInResource(kalturaPlayback).content as StreamPlaybackResource
 
         assertThat(resource.streamUrl).isEqualTo(kalturaPlayback.appleHlsStreamUrl)
         assertThat(resource.duration).isEqualTo(kalturaPlayback.duration)
@@ -38,7 +37,8 @@ internal class PlaybackToResourceConverterTest {
 
     @Test
     fun `converts a resource from a Youtube playback`() {
-        val resource = this.playbackToResourceConverter.wrapPlaybackInResource(youtubePlayback).content as YoutubePlaybackResource
+        val resource =
+            this.playbackToResourceConverter.wrapPlaybackInResource(youtubePlayback).content as YoutubePlaybackResource
 
         assertThat(resource.duration).isEqualTo(youtubePlayback.duration)
         assertThat(resource.thumbnailUrl).isEqualTo(youtubePlayback.thumbnailUrl)

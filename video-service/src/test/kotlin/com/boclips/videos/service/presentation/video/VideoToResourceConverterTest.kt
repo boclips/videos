@@ -119,6 +119,9 @@ internal class VideoToResourceConverterTest {
         val resultResource = videoToResourceConverter
             .wrapVideosInResource(videos = listOf(youtubeVideo, kalturaVideo))
 
-        assertThat(resultResource.map { it.content.playback!!.content.type }).containsExactlyInAnyOrder("STREAM", "YOUTUBE")
+        assertThat(resultResource.map { it.content.playback!!.content.type }).containsExactlyInAnyOrder(
+            "STREAM",
+            "YOUTUBE"
+        )
     }
 }

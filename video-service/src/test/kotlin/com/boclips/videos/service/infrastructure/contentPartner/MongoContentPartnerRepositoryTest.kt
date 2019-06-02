@@ -46,9 +46,18 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `updating an existing content partner`() {
-        val originalContentPartner = mongoContentPartnerRespository.create(TestFactories.createContentPartner(name = "Old name", ageRange = AgeRange.bounded(min = 11, max = 14)))
+        val originalContentPartner = mongoContentPartnerRespository.create(
+            TestFactories.createContentPartner(
+                name = "Old name",
+                ageRange = AgeRange.bounded(min = 11, max = 14)
+            )
+        )
 
-        val replacementContentPartner = TestFactories.createContentPartner(id = originalContentPartner.contentPartnerId, name = "New name", ageRange = AgeRange.bounded(min = 9, max = 16))
+        val replacementContentPartner = TestFactories.createContentPartner(
+            id = originalContentPartner.contentPartnerId,
+            name = "New name",
+            ageRange = AgeRange.bounded(min = 9, max = 16)
+        )
 
         mongoContentPartnerRespository.update(contentPartner = replacementContentPartner)
 

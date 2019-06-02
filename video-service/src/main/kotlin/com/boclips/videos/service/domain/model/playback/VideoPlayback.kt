@@ -13,7 +13,6 @@ sealed class VideoPlayback {
         override val duration: Duration
     ) : VideoPlayback()
 
-
     data class StreamPlayback(
         override val id: PlaybackId,
         override val thumbnailUrl: String,

@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.Locale

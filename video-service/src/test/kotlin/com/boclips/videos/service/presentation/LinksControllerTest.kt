@@ -132,5 +132,4 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
             .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
     }
-
 }

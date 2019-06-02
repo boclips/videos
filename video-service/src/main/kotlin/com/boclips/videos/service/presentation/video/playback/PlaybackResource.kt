@@ -18,7 +18,7 @@ data class StreamPlaybackResource(
 ) : PlaybackResource()
 
 data class YoutubePlaybackResource(
-    override val type: String= "YOUTUBE",
+    override val type: String = "YOUTUBE",
     override var id: String?,
     override var thumbnailUrl: String?,
     override var duration: Duration?

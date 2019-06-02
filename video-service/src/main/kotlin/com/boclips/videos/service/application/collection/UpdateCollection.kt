@@ -22,5 +22,4 @@ class UpdateCollection(
         collectionService.updateSearchIndex(id)
         eventService.saveUpdateCollectionEvent(id, commands)
     }
-
 }

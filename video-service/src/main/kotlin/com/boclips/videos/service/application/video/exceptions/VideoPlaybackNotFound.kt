@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class VideoPlaybackNotFound(override val message: String? = null) :
-    ResourceNotFoundApiException(error = "Not Found", message = message.orEmpty()){
+    ResourceNotFoundApiException(error = "Not Found", message = message.orEmpty()) {
     constructor(createRequest: CreateVideoRequest) :
         this("Video playback for video '${createRequest.playbackId}' not found in '${createRequest.playbackProvider}'")
 }

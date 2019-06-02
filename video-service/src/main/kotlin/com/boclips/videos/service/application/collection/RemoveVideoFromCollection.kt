@@ -17,7 +17,10 @@ class RemoveVideoFromCollection(
 
         collectionRepository.getOwnedCollectionOrThrow(collectionId)
 
-        collectionRepository.update(CollectionId(collectionId), CollectionUpdateCommand.RemoveVideoFromCollectionCommand(VideoId(videoId)))
+        collectionRepository.update(
+            CollectionId(collectionId),
+            CollectionUpdateCommand.RemoveVideoFromCollectionCommand(VideoId(videoId))
+        )
 
         eventService.saveUpdateCollectionEvent(
             CollectionId(collectionId),

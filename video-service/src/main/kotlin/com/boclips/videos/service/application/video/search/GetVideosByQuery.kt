@@ -3,8 +3,8 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.domain.service.events.EventService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.presentation.video.VideosResource

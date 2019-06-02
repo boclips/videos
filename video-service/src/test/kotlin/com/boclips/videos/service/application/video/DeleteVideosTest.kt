@@ -58,13 +58,15 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
         deleteVideos(videoId.value)
 
-        assertThat(fakeVideoSearchService.search(
-            PaginatedSearchRequest(
-                query = VideoQuery(
-                    "Some title"
+        assertThat(
+            fakeVideoSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "Some title"
+                    )
                 )
             )
-        )).isEmpty()
+        ).isEmpty()
     }
 
     @Test

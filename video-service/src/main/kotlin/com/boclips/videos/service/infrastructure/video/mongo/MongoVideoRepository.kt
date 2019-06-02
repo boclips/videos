@@ -42,8 +42,8 @@ class MongoVideoRepository(
     companion object : KLogging() {
 
         const val collectionName = "videos"
-
     }
+
     override fun find(videoId: VideoId): Video? {
         val videoOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(videoId.value))
             ?.let(VideoDocumentConverter::toVideo)

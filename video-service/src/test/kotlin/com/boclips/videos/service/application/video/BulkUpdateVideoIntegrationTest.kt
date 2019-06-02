@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType

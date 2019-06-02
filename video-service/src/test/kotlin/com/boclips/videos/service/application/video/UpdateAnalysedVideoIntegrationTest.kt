@@ -133,12 +133,14 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
-        assertThat(fakeVideoSearchService.search(
-            PaginatedSearchRequest(
-                query = VideoQuery(
-                    "transcript"
+        assertThat(
+            fakeVideoSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "transcript"
+                    )
                 )
             )
-        )).containsExactly(videoId.value)
+        ).containsExactly(videoId.value)
     }
 }

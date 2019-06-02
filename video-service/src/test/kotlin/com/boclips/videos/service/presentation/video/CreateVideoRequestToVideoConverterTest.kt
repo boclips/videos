@@ -128,6 +128,11 @@ class CreateVideoRequestToVideoConverterTest {
     }
 }
 
-private fun AbstractThrowableAssert<*,*>.hasBoclipsApiErrorMessage(s: String) {
-    this.has(Condition(Predicate { t -> (t as BoclipsApiException).exceptionDetails.message == s }, "cannot find exception message"))
+private fun AbstractThrowableAssert<*, *>.hasBoclipsApiErrorMessage(s: String) {
+    this.has(
+        Condition(
+            Predicate { t -> (t as BoclipsApiException).exceptionDetails.message == s },
+            "cannot find exception message"
+        )
+    )
 }

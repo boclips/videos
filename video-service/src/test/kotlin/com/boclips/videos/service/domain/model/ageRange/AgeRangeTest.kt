@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.model.ageRange
 
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

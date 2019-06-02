@@ -12,7 +12,10 @@ import org.springframework.stereotype.Component
 class DefaultCollectionSearchService(
     readSearchService: ReadSearchService<CollectionMetadata, CollectionQuery>,
     writeSearchService: WriteSearchService<CollectionMetadata>
-) : CollectionSearchServiceAdapter<com.boclips.videos.service.domain.model.collection.Collection>(readSearchService, writeSearchService),
+) : CollectionSearchServiceAdapter<com.boclips.videos.service.domain.model.collection.Collection>(
+    readSearchService,
+    writeSearchService
+),
     CollectionSearchService {
 
     override fun convert(document: com.boclips.videos.service.domain.model.collection.Collection): CollectionMetadata {

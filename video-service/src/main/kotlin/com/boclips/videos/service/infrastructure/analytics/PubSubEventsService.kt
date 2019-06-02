@@ -96,15 +96,19 @@ class PubSubEventsService(
     }
 
     override fun saveBookmarkCollectionEvent(collectionId: CollectionId) {
-        topics.collectionBookmarkChanged().send(msg(
-            CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(true)
-        ))
+        topics.collectionBookmarkChanged().send(
+            msg(
+                CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(true)
+            )
+        )
     }
 
     override fun saveUnbookmarkCollectionEvent(collectionId: CollectionId) {
-        topics.collectionBookmarkChanged().send(msg(
-            CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(false)
-        ))
+        topics.collectionBookmarkChanged().send(
+            msg(
+                CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(false)
+            )
+        )
     }
 
     override fun savePlaybackEvent(
@@ -115,15 +119,17 @@ class PubSubEventsService(
         segmentEndSeconds: Long,
         videoDurationSeconds: Long
     ) {
-        topics.videoSegmentPlayed().send(msg(
-            VideoSegmentPlayed.builder()
-                .videoId(videoId.value)
-                .playerId(playerId)
-                .videoIndex(videoIndex)
-                .segmentStartSeconds(segmentStartSeconds)
-                .segmentEndSeconds(segmentEndSeconds)
-                .videoDurationSeconds(videoDurationSeconds)
-        ))
+        topics.videoSegmentPlayed().send(
+            msg(
+                VideoSegmentPlayed.builder()
+                    .videoId(videoId.value)
+                    .playerId(playerId)
+                    .videoIndex(videoIndex)
+                    .segmentStartSeconds(segmentStartSeconds)
+                    .segmentEndSeconds(segmentEndSeconds)
+                    .videoDurationSeconds(videoDurationSeconds)
+            )
+        )
     }
 
     private fun msg(builder: UserEvent.UserEventBuilder<*, *>): Message<*> {

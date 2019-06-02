@@ -35,18 +35,20 @@ class VideoSearchQuery(
                 )
             }
         }
-        return parseIdsOrPhrase(this.text).let { VideoQuery(
-            ids = it.ids,
-            phrase = it.phrase,
-            includeTags = includeTags,
-            excludeTags = excludeTags,
-            minDuration = minDuration,
-            maxDuration = maxDuration,
-            source = source,
-            sort = sort,
-            releaseDateFrom = releaseDateFrom,
-            releaseDateTo = releaseDateTo
-        ) }
+        return parseIdsOrPhrase(this.text).let {
+            VideoQuery(
+                ids = it.ids,
+                phrase = it.phrase,
+                includeTags = includeTags,
+                excludeTags = excludeTags,
+                minDuration = minDuration,
+                maxDuration = maxDuration,
+                source = source,
+                sort = sort,
+                releaseDateFrom = releaseDateFrom,
+                releaseDateTo = releaseDateTo
+            )
+        }
     }
 
     override fun toString(): String {

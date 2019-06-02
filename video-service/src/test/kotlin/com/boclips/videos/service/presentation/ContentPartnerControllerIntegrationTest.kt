@@ -53,7 +53,11 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             }
         """
 
-        mockMvc.perform(post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content))
+        mockMvc.perform(
+            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+                content
+            )
+        )
             .andExpect(status().isCreated)
             .andExpect(header().exists("Location"))
     }
@@ -81,8 +85,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             }
         """
 
-        val cpUrl = mockMvc.perform(post("/v1/content-partners").asBoclipsEmployee()
-            .contentType(MediaType.APPLICATION_JSON).content(originalContent))
+        val cpUrl = mockMvc.perform(
+            post("/v1/content-partners").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(originalContent)
+        )
             .andReturn().response.getHeaders("Location").first()
 
         mockMvc.perform(put(cpUrl).asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(updatedContent))
@@ -107,12 +113,19 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     }
             }"""
 
-        mockMvc.perform(post("/v1/content-partners").asBoclipsEmployee()
-            .contentType(MediaType.APPLICATION_JSON).content(originalContent))
+        mockMvc.perform(
+            post("/v1/content-partners").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(originalContent)
+        )
 
         mockMvc.perform(get("/v1/content-partners").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED-ED")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0]._links.self.href", containsString("/content-partners/")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0]._links.self.href",
+                    containsString("/content-partners/")
+                )
+            )
     }
 }

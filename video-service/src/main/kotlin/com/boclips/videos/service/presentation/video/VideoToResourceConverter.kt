@@ -48,7 +48,7 @@ class VideoToResourceConverter(
         )
     }
 
-    private fun getAgeRange(video: Video) : AgeRangeResource? {
+    private fun getAgeRange(video: Video): AgeRangeResource? {
         return AgeRangeToResourceConverter.convert(video.ageRange)
     }
 

@@ -7,4 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class VideoTranscriptNotFound(val videoId: VideoId) :
-    ResourceNotFoundApiException(error = "Not Found", message = "Video transcript for video '${videoId.value}' not found.")
+    ResourceNotFoundApiException(
+        error = "Not Found",
+        message = "Video transcript for video '${videoId.value}' not found."
+    )

@@ -6,4 +6,5 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class VideoNotFoundException(val id: VideoId? = null) : ResourceNotFoundApiException(error = "Not Found", message = id?.let { "Video $it not found" } ?: "Video not found")
+class VideoNotFoundException(val id: VideoId? = null) :
+    ResourceNotFoundApiException(error = "Not Found", message = id?.let { "Video $it not found" } ?: "Video not found")

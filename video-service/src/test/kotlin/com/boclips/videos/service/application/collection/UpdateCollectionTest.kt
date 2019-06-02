@@ -89,7 +89,7 @@ class UpdateCollectionTest : AbstractSpringIntegrationTest() {
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
 
-        assertThat(collectionService.search(CollectionSearchQuery("title",1,0)).first().id).isEqualTo(collectionId)
+        assertThat(collectionService.search(CollectionSearchQuery("title", 1, 0)).first().id).isEqualTo(collectionId)
     }
 
     @Test
@@ -99,6 +99,6 @@ class UpdateCollectionTest : AbstractSpringIntegrationTest() {
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
 
-        assertThat(collectionService.search(CollectionSearchQuery("title",1,0))).isEmpty()
+        assertThat(collectionService.search(CollectionSearchQuery("title", 1, 0))).isEmpty()
     }
 }

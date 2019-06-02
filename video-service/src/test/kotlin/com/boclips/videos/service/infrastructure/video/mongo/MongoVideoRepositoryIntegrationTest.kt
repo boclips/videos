@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.playback.VideoPlayback.*
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
@@ -213,7 +213,12 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val updatedAsset = mongoVideoRepository.update(VideoUpdateCommand.ReplaceAgeRange(originalAsset.videoId, AgeRange.bounded(3, 5)))
+        val updatedAsset = mongoVideoRepository.update(
+            VideoUpdateCommand.ReplaceAgeRange(
+                originalAsset.videoId,
+                AgeRange.bounded(3, 5)
+            )
+        )
 
         assertThat(updatedAsset.ageRange).isEqualTo(AgeRange.bounded(3, 5))
     }
@@ -365,9 +370,12 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `finds videos by content partner`() {
-        val video1 = mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerName = "TED"))
-        val video2 = mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerName = "TED"))
-        val video3 = mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerName = "Reuters"))
+        val video1 =
+            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerName = "TED"))
+        val video2 =
+            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerName = "TED"))
+        val video3 =
+            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerName = "Reuters"))
 
         val videos = mongoVideoRepository.findByContentPartner(contentPartnerName = "TED")
 

@@ -8,4 +8,4 @@ data class ContentPartnerRequest(
 
     @field:Valid
     var ageRange: AgeRangeRequest? = null
-    )
+)
