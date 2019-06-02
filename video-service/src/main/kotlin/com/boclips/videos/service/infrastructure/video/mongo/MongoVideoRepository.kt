@@ -124,6 +124,8 @@ class MongoVideoRepository(
     }
 
     override fun bulkUpdate(commands: List<VideoUpdateCommand>) {
+        if (commands.isEmpty()) return
+
         val updateDocs = commands.map { updateCommand ->
             UpdateOneModel<VideoDocument>(
                 VideoDocument::id eq ObjectId(updateCommand.videoId.value),

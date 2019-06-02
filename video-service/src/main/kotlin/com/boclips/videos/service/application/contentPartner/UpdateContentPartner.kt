@@ -34,8 +34,10 @@ class UpdateContentPartner(
     ) {
         val videosAffected = videoRepository.findByContentPartner(contentPartnerName = contentPartner.name)
 
-        videosAffected.map { video ->
-            videoRepository.update(VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = ageRange))
+        val commands = videosAffected.map { video ->
+            VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = ageRange)
         }
+
+        videoRepository.bulkUpdate(commands)
     }
 }
