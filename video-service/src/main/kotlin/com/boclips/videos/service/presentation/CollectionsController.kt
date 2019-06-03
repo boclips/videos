@@ -49,7 +49,7 @@ class CollectionsController(
     private val collectionsLinkBuilder: CollectionsLinkBuilder
 ) {
     companion object : KLogging() {
-        const val PUBLIC_COLLECTIONS_PAGE_SIZE = 30
+        const val COLLECTIONS_PAGE_SIZE = 30
     }
 
     @GetMapping
@@ -73,7 +73,7 @@ class CollectionsController(
             },
             owner = owner,
             pageNumber = page?.let { it } ?: 0,
-            pageSize = size?.let { it } ?: PUBLIC_COLLECTIONS_PAGE_SIZE,
+            pageSize = size?.let { it } ?: COLLECTIONS_PAGE_SIZE,
             subjects = subjects ?: emptyList()
         )
 

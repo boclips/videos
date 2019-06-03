@@ -56,7 +56,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun publicCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
-        size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
     ) = Link(
         getCollectionsRoot()
             .queryParam("projection", projection)
@@ -66,10 +66,22 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             .toUriString(), "publicCollections"
     )
 
+    fun searchCollections(
+        projection: Projection = Projection.list,
+        page: Int = 0,
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
+    ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { Link(
+        getCollectionsRoot()
+            .queryParam("projection", projection)
+            .queryParam("page", page)
+            .queryParam("size", size)
+            .toUriString() + "&query={query}", "searchCollections"
+    ) }
+
     fun bookmarkedCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
-        size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
     ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
         Link(
             getCollectionsRoot()
@@ -85,7 +97,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun myCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
-        size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
     ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
         Link(
             collectionsLink(projection = projection, page = page, size = size)
@@ -98,7 +110,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun collectionsByOwner(
         projection: Projection = Projection.list,
         page: Int = 0,
-        size: Int = CollectionsController.PUBLIC_COLLECTIONS_PAGE_SIZE
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
     ) = getIfHasRole(UserRoles.VIEW_ANY_COLLECTION) {
         Link(
             collectionsLink(projection = projection, page = page, size = size)

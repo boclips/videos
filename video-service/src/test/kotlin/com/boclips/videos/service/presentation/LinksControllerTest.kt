@@ -40,7 +40,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
 
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
-            .andExpect(jsonPath("$._links.search").doesNotExist())
+            .andExpect(jsonPath("$._links.searchVideos").doesNotExist())
+            .andExpect(jsonPath("$._links.searchCollections").doesNotExist())
             .andExpect(jsonPath("$._links.videos").doesNotExist())
             .andExpect(jsonPath("$._links.myCollections").doesNotExist())
             .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())
@@ -54,15 +55,21 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
         val userId = "teacher@teacher.com"
         mockMvc.perform(get("/v1").asTeacher(userId))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.search.href", containsString("/videos?query=")))
+            .andExpect(jsonPath("$._links.searchVideos.href", containsString("/videos?query=")))
             .andExpect(
                 jsonPath(
-                    "$._links.search.href",
+                    "$._links.searchVideos.href",
                     containsString("{&sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source}")
                 )
             )
-            .andExpect(jsonPath("$._links.search.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
+            .andExpect(
+                jsonPath(
+                    "$._links.searchCollections.href",
+                    endsWith("collections?projection=list&page=0&size=30&query={query}")
+                )
+            )
             .andExpect(
                 jsonPath(
                     "$._links.publicCollections.href",
@@ -117,7 +124,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `optional parameters are not required by link template`() {
         val response = mockMvc.perform(get("/v1").asTeacher()).andReturn().response.contentAsString
 
-        val searchUrlTemplate: String = JsonPath.parse(response).read("$._links.search.href")
+        val searchUrlTemplate: String = JsonPath.parse(response).read("$._links.searchVideos.href")
         val searchUrl =
             UriTemplate(searchUrlTemplate).expand(mapOf(("query" to "phrase"), ("size" to 1), ("page" to 1)))
 

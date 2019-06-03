@@ -21,11 +21,11 @@ class VideosLinkBuilder {
             .getVideo(null)
     ).withRel("video")
 
-    fun searchLink() = getIfHasRole(UserRoles.VIEW_VIDEOS) {
+    fun searchVideosLink() = getIfHasRole(UserRoles.VIEW_VIDEOS) {
         ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .search(null, null, null, null, null, null, null, null, null, null, null)
-        ).withRel("search")
+        ).withRel("searchVideos")
     }
 
     fun videosLink() =

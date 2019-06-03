@@ -37,16 +37,16 @@ class VideosLinkBuilderTest {
     fun `search link when authenticated`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
 
-        val link = VideosLinkBuilder().searchLink()!!
+        val link = VideosLinkBuilder().searchVideosLink()!!
 
         assertThat(link.href).isEqualTo("/v1/videos?query={query}&size={size}&page={page}{&sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source}")
-        assertThat(link.rel).isEqualTo("search")
+        assertThat(link.rel).isEqualTo("searchVideos")
         assertThat(link.isTemplated).isTrue()
     }
 
     @Test
     fun `search link when not authenticated`() {
-        val link = VideosLinkBuilder().searchLink()
+        val link = VideosLinkBuilder().searchVideosLink()
 
         assertThat(link).isNull()
     }
