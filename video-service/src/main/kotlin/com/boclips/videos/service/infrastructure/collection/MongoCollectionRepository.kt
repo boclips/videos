@@ -37,8 +37,11 @@ class MongoCollectionRepository(
     private val collectionUpdates: CollectionUpdates = CollectionUpdates()
 ) : CollectionRepository {
     companion object : KLogging() {
+
         const val collectionName = "collections"
     }
+
+    private val publicCollectionCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
 
     override fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection {
         val objectId = ObjectId()
@@ -75,9 +78,10 @@ class MongoCollectionRepository(
         return getPagedCollections(pageRequest, criteria)
     }
 
+
     override fun getPublic(pageRequest: PageRequest, subjectsToFilter: List<SubjectId>): Page<Collection> {
         val criteria = and(
-            CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC,
+            publicCollectionCriteria,
             and(
                 subjectsToFilter.map {
                     CollectionDocument::subjects contains it.value
@@ -90,7 +94,7 @@ class MongoCollectionRepository(
 
     override fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection> {
         val criteria = and(
-            CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC,
+            publicCollectionCriteria,
             CollectionDocument::bookmarks contains bookmarkedBy.value
         )
         return getPagedCollections(pageRequest, criteria)
@@ -184,5 +188,12 @@ class MongoCollectionRepository(
                 max = collectionDocument.ageRangeMax
             ) else AgeRange.unbounded()
         )
+    }
+
+    override fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit) {
+        val sequence = Sequence { dbCollection().find(publicCollectionCriteria).iterator() }
+            .mapNotNull(this::toCollection)
+
+        consumer(sequence)
     }
 }

@@ -8,6 +8,7 @@ interface CollectionRepository {
     fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection
     fun find(id: CollectionId): Collection?
     fun findAll(id: List<CollectionId>): List<Collection>
+    fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit)
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
     fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand)
     fun delete(id: CollectionId)

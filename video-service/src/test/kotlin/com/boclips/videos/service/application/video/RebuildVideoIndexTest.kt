@@ -19,7 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class RebuildSearchIndexTest {
+class RebuildVideoIndexTest {
 
     lateinit var searchService: VideoSearchService
 
@@ -52,7 +52,7 @@ class RebuildSearchIndexTest {
             }
         }
 
-        val rebuildSearchIndex = RebuildSearchIndex(videoRepository, searchService)
+        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, searchService)
 
         assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
@@ -76,7 +76,7 @@ class RebuildSearchIndexTest {
             } doThrow (MongoClientException("Boom"))
         }
 
-        val rebuildSearchIndex = RebuildSearchIndex(videoRepository, searchService)
+        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, searchService)
 
         assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }

@@ -24,7 +24,7 @@ import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideoTranscript
-import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateVideo
@@ -192,8 +192,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun rebuildSearchIndex(): RebuildSearchIndex {
-        return RebuildSearchIndex(videoRepository, videoSearchService)
+    fun rebuildSearchIndex(): RebuildVideoIndex {
+        return RebuildVideoIndex(videoRepository, videoSearchService)
     }
 
     @Bean

@@ -8,7 +8,7 @@ import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
 
-open class RebuildSearchIndex(
+open class RebuildVideoIndex(
     private val videoRepository: VideoRepository,
     private val videoSearchService: VideoSearchService
 ) {

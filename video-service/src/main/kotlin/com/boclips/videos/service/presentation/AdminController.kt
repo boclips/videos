@@ -1,11 +1,12 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
-import com.boclips.videos.service.application.video.RebuildSearchIndex
+import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import mu.KLogging
 import org.springframework.http.HttpStatus
@@ -36,7 +37,8 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 @RestController
 @RequestMapping("/v1/admin/actions")
 class AdminController(
-    private val rebuildSearchIndex: RebuildSearchIndex,
+    private val rebuildVideoIndex: RebuildVideoIndex,
+    private val rebuildCollectionIndex: RebuildCollectionIndex,
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
     private val requestVideoPlaybackUpdate: RequestVideoPlaybackUpdate,
     private val analyseVideo: AnalyseVideo,
@@ -44,9 +46,14 @@ class AdminController(
 ) {
     companion object : KLogging()
 
-    @PostMapping("/rebuild_search_index")
-    fun rebuildSearchIndex(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(rebuildSearchIndex::invoke)
+    @PostMapping("/rebuild_video_index")
+    fun rebuildVideoIndex(): ResponseEntity<ResponseBodyEmitter> {
+        return asyncWithNotifier(rebuildVideoIndex::invoke)
+    }
+
+    @PostMapping("/rebuild_collection_index")
+    fun rebuildCollectionIndex(): ResponseEntity<ResponseBodyEmitter> {
+        return asyncWithNotifier(rebuildCollectionIndex::invoke)
     }
 
     @PostMapping("/build_legacy_search_index")

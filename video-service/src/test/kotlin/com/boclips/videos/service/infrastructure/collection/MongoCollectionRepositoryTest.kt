@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.collection
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.SubjectId
@@ -531,5 +532,31 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             setSecurityContext("user3")
             assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
         }
+    }
+
+    @Test
+    fun `stream all public collections`() {
+        val c1 = collectionRepository.create(
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
+        )
+        collectionRepository.create(
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
+        )
+        val c3 = collectionRepository.create(
+            owner = UserId(value = "user1"),
+            title = "Starting Title",
+            createdByBoclips = false
+        )
+        collectionRepository.update(c1.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
+        collectionRepository.update(c3.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
+
+        var collections: List<Collection> = emptyList()
+        collectionRepository.streamAllPublic { collections = it.toList() }
+
+        assertThat(collections).hasSize(2)
     }
 }
