@@ -40,8 +40,8 @@ class ContentEnrichersTest {
         assertThat(
             isClassroom(
                 createVideo(
-                    type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
-                    contentPartnerName = "Reuters"
+                    contentPartnerName = "Reuters",
+                    type = LegacyVideoType.INSTRUCTIONAL_CLIPS
                 )
             )
         ).isTrue()
@@ -52,16 +52,16 @@ class ContentEnrichersTest {
         assertThat(
             isClassroom(
                 createVideo(
-                    type = LegacyVideoType.STOCK,
-                    title = "jfk state of union speech"
+                    title = "jfk state of union speech",
+                    type = LegacyVideoType.STOCK
                 )
             )
         ).isTrue()
         assertThat(
             isClassroom(
                 createVideo(
-                    type = LegacyVideoType.STOCK,
-                    description = "jfk state of union Speech"
+                    description = "jfk state of union Speech",
+                    type = LegacyVideoType.STOCK
                 )
             )
         ).isTrue()
@@ -72,8 +72,8 @@ class ContentEnrichersTest {
         assertThat(
             isClassroom(
                 createVideo(
-                    type = LegacyVideoType.STOCK,
-                    title = "Family left speechless by bride's wedding dress"
+                    title = "Family left speechless by bride's wedding dress",
+                    type = LegacyVideoType.STOCK
                 )
             )
         ).isFalse()
@@ -84,8 +84,8 @@ class ContentEnrichersTest {
         assertThat(
             isClassroom(
                 createVideo(
-                    type = LegacyVideoType.STOCK,
-                    title = "Archive public information film: Woman throwing grain (to chickens)"
+                    title = "Archive public information film: Woman throwing grain (to chickens)",
+                    type = LegacyVideoType.STOCK
                 )
             )
         ).isTrue()
@@ -96,8 +96,8 @@ class ContentEnrichersTest {
         assertThat(
             isClassroom(
                 createVideo(
-                    type = LegacyVideoType.STOCK,
-                    title = "Animation explaining all about biology"
+                    title = "Animation explaining all about biology",
+                    type = LegacyVideoType.STOCK
                 )
             )
         ).isTrue()
@@ -108,8 +108,8 @@ class ContentEnrichersTest {
         assertThat(
             isClassroom(
                 createVideo(
-                    type = LegacyVideoType.STOCK,
-                    title = "Animation explaining all about space"
+                    title = "Animation explaining all about space",
+                    type = LegacyVideoType.STOCK
                 )
             )
         ).isTrue()
@@ -139,8 +139,8 @@ class ContentEnrichersTest {
             assertThat(
                 isClassroom(
                     createVideo(
-                        type = LegacyVideoType.STOCK,
-                        title = title
+                        title = title,
+                        type = LegacyVideoType.STOCK
                     )
                 )
             ).withFailMessage("Expected '$title' to be excluded").isFalse()
@@ -160,8 +160,8 @@ class ContentEnrichersTest {
             assertThat(
                 isClassroom(
                     createVideo(
-                        type = LegacyVideoType.STOCK,
-                        title = it
+                        title = it,
+                        type = LegacyVideoType.STOCK
                     )
                 )
             ).withFailMessage("Expected '$it' to be excluded").isFalse()
@@ -180,8 +180,8 @@ class ContentEnrichersTest {
             assertThat(
                 isClassroom(
                     createVideo(
-                        type = LegacyVideoType.STOCK,
-                        title = title
+                        title = title,
+                        type = LegacyVideoType.STOCK
                     )
                 )
             ).withFailMessage("Expected '$title' to be excluded").isFalse()

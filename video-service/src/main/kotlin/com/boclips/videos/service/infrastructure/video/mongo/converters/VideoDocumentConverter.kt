@@ -2,9 +2,11 @@ package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoOwner
 import com.boclips.videos.service.infrastructure.video.mongo.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
@@ -22,7 +24,8 @@ object VideoDocumentConverter {
             description = video.description,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
-                    name = video.contentPartnerName
+                    name = video.contentPartnerName,
+                    id = video.owner.contentPartnerId.value
                 ),
                 videoReference = video.contentPartnerVideoId
             ),
@@ -48,6 +51,12 @@ object VideoDocumentConverter {
             description = document.description,
             contentPartnerName = document.source.contentPartner.name,
             contentPartnerVideoId = document.source.videoReference,
+            owner = VideoOwner(
+                contentPartnerId = document.source.contentPartner.id?.let { ContentPartnerId(value = it) }
+                    ?: ContentPartnerId(value = "nope"),
+                name = document.source.contentPartner.name,
+                videoReference = document.source.videoReference
+            ),
             playback = PlaybackConverter.toPlayback(document.playback),
             type = LegacyVideoType.valueOf(document.legacy.type),
             keywords = document.keywords,

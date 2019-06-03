@@ -27,6 +27,7 @@ import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoOwner
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
@@ -66,7 +67,12 @@ object TestFactories {
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
         searchable: Boolean = true,
-        ageRange: AgeRange = AgeRange.bounded(5, 12)
+        ageRange: AgeRange = AgeRange.bounded(5, 12),
+        videoOwner: VideoOwner = VideoOwner(
+            contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+            name = contentPartnerName,
+            videoReference = contentPartnerVideoId
+        )
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -77,6 +83,7 @@ object TestFactories {
             releasedOn = releasedOn,
             contentPartnerName = contentPartnerName,
             contentPartnerVideoId = contentPartnerVideoId,
+            owner = videoOwner,
             type = type,
             legalRestrictions = legalRestrictions,
             subjects = subjects,

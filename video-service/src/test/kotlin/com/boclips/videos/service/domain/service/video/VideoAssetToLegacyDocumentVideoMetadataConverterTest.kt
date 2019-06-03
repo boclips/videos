@@ -16,12 +16,12 @@ class VideoToLegacyDocumentVideoMetadataConverterTest {
             videoId = videoId,
             title = "the title",
             description = "the description",
-            keywords = listOf("keyword"),
             contentPartnerName = "Reuters",
             contentPartnerVideoId = "r001",
-            releasedOn = LocalDate.parse("2019-01-17"),
+            playback = TestFactories.createKalturaPlayback(duration = Duration.ofSeconds(10)),
             type = LegacyVideoType.TED_TALKS,
-            playback = TestFactories.createKalturaPlayback(duration = Duration.ofSeconds(10))
+            keywords = listOf("keyword"),
+            releasedOn = LocalDate.parse("2019-01-17")
         )
 
         val legacyMetadata = VideoToLegacyVideoMetadataConverter.convert(video)

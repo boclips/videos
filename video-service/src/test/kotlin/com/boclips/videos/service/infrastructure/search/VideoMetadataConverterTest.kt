@@ -22,12 +22,12 @@ class VideoMetadataConverterTest {
             title = "video title",
             description = "video description",
             contentPartnerName = "content partner",
-            releasedOn = LocalDate.of(2019, Month.APRIL, 19),
-            keywords = listOf("k1"),
-            type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
             playback = TestFactories.createYoutubePlayback(
                 duration = Duration.ofSeconds(10)
             ),
+            type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+            keywords = listOf("k1"),
+            releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             transcript = "a great transcript"
         )
 
@@ -74,8 +74,8 @@ class VideoMetadataConverterTest {
     @Test
     fun `it can apply multiple tags`() {
         val video = TestFactories.createVideo(
-            type = LegacyVideoType.NEWS,
-            description = "biology animation"
+            description = "biology animation",
+            type = LegacyVideoType.NEWS
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)

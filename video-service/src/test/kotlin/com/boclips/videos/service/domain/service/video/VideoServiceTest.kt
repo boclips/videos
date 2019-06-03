@@ -133,8 +133,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         val video = videoService.create(
             TestFactories.createVideo(
-                ageRange = AgeRange.unbounded(),
-                contentPartnerName = "Our content partner"
+                contentPartnerName = "Our content partner",
+                ageRange = AgeRange.unbounded()
             )
         )
 

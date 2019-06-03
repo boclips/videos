@@ -366,7 +366,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns a helpful error message when request is not valid`() {
         val content = """
             {
-                "provider": "AP"
+                "provider": "AP",
+                "providerVideoId": "1"
             }
         """.trimIndent()
 

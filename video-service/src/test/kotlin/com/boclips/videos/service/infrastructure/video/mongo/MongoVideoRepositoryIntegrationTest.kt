@@ -240,10 +240,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val originalVideo1 = mongoVideoRepository.create(
             TestFactories.createVideo(
                 title = "original title 1",
-                subjects = setOf(LegacySubject("German")),
                 playback = TestFactories.createKalturaPlayback(
                     duration = Duration.ofMinutes(1)
-                )
+                ),
+                subjects = setOf(LegacySubject("German"))
             )
         )
 
@@ -294,8 +294,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `find by content partner and content partner video id`() {
         val video = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
-            contentPartnerVideoId = "ted-id-1",
-            contentPartnerName = "TED Talks"
+            contentPartnerName = "TED Talks",
+            contentPartnerVideoId = "ted-id-1"
         )
 
         mongoVideoRepository.create(video)

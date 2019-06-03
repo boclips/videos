@@ -35,8 +35,8 @@ internal class VideoToResourceConverterTest {
         contentPartnerVideoId = "111",
         type = LegacyVideoType.TED_TALKS,
         subjects = setOf(LegacySubject("Maths")),
-        searchable = true,
         legalRestrictions = "None",
+        searchable = true,
         ageRange = AgeRange.bounded(min = 5, max = 11)
     )
 
@@ -45,11 +45,11 @@ internal class VideoToResourceConverterTest {
         description = "Best bottle slogan",
         contentPartnerName = "JacekWork",
         contentPartnerVideoId = "222",
+        playback = TestFactories.createYoutubePlayback(),
         type = LegacyVideoType.OTHER,
         subjects = setOf(LegacySubject("Biology")),
-        searchable = false,
         legalRestrictions = "Many",
-        playback = TestFactories.createYoutubePlayback()
+        searchable = false
     )
 
     @Test

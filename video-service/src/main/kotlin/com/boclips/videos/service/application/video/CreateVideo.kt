@@ -39,31 +39,37 @@ class CreateVideo(
     companion object : KLogging()
 
     operator fun invoke(createRequest: CreateVideoRequest): Resource<VideoResource> {
+        ensureVideoIsUnique(createRequest.provider!!, createRequest.providerVideoId!!)
+
         val videoPlayback = findVideoPlayback(createRequest)
-        val videoToBeCreated = createVideoRequestToVideoConverter.convert(createRequest, videoPlayback)
-
-        ensureVideoIsUnique(videoToBeCreated)
-
-        createContentPartnerIfDoesNotExist(createRequest.provider!!)
-
+        val contentPartner = createOrFindContentPartner(createRequest.provider)
+        val videoToBeCreated = createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner)
         val createdVideo = videoService.create(videoToBeCreated)
+
+        indexVideo(createdVideo)
         videoCounter.increment()
 
-        videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
-
-        if (videoToBeCreated.isBoclipsHosted()) {
-            legacySearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)), null)
-        }
-
         if (createRequest.analyseVideo) {
-            try {
-                analyseVideo(createdVideo.videoId.value, null)
-            } catch (exception: VideoNotAnalysableException) {
-                logger.info { "Video cannot be analysed" }
-            }
+            triggerVideoAnalysis(createdVideo)
         }
 
         return searchVideo.byId(createdVideo.videoId.value)
+    }
+
+    private fun triggerVideoAnalysis(createdVideo: Video) {
+        try {
+            analyseVideo(createdVideo.videoId.value, null)
+        } catch (exception: VideoNotAnalysableException) {
+            logger.info { "Video cannot be analysed" }
+        }
+    }
+
+    private fun indexVideo(createdVideo: Video) {
+        videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
+
+        if (createdVideo.isBoclipsHosted()) {
+            legacySearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)), null)
+        }
     }
 
     private fun findVideoPlayback(createRequest: CreateVideoRequest): VideoPlayback {
@@ -75,13 +81,16 @@ class CreateVideo(
         ) ?: throw VideoPlaybackNotFound(createRequest)
     }
 
-    private fun ensureVideoIsUnique(video: Video) {
-        if (videoRepository.existsVideoFromContentPartner(video.contentPartnerName, video.contentPartnerVideoId)) {
-            throw VideoExists(video.contentPartnerName, video.contentPartnerVideoId)
+    private fun ensureVideoIsUnique(
+        contentPartnerName: String,
+        contentPartnerVideoId: String
+    ) {
+        if (videoRepository.existsVideoFromContentPartner(contentPartnerName, contentPartnerVideoId)) {
+            throw VideoExists(contentPartnerName, contentPartnerVideoId)
         }
     }
 
-    private fun createContentPartnerIfDoesNotExist(provider: String): ContentPartner {
+    private fun createOrFindContentPartner(provider: String): ContentPartner {
         val existingContentPartner = contentPartnerRepository.findByName(provider)
 
         if (existingContentPartner == null) {

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException
@@ -17,18 +18,20 @@ class CreateVideoRequestToVideoConverterTest {
 
     lateinit var converter: CreateVideoRequestToVideoConverter
     lateinit var videoPlayback: VideoPlayback
+    lateinit var contentPartner: ContentPartner
 
     @BeforeEach
     fun setUp() {
         converter = CreateVideoRequestToVideoConverter()
         videoPlayback = TestFactories.createKalturaPlayback()
+        contentPartner = TestFactories.createContentPartner()
     }
 
     @Test
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
         val playback = TestFactories.createKalturaPlayback(duration = expectedDuration)
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner)
 
         assertThat(video.playback.duration).isEqualTo(expectedDuration)
     }
@@ -36,14 +39,20 @@ class CreateVideoRequestToVideoConverterTest {
     @Test
     fun `uses the playback`() {
         val playback = TestFactories.createKalturaPlayback()
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner)
 
         assertThat(video.playback).isEqualTo(playback)
     }
 
     @Test
     fun `throws when title is null`() {
-        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(title = null), videoPlayback) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(title = null),
+                videoPlayback,
+                contentPartner
+            )
+        }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasBoclipsApiErrorMessage("title cannot be null")
     }
@@ -53,7 +62,8 @@ class CreateVideoRequestToVideoConverterTest {
         assertThatThrownBy {
             converter.convert(
                 TestFactories.createCreateVideoRequest(description = null),
-                videoPlayback
+                videoPlayback,
+                contentPartner
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -62,7 +72,13 @@ class CreateVideoRequestToVideoConverterTest {
 
     @Test
     fun `throws when keywords is null`() {
-        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(keywords = null), videoPlayback) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(keywords = null),
+                videoPlayback,
+                contentPartner
+            )
+        }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasBoclipsApiErrorMessage("keywords cannot be null")
     }
@@ -72,7 +88,8 @@ class CreateVideoRequestToVideoConverterTest {
         assertThatThrownBy {
             converter.convert(
                 TestFactories.createCreateVideoRequest(releasedOn = null),
-                videoPlayback
+                videoPlayback,
+                contentPartner
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -81,7 +98,13 @@ class CreateVideoRequestToVideoConverterTest {
 
     @Test
     fun `throws when contentProvider is null`() {
-        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(provider = null), videoPlayback) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(provider = null),
+                videoPlayback,
+                contentPartner
+            )
+        }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasBoclipsApiErrorMessage("provider cannot be null")
     }
@@ -91,7 +114,8 @@ class CreateVideoRequestToVideoConverterTest {
         assertThatThrownBy {
             converter.convert(
                 TestFactories.createCreateVideoRequest(providerVideoId = null),
-                videoPlayback
+                videoPlayback,
+                contentPartner
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -103,7 +127,8 @@ class CreateVideoRequestToVideoConverterTest {
         assertThatThrownBy {
             converter.convert(
                 TestFactories.createCreateVideoRequest(videoType = null),
-                videoPlayback
+                videoPlayback,
+                contentPartner
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -115,14 +140,21 @@ class CreateVideoRequestToVideoConverterTest {
         assertThat(
             converter.convert(
                 TestFactories.createCreateVideoRequest(legalRestrictions = null),
-                videoPlayback
+                videoPlayback,
+                contentPartner
             ).legalRestrictions
         ).isEmpty()
     }
 
     @Test
     fun `throws when subjects is null`() {
-        assertThatThrownBy { converter.convert(TestFactories.createCreateVideoRequest(subjects = null), videoPlayback) }
+        assertThatThrownBy {
+            converter.convert(
+                TestFactories.createCreateVideoRequest(subjects = null),
+                videoPlayback,
+                contentPartner
+            )
+        }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
             .hasBoclipsApiErrorMessage("subjects cannot be null")
     }
