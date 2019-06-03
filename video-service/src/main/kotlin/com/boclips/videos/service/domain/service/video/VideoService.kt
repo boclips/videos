@@ -64,7 +64,7 @@ class VideoService(
         var ageRange = videoToBeCreated.ageRange
 
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
-            contentPartnerRepository.findByName(videoToBeCreated.contentPartnerName)
+            contentPartnerRepository.findByName(videoToBeCreated.owner.name)
                 ?.apply { ageRange = this.ageRange ?: UnboundedAgeRange }
         }
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))

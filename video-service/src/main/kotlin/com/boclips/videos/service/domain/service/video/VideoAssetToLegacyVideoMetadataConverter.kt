@@ -4,7 +4,6 @@ import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.videos.service.domain.model.Video
 
 object VideoToLegacyVideoMetadataConverter {
-
     fun convert(video: Video): LegacyVideoMetadata {
         return LegacyVideoMetadata(
             id = video.videoId.value,
@@ -12,8 +11,8 @@ object VideoToLegacyVideoMetadataConverter {
             description = video.description,
             keywords = video.keywords,
             duration = video.playback.duration,
-            contentPartnerName = video.contentPartnerName,
-            contentPartnerVideoId = video.contentPartnerVideoId,
+            contentPartnerName = video.owner.name,
+            contentPartnerVideoId = video.owner.videoReference,
             releaseDate = video.releasedOn,
             videoTypeTitle = video.type.title
         )

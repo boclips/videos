@@ -81,8 +81,6 @@ object TestFactories {
             description = description,
             keywords = keywords,
             releasedOn = releasedOn,
-            contentPartnerName = contentPartnerName,
-            contentPartnerVideoId = contentPartnerVideoId,
             owner = videoOwner,
             type = type,
             legalRestrictions = legalRestrictions,

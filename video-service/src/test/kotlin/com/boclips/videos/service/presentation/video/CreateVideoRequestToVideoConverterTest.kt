@@ -97,19 +97,6 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
-    fun `throws when contentProvider is null`() {
-        assertThatThrownBy {
-            converter.convert(
-                TestFactories.createCreateVideoRequest(provider = null),
-                videoPlayback,
-                contentPartner
-            )
-        }
-            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasBoclipsApiErrorMessage("provider cannot be null")
-    }
-
-    @Test
     fun `throws when contentProviderId is null`() {
         assertThatThrownBy {
             converter.convert(

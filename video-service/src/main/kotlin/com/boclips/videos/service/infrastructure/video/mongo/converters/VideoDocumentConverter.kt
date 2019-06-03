@@ -24,10 +24,10 @@ object VideoDocumentConverter {
             description = video.description,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
-                    name = video.contentPartnerName,
+                    name = video.owner.name,
                     id = video.owner.contentPartnerId.value
                 ),
-                videoReference = video.contentPartnerVideoId
+                videoReference = video.owner.videoReference
             ),
             playback = PlaybackConverter.toDocument(video.playback),
             legacy = LegacyDocument(type = video.type.name),
@@ -49,11 +49,9 @@ object VideoDocumentConverter {
             videoId = VideoId(document.id.toHexString()),
             title = document.title,
             description = document.description,
-            contentPartnerName = document.source.contentPartner.name,
-            contentPartnerVideoId = document.source.videoReference,
             owner = VideoOwner(
                 contentPartnerId = document.source.contentPartner.id?.let { ContentPartnerId(value = it) }
-                    ?: ContentPartnerId(value = "nope"),
+                    ?: ContentPartnerId(value = document.source.contentPartner.name),
                 name = document.source.contentPartner.name,
                 videoReference = document.source.videoReference
             ),

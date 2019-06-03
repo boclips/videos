@@ -13,7 +13,6 @@ import org.bson.types.ObjectId
 
 // TODO refactor to use javax validation in the first place
 class CreateVideoRequestToVideoConverter {
-
     fun convert(
         createVideoRequest: CreateVideoRequest,
         videoPlayback: VideoPlayback,
@@ -31,8 +30,6 @@ class CreateVideoRequestToVideoConverter {
                 name = contentPartner.name,
                 videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId")
             ),
-            contentPartnerName = getOrThrow(createVideoRequest.provider, "provider"),
-            contentPartnerVideoId = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
             type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             subjects = getOrThrow(createVideoRequest.subjects, "subjects").map { LegacySubject(it) }.toSet(),
