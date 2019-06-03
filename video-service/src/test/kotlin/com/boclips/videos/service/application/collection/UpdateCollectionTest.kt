@@ -9,7 +9,6 @@ import com.boclips.videos.service.presentation.collections.UpdateCollectionReque
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import org.assertj.core.api.Assertions.assertThat
-import org.awaitility.Awaitility
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -90,10 +89,7 @@ class UpdateCollectionTest : AbstractSpringIntegrationTest() {
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
 
-        Awaitility.await().untilAsserted {
-            assertThat(collectionService.search(CollectionSearchQuery("title",1,0))).isNotEmpty
-            assertThat(collectionService.search(CollectionSearchQuery("title",1,0)).first().id).isEqualTo(collectionId)
-        }
+        assertThat(collectionService.search(CollectionSearchQuery("title", 1, 0)).first().id).isEqualTo(collectionId)
     }
 
     @Test
