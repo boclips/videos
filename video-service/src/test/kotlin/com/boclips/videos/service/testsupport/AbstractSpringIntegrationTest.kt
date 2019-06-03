@@ -3,8 +3,9 @@ package com.boclips.videos.service.testsupport
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
+import com.boclips.search.service.infrastructure.AbstractInMemorySearchService
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -54,7 +55,7 @@ import java.util.UUID
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
-    lateinit var fakeVideoSearchService: InMemoryVideoSearchService
+    lateinit var searchIndices: List<AbstractInMemorySearchService<*, *>>
 
     @Autowired
     lateinit var legacySearchService: LegacySearchService
@@ -124,7 +125,7 @@ abstract class AbstractSpringIntegrationTest {
                 }
         }
 
-        fakeVideoSearchService.safeRebuildIndex(emptySequence())
+        searchIndices.forEach { it.clear() }
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
 

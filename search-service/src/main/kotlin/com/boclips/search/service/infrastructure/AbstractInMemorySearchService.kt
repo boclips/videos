@@ -1,8 +1,8 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.ReadSearchService
+import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.model.SearchQuery
 import com.boclips.search.service.domain.model.SortOrder
@@ -51,6 +51,10 @@ abstract class AbstractInMemorySearchService<QUERY : SearchQuery<METADATA>, META
     override fun safeRebuildIndex(videos: Sequence<METADATA>, notifier: ProgressNotifier?) {
         index.clear()
         upsert(videos, notifier)
+    }
+
+    fun clear() {
+        index.clear()
     }
 
     override fun removeFromSearch(videoId: String) {

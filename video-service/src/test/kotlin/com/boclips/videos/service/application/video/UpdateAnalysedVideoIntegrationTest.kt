@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -21,6 +22,9 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoRepository: VideoRepository
+
+    @Autowired
+    lateinit var videoSearchService: InMemoryVideoSearchService
 
     @Test
     fun `uploads captions to Kaltura`() {
@@ -134,7 +138,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
         subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         assertThat(
-            fakeVideoSearchService.search(
+            videoSearchService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         "transcript"

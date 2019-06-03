@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -19,6 +20,9 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoService: VideoService
+
+    @Autowired
+    lateinit var videoSearchService: InMemoryVideoSearchService
 
     @Test
     fun `requesting deletion of an existing video deletes the video`() {
@@ -59,7 +63,7 @@ class DeleteVideosTest : AbstractSpringIntegrationTest() {
         deleteVideos(videoId.value)
 
         assertThat(
-            fakeVideoSearchService.search(
+            videoSearchService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         "Some title"
