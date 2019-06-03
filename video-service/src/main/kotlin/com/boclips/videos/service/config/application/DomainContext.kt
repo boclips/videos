@@ -6,6 +6,8 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoAccessService
@@ -36,6 +38,17 @@ class DomainContext(val mongoClient: MongoClient) {
             contentPartnerRepository,
             videoRepository,
             videoSearchService
+        )
+    }
+
+    @Bean
+    fun collectionService(
+        collectionRepository: CollectionRepository,
+        collectionSearchService: CollectionSearchService
+    ): CollectionService {
+        return CollectionService(
+            collectionRepository,
+            collectionSearchService
         )
     }
 

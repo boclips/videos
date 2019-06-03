@@ -8,7 +8,6 @@ import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 import org.springframework.stereotype.Component
 
-@Component
 class CollectionService(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService
