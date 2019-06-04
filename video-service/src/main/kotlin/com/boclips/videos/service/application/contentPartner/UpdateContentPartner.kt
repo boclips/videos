@@ -23,19 +23,21 @@ class UpdateContentPartner(
             )
         )
 
-        updateVideosAgeRange(contentPartner, ageRange)
+        updateContentPartnerInVideos(contentPartner)
 
         return contentPartner
     }
 
-    private fun updateVideosAgeRange(
-        contentPartner: ContentPartner,
-        ageRange: AgeRange
+    private fun updateContentPartnerInVideos(
+        contentPartner: ContentPartner
     ) {
         val videosAffected = videoRepository.findByContentPartner(contentPartnerName = contentPartner.name)
 
-        val commands = videosAffected.map { video ->
-            VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = ageRange)
+        val commands = videosAffected.flatMap { video ->
+            listOf(
+                VideoUpdateCommand.ReplaceContentPartner(videoId = video.videoId, contentPartner = contentPartner),
+                VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange)
+            )
         }
 
         videoRepository.bulkUpdate(commands)

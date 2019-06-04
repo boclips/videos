@@ -13,7 +13,7 @@ class GetContentPartner(
     operator fun invoke(contentPartnerId: String?): ContentPartnerResource {
         val id = getOrThrow(contentPartnerId, "contentPartnerId")
 
-        val contentPartner = contentPartnerRepository.find(ContentPartnerId(id))
+        val contentPartner = contentPartnerRepository.findById(ContentPartnerId(id))
             ?: throw ResourceNotFoundApiException(
                 error = "Content partner not found",
                 message = "No content partner found for this id: $contentPartnerId"

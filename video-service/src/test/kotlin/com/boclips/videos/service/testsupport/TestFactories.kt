@@ -69,8 +69,11 @@ object TestFactories {
         searchable: Boolean = true,
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         videoOwner: VideoOwner = VideoOwner(
-            contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
-            name = contentPartnerName,
+            ContentPartner(
+                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+                name = contentPartnerName,
+                ageRange = ageRange
+            ),
             videoReference = contentPartnerVideoId
         )
     ): Video {

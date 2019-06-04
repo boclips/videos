@@ -17,6 +17,8 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
+import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.VideoDocumentConverter
@@ -182,6 +184,10 @@ class MongoVideoRepository(
                     VideoDocument::ageRangeMax,
                     updateCommand.ageRange.max()
                 )
+            )
+            is VideoUpdateCommand.ReplaceContentPartner -> set(
+                VideoDocument::source / SourceDocument::contentPartner,
+                ContentPartnerDocumentConverter.toContentPartnerDocument(updateCommand.contentPartner)
             )
         }
     }

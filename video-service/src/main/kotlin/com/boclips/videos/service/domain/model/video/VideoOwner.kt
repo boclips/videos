@@ -1,9 +1,8 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 
 data class VideoOwner(
-    val contentPartnerId: ContentPartnerId,
-    val name: String,
+    val contentPartner: ContentPartner,
     val videoReference: String
 )

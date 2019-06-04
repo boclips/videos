@@ -26,8 +26,7 @@ class CreateVideoRequestToVideoConverter {
             keywords = getOrThrow(createVideoRequest.keywords, "keywords"),
             releasedOn = getOrThrow(createVideoRequest.releasedOn, "releasedOn"),
             owner = VideoOwner(
-                contentPartnerId = contentPartner.contentPartnerId,
-                name = contentPartner.name,
+                contentPartner = contentPartner,
                 videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId")
             ),
             type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),

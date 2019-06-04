@@ -61,13 +61,14 @@ class VideoService(
     }
 
     fun create(videoToBeCreated: Video): Video {
-        var ageRange = videoToBeCreated.ageRange
+        var newAgeRange = videoToBeCreated.ageRange
 
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
-            contentPartnerRepository.findByName(videoToBeCreated.owner.name)
-                ?.apply { ageRange = this.ageRange ?: UnboundedAgeRange }
+            contentPartnerRepository.findByName(videoToBeCreated.owner.contentPartner.name)
+                ?.apply { newAgeRange = this.ageRange }
         }
-        return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
+
+        return videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
     }
 }
 

@@ -24,7 +24,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoService: VideoService
 
     @Test
-    fun `updating a content partner`() {
+    fun `updating a content partner name`() {
         val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
@@ -44,13 +44,14 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val deletedContentPartner = contentPartnerRepository.findByName(contentPartnerName = "My content partner")
         assertThat(deletedContentPartner).isNull()
 
-        val updatedContentPartner =
-            contentPartnerRepository.findByName(contentPartnerName = "My better content partner")
+        val updatedContentPartner = contentPartnerRepository.findByName(
+            contentPartnerName = "My better content partner"
+        )
         assertThat(updatedContentPartner!!.name).isEqualTo("My better content partner")
     }
 
     @Test
-    fun `updating a content partner and age ranges of videos`() {
+    fun `updating age ranges of videos`() {
         val videoId = saveVideo(
             contentProvider = "My better content partner",
             ageRange = UnboundedAgeRange
@@ -65,8 +66,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request =
-            TestFactories.createContentPartnerRequest(
+            request = TestFactories.createContentPartnerRequest(
                 name = "My better content partner",
                 ageRange = AgeRangeRequest(min = 9, max = 14)
             )

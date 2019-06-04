@@ -11,7 +11,7 @@ class ContentEnrichers {
 
             return when {
                 contentPartnersExcluded.any {
-                    video.owner.name.equals(
+                    video.owner.contentPartner.name.equals(
                         other = it,
                         ignoreCase = true
                     )

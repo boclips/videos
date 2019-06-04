@@ -27,7 +27,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             TestFactories.createContentPartner()
         )
 
-        val retrievedAsset = mongoContentPartnerRespository.find(originalContentPartner.contentPartnerId)
+        val retrievedAsset = mongoContentPartnerRespository.findById(originalContentPartner.contentPartnerId)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
     }
@@ -63,8 +63,8 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         val updatedContentPartner = mongoContentPartnerRespository.findByName(contentPartnerName = "New name")!!
 
-        assertThat(updatedContentPartner.ageRange!!.min()).isEqualTo(9)
-        assertThat(updatedContentPartner.ageRange!!.max()).isEqualTo(16)
+        assertThat(updatedContentPartner.ageRange.min()).isEqualTo(9)
+        assertThat(updatedContentPartner.ageRange.max()).isEqualTo(16)
 
         assertThat(mongoContentPartnerRespository.findByName(originalContentPartner.name)).isNull()
     }
@@ -73,7 +73,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `creates a new content partner on an update if no content partner matches the id`() {
         val contentPartner = mongoContentPartnerRespository.update(TestFactories.createContentPartner())
 
-        assertThat(mongoContentPartnerRespository.find(contentPartner.contentPartnerId)).isNotNull()
+        assertThat(mongoContentPartnerRespository.findById(contentPartner.contentPartnerId)).isNotNull()
     }
 
     @Test

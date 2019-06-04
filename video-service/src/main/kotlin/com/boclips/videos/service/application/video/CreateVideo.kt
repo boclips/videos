@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -98,7 +99,7 @@ class CreateVideo(
             val contentPartner = ContentPartner(
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                 name = provider,
-                ageRange = null
+                ageRange = UnboundedAgeRange
             )
 
             return contentPartnerRepository.create(contentPartner)

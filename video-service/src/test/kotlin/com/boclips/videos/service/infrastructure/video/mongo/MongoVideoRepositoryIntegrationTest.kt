@@ -399,7 +399,11 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("description", "Ain't no video like this one")
                         .append(
                             "source", Document()
-                                .append("contentPartner", Document().append("name", "cp-name"))
+                                .append(
+                                    "contentPartner", Document()
+                                        .append("name", "cp-name")
+                                        .append("_id", ObjectId())
+                                )
                                 .append("videoReference", "ref")
                         )
                         .append("playback", Document().append("id", "some-id").append("type", "KALTURA"))
@@ -431,7 +435,11 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("description", "Ain't no video like this one")
                         .append(
                             "source", Document()
-                                .append("contentPartner", Document().append("name", "cp-name"))
+                                .append(
+                                    "contentPartner", Document()
+                                        .append("name", "cp-name")
+                                        .append("_id", ObjectId())
+                                )
                                 .append("videoReference", "ref")
                         )
                         .append(

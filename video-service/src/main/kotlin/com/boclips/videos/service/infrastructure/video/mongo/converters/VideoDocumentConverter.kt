@@ -2,12 +2,13 @@ package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoOwner
-import com.boclips.videos.service.infrastructure.video.mongo.ContentPartnerDocument
+import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
 import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
@@ -24,8 +25,10 @@ object VideoDocumentConverter {
             description = video.description,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
-                    name = video.owner.name,
-                    id = video.owner.contentPartnerId.value
+                    id = ObjectId(video.owner.contentPartner.contentPartnerId.value),
+                    name = video.owner.contentPartner.name,
+                    ageRangeMin = video.owner.contentPartner.ageRange.min(),
+                    ageRangeMax = video.owner.contentPartner.ageRange.max()
                 ),
                 videoReference = video.owner.videoReference
             ),
@@ -50,9 +53,14 @@ object VideoDocumentConverter {
             title = document.title,
             description = document.description,
             owner = VideoOwner(
-                contentPartnerId = document.source.contentPartner.id?.let { ContentPartnerId(value = it) }
-                    ?: ContentPartnerId(value = document.source.contentPartner.name),
-                name = document.source.contentPartner.name,
+                contentPartner = ContentPartner(
+                    contentPartnerId = ContentPartnerId(value = document.source.contentPartner.id.toHexString()),
+                    name = document.source.contentPartner.name,
+                    ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
+                        min = document.ageRangeMin,
+                        max = document.ageRangeMax
+                    ) else AgeRange.unbounded()
+                ),
                 videoReference = document.source.videoReference
             ),
             playback = PlaybackConverter.toPlayback(document.playback),

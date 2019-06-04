@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -8,6 +9,7 @@ import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoOwner
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.Locale
@@ -22,8 +24,11 @@ class VideoDocumentConverterTest {
             contentPartnerName = "the contentPartner",
             contentPartnerVideoId = "the contentPartnerVideoId",
             videoOwner = VideoOwner(
-                contentPartnerId = ContentPartnerId(value = "test"),
-                name = "Owner-123",
+                contentPartner = ContentPartner(
+                    contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+                    name = "Some name",
+                    ageRange = AgeRange.bounded(10, 17)
+                ),
                 videoReference = "video-123"
             ),
             type = LegacyVideoType.NEWS,
