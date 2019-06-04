@@ -21,6 +21,8 @@ import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
+import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
+import com.boclips.videos.service.application.video.ClassifyVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideoTranscript
@@ -209,6 +211,16 @@ class ApplicationContext(
     @Bean
     fun analyseContentPartnerVideos(): AnalyseContentPartnerVideos {
         return AnalyseContentPartnerVideos(videoRepository, analyseVideo())
+    }
+
+    @Bean
+    fun classifyVideo(): ClassifyVideo {
+        return ClassifyVideo(videoService, topics)
+    }
+
+    @Bean
+    fun classifyContentPartnerVideos(): ClassifyContentPartnerVideos {
+        return ClassifyContentPartnerVideos(videoRepository, classifyVideo())
     }
 
     @Bean

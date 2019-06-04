@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.exceptions.VideoNotAnalysableExcep
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
+import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import mu.KLogging
@@ -42,7 +43,8 @@ class AdminController(
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
     private val requestVideoPlaybackUpdate: RequestVideoPlaybackUpdate,
     private val analyseVideo: AnalyseVideo,
-    private val analyseContentPartnerVideos: AnalyseContentPartnerVideos
+    private val analyseContentPartnerVideos: AnalyseContentPartnerVideos,
+    private val classifyContentPartnerVideos: ClassifyContentPartnerVideos
 ) {
     companion object : KLogging()
 
@@ -85,6 +87,12 @@ class AdminController(
         } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
+        return ResponseEntity(HttpStatus.ACCEPTED)
+    }
+
+    @PostMapping("/classify_videos")
+    fun postClassifyVideos(@RequestParam contentPartner: String): ResponseEntity<Void> {
+        classifyContentPartnerVideos(contentPartner)
         return ResponseEntity(HttpStatus.ACCEPTED)
     }
 

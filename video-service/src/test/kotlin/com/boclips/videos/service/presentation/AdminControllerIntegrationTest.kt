@@ -141,11 +141,33 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `analyse content partner videos returns 403 when user is not allowed`() {
-        saveVideo(contentProvider = "Ted")
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
         val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `classify content partner videos publishes events`() {
+        saveVideo(contentProvider = "AContentPartner", title = "matrix multiplication")
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asOperator())
+            .andExpect(MockMvcResultMatchers.status().isAccepted)
+
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+
+        assertThat(message).isNotNull
+        assertThat(message.payload.toString()).contains("matrix multiplication")
+    }
+
+    @Test
+    fun `classify content partner videos returns 403 when user is not allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asTeacher())
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
         assertThat(message).isNull()
     }
