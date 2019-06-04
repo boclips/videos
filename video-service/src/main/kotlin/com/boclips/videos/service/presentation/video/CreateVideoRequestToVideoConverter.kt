@@ -8,7 +8,6 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoOwner
 import org.bson.types.ObjectId
 
 // TODO refactor to use javax validation in the first place
@@ -25,10 +24,8 @@ class CreateVideoRequestToVideoConverter {
             description = getOrThrow(createVideoRequest.description, "description"),
             keywords = getOrThrow(createVideoRequest.keywords, "keywords"),
             releasedOn = getOrThrow(createVideoRequest.releasedOn, "releasedOn"),
-            owner = VideoOwner(
-                contentPartner = contentPartner,
-                videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId")
-            ),
+            contentPartner = contentPartner,
+            videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
             type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             subjects = getOrThrow(createVideoRequest.subjects, "subjects").map { LegacySubject(it) }.toSet(),

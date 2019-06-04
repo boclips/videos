@@ -27,7 +27,6 @@ import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoOwner
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
@@ -68,14 +67,12 @@ object TestFactories {
         topics: Set<Topic> = emptySet(),
         searchable: Boolean = true,
         ageRange: AgeRange = AgeRange.bounded(5, 12),
-        videoOwner: VideoOwner = VideoOwner(
-            ContentPartner(
-                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
-                name = contentPartnerName,
-                ageRange = ageRange
-            ),
-            videoReference = contentPartnerVideoId
-        )
+        contentPartner: ContentPartner = ContentPartner(
+            contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+            name = contentPartnerName,
+            ageRange = ageRange
+        ),
+        videoReference: String = contentPartnerVideoId
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -84,7 +81,6 @@ object TestFactories {
             description = description,
             keywords = keywords,
             releasedOn = releasedOn,
-            owner = videoOwner,
             type = type,
             legalRestrictions = legalRestrictions,
             subjects = subjects,
@@ -92,7 +88,9 @@ object TestFactories {
             transcript = transcript,
             topics = topics,
             searchable = searchable,
-            ageRange = ageRange
+            ageRange = ageRange,
+            contentPartner = contentPartner,
+            videoReference = videoReference
         )
     }
 

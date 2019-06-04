@@ -1,19 +1,20 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoOwner
 import java.time.LocalDate
 import java.util.Locale
 
 data class Video(
     val videoId: VideoId,
     val playback: VideoPlayback,
-    val owner: VideoOwner,
+    val contentPartner: ContentPartner,
+    val videoReference: String,
     val title: String,
     val description: String,
     val keywords: List<String>,
@@ -36,7 +37,7 @@ data class Video(
     }
 
     override fun toString(): String {
-        return "Video(videoId=$videoId, title='$title', contentPartnerName='${owner.contentPartner.name}')"
+        return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}')"
     }
 
     override fun equals(other: Any?): Boolean {

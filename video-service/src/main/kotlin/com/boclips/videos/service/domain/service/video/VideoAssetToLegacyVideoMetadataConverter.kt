@@ -11,8 +11,8 @@ object VideoToLegacyVideoMetadataConverter {
             description = video.description,
             keywords = video.keywords,
             duration = video.playback.duration,
-            contentPartnerName = video.owner.contentPartner.name,
-            contentPartnerVideoId = video.owner.videoReference,
+            contentPartnerName = video.contentPartner.name,
+            contentPartnerVideoId = video.videoReference,
             releaseDate = video.releasedOn,
             videoTypeTitle = video.type.title
         )

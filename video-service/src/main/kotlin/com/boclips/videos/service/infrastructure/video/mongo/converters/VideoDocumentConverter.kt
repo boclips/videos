@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoOwner
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
@@ -25,12 +24,12 @@ object VideoDocumentConverter {
             description = video.description,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
-                    id = ObjectId(video.owner.contentPartner.contentPartnerId.value),
-                    name = video.owner.contentPartner.name,
-                    ageRangeMin = video.owner.contentPartner.ageRange.min(),
-                    ageRangeMax = video.owner.contentPartner.ageRange.max()
+                    id = ObjectId(video.contentPartner.contentPartnerId.value),
+                    name = video.contentPartner.name,
+                    ageRangeMin = video.contentPartner.ageRange.min(),
+                    ageRangeMax = video.contentPartner.ageRange.max()
                 ),
-                videoReference = video.owner.videoReference
+                videoReference = video.videoReference
             ),
             playback = PlaybackConverter.toDocument(video.playback),
             legacy = LegacyDocument(type = video.type.name),
@@ -52,17 +51,15 @@ object VideoDocumentConverter {
             videoId = VideoId(document.id.toHexString()),
             title = document.title,
             description = document.description,
-            owner = VideoOwner(
-                contentPartner = ContentPartner(
-                    contentPartnerId = ContentPartnerId(value = document.source.contentPartner.id.toHexString()),
-                    name = document.source.contentPartner.name,
-                    ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
-                        min = document.ageRangeMin,
-                        max = document.ageRangeMax
-                    ) else AgeRange.unbounded()
-                ),
-                videoReference = document.source.videoReference
+            contentPartner = ContentPartner(
+                contentPartnerId = ContentPartnerId(value = document.source.contentPartner.id.toHexString()),
+                name = document.source.contentPartner.name,
+                ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
+                    min = document.ageRangeMin,
+                    max = document.ageRangeMax
+                ) else AgeRange.unbounded()
             ),
+            videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
             type = LegacyVideoType.valueOf(document.legacy.type),
             keywords = document.keywords,
