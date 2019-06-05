@@ -10,7 +10,7 @@ import org.elasticsearch.rest.RestStatus
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class ESVideoWriteSearchServiceTest : EmbeddedElasticSearchIntegrationTest() {
+class ESVideoWriteSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     lateinit var searchSearchServiceVideo: ESVideoWriteSearchService
     lateinit var client: RestHighLevelClient
 
