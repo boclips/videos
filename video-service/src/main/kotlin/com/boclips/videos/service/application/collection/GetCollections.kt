@@ -22,8 +22,10 @@ class GetCollections(
     private val collectionResourceFactory: CollectionResourceFactory
 ) {
     operator fun invoke(collectionFilter: CollectionFilter): Page<CollectionResource> {
-        val pageRequest =
-            PageRequest(collectionFilter.pageNumber, collectionFilter.pageSize)
+        val pageRequest = PageRequest(
+            page = collectionFilter.pageNumber,
+            size = collectionFilter.pageSize
+        )
 
         if (requiresTextSearching(collectionFilter)) {
             return collectionService.search(
@@ -33,13 +35,11 @@ class GetCollections(
                     collectionFilter.pageNumber
                 )
             ).let {
-                assemblePage(
-                    collectionFilter, PageInfo(false), it
-                )
+                assemblePage(collectionFilter = collectionFilter, pageInfo = PageInfo(false), collections = it)
             }
         }
 
-        return fetchByVisibility(collectionFilter, pageRequest)
+        return fetchByVisibility(collectionFilter = collectionFilter, pageRequest = pageRequest)
             .let { collection -> assemblePage(collectionFilter, collection.pageInfo, collection.elements) }
     }
 

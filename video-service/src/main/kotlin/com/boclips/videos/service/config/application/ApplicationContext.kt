@@ -8,6 +8,7 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
+import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -39,6 +40,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
@@ -62,6 +64,7 @@ class ApplicationContext(
     val videoService: VideoService,
     val videoRepository: VideoRepository,
     val videoSearchService: VideoSearchService,
+    val collectionSearchService: CollectionSearchService,
     val playbackRepository: PlaybackRepository,
     val legacySearchService: LegacySearchService,
     val collectionService: CollectionService,
@@ -196,6 +199,11 @@ class ApplicationContext(
     @Bean
     fun rebuildSearchIndex(): RebuildVideoIndex {
         return RebuildVideoIndex(videoRepository, videoSearchService)
+    }
+
+    @Bean
+    fun rebuildCollectionSearchIndex(): RebuildCollectionIndex {
+        return RebuildCollectionIndex(collectionRepository, collectionSearchService)
     }
 
     @Bean

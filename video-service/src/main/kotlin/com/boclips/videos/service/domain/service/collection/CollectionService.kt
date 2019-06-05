@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
-import org.springframework.stereotype.Component
 
 class CollectionService(
     private val collectionRepository: CollectionRepository,
@@ -21,11 +20,11 @@ class CollectionService(
             windowSize = query.pageSize
         )
         val collectionIds = collectionSearchService.search(searchRequest).map { CollectionId(value = it) }
-        val collection = collectionRepository.findAll(collectionIds)
+        val collections = collectionRepository.findAll(collectionIds)
 
-        logger.info { "Returning ${collection.size} collections for query $query" }
+        logger.info { "Returning ${collections.size} collections for query $query" }
 
-        return collection
+        return collections
     }
 
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {
