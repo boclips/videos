@@ -6,14 +6,18 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.infrastructure.collections.InMemoryCollectionSearchService
+import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class TestCollectionSearchService(query: ReadSearchService<CollectionMetadata, CollectionQuery>, admin: WriteSearchService<CollectionMetadata>) :
+class TestCollectionSearchService(
+    query: ReadSearchService<CollectionMetadata, CollectionQuery>,
+    admin: WriteSearchService<CollectionMetadata>
+) :
     CollectionSearchServiceAdapter<String>(query, admin) {
     override fun convert(document: String): CollectionMetadata {
-        return CollectionMetadata(
+        return SearchableCollectionMetadataFactory.create(
             id = document.substring(0, 1).toUpperCase(),
             title = document
         )
@@ -38,9 +42,10 @@ class CollectionSearchServiceAdapterTest {
 
         val result = searchService.search(
             PaginatedSearchRequest(
-            CollectionQuery(
-                "hello"
-            ), 0, 1)
+                CollectionQuery(
+                    "hello"
+                ), 0, 1
+            )
         ).first()
 
         assertThat(result).isEqualTo("H")
@@ -50,10 +55,13 @@ class CollectionSearchServiceAdapterTest {
     fun `upsert many collections makes an insert`() {
         searchService.upsert(sequenceOf("one", "two"))
 
-        val result = searchService.search(PaginatedSearchRequest(
-            CollectionQuery(
-                "two"
-            ), 0, 1)).first()
+        val result = searchService.search(
+            PaginatedSearchRequest(
+                CollectionQuery(
+                    "two"
+                ), 0, 1
+            )
+        ).first()
 
         assertThat(result).isEqualTo("T")
     }
@@ -63,10 +71,15 @@ class CollectionSearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.safeRebuildIndex(emptySequence())
 
-        assertThat(searchService.search(PaginatedSearchRequest(
-            CollectionQuery(
-                "hello"
-            ), 0, 1))).isEmpty()
+        assertThat(
+            searchService.search(
+                PaginatedSearchRequest(
+                    CollectionQuery(
+                        "hello"
+                    ), 0, 1
+                )
+            )
+        ).isEmpty()
     }
 
     @Test
@@ -81,9 +94,14 @@ class CollectionSearchServiceAdapterTest {
         searchService.upsert(sequenceOf("hello"))
         searchService.removeFromSearch("H")
 
-        assertThat(searchService.search(PaginatedSearchRequest(
-            CollectionQuery(
-                "hello"
-            ), 0, 1))).isEmpty()
+        assertThat(
+            searchService.search(
+                PaginatedSearchRequest(
+                    CollectionQuery(
+                        "hello"
+                    ), 0, 1
+                )
+            )
+        ).isEmpty()
     }
 }

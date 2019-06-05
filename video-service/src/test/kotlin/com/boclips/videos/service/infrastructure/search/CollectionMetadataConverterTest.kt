@@ -1,0 +1,29 @@
+package com.boclips.videos.service.infrastructure.search
+
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.testsupport.TestFactories
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+class CollectionMetadataConverterTest {
+    @Test
+    fun convert() {
+        val collection = TestFactories.createCollection(
+            id = CollectionId(value = "test-id"),
+            title = "Some Collection Title",
+            owner = "12903012381",
+            isPublic = false,
+            bookmarks = setOf(UserId(value = "userId1"))
+        )
+
+        val collectionMetadata = CollectionMetadataConverter.convert(collection)
+
+        assertThat(collectionMetadata.id).isEqualTo("test-id")
+        assertThat(collectionMetadata.title).isEqualTo("Some Collection Title")
+        assertThat(collectionMetadata.owner).isEqualTo("12903012381")
+        assertThat(collectionMetadata.visibility).isEqualTo(CollectionVisibility.PRIVATE)
+        assertThat(collectionMetadata.bookmarkedByUsers).containsExactly("userId1")
+    }
+}

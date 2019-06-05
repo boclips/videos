@@ -1,6 +1,7 @@
 package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
@@ -33,14 +34,16 @@ object SearchableVideoMetadataFactory {
     )
 }
 
-
 object SearchableCollectionMetadataFactory {
     fun create(
         id: String,
         title: String = ""
     ) = CollectionMetadata(
         id = id,
-        title = title
+        title = title,
+        visibility = CollectionVisibility.PRIVATE,
+        owner = "some-user-id",
+        bookmarkedByUsers = setOf("some-user-id")
     )
 }
 
