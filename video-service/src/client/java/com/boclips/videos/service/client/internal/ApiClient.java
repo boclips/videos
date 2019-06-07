@@ -3,7 +3,6 @@ package com.boclips.videos.service.client.internal;
 import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
-import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
 import com.boclips.videos.service.client.internal.resources.*;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -13,7 +12,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -88,7 +86,7 @@ public class ApiClient implements VideoServiceClient {
     public List<Collection> getMyCollections(PageSpec pageSpec) {
         this.linkTemplate = getLinks();
         Link collectionsLink = linkTemplate.get_links().getMyCollections();
-        if(collectionsLink == null) {
+        if (collectionsLink == null) {
             throw new UnsupportedOperationException("No 'my collections' link. Check user roles.");
         }
         return getCollections(uri(collectionsLink), pageSpec);
@@ -98,14 +96,14 @@ public class ApiClient implements VideoServiceClient {
     public List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec) {
         this.linkTemplate = getLinks();
         Link collectionsLink = linkTemplate.get_links().getCollectionsByOwner();
-        if(collectionsLink == null) {
+        if (collectionsLink == null) {
             throw new UnsupportedOperationException("No 'collections by owner' link. Check user roles.");
         }
         return getCollections(uri(collectionsLink).queryParam("owner", owner), pageSpec);
     }
 
     private List<Collection> getCollections(UriComponentsBuilder uri, PageSpec pageSpec) {
-        if(pageSpec.getPageSize() != null) {
+        if (pageSpec.getPageSize() != null) {
             uri.replaceQueryParam("size", pageSpec.getPageSize());
         }
 
