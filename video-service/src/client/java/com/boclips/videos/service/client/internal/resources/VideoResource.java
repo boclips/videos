@@ -20,7 +20,6 @@ public class VideoResource {
                 .videoId(new VideoId(_links.getSelf().toUri()))
                 .title(title)
                 .description(description)
-                .subjects(subjects)
                 .contentPartnerId(contentPartner)
                 .contentPartnerVideoId("")
                 .build();

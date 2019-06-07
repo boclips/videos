@@ -5,7 +5,6 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId
@@ -28,7 +27,7 @@ class CreateVideoRequestToVideoConverter {
             videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
             type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
-            subjects = getOrThrow(createVideoRequest.subjects, "subjects").map { LegacySubject(it) }.toSet(),
+            subjects = emptySet(),
             language = null,
             transcript = null,
             topics = emptySet(),

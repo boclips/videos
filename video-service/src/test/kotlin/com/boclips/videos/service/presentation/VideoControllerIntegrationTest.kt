@@ -346,8 +346,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
                 "playbackId": "abc1",
-                "playbackProvider": "KALTURA",
-                "subjects": ["Maths"]
+                "playbackProvider": "KALTURA"
             }
         """.trimIndent()
 
@@ -359,7 +358,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get(createdResourceUrl!!).asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.title", equalTo("AP title")))
-            .andExpect(jsonPath("$.subjects", equalTo(listOf("Maths"))))
     }
 
     @Test
@@ -454,89 +452,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `add subjects to an existing video with no subjects`() {
-        val mathsPatch = """{ "subjects": ["Maths", "Physics"] }"""
-
-        val videoId = saveVideo(subjects = emptySet())
-
-        mockMvc.perform(
-            post("/v1/videos/${videoId.value}").asSubjectClassifier()
-                .contentType(MediaType.APPLICATION_JSON).content(mathsPatch)
-        )
-            .andExpect(status().is2xxSuccessful)
-
-        mockMvc.perform(get("/v1/videos/${videoId.value}").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.subjects", equalTo(listOf("Maths", "Physics"))))
-    }
-
-    @Test
-    fun `replace subjects`() {
-        val videoId = saveVideo(subjects = setOf("Maths")).value
-
-        mockMvc.perform(
-            post("/v1/videos/$videoId").asSubjectClassifier()
-                .contentType(MediaType.APPLICATION_JSON).content("""{ "subjects": ["Physics"] }""")
-        )
-            .andExpect(status().is2xxSuccessful)
-
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.subjects", equalTo(listOf("Physics"))))
-    }
-
-    @Test
-    fun `setting subject doesn't destroy the alias`() {
-        val title = "Back to the Future II"
-        val alias = "123123"
-        saveVideo(title = title)
-
-        mongoVideosCollection().findOneAndUpdate(
-            eq("title", title),
-            set("aliases", alias)
-        )
-
-        mockMvc.perform(
-            post("/v1/videos/$alias").asSubjectClassifier()
-                .contentType(MediaType.APPLICATION_JSON).content("""{ "subjects": ["Physics"] }""")
-        )
-            .andExpect(status().is2xxSuccessful)
-
-        mockMvc.perform(get("/v1/videos/$alias").asTeacher())
-            .andExpect(status().isOk)
-    }
-
-    @Test
     fun `other roles are not authorised to add data to a video`() {
         mockMvc.perform(
             post("/v1/videos/99999").asIngestor()
                 .contentType(MediaType.APPLICATION_JSON).content("{}")
         )
             .andExpect(status().isForbidden)
-    }
-
-    @Test
-    fun `it's an error to add data to a nonexistent video with a well-formed ID`() {
-        val mathsPatch = """{ "subjects": ["Maths"] }"""
-
-        mockMvc.perform(
-            post("/v1/videos/${TestFactories.aValidId()}").asSubjectClassifier()
-                .contentType(MediaType.APPLICATION_JSON).content(mathsPatch)
-        )
-            .andExpect(status().isNotFound)
-            .andExpectApiErrorPayload()
-    }
-
-    @Test
-    fun `it's an error to add data for a malformed video ID`() {
-        val mathsPatch = """{ "subjects": ["Maths"] }"""
-
-        mockMvc.perform(
-            post("/v1/videos/not-a-string").asSubjectClassifier()
-                .contentType(MediaType.APPLICATION_JSON).content(mathsPatch)
-        )
-            .andExpect(status().isNotFound)
-            .andExpectApiErrorPayload()
     }
 
     @Test

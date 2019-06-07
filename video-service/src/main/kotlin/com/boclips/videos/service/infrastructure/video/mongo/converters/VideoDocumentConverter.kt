@@ -4,10 +4,10 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
+import com.boclips.videos.service.infrastructure.subject.mongo.converters.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
 import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
@@ -34,7 +34,7 @@ object VideoDocumentConverter {
             playback = PlaybackConverter.toDocument(video.playback),
             legacy = LegacyDocument(type = video.type.name),
             keywords = video.keywords,
-            subjects = video.subjects.map(LegacySubject::name),
+            subjects = video.subjects.map(SubjectDocumentConverter::toSubjectDocument),
             releaseDate = Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             legalRestrictions = video.legalRestrictions,
             language = video.language?.toLanguageTag(),
@@ -63,7 +63,7 @@ object VideoDocumentConverter {
             playback = PlaybackConverter.toPlayback(document.playback),
             type = LegacyVideoType.valueOf(document.legacy.type),
             keywords = document.keywords,
-            subjects = document.subjects.map(::LegacySubject).toSet(),
+            subjects = document.subjects.map(SubjectDocumentConverter::toSubject).toSet(),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             legalRestrictions = document.legalRestrictions,
             language = document.language?.let(Locale::forLanguageTag),

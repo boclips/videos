@@ -3,7 +3,6 @@ package com.boclips.videos.service.client
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
-import com.boclips.videos.service.client.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.testsupport.AbstractVideoServiceClientSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
@@ -126,38 +125,6 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         getClient().create(request)
 
         assertThat(getClient().existsByContentPartnerInfo("irrelevant", "?#&SP-123")).isTrue()
-    }
-
-    @Test
-    fun `tag videos with subjects`() {
-        val id = getClient().create(
-            TestFactories.createCreateVideoRequest(
-                contentProviderId = "ted",
-                contentProviderVideoId = "123",
-                playbackId = "ref-id-123"
-            )
-        )
-
-        getClient().setSubjects(id, setOf("maths", "physics"))
-
-        val video = getClient().get(id)
-        assertThat(video.subjects).containsExactly("maths", "physics")
-    }
-
-    @Test
-    fun `tag videos with subjects throws when video doesn't exist`() {
-        val request = TestFactories.createCreateVideoRequest(
-            contentProviderId = "ted",
-            contentProviderVideoId = "123",
-            playbackId = "ref-id-123"
-        )
-        val id = getClient().create(request)
-
-        val nonExistingId = VideoId(URI(id.uri.toString() + "111"))
-
-        assertThrows<VideoNotFoundException> {
-            getClient().setSubjects(nonExistingId, setOf("maths"))
-        }
     }
 
     @Test

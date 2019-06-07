@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -34,7 +33,7 @@ internal class VideoToResourceConverterTest {
         contentPartnerName = "WeWork",
         contentPartnerVideoId = "111",
         type = LegacyVideoType.TED_TALKS,
-        subjects = setOf(LegacySubject("Maths")),
+        subjects = setOf(TestFactories.createSubject(name = "Maths")),
         legalRestrictions = "None",
         searchable = true,
         ageRange = AgeRange.bounded(min = 5, max = 11)
@@ -47,7 +46,7 @@ internal class VideoToResourceConverterTest {
         contentPartnerVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
         type = LegacyVideoType.OTHER,
-        subjects = setOf(LegacySubject("Biology")),
+        subjects = setOf(TestFactories.createSubject(name = "Biology")),
         legalRestrictions = "Many",
         searchable = false
     )

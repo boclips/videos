@@ -14,6 +14,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.Subject
 import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
@@ -23,7 +24,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -59,7 +59,7 @@ object TestFactories {
         playback: VideoPlayback = createKalturaPlayback(),
         type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = listOf("keyword"),
-        subjects: Set<LegacySubject> = emptySet(),
+        subjects: Set<Subject> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         legalRestrictions: String = "",
         language: Locale? = null,
@@ -93,6 +93,8 @@ object TestFactories {
             videoReference = videoReference
         )
     }
+
+    fun createSubject(id: String = aValidId(), name: String = id): Subject = Subject(id = SubjectId(id), name = name)
 
     fun createMediaEntry(
         id: String = "1",
@@ -157,7 +159,6 @@ object TestFactories {
         videoType: String? = "NEWS",
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
-        subjects: Set<String>? = emptySet(),
         analyseVideo: Boolean = false
     ) = CreateVideoRequest(
         provider = provider,
@@ -170,7 +171,6 @@ object TestFactories {
         videoType = videoType,
         playbackId = playbackId,
         playbackProvider = playbackProvider,
-        subjects = subjects,
         analyseVideo = analyseVideo
     )
 
@@ -263,7 +263,7 @@ object TestFactories {
             .topics(topics)
             .keywords(keywords)
             .transcript(transcript)
-            .captions(TestFactories.createCaptions())
+            .captions(createCaptions())
             .build()
     }
 

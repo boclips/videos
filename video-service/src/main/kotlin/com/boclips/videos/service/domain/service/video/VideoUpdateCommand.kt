@@ -1,16 +1,16 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.collection.Subject
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.Duration
 import java.util.Locale
 
 sealed class VideoUpdateCommand(val videoId: VideoId) {
-    class ReplaceSubjects(videoId: VideoId, val subjects: List<LegacySubject>) : VideoUpdateCommand(videoId)
+    class ReplaceSubjects(videoId: VideoId, val subjects: List<Subject>) : VideoUpdateCommand(videoId)
     class ReplaceDuration(videoId: VideoId, val duration: Duration) : VideoUpdateCommand(videoId)
     class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)
     class MakeSearchable(videoId: VideoId) : VideoUpdateCommand(videoId)

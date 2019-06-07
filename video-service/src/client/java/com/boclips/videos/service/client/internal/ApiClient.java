@@ -61,22 +61,6 @@ public class ApiClient implements VideoServiceClient {
     }
 
     @Override
-    public void setSubjects(VideoId id, Set<String> subjects) {
-        val body = new HashMap<String, Object>();
-        body.put("subjects", subjects);
-        try {
-            restTemplate.postForObject(id.getUri(), body, String.class);
-        } catch (HttpClientErrorException e) {
-            switch (e.getStatusCode()) {
-                case NOT_FOUND:
-                    throw new VideoNotFoundException(id);
-                default:
-                    throw new UnsupportedOperationException(e);
-            }
-        }
-    }
-
-    @Override
     public Video get(VideoId id) {
         return restTemplate.getForObject(id.getUri(), VideoResource.class).toVideo();
     }

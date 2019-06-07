@@ -149,7 +149,6 @@ abstract class AbstractSpringIntegrationTest {
         contentProviderId: String = "content-partner-video-id-${playbackId.value}",
         legacyType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
-        subjects: Set<String> = emptySet(),
         searchable: Boolean = true,
         legalRestrictions: String = "",
         ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11)
@@ -181,7 +180,6 @@ abstract class AbstractSpringIntegrationTest {
                 videoType = legacyType.name,
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
-                subjects = subjects,
                 searchable = searchable,
                 analyseVideo = false,
                 ageRangeMin = ageRange.min(),

@@ -132,19 +132,6 @@ class CreateVideoRequestToVideoConverterTest {
             ).legalRestrictions
         ).isEmpty()
     }
-
-    @Test
-    fun `throws when subjects is null`() {
-        assertThatThrownBy {
-            converter.convert(
-                TestFactories.createCreateVideoRequest(subjects = null),
-                videoPlayback,
-                contentPartner
-            )
-        }
-            .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
-            .hasBoclipsApiErrorMessage("subjects cannot be null")
-    }
 }
 
 private fun AbstractThrowableAssert<*, *>.hasBoclipsApiErrorMessage(s: String) {

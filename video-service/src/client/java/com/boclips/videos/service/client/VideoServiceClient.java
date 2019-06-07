@@ -41,8 +41,6 @@ public interface VideoServiceClient {
 
     Boolean existsByContentPartnerInfo(String contentPartnerId, String contentPartnerVideoId);
 
-    void setSubjects(VideoId id, Set<String> subjects);
-
     Video get(VideoId id);
 
     VideoId rawIdToVideoId(String rawId);

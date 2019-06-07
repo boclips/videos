@@ -3,7 +3,6 @@ package com.boclips.videos.service.infrastructure.video.mongo.converters
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.testsupport.TestFactories
@@ -30,7 +29,7 @@ class VideoDocumentConverterTest {
             videoReference = "video-123",
             type = LegacyVideoType.NEWS,
             keywords = listOf("keyword1", "keyword2"),
-            subjects = setOf(LegacySubject("subject1"), LegacySubject("subject2")),
+            subjects = setOf(TestFactories.createSubject(), TestFactories.createSubject()),
             releasedOn = LocalDate.ofYearDay(2018, 10),
             legalRestrictions = "legal restrictions",
             language = Locale.GERMANY,

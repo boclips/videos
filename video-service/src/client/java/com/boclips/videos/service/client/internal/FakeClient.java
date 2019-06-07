@@ -34,7 +34,6 @@ public class FakeClient implements VideoServiceClient {
                 .videoId(videoId)
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .subjects(request.getSubjects())
                 .contentPartnerId(request.getProvider())
                 .contentPartnerVideoId(request.getProviderVideoId())
                 .build();
@@ -49,14 +48,6 @@ public class FakeClient implements VideoServiceClient {
                 video.getContentPartnerId().equals(contentPartnerId) &&
                         video.getContentPartnerVideoId().equals(contentPartnerVideoId)
         );
-    }
-
-    @Override
-    public void setSubjects(VideoId id, Set<String> subjects) {
-        videos.compute(id, (videoId, video) -> {
-            if (video == null) throw new VideoNotFoundException(id);
-            return video.toBuilder().subjects(subjects).build();
-        });
     }
 
     @Override

@@ -11,7 +11,6 @@ public class Video {
     private final VideoId videoId;
     private final String title;
     private final String description;
-    private final Set<String> subjects;
     private final String contentPartnerId;
     private final String contentPartnerVideoId;
 }

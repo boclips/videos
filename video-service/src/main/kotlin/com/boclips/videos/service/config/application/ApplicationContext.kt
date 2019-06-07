@@ -30,7 +30,6 @@ import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
-import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
@@ -108,11 +107,6 @@ class ApplicationContext(
             legacySearchService,
             analyseVideo
         )
-    }
-
-    @Bean
-    fun updateVideo(): UpdateVideo {
-        return UpdateVideo(videoRepository)
     }
 
     @Bean

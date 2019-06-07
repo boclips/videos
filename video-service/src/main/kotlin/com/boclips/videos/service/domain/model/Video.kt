@@ -1,9 +1,9 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.collection.Subject
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -21,7 +21,7 @@ data class Video(
     val releasedOn: LocalDate,
     val type: LegacyVideoType,
     val legalRestrictions: String,
-    val subjects: Set<LegacySubject>,
+    val subjects: Set<Subject>,
     val topics: Set<Topic>,
     val language: Locale?,
     val transcript: String?,

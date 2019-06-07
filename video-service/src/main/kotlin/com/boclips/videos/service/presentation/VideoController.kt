@@ -4,7 +4,6 @@ import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideos
 import com.boclips.videos.service.application.video.GetVideoTranscript
-import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.SortKey
@@ -39,7 +38,6 @@ class VideoController(
     private val searchVideo: SearchVideo,
     private val deleteVideos: DeleteVideos,
     private val createVideo: CreateVideo,
-    private val updateVideo: UpdateVideo,
     private val bulkUpdateVideo: BulkUpdateVideo,
     private val getVideoTranscript: GetVideoTranscript,
     private val objectMapper: ObjectMapper
@@ -155,12 +153,6 @@ class VideoController(
         return ResponseEntity(HttpHeaders().apply {
             set(HttpHeaders.LOCATION, resource.getLink("self").href)
         }, HttpStatus.CREATED)
-    }
-
-    @PostMapping("/{id}")
-    fun patchOneVideo(@PathVariable("id") id: String?, @RequestBody patchVideoRequest: VideoResource): ResponseEntity<Void> {
-        updateVideo(id, patchVideoRequest)
-        return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
     @PatchMapping

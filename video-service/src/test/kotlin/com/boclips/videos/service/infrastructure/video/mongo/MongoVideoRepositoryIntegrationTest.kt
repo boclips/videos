@@ -5,7 +5,6 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.video.LegacySubject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoFilter
@@ -30,6 +29,9 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mongoVideoRepository: MongoVideoRepository
+
+    val maths = TestFactories.createSubject(name = "Maths")
+    val biology = TestFactories.createSubject(name = "Biology")
 
     @Test
     fun `create a video`() {
@@ -190,19 +192,19 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideo(
                 title = "original title",
-                subjects = setOf(LegacySubject("Maths"))
+                subjects = setOf(maths)
             )
         )
 
         val updatedAsset = mongoVideoRepository.update(
             VideoUpdateCommand.ReplaceSubjects(
                 originalAsset.videoId,
-                listOf(LegacySubject("Biology"))
+                listOf(biology)
             )
         )
 
         assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects")
-        assertThat(updatedAsset.subjects).containsOnly(LegacySubject("Biology"))
+        assertThat(updatedAsset.subjects).containsOnly(biology)
     }
 
     @Test
@@ -243,7 +245,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 playback = TestFactories.createKalturaPlayback(
                     duration = Duration.ofMinutes(1)
                 ),
-                subjects = setOf(LegacySubject("German"))
+                subjects = setOf(maths)
             )
         )
 
@@ -253,7 +255,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 playback = TestFactories.createKalturaPlayback(
                     duration = Duration.ofMinutes(99)
                 ),
-                subjects = setOf(LegacySubject("Maths"))
+                subjects = setOf(maths)
             )
         )
 
@@ -268,7 +270,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             ),
             VideoUpdateCommand.ReplaceSubjects(
                 videoId = originalVideo2.videoId,
-                subjects = listOf(LegacySubject("French"))
+                subjects = listOf(biology)
             ),
             VideoUpdateCommand.ReplaceDuration(
                 videoId = originalVideo2.videoId,
@@ -287,7 +289,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedVideo2).isEqualToIgnoringGivenFields(originalVideo2, "subjects", "duration", "playback")
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
-        assertThat(updatedVideo2.subjects).isEqualTo(setOf(LegacySubject("French")))
+        assertThat(updatedVideo2.subjects).isEqualTo(setOf(biology))
     }
 
     @Test

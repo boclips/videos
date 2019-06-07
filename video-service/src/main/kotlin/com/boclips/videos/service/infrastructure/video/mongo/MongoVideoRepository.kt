@@ -19,6 +19,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
+import com.boclips.videos.service.infrastructure.subject.mongo.converters.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.VideoDocumentConverter
@@ -167,7 +168,7 @@ class MongoVideoRepository(
                 VideoDocument::playback / PlaybackDocument::duration,
                 updateCommand.duration.seconds.toInt()
             )
-            is ReplaceSubjects -> set(VideoDocument::subjects, updateCommand.subjects.map { it.name })
+            is ReplaceSubjects -> set(VideoDocument::subjects, updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument))
             is MakeSearchable -> set(VideoDocument::searchable, true)
             is HideFromSearch -> set(VideoDocument::searchable, false)
             is ReplaceLanguage -> set(VideoDocument::language, updateCommand.language.toLanguageTag())

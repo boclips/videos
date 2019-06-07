@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.mongo
 
+import com.boclips.videos.service.infrastructure.subject.mongo.SubjectDocument
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.util.Date
@@ -12,7 +13,7 @@ data class VideoDocument(
     val playback: PlaybackDocument?,
     val legacy: LegacyDocument,
     val keywords: List<String>,
-    val subjects: List<String>,
+    val subjects: List<SubjectDocument>,
     val releaseDate: Date,
     val legalRestrictions: String,
     val language: String?,
