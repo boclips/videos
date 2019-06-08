@@ -180,7 +180,7 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         addSubject("French")
 
         val subjects = setOf(SubjectId("Math"))
-        val videos = listOf(VideoId(URI.create("hello")))
+        val videos = listOf(TestFactories.createVideoId())
 
         addCollection(Collection.builder().title("first collection").subjects(subjects).videos(videos).build())
         addCollection(Collection.builder().title("second collection").subjects(emptySet()).videos(videos).build())

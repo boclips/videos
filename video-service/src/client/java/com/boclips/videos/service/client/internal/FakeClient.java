@@ -93,7 +93,7 @@ public class FakeClient implements VideoServiceClient {
     }
 
     private String nextId() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 24);
     }
 
     public List<CreateVideoRequest> getAllVideoRequests() {
