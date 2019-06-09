@@ -12,7 +12,6 @@ import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asOperator
-import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -79,6 +78,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofSeconds(56),
             contentProvider = "cp2"
         ).value
+
+        setVideoSubjects(kalturaVideoId, saveSubject("Maths"))
     }
 
     @Test
@@ -92,6 +93,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
             .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp")))
             .andExpect(jsonPath("$._embedded.videos[0].legalRestrictions", equalTo("None")))
+            .andExpect(jsonPath("$._embedded.videos[0].subjects[0]", equalTo("Maths")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
             .andExpect(
@@ -396,8 +398,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
                 "playbackId": "abc1",
-                "playbackProvider": "KALTURA",
-                "subjects": ["Maths"]
+                "playbackProvider": "KALTURA"
             }
         """.trimIndent()
 

@@ -8,11 +8,21 @@ import com.boclips.videos.service.infrastructure.subject.mongo.SubjectDocument
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.bson.types.ObjectId
+import org.litote.kmongo.`in`
 import org.litote.kmongo.getCollection
 
 class MongoSubjectRepository(
     private val mongoClient: MongoClient
 ) : SubjectRepository {
+
+    override fun findByIds(ids: Iterable<String>): List<Subject> {
+        val objectIds = ids.map { ObjectId(it) }
+        return getSubjectCollection()
+                .find(SubjectDocument::id `in` objectIds)
+                .map(this::toSubject)
+                .toList()
+    }
+
     companion object : KLogging() {
         const val collectionName = "subjects"
     }

@@ -18,18 +18,7 @@ import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
-import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
-import com.boclips.videos.service.application.video.AnalyseVideo
-import com.boclips.videos.service.application.video.BuildLegacySearchIndex
-import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
-import com.boclips.videos.service.application.video.ClassifyVideo
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideos
-import com.boclips.videos.service.application.video.GetVideoTranscript
-import com.boclips.videos.service.application.video.RebuildVideoIndex
-import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
-import com.boclips.videos.service.application.video.UpdateAnalysedVideo
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
@@ -112,6 +101,11 @@ class ApplicationContext(
     @Bean
     fun updateAnalysedVideo(): UpdateAnalysedVideo {
         return UpdateAnalysedVideo(playbackRepository, videoRepository, videoSearchService)
+    }
+
+    @Bean
+    fun updateVideoSubjects(): UpdateVideoSubjects {
+        return UpdateVideoSubjects(videoRepository, subjectRepository)
     }
 
     @Bean

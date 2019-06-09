@@ -2,19 +2,23 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
+import com.boclips.events.types.Subject
+import com.boclips.events.types.video.VideoSubjectClassified
 import com.boclips.kalturaclient.TestKalturaClient
-import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.infrastructure.AbstractInMemorySearchService
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -23,6 +27,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
@@ -46,7 +51,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -101,6 +106,12 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var objectMapper: ObjectMapper
+
+    @Autowired
+    lateinit var createSubject: CreateSubject
+
+    @Autowired
+    lateinit var updateVideoSubjects: UpdateVideoSubjects
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null
@@ -188,6 +199,18 @@ abstract class AbstractSpringIntegrationTest {
         ).content.id
 
         return VideoId(id!!)
+    }
+
+    fun saveSubject(name: String): SubjectId {
+        val subjectId = createSubject(CreateSubjectRequest(name)).id
+        return SubjectId(subjectId)
+    }
+
+    fun setVideoSubjects(videoId: String, vararg subjectIds: SubjectId) {
+        updateVideoSubjects(VideoSubjectClassified.builder()
+                .videoId(videoId)
+                .subjects(subjectIds.map { Subject.builder().id(it.value).build() }.toSet())
+                .build())
     }
 
     fun saveCollection(
