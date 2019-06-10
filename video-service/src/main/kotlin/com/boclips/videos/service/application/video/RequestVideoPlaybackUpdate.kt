@@ -110,21 +110,15 @@ open class RequestVideoPlaybackUpdate(
         }
     }
 
-    private fun updateContentPartnerWithChannelName(playbackProviderMetadata: YoutubeMetadata, video: Video) {
+    private fun updateContentPartnerWithChannelName(playbackProvderMetadata: YoutubeMetadata, video: Video) {
         val contentPartner = createOrUpdateContentPartner(
-            contentPartnerId = ContentPartnerId(playbackProviderMetadata.channelId),
-            provider = playbackProviderMetadata.channelName
+            contentPartnerId = ContentPartnerId(playbackProvderMetadata.channelId),
+            provider = playbackProvderMetadata.channelName
         )
 
         val replaceContentPartnerCommand =
             VideoUpdateCommand.ReplaceContentPartner(videoId = video.videoId, contentPartner = contentPartner)
-
-        try {
-            videoRepository.update(replaceContentPartnerCommand)
-            logger.info { "Updated content partner for video ${video.videoId} with content partner ${contentPartner.name}" }
-        } catch (ex: Exception) {
-            logger.info { "Did not update content partner for ${video.videoId}: $ex" }
-        }
+        videoRepository.update(replaceContentPartnerCommand)
     }
 
     private fun validateSource(source: String?) {
