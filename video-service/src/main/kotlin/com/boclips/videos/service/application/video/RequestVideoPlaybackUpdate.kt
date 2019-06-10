@@ -3,13 +3,9 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.video.VideoPlaybackSyncRequested
-import com.boclips.videos.service.application.contentPartner.CreateOrUpdateContentPartner
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -21,7 +17,6 @@ import org.springframework.messaging.support.MessageBuilder
 open class RequestVideoPlaybackUpdate(
     private val videoRepository: VideoRepository,
     private val playbackRepository: PlaybackRepository,
-    private val createOrUpdateContentPartner: CreateOrUpdateContentPartner,
     private val topics: Topics
 ) {
     companion object : KLogging() {
@@ -87,16 +82,6 @@ open class RequestVideoPlaybackUpdate(
             return
         }
 
-        val playbackProviderMetadata = playbackRepository.getProviderMetadata(actualVideo.playback.id)
-        if (playbackProviderMetadata == null) {
-            logger.info { "Could not find provider metadata information for $potentialVideoToBeUpdated (Playback Id: ${actualVideo.playback.id}" }
-            return
-        }
-
-        if (playbackProviderMetadata.id.type == PlaybackProviderType.YOUTUBE) {
-            updateContentPartnerWithChannelName(playbackProviderMetadata as YoutubeMetadata, actualVideo)
-        }
-
         val replacePlayback = VideoUpdateCommand.ReplacePlayback(
             videoId = actualVideo.videoId,
             playback = playback
@@ -108,17 +93,6 @@ open class RequestVideoPlaybackUpdate(
         } catch (ex: Exception) {
             logger.info { "Did not update playback for video ${actualVideo.videoId}: $ex" }
         }
-    }
-
-    private fun updateContentPartnerWithChannelName(playbackProvderMetadata: YoutubeMetadata, video: Video) {
-        val contentPartner = createOrUpdateContentPartner(
-            contentPartnerId = ContentPartnerId(playbackProvderMetadata.channelId),
-            provider = playbackProvderMetadata.channelName
-        )
-
-        val replaceContentPartnerCommand =
-            VideoUpdateCommand.ReplaceContentPartner(videoId = video.videoId, contentPartner = contentPartner)
-        videoRepository.update(replaceContentPartnerCommand)
     }
 
     private fun validateSource(source: String?) {

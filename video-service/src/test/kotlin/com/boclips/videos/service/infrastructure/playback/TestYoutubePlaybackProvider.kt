@@ -4,15 +4,12 @@ import com.boclips.events.types.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
-import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
-import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import java.time.Duration
 import java.util.Locale
 
 class TestYoutubePlaybackProvider : PlaybackProvider {
     private val playbackById = mutableMapOf<PlaybackId, YoutubePlayback>()
-    private val provderMetadataById = mutableMapOf<PlaybackId, YoutubeMetadata>()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
         return playbackIds
@@ -41,25 +38,6 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
             id = playbackId,
             thumbnailUrl = thumbnailUrl,
             duration = duration
-        )
-
-        return this
-    }
-
-    override fun retrieveProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoProviderMetadata> {
-        return playbackIds.mapNotNull map@{ id ->
-            val youtubeMetadata = provderMetadataById[id] ?: return@map null
-            (id to youtubeMetadata)
-        }.toMap()
-    }
-
-    fun addMetadata(youtubeId: String, channelName: String, channelId: String): TestYoutubePlaybackProvider {
-        val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = youtubeId)
-
-        provderMetadataById[playbackId] = YoutubeMetadata(
-            channelName = channelName,
-            channelId = channelId,
-            id = playbackId
         )
 
         return this

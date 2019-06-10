@@ -22,25 +22,4 @@ internal class ContentPartnerDocumentConverterTest {
 
         assertThat(convertedAsset).isEqualTo(original)
     }
-
-    @Test
-    fun `invalid hex string is treated as a youtube channel name`() {
-        val original = ContentPartner(
-            contentPartnerId = ContentPartnerId("not a hex string"),
-            name = "The grandest content partner there ever lived",
-            ageRange = AgeRange.bounded(5, 11)
-        )
-
-        val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)
-        val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
-
-        assertThat(convertedAsset).isEqualTo(original)
-    }
-
-    @Test
-    fun `validates if an id is from youtube`() {
-        assertThat(ContentPartnerDocumentConverter.isIdFromYoutube(ContentPartnerId(ObjectId.get().toHexString()))).isFalse()
-
-        assertThat(ContentPartnerDocumentConverter.isIdFromYoutube(ContentPartnerId("definitely a youtube id"))).isTrue()
-    }
 }

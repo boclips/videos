@@ -2,10 +2,8 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.infrastructure.contentPartner.MongoContentPartnerRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -25,9 +23,6 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
     @Autowired
     lateinit var videoRepository: MongoVideoRepository
-
-    @Autowired
-    lateinit var contentPartnerRepository: MongoContentPartnerRepository
 
     @BeforeEach
     fun setup() {
@@ -73,39 +68,7 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
     }
 
     @Test
-    fun `subscribes to video playback sync request event and handles youtube request`() {
-        val playbackId = TestFactories.createYoutubePlayback().id
-        val videoId = saveVideo(
-            playbackId = playbackId,
-            contentProvider = "Boclips Teacher"
-        )
-
-        val event = VideoPlaybackSyncRequested.builder().videoId(videoId.value).build()
-
-        fakeYoutubePlaybackProvider.clear()
-        fakeYoutubePlaybackProvider.addVideo(
-            youtubeId = playbackId.value, thumbnailUrl = "123", duration = Duration.ofSeconds(10)
-        )
-        fakeYoutubePlaybackProvider.addMetadata(
-            youtubeId = playbackId.value,
-            channelName = "aChannelName",
-            channelId = "aChannelId"
-        )
-
-        subscriptions
-            .videoPlaybackSyncRequested()
-            .send(MessageBuilder.withPayload(event).build())
-
-        val updatedAsset = videoRepository.find(videoId)!!
-
-        assertThat(updatedAsset.playback).isNotNull
-        assertThat(updatedAsset.playback.duration).isEqualTo(Duration.ofSeconds(10))
-        assertThat(updatedAsset.contentPartner.name).isEqualTo("aChannelName")
-        assertThat(updatedAsset.contentPartner.contentPartnerId.value).isEqualTo("aChannelId")
-    }
-
-    @Test
-    fun `subscribes to playback sync event and can deal with non-existent youtube videos`() {
+    fun `subscribes to playback sync event and can deal with inexistent youtube videos`() {
         val playbackId = TestFactories.createYoutubePlayback().id
         val videoId = saveVideo(
             playbackId = playbackId

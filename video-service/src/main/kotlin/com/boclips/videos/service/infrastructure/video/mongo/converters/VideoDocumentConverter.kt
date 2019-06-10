@@ -2,10 +2,11 @@ package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
-import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.mongo.converters.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
@@ -50,7 +51,14 @@ object VideoDocumentConverter {
             videoId = VideoId(document.id.toHexString()),
             title = document.title,
             description = document.description,
-            contentPartner = ContentPartnerDocumentConverter.toContentPartner(document.source.contentPartner),
+            contentPartner = ContentPartner(
+                contentPartnerId = ContentPartnerId(value = document.source.contentPartner.id.toHexString()),
+                name = document.source.contentPartner.name,
+                ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
+                    min = document.ageRangeMin,
+                    max = document.ageRangeMax
+                ) else AgeRange.unbounded()
+            ),
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
             type = LegacyVideoType.valueOf(document.legacy.type),

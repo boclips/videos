@@ -13,8 +13,6 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
-import com.boclips.videos.service.application.contentPartner.CreateOrFindContentPartner
-import com.boclips.videos.service.application.contentPartner.CreateOrUpdateContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
@@ -89,7 +87,7 @@ class ApplicationContext(
         return CreateVideo(
             videoService,
             videoRepository,
-            createOrFindContentPartner(),
+            contentPartnerRepository,
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             videoSearchService,
@@ -223,7 +221,7 @@ class ApplicationContext(
 
     @Bean
     fun refreshVideoDurations(): RequestVideoPlaybackUpdate {
-        return RequestVideoPlaybackUpdate(videoRepository, playbackRepository, createOrUpdateContentPartner(), topics)
+        return RequestVideoPlaybackUpdate(videoRepository, playbackRepository, topics)
     }
 
     @Bean
@@ -249,16 +247,6 @@ class ApplicationContext(
     @Bean
     fun createContentPartner(): CreateContentPartner {
         return CreateContentPartner(contentPartnerRepository)
-    }
-
-    @Bean
-    fun createOrFindContentPartner(): CreateOrFindContentPartner {
-        return CreateOrFindContentPartner(contentPartnerRepository)
-    }
-
-    @Bean
-    fun createOrUpdateContentPartner(): CreateOrUpdateContentPartner {
-        return CreateOrUpdateContentPartner(contentPartnerRepository)
     }
 
     @Bean

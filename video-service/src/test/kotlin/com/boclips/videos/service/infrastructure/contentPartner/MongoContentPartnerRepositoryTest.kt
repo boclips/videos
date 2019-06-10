@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.contentPartner
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -26,17 +25,6 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun find() {
         val originalContentPartner = mongoContentPartnerRespository.create(
             TestFactories.createContentPartner()
-        )
-
-        val retrievedAsset = mongoContentPartnerRespository.findById(originalContentPartner.contentPartnerId)
-
-        assertThat(retrievedAsset).isEqualTo(originalContentPartner)
-    }
-
-    @Test
-    fun `find by youtube channel name`() {
-        val originalContentPartner = mongoContentPartnerRespository.create(
-            TestFactories.createContentPartner(id = ContentPartnerId(value = "ayoutubechannel"))
         )
 
         val retrievedAsset = mongoContentPartnerRespository.findById(originalContentPartner.contentPartnerId)
@@ -71,7 +59,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             ageRange = AgeRange.bounded(min = 9, max = 16)
         )
 
-        mongoContentPartnerRespository.update(replacementContentPartner)
+        mongoContentPartnerRespository.update(contentPartner = replacementContentPartner)
 
         val updatedContentPartner = mongoContentPartnerRespository.findByName(contentPartnerName = "New name")!!
 
@@ -82,32 +70,10 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
-    fun `update with a youtube id`() {
-        val originalContentPartner = mongoContentPartnerRespository.create(
-            TestFactories.createContentPartner(
-                id = ContentPartnerId(value = "youtubeChannelId"),
-                name = "Old name",
-                ageRange = AgeRange.bounded(min = 11, max = 14)
-            )
-        )
-
-        val replacementContentPartner = TestFactories.createContentPartner(
-            id = originalContentPartner.contentPartnerId,
-            name = "new name"
-        )
-
-        mongoContentPartnerRespository.update(contentPartner = replacementContentPartner)
-
-        val updatedContentPartner = mongoContentPartnerRespository.findByName(contentPartnerName = "new name")
-
-        assertThat(updatedContentPartner).isNotNull
-    }
-
-    @Test
     fun `creates a new content partner on an update if no content partner matches the id`() {
         val contentPartner = mongoContentPartnerRespository.update(TestFactories.createContentPartner())
 
-        assertThat(mongoContentPartnerRespository.findById(contentPartner.contentPartnerId)).isNotNull
+        assertThat(mongoContentPartnerRespository.findById(contentPartner.contentPartnerId)).isNotNull()
     }
 
     @Test

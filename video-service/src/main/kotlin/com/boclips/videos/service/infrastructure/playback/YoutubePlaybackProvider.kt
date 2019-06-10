@@ -4,7 +4,6 @@ import com.boclips.events.types.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
-import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -42,38 +41,11 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
         throw UnsupportedOperationException("YouTube captions not supported")
     }
 
-    override fun retrieveProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubeMetadata> {
-        if (playbackIds.isEmpty()) {
-            return emptyMap()
-        }
-
-        return playbackIds.chunked(IDS_PER_QUERY_LIMIT).flatMap(this::fetchMetadatas).toMap()
-    }
-
     private fun fetchPlaybacks(playbackIds: List<PlaybackId>): List<Pair<PlaybackId, YoutubePlayback>> {
-        val videosListByIdRequest = getVideoListByIds(playbackIds)
-
-        return videosListByIdRequest.execute().items.map(this::convertToPlayback)
-    }
-
-    private fun getVideoListByIds(playbackIds: List<PlaybackId>): YouTube.Videos.List {
         val videosListByIdRequest = youtube.videos().list("snippet,contentDetails")
         videosListByIdRequest.id = playbackIds.joinToString(separator = ",", transform = PlaybackId::value)
-        return videosListByIdRequest
-    }
 
-    private fun fetchMetadatas(playbackIds: List<PlaybackId>): List<Pair<PlaybackId, YoutubeMetadata>> {
-        return getVideoListByIds(playbackIds).execute().items.map(this::convertToProviderMetadata)
-    }
-
-    private fun convertToProviderMetadata(item: Video): Pair<PlaybackId, YoutubeMetadata> {
-        val playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, item.id)
-
-        return playbackId to YoutubeMetadata(
-            id = playbackId,
-            channelId = item.snippet.channelId,
-            channelName = item.snippet.channelTitle
-        )
+        return videosListByIdRequest.execute().items.map(this::convertToPlayback)
     }
 
     private fun convertToPlayback(item: Video): Pair<PlaybackId, YoutubePlayback> {
