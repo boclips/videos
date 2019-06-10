@@ -67,7 +67,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.searchCollections.href",
-                    endsWith("collections?projection=list&page=0&size=30&query={query}")
+                    endsWith("collections?projection=list&page=0&size=30{&query,subjects}")
                 )
             )
             .andExpect(
