@@ -2,8 +2,10 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.infrastructure.contentPartner.MongoContentPartnerRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -23,6 +25,9 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
     @Autowired
     lateinit var videoRepository: MongoVideoRepository
+
+    @Autowired
+    lateinit var contentPartnerRepository: MongoContentPartnerRepository
 
     @BeforeEach
     fun setup() {
@@ -68,7 +73,7 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
     }
 
     @Test
-    fun `subscribes to playback sync event and can deal with inexistent youtube videos`() {
+    fun `subscribes to playback sync event and can deal with non-existent youtube videos`() {
         val playbackId = TestFactories.createYoutubePlayback().id
         val videoId = saveVideo(
             playbackId = playbackId

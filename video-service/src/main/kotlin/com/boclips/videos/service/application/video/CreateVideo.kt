@@ -1,15 +1,12 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.videos.service.application.contentPartner.CreateOrFindContentPartner
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -22,13 +19,12 @@ import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoCo
 import com.boclips.videos.service.presentation.video.VideoResource
 import io.micrometer.core.instrument.Counter
 import mu.KLogging
-import org.bson.types.ObjectId
 import org.springframework.hateoas.Resource
 
 class CreateVideo(
     private val videoService: VideoService,
     private val videoRepository: VideoRepository,
-    private val contentPartnerRepository: ContentPartnerRepository,
+    private val createOrFindContentPartner: CreateOrFindContentPartner,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val videoSearchServiceAdmin: VideoSearchService,
@@ -89,22 +85,5 @@ class CreateVideo(
         if (videoRepository.existsVideoFromContentPartner(contentPartnerName, contentPartnerVideoId)) {
             throw VideoExists(contentPartnerName, contentPartnerVideoId)
         }
-    }
-
-    private fun createOrFindContentPartner(provider: String): ContentPartner {
-        val existingContentPartner = contentPartnerRepository.findByName(provider)
-
-        if (existingContentPartner == null) {
-            logger.info { "Create new content partner $provider" }
-            val contentPartner = ContentPartner(
-                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
-                name = provider,
-                ageRange = UnboundedAgeRange
-            )
-
-            return contentPartnerRepository.create(contentPartner)
-        }
-
-        return existingContentPartner
     }
 }

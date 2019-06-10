@@ -13,12 +13,27 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
+import com.boclips.videos.service.application.contentPartner.CreateOrFindContentPartner
+import com.boclips.videos.service.application.contentPartner.CreateOrUpdateContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
+import com.boclips.videos.service.application.contentPartner.UpdateYoutubeChannelNames
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
+import com.boclips.videos.service.application.video.AnalyseVideo
+import com.boclips.videos.service.application.video.BuildLegacySearchIndex
+import com.boclips.videos.service.application.video.BulkUpdateVideo
+import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
+import com.boclips.videos.service.application.video.ClassifyVideo
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideos
+import com.boclips.videos.service.application.video.GetVideoTranscript
+import com.boclips.videos.service.application.video.RebuildVideoIndex
+import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
+import com.boclips.videos.service.application.video.UpdateAnalysedVideo
+import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
@@ -87,7 +102,7 @@ class ApplicationContext(
         return CreateVideo(
             videoService,
             videoRepository,
-            contentPartnerRepository,
+            createOrFindContentPartner(),
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             videoSearchService,
@@ -225,6 +240,11 @@ class ApplicationContext(
     }
 
     @Bean
+    fun updateYoutubeChannelNames(): UpdateYoutubeChannelNames {
+        return UpdateYoutubeChannelNames(videoRepository, playbackRepository, createOrUpdateContentPartner())
+    }
+
+    @Bean
     fun getSubjects(): GetSubjects {
         return GetSubjects(subjectRepository)
     }
@@ -247,6 +267,16 @@ class ApplicationContext(
     @Bean
     fun createContentPartner(): CreateContentPartner {
         return CreateContentPartner(contentPartnerRepository)
+    }
+
+    @Bean
+    fun createOrFindContentPartner(): CreateOrFindContentPartner {
+        return CreateOrFindContentPartner(contentPartnerRepository)
+    }
+
+    @Bean
+    fun createOrUpdateContentPartner(): CreateOrUpdateContentPartner {
+        return CreateOrUpdateContentPartner(contentPartnerRepository)
     }
 
     @Bean

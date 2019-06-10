@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
+import com.boclips.videos.service.application.contentPartner.UpdateYoutubeChannelNames
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
@@ -44,7 +45,8 @@ class AdminController(
     private val requestVideoPlaybackUpdate: RequestVideoPlaybackUpdate,
     private val analyseVideo: AnalyseVideo,
     private val analyseContentPartnerVideos: AnalyseContentPartnerVideos,
-    private val classifyContentPartnerVideos: ClassifyContentPartnerVideos
+    private val classifyContentPartnerVideos: ClassifyContentPartnerVideos,
+    private val updateYoutubeChannelNames: UpdateYoutubeChannelNames
 ) {
     companion object : KLogging()
 
@@ -66,6 +68,12 @@ class AdminController(
     @PostMapping("/refresh_playbacks")
     fun refreshVideoDurations(@RequestParam source: String?): ResponseEntity<Void> {
         requestVideoPlaybackUpdate(source)
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @PostMapping("/update_youtube_channel_names")
+    fun updateYoutubeChannel(): ResponseEntity<Void> {
+        updateYoutubeChannelNames()
         return ResponseEntity(HttpStatus.OK)
     }
 

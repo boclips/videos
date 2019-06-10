@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -80,6 +81,18 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `refresh bad playback information returns 400`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_playbacks?source=BAD").asOperator())
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    fun `update youtube channel returns 200 when user is allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/update_youtube_channel_names").asOperator())
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `update youtube channel returns 403 when user is not allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/update_youtube_channel_names").asTeacher())
+            .andExpect(status().isForbidden)
     }
 
     @Test

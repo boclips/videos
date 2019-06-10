@@ -7,8 +7,20 @@ import org.bson.types.ObjectId
 
 object ContentPartnerDocumentConverter {
     fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {
+        val id: ObjectId
+        val youtubeChanelId: String?
+
+        if (ObjectId.isValid(contentPartner.contentPartnerId.value)) {
+            id = ObjectId(contentPartner.contentPartnerId.value)
+            youtubeChanelId = null
+        } else {
+            id = ObjectId.get()
+            youtubeChanelId = contentPartner.contentPartnerId.value
+        }
+
         return ContentPartnerDocument(
-            id = ObjectId(contentPartner.contentPartnerId.value),
+            id = id,
+            youtubeChannelId = youtubeChanelId,
             name = contentPartner.name,
             ageRangeMax = contentPartner.ageRange.max(),
             ageRangeMin = contentPartner.ageRange.min()
@@ -16,8 +28,10 @@ object ContentPartnerDocumentConverter {
     }
 
     fun toContentPartner(document: ContentPartnerDocument): ContentPartner {
+        val id = document.youtubeChannelId ?: document.id.toString()
+
         return ContentPartner(
-            contentPartnerId = ContentPartnerId(document.id.toString()),
+            contentPartnerId = ContentPartnerId(id),
             name = document.name,
             ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
                 document.ageRangeMin,
@@ -25,4 +39,7 @@ object ContentPartnerDocumentConverter {
             ) else AgeRange.unbounded()
         )
     }
+
+    fun isIdFromYoutube(contentPartnerId: ContentPartnerId) =
+        !ObjectId.isValid(contentPartnerId.value)
 }
