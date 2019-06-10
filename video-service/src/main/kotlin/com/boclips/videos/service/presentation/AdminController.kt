@@ -91,7 +91,7 @@ class AdminController(
     }
 
     @PostMapping("/classify_videos")
-    fun postClassifyVideos(@RequestParam contentPartner: String): ResponseEntity<Void> {
+    fun postClassifyVideos(@RequestParam contentPartner: String?): ResponseEntity<Void> {
         classifyContentPartnerVideos(contentPartner)
         return ResponseEntity(HttpStatus.ACCEPTED)
     }
