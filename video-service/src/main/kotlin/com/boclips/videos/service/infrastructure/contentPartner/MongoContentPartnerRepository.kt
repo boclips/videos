@@ -11,10 +11,11 @@ import com.mongodb.client.model.UpdateOptions
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.SetTo
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
-import org.litote.kmongo.updateOne
+import org.litote.kmongo.set
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartnerRepository {
     companion object : KLogging() {
@@ -39,7 +40,11 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
             .map { ContentPartnerDocumentConverter.toContentPartner(it) }
 
     override fun findById(contentPartnerId: ContentPartnerId): ContentPartner? {
-        return findByQuery(ContentPartnerDocument::id eq ObjectId(contentPartnerId.value))
+        return if (ContentPartnerDocumentConverter.isIdFromYoutube(contentPartnerId)) {
+            findByQuery(ContentPartnerDocument::youtubeChannelId eq contentPartnerId.value)
+        } else {
+            findByQuery(ContentPartnerDocument::id eq ObjectId(contentPartnerId.value))
+        }
     }
 
     override fun findByName(contentPartnerName: String): ContentPartner? {
@@ -47,9 +52,29 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
     }
 
     override fun update(contentPartner: ContentPartner): ContentPartner {
+        val findContentPartnerByIdBson =
+            if (ContentPartnerDocumentConverter.isIdFromYoutube(contentPartner.contentPartnerId)) {
+                ContentPartnerDocument::youtubeChannelId eq contentPartner.contentPartnerId.value
+            } else {
+                ContentPartnerDocument::id eq ObjectId(contentPartner.contentPartnerId.value)
+            }
+
         getContentPartnerCollection().updateOne(
-            ContentPartnerDocument::id eq ObjectId(contentPartner.contentPartnerId.value),
-            ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner),
+            findContentPartnerByIdBson,
+            set(
+                SetTo(
+                    ContentPartnerDocument::ageRangeMax,
+                    contentPartner.ageRange.max()
+                ),
+                SetTo(
+                    ContentPartnerDocument::ageRangeMin,
+                    contentPartner.ageRange.min()
+                ),
+                SetTo(
+                    ContentPartnerDocument::name,
+                    contentPartner.name
+                )
+            ),
             UpdateOptions().upsert(true)
         )
 

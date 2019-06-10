@@ -5,6 +5,7 @@ import org.bson.types.ObjectId
 
 data class ContentPartnerDocument(
     @BsonId val id: ObjectId,
+    val youtubeChannelId: String? = null,
     val name: String,
     val ageRangeMin: Int?,
     val ageRangeMax: Int?

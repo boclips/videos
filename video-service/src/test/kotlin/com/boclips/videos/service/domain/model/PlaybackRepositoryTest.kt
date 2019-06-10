@@ -4,6 +4,7 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
@@ -26,6 +27,7 @@ class PlaybackRepositoryTest {
         val kalturaPlaybackProvider = KalturaPlaybackProvider(kalturaClient)
         val youtubePlaybackProvider = TestYoutubePlaybackProvider()
         youtubePlaybackProvider.addVideo("yt-123", "thumbnailUrl", Duration.ZERO)
+        youtubePlaybackProvider.addMetadata("yt-123", "aChannelName", "aChannelId")
 
         playbackRepository = PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
     }
@@ -89,5 +91,16 @@ class PlaybackRepositoryTest {
         assertThrows<UnsupportedOperationException> {
             playbackRepository.uploadCaptions(youtubeVideo, createCaptions())
         }
+    }
+
+    @Test
+    fun `can get metadata for youtube channel`() {
+        val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
+
+        val metadata = playbackRepository.getProviderMetadata(youtubeVideo)
+
+        assertThat(metadata!!.id.type).isEqualTo(PlaybackProviderType.YOUTUBE)
+        assertThat((metadata as YoutubeMetadata).channelId).isEqualTo("aChannelId")
+        assertThat((metadata).channelName).isEqualTo("aChannelName")
     }
 }
