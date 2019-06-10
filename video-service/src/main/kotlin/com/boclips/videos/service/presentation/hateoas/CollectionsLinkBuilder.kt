@@ -75,7 +75,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             .queryParam("projection", projection)
             .queryParam("page", page)
             .queryParam("size", size)
-            .toUriString() + "&query={query}", "searchCollections"
+            .toUriString() + "{&query,subjects}", "searchCollections"
     ) }
 
     fun bookmarkedCollections(

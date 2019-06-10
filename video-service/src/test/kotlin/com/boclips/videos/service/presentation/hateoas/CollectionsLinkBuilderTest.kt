@@ -51,7 +51,7 @@ class CollectionsLinkBuilderTest {
             size = 2
         )!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&page=0&size=2&query={query}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&page=0&size=2{&query,subjects}")
         assertThat(link.rel).isEqualTo("searchCollections")
         assertThat(link.isTemplated).isEqualTo(true)
     }
