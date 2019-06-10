@@ -84,9 +84,8 @@ class MongoVideoRepository(
 
     override fun streamAll(filter: VideoFilter, consumer: (Sequence<Video>) -> Unit) {
         val filterBson = when (filter) {
-            is VideoFilter.ContentPartnerIs -> VideoDocument::source.div(SourceDocument::contentPartner).div(
-                ContentPartnerDocument::name
-            ) eq filter.contentPartnerName
+            is VideoFilter.ContentPartnerIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name eq filter.contentPartnerName
+            is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
             VideoFilter.IsSearchable -> VideoDocument::searchable eq true
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA

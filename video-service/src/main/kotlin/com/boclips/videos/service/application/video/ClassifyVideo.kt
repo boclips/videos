@@ -15,7 +15,12 @@ class ClassifyVideo(
     companion object : KLogging()
 
     operator fun invoke(videoId: String) {
-        val video = videoService.getPlayableVideo(videoId = VideoId(value = videoId))
+        val video = try {
+            videoService.getPlayableVideo(videoId = VideoId(value = videoId))
+        } catch(e: Exception) {
+            return
+        }
+
         if(video.type != LegacyVideoType.INSTRUCTIONAL_CLIPS) {
             logger.info { "Ignoring subject classification request of video $videoId because it is not instructional" }
             return

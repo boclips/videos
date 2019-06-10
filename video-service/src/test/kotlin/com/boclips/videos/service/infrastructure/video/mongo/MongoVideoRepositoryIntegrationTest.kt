@@ -117,6 +117,18 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `stream all by legacy type`() {
+        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId(), type = LegacyVideoType.STOCK))
+        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId(), type = LegacyVideoType.INSTRUCTIONAL_CLIPS))
+        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId(), type = LegacyVideoType.NEWS))
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.LegacyTypeIs(LegacyVideoType.INSTRUCTIONAL_CLIPS)) { videos = it.toList() }
+
+        assertThat(videos).hasSize(1)
+    }
+
+    @Test
     fun `stream all by content partner`() {
         mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "TED"))
         mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "Bob"))
