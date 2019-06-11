@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -118,12 +119,29 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `stream all by legacy type`() {
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId(), type = LegacyVideoType.STOCK))
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId(), type = LegacyVideoType.INSTRUCTIONAL_CLIPS))
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId(), type = LegacyVideoType.NEWS))
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                type = LegacyVideoType.STOCK
+            )
+        )
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                type = LegacyVideoType.INSTRUCTIONAL_CLIPS
+            )
+        )
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                type = LegacyVideoType.NEWS
+            )
+        )
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.LegacyTypeIs(LegacyVideoType.INSTRUCTIONAL_CLIPS)) { videos = it.toList() }
+        mongoVideoRepository.streamAll(VideoFilter.LegacyTypeIs(LegacyVideoType.INSTRUCTIONAL_CLIPS)) {
+            videos = it.toList()
+        }
 
         assertThat(videos).hasSize(1)
     }
@@ -391,11 +409,41 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val video3 =
             mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerName = "Reuters"))
 
-        val videos = mongoVideoRepository.findByContentPartner(contentPartnerName = "TED")
+        val videos = mongoVideoRepository.findByContentPartnerName(contentPartnerName = "TED")
 
         assertThat(videos).contains(video1)
         assertThat(videos).contains(video2)
         assertThat(videos).doesNotContain(video3)
+    }
+
+    @Test
+    fun `find videos by content partner youtube id`() {
+        val video1 =
+            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerId = ContentPartnerId("youtube-id-1")))
+        val video2 =
+            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerId = ContentPartnerId("youtube-id-1")))
+
+        mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerId = ContentPartnerId("youtube-id-2")))
+
+        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId("youtube-id-1"))
+
+        assertThat(videos).containsExactly(video1, video2)
+    }
+
+    @Test
+    fun `find videos by content partner id`() {
+        val id = ObjectId.get().toHexString()
+        val video1 =
+            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerId = ContentPartnerId(id)))
+        val video2 =
+            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerId = ContentPartnerId(id)))
+
+        val id2 = ObjectId.get().toHexString()
+        mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerId = ContentPartnerId(id2)))
+
+        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(id))
+
+        assertThat(videos).containsExactly(video1, video2)
     }
 
     @Nested

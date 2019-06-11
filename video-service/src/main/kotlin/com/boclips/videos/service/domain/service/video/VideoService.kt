@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -69,6 +70,10 @@ class VideoService(
         }
 
         return videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
+    }
+
+    fun getPlayableVideos(contentPartnerId: ContentPartnerId): List<Video> {
+        return videoRepository.findByContentPartnerId(contentPartnerId)
     }
 }
 

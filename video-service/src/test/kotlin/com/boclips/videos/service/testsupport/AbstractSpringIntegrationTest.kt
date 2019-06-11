@@ -157,7 +157,8 @@ abstract class AbstractSpringIntegrationTest {
         date: String = "2018-01-01",
         duration: Duration = Duration.ofSeconds(120),
         contentProvider: String = "Reuters",
-        contentProviderId: String = "content-partner-video-id-${playbackId.value}",
+        contentProviderId: String? = null,
+        contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
         legacyType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         searchable: Boolean = true,
@@ -182,7 +183,8 @@ abstract class AbstractSpringIntegrationTest {
         val id = createVideo(
             CreateVideoRequest(
                 provider = contentProvider,
-                providerVideoId = contentProviderId,
+                providerId = contentProviderId,
+                providerVideoId = contentProviderVideoId,
                 title = title,
                 description = description,
                 releasedOn = LocalDate.parse(date),

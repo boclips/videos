@@ -94,7 +94,11 @@ class VideoController(
 
     @PostMapping("/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> {
-        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
+        val videoIds = searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
+            .union(searchVideo.byContentPartnerId(adminSearchRequest?.contentPartnerId ?: ""))
+            .toList()
+
+        return videoIds
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
     }

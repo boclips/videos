@@ -28,7 +28,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `video lookup by provider id returns 200 when video exists`() {
-        saveVideo(contentProvider = "ted", contentProviderId = "abc")
+        saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
         mockMvc.perform(head("/v1/content-partners/ted/videos/abc").asIngestor())
             .andExpect(status().isOk)

@@ -34,6 +34,7 @@ import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
+import com.boclips.videos.service.application.video.search.GetAllVideosByContentPartnerId
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
@@ -90,7 +91,8 @@ class ApplicationContext(
         getVideoById(videoToResourceConverter),
         getAllVideosById(videoToResourceConverter),
         getVideosByQuery(searchQueryConverter, videoToResourceConverter),
-        videoRepository
+        videoRepository,
+        getAllVideosByContentPartnerId(videoToResourceConverter)
     )
 
     @Bean
@@ -103,6 +105,7 @@ class ApplicationContext(
             videoService,
             videoRepository,
             createOrFindContentPartner(),
+            createOrUpdateContentPartner(),
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             videoSearchService,
@@ -297,6 +300,11 @@ class ApplicationContext(
     @Bean
     fun getContentPartners(): GetContentPartners {
         return GetContentPartners(contentPartnerRepository, contentPartnersLinkBuilder)
+    }
+
+    @Bean
+    fun getAllVideosByContentPartnerId(videoToResourceConverter: VideoToResourceConverter): GetAllVideosByContentPartnerId {
+        return GetAllVideosByContentPartnerId(videoService, videoToResourceConverter = videoToResourceConverter)
     }
 
     private fun getVideoById(

@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -68,10 +69,23 @@ class MongoVideoRepository(
         return videoIds.mapNotNull { videoId -> videos[videoId] }
     }
 
-    override fun findByContentPartner(contentPartnerName: String): List<Video> {
+    override fun findByContentPartnerName(contentPartnerName: String): List<Video> {
         return getVideoCollection()
             .find(VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::name) eq contentPartnerName)
             .map(VideoDocumentConverter::toVideo)
+            .toList()
+    }
+
+    override fun findByContentPartnerId(contentPartnerId: ContentPartnerId): List<Video> {
+        val bson = if (ContentPartnerDocumentConverter.isIdFromYoutube(contentPartnerId)) {
+            VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::youtubeChannelId) eq contentPartnerId.value
+        } else {
+            VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::id) eq ObjectId(contentPartnerId.value)
+        }
+
+        return getVideoCollection()
+            .find(bson)
+            .map { VideoDocumentConverter.toVideo(it) }
             .toList()
     }
 
@@ -167,7 +181,10 @@ class MongoVideoRepository(
                 VideoDocument::playback / PlaybackDocument::duration,
                 updateCommand.duration.seconds.toInt()
             )
-            is ReplaceSubjects -> set(VideoDocument::subjects, updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument))
+            is ReplaceSubjects -> set(
+                VideoDocument::subjects,
+                updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument)
+            )
             is MakeSearchable -> set(VideoDocument::searchable, true)
             is HideFromSearch -> set(VideoDocument::searchable, false)
             is ReplaceLanguage -> set(VideoDocument::language, updateCommand.language.toLanguageTag())

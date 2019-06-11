@@ -55,6 +55,7 @@ object TestFactories {
         title: String = "title",
         description: String = "description",
         contentPartnerName: String = "Reuters",
+        contentPartnerId: ContentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
         contentPartnerVideoId: String = "cp-id-$videoId",
         playback: VideoPlayback = createKalturaPlayback(),
         type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
@@ -68,7 +69,7 @@ object TestFactories {
         searchable: Boolean = true,
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         contentPartner: ContentPartner = ContentPartner(
-            contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+            contentPartnerId = contentPartnerId,
             name = contentPartnerName,
             ageRange = ageRange
         ),

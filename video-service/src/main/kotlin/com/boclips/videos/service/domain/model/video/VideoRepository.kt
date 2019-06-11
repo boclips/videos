@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 
 interface VideoRepository {
@@ -14,6 +15,7 @@ interface VideoRepository {
     fun bulkUpdate(commands: List<VideoUpdateCommand>)
     fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): VideoId?
-    fun findByContentPartner(contentPartnerName: String): List<Video>
+    fun findByContentPartnerName(contentPartnerName: String): List<Video>
+    fun findByContentPartnerId(contentPartnerId: ContentPartnerId): List<Video>
 }
 

@@ -4,7 +4,6 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.mongo.converters.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
@@ -22,12 +21,7 @@ object VideoDocumentConverter {
             title = video.title,
             description = video.description,
             source = SourceDocument(
-                contentPartner = ContentPartnerDocument(
-                    id = ObjectId(video.contentPartner.contentPartnerId.value),
-                    name = video.contentPartner.name,
-                    ageRangeMin = video.contentPartner.ageRange.min(),
-                    ageRangeMax = video.contentPartner.ageRange.max()
-                ),
+                contentPartner = ContentPartnerDocumentConverter.toContentPartnerDocument(video.contentPartner),
                 videoReference = video.videoReference
             ),
             playback = PlaybackConverter.toDocument(video.playback),

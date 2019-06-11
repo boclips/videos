@@ -2,11 +2,13 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.videos.service.application.contentPartner.CreateOrFindContentPartner
+import com.boclips.videos.service.application.contentPartner.CreateOrUpdateContentPartner
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -25,6 +27,7 @@ class CreateVideo(
     private val videoService: VideoService,
     private val videoRepository: VideoRepository,
     private val createOrFindContentPartner: CreateOrFindContentPartner,
+    private val createOrUpdateContentPartner: CreateOrUpdateContentPartner,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val videoSearchServiceAdmin: VideoSearchService,
@@ -39,7 +42,13 @@ class CreateVideo(
         ensureVideoIsUnique(createRequest.provider!!, createRequest.providerVideoId!!)
 
         val videoPlayback = findVideoPlayback(createRequest)
-        val contentPartner = createOrFindContentPartner(createRequest.provider)
+        val contentPartner =
+        if (createRequest.providerId != null) {
+            createOrUpdateContentPartner(ContentPartnerId(createRequest.providerId!!), createRequest.provider)
+        } else {
+            createOrFindContentPartner(createRequest.provider)
+        }
+
         val videoToBeCreated = createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner)
         val createdVideo = videoService.create(videoToBeCreated)
 
