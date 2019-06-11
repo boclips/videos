@@ -164,15 +164,10 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `classify content partner videos publishes events`() {
-        saveVideo(contentProvider = "AContentPartner", title = "matrix multiplication")
+        saveVideo(contentProvider = "AContentPartner")
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
-
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
-
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains("matrix multiplication")
     }
 
     @Test
