@@ -73,6 +73,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { Link(
         getCollectionsRoot()
             .queryParam("projection", projection)
+            .queryParam("public", true)
             .queryParam("page", page)
             .queryParam("size", size)
             .toUriString() + "{&query,subjects}", "searchCollections"
