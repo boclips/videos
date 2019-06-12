@@ -371,8 +371,8 @@ object TestFactories {
     }
 
     fun createContentPartnerRequest(
-        name: String = "TED",
-        ageRange: AgeRangeRequest = AgeRangeRequest(min = 5, max = 11)
+        name: String? = "TED",
+        ageRange: AgeRangeRequest? = AgeRangeRequest(min = 5, max = 11)
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
             name = name,

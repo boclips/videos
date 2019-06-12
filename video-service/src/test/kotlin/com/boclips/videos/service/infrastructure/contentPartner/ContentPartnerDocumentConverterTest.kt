@@ -39,8 +39,8 @@ internal class ContentPartnerDocumentConverterTest {
 
     @Test
     fun `validates if an id is from youtube`() {
-        assertThat(ContentPartnerDocumentConverter.isIdFromYoutube(ContentPartnerId(ObjectId.get().toHexString()))).isFalse()
+        assertThat(ContentPartnerDocumentConverter.isYoutubeChannelPartner(ContentPartnerId(ObjectId.get().toHexString()))).isFalse()
 
-        assertThat(ContentPartnerDocumentConverter.isIdFromYoutube(ContentPartnerId("definitely a youtube id"))).isTrue()
+        assertThat(ContentPartnerDocumentConverter.isYoutubeChannelPartner(ContentPartnerId("definitely a youtube id"))).isTrue()
     }
 }

@@ -4,7 +4,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import javax.validation.Valid
 
 data class ContentPartnerRequest(
-    val name: String,
+    val name: String? = null,
 
     @field:Valid
     var ageRange: AgeRangeRequest? = null

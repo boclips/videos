@@ -3,11 +3,12 @@ package com.boclips.videos.service.infrastructure.contentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoIterable
-import com.mongodb.client.model.UpdateOptions
+import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
@@ -40,53 +41,44 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
             .map { ContentPartnerDocumentConverter.toContentPartner(it) }
 
     override fun findById(contentPartnerId: ContentPartnerId): ContentPartner? {
-        return if (ContentPartnerDocumentConverter.isIdFromYoutube(contentPartnerId)) {
-            findByQuery(ContentPartnerDocument::youtubeChannelId eq contentPartnerId.value)
-        } else {
-            findByQuery(ContentPartnerDocument::id eq ObjectId(contentPartnerId.value))
-        }
+        return findByQuery(toBsonIdFilter(contentPartnerId))
     }
 
     override fun findByName(contentPartnerName: String): ContentPartner? {
         return findByQuery(ContentPartnerDocument::name eq contentPartnerName)
     }
 
-    override fun update(contentPartner: ContentPartner): ContentPartner {
-        val findContentPartnerByIdBson =
-            if (ContentPartnerDocumentConverter.isIdFromYoutube(contentPartner.contentPartnerId)) {
-                ContentPartnerDocument::youtubeChannelId eq contentPartner.contentPartnerId.value
-            } else {
-                ContentPartnerDocument::id eq ObjectId(contentPartner.contentPartnerId.value)
-            }
+    override fun update(updateCommands: List<ContentPartnerUpdateCommand>) {
+        if (updateCommands.isEmpty()) {
+            return
+        }
 
-        getContentPartnerCollection().updateOne(
-            findContentPartnerByIdBson,
-            set(
-                SetTo(
-                    ContentPartnerDocument::ageRangeMax,
-                    contentPartner.ageRange.max()
-                ),
-                SetTo(
-                    ContentPartnerDocument::ageRangeMin,
-                    contentPartner.ageRange.min()
-                ),
-                SetTo(
-                    ContentPartnerDocument::name,
-                    contentPartner.name
-                )
-            ),
-            UpdateOptions().upsert(true)
-        )
+        val updateDocs = updateCommands.map { updateCommand ->
+            UpdateOneModel<ContentPartnerDocument>(
+                toBsonIdFilter(updateCommand.contentPartnerId),
+                updateCommandsToBson(updateCommand)
+            )
+        }
 
-        val updatedContentPartner = findById(contentPartner.contentPartnerId) ?: throw ResourceNotFoundApiException(
-            error = "Content partner not found",
-            message = "There has been an error in updating the content partner.  Content partner id: ${contentPartner.contentPartnerId.value} could not be found."
-        )
-
-        logger.info { "Updated contentPartner ${updatedContentPartner.contentPartnerId.value}" }
-
-        return updatedContentPartner
+        val result = getContentPartnerCollection().bulkWrite(updateDocs)
+        logger.info { "Bulk content partner update: $result" }
     }
+
+    private fun updateCommandsToBson(updateCommand: ContentPartnerUpdateCommand) =
+        when (updateCommand) {
+            is ContentPartnerUpdateCommand.ReplaceName -> set(ContentPartnerDocument::name, updateCommand.name)
+            is ContentPartnerUpdateCommand.ReplaceAgeRange ->
+                set(
+                    SetTo(
+                        ContentPartnerDocument::ageRangeMin,
+                        updateCommand.ageRange.min()
+                    ),
+                    SetTo(
+                        ContentPartnerDocument::ageRangeMax,
+                        updateCommand.ageRange.max()
+                    )
+                )
+        }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {
         val contentPartner =
@@ -104,4 +96,12 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
 
     private fun getContentPartnerCollection() =
         mongoClient.getDatabase(DATABASE_NAME).getCollection<ContentPartnerDocument>(collectionName)
+
+    private fun toBsonIdFilter(contentPartnerId: ContentPartnerId): Bson {
+        return if (ContentPartnerDocumentConverter.isYoutubeChannelPartner(contentPartnerId)) {
+            ContentPartnerDocument::youtubeChannelId eq contentPartnerId.value
+        } else {
+            ContentPartnerDocument::id eq ObjectId(contentPartnerId.value)
+        }
+    }
 }

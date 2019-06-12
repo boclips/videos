@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -13,15 +13,12 @@ class UpdateContentPartner(
     private val videoRepository: VideoRepository
 ) {
     operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
-        val ageRange = request.ageRange?.let { AgeRange.bounded(min = it.min, max = it.max) } ?: AgeRange.unbounded()
+        val id = ContentPartnerId(value = contentPartnerId)
 
-        val contentPartner = contentPartnerRepository.update(
-            ContentPartner(
-                contentPartnerId = ContentPartnerId(value = contentPartnerId),
-                name = request.name,
-                ageRange = ageRange
-            )
-        )
+        contentPartnerRepository.update(ContentPartnerUpdatesConverter().convert(id, request))
+
+        val contentPartner = contentPartnerRepository.findById(id)
+            ?: throw ContentPartnerNotFoundException("Could not find content partner: ${id.value}")
 
         updateContentPartnerInVideos(contentPartner)
 

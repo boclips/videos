@@ -1,10 +1,12 @@
 package com.boclips.videos.service.application.contentPartner
 
+import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
@@ -52,7 +54,16 @@ class UpdateYoutubeChannelNames(
     ) {
         val contentPartner =
             contentPartnerRepository.findById(ContentPartnerId(value = playbackProviderMetadata.channelId))?.let {
-                contentPartnerRepository.update(it.copy(name = playbackProviderMetadata.channelName))
+                contentPartnerRepository.update(
+                    listOf(
+                        ContentPartnerUpdateCommand.ReplaceName(
+                            it.contentPartnerId,
+                            playbackProviderMetadata.channelName
+                        )
+                    )
+                )
+                contentPartnerRepository.findById(it.contentPartnerId)
+                    ?: throw ContentPartnerNotFoundException("Could not find content partner: ${it.contentPartnerId.value}")
             } ?: contentPartnerRepository.create(
                 ContentPartner(
                     contentPartnerId = ContentPartnerId(playbackProviderMetadata.channelId),

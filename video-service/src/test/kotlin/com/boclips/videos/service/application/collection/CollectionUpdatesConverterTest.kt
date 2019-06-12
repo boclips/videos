@@ -7,7 +7,7 @@ import com.boclips.videos.service.presentation.collections.UpdateCollectionReque
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class CollectionUpdatesConverterTest {
+class CollectionUpdatesConverterTest {
     @Test
     fun `can handle null request`() {
         val commands = CollectionUpdatesConverter.convert(null)

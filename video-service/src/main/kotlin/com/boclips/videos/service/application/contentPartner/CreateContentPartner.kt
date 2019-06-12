@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.contentPartner
 
+import com.boclips.videos.service.application.exceptions.InvalidContentPartnerNameException
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
@@ -12,6 +13,10 @@ class CreateContentPartner(
 ) {
     operator fun invoke(request: ContentPartnerRequest): ContentPartner {
         val ageRange = request.ageRange?.let { AgeRange.bounded(min = it.min, max = it.max) } ?: AgeRange.unbounded()
+
+        if (request.name.isNullOrEmpty()) {
+            throw InvalidContentPartnerNameException()
+        }
 
         return contentPartnerRepository.create(
             ContentPartner(

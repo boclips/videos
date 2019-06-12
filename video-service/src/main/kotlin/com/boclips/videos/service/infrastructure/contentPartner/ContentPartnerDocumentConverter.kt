@@ -10,12 +10,12 @@ object ContentPartnerDocumentConverter {
         val id: ObjectId
         val youtubeChanelId: String?
 
-        if (ObjectId.isValid(contentPartner.contentPartnerId.value)) {
-            id = ObjectId(contentPartner.contentPartnerId.value)
-            youtubeChanelId = null
-        } else {
+        if (isYoutubeChannelPartner(contentPartner.contentPartnerId)) {
             id = ObjectId.get()
             youtubeChanelId = contentPartner.contentPartnerId.value
+        } else {
+            id = ObjectId(contentPartner.contentPartnerId.value)
+            youtubeChanelId = null
         }
 
         return ContentPartnerDocument(
@@ -40,6 +40,6 @@ object ContentPartnerDocumentConverter {
         )
     }
 
-    fun isIdFromYoutube(contentPartnerId: ContentPartnerId) =
+    fun isYoutubeChannelPartner(contentPartnerId: ContentPartnerId) =
         !ObjectId.isValid(contentPartnerId.value)
 }

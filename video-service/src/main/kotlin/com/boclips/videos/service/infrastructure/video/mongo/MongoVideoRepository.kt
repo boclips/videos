@@ -77,7 +77,7 @@ class MongoVideoRepository(
     }
 
     override fun findByContentPartnerId(contentPartnerId: ContentPartnerId): List<Video> {
-        val bson = if (ContentPartnerDocumentConverter.isIdFromYoutube(contentPartnerId)) {
+        val bson = if (ContentPartnerDocumentConverter.isYoutubeChannelPartner(contentPartnerId)) {
             VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::youtubeChannelId) eq contentPartnerId.value
         } else {
             VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::id) eq ObjectId(contentPartnerId.value)
@@ -150,7 +150,7 @@ class MongoVideoRepository(
         }
 
         val result = getVideoCollection().bulkWrite(updateDocs)
-        logger.info("Bulk update: $result")
+        logger.info("Bulk video update: $result")
     }
 
     override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {

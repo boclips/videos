@@ -1,0 +1,40 @@
+package com.boclips.videos.service.application.contentPartner
+
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
+import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+class ContentPartnerUpdatesConverterTest {
+    @Test
+    fun `creates command for updating the name`() {
+        val commands = ContentPartnerUpdatesConverter().convert(
+            id = ContentPartnerId(value = "123"),
+            contentPartnerRequest = ContentPartnerRequest(name = "Hello", ageRange = null)
+        )
+
+        assertThat(commands).hasSize(1)
+        assertThat(commands.first().contentPartnerId.value).isEqualTo("123")
+        assertThat((commands.first() as ContentPartnerUpdateCommand.ReplaceName).name).isEqualTo("Hello")
+    }
+
+    @Test
+    fun `creates command for updating the age range`() {
+        val commands = ContentPartnerUpdatesConverter().convert(
+            id = ContentPartnerId(value = "123"),
+            contentPartnerRequest = ContentPartnerRequest(
+                ageRange = AgeRangeRequest(1, 3),
+                name = null
+            )
+        )
+
+        assertThat(commands).hasSize(1)
+        assertThat(commands.first().contentPartnerId.value).isEqualTo("123")
+        assertThat((commands.first() as ContentPartnerUpdateCommand.ReplaceAgeRange).ageRange).isEqualTo(
+            AgeRange.bounded(1, 3)
+        )
+    }
+}

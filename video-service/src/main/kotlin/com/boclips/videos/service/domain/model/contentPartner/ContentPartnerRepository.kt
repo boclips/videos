@@ -5,5 +5,5 @@ interface ContentPartnerRepository {
     fun findAll(): Iterable<ContentPartner>
     fun findById(contentPartnerId: ContentPartnerId): ContentPartner?
     fun findByName(contentPartnerName: String): ContentPartner?
-    fun update(contentPartner: ContentPartner): ContentPartner
+    fun update(updateCommands: List<ContentPartnerUpdateCommand>)
 }
