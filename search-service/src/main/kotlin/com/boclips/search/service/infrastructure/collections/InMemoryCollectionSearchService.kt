@@ -14,14 +14,24 @@ class InMemoryCollectionSearchService : AbstractInMemorySearchService<Collection
 
     override fun idsMatching(
         index: MutableMap<String, CollectionMetadata>,
-        collectionQuery: CollectionQuery
+        query: CollectionQuery
     ): List<String> {
-        val phrase = collectionQuery.phrase
+        val phrase = query.phrase
 
         return index
             .filter { entry ->
-                collectionQuery.phrase == null || entry.value.title.contains(phrase!!, ignoreCase = true)
+                when {
+                    phraseQuery(query) -> entry.value.title.contains(phrase!!, ignoreCase = true)
+                    subjectQuery(query) -> entry.value.subjectIds.any { query.subjectIds.contains(it) }
+                    else -> true
+                }
             }
             .map { collection -> collection.key }
     }
+
+    private fun subjectQuery(collectionQuery: CollectionQuery) =
+        collectionQuery.subjectIds.isNotEmpty()
+
+    private fun phraseQuery(collectionQuery: CollectionQuery) =
+        collectionQuery.phrase != null
 }

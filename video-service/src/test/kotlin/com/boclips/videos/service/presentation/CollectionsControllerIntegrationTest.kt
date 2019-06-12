@@ -190,9 +190,9 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `get all public collections`() {
-        updateCollectionToBePublic(createCollection("collection 2"))
+    fun `filter all public collections and use pagination`() {
         updateCollectionToBePublic(createCollection("collection 1"))
+        updateCollectionToBePublic(createCollection("collection 2"))
 
         mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&public=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
@@ -218,7 +218,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `search public collections`() {
+    fun `query search public collections`() {
         updateCollectionToBePublic(createCollection("five ponies were eating grass"))
         updateCollectionToBePublic(createCollection("while a car and a truck crashed"))
 

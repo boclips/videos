@@ -27,15 +27,17 @@ class GetCollections(
             size = collectionFilter.pageSize
         )
 
-        if (requiresTextSearching(collectionFilter)) {
+        if (isPublicCollectionSearch(collectionFilter)) {
             return collectionService.search(
                 CollectionSearchQuery(
-                    collectionFilter.query!!,
+                    collectionFilter.query,
+                    collectionFilter.subjects,
                     collectionFilter.pageSize,
                     collectionFilter.pageNumber
                 )
             ).let {
-                assemblePage(collectionFilter = collectionFilter, pageInfo = PageInfo(false), collections = it)
+                //TODO we are unwrapping and wrapping here
+                assemblePage(collectionFilter = collectionFilter, pageInfo = it.pageInfo, collections = it.elements)
             }
         }
 
@@ -43,8 +45,8 @@ class GetCollections(
             .let { collection -> assemblePage(collectionFilter, collection.pageInfo, collection.elements) }
     }
 
-    private fun requiresTextSearching(collectionFilter: CollectionFilter) =
-        collectionFilter.query != null
+    private fun isPublicCollectionSearch(collectionFilter: CollectionFilter) =
+        collectionFilter.visibility == CollectionFilter.Visibility.PUBLIC
 
     private fun assemblePage(
         collectionFilter: CollectionFilter,
@@ -67,11 +69,6 @@ class GetCollections(
         pageRequest: PageRequest
     ): Page<Collection> {
         return when (collectionFilter.visibility) {
-            CollectionFilter.Visibility.PUBLIC -> collectionRepository.getPublic(
-                pageRequest,
-                collectionFilter.subjects.map {
-                    SubjectId(it)
-                })
             CollectionFilter.Visibility.BOOKMARKED -> collectionRepository.getBookmarked(
                 pageRequest,
                 getCurrentUserId()
@@ -80,6 +77,7 @@ class GetCollections(
                 val owner = validatePrivateCollectionsOwnerOrThrow(collectionFilter)
                 collectionRepository.getByOwner(owner, pageRequest)
             }
+            else -> throw IllegalStateException()
         }
     }
 

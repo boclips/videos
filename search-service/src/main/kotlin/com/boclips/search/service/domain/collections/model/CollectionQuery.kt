@@ -5,5 +5,6 @@ import com.boclips.search.service.domain.model.Sort
 
 class CollectionQuery (
     phrase: String? = null,
-    sort: Sort<CollectionMetadata>? = null
+    sort: Sort<CollectionMetadata>? = null,
+    val subjectIds: List<String> = emptyList()
 ) : SearchQuery<CollectionMetadata>(phrase, sort)

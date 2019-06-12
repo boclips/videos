@@ -1,7 +1,10 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
+import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.convertPageToIndex
@@ -13,7 +16,7 @@ class CollectionService(
 ) {
     companion object : KLogging()
 
-    fun search(query: CollectionSearchQuery): List<com.boclips.videos.service.domain.model.collection.Collection> {
+    fun search(query: CollectionSearchQuery): Page<Collection> {
         val searchRequest = PaginatedSearchRequest(
             query = query.toSearchQuery(),
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
@@ -24,7 +27,7 @@ class CollectionService(
 
         logger.info { "Returning ${collections.size} collections for query $query" }
 
-        return collections
+        return Page(collections, PageInfo(hasMoreElements = count(query) > query.pageIndexUpperBound()))
     }
 
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {

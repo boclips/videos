@@ -33,7 +33,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `returns empty collection for empty result`(
+    fun `returns empty collection when nothing found`(
         readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
         writeService: WriteSearchService<CollectionMetadata>
     ) {
@@ -59,7 +59,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `finds a collection matching metadata`(
+    fun `finds a collection matching title`(
         readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
         writeService: WriteSearchService<CollectionMetadata>
     ) {
@@ -82,14 +82,31 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(
-                query = CollectionQuery(
-                    "gentleman"
-                )
-            )
+            PaginatedSearchRequest(query = CollectionQuery("gentleman"))
         )
 
         assertThat(result).containsExactlyInAnyOrder("1", "3")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `finds a collection matching subjects`(
+        readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
+        writeService: WriteSearchService<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1", subjects = listOf("crispity", "crunchy")),
+                SearchableCollectionMetadataFactory.create(id = "2", subjects = listOf("crunchy")),
+                SearchableCollectionMetadataFactory.create(id = "3", subjects = emptyList())
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(query = CollectionQuery(subjectIds = listOf("gentleman", "crispity")))
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("1")
     }
 
     @ParameterizedTest
@@ -161,7 +178,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `counts all collections matching metadata`(
+    fun `counts collections`(
         readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
         writeService: WriteSearchService<CollectionMetadata>
     ) {
@@ -253,6 +270,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
     }
 
+    // TODO move to write search integration test
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and upserts the collections provided`(

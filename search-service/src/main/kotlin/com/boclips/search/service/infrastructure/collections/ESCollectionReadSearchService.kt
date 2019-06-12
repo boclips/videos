@@ -10,7 +10,6 @@ import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
@@ -60,35 +59,37 @@ class ESCollectionReadSearchService(val client: RestHighLevelClient) :
     }
 
     private fun fuzzyQuery(query: CollectionQuery): QueryBuilder {
-        return if (query.phrase.isNullOrEmpty()) {
-            QueryBuilders.matchAllQuery()
-        } else {
-            QueryBuilders
-                .boolQuery()
-                .should(matchTitle(query))
-        }
-    }
-
-    private fun matchTitle(query: CollectionQuery): QueryBuilder {
         return QueryBuilders
             .boolQuery()
-            .must(matchTitle(query.phrase))
-            .should(boostTitleMatch(query.phrase))
-    }
-
-    private fun boostTitleMatch(phrase: String?): MatchPhraseQueryBuilder {
-        return QueryBuilders.matchPhraseQuery(ESCollection.TITLE, phrase)
-    }
-
-    private fun matchTitle(phrase: String?): MultiMatchQueryBuilder {
-        return QueryBuilders
-            .multiMatchQuery(
-                phrase,
-                ESCollection.TITLE,
-                "${ESCollection.TITLE}.std"
-            )
-            .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-            .fuzziness(Fuzziness.ONE)
+            .apply {
+                if (!query.phrase.isNullOrEmpty()) {
+                    should(
+                        QueryBuilders
+                            .boolQuery()
+                            .must(
+                                QueryBuilders
+                                    .multiMatchQuery(
+                                        query.phrase,
+                                        ESCollection.TITLE,
+                                        "${ESCollection.TITLE}.std"
+                                    )
+                                    .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+                                    .fuzziness(Fuzziness.ONE)
+                            )
+                            .should(QueryBuilders.matchPhraseQuery(ESCollection.TITLE, query.phrase))
+                    )
+                }
+            }
+            .apply {
+                if (query.subjectIds.isNotEmpty()) {
+                    must(
+                        QueryBuilders.termsQuery(
+                            ESCollection.SUBJECTS,
+                            query.subjectIds
+                        )
+                    )
+                }
+            }
     }
 
     private fun rescorer(phrase: String?): QueryRescorerBuilder {

@@ -50,6 +50,10 @@ interface IndexConfiguration {
             )
         )
 
+        val stringArray = mapOf(
+            "type" to "text"
+        )
+
         val date = mapOf(
             "type" to "date"
         )

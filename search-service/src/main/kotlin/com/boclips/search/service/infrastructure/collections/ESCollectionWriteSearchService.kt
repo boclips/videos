@@ -12,7 +12,8 @@ class ESCollectionWriteSearchService(client: RestHighLevelClient) : AbstractESWr
 
     override fun convertToSerializableObject(entry: CollectionMetadata) = ESCollection(
         id = entry.id,
-        title = entry.title
+        title = entry.title,
+        subjects = entry.subjectIds
     )
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id

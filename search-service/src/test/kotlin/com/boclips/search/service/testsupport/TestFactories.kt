@@ -37,10 +37,12 @@ object SearchableVideoMetadataFactory {
 object SearchableCollectionMetadataFactory {
     fun create(
         id: String,
-        title: String = ""
+        title: String = "",
+        subjects: List<String> = emptyList()
     ) = CollectionMetadata(
         id = id,
         title = title,
+        subjectIds = subjects,
         visibility = CollectionVisibility.PRIVATE,
         owner = "some-user-id",
         bookmarkedByUsers = setOf("some-user-id")

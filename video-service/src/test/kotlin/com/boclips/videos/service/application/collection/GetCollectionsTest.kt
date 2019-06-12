@@ -101,14 +101,9 @@ class GetCollectionsTest {
 
     @Test
     fun `fetches all public collections with skinny videos`() {
-        collectionRepository = mock {
+        collectionService = mock {
             on {
-                getPublic(
-                    PageRequest(
-                        0,
-                        1
-                    )
-                )
+                search(any())
             } doReturn Page(
                 listOf(
                     TestFactories.createCollection(
@@ -144,14 +139,9 @@ class GetCollectionsTest {
 
     @Test
     fun `fetches all public collections with fat videos`() {
-        collectionRepository = mock {
+        collectionService = mock {
             on {
-                getPublic(
-                    PageRequest(
-                        0,
-                        1
-                    )
-                )
+                search(any())
             } doReturn Page(
                 listOf(
                     TestFactories.createCollection(
@@ -189,21 +179,13 @@ class GetCollectionsTest {
 
     @Test
     fun `fetches collections with their subjects`() {
-        collectionRepository = mock {
+        collectionService = mock {
             on {
-                getPublic(
-                    PageRequest(
-                        0,
-                        1
-                    )
-                )
+                search(any())
             } doReturn Page(
                 listOf(
                     TestFactories.createCollection(
                         id = CollectionId("collection-id"),
-                        owner = "yoyoyo@public.com",
-                        title = "collection title",
-                        videos = listOf(video.videoId),
                         isPublic = true,
                         subjects = setOf(SubjectId("1"))
                     ),
@@ -225,8 +207,10 @@ class GetCollectionsTest {
         assertThat(collections.elements).hasSize(2)
 
         val collection = collections.elements.first()
+
         assertThat(collection.id).isEqualTo("collection-id")
         assertThat(collection.subjects).hasSize(1)
+
         val subject = collection.subjects.first()
         assertThat(subject.content.id).isEqualTo("1")
     }
@@ -237,15 +221,17 @@ class GetCollectionsTest {
             on {
                 search(any())
             } doReturn
-                listOf(
-                    TestFactories.createCollection(
-                        id = CollectionId("collection-id"),
-                        owner = "yoyoyo@public.com",
-                        title = "collection title",
-                        videos = listOf(video.videoId),
-                        isPublic = true,
-                        subjects = setOf(SubjectId("1"))
-                    )
+                Page(
+                    listOf(
+                        TestFactories.createCollection(
+                            id = CollectionId("collection-id"),
+                            owner = "yoyoyo@public.com",
+                            title = "collection title",
+                            videos = listOf(video.videoId),
+                            isPublic = true,
+                            subjects = setOf(SubjectId("1"))
+                        )
+                    ), PageInfo(false)
                 )
         }
 

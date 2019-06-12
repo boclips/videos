@@ -5,7 +5,7 @@ import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
 
-class ESCollectionsConverterTest {
+class ESCollectionConverterTest {
 
     private val elasticSearchResultConverter =
         ESCollectionConverter()
@@ -17,7 +17,8 @@ class ESCollectionsConverterTest {
                 """
             {
                 "id": "14",
-                "title": "The title"
+                "title": "The title",
+                "subjects": ["crispity", "crunchy"]
             }
         """.trimIndent()
             )
@@ -28,24 +29,9 @@ class ESCollectionsConverterTest {
         assertThat(collection).isEqualTo(
             ESCollection(
                 id = "14",
-                title = "The title"
+                title = "The title",
+                subjects = listOf("crispity", "crunchy")
             )
         )
-    }
-
-    @Test
-    fun `convert search hit with no transcript`() {
-        val searchHit = SearchHit(14).sourceRef(
-            BytesArray(
-                """
-            {
-                "id": "14",
-                "title": "The title"
-            }
-        """.trimIndent()
-            )
-        )
-
-        val collection = elasticSearchResultConverter.convert(searchHit)
     }
 }
