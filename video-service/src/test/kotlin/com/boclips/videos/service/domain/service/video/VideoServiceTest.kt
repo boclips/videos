@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -141,16 +140,5 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(video.ageRange.min()).isEqualTo(3)
         assertThat(video.ageRange.max()).isEqualTo(7)
-    }
-
-    @Test
-    fun `can get video by content partner id`() {
-        saveVideo()
-        val videoId2 = saveVideo(contentProviderId = "test")
-        val videoId3 = saveVideo(contentProviderId = "test")
-
-        val expectedVideoIds = videoService.getPlayableVideos(ContentPartnerId("test"))
-
-        assertThat(expectedVideoIds.map { it.videoId }).containsExactly(videoId2, videoId3)
     }
 }

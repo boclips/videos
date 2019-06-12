@@ -1,8 +1,10 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
@@ -14,7 +16,7 @@ import mu.KLogging
 class UpdateYoutubeChannelNames(
     private val videoRepository: VideoRepository,
     private val playbackRepository: PlaybackRepository,
-    private val createOrUpdateContentPartner: CreateOrUpdateContentPartner
+    private val contentPartnerRepository: ContentPartnerRepository
 ) {
     companion object : KLogging()
 
@@ -30,15 +32,9 @@ class UpdateYoutubeChannelNames(
             return
         }
 
-        val playback = playbackRepository.find(actualVideo.playback.id)
-        if (playback == null) {
-            RequestVideoPlaybackUpdate.logger.info { "Could not find playback information for $videoToUpdate (Playback Id: ${actualVideo.playback.id})" }
-            return
-        }
-
         val playbackProviderMetadata = playbackRepository.getProviderMetadata(actualVideo.playback.id)
         if (playbackProviderMetadata == null) {
-            RequestVideoPlaybackUpdate.logger.info { "Could not find provider metadata information for $videoToUpdate (Playback Id: ${actualVideo.playback.id}" }
+            logger.info { "Could not find provider metadata information for $videoToUpdate (Playback Id: ${actualVideo.playback.id}" }
             return
         }
 
@@ -54,19 +50,25 @@ class UpdateYoutubeChannelNames(
         playbackProviderMetadata: VideoProviderMetadata.YoutubeMetadata,
         video: Video
     ) {
-        val contentPartner = createOrUpdateContentPartner(
-            contentPartnerId = ContentPartnerId(playbackProviderMetadata.channelId),
-            provider = playbackProviderMetadata.channelName
-        )
+        val contentPartner =
+            contentPartnerRepository.findById(ContentPartnerId(value = playbackProviderMetadata.channelId))?.let {
+                contentPartnerRepository.update(it.copy(name = playbackProviderMetadata.channelName))
+            } ?: contentPartnerRepository.create(
+                ContentPartner(
+                    contentPartnerId = ContentPartnerId(playbackProviderMetadata.channelId),
+                    name = playbackProviderMetadata.channelName,
+                    ageRange = AgeRange.unbounded()
+                )
+            )
 
         val replaceContentPartnerCommand =
             VideoUpdateCommand.ReplaceContentPartner(videoId = video.videoId, contentPartner = contentPartner)
 
         try {
             videoRepository.update(replaceContentPartnerCommand)
-            RequestVideoPlaybackUpdate.logger.info { "Updated content partner for video ${video.videoId} with content partner ${contentPartner.name}" }
+            logger.info { "Updated content partner for video ${video.videoId} with content partner ${contentPartner.name}" }
         } catch (ex: Exception) {
-            RequestVideoPlaybackUpdate.logger.info { "Did not update content partner for ${video.videoId}: $ex" }
+            logger.info { "Did not update content partner for ${video.videoId}: $ex" }
         }
     }
 }

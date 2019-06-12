@@ -625,22 +625,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.transcript.href").doesNotHaveJsonPath())
     }
 
-    @Test
-    fun `can get a list of videos from content partner`() {
-        saveVideo(contentProviderId = "test1", contentProvider = "AContentPartner")
-        saveVideo(contentProviderId = "test1", contentProvider = "AContentPartner")
-        saveVideo(contentProviderId = "test2", contentProvider = "A different content partner")
-
-        mockMvc.perform(
-            post("/v1/videos/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"contentPartnerId": "test1"}""").asBoclipsEmployee()
-        )
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(2)))
-            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("AContentPartner")))
-    }
-
     private fun saveVideoWithTranscript(): String {
         val videoId = saveVideo(
             title = "Today Video?",

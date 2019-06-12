@@ -7,11 +7,6 @@ sealed class AgeRange {
 
         fun unbounded() =
             UnboundedAgeRange
-
-        fun fromMinMax(min: Int?, max: Int?): AgeRange {
-            if (min != null) return BoundedAgeRange(min, max)
-            return UnboundedAgeRange
-        }
     }
 
     fun min() = when (this) {
