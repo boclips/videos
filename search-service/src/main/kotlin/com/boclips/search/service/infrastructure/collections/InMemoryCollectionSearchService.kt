@@ -20,7 +20,7 @@ class InMemoryCollectionSearchService : AbstractInMemorySearchService<Collection
 
         return index
             .filter { entry ->
-                entry.value.title.contains(phrase!!, ignoreCase = true)
+                collectionQuery.phrase == null || entry.value.title.contains(phrase!!, ignoreCase = true)
             }
             .map { collection -> collection.key }
     }

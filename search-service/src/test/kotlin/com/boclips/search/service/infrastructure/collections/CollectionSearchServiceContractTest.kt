@@ -94,6 +94,28 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `gets all collections when empty query`(
+        readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
+        writeService: WriteSearchService<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
+                SearchableCollectionMetadataFactory.create(id = "2", title = "Beer")
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(phrase = null)
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `paginates results`(
         readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
         writeService: WriteSearchService<CollectionMetadata>
@@ -183,13 +205,15 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         writeService.removeFromSearch("1")
 
-        assertThat(readService.search(
-            PaginatedSearchRequest(
-                query = CollectionQuery(
-                    "gentleman"
+        assertThat(
+            readService.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        "gentleman"
+                    )
                 )
-            )
-        ).isEmpty())
+            ).isEmpty()
+        )
     }
 
     @ParameterizedTest
@@ -206,23 +230,27 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 )
             )
         )
-        assertThat(readService.search(
-            PaginatedSearchRequest(
-                query = CollectionQuery(
-                    "boy"
+        assertThat(
+            readService.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        "boy"
+                    )
                 )
-            )
-        ).isNotEmpty())
+            ).isNotEmpty()
+        )
 
         writeService.safeRebuildIndex(emptySequence())
 
-        assertThat(readService.search(
-            PaginatedSearchRequest(
-                query = CollectionQuery(
-                    "boy"
+        assertThat(
+            readService.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        "boy"
+                    )
                 )
-            )
-        ).isEmpty())
+            ).isEmpty()
+        )
     }
 
     @ParameterizedTest

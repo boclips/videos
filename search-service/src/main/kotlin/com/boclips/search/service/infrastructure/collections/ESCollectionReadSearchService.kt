@@ -10,9 +10,9 @@ import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
-import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
+import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
@@ -48,25 +48,28 @@ class ESCollectionReadSearchService(val client: RestHighLevelClient) :
     }
 
     private fun buildFuzzyRequest(query: CollectionQuery): SearchSourceBuilder {
-        val esQuery = SearchSourceBuilder()
-            .query(fuzzyQuery(query))
+        val esQuery = SearchSourceBuilder().query(fuzzyQuery(query))
 
-        if (query.sort === null) {
+        if (!query.phrase.isNullOrBlank()) {
             esQuery.addRescorer(rescorer(query.phrase))
-        } else {
+        } else if (query.sort != null) {
             esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
         }
 
         return esQuery
     }
 
-    private fun fuzzyQuery(query: CollectionQuery): BoolQueryBuilder? {
-        return QueryBuilders
-            .boolQuery()
-            .should(matchTitle(query))
+    private fun fuzzyQuery(query: CollectionQuery): QueryBuilder {
+        return if (query.phrase.isNullOrEmpty()) {
+            QueryBuilders.matchAllQuery()
+        } else {
+            QueryBuilders
+                .boolQuery()
+                .should(matchTitle(query))
+        }
     }
 
-    private fun matchTitle(query: CollectionQuery): BoolQueryBuilder {
+    private fun matchTitle(query: CollectionQuery): QueryBuilder {
         return QueryBuilders
             .boolQuery()
             .must(matchTitle(query.phrase))
@@ -85,8 +88,7 @@ class ESCollectionReadSearchService(val client: RestHighLevelClient) :
                 "${ESCollection.TITLE}.std"
             )
             .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-            .minimumShouldMatch("75%")
-            .fuzziness(Fuzziness.ZERO)
+            .fuzziness(Fuzziness.ONE)
     }
 
     private fun rescorer(phrase: String?): QueryRescorerBuilder {
@@ -100,5 +102,4 @@ class ESCollectionReadSearchService(val client: RestHighLevelClient) :
             .windowSize(100)
             .setScoreMode(QueryRescoreMode.Total)
     }
-
 }
