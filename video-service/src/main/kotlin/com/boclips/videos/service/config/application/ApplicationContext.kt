@@ -96,6 +96,7 @@ class ApplicationContext(
     fun createVideo(
         searchVideo: SearchVideo,
         videoCounter: Counter,
+        classifyVideo: ClassifyVideo,
         analyseVideo: AnalyseVideo
     ): CreateVideo {
         return CreateVideo(
@@ -108,6 +109,7 @@ class ApplicationContext(
             playbackRepository,
             videoCounter,
             legacySearchService,
+            classifyVideo,
             analyseVideo
         )
     }

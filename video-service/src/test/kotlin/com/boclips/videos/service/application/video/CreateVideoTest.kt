@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.video.VideoAnalysisRequested
+import com.boclips.events.types.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
@@ -215,5 +216,22 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(video.content.id)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-$123.mp4")
+    }
+
+    @Test
+    fun `it requests that the video subject is classified`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1234"))
+
+        createVideo(
+            TestFactories.createCreateVideoRequest(
+                playbackId = "1234",
+                videoType = "INSTRUCTIONAL_CLIPS",
+                title = "fractions"
+            )
+        )
+
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+
+        assertThat(message.payload.toString()).contains("fractions")
     }
 }

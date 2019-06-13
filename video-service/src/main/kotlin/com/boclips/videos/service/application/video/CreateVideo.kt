@@ -35,6 +35,7 @@ class CreateVideo(
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
     private val legacySearchService: LegacySearchService,
+    private val classifyVideo: ClassifyVideo,
     private val analyseVideo: AnalyseVideo
 ) {
     companion object : KLogging()
@@ -62,6 +63,8 @@ class CreateVideo(
         if (createRequest.analyseVideo) {
             triggerVideoAnalysis(createdVideo)
         }
+
+        classifyVideo(createdVideo.videoId.value)
 
         return searchVideo.byId(createdVideo.videoId.value)
     }

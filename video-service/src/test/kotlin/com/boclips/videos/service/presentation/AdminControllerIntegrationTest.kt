@@ -166,6 +166,8 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `classify content partner videos returns 403 when user is not allowed`() {
+        messageCollector.forChannel(topics.videoSubjectClassificationRequested()).clear()
+
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
