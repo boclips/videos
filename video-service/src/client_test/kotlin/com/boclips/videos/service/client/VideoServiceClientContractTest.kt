@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.net.URI
 import java.time.Duration
 
 internal abstract class VideoServiceClientContractTest : AbstractVideoServiceClientSpringIntegrationTest() {
@@ -27,11 +26,11 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     @Test
     fun `get a video`() {
         val id = getClient().create(
-                TestFactories.createCreateVideoRequest(
-                        title = "the title",
-                        description = "the description",
-                        playbackId = "ref-id-123"
-                )
+            TestFactories.createCreateVideoRequest(
+                title = "the title",
+                description = "the description",
+                playbackId = "ref-id-123"
+            )
         )
 
         val video = getClient().get(id)
@@ -146,7 +145,8 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `specify page size when fetching collections`() {
-        val collections: List<Collection> = getClient().getMyCollections(VideoServiceClient.PageSpec.builder().pageSize(1).build())
+        val collections: List<Collection> =
+            getClient().getMyCollections(VideoServiceClient.PageSpec.builder().pageSize(1).build())
 
         assertThat(collections).hasSize(1)
     }
@@ -184,7 +184,10 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
 
         addCollection(Collection.builder().title("first collection").subjects(subjects).videos(videos).build())
         addCollection(Collection.builder().title("second collection").subjects(emptySet()).videos(videos).build())
-        addCollection(Collection.builder().title("another user's collection").subjects(subjects).videos(videos).build(), "anotheruser@boclips.com")
+        addCollection(
+            Collection.builder().title("another user's collection").subjects(subjects).videos(videos).build(),
+            "anotheruser@boclips.com"
+        )
     }
 
     override fun getClient() = fakeClient
@@ -203,6 +206,7 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
             )
         )
         fakeYoutubePlaybackProvider.addVideo("ref-id-123", "http://my-little-pony.com", Duration.ZERO)
+        fakeYoutubePlaybackProvider.addMetadata("ref-id-123", "http://my-little-pony.com", "channelId")
 
         subjectRepository.create("Maths")
         subjectRepository.create("French")
