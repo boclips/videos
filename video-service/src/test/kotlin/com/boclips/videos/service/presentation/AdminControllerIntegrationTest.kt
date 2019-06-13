@@ -84,12 +84,6 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `update youtube channel returns 200 when user is allowed`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/update_youtube_channel_names").asOperator())
-            .andExpect(status().isOk)
-    }
-
-    @Test
     fun `update youtube channel returns 403 when user is not allowed`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/update_youtube_channel_names").asTeacher())
             .andExpect(status().isForbidden)

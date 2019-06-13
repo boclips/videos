@@ -16,7 +16,6 @@ import com.boclips.videos.service.application.contentPartner.CreateContentPartne
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
-import com.boclips.videos.service.application.contentPartner.UpdateYoutubeChannelNames
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
@@ -237,11 +236,6 @@ class ApplicationContext(
     @Bean
     fun refreshVideoDurations(): RequestVideoPlaybackUpdate {
         return RequestVideoPlaybackUpdate(videoRepository, playbackRepository, topics)
-    }
-
-    @Bean
-    fun updateYoutubeChannelNames(): UpdateYoutubeChannelNames {
-        return UpdateYoutubeChannelNames(videoRepository, playbackRepository, contentPartnerRepository)
     }
 
     @Bean
