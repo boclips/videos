@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
+import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -66,7 +67,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "this video got disabled because it offended overweight people",
             date = "2018-05-10",
             duration = Duration.ofSeconds(6),
-            contentProvider = "cp"
+            contentProvider = "cp",
+            ageRange = UnboundedAgeRange
         ).value
         changeVideoStatus(disabledVideoId, VideoResourceStatus.SEARCH_DISABLED)
 
@@ -76,7 +78,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "it's a video from youtube",
             date = "2017-02-11",
             duration = Duration.ofSeconds(56),
-            contentProvider = "cp2"
+            contentProvider = "cp2",
+            ageRange = UnboundedAgeRange
         ).value
 
         setVideoSubjects(kalturaVideoId, saveSubject("Maths"))
@@ -205,6 +208,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns video with correct source`() {
         mockMvc.perform(get("/v1/videos?query=elephants&source=boclips").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+
+    @Test
+    fun `returns video within specified age range`() {
+        mockMvc.perform(get("/v1/videos?query=elephants&age_range_min=5&age_range_max=11").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))

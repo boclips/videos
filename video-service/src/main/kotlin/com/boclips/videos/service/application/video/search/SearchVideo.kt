@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.SortKey
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 
@@ -32,7 +31,9 @@ class SearchVideo(
         releasedDateTo: String? = null,
         pageSize: Int,
         pageNumber: Int,
-        source: String? = null
+        source: String? = null,
+        ageRangeMin: Int? = null,
+        ageRangeMax: Int? = null
     ) = getVideosByQuery(
         query = getOrThrow(query),
         sortBy = sortBy,
@@ -44,7 +45,9 @@ class SearchVideo(
         releasedDateTo = releasedDateTo,
         pageSize = pageSize,
         pageNumber = pageNumber,
-        source = source
+        source = source,
+        ageRangeMin = ageRangeMin,
+        ageRangeMax = ageRangeMax
     )
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): VideoId? {

@@ -59,7 +59,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.searchVideos.href",
-                    containsString("{&sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source}")
+                    containsString("{&sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source,age_range_min,age_range_max}")
                 )
             )
             .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))

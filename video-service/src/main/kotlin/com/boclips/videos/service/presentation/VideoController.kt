@@ -59,6 +59,8 @@ class VideoController(
         @RequestParam(name = "released_date_from", required = false) releasedDateFrom: String?,
         @RequestParam(name = "released_date_to", required = false) releasedDateTo: String?,
         @RequestParam(name = "source", required = false) source: String?,
+        @RequestParam(name = "age_range_min", required = false) ageRangeMin: Int?,
+        @RequestParam(name = "age_range_max", required = false) ageRangeMax: Int?,
         @RequestParam("size") size: Int?,
         @RequestParam("page") page: Int?
     ): ResponseEntity<PagedResources<*>> {
@@ -73,7 +75,9 @@ class VideoController(
             pageNumber = page ?: DEFAULT_PAGE_INDEX,
             minDuration = minDuration,
             maxDuration = maxDuration,
-            source = source
+            source = source,
+            ageRangeMin = ageRangeMin,
+            ageRangeMax = ageRangeMax
         )
 
         val videoResources = videosResource
