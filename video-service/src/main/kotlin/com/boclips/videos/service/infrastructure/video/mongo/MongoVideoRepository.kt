@@ -105,7 +105,12 @@ class MongoVideoRepository(
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
         }
 
-        val sequence = Sequence { getVideoCollection().find(filterBson).iterator() }
+        val sequence = Sequence {
+            getVideoCollection()
+                .find(filterBson)
+                .noCursorTimeout(true)
+                .iterator()
+        }
             .map(VideoDocumentConverter::toVideo)
 
         consumer(sequence)
