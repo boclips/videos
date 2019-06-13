@@ -16,7 +16,6 @@ import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -115,10 +114,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("ad-free"))))
 
-            .andExpect(jsonPath("$.page.size", Matchers.equalTo(100)))
-            .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(1)))
-            .andExpect(jsonPath("$.page.totalPages", Matchers.equalTo(1)))
-            .andExpect(jsonPath("$.page.number", Matchers.equalTo(0)))
+            .andExpect(jsonPath("$.page.size", equalTo(100)))
+            .andExpect(jsonPath("$.page.totalElements", equalTo(1)))
+            .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
+            .andExpect(jsonPath("$.page.number", equalTo(0)))
             .andExpect(jsonPath("$._links.prev").doesNotExist())
             .andExpect(jsonPath("$._links.next").doesNotExist())
     }
@@ -191,10 +190,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
 
-            .andExpect(jsonPath("$.page.size", Matchers.equalTo(100)))
-            .andExpect(jsonPath("$.page.totalElements", Matchers.equalTo(1)))
-            .andExpect(jsonPath("$.page.totalPages", Matchers.equalTo(1)))
-            .andExpect(jsonPath("$.page.number", Matchers.equalTo(0)))
+            .andExpect(jsonPath("$.page.size", equalTo(100)))
+            .andExpect(jsonPath("$.page.totalElements", equalTo(1)))
+            .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
+            .andExpect(jsonPath("$.page.number", equalTo(0)))
     }
 
     @Test
@@ -503,7 +502,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `dedup videos searching by IDs`() {
+    fun `dedupe videos searching by IDs`() {
         mockMvc.perform(
             post("/v1/videos/search")
                 .contentType(MediaType.APPLICATION_JSON)

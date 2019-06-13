@@ -29,9 +29,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
         val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
 
         getContentPartnerCollection()
-            .insertOne(
-                contentPartnerDocument.copy(createdAt = Instant.now(), lastModified = Instant.now())
-            )
+            .insertOne(contentPartnerDocument.copy(createdAt = Instant.now(), lastModified = Instant.now()))
 
         val createdContentPartner = findById(contentPartner.contentPartnerId) ?: throw ResourceNotFoundApiException(
             error = "Content partner not found",
@@ -108,10 +106,6 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
         mongoClient.getDatabase(DATABASE_NAME).getCollection<ContentPartnerDocument>(collectionName)
 
     private fun toBsonIdFilter(contentPartnerId: ContentPartnerId): Bson {
-        return if (ContentPartnerDocumentConverter.isYoutubeChannelPartner(contentPartnerId)) {
-            ContentPartnerDocument::youtubeChannelId eq contentPartnerId.value
-        } else {
-            ContentPartnerDocument::id eq ObjectId(contentPartnerId.value)
-        }
+        return ContentPartnerDocument::id eq ObjectId(contentPartnerId.value)
     }
 }

@@ -78,13 +78,9 @@ class MongoVideoRepository(
     }
 
     override fun findByContentPartnerId(contentPartnerId: ContentPartnerId): List<Video> {
-        val bson = if (ContentPartnerDocumentConverter.isYoutubeChannelPartner(contentPartnerId)) {
-            VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::youtubeChannelId) eq contentPartnerId.value
-        } else {
-            VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::id) eq ObjectId(
-                contentPartnerId.value
-            )
-        }
+        val bson =
+            (VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id) eq
+                ObjectId(contentPartnerId.value)
 
         return getVideoCollection()
             .find(bson)

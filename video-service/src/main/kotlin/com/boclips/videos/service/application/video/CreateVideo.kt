@@ -51,7 +51,7 @@ class CreateVideo(
         val contentPartner =
             contentPartnerRepository.findByName(createRequest.provider) ?: contentPartnerRepository.create(
                 ContentPartner(
-                    contentPartnerId = ContentPartnerId(ObjectId.get().toHexString()),
+                    contentPartnerId = ContentPartnerId(value = ObjectId.get().toHexString()),
                     name = createRequest.provider,
                     ageRange = AgeRange.unbounded(),
                     credit = when (videoPlayback) {

@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,7 +41,6 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `find by youtube channel name`() {
         val originalContentPartner = mongoContentPartnerRespository.create(
             TestFactories.createContentPartner(
-                id = ContentPartnerId(value = "ayoutubechannel"),
                 credit = Credit.YoutubeCredit(channelId = "123")
             )
         )

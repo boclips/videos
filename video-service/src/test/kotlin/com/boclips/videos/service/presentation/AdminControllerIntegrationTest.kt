@@ -138,6 +138,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
             contentProvider = "TheYoutuber",
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "id")
         )
+
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator())
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
 

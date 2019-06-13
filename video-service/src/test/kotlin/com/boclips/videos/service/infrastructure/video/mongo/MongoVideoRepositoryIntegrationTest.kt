@@ -418,14 +418,32 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find videos by content partner youtube id`() {
+        val contentPartnerId = ObjectId().toHexString()
         val video1 =
-            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerId = ContentPartnerId("youtube-id-1")))
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    title = "Video 1",
+                    contentPartnerId = ContentPartnerId(value = contentPartnerId)
+                )
+            )
+
         val video2 =
-            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerId = ContentPartnerId("youtube-id-1")))
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    title = "Video 2",
+                    contentPartnerId = ContentPartnerId(value = contentPartnerId)
+                )
+            )
 
-        mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerId = ContentPartnerId("youtube-id-2")))
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                title = "Video 3",
+                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString())
+            )
+        )
 
-        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId("youtube-id-1"))
+        val videos =
+            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(value = contentPartnerId))
 
         assertThat(videos).containsExactly(video1, video2)
     }
@@ -434,12 +452,27 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `find videos by content partner id`() {
         val id = ObjectId.get().toHexString()
         val video1 =
-            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerId = ContentPartnerId(id)))
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    title = "Video 1",
+                    contentPartnerId = ContentPartnerId(id)
+                )
+            )
         val video2 =
-            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerId = ContentPartnerId(id)))
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    title = "Video 2",
+                    contentPartnerId = ContentPartnerId(id)
+                )
+            )
 
         val id2 = ObjectId.get().toHexString()
-        mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerId = ContentPartnerId(id2)))
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                title = "Video 3",
+                contentPartnerId = ContentPartnerId(id2)
+            )
+        )
 
         val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(id))
 
