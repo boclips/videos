@@ -4,9 +4,16 @@ import com.boclips.security.EnableBoclipsSecurity
 import com.boclips.security.HttpSecurityConfigurer
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.http.HttpMethod
+import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.HEAD
+import org.springframework.http.HttpMethod.OPTIONS
+import org.springframework.http.HttpMethod.PATCH
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.PUT
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.stereotype.Component
+import com.boclips.videos.service.config.security.UserRoles as ROLE
 
 @Profile("!test")
 @Configuration
@@ -18,84 +25,56 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
     override fun configure(http: HttpSecurity) {
         http
             .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/actuator/health").permitAll()
-            .antMatchers(HttpMethod.GET, "/actuator/prometheus").permitAll()
+            .antMatchers(GET, "/actuator/health").permitAll()
+            .antMatchers(GET, "/actuator/prometheus").permitAll()
 
-            .antMatchers(HttpMethod.OPTIONS, "/v1/**").permitAll()
+            .antMatchers(OPTIONS, "/v1/**").permitAll()
 
             .antMatchers("/v1").permitAll()
             .antMatchers("/v1/").permitAll()
 
-            .antMatchers(HttpMethod.GET, "/v1/interactions").permitAll()
-            .antMatchers(HttpMethod.POST, "/v1/events/*").permitAll()
+            .antMatchers(GET, "/v1/interactions").permitAll()
+            .antMatchers(POST, "/v1/events/*").permitAll()
 
-            .antMatchers(HttpMethod.GET, "/v1/subjects").permitAll()
-            .antMatchers(HttpMethod.POST, "/v1/subjects")
-            .hasRole(UserRoles.CREATE_SUBJECT)
+            .antMatchers(GET, "/v1/subjects").permitAll()
+            .antMatchers(GET, "/v1/subjects/*").permitAll()
+            .antMatchers(POST, "/v1/subjects").hasRole(ROLE.CREATE_SUBJECT)
 
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/rebuild_video_index")
-            .hasRole(UserRoles.REBUILD_SEARCH_INDEX)
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/rebuild_collection_index")
-            .hasRole(UserRoles.REBUILD_SEARCH_INDEX)
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/build_legacy_search_index")
-            .hasRole(UserRoles.REBUILD_SEARCH_INDEX)
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/analyse_video/*")
-            .hasRole(UserRoles.UPDATE_VIDEOS)
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/analyse_videos")
-            .hasRole(UserRoles.UPDATE_VIDEOS)
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/classify_videos")
-            .hasRole(UserRoles.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/admin/actions/rebuild_video_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
+            .antMatchers(POST, "/v1/admin/actions/rebuild_collection_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
+            .antMatchers(POST, "/v1/admin/actions/build_legacy_search_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
+            .antMatchers(POST, "/v1/admin/actions/analyse_video/*").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/admin/actions/analyse_videos").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/admin/actions/classify_videos").hasRole(ROLE.UPDATE_VIDEOS)
 
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/refresh_playbacks")
-            .hasRole(UserRoles.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/admin/actions/refresh_playbacks").hasRole(ROLE.UPDATE_VIDEOS)
 
-            .antMatchers(HttpMethod.POST, "/v1/admin/actions/update_youtube_channel_names")
-            .hasRole(UserRoles.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/admin/actions/update_youtube_channel_names").hasRole(ROLE.UPDATE_VIDEOS)
 
-            .antMatchers(HttpMethod.POST, "/v1/e2e/actions/reset_all")
-            .hasRole(UserRoles.E2E)
+            .antMatchers(POST, "/v1/e2e/actions/reset_all").hasRole(ROLE.E2E)
 
-            .antMatchers(HttpMethod.DELETE, "/v1/videos/*")
-            .hasRole(UserRoles.REMOVE_VIDEOS)
-            .antMatchers(HttpMethod.POST, "/v1/videos")
-            .hasRole(UserRoles.INSERT_VIDEOS)
-            .antMatchers(HttpMethod.PATCH, "/v1/videos")
-            .hasRole(UserRoles.UPDATE_VIDEOS)
-            .antMatchers(HttpMethod.POST, "/v1/videos/search")
-            .hasRole(UserRoles.VIEW_DISABLED_VIDEOS)
-            .antMatchers(HttpMethod.POST, "/v1/videos/*")
-            .hasRole(UserRoles.UPDATE_VIDEOS)
-            .antMatchers(HttpMethod.GET, "/v1/videos*")
-            .hasRole(UserRoles.VIEW_VIDEOS)
-            .antMatchers(HttpMethod.GET, "/v1/videos/*/transcript")
-            .hasRole(UserRoles.DOWNLOAD_TRANSCRIPT)
-            .antMatchers(HttpMethod.GET, "/v1/videos/*").permitAll()
+            .antMatchers(DELETE, "/v1/videos/*").hasRole(ROLE.REMOVE_VIDEOS)
+            .antMatchers(POST, "/v1/videos").hasRole(ROLE.INSERT_VIDEOS)
+            .antMatchers(PATCH, "/v1/videos").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/videos/search").hasRole(ROLE.VIEW_DISABLED_VIDEOS)
+            .antMatchers(POST, "/v1/videos/*").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(GET, "/v1/videos*").hasRole(ROLE.VIEW_VIDEOS)
+            .antMatchers(GET, "/v1/videos/*/transcript").hasRole(ROLE.DOWNLOAD_TRANSCRIPT)
+            .antMatchers(GET, "/v1/videos/*").permitAll()
 
-            .antMatchers(HttpMethod.POST, "/v1/collections")
-            .hasRole(UserRoles.INSERT_COLLECTIONS)
-            .antMatchers(HttpMethod.GET, "/v1/collections")
-            .hasRole(UserRoles.VIEW_COLLECTIONS)
-            .antMatchers(HttpMethod.GET, "/v1/collections/*")
-            .hasRole(UserRoles.VIEW_COLLECTIONS)
-            .antMatchers(HttpMethod.PATCH, "/v1/collections/*")
-            .hasRole(UserRoles.UPDATE_COLLECTIONS)
-            .antMatchers(HttpMethod.DELETE, "/v1/collections/*")
-            .hasRole(UserRoles.DELETE_COLLECTIONS)
-            .antMatchers(HttpMethod.PUT, "/v1/collections/*/videos/*")
-            .hasRole(UserRoles.UPDATE_COLLECTIONS)
-            .antMatchers(HttpMethod.DELETE, "/v1/collections/*/videos/*")
-            .hasRole(UserRoles.UPDATE_COLLECTIONS)
+            .antMatchers(POST, "/v1/collections").hasRole(ROLE.INSERT_COLLECTIONS)
+            .antMatchers(GET, "/v1/collections").hasRole(ROLE.VIEW_COLLECTIONS)
+            .antMatchers(GET, "/v1/collections/*").hasRole(ROLE.VIEW_COLLECTIONS)
+            .antMatchers(PATCH, "/v1/collections/*").hasRole(ROLE.UPDATE_COLLECTIONS)
+            .antMatchers(DELETE, "/v1/collections/*").hasRole(ROLE.DELETE_COLLECTIONS)
+            .antMatchers(PUT, "/v1/collections/*/videos/*").hasRole(ROLE.UPDATE_COLLECTIONS)
+            .antMatchers(DELETE, "/v1/collections/*/videos/*").hasRole(ROLE.UPDATE_COLLECTIONS)
 
-            .antMatchers(HttpMethod.HEAD, "/v1/content-partners/*/videos/*")
-            .hasRole(UserRoles.INSERT_VIDEOS)
-            .antMatchers(HttpMethod.POST, "/v1/content-partners")
-            .hasRole(UserRoles.VIEW_CONTENT_PARTNERS)
-            .antMatchers(HttpMethod.GET, "/v1/content-partners")
-            .hasRole(UserRoles.INSERT_CONTENT_PARTNERS)
-            .antMatchers(HttpMethod.PUT, "/v1/content-partners/*")
-            .hasRole(UserRoles.UPDATE_CONTENT_PARTNERS)
-            .antMatchers(HttpMethod.GET, "/v1/content-partners/*")
-            .hasRole(UserRoles.VIEW_CONTENT_PARTNERS)
+            .antMatchers(HEAD, "/v1/content-partners/*/videos/*").hasRole(ROLE.INSERT_VIDEOS)
+            .antMatchers(POST, "/v1/content-partners").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
+            .antMatchers(GET, "/v1/content-partners").hasRole(ROLE.INSERT_CONTENT_PARTNERS)
+            .antMatchers(PUT, "/v1/content-partners/*").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
+            .antMatchers(GET, "/v1/content-partners/*").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
 
             .anyRequest().denyAll()
     }

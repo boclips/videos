@@ -17,6 +17,7 @@ import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
+import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
@@ -236,6 +237,11 @@ class ApplicationContext(
     @Bean
     fun refreshVideoDurations(): RequestVideoPlaybackUpdate {
         return RequestVideoPlaybackUpdate(videoRepository, playbackRepository, topics)
+    }
+
+    @Bean
+    fun getSubject(): GetSubject {
+        return GetSubject(subjectRepository)
     }
 
     @Bean

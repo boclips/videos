@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -25,7 +26,17 @@ class SubjectsLinkBuilderTest {
     }
 
     @Test
-    fun `self link`() {
-        assertThat(subjectsLinkBuilder.self()).isEqualTo(Link("https://localhost/v1/subjects", "self"))
+    fun `subjects link with rel`() {
+        assertThat(subjectsLinkBuilder.subjects("rel")).isEqualTo(Link("https://localhost/v1/subjects", "rel"))
+    }
+
+    @Test
+    fun `subject link defaults to self`() {
+        assertThat(subjectsLinkBuilder.subject(SubjectResource("id"))).isEqualTo(Link("https://localhost/v1/subjects/id", "self"))
+    }
+
+    @Test
+    fun `subject link with rel`() {
+        assertThat(subjectsLinkBuilder.subject(SubjectResource("id"), "rel")).isEqualTo(Link("https://localhost/v1/subjects/id", "rel"))
     }
 }

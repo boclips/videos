@@ -270,6 +270,18 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
         mockMvc.perform(post("/v1/admin/actions/rebuild_collection_index").asOperator())
             .andExpect(status().is2xxSuccessful)
     }
+
+    @Test
+    fun `everybody can access subjects without permissions`() {
+        mockMvc.perform(get("/v1/subjects"))
+            .andExpect(status().`is`(HttpStatus.OK.value()))
+    }
+
+    @Test
+    fun `everybody can access a subject without permissions`() {
+        mockMvc.perform(get("/v1/subjects/53fbf4615c3b9f41c381b6a3"))
+            .andExpect(status().`is`(not401Or403()))
+    }
 }
 
 private fun not401Or403(): Matcher<Int> {
