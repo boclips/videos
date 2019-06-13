@@ -29,7 +29,7 @@ class UpdateContentPartner(
     private fun updateContentPartnerInVideos(
         contentPartner: ContentPartner
     ) {
-        val videosAffected = videoRepository.findByContentPartnerName(contentPartnerName = contentPartner.name)
+        val videosAffected = videoRepository.findByContentPartnerId(contentPartnerId = contentPartner.contentPartnerId)
 
         val commands = videosAffected.flatMap { video ->
             listOf(

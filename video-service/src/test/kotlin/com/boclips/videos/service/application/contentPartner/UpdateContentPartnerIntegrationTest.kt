@@ -52,16 +52,16 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `updating age ranges of videos`() {
-        val videoId = saveVideo(
-            contentProvider = "My better content partner",
-            ageRange = UnboundedAgeRange
-        )
-
         val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11)
             )
+        )
+
+        val videoId = saveVideo(
+            contentProvider = "My content partner",
+            ageRange = UnboundedAgeRange
         )
 
         updateContentPartner(
