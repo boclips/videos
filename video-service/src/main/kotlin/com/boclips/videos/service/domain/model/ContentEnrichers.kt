@@ -12,8 +12,8 @@ class ContentEnrichers {
             return when {
                 contentPartnersExcluded.any {
                     video.contentPartner.name.equals(
-                        other = it,
-                        ignoreCase = true
+                            other = it,
+                            ignoreCase = true
                     )
                 } -> false
                 video.type != LegacyVideoType.STOCK -> true
@@ -72,10 +72,7 @@ class ContentEnrichers {
             "Mage Math",
             "engVid",
             "1 Minute in a Museum",
-            "British Movietone",
-            "TED Talks",
-            "TED-Ed"
+            "British Movietone"
         )
     }
 }
-

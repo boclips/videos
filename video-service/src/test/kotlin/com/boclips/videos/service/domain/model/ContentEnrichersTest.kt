@@ -19,9 +19,7 @@ class ContentEnrichersTest {
             "Mage Math",
             "engVid",
             "1 Minute in a Museum",
-            "British Movietone",
-            "TED Talks",
-            "TED-Ed"
+            "British Movietone"
         )
 
         blackListedContentPartners.forEach {
