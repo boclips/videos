@@ -11,8 +11,7 @@ class SearchVideo(
     private val getVideoById: GetVideoById,
     private val getAllVideosById: GetAllVideosById,
     private val getVideosByQuery: GetVideosByQuery,
-    private val videoRepository: VideoRepository,
-    private val getAllVideosByContentPartnerId: GetAllVideosByContentPartnerId
+    private val videoRepository: VideoRepository
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
@@ -21,9 +20,6 @@ class SearchVideo(
     fun byId(id: String?) = getVideoById(resolveToAssetId(id)!!)
 
     fun byIds(ids: List<String>) = getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) })
-
-    fun byContentPartnerId(contentPartnerId: String) =
-        getAllVideosByContentPartnerId(contentPartnerId = ContentPartnerId(contentPartnerId))
 
     fun byQuery(
         query: String?,

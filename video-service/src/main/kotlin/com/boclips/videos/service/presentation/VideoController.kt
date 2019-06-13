@@ -93,15 +93,10 @@ class VideoController(
     }
 
     @PostMapping("/search")
-    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> {
-        val videoIds = searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
-            .union(searchVideo.byContentPartnerId(adminSearchRequest?.contentPartnerId ?: ""))
-            .toList()
-
-        return videoIds
+    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> =
+        searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
-    }
 
     @GetMapping(path = ["/{id}"], produces = ["application/hal+json"])
     fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {

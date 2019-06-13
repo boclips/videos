@@ -89,8 +89,7 @@ class ApplicationContext(
         getVideoById(videoToResourceConverter),
         getAllVideosById(videoToResourceConverter),
         getVideosByQuery(searchQueryConverter, videoToResourceConverter),
-        videoRepository,
-        getAllVideosByContentPartnerId(videoToResourceConverter)
+        videoRepository
     )
 
     @Bean
@@ -287,11 +286,6 @@ class ApplicationContext(
     @Bean
     fun getContentPartners(): GetContentPartners {
         return GetContentPartners(contentPartnerRepository, contentPartnersLinkBuilder)
-    }
-
-    @Bean
-    fun getAllVideosByContentPartnerId(videoToResourceConverter: VideoToResourceConverter): GetAllVideosByContentPartnerId {
-        return GetAllVideosByContentPartnerId(videoService, videoToResourceConverter = videoToResourceConverter)
     }
 
     private fun getVideoById(
