@@ -38,6 +38,7 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.set
+import java.time.Instant
 import java.util.Optional
 
 class MongoVideoRepository(
@@ -80,7 +81,9 @@ class MongoVideoRepository(
         val bson = if (ContentPartnerDocumentConverter.isYoutubeChannelPartner(contentPartnerId)) {
             VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::youtubeChannelId) eq contentPartnerId.value
         } else {
-            VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::id) eq ObjectId(contentPartnerId.value)
+            VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::id) eq ObjectId(
+                contentPartnerId.value
+            )
         }
 
         return getVideoCollection()
@@ -207,10 +210,14 @@ class MongoVideoRepository(
                     updateCommand.ageRange.max()
                 )
             )
-            is VideoUpdateCommand.ReplaceContentPartner -> set(
-                VideoDocument::source / SourceDocument::contentPartner,
-                ContentPartnerDocumentConverter.toContentPartnerDocument(updateCommand.contentPartner)
-            )
+            is VideoUpdateCommand.ReplaceContentPartner -> {
+                val contentPartnerDocument =
+                    ContentPartnerDocumentConverter.toContentPartnerDocument(updateCommand.contentPartner)
+                set(
+                    VideoDocument::source / SourceDocument::contentPartner,
+                    contentPartnerDocument.copy(lastModified = Instant.now())
+                )
+            }
         }
     }
 

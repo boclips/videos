@@ -69,7 +69,7 @@ object PlaybackConverter : KLogging() {
                     logger.info { "Failed to convert $playbackDocument" }
 
                     return VideoPlayback.FaultyPlayback(
-                        id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id)
+                        id = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = playbackDocument.id)
                     )
                 }
 

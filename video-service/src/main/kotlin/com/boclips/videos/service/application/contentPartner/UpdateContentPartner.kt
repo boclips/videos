@@ -14,8 +14,9 @@ class UpdateContentPartner(
 ) {
     operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
+        val updateCommands = ContentPartnerUpdatesConverter().convert(id, request)
 
-        contentPartnerRepository.update(ContentPartnerUpdatesConverter().convert(id, request))
+        contentPartnerRepository.update(updateCommands)
 
         val contentPartner = contentPartnerRepository.findById(id)
             ?: throw ContentPartnerNotFoundException("Could not find content partner: ${id.value}")

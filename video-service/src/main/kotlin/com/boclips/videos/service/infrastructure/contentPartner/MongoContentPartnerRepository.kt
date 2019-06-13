@@ -13,10 +13,12 @@ import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.SetTo
+import org.litote.kmongo.combine
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.set
+import java.time.Instant
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartnerRepository {
     companion object : KLogging() {
@@ -24,7 +26,12 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
     }
 
     override fun create(contentPartner: ContentPartner): ContentPartner {
-        getContentPartnerCollection().insertOne(ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner))
+        val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
+
+        getContentPartnerCollection()
+            .insertOne(
+                contentPartnerDocument.copy(createdAt = Instant.now(), lastModified = Instant.now())
+            )
 
         val createdContentPartner = findById(contentPartner.contentPartnerId) ?: throw ResourceNotFoundApiException(
             error = "Content partner not found",
@@ -64,8 +71,8 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
         logger.info { "Bulk content partner update: $result" }
     }
 
-    private fun updateCommandsToBson(updateCommand: ContentPartnerUpdateCommand) =
-        when (updateCommand) {
+    private fun updateCommandsToBson(updateCommand: ContentPartnerUpdateCommand): Bson {
+        val update = when (updateCommand) {
             is ContentPartnerUpdateCommand.ReplaceName -> set(ContentPartnerDocument::name, updateCommand.name)
             is ContentPartnerUpdateCommand.ReplaceAgeRange ->
                 set(
@@ -79,6 +86,9 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
                     )
                 )
         }
+
+        return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))
+    }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {
         val contentPartner =

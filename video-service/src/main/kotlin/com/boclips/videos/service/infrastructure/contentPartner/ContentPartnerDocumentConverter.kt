@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import org.bson.types.ObjectId
+import java.time.Instant
 
 object ContentPartnerDocumentConverter {
     fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {
