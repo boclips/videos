@@ -7,5 +7,6 @@ import org.springframework.hateoas.core.Relation
 open class ContentPartnerResource(
     val id: String,
     val name: String,
-    val ageRange: AgeRangeResource? = null
+    val ageRange: AgeRangeResource? = null,
+    val isOfficial: Boolean
 )

@@ -139,7 +139,11 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
         mockMvc.perform(get("/v1/content-partners").asBoclipsEmployee())
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED-ED")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.min", equalTo(10)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.max", equalTo(19)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
             .andExpect(
                 jsonPath(
                     "$._embedded.contentPartners[0]._links.self.href",
