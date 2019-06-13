@@ -19,8 +19,8 @@ object VideoMetadataConverter {
             durationSeconds = video.playback.duration.seconds,
             source = convertPlaybackTypeToSourceType(video.playback.id.type),
             transcript = video.transcript,
-            ageRangeMin = video.ageRange?.min(),
-            ageRangeMax = video.ageRange?.max()
+            ageRangeMin = video.ageRange.min(),
+            ageRangeMax = video.ageRange.max()
         )
     }
 
