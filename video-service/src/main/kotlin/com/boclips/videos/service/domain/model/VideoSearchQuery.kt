@@ -24,7 +24,9 @@ class VideoSearchQuery(
     val releaseDateTo: LocalDate? = null,
     val pageSize: Int,
     val pageIndex: Int,
-    val source: SourceType? = null
+    val source: SourceType? = null,
+    val ageRangeMin: Int? = null,
+    val ageRangeMax: Int? = null
 ) {
     fun toSearchQuery(): VideoQuery {
         val sort = sortBy?.let {
@@ -46,7 +48,9 @@ class VideoSearchQuery(
                 source = source,
                 sort = sort,
                 releaseDateFrom = releaseDateFrom,
-                releaseDateTo = releaseDateTo
+                releaseDateTo = releaseDateTo,
+                ageRangeMin = ageRangeMin,
+                ageRangeMax = ageRangeMax
             )
         }
     }
