@@ -119,6 +119,10 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                 if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
                     must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
                 }
+            }.apply {
+                if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
+                    must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
+                }
             }
             .should(boostTitleMatch(videoQuery.phrase))
             .should(boostDescriptionMatch(videoQuery.phrase))
@@ -149,6 +153,38 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
         to?.let { queryBuilder.to(it) }
 
         return queryBuilder
+    }
+
+    private fun beWithinAgeRange(min: Int?, max: Int?): BoolQueryBuilder {
+        return QueryBuilders
+            .boolQuery()
+            .apply {
+                if (min != null) {
+                    should(
+                        QueryBuilders.boolQuery().apply {
+                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
+                                to(min)
+                            })
+                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MAX).apply {
+                                from(min)
+                            })
+                        }
+                    )
+
+                    should(
+                        QueryBuilders.boolQuery().apply {
+                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
+                                from(min)
+                            })
+                            max?.let {
+                                must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
+                                    to(max)
+                                })
+                            }
+                        }
+                    )
+                }
+            }
     }
 
     private fun matchTags(excludeTags: List<String>) =

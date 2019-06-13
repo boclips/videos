@@ -12,5 +12,7 @@ data class VideoMetadata(
     val tags: List<String>,
     val durationSeconds: Long,
     val source: SourceType,
-    val transcript: String?
+    val transcript: String?,
+    val ageRangeMin: Int?,
+    val ageRangeMax: Int?
 )

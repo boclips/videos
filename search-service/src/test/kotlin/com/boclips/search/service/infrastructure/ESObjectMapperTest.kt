@@ -21,7 +21,9 @@ class ESObjectMapperTest {
                 releaseDate = LocalDate.of(2015, Month.MAY, 21),
                 durationSeconds = 10,
                 source = "Boclips",
-                transcript = null
+                transcript = null,
+                ageRangeMin = 3,
+                ageRangeMax = 11
             )
         )
 

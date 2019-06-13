@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -28,7 +29,8 @@ class VideoMetadataConverterTest {
             type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
             keywords = listOf("k1"),
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
-            transcript = "a great transcript"
+            transcript = "a great transcript",
+            ageRange = AgeRange.bounded(5, 11)
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -44,7 +46,9 @@ class VideoMetadataConverterTest {
                 tags = listOf("classroom"),
                 durationSeconds = 10,
                 source = SourceType.YOUTUBE,
-                transcript = "a great transcript"
+                transcript = "a great transcript",
+                ageRangeMin = 5,
+                ageRangeMax = 11
             )
         )
     }

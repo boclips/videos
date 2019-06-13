@@ -20,7 +20,9 @@ class ESVideoWriteSearchService(client: RestHighLevelClient) : AbstractESWriteSe
         tags = entry.tags,
         durationSeconds = entry.durationSeconds,
         source = entry.source.name,
-        transcript = entry.transcript
+        transcript = entry.transcript,
+        ageRangeMax = entry.ageRangeMax,
+        ageRangeMin = entry.ageRangeMin
     )
 
     override fun getIdentifier(entry: VideoMetadata) = entry.id

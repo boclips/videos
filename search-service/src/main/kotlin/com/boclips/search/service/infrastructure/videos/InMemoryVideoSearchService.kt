@@ -45,9 +45,26 @@ class InMemoryVideoSearchService : AbstractInMemorySearchService<VideoQuery, Vid
                     videoQuery.source?.let { it == entry.value.source } ?: true
                 }.filter { entry ->
                     (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
+                }.filter { entry ->
+                    videoQuery.ageRangeMin?.let { queryMin ->
+                        entry.value.ageRangeMin?.let { videoMin ->
+                            val videoMax = entry.value.ageRangeMax
+                            val queryMax = videoQuery.ageRangeMax
+
+                            compareAgeRanges(videoMin, queryMin, videoMax, queryMax)
+                        } ?: false
+                    } ?: true
                 }
                 .map { video -> video.key }
         }
     }
 
+    private fun compareAgeRanges(videoMin: Int, queryMin: Int, videoMax: Int?, queryMax: Int?) : Boolean {
+        return (
+            videoMin <= queryMin
+                && (videoMax == null || videoMax >= queryMin)
+            || videoMin >= queryMin
+                && (videoMax == null || queryMax == null || videoMin <= queryMax)
+            )
+    }
 }

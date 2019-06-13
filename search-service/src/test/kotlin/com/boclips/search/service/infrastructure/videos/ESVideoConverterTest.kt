@@ -26,7 +26,9 @@ class ESVideoConverterTest {
                 "tags": ["news", "classroom"],
                 "durationSeconds": 10,
                 "source": "Boclips",
-                "transcript": "A great transcript"
+                "transcript": "A great transcript",
+                "ageRangeMin": "3",
+                "ageRangeMax": "11"
             }
         """.trimIndent()
             )
@@ -45,7 +47,9 @@ class ESVideoConverterTest {
                 tags = listOf("news", "classroom"),
                 durationSeconds = 10,
                 source = "Boclips",
-                transcript = "A great transcript"
+                transcript = "A great transcript",
+                ageRangeMin = 3,
+                ageRangeMax = 11
             )
         )
     }

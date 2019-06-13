@@ -693,4 +693,199 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         assertThat(results).containsAll(listOf("1", "0"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("2", "3"))
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by age range when min and max is within bounds`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    ageRangeMin = 5,
+                    ageRangeMax = 7
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    ageRangeMin = 7,
+                    ageRangeMax = 9
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Second world war",
+                    ageRangeMin = 7,
+                    ageRangeMax = 11
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Fifth world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 4
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    description = "Sixth world war",
+                    ageRangeMin = 15,
+                    ageRangeMax = 18
+                )
+            )
+        )
+
+        val results =
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "World war",
+                        ageRangeMin = 5,
+                        ageRangeMax = 11
+                    )
+                )
+            )
+
+        assertThat(results).containsAll(listOf("0", "1", "2"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("4","3"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by age range when min and max extends outside bounds`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 18
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 7
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Second world war",
+                    ageRangeMin = 7,
+                    ageRangeMax = 15
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Third world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 5
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    description = "Fifth world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 4
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "5",
+                    description = "Sixth world war",
+                    ageRangeMin = 15,
+                    ageRangeMax = 18
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "6",
+                    description = "Seventh world war",
+                    ageRangeMin = 7
+                )
+            )
+        )
+
+        val results =
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "World war",
+                        ageRangeMin = 5,
+                        ageRangeMax = 11
+                    )
+                )
+            )
+
+        assertThat(results).containsAll(listOf("0", "1", "2", "3", "6"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("4","5"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by age range when query has no max`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 18
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 7
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Second world war",
+                    ageRangeMin = 7,
+                    ageRangeMax = 15
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Third world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 5
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    description = "Fourth world war",
+                    ageRangeMin = 7,
+                    ageRangeMax = 11
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "5",
+                    description = "Fifth world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 4
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "6",
+                    description = "Sixth world war",
+                    ageRangeMin = 15,
+                    ageRangeMax = 18
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "7",
+                    description = "Seventh world war",
+                    ageRangeMin = 7
+                )
+            )
+        )
+
+        val results =
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "World war",
+                        ageRangeMin = 5
+                    )
+                )
+            )
+
+        assertThat(results).containsAll(listOf("0", "1", "2", "3", "4", "6","7"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("5"))
+    }
 }

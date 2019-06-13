@@ -15,5 +15,7 @@ class VideoQuery(
     val maxDuration: Duration? = null,
     val source: SourceType? = null,
     val releaseDateFrom: LocalDate? = null,
-    val releaseDateTo: LocalDate? = null
+    val releaseDateTo: LocalDate? = null,
+    val ageRangeMin: Int? = null,
+    val ageRangeMax: Int? = null
 ) : SearchQuery<VideoMetadata>(phrase, sort)

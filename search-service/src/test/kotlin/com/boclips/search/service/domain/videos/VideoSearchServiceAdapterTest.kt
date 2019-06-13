@@ -25,7 +25,9 @@ class TestVideoSearchService(query: ReadSearchService<VideoMetadata, VideoQuery>
             tags = listOf("classroom"),
             durationSeconds = 0,
             source = SourceType.YOUTUBE,
-            transcript = null
+            transcript = null,
+            ageRangeMin = 3,
+            ageRangeMax = 18
         )
     }
 }

@@ -208,6 +208,90 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
     }
 
     @Test
+    fun `returns documents where age range is within the given min and max`() {
+        writeSearchService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 7, ageRangeMax = 9),
+                SearchableVideoMetadataFactory.create(id = "2", title = "TED", ageRangeMin = 5, ageRangeMax = 9),
+                SearchableVideoMetadataFactory.create(id = "3", title = "TED", ageRangeMin = 8, ageRangeMax = 11),
+                SearchableVideoMetadataFactory.create(id = "4", title = "TED", ageRangeMin = 15, ageRangeMax = 18),
+                SearchableVideoMetadataFactory.create(id = "5", title = "TED", ageRangeMin = 1, ageRangeMax = 3)
+            )
+        )
+
+        val results = readSearchService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    ageRangeMin = 5,
+                    ageRangeMax = 11
+                )
+            )
+        )
+
+        assertThat(results).hasSize(3)
+        assertThat(results).contains("1")
+        assertThat(results).contains("2")
+        assertThat(results).contains("3")
+    }
+
+    @Test
+    fun `returns documents where age range is within the given min and max but extends beyond it`() {
+        writeSearchService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
+                SearchableVideoMetadataFactory.create(id = "2", title = "TED", ageRangeMin = 3, ageRangeMax = 7),
+                SearchableVideoMetadataFactory.create(id = "3", title = "TED", ageRangeMin = 7),
+                SearchableVideoMetadataFactory.create(id = "4", title = "TED", ageRangeMin = 3),
+                SearchableVideoMetadataFactory.create(id = "5", title = "TED", ageRangeMin = 15, ageRangeMax = 18),
+                SearchableVideoMetadataFactory.create(id = "6", title = "TED", ageRangeMin = 1, ageRangeMax = 3)
+            )
+        )
+
+        val results = readSearchService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    ageRangeMin = 5,
+                    ageRangeMax = 11
+                )
+            )
+        )
+
+        assertThat(results).hasSize(4)
+        assertThat(results).contains("1")
+        assertThat(results).contains("2")
+        assertThat(results).contains("3")
+        assertThat(results).contains("4")
+    }
+
+    @Test
+    fun `returns documents where age range is within the range created by the given min`() {
+        writeSearchService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
+                SearchableVideoMetadataFactory.create(id = "2", title = "TED", ageRangeMin = 7),
+                SearchableVideoMetadataFactory.create(id = "3", title = "TED", ageRangeMin = 3),
+                SearchableVideoMetadataFactory.create(id = "4", title = "TED", ageRangeMin = 1, ageRangeMax = 3)
+            )
+        )
+
+        val results = readSearchService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    ageRangeMin = 5
+                )
+            )
+        )
+
+        assertThat(results).hasSize(3)
+        assertThat(results).contains("1")
+        assertThat(results).contains("2")
+        assertThat(results).contains("3")
+    }
+
+    @Test
     fun `returns documents where transcript matches`() {
         writeSearchService.upsert(
             sequenceOf(
