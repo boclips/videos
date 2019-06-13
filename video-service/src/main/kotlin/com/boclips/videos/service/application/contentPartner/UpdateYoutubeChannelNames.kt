@@ -23,14 +23,19 @@ class UpdateYoutubeChannelNames(
     companion object : KLogging()
 
     operator fun invoke() {
-        videoRepository.streamAll(VideoFilter.IsYoutube) { sequence -> sequence.forEach { handleUpdate(it) } }
+        videoRepository.streamAll(VideoFilter.IsNotUpdated) { sequence -> sequence.forEach { handleUpdate(it) } }
     }
 
     private fun handleUpdate(videoToUpdate: Video) {
         val actualVideo = videoRepository.find(videoToUpdate.videoId)
 
         if (actualVideo == null) {
-            logger.info { "Could find video $videoToUpdate" }
+            logger.info { "Could not find video $videoToUpdate" }
+            return
+        }
+
+        if (!actualVideo.isPlayable()) {
+            logger.info { "This video should be deleted: ${actualVideo.videoId.value}" }
             return
         }
 
