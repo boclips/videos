@@ -77,6 +77,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
+        fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")
 
         val resource =
             createVideo(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))

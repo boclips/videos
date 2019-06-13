@@ -49,6 +49,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     @Test
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
+        fakeYoutubePlaybackProvider.addMetadata("8889", channelName = "channel", channelId = "1")
 
         val resource =
             createVideo(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))
@@ -182,6 +183,8 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
     @Test
     fun `does not populate legacy search when youtube video is created`() {
         fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
+        fakeYoutubePlaybackProvider.addMetadata("1234", channelName = "channel", channelId = "1")
+
         createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = "1234",

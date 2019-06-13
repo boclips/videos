@@ -27,7 +27,8 @@ class ContentPartnerUpdatesConverterTest {
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(
                 ageRange = AgeRangeRequest(1, 3),
-                name = null
+                name = null,
+                accreditedToYtChannelId = "test"
             )
         )
 

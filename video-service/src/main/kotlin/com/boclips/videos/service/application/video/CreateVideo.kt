@@ -10,9 +10,11 @@ import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -43,14 +45,26 @@ class CreateVideo(
     operator fun invoke(createRequest: CreateVideoRequest): Resource<VideoResource> {
         ensureVideoIsUnique(createRequest.provider!!, createRequest.providerVideoId!!)
 
-        val videoPlayback = findVideoPlayback(createRequest)
+        val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
+        val videoPlayback = findVideoPlayback(playbackId)
 
         val contentPartner =
             contentPartnerRepository.findByName(createRequest.provider) ?: contentPartnerRepository.create(
                 ContentPartner(
                     contentPartnerId = ContentPartnerId(ObjectId.get().toHexString()),
                     name = createRequest.provider,
-                    ageRange = AgeRange.unbounded()
+                    ageRange = AgeRange.unbounded(),
+                    credit = when (videoPlayback) {
+                        is VideoPlayback.YoutubePlayback -> {
+                            val metadata =
+                                findVideoPlaybackMetadata(playbackId) as VideoProviderMetadata.YoutubeMetadata
+                            Credit.YoutubeCredit(channelId = metadata.channelId)
+                        }
+                        is VideoPlayback.StreamPlayback -> {
+                            Credit.PartnerCredit
+                        }
+                        else -> throw IllegalStateException("Could not retrieve playback for $videoPlayback")
+                    }
                 )
             )
 
@@ -85,13 +99,12 @@ class CreateVideo(
         }
     }
 
-    private fun findVideoPlayback(createRequest: CreateVideoRequest): VideoPlayback {
-        return playbackRepository.find(
-            PlaybackId.from(
-                createRequest.playbackId,
-                createRequest.playbackProvider
-            )
-        ) ?: throw VideoPlaybackNotFound(createRequest)
+    private fun findVideoPlayback(playbackId: PlaybackId): VideoPlayback {
+        return playbackRepository.find(playbackId) ?: throw VideoPlaybackNotFound(playbackId)
+    }
+
+    private fun findVideoPlaybackMetadata(playbackId: PlaybackId): VideoProviderMetadata? {
+        return playbackRepository.getProviderMetadata(playbackId)
     }
 
     private fun ensureVideoIsUnique(

@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
 import org.bson.types.ObjectId
 
@@ -22,7 +23,8 @@ class CreateContentPartner(
             ContentPartner(
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                 name = request.name,
-                ageRange = ageRange
+                ageRange = ageRange,
+                credit = request.accreditedToYtChannelId?.let { Credit.YoutubeCredit(it) } ?: Credit.PartnerCredit
             )
         )
     }

@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.contentPartner
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
+import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -38,7 +39,10 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `find by youtube channel name`() {
         val originalContentPartner = mongoContentPartnerRespository.create(
-            TestFactories.createContentPartner(id = ContentPartnerId(value = "ayoutubechannel"))
+            TestFactories.createContentPartner(
+                id = ContentPartnerId(value = "ayoutubechannel"),
+                credit = Credit.YoutubeCredit(channelId = "123")
+            )
         )
 
         val retrievedAsset = mongoContentPartnerRespository.findById(originalContentPartner.contentPartnerId)

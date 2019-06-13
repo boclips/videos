@@ -3,8 +3,8 @@ package com.boclips.videos.service.infrastructure.contentPartner
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.contentPartner.Credit
 import org.bson.types.ObjectId
-import java.time.Instant
 
 object ContentPartnerDocumentConverter {
     fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {
@@ -37,7 +37,8 @@ object ContentPartnerDocumentConverter {
             ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
                 document.ageRangeMin,
                 document.ageRangeMax
-            ) else AgeRange.unbounded()
+            ) else AgeRange.unbounded(),
+            credit = document.youtubeChannelId?.let { Credit.YoutubeCredit(channelId = it) } ?: Credit.PartnerCredit
         )
     }
 

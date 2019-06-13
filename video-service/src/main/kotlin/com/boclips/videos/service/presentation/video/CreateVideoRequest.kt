@@ -6,6 +6,7 @@ data class CreateVideoRequest(
     val provider: String? = null,
     var providerId: String? = null,
     val providerVideoId: String? = null,
+    val youtubeChannelId: String? = null,
     val title: String? = null,
     val description: String? = null,
     val releasedOn: LocalDate? = null,

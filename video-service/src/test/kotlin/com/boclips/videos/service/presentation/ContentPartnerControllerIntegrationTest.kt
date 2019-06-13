@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -22,9 +21,6 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Test
     fun `video lookup by provider id returns 200 when video exists`() {
@@ -50,6 +46,29 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                         "min": 11,
                         "max": 18
                     }
+            }
+        """
+
+        mockMvc.perform(
+            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+                content
+            )
+        )
+            .andExpect(status().isCreated)
+            .andExpect(header().exists("Location"))
+    }
+
+    @Test
+    fun `create content partner accredited to youtube`() {
+        val content = """
+            {
+                "name": "Youtube Channel",
+                "ageRange":
+                    {
+                        "min": 11,
+                        "max": 18
+                    },
+                "accreditedToYtChannelId": "some-yt-channel-id"
             }
         """
 

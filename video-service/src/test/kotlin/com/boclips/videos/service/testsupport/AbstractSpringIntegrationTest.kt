@@ -51,7 +51,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -173,11 +173,15 @@ abstract class AbstractSpringIntegrationTest {
                     duration = duration
                 )
             )
-            YOUTUBE -> fakeYoutubePlaybackProvider.addVideo(
-                playbackId.value,
-                "https://youtube.com/thumb/${playbackId.value}.png",
-                duration = duration
-            )
+            YOUTUBE -> {
+                fakeYoutubePlaybackProvider.addVideo(
+                    playbackId.value,
+                    "https://youtube.com/thumb/${playbackId.value}.png",
+                    duration = duration
+                )
+
+                fakeYoutubePlaybackProvider.addMetadata(playbackId.value, "Another amazing YT Channel", "channel-1")
+            }
         }
 
         val id = createVideo(
@@ -209,10 +213,12 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun setVideoSubjects(videoId: String, vararg subjectIds: SubjectId) {
-        updateVideoSubjects(VideoSubjectClassified.builder()
+        updateVideoSubjects(
+            VideoSubjectClassified.builder()
                 .videoId(videoId)
                 .subjects(subjectIds.map { Subject.builder().id(it.value).build() }.toSet())
-                .build())
+                .build()
+        )
     }
 
     fun saveCollection(

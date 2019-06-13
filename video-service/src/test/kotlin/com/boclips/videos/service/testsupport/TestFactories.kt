@@ -19,6 +19,7 @@ import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -71,7 +72,8 @@ object TestFactories {
         contentPartner: ContentPartner = ContentPartner(
             contentPartnerId = contentPartnerId,
             name = contentPartnerName,
-            ageRange = ageRange
+            ageRange = ageRange,
+            credit = Credit.PartnerCredit
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -361,22 +363,29 @@ object TestFactories {
     fun createContentPartner(
         id: ContentPartnerId = ContentPartnerId(ObjectId().toHexString()),
         name: String = "TED",
-        ageRange: AgeRange = AgeRange.bounded(5, 11)
+        ageRange: AgeRange = AgeRange.bounded(5, 11),
+        credit: Credit = Credit.PartnerCredit
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
             name = name,
-            ageRange = ageRange
+            ageRange = ageRange,
+            credit = credit
         )
     }
 
     fun createContentPartnerRequest(
         name: String? = "TED",
-        ageRange: AgeRangeRequest? = AgeRangeRequest(min = 5, max = 11)
+        ageRange: AgeRangeRequest? = AgeRangeRequest(
+            min = 5,
+            max = 11
+        ),
+        accreditedToYtChannel: String? = null
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
             name = name,
-            ageRange = ageRange
+            ageRange = ageRange,
+            accreditedToYtChannelId = accreditedToYtChannel
         )
     }
 }

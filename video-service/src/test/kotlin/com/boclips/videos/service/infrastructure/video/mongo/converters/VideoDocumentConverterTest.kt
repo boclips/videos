@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.video.mongo.converters
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.testsupport.TestFactories
@@ -24,7 +25,8 @@ class VideoDocumentConverterTest {
             contentPartner = ContentPartner(
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                 name = "Some name",
-                ageRange = AgeRange.bounded(10, 17)
+                ageRange = AgeRange.bounded(10, 17),
+                credit = Credit.PartnerCredit
             ),
             videoReference = "video-123",
             type = LegacyVideoType.NEWS,
