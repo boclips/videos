@@ -79,19 +79,6 @@ class MongoCollectionRepository(
     }
 
 
-    override fun getPublic(pageRequest: PageRequest, subjectsToFilter: List<SubjectId>): Page<Collection> {
-        val criteria = and(
-            publicCollectionCriteria,
-            and(
-                subjectsToFilter.map {
-                    CollectionDocument::subjects contains it.value
-                }
-            )
-        )
-
-        return getPagedCollections(pageRequest, criteria)
-    }
-
     override fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection> {
         val criteria = and(
             publicCollectionCriteria,

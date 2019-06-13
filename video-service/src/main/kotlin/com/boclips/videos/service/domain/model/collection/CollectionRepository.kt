@@ -12,7 +12,6 @@ interface CollectionRepository {
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
     fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand)
     fun delete(id: CollectionId)
-    fun getPublic(pageRequest: PageRequest, subjects: List<SubjectId> = emptyList()): Page<Collection>
     fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun bookmark(id: CollectionId, user: UserId)
     fun unbookmark(id: CollectionId, user: UserId)
