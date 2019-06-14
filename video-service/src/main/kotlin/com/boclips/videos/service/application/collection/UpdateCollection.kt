@@ -3,12 +3,12 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.application.collection.security.getOwnedCollectionOrThrow
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 
 class UpdateCollection(
-    private val collectionService: CollectionService,
+    private val collectionSearchService: CollectionSearchService,
     private val collectionRepository: CollectionRepository,
     private val eventService: EventService
 ) {
@@ -19,7 +19,15 @@ class UpdateCollection(
         val commands = CollectionUpdatesConverter.convert(updateCollectionRequest)
 
         collectionRepository.update(id, *commands.toTypedArray())
-        collectionService.updateSearchIndex(id)
+
+        collectionRepository.find(id)?.let { collection ->
+            if (collection.isPublic) {
+                collectionSearchService.upsert(sequenceOf(collection))
+            } else {
+                collectionSearchService.removeFromSearch(collection.id.value)
+            }
+        }
+
         eventService.saveUpdateCollectionEvent(id, commands)
     }
 }

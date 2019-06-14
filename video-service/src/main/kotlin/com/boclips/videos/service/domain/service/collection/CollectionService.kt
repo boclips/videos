@@ -34,15 +34,5 @@ class CollectionService(
         logger.info { "Counted collections for query $collectionSearchQuery" }
         return collectionSearchService.count(collectionSearchQuery.toSearchQuery())
     }
-
-    fun updateSearchIndex(id: CollectionId) {
-        collectionRepository.find(id)?.let {
-            if (it.isPublic) {
-                collectionSearchService.upsert(sequenceOf(it))
-            } else {
-                collectionSearchService.removeFromSearch(it.id.value)
-            }
-        }
-    }
 }
 

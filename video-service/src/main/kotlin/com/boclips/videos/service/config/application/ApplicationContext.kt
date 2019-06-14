@@ -187,7 +187,7 @@ class ApplicationContext(
 
     @Bean
     fun updateCollection(): UpdateCollection {
-        return UpdateCollection(collectionService, collectionRepository, eventService)
+        return UpdateCollection(collectionSearchService, collectionRepository, eventService)
     }
 
     @Bean
