@@ -21,8 +21,8 @@ class ClassifyVideo(
             return
         }
 
-        if(video.type != LegacyVideoType.INSTRUCTIONAL_CLIPS) {
-            logger.info { "Ignoring subject classification request of video $videoId because it is not instructional" }
+        if(video.type == LegacyVideoType.STOCK || video.type == LegacyVideoType.NEWS) {
+            logger.info { "Ignoring subject classification request of video $videoId because it has type ${video.type}" }
             return
         }
 

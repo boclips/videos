@@ -24,8 +24,19 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `ignores non-instructional videos`() {
+    fun `ignores stock videos`() {
         val video = saveVideo(legacyType = LegacyVideoType.STOCK)
+
+        classifyVideo(video.value)
+
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `ignores news videos`() {
+        val video = saveVideo(legacyType = LegacyVideoType.NEWS)
 
         classifyVideo(video.value)
 
