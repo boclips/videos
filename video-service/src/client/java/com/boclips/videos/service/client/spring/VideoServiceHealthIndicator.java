@@ -15,7 +15,6 @@ public class VideoServiceHealthIndicator extends AbstractHealthIndicator {
         this.videoServiceClient = videoServiceClient;
     }
 
-
     @Override
     protected void doHealthCheck(Health.Builder builder) {
         try {

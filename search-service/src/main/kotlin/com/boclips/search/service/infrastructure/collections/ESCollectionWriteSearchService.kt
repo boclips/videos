@@ -17,5 +17,4 @@ class ESCollectionWriteSearchService(client: RestHighLevelClient) : AbstractESWr
     )
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id
-
 }

@@ -5,7 +5,6 @@ import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.infrastructure.AbstractESWriteSearchService
 import com.boclips.search.service.infrastructure.ESConfig
 import com.boclips.search.service.infrastructure.collections.ESCollectionReadSearchService
 import com.boclips.search.service.infrastructure.collections.ESCollectionWriteSearchService
@@ -17,12 +16,9 @@ import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearchService
-import mu.KLogging
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Component
-import javax.annotation.PostConstruct
 
 @Configuration
 class SearchContext {
@@ -74,16 +70,4 @@ class SearchContext {
     fun reportNoResults(emailClient: EmailClient): ReportNoResults {
         return ReportNoResults(emailClient)
     }
-}
-
-@Component
-class IndexInitialiser(private val indices: List<AbstractESWriteSearchService<*>>) {
-    companion object : KLogging()
-
-    @PostConstruct
-    fun ensureIndices() {
-        logger.info { "Attempting to reindex ${indices.size} indices" }
-        indices.forEach{ it.makeSureIndexIsThere()}
-    }
-
 }

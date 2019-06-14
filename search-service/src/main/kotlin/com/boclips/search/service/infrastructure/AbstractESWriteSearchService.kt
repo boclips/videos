@@ -18,12 +18,16 @@ import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
 abstract class AbstractESWriteSearchService<T>(
-    val indexConfiguration: IndexConfiguration,
+    private val indexConfiguration: IndexConfiguration,
     val client: RestHighLevelClient,
-    val esIndex: ESIndex
+    private val esIndex: ESIndex
 ) : WriteSearchService<T> {
     companion object : KLogging() {
         private const val UPSERT_BATCH_SIZE = 2000
+    }
+
+    init {
+        makeSureIndexIsThere()
     }
 
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
@@ -58,13 +62,13 @@ abstract class AbstractESWriteSearchService<T>(
         upsertToIndex(items, esIndex.getIndexAlias())
     }
 
-    @Synchronized
-    public fun makeSureIndexIsThere() {
+    private fun makeSureIndexIsThere() {
         if (!client.indices().exists(
                 GetIndexRequest().indices(esIndex.getIndexAlias()),
                 RequestOptions.DEFAULT
             )
         ) {
+            logger.info { "Initialising index with empty sequence" }
             safeRebuildIndex(emptySequence())
         }
     }
