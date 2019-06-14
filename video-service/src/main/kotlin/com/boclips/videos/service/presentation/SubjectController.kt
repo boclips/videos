@@ -34,7 +34,7 @@ class SubjectController(
 
     @GetMapping
     fun subjects(): Resources<Resource<*>> {
-        return Resources(getSubjects().map { Resource(it) }, subjectsLinkBuilder.subjects("self"))
+        return Resources(getSubjects().map { Resource(it, subjectsLinkBuilder.subject(it, "self")) }, subjectsLinkBuilder.subjects("self"))
     }
 
     @PostMapping
