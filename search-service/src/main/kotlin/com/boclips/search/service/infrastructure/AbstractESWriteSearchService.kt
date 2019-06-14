@@ -59,7 +59,7 @@ abstract class AbstractESWriteSearchService<T>(
     }
 
     @Synchronized
-    private fun makeSureIndexIsThere() {
+    public fun makeSureIndexIsThere() {
         if (!client.indices().exists(
                 GetIndexRequest().indices(esIndex.getIndexAlias()),
                 RequestOptions.DEFAULT
