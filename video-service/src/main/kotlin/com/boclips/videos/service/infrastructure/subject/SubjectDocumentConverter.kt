@@ -1,8 +1,8 @@
-package com.boclips.videos.service.infrastructure.subject.mongo.converters
+package com.boclips.videos.service.infrastructure.subject
 
-import com.boclips.videos.service.domain.model.collection.Subject
-import com.boclips.videos.service.domain.model.collection.SubjectId
-import com.boclips.videos.service.infrastructure.subject.mongo.SubjectDocument
+import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.types.ObjectId
 
 object SubjectDocumentConverter {

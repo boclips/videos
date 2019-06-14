@@ -14,17 +14,19 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.Subject
-import com.boclips.videos.service.domain.model.collection.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.videos.service.domain.model.disciplines.Discipline
+import com.boclips.videos.service.domain.model.disciplines.DisciplineId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
+import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -97,7 +99,10 @@ object TestFactories {
         )
     }
 
-    fun createSubject(id: String = aValidId(), name: String = id): Subject = Subject(id = SubjectId(id), name = name)
+    fun createSubject(id: String = aValidId(), name: String = id): Subject =
+        Subject(
+            id = SubjectId(id), name = name
+        )
 
     fun createMediaEntry(
         id: String = "1",
@@ -428,5 +433,29 @@ object VideoResourceFactory {
         badges = badges,
         status = status,
         hasTranscripts = hasTranscripts
+    )
+}
+
+object SubjectFactory {
+    fun sample(
+        id: String = ObjectId().toHexString(),
+        name: String = "name"
+    ) = Subject(
+        id = SubjectId(id),
+        name = name
+    )
+}
+
+object DisciplineFactory {
+    fun sample(
+        id: String = ObjectId().toHexString(),
+        code: String = "code",
+        name: String = "name",
+        subjects: List<Subject> = listOf(SubjectFactory.sample())
+    ) = Discipline(
+        id = DisciplineId(id),
+        code = code,
+        name = name,
+        subjects = subjects
     )
 }

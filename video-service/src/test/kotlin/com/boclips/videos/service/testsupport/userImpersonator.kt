@@ -10,6 +10,7 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
             .user(email)
             .roles(
                 UserRoles.VIEW_VIDEOS,
+                UserRoles.VIEW_DISCIPLINES,
                 UserRoles.DOWNLOAD_TRANSCRIPT,
                 UserRoles.VIEW_COLLECTIONS,
                 UserRoles.UPDATE_COLLECTIONS,
@@ -36,7 +37,10 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "teacher@boc
                 UserRoles.CREATE_SUBJECT,
                 UserRoles.VIEW_CONTENT_PARTNERS,
                 UserRoles.INSERT_CONTENT_PARTNERS,
-                UserRoles.UPDATE_CONTENT_PARTNERS
+                UserRoles.UPDATE_CONTENT_PARTNERS,
+                UserRoles.VIEW_DISCIPLINES,
+                UserRoles.INSERT_DISCIPLINES,
+                UserRoles.UPDATE_DISCIPLINES
             )
     )
 

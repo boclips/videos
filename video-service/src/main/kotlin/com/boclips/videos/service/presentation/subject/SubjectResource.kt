@@ -1,9 +1,17 @@
 package com.boclips.videos.service.presentation.subject
 
+import com.boclips.videos.service.domain.model.subjects.Subject
 import org.springframework.hateoas.core.Relation
 
 @Relation(collectionRelation = "subjects")
 data class SubjectResource(
     val id: String,
     val name: String? = null
-)
+) {
+    companion object {
+        fun from(subject: Subject) = SubjectResource(
+            id = subject.id.value,
+            name = subject.name
+        )
+    }
+}

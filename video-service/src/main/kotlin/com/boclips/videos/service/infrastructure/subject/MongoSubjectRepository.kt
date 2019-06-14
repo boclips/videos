@@ -1,10 +1,9 @@
 package com.boclips.videos.service.infrastructure.subject
 
-import com.boclips.videos.service.domain.model.collection.Subject
-import com.boclips.videos.service.domain.model.collection.SubjectId
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.subject.mongo.SubjectDocument
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.bson.types.ObjectId

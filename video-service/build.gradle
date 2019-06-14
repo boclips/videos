@@ -179,6 +179,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    testImplementation('org.mockito:mockito-junit-jupiter:2.23.0')
     testImplementation('org.yaml:snakeyaml:1.23')
 
     youtubeContractTestImplementation sourceSets.main.output

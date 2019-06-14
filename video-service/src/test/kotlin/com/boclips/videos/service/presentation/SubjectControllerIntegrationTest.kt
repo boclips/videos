@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -44,7 +45,7 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
         createSubject("Mathematics")
         createSubject("French")
 
-        mockMvc.perform(get("/v1/subjects"))
+        mockMvc.perform(get("/v1/subjects").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.subjects[0].id").exists())

@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.videos.service.domain.model.collection.Subject
-import com.boclips.videos.service.domain.model.collection.SubjectId
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.nhaarman.mockito_kotlin.mock
@@ -16,7 +16,12 @@ class GetSubjectTest {
     @Test
     fun `subject when found returns resource`() {
         val subjectRepository = mock<SubjectRepository>()
-        whenever(subjectRepository.findByIds(listOf("id"))).thenReturn(listOf(Subject(SubjectId("id"), "name")))
+        whenever(subjectRepository.findByIds(listOf("id"))).thenReturn(listOf(
+            Subject(
+                SubjectId("id"),
+                "name"
+            )
+        ))
 
         assertThat(GetSubject(subjectRepository)("id")).isEqualTo(SubjectResource("id", "name"))
     }

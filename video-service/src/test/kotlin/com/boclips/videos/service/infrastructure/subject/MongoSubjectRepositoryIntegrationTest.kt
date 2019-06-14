@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.subject
 
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat

@@ -1,6 +1,4 @@
-package com.boclips.videos.service.domain.service.subject
-
-import com.boclips.videos.service.domain.model.collection.Subject
+package com.boclips.videos.service.domain.model.subjects
 
 interface SubjectRepository {
     fun findAll(): List<Subject>

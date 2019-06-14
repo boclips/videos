@@ -4,7 +4,7 @@ import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.video.VideoSubjectClassified
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener

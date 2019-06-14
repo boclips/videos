@@ -12,6 +12,7 @@ logging:
   config: "classpath:logback.xml"
   level:
     com.boclips.kalturaclient: debug
+    org.springframework.security: debug
 
 management:
   endpoint:

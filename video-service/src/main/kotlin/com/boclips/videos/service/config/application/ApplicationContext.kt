@@ -16,6 +16,10 @@ import com.boclips.videos.service.application.contentPartner.CreateContentPartne
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
+import com.boclips.videos.service.application.disciplines.CreateDiscipline
+import com.boclips.videos.service.application.disciplines.GetDiscipline
+import com.boclips.videos.service.application.disciplines.GetDisciplines
+import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
@@ -32,7 +36,6 @@ import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
-import com.boclips.videos.service.application.video.search.GetAllVideosByContentPartnerId
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
@@ -40,12 +43,13 @@ import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.disciplines.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -75,6 +79,7 @@ class ApplicationContext(
     val videoAccessService: VideoAccessService,
     val topics: Topics,
     val subjectRepository: SubjectRepository,
+    val disciplineRepository: DisciplineRepository,
     val contentPartnerRepository: ContentPartnerRepository,
     val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
 ) {
@@ -253,6 +258,26 @@ class ApplicationContext(
     @Bean
     fun createSubject(): CreateSubject {
         return CreateSubject(subjectRepository)
+    }
+
+    @Bean
+    fun getDiscipline(): GetDiscipline {
+        return GetDiscipline(disciplineRepository)
+    }
+
+    @Bean
+    fun getDisciplines(): GetDisciplines {
+        return GetDisciplines(disciplineRepository)
+    }
+
+    @Bean
+    fun createDiscipline(): CreateDiscipline {
+        return CreateDiscipline(disciplineRepository)
+    }
+
+    @Bean
+    fun replaceDisciplineSubjects(): ReplaceDisciplineSubjects {
+        return ReplaceDisciplineSubjects(disciplineRepository, subjectRepository)
     }
 
     @Bean

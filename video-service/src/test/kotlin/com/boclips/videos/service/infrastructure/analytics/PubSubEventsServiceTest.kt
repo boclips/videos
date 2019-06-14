@@ -11,7 +11,7 @@ import com.boclips.events.types.video.VideoSegmentPlayed
 import com.boclips.events.types.video.VideosSearched
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.SubjectId
+import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.events.EventService
@@ -158,7 +158,11 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ReplaceSubjectsCommand(subjects = setOf(SubjectId("subject-1")))
+                CollectionUpdateCommand.ReplaceSubjectsCommand(subjects = setOf(
+                    SubjectId(
+                        "subject-1"
+                    )
+                ))
             )
         )
 

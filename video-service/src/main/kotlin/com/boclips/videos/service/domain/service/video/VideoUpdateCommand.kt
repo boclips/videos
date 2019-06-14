@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
-import com.boclips.videos.service.domain.model.collection.Subject
+import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Topic

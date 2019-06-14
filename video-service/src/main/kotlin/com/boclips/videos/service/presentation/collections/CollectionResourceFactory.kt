@@ -23,7 +23,7 @@ class CollectionResourceFactory(
             isMine = collection.isMine(),
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
-            subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
+            subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange)
         )
     }
@@ -39,7 +39,7 @@ class CollectionResourceFactory(
             isMine = collection.isMine(),
             isBookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
-            subjects = subjectToResourceConverter.wrapSubjectsInResource(collection.subjects),
+            subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange)
         )
     }

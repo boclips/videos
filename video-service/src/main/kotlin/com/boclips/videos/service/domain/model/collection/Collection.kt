@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import getCurrentUserId
 import java.time.Instant
