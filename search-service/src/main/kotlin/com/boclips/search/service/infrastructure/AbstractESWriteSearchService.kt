@@ -58,7 +58,6 @@ abstract class AbstractESWriteSearchService<T>(
     }
 
     override fun upsert(items: Sequence<T>, notifier: ProgressNotifier?) {
-        makeSureIndexIsThere()
         upsertToIndex(items, esIndex.getIndexAlias())
     }
 
