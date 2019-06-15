@@ -202,7 +202,7 @@ class ApplicationContext(
 
     @Bean
     fun deleteCollection(): DeleteCollection {
-        return DeleteCollection(collectionRepository)
+        return DeleteCollection(collectionRepository, collectionSearchService)
     }
 
     @Bean

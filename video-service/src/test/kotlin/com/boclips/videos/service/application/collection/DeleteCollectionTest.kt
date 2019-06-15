@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.assertThrows
 class DeleteCollectionTest {
 
     lateinit var collectionRepository: CollectionRepository
+    var collectionSearchService: CollectionSearchService = mock {
+        on { removeFromSearch(any()) }.then {  }
+    }
 
     @BeforeEach
     fun setUp() {
@@ -32,12 +36,26 @@ class DeleteCollectionTest {
             on { find(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
         val collectionId = TestFactories.aValidId()
 
         deleteCollection(collectionId)
 
         verify(collectionRepository).delete(eq(CollectionId(collectionId)))
+    }
+
+    @Test
+    fun `removes collection from the search index`() {
+        collectionRepository = mock {
+            on { find(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
+        }
+
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
+        val collectionId = TestFactories.aValidId()
+
+        deleteCollection(collectionId)
+
+        verify(collectionSearchService).removeFromSearch(collectionId)
     }
 
     @Test
@@ -52,7 +70,7 @@ class DeleteCollectionTest {
             on { find(collectionId) } doReturn onGetCollection
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             deleteCollection(
@@ -74,7 +92,7 @@ class DeleteCollectionTest {
             on { find(collectionId) } doReturn onGetCollection
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             deleteCollection(
@@ -95,7 +113,7 @@ class DeleteCollectionTest {
             on { find(collectionId) } doReturn onGetCollection
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
 
         assertThrows<CollectionNotFoundException> {
             deleteCollection(
