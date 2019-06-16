@@ -1,22 +1,16 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
-import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.messaging.support.MessageBuilder
 
-open class RequestVideoPlaybackUpdate(
+open class RequestPlaybackUpdate(
     private val videoRepository: VideoRepository,
-    private val playbackRepository: PlaybackRepository,
     private val topics: Topics
 ) {
     companion object : KLogging() {
@@ -40,15 +34,6 @@ open class RequestVideoPlaybackUpdate(
         }
     }
 
-    @StreamListener(Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED)
-    operator fun invoke(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
-        try {
-            handleUpdate(videoPlaybackSyncRequestedEvent)
-        } catch (ex: Exception) {
-            logger.info { "Failed to process ${Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED} for ${videoPlaybackSyncRequestedEvent.videoId}: $ex" }
-        }
-    }
-
     private fun publishToTopic(): (Sequence<Video>) -> Unit {
         return { sequence ->
             sequence.forEach { video ->
@@ -59,39 +44,6 @@ open class RequestVideoPlaybackUpdate(
                 topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
                 logger.info { "Video ${video.videoId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
             }
-        }
-    }
-
-    private fun handleUpdate(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
-        val potentialVideoToBeUpdated = VideoId(value = videoPlaybackSyncRequestedEvent.videoId)
-        val actualVideo = videoRepository.find(potentialVideoToBeUpdated)
-
-        if (actualVideo == null) {
-            logger.info { "Could find video $potentialVideoToBeUpdated" }
-            return
-        }
-
-        if (!actualVideo.isPlayable()) {
-            logger.info { "Video $potentialVideoToBeUpdated has no playback information associated with it." }
-            return
-        }
-
-        val playback = playbackRepository.find(actualVideo.playback.id)
-        if (playback == null) {
-            logger.info { "Could not find playback information for $potentialVideoToBeUpdated (Playback Id: ${actualVideo.playback.id})" }
-            return
-        }
-
-        val replacePlayback = VideoUpdateCommand.ReplacePlayback(
-            videoId = actualVideo.videoId,
-            playback = playback
-        )
-
-        try {
-            videoRepository.update(replacePlayback)
-            logger.info { "Updated playback information for video ${actualVideo.videoId} successfully" }
-        } catch (ex: Exception) {
-            logger.info { "Did not update playback for video ${actualVideo.videoId}: $ex" }
         }
     }
 

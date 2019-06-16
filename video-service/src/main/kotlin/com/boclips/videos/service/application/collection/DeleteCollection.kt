@@ -12,8 +12,7 @@ class DeleteCollection(
     operator fun invoke(collectionId: String) {
         collectionRepository.getOwnedCollectionOrThrow(collectionId)
 
-        collectionRepository
-            .delete(CollectionId(collectionId))
+        collectionRepository.delete(CollectionId(collectionId))
 
         collectionSearchService.removeFromSearch(collectionId)
     }

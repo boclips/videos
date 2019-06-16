@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 
-class DeleteVideos(
+class DeleteVideo(
     private val videoRepository: VideoRepository,
     private val videoSearchService: VideoSearchService,
     private val playbackRepository: PlaybackRepository

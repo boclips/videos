@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideos
+import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/videos")
 class VideoController(
     private val searchVideo: SearchVideo,
-    private val deleteVideos: DeleteVideos,
+    private val deleteVideo: DeleteVideo,
     private val createVideo: CreateVideo,
     private val bulkUpdateVideo: BulkUpdateVideo,
     private val getVideoTranscript: GetVideoTranscript,
@@ -108,8 +108,8 @@ class VideoController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteVideo(@PathVariable("id") id: String?) {
-        deleteVideos(id)
+    fun removeVideo(@PathVariable("id") id: String?) {
+        deleteVideo(id)
     }
 
     @GetMapping("/{id}/transcript")

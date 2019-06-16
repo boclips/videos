@@ -30,11 +30,12 @@ import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
 import com.boclips.videos.service.application.video.ClassifyVideo
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideos
+import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RebuildVideoIndex
-import com.boclips.videos.service.application.video.RequestVideoPlaybackUpdate
+import com.boclips.videos.service.application.video.RequestPlaybackUpdate
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
+import com.boclips.videos.service.application.video.UpdatePlayback
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
@@ -135,8 +136,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun deleteVideos(): DeleteVideos {
-        return DeleteVideos(videoRepository, videoSearchService, playbackRepository)
+    fun deleteVideos(): DeleteVideo {
+        return DeleteVideo(videoRepository, videoSearchService, playbackRepository)
     }
 
     @Bean
@@ -241,8 +242,13 @@ class ApplicationContext(
     }
 
     @Bean
-    fun refreshVideoDurations(): RequestVideoPlaybackUpdate {
-        return RequestVideoPlaybackUpdate(videoRepository, playbackRepository, topics)
+    fun refreshVideoDurations(): RequestPlaybackUpdate {
+        return RequestPlaybackUpdate(videoRepository, topics)
+    }
+
+    @Bean
+    fun updatePlayback(): UpdatePlayback {
+        return UpdatePlayback(videoRepository, playbackRepository)
     }
 
     @Bean

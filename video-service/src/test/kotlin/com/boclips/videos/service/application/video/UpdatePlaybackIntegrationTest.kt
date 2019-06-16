@@ -2,49 +2,24 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.infrastructure.contentPartner.MongoContentPartnerRepository
-import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.support.MessageBuilder
 import java.time.Duration
 
-class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest() {
+class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var requestVideoPlaybackUpdate: RequestVideoPlaybackUpdate
+    lateinit var videoRepository: VideoRepository
 
     @Autowired
-    lateinit var videoRepository: MongoVideoRepository
-
-    @Autowired
-    lateinit var contentPartnerRepository: MongoContentPartnerRepository
-
-    @BeforeEach
-    fun setup() {
-        messageCollector.forChannel(topics.videoPlaybackSyncRequested()).clear()
-    }
-
-    @Test
-    fun `publishes one event per video to be updated`() {
-        val video = saveVideo()
-        saveVideo()
-
-        requestVideoPlaybackUpdate.invoke()
-
-        val message = messageCollector.forChannel(topics.videoPlaybackSyncRequested()).poll()
-        val event = objectMapper.readValue(message.payload.toString(), VideoPlaybackSyncRequested::class.java)
-        Assertions.assertThat(event.videoId).isEqualTo(video.value)
-    }
+    lateinit var requestPlaybackUpdate: RequestPlaybackUpdate
 
     @Test
     fun `subscribes to video playback sync request event and handles it`() {
@@ -68,8 +43,8 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
             .send(MessageBuilder.withPayload(event).build())
 
         val updatedAsset = videoRepository.find(videoId)!!
-        assertThat(updatedAsset.playback).isNotNull
-        assertThat(updatedAsset.playback.duration).isEqualTo(Duration.ofSeconds(1000))
+        Assertions.assertThat(updatedAsset.playback).isNotNull
+        Assertions.assertThat(updatedAsset.playback.duration).isEqualTo(Duration.ofSeconds(1000))
     }
 
     @Test
@@ -92,9 +67,9 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
         val youtube = saveVideo(playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.YOUTUBE))
         saveVideo(playbackId = PlaybackId(value = "12331", type = PlaybackProviderType.KALTURA))
 
-        requestVideoPlaybackUpdate.invoke(source = "youtube")
+        requestPlaybackUpdate.invoke(source = "youtube")
 
-        assertThat(messageCollector.forChannel(topics.videoPlaybackSyncRequested()).size).isEqualTo(1)
+        Assertions.assertThat(messageCollector.forChannel(topics.videoPlaybackSyncRequested()).size).isEqualTo(1)
 
         val message = messageCollector.forChannel(topics.videoPlaybackSyncRequested()).poll()
         val event = objectMapper.readValue(message.payload.toString(), VideoPlaybackSyncRequested::class.java)
@@ -107,9 +82,9 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
         saveVideo(playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.YOUTUBE))
         val kaltura = saveVideo(playbackId = PlaybackId(value = "12331", type = PlaybackProviderType.KALTURA))
 
-        requestVideoPlaybackUpdate.invoke(source = "kaltura")
+        requestPlaybackUpdate.invoke(source = "kaltura")
 
-        assertThat(messageCollector.forChannel(topics.videoPlaybackSyncRequested()).size).isEqualTo(1)
+        Assertions.assertThat(messageCollector.forChannel(topics.videoPlaybackSyncRequested()).size).isEqualTo(1)
 
         val message = messageCollector.forChannel(topics.videoPlaybackSyncRequested()).poll()
         val event = objectMapper.readValue(message.payload.toString(), VideoPlaybackSyncRequested::class.java)
@@ -119,8 +94,8 @@ class RequestVideoPlaybackUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
     @Test
     fun `throws for invalid source`() {
-        assertThrows<InvalidSourceException> {
-            requestVideoPlaybackUpdate.invoke(source = "blah")
+        org.junit.jupiter.api.assertThrows<InvalidSourceException> {
+            requestPlaybackUpdate.invoke(source = "blah")
         }
     }
 }
