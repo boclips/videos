@@ -8,10 +8,11 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -78,7 +79,6 @@ class MongoCollectionRepository(
         return getPagedCollections(pageRequest, criteria)
     }
 
-
     override fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection> {
         val criteria = and(
             publicCollectionCriteria,
@@ -97,6 +97,23 @@ class MongoCollectionRepository(
             }
 
         updateOne(id, updateBson)
+    }
+
+    override fun update(updateCommand: CollectionsUpdateCommand) {
+        when (updateCommand) {
+            is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {
+                val allCollectionsContainingVideo = dbCollection()
+                    .find(CollectionDocument::videos contains updateCommand.videoId.value)
+
+                allCollectionsContainingVideo.forEach { collectionDocument ->
+                    val command = CollectionUpdateCommand.RemoveVideoFromCollectionCommand(
+                        videoId = updateCommand.videoId
+
+                    )
+                    update(CollectionId(value = collectionDocument.id.toHexString()), command)
+                }
+            }
+        }
     }
 
     override fun delete(id: CollectionId) {

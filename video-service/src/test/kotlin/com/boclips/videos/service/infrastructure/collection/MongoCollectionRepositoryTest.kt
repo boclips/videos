@@ -6,10 +6,11 @@ import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +28,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRepository: CollectionRepository
 
     @Nested
-    inner class CreateAndUpdate {
+    inner class CreateAndUpdateOne {
         @Test
         fun `can create and add videos to a collection`() {
             val video1 = saveVideo()
@@ -89,7 +90,10 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
             assertThat(collection.isPublic).isEqualTo(false)
 
-            collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = true))
+            collectionRepository.update(
+                collection.id,
+                CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = true)
+            )
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
@@ -156,6 +160,77 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, null))
         }
+
+        @Test
+        fun `updatedAt timestamp on modifying changes`() {
+            val video1 = saveVideo()
+
+            val moment = Instant.now()
+            val collectionV1 = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "My Videos",
+                createdByBoclips = false
+            )
+
+            assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
+
+            Thread.sleep(1)
+
+            collectionRepository.update(
+                collectionV1.id,
+                CollectionUpdateCommand.AddVideoToCollectionCommand(video1)
+            )
+
+            val collectionV2 = collectionRepository.find(collectionV1.id)!!
+
+            assertThat(collectionV2.updatedAt).isAfter(collectionV1.updatedAt)
+
+            Thread.sleep(1)
+
+            collectionRepository.update(
+                collectionV2.id,
+                CollectionUpdateCommand.RemoveVideoFromCollectionCommand(video1)
+            )
+
+            val collectionV3 = collectionRepository.find(collectionV1.id)!!
+
+            assertThat(collectionV3.updatedAt).isAfter(collectionV2.updatedAt)
+        }
+    }
+
+    @Nested
+    inner class UpdateMany {
+        @Test
+        fun `removes a video reference from all collections`() {
+            val videoId = VideoId(value = ObjectId().toHexString())
+
+            val aGoodCollection = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Great collection",
+                createdByBoclips = false
+            )
+
+            collectionRepository.update(
+                aGoodCollection.id,
+                CollectionUpdateCommand.AddVideoToCollectionCommand(videoId)
+            )
+
+            val anotherGoodCollection = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Good collection",
+                createdByBoclips = true
+            )
+
+            collectionRepository.update(
+                anotherGoodCollection.id,
+                CollectionUpdateCommand.AddVideoToCollectionCommand(videoId)
+            )
+
+            collectionRepository.update(CollectionsUpdateCommand.RemoveVideoFromAllCollections(videoId))
+
+            assertThat(collectionRepository.find(aGoodCollection.id)!!.videos).isEmpty()
+            assertThat(collectionRepository.find(anotherGoodCollection.id)!!.videos).isEmpty()
+        }
     }
 
     @Test
@@ -171,42 +246,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         val deletedCollection = collectionRepository.find(collection.id)
 
         assertThat(deletedCollection).isNull()
-    }
-
-    @Test
-    fun `updatedAt timestamp on modifying changes`() {
-        val video1 = saveVideo()
-
-        val moment = Instant.now()
-        val collectionV1 = collectionRepository.create(
-            owner = UserId(value = "user1"),
-            title = "My Videos",
-            createdByBoclips = false
-        )
-
-        assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
-
-        Thread.sleep(1)
-
-        collectionRepository.update(
-            collectionV1.id,
-            CollectionUpdateCommand.AddVideoToCollectionCommand(video1)
-        )
-
-        val collectionV2 = collectionRepository.find(collectionV1.id)!!
-
-        assertThat(collectionV2.updatedAt).isAfter(collectionV1.updatedAt)
-
-        Thread.sleep(1)
-
-        collectionRepository.update(
-            collectionV2.id,
-            CollectionUpdateCommand.RemoveVideoFromCollectionCommand(video1)
-        )
-
-        val collectionV3 = collectionRepository.find(collectionV1.id)!!
-
-        assertThat(collectionV3.updatedAt).isAfter(collectionV2.updatedAt)
     }
 
     @Nested
@@ -275,7 +314,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(bookmarkedCollections.elements).hasSize(1)
             assertThat(bookmarkedCollections.elements.map { it.id }).contains(publicBookmarkedCollection.id)
         }
-
     }
 
     @Nested

@@ -137,7 +137,7 @@ class ApplicationContext(
 
     @Bean
     fun deleteVideos(): DeleteVideo {
-        return DeleteVideo(videoRepository, videoSearchService, playbackRepository)
+        return DeleteVideo(videoRepository, collectionRepository, videoSearchService, playbackRepository)
     }
 
     @Bean
