@@ -66,5 +66,7 @@ public interface VideoServiceClient {
         private Integer pageSize;
     }
 
+    Collection get(CollectionId id);
+
     CollectionId rawIdToCollectionId(String rawId);
 }

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.internal.resources;
 
 import com.boclips.videos.service.client.Collection;
+import com.boclips.videos.service.client.CollectionId;
 import com.boclips.videos.service.client.SubjectId;
 import com.boclips.videos.service.client.VideoId;
 import lombok.Data;
@@ -11,11 +12,9 @@ import java.util.stream.Collectors;
 
 @Data
 public class CollectionResource {
-
+    private CollectionLinks _links;
     private String title;
-
     private Set<SubjectResource> subjects;
-
     private List<VideoResource> videos;
 
     public Collection toCollection() {
@@ -28,10 +27,10 @@ public class CollectionResource {
                 .collect(Collectors.toList());
 
         return Collection.builder()
+                .collectionId(new CollectionId(_links.getSelf().toUri()))
                 .title(title)
                 .videos(videos)
                 .subjects(subjects)
                 .build();
     }
 }
-

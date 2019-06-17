@@ -91,6 +91,15 @@ public class FakeClient implements VideoServiceClient {
         return collectionsByUser.computeIfAbsent(user, u -> new ArrayList<>());
     }
 
+    @Override
+    public Collection get(CollectionId id) {
+        return collectionsByUser.values().stream()
+                .flatMap(java.util.Collection::stream)
+                .filter(collection -> collection.getCollectionId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("FakeClient not pre-populated for given collection ID"));
+    }
+
     @SneakyThrows
     public CollectionId rawIdToCollectionId(String rawId) {
         return new CollectionId(new URI(String.format("%s/%s", "https://fake-video-service.com/collections", rawId)));

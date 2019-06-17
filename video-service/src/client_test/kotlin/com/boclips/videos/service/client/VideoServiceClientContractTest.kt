@@ -59,6 +59,16 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
+    fun `get a Collection`() {
+        val testCollection = getClient().myCollections.component1()
+
+        val collection = getClient().get(testCollection.collectionId)
+
+        assertThat(collection.title).isEqualTo(testCollection.title)
+        assertThat(collection.videos).isNotEmpty
+    }
+
+    @Test
     fun `create a kaltura video gives a unique id`() {
         val id1 = getClient().create(
             TestFactories.createCreateVideoRequest(
@@ -191,10 +201,29 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         val subjects = setOf(SubjectId("Math"))
         val videos = listOf(TestFactories.createVideoId())
 
-        addCollection(Collection.builder().title("first collection").subjects(subjects).videos(videos).build())
-        addCollection(Collection.builder().title("second collection").subjects(emptySet()).videos(videos).build())
         addCollection(
-            Collection.builder().title("another user's collection").subjects(subjects).videos(videos).build(),
+            Collection.builder()
+                .collectionId(TestFactories.createCollectionId())
+                .title("first collection")
+                .subjects(subjects)
+                .videos(videos)
+                .build()
+        )
+        addCollection(
+            Collection.builder()
+                .collectionId(TestFactories.createCollectionId())
+                .title("second collection")
+                .subjects(emptySet())
+                .videos(videos)
+                .build()
+        )
+        addCollection(
+            Collection.builder()
+                .collectionId(TestFactories.createCollectionId())
+                .title("another user's collection")
+                .subjects(subjects)
+                .videos(videos)
+                .build(),
             "anotheruser@boclips.com"
         )
     }

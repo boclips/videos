@@ -66,14 +66,19 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public VideoId rawIdToVideoId(String rawId) {
         return new VideoId(
-            interpolateSingleResourceUri(getLinks().get_links().getVideo(), rawId)
+                interpolateSingleResourceUri(getLinks().get_links().getVideo(), rawId)
         );
+    }
+
+    @Override
+    public Collection get(CollectionId id) {
+        return restTemplate.getForObject(id.getUri(), CollectionResource.class).toCollection();
     }
 
     @Override
     public CollectionId rawIdToCollectionId(String rawId) {
         return new CollectionId(
-            interpolateSingleResourceUri(getLinks().get_links().getCollection(), rawId)
+                interpolateSingleResourceUri(getLinks().get_links().getCollection(), rawId)
         );
     }
 
