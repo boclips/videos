@@ -35,7 +35,9 @@ import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestPlaybackUpdate
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
+import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdatePlayback
+import com.boclips.videos.service.application.video.UpdateTranscripts
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
@@ -123,6 +125,16 @@ class ApplicationContext(
     @Bean
     fun updateAnalysedVideo(): UpdateAnalysedVideo {
         return UpdateAnalysedVideo(playbackRepository, videoRepository, videoSearchService)
+    }
+
+    @Bean
+    fun updateVideoCaptions(): UpdateCaptions {
+        return UpdateCaptions(videoRepository, playbackRepository)
+    }
+
+    @Bean
+    fun updateVideoTranscripts(): UpdateTranscripts {
+        return UpdateTranscripts(videoRepository)
     }
 
     @Bean
