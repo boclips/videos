@@ -148,7 +148,7 @@ class CollectionsController(
     private fun wrapCollection(collection: CollectionResource) =
         Resource(
             collection, listOfNotNull(
-                collectionsLinkBuilder.self(),
+                collectionsLinkBuilder.self(collection),
                 collectionsLinkBuilder.editCollection(collection),
                 collectionsLinkBuilder.removeCollection(collection),
                 collectionsLinkBuilder.addVideoToCollection(collection),

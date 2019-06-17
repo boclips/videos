@@ -10,6 +10,7 @@ import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyString
@@ -122,7 +123,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].title", equalTo("a video title")))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.self.href").exists())
@@ -149,7 +150,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(savedVideoId.value)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
             .andExpect(jsonPath("$._links.self.href").exists())

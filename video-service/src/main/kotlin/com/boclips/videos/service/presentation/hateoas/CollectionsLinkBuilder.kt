@@ -70,14 +70,16 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         projection: Projection = Projection.list,
         page: Int = 0,
         size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { Link(
-        getCollectionsRoot()
-            .queryParam("projection", projection)
-            .queryParam("public", true)
-            .queryParam("page", page)
-            .queryParam("size", size)
-            .toUriString() + "{&query,subjects}", "searchCollections"
-    ) }
+    ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
+        Link(
+            getCollectionsRoot()
+                .queryParam("projection", projection)
+                .queryParam("public", true)
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .toUriString() + "{&query,subjects}", "searchCollections"
+        )
+    }
 
     fun bookmarkedCollections(
         projection: Projection = Projection.list,
@@ -125,7 +127,10 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         .queryParam("page", page)
         .queryParam("size", size)
 
-    fun self(): Link {
+    fun self(collectionResource: CollectionResource? = null): Link {
+        if (collectionResource != null) {
+            return collectionResourceLink(collectionResource.id, "self")
+        }
         return Link(uriComponentsBuilderFactory.getInstance().toUriString())
     }
 
