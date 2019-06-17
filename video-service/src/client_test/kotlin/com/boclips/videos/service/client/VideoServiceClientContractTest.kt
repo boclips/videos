@@ -50,6 +50,15 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
+    fun `get CollectionId for raw identifier`() {
+        val rawId = "test-collection-identifier"
+
+        val id = getClient().rawIdToCollectionId(rawId)
+
+        assertThat(id.uri.toString()).matches("https?://.*/collections/$rawId")
+    }
+
+    @Test
     fun `create a kaltura video gives a unique id`() {
         val id1 = getClient().create(
             TestFactories.createCreateVideoRequest(

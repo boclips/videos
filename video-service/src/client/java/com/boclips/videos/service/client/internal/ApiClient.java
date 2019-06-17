@@ -4,12 +4,12 @@ import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.internal.resources.*;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,14 +64,24 @@ public class ApiClient implements VideoServiceClient {
     }
 
     @Override
-    @SneakyThrows
     public VideoId rawIdToVideoId(String rawId) {
-        this.linkTemplate = getLinks();
-        val videoLinkTemplate = linkTemplate.get_links().getVideo();
+        return new VideoId(
+            interpolateSingleResourceUri(getLinks().get_links().getVideo(), rawId)
+        );
+    }
+
+    @Override
+    public CollectionId rawIdToCollectionId(String rawId) {
+        return new CollectionId(
+            interpolateSingleResourceUri(getLinks().get_links().getCollection(), rawId)
+        );
+    }
+
+    private URI interpolateSingleResourceUri(Link singleResourceLink, String rawId) {
         val params = new HashMap<String, Object>();
         params.put("id", rawId);
-        Link videoLink = videoLinkTemplate.interpolate(params);
-        return new VideoId(videoLink.toUri());
+        Link interpolatedLink = singleResourceLink.interpolate(params);
+        return interpolatedLink.toUri();
     }
 
     @Override

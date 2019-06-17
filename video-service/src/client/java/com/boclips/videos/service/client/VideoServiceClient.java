@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.client.token.grant.client.ClientCrede
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Set;
 
 public interface VideoServiceClient {
 
@@ -66,4 +65,6 @@ public interface VideoServiceClient {
     class PageSpec {
         private Integer pageSize;
     }
+
+    CollectionId rawIdToCollectionId(String rawId);
 }

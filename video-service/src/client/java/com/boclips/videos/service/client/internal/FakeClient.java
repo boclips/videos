@@ -4,7 +4,6 @@ import com.boclips.videos.service.client.Collection;
 import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
-import com.boclips.videos.service.client.exceptions.VideoNotFoundException;
 import lombok.SneakyThrows;
 import lombok.val;
 
@@ -63,7 +62,7 @@ public class FakeClient implements VideoServiceClient {
 
     @Override
     public List<Subject> getSubjects() {
-        return new ArrayList(subjects);
+        return new ArrayList<>(subjects);
     }
 
     @Override
@@ -90,6 +89,11 @@ public class FakeClient implements VideoServiceClient {
 
     private List<Collection> getCollections(String user) {
         return collectionsByUser.computeIfAbsent(user, u -> new ArrayList<>());
+    }
+
+    @SneakyThrows
+    public CollectionId rawIdToCollectionId(String rawId) {
+        return new CollectionId(new URI(String.format("%s/%s", "https://fake-video-service.com/collections", rawId)));
     }
 
     private String nextId() {
