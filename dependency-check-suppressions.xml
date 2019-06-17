@@ -42,4 +42,61 @@
         <cpe>cpe:/a:apache:tomcat:9.0.16</cpe>
         <cve>CVE-2019-0232</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+      File name: jackson-databind-2.9.8.jar
+
+      This vulnerability is related to applications that include a MySQL connector
+      on the classpath (not our case).
+      ]]></notes>
+        <cpe>cpe:/a:fasterxml:jackson:2.9.8</cpe>
+        <cve>CVE-2019-12086</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+      File name: elasticsearch-6.5.4.jar
+
+      This vulnerability is related clusters that configure  xpack.security.dls_fls.enabled  to false.
+      This option is set to true by default and we do not override that setting anywhere. See the link for reference:
+        https://www.elastic.co/guide/en/elasticsearch/reference/6.5/security-settings.html#field-document-security-settings
+      ]]></notes>
+        <cpe>cpe:/a:elasticsearch:elasticsearch:6.5.4</cpe>
+        <cve>CVE-2019-7611</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+      File name: spring-security-*.jar in combination with Spring Framework 5.0.5.RELEASE
+
+      Affects Spring Framework 5.0.5.RELEASE only.
+      ]]></notes>
+        <gav regex="true">^org\.springframework\.security:spring-security-.*:.*$</gav>
+        <cve>CVE-2018-1258</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+      File name: spring-tuple-1.0.0.RELEASE.jar
+
+      Affects Spring Framework 5.0.5 and below.
+      ]]></notes>
+        <gav regex="true">^org\.springframework:spring-tuple:.*$</gav>
+        <cve>CVE-2018-1270</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+      File name: spring-tuple-1.0.0.RELEASE.jar
+
+      Affects Spring Framework 5.0.5 and below.
+      ]]></notes>
+        <gav regex="true">^org\.springframework:spring-tuple:.*$</gav>
+        <cve>CVE-2018-1272</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+      File name: spring-tuple-1.0.0.RELEASE.jar
+
+      Affects Spring Framework 4.X and below.
+      ]]></notes>
+        <gav regex="true">^org\.springframework:spring-tuple:.*$</gav>
+        <cve>CVE-2016-9878</cve>
+    </suppress>
 </suppressions>
