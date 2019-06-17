@@ -10,18 +10,21 @@ import java.net.URI
 class CollectionResourceTest {
     @Test
     fun `converts resource to collection`() {
-        val id = TestFactories.aValidId()
+        val collectionUri = "https://video-service.com/v1/collections/${TestFactories.aValidId()}"
+        val videoId = TestFactories.aValidId()
         val resource = CollectionResource().apply {
+            _links = CollectionLinks(Link(collectionUri))
             title = "the title"
             subjects = setOf(SubjectResource().apply { this.id = "maths" })
             videos = listOf(VideoResource().apply {
-                _links = VideoLinks().apply { self = Link().apply { href = "https://video-service.com/v1/videos/$id" } }
+                _links = VideoLinks().apply { self = Link().apply { href = "https://video-service.com/v1/videos/$videoId" } }
             })
         }
 
         val collection = resource.toCollection()
+        assertThat(collection.collectionId.uri.toString()).isEqualTo(collectionUri)
         assertThat(collection.title).isEqualTo("the title")
         assertThat(collection.subjects).containsExactly(SubjectId.builder().value("maths").build())
-        assertThat(collection.videos).containsExactly(VideoId(URI("https://video-service.com/v1/videos/$id")))
+        assertThat(collection.videos).containsExactly(VideoId(URI("https://video-service.com/v1/videos/$videoId")))
     }
 }

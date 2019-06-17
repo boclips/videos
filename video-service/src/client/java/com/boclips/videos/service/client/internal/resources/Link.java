@@ -1,16 +1,15 @@
 package com.boclips.videos.service.client.internal.resources;
 
-import lombok.Data;
-import lombok.SneakyThrows;
-import lombok.val;
-import lombok.var;
+import lombok.*;
 
 import java.net.URI;
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Link {
-    private String href = null;
+    private String href;
 
     @SneakyThrows
     public URI toUri() {
