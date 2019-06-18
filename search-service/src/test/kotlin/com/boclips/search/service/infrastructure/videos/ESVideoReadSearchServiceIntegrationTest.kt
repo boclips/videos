@@ -292,6 +292,124 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
     }
 
     @Test
+    fun `returns documents where the subject is matched by the given query`() {
+        writeSearchService.upsert(sequenceOf(
+            SearchableVideoMetadataFactory.create(
+                id = "1",
+                title = "TED",
+                subjects = setOf("my-fancy-subject")
+            ),
+            SearchableVideoMetadataFactory.create(
+                id = "2",
+                title = "TED",
+                subjects = setOf("my-less-fancy-subject")
+            )
+        ))
+
+        val results = readSearchService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjects = setOf("my-fancy-subject")
+                )
+            )
+        )
+
+        assertThat(results).hasSize(1)
+        assertThat(results).contains("1")
+    }
+
+    @Test
+    fun `returns documents where there are multiple subjects in the query`() {
+        writeSearchService.upsert(sequenceOf(
+            SearchableVideoMetadataFactory.create(
+                id = "1",
+                title = "TED",
+                subjects = setOf("subject-one")
+            ),
+            SearchableVideoMetadataFactory.create(
+                id = "2",
+                title = "TED",
+                subjects = setOf("subject-two")
+            ),
+            SearchableVideoMetadataFactory.create(
+                id = "3",
+                title = "TED",
+                subjects = setOf("subject-three")
+        )
+        ))
+
+        val results = readSearchService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjects = setOf("subject-one", "subject-two")
+                )
+            )
+        )
+
+        assertThat(results).hasSize(2)
+        assertThat(results).contains("1")
+        assertThat(results).contains("2")
+    }
+
+    @Test
+    fun `returns documents where videos have multiple subjects`() {
+        writeSearchService.upsert(sequenceOf(
+            SearchableVideoMetadataFactory.create(
+                id = "1",
+                title = "TED",
+                subjects = setOf("subject-one", "subject-two")
+            ),
+            SearchableVideoMetadataFactory.create(
+                id = "2",
+                title = "TED",
+                subjects = setOf("subject-two", "subject-three")
+            ),
+            SearchableVideoMetadataFactory.create(
+                id = "3",
+                title = "TED",
+                subjects = setOf("subject-three")
+            )
+        ))
+
+        val results = readSearchService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjects = setOf("subject-two")
+                )
+            )
+        )
+
+        assertThat(results).hasSize(2)
+        assertThat(results).contains("1")
+        assertThat(results).contains("2")
+    }
+
+    @Test
+    fun `returns no documents when subjects do not match`() {
+        writeSearchService.upsert(sequenceOf(
+            SearchableVideoMetadataFactory.create(
+                id = "1",
+                title = "TED",
+                subjects = setOf("maths-123")
+            )
+        ))
+
+        val results = readSearchService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjects = setOf("biology-987")
+                )
+            )
+        )
+
+        assertThat(results).hasSize(0)
+    }
+
+    @Test
     fun `returns documents where transcript matches`() {
         writeSearchService.upsert(
             sequenceOf(

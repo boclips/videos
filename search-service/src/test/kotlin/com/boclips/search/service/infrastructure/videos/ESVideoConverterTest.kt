@@ -28,7 +28,8 @@ class ESVideoConverterTest {
                 "source": "Boclips",
                 "transcript": "A great transcript",
                 "ageRangeMin": "3",
-                "ageRangeMax": "11"
+                "ageRangeMax": "11",
+                "subjects": ["boring-subject"]
             }
         """.trimIndent()
             )
@@ -49,7 +50,8 @@ class ESVideoConverterTest {
                 source = "Boclips",
                 transcript = "A great transcript",
                 ageRangeMin = 3,
-                ageRangeMax = 11
+                ageRangeMax = 11,
+                subjects = setOf("boring-subject")
             )
         )
     }

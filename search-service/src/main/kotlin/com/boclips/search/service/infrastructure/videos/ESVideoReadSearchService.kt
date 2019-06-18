@@ -104,7 +104,7 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
     }
 
     private fun matchFieldsExceptContentPartner(videoQuery: VideoQuery): BoolQueryBuilder {
-        return QueryBuilders
+        val filter = QueryBuilders
             .boolQuery()
             .must(matchTitleDescriptionKeyword(videoQuery.phrase))
             .apply {
@@ -124,10 +124,24 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                     must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
                 }
             }
+            .apply {
+                if (videoQuery.subjects.isNotEmpty()) {
+                    must(matchSubjects(videoQuery.subjects))
+                }
+            }
             .should(boostTitleMatch(videoQuery.phrase))
             .should(boostDescriptionMatch(videoQuery.phrase))
             .mustNot(matchTags(videoQuery.excludeTags))
             .filter(filterByTag(videoQuery.includeTags))
+        return filter
+    }
+
+    private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
+        val queries = QueryBuilders.boolQuery()
+        for (s: String in subjects) {
+            queries.should(QueryBuilders.matchPhraseQuery(ESVideo.SUBJECTS, s))
+        }
+        return queries
     }
 
     private fun matchSource(source: SourceType): TermQueryBuilder {

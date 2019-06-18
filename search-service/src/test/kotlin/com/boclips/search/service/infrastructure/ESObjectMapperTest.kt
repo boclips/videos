@@ -23,7 +23,8 @@ class ESObjectMapperTest {
                 source = "Boclips",
                 transcript = null,
                 ageRangeMin = 3,
-                ageRangeMax = 11
+                ageRangeMax = 11,
+                subjects = setOf("boring-subject")
             )
         )
 

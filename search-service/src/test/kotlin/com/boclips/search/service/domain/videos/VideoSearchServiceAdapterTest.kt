@@ -27,7 +27,8 @@ class TestVideoSearchService(query: ReadSearchService<VideoMetadata, VideoQuery>
             source = SourceType.YOUTUBE,
             transcript = null,
             ageRangeMin = 3,
-            ageRangeMax = 18
+            ageRangeMax = 18,
+            subjects = emptySet()
         )
     }
 }

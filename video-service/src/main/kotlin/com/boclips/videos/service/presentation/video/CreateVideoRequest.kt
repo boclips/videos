@@ -18,5 +18,6 @@ data class CreateVideoRequest(
     val searchable: Boolean? = null,
     val analyseVideo: Boolean = true,
     val ageRangeMin: Int? = null,
-    val ageRangeMax: Int? = null
+    val ageRangeMax: Int? = null,
+    val subjects: Set<String>? = null
 )

@@ -7,7 +7,8 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.AbstractInMemorySearchService
 import java.time.LocalDate
 
-class InMemoryVideoSearchService : AbstractInMemorySearchService<VideoQuery, VideoMetadata>(), ReadSearchService<VideoMetadata, VideoQuery>, WriteSearchService<VideoMetadata> {
+class InMemoryVideoSearchService : AbstractInMemorySearchService<VideoQuery, VideoMetadata>(),
+    ReadSearchService<VideoMetadata, VideoQuery>, WriteSearchService<VideoMetadata> {
     override fun upsertMetadata(index: MutableMap<String, VideoMetadata>, item: VideoMetadata) {
         index[item.id] = item.copy()
     }
@@ -54,16 +55,26 @@ class InMemoryVideoSearchService : AbstractInMemorySearchService<VideoQuery, Vid
                             compareAgeRanges(videoMin, queryMin, videoMax, queryMax)
                         } ?: false
                     } ?: true
+                }.filter { entry ->
+                    if (videoQuery.subjects.isEmpty()) {
+                        true
+                    } else {
+                        videoQuery.subjects.any { querySubject ->
+                            entry.value.subjects.any { videoSubject ->
+                                videoSubject.contains(querySubject)
+                            }
+                        }
+                    }
                 }
                 .map { video -> video.key }
         }
     }
 
-    private fun compareAgeRanges(videoMin: Int, queryMin: Int, videoMax: Int?, queryMax: Int?) : Boolean {
+    private fun compareAgeRanges(videoMin: Int, queryMin: Int, videoMax: Int?, queryMax: Int?): Boolean {
         return (
             videoMin <= queryMin
                 && (videoMax == null || videoMax >= queryMin)
-            || videoMin >= queryMin
+                || videoMin >= queryMin
                 && (videoMax == null || queryMax == null || videoMin <= queryMax)
             )
     }

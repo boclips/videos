@@ -20,7 +20,8 @@ object VideoMetadataConverter {
             source = convertPlaybackTypeToSourceType(video.playback.id.type),
             transcript = video.transcript,
             ageRangeMin = video.ageRange.min(),
-            ageRangeMax = video.ageRange.max()
+            ageRangeMax = video.ageRange.max(),
+            subjects = video.subjects.map { it.id.value }.toSet()
         )
     }
 

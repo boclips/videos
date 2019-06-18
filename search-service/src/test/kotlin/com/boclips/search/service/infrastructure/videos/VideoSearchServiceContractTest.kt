@@ -747,7 +747,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
 
         assertThat(results).containsAll(listOf("0", "1", "2"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("4","3"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("4", "3"))
     }
 
     @ParameterizedTest
@@ -814,7 +814,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
 
         assertThat(results).containsAll(listOf("0", "1", "2", "3", "6"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("4","5"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("4", "5"))
     }
 
     @ParameterizedTest
@@ -885,7 +885,123 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 )
             )
 
-        assertThat(results).containsAll(listOf("0", "1", "2", "3", "4", "6","7"))
+        assertThat(results).containsAll(listOf("0", "1", "2", "3", "4", "6", "7"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("5"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by subject`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    title = "TED",
+                    subjects = setOf("subject-one")
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED",
+                    subjects = setOf("subject-two")
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjects = setOf("subject-one")
+                )
+            )
+        )
+
+        assertThat(results).containsExactly("0")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by subject on videos with multiple subjects`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    title = "TED",
+                    subjects = setOf("subject-one", "subject-two")
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED",
+                    subjects = setOf("subject-three")
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "TED",
+                    subjects = setOf("subject-two", "subject-three")
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjects = setOf("subject-three")
+                )
+            )
+        )
+
+        assertThat(results).containsAll(listOf("1", "2"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("0"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter with multiple subjects in a query`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    title = "TED",
+                    subjects = setOf("subject-one")
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED",
+                    subjects = setOf("subject-two")
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "TED",
+                    subjects = setOf("subject-two", "subject-three")
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "TED",
+                    subjects = setOf("subject-four", "subject-three")
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjects = setOf("subject-one", "subject-two")
+                )
+            )
+        )
+
+        assertThat(results).containsAll(listOf("0", "1", "2"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("3"))
     }
 }

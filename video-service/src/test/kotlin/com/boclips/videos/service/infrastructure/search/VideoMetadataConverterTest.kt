@@ -5,6 +5,8 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -30,7 +32,13 @@ class VideoMetadataConverterTest {
             keywords = listOf("k1"),
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             transcript = "a great transcript",
-            ageRange = AgeRange.bounded(5, 11)
+            ageRange = AgeRange.bounded(5, 11),
+            subjects = setOf(
+                Subject(
+                    id = SubjectId(value = "1"),
+                    name = "fancy"
+                )
+            )
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -48,7 +56,8 @@ class VideoMetadataConverterTest {
                 source = SourceType.YOUTUBE,
                 transcript = "a great transcript",
                 ageRangeMin = 5,
-                ageRangeMax = 11
+                ageRangeMax = 11,
+                subjects = setOf("1")
             )
         )
     }

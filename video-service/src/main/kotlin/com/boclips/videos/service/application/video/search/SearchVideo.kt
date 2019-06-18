@@ -35,7 +35,8 @@ class SearchVideo(
         pageNumber: Int,
         source: String? = null,
         ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null
+        ageRangeMax: Int? = null,
+        subjects: Set<String> = emptySet()
     ) = getVideosByQuery(
         query = getOrThrow(query),
         sortBy = sortBy,
@@ -49,7 +50,8 @@ class SearchVideo(
         pageNumber = pageNumber,
         source = source,
         ageRangeMin = ageRangeMin,
-        ageRangeMax = ageRangeMax
+        ageRangeMax = ageRangeMax,
+        subjects = subjects
     )
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): VideoId? {

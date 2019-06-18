@@ -21,7 +21,8 @@ object SearchableVideoMetadataFactory {
         source: SourceType = SourceType.YOUTUBE,
         transcript: String? = null,
         ageRangeMin: Int? = 3,
-        ageRangeMax: Int? = 11
+        ageRangeMax: Int? = 11,
+        subjects: Set<String> = emptySet()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -34,7 +35,8 @@ object SearchableVideoMetadataFactory {
         source = source,
         transcript = transcript,
         ageRangeMin = ageRangeMin,
-        ageRangeMax = ageRangeMax
+        ageRangeMax = ageRangeMax,
+        subjects = subjects
     )
 }
 

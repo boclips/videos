@@ -61,8 +61,9 @@ class VideoController(
         @RequestParam(name = "source", required = false) source: String?,
         @RequestParam(name = "age_range_min", required = false) ageRangeMin: Int?,
         @RequestParam(name = "age_range_max", required = false) ageRangeMax: Int?,
-        @RequestParam("size") size: Int?,
-        @RequestParam("page") page: Int?
+        @RequestParam(name = "size") size: Int?,
+        @RequestParam(name = "page") page: Int?,
+        @RequestParam(name = "subjects", required = false) subjects: Set<String>?
     ): ResponseEntity<PagedResources<*>> {
         val videosResource = searchVideo.byQuery(
             query = query,
@@ -77,7 +78,8 @@ class VideoController(
             maxDuration = maxDuration,
             source = source,
             ageRangeMin = ageRangeMin,
-            ageRangeMax = ageRangeMax
+            ageRangeMax = ageRangeMax,
+            subjects = subjects ?: emptySet()
         )
 
         val videoResources = videosResource

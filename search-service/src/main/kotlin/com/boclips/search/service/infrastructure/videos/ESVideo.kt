@@ -16,7 +16,8 @@ data class ESVideo @JsonCreator constructor(
     @param:JsonProperty(SOURCE) val source: String?,
     @param:JsonProperty(TRANSCRIPT) val transcript: String?,
     @param:JsonProperty(AGE_RANGE_MIN) val ageRangeMin: Int?,
-    @param:JsonProperty(AGE_RANGE_MAX) val ageRangeMax: Int?
+    @param:JsonProperty(AGE_RANGE_MAX) val ageRangeMax: Int?,
+    @param:JsonProperty(SUBJECTS) val subjects: Set<String>?
 
 ) {
     companion object {
@@ -32,5 +33,6 @@ data class ESVideo @JsonCreator constructor(
         const val TRANSCRIPT = "transcript"
         const val AGE_RANGE_MIN = "ageRangeMin"
         const val AGE_RANGE_MAX = "ageRangeMax"
+        const val SUBJECTS = "subjects"
     }
 }

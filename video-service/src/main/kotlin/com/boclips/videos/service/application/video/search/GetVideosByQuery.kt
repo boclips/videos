@@ -31,7 +31,8 @@ class GetVideosByQuery(
         pageNumber: Int,
         source: String?,
         ageRangeMin: Int?,
-        ageRangeMax: Int?
+        ageRangeMax: Int?,
+        subjects: Set<String>
     ): VideosResource {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -49,7 +50,8 @@ class GetVideosByQuery(
             releaseDateFrom = searchQueryConverter.convertDate(releasedDateFrom),
             releaseDateTo = searchQueryConverter.convertDate(releasedDateTo),
             ageRangeMin = ageRangeMin,
-            ageRangeMax = ageRangeMax
+            ageRangeMax = ageRangeMax,
+            subjects = subjects
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
