@@ -50,7 +50,7 @@ class VideoController(
 
     @GetMapping
     fun search(
-        @RequestParam("query") query: String?,
+        @RequestParam(name = "query", required = false) query: String?,
         @RequestParam(name = "sort_by", required = false) sortBy: SortKey?,
         @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
         @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
@@ -61,8 +61,8 @@ class VideoController(
         @RequestParam(name = "source", required = false) source: String?,
         @RequestParam(name = "age_range_min", required = false) ageRangeMin: Int?,
         @RequestParam(name = "age_range_max", required = false) ageRangeMax: Int?,
-        @RequestParam(name = "size") size: Int?,
-        @RequestParam(name = "page") page: Int?,
+        @RequestParam(name = "size", required = false) size: Int?,
+        @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "subjects", required = false) subjects: Set<String>?
     ): ResponseEntity<PagedResources<*>> {
         val videosResource = searchVideo.byQuery(

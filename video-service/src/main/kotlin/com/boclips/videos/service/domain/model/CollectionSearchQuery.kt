@@ -8,7 +8,7 @@ class CollectionSearchQuery(
     val pageSize: Int,
     val pageIndex: Int
 ) {
-    fun toSearchQuery() = CollectionQuery(phrase = this.text, subjectIds = this.subjectIds)
+    fun toSearchQuery() = CollectionQuery(phrase = this.text ?: "", subjectIds = this.subjectIds)
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize
 

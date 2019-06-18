@@ -39,7 +39,7 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
     }
 
     override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
-        if (searchRequest.query.phrase != null) {
+        if (searchRequest.query.phrase.isNotEmpty()) {
             throw java.lang.UnsupportedOperationException()
         }
         val query = searchRequest.query.ids.joinToString(separator = " OR ", prefix = "id:")

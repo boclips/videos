@@ -6,7 +6,7 @@ import java.time.Duration
 import java.time.LocalDate
 
 class VideoQuery(
-    phrase: String? = null,
+    phrase: String = "",
     sort: Sort<VideoMetadata>? = null,
     val ids: List<String> = emptyList(),
     val includeTags: List<String> = emptyList(),

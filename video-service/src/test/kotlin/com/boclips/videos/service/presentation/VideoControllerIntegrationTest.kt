@@ -254,7 +254,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns video with correct subject`() {
+    fun `returns video matching query and subject`() {
         val videoId = saveVideo(
             playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
             title = "powerful video about elephants",
@@ -275,10 +275,24 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 400 for invalid search request`() {
-        mockMvc.perform(get("/v1/videos").asTeacher())
-            .andExpect(status().`is`(400))
-            .andExpectApiErrorPayload()
+    fun `returns videos of given subject`() {
+        val videoId = saveVideo(
+            playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
+            title = "powerful video about elephants",
+            description = "test description 3",
+            date = "2018-02-11",
+            duration = Duration.ofSeconds(23),
+            contentProvider = "cp",
+            legalRestrictions = "None"
+        ).value
+
+        val subjectId = saveSubject("Maths")
+        setVideoSubjects(videoId, subjectId)
+
+        mockMvc.perform(get("/v1/videos?subjects=${subjectId.value}").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId)))
     }
 
     @Test

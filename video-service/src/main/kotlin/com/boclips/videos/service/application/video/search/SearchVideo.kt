@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.presentation.video.VideosResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class SearchVideo(
@@ -37,31 +38,33 @@ class SearchVideo(
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         subjects: Set<String> = emptySet()
-    ) = getVideosByQuery(
-        query = getOrThrow(query),
-        sortBy = sortBy,
-        includeTags = includeTags,
-        excludeTags = excludeTags,
-        minDurationString = minDuration,
-        maxDurationString = maxDuration,
-        releasedDateFrom = releasedDateFrom,
-        releasedDateTo = releasedDateTo,
-        pageSize = pageSize,
-        pageNumber = pageNumber,
-        source = source,
-        ageRangeMin = ageRangeMin,
-        ageRangeMax = ageRangeMax,
-        subjects = subjects
-    )
+    ): VideosResource {
+        return getVideosByQuery(
+            query = query ?: "",
+            sortBy = sortBy,
+            includeTags = includeTags,
+            excludeTags = excludeTags,
+            minDurationString = minDuration,
+            maxDurationString = maxDuration,
+            releasedDateFrom = releasedDateFrom,
+            releasedDateTo = releasedDateTo,
+            pageSize = pageSize,
+            pageNumber = pageNumber,
+            source = source,
+            ageRangeMin = ageRangeMin,
+            ageRangeMax = ageRangeMax,
+            subjects = subjects
+        )
+    }
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): VideoId? {
-        val videoId = getOrThrow(videoIdParam)
+        if (videoIdParam == null) throw SearchRequestValidationException()
 
         return try {
-            if (isAlias(videoId)) {
-                videoRepository.resolveAlias(videoId) ?: throw VideoNotFoundException()
+            if (isAlias(videoIdParam)) {
+                videoRepository.resolveAlias(videoIdParam) ?: throw VideoNotFoundException()
             } else {
-                VideoId(value = videoId)
+                VideoId(value = videoIdParam)
             }
         } catch (e: IllegalVideoIdentifierException) {
             if (throwIfDoesNotExist)
@@ -72,10 +75,5 @@ class SearchVideo(
                 throw e
             null
         }
-    }
-
-    private fun getOrThrow(videoId: String?): String {
-        if (videoId == null) throw SearchRequestValidationException()
-        return videoId
     }
 }

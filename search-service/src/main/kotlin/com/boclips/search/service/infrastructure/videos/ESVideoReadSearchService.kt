@@ -60,8 +60,7 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
     }
 
     private fun buildFuzzyRequest(videoQuery: VideoQuery): SearchSourceBuilder {
-        val esQuery = SearchSourceBuilder()
-            .query(fuzzyQuery(videoQuery))
+        val esQuery = SearchSourceBuilder().query(fuzzyQuery(videoQuery))
 
         if (videoQuery.sort === null) {
             esQuery.addRescorer(rescorer(videoQuery.phrase))
@@ -86,27 +85,43 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
     private fun fuzzyQuery(videoQuery: VideoQuery): BoolQueryBuilder? {
         return QueryBuilders
             .boolQuery()
-            .should(matchFieldsExceptContentPartner(videoQuery))
-            .should(matchContentPartnerAndTagsExactly(videoQuery).boost(1000.0F))
+            .apply {
+                should(matchContentPartnerAndTagsExactly(videoQuery).boost(1000.0F))
+            }
+            .apply {
+                if (videoQuery.phrase.isEmpty()) {
+                    must(matchFieldsExceptContentPartner(videoQuery))
+                }
+                if (videoQuery.phrase.isNotEmpty()) {
+                    should(matchFieldsExceptContentPartner(videoQuery))
+                }
+            }
     }
 
     private fun matchContentPartnerAndTagsExactly(videoQuery: VideoQuery): BoolQueryBuilder {
         return QueryBuilders
             .boolQuery()
-            .must(
-                QueryBuilders.termQuery(
-                    ESVideo.CONTENT_PROVIDER,
-                    videoQuery.phrase
-                )
-            )
-            .mustNot(matchTags(videoQuery.excludeTags))
-            .filter(filterByTag(videoQuery.includeTags))
+            .apply {
+                must(QueryBuilders.termQuery(ESVideo.CONTENT_PROVIDER, videoQuery.phrase))
+            }
+            .apply {
+                mustNot(matchTags(videoQuery.excludeTags))
+            }
+            .apply {
+                filter(filterByTag(videoQuery.includeTags))
+            }
     }
 
     private fun matchFieldsExceptContentPartner(videoQuery: VideoQuery): BoolQueryBuilder {
-        val filter = QueryBuilders
+        return QueryBuilders
             .boolQuery()
-            .must(matchTitleDescriptionKeyword(videoQuery.phrase))
+            .apply {
+                if (videoQuery.phrase.isNotEmpty()) {
+                    must(matchTitleDescriptionKeyword(videoQuery.phrase))
+                    should(boostTitleMatch(videoQuery.phrase))
+                    should(boostDescriptionMatch(videoQuery.phrase))
+                }
+            }
             .apply {
                 if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
                     must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
@@ -129,11 +144,12 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                     must(matchSubjects(videoQuery.subjects))
                 }
             }
-            .should(boostTitleMatch(videoQuery.phrase))
-            .should(boostDescriptionMatch(videoQuery.phrase))
-            .mustNot(matchTags(videoQuery.excludeTags))
-            .filter(filterByTag(videoQuery.includeTags))
-        return filter
+            .apply {
+                mustNot(matchTags(videoQuery.excludeTags))
+            }
+            .apply {
+                filter(filterByTag(videoQuery.includeTags))
+            }
     }
 
     private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
@@ -236,7 +252,6 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
     }
 
     private fun rescorer(phrase: String?): QueryRescorerBuilder {
-
         val rescoreQuery = QueryBuilders.multiMatchQuery(
             phrase,
             "title.$FIELD_DESCRIPTOR_SHINGLES",

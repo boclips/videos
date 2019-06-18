@@ -8,6 +8,7 @@ import com.boclips.search.service.infrastructure.AbstractInMemorySearchService
 
 class InMemoryCollectionSearchService : AbstractInMemorySearchService<CollectionQuery, CollectionMetadata>(),
     ReadSearchService<CollectionMetadata, CollectionQuery>, WriteSearchService<CollectionMetadata> {
+
     override fun upsertMetadata(index: MutableMap<String, CollectionMetadata>, item: CollectionMetadata) {
         index[item.id] = item.copy()
     }
@@ -21,7 +22,7 @@ class InMemoryCollectionSearchService : AbstractInMemorySearchService<Collection
         return index
             .filter { entry ->
                 when {
-                    phraseQuery(query) -> entry.value.title.contains(phrase!!, ignoreCase = true)
+                    phraseQuery(query) -> entry.value.title.contains(phrase, ignoreCase = true)
                     subjectQuery(query) -> entry.value.subjectIds.any { query.subjectIds.contains(it) }
                     else -> true
                 }
@@ -33,5 +34,5 @@ class InMemoryCollectionSearchService : AbstractInMemorySearchService<Collection
         collectionQuery.subjectIds.isNotEmpty()
 
     private fun phraseQuery(collectionQuery: CollectionQuery) =
-        collectionQuery.phrase != null
+        collectionQuery.phrase.isNotEmpty()
 }

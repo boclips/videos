@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -17,16 +16,21 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
     lateinit var searchVideo: SearchVideo
 
     @Test
-    fun `throws exception when query is null`() {
-        assertThatThrownBy {
-            searchVideo.byQuery(
-                query = null,
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
-                pageSize = 2,
-                pageNumber = 0
-            )
-        }.isInstanceOf(SearchRequestValidationException::class.java)
+    fun `can search for empty query`() {
+        saveVideo(
+            title = "a youtube video",
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1")
+        )
+
+        val result = searchVideo.byQuery(
+            query = null,
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageNumber = 1
+        )
+
+        assertThat(result.totalVideos).isEqualTo(1)
     }
 
     @Test

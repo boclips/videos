@@ -56,11 +56,11 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
         val userId = "teacher@teacher.com"
         mockMvc.perform(get("/v1").asTeacher(userId))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.searchVideos.href", containsString("/videos?query=")))
+            .andExpect(jsonPath("$._links.searchVideos.href", containsString("/videos")))
             .andExpect(
                 jsonPath(
                     "$._links.searchVideos.href",
-                    containsString("{&sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source,age_range_min,age_range_max,subjects}")
+                    containsString("{?query,sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subjects}")
                 )
             )
             .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))

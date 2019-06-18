@@ -29,7 +29,7 @@ class SearchServiceProvider : ArgumentsProvider {
     }
 }
 
-class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
+class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
@@ -124,7 +124,7 @@ class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         val result = readService.search(
             PaginatedSearchRequest(
-                query = CollectionQuery(phrase = null)
+                query = CollectionQuery(phrase = "")
             )
         )
 

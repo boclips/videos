@@ -34,7 +34,7 @@ class SearchServiceProvider : ArgumentsProvider {
     }
 }
 
-class SearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
+class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
