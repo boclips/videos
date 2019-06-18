@@ -329,6 +329,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns 404 for non hex id`() {
+        mockMvc.perform(get("/v1/videos/not-quite-hexadecimal").asTeacher())
+            .andExpect(status().`is`(404))
+            .andExpectApiErrorPayload()
+    }
+
+    @Test
     fun `returns 200 when video is deleted`() {
         val videoId = saveVideo().value
 

@@ -1,3 +1,5 @@
 package com.boclips.videos.service.domain.model.video
 
-class IllegalVideoIdentifierException(message: String) : Exception(message)
+import com.boclips.web.exceptions.ResourceNotFoundApiException
+
+class IllegalVideoIdentifierException(message: String) : ResourceNotFoundApiException("Video not found", message)
