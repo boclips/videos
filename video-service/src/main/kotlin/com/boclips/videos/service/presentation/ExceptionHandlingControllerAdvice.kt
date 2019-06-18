@@ -23,4 +23,5 @@ class ExceptionHandlingControllerAdvice {
     fun handleNotAuthorizedException(ex: UnauthorizedException) {
         logger.info { "Unauthorized: $ex" }
     }
+
 }

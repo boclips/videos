@@ -3,8 +3,10 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.SortKey
+import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class SearchVideo(
     private val getVideoById: GetVideoById,
@@ -59,6 +61,10 @@ class SearchVideo(
             } else {
                 VideoId(value = videoId)
             }
+        } catch (e: IllegalVideoIdentifierException) {
+            if (throwIfDoesNotExist)
+                throw ResourceNotFoundApiException("Video not found", e.message ?: "")
+            null
         } catch (e: Exception) {
             if (throwIfDoesNotExist)
                 throw e
