@@ -2,7 +2,6 @@ package com.boclips.videos.service.infrastructure.subject
 
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.subjects.SubjectId
-import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.types.ObjectId
 
 object SubjectDocumentConverter {
@@ -20,5 +19,4 @@ object SubjectDocumentConverter {
             name = subject.name
         )
     }
-
 }
