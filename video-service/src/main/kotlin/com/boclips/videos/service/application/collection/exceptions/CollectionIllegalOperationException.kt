@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.collection
+package com.boclips.videos.service.application.collection.exceptions
 
 import com.boclips.videos.service.domain.model.collection.UserId
 import org.springframework.http.HttpStatus

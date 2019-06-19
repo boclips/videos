@@ -14,12 +14,4 @@ data class CollectionFilter(
     enum class Visibility {
         PUBLIC, PRIVATE, BOOKMARKED
     }
-
-    fun isPublicCollections(): Boolean {
-        return visibility == Visibility.PUBLIC
-    }
-
-    fun isMyCollections(): Boolean {
-        return owner != null
-    }
 }

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.collection.security
 
-import com.boclips.videos.service.application.collection.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -24,7 +24,10 @@ private fun getCollectionOrThrow(
 
     return when {
         isForReading && collection.isPublic -> collection
-        collection.owner != userId -> throw CollectionAccessNotAuthorizedException(userId, collectionId)
+        collection.owner != userId -> throw CollectionAccessNotAuthorizedException(
+            userId,
+            collectionId
+        )
         else -> collection
     }
 }
