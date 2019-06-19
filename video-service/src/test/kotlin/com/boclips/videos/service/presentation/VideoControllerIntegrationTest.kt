@@ -198,7 +198,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns video within specified duration`() {
-        mockMvc.perform(get("/v1/videos?query=powerful&min_duration=PT20S&max_duration=PT24S").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=powerful&duration_min=PT20S&duration_max=PT24S").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -230,7 +230,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 400 with invalid duration`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&min_duration=invalidoops").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&duration_min=invalidoops").asTeacher())
             .andExpect(status().isBadRequest)
             .andExpectApiErrorPayload()
     }
