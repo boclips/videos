@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.time.Duration
 
 class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
@@ -18,44 +19,6 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
     internal fun setUp() {
         readSearchService = ESVideoReadSearchService(CONFIG.buildClient())
         writeSearchService = ESVideoWriteSearchService(CONFIG.buildClient())
-    }
-
-    @Test
-    fun `calling upsert doesn't delete the index`() {
-        writeSearchService.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy")
-            )
-        )
-        writeSearchService.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple")
-            )
-        )
-
-        val results = readSearchService.search(
-            PaginatedSearchRequest(query = VideoQuery("candy"))
-        )
-
-        assertThat(results).hasSize(2)
-    }
-
-    @Test
-    fun `no filters return everything`() {
-        writeSearchService.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy")
-            )
-        )
-        writeSearchService.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple")
-            )
-        )
-
-        val results = readSearchService.search(PaginatedSearchRequest(query = VideoQuery()))
-
-        assertThat(results).hasSize(2)
     }
 
     @Nested
@@ -545,7 +508,322 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
     }
 
     @Nested
+    inner class Counting {
+        @Test
+        fun `counts search results for phrase queries`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
+                    SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "5", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "6", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "7", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "8", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "9", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "10", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "11", description = "candy banana apple")
+                )
+            )
+
+            val results = readSearchService.count(VideoQuery(phrase = "banana"))
+
+            assertThat(results).isEqualTo(11)
+        }
+
+        @Test
+        fun `counts search results for IDs queries`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
+                    SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
+                )
+            )
+
+            val results = readSearchService.count(VideoQuery(ids = listOf("2", "5")))
+
+            assertThat(results).isEqualTo(1)
+        }
+
+        @Test
+        fun `can count for just news results`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(
+                        id = "4",
+                        description = "candy banana apple",
+                        tags = listOf("news")
+                    )
+                )
+            )
+
+            val results = readSearchService.count(VideoQuery(includeTags = listOf("news")))
+
+            assertThat(results).isEqualTo(1)
+        }
+    }
+
+    @Nested
+    inner class Pagination {
+        @Test
+        fun `paginates search results`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
+                    SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
+                )
+            )
+
+            val results =
+                readSearchService.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            "banana"
+                        ), startIndex = 0, windowSize = 2
+                    )
+                )
+
+            assertThat(results.size).isEqualTo(2)
+        }
+
+        @Test
+        fun `can retrieve any page`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
+                    SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
+                )
+            )
+
+            val page1 = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "banana"
+                    ), startIndex = 0, windowSize = 2
+                )
+            )
+            val page2 = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "banana"
+                    ), startIndex = 2, windowSize = 2
+                )
+            )
+            val page3 = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "banana"
+                    ), startIndex = 4, windowSize = 2
+                )
+            )
+
+            assertThat(page1).doesNotContainAnyElementsOf(page2)
+            assertThat(page1).hasSize(2)
+            assertThat(page2).hasSize(2)
+            assertThat(page3).hasSize(0)
+        }
+    }
+
+    @Nested
+    inner class IdSearches {
+        @Test
+        fun `returns exact matches for IDs search query`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
+                    SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(query = VideoQuery(ids = listOf("2", "5")))
+            )
+
+            assertThat(results).containsExactly("2")
+        }
+    }
+
+    @Nested
+    inner class TagSearches {
+        @Test
+        fun `all include tags must match`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(query = VideoQuery(includeTags = listOf("classroom", "news")))
+            )
+
+            assertThat(results).isEmpty()
+        }
+
+        @Test
+        fun `all exclude tags must match`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        excludeTags = listOf(
+                            "classroom",
+                            "news"
+                        )
+                    )
+                )
+            )
+
+            assertThat(results).isEmpty()
+        }
+
+        @Test
+        fun `having include and exclude as the same tag returns no results`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        excludeTags = listOf("classroom"),
+                        includeTags = listOf("classroom")
+                    )
+                )
+            )
+
+            assertThat(results).isEmpty()
+        }
+
+        @Test
+        fun `searching with no filters returns news and non-news`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "3", description = "banana"),
+                    SearchableVideoMetadataFactory.create(
+                        id = "9",
+                        description = "candy banana apple",
+                        tags = listOf("news")
+                    ),
+                    SearchableVideoMetadataFactory.create(id = "10", description = "candy banana apple")
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(query = VideoQuery(phrase = "banana"))
+            )
+
+            assertThat(results).hasSize(3)
+        }
+    }
+
+    @Nested
+    inner class DurationSearches {
+        @Test
+        fun `duration range matches`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", durationSeconds = 120),
+                    SearchableVideoMetadataFactory.create(id = "2", durationSeconds = 100),
+                    SearchableVideoMetadataFactory.create(id = "3", durationSeconds = 60)
+                )
+            )
+
+            val results =
+                readSearchService.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            minDuration = Duration.ofSeconds(60),
+                            maxDuration = Duration.ofSeconds(110)
+                        )
+                    )
+                )
+
+            assertThat(results.size).isEqualTo(2)
+            assertThat(results).containsExactlyInAnyOrder("2", "3")
+        }
+
+        @Test
+        fun `duration range no upper bound`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", durationSeconds = 120),
+                    SearchableVideoMetadataFactory.create(id = "2", durationSeconds = 100),
+                    SearchableVideoMetadataFactory.create(id = "3", durationSeconds = 40)
+                )
+            )
+
+            val results =
+                readSearchService.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            minDuration = Duration.ofSeconds(60)
+                        )
+                    )
+                )
+
+            assertThat(results.size).isEqualTo(2)
+            assertThat(results).containsExactlyInAnyOrder("1", "2")
+        }
+
+        @Test
+        fun `duration range no lower bound`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", durationSeconds = 120),
+                    SearchableVideoMetadataFactory.create(id = "2", durationSeconds = 60),
+                    SearchableVideoMetadataFactory.create(id = "3", durationSeconds = 100)
+                )
+            )
+
+            val results =
+                readSearchService.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(maxDuration = Duration.ofSeconds(110))
+                    )
+                )
+
+            assertThat(results.size).isEqualTo(2)
+            assertThat(results).containsExactlyInAnyOrder("2", "3")
+        }
+    }
+
+    @Nested
     inner class CombinationOfFiltersSearches {
+
+        @Test
+        fun `no filters return everything`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy")
+                )
+            )
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple")
+                )
+            )
+
+            val results = readSearchService.search(PaginatedSearchRequest(query = VideoQuery()))
+
+            assertThat(results).hasSize(2)
+        }
+
         @Test
         fun `age, subject`() {
             writeSearchService.upsert(
@@ -807,230 +1085,76 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
 
             assertThat(results).containsExactly("3")
         }
-    }
-
-    @Nested
-    inner class Counting {
-        @Test
-        fun `counts search results for phrase queries`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
-                    SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "5", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "6", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "7", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "8", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "9", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "10", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "11", description = "candy banana apple")
-                )
-            )
-
-            val results = readSearchService.count(VideoQuery(phrase = "banana"))
-
-            assertThat(results).isEqualTo(11)
-        }
 
         @Test
-        fun `counts search results for IDs queries`() {
+        fun `duration, query`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
-                    SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
-                )
-            )
-
-            val results = readSearchService.count(VideoQuery(ids = listOf("2", "5")))
-
-            assertThat(results).isEqualTo(1)
-        }
-
-        @Test
-        fun `can count for just news results`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
+                    SearchableVideoMetadataFactory.create(id = "0", durationSeconds = 50),
                     SearchableVideoMetadataFactory.create(
-                        id = "4",
-                        description = "candy banana apple",
-                        tags = listOf("news")
+                        id = "1",
+                        durationSeconds = 10,
+                        title = "matching-query"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        durationSeconds = 50,
+                        title = "matching-query"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        durationSeconds = 100,
+                        title = "matching-query"
                     )
-                )
-            )
-
-            val results = readSearchService.count(VideoQuery(includeTags = listOf("news")))
-
-            assertThat(results).isEqualTo(1)
-        }
-    }
-
-    @Nested
-    inner class Pagination {
-        @Test
-        fun `paginates search results`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
-                    SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
-                )
-            )
-
-            val results =
-                readSearchService.search(
-                    PaginatedSearchRequest(
-                        query = VideoQuery(
-                            "banana"
-                        ), startIndex = 0, windowSize = 2
-                    )
-                )
-
-            assertThat(results.size).isEqualTo(2)
-        }
-
-        @Test
-        fun `can retrieve any page`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
-                    SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "4", description = "candy banana apple")
-                )
-            )
-
-            val page1 = readSearchService.search(
-                PaginatedSearchRequest(
-                    query = VideoQuery(
-                        "banana"
-                    ), startIndex = 0, windowSize = 2
-                )
-            )
-            val page2 = readSearchService.search(
-                PaginatedSearchRequest(
-                    query = VideoQuery(
-                        "banana"
-                    ), startIndex = 2, windowSize = 2
-                )
-            )
-            val page3 = readSearchService.search(
-                PaginatedSearchRequest(
-                    query = VideoQuery(
-                        "banana"
-                    ), startIndex = 4, windowSize = 2
-                )
-            )
-
-            assertThat(page1).doesNotContainAnyElementsOf(page2)
-            assertThat(page1).hasSize(2)
-            assertThat(page2).hasSize(2)
-            assertThat(page3).hasSize(0)
-        }
-    }
-
-    @Nested
-    inner class IdSearches {
-        @Test
-        fun `returns exact matches for IDs search query`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
-                    SearchableVideoMetadataFactory.create(id = "2", title = "candy banana apple"),
-                    SearchableVideoMetadataFactory.create(id = "3", title = "banana apple candy")
                 )
             )
 
             val results = readSearchService.search(
-                PaginatedSearchRequest(query = VideoQuery(ids = listOf("2", "5")))
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        phrase = "matching-query",
+                        minDuration = Duration.ofSeconds(40),
+                        maxDuration = Duration.ofSeconds(60)
+                    )
+                )
+            )
+            assertThat(results).containsExactly("2")
+        }
+
+        @Test
+        fun `duration, subject`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "0", durationSeconds = 50),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        durationSeconds = 10,
+                        subjects = setOf("subject-two", "subject-three")
+                        ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        durationSeconds = 50,
+                        subjects = setOf("subject-two", "subject-three")
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        durationSeconds = 100,
+                        subjects = setOf("subject-two", "subject-three")
+                    )
+                )
             )
 
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        subjects = setOf("subject-two"),
+                        minDuration = Duration.ofSeconds(49),
+                        maxDuration = Duration.ofSeconds(51)
+                    )
+                )
+            )
             assertThat(results).containsExactly("2")
         }
     }
 
-    @Nested
-    inner class TagSearches {
-        @Test
-        fun `all include tags must match`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
-                )
-            )
-
-            val results = readSearchService.search(
-                PaginatedSearchRequest(query = VideoQuery(includeTags = listOf("classroom", "news")))
-            )
-
-            assertThat(results).isEmpty()
-        }
-
-        @Test
-        fun `all exclude tags must match`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
-                )
-            )
-
-            val results = readSearchService.search(
-                PaginatedSearchRequest(
-                    query = VideoQuery(
-                        excludeTags = listOf(
-                            "classroom",
-                            "news"
-                        )
-                    )
-                )
-            )
-
-            assertThat(results).isEmpty()
-        }
-
-        @Test
-        fun `having include and exclude as the same tag returns no results`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
-                )
-            )
-
-            val results = readSearchService.search(
-                PaginatedSearchRequest(
-                    query = VideoQuery(
-                        excludeTags = listOf("classroom"),
-                        includeTags = listOf("classroom")
-                    )
-                )
-            )
-
-            assertThat(results).isEmpty()
-        }
-
-        @Test
-        fun `searching with no filters returns news and non-news`() {
-            writeSearchService.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "banana"),
-                    SearchableVideoMetadataFactory.create(
-                        id = "9",
-                        description = "candy banana apple",
-                        tags = listOf("news")
-                    ),
-                    SearchableVideoMetadataFactory.create(id = "10", description = "candy banana apple")
-                )
-            )
-
-            val results = readSearchService.search(
-                PaginatedSearchRequest(query = VideoQuery(phrase = "banana"))
-            )
-
-            assertThat(results).hasSize(3)
-        }
-    }
 }
