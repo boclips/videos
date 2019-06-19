@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -55,12 +56,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `when authenticated user`() {
         val userId = "teacher@teacher.com"
         mockMvc.perform(get("/v1").asTeacher(userId))
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.searchVideos.href", containsString("/videos")))
             .andExpect(
                 jsonPath(
                     "$._links.searchVideos.href",
-                    containsString("{?query,sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subjects}")
+                    containsString("{?query,sort_by,include_tag,exclude_tag,min_duration,max_duration,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject}")
                 )
             )
             .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))
@@ -68,7 +70,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.searchCollections.href",
-                    endsWith("collections?projection=list&public=true&page=0&size=30{&query,subjects}")
+                    endsWith("collections?projection=list&public=true&page=0&size=30{&query,subject}")
                 )
             )
             .andExpect(

@@ -77,7 +77,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                 .queryParam("public", true)
                 .queryParam("page", page)
                 .queryParam("size", size)
-                .toUriString() + "{&query,subjects}", "searchCollections"
+                .toUriString() + "{&query,subject}", "searchCollections"
         )
     }
 

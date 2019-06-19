@@ -268,7 +268,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val subjectId = saveSubject("Maths")
         setVideoSubjects(videoId, subjectId)
 
-        mockMvc.perform(get("/v1/videos?query=elephants&subjects=${subjectId.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&subject=${subjectId.value}").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId)))
@@ -289,10 +289,28 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val subjectId = saveSubject("Maths")
         setVideoSubjects(videoId, subjectId)
 
-        mockMvc.perform(get("/v1/videos?subjects=${subjectId.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?subject=${subjectId.value}").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId)))
+    }
+
+    @Test
+    fun `returns videos of given subjects`() {
+        saveVideo()
+        val mathsVideoId = saveVideo().value
+        val englishVideoId = saveVideo().value
+
+        val mathsId = saveSubject("Maths")
+        val englishId = saveSubject("English")
+        setVideoSubjects(mathsVideoId, mathsId)
+        setVideoSubjects(englishVideoId, englishId)
+
+        mockMvc.perform(get("/v1/videos?subject=${mathsId.value}&subject=${englishId.value}").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(mathsVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(englishVideoId)))
     }
 
     @Test
