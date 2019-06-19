@@ -72,7 +72,8 @@ class ContentEnrichers {
             "Mage Math",
             "engVid",
             "1 Minute in a Museum",
-            "British Movietone"
+            "British Movietone",
+            "360 Cities"
         )
     }
 }
