@@ -13,6 +13,5 @@ public class Video {
     private final String description;
     private final String contentPartnerId;
     private final String contentPartnerVideoId;
+    private final Playback playback;
 }
-
-

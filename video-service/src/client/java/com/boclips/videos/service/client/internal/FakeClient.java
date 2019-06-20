@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.*;
 
 public class FakeClient implements VideoServiceClient {
@@ -15,6 +16,7 @@ public class FakeClient implements VideoServiceClient {
     private List<CreateVideoRequest> createRequests = new ArrayList<>();
     private Map<VideoId, Video> videos = new HashMap<>();
     private Set<String> illegalPlaybackIds = new HashSet<>();
+    private Map<VideoId, Playback> playbacks = new HashMap<>();
     private Set<Subject> subjects = new HashSet<>();
     private Map<String, List<Collection>> collectionsByUser = new HashMap<>();
 
@@ -29,14 +31,21 @@ public class FakeClient implements VideoServiceClient {
         }
 
         val videoId = rawIdToVideoId(nextId());
+        Playback playback = Playback.builder()
+                .playbackId(request.getPlaybackId())
+                .duration(Duration.ofMinutes(7))
+                .thumbnailUrl("https://thumbnailz.org/img/" + nextId())
+                .build();
         val video = Video.builder()
                 .videoId(videoId)
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .contentPartnerId(request.getProvider())
                 .contentPartnerVideoId(request.getProviderVideoId())
+                .playback(playback)
                 .build();
         videos.put(videoId, video);
+        playbacks.put(videoId, playback);
         createRequests.add(request);
         return videoId;
     }

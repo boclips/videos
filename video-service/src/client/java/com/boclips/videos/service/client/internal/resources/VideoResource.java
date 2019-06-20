@@ -14,6 +14,7 @@ public class VideoResource {
     private Set<String> subjects = null;
     private String contentPartner = null;
     private String contentPartnerVideoId = null;
+    private PlaybackResource playback = null;
 
     public Video toVideo() {
         return Video.builder()
@@ -22,6 +23,7 @@ public class VideoResource {
                 .description(description)
                 .contentPartnerId(contentPartner)
                 .contentPartnerVideoId("")
+                .playback(playback != null ? playback.toPlayback() : null)
                 .build();
     }
 

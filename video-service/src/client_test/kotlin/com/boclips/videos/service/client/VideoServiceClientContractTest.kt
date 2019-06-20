@@ -25,11 +25,12 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get a video`() {
+        val playbackId = "ref-id-123"
         val id = getClient().create(
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
-                playbackId = "ref-id-123"
+                playbackId = playbackId
             )
         )
 
@@ -37,6 +38,9 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
         assertThat(video.title).isEqualTo("the title")
         assertThat(video.description).isEqualTo("the description")
+        assertThat(video.playback?.playbackId).isEqualTo(playbackId)
+        assertThat(video.playback?.thumbnailUrl).isNotBlank()
+        assertThat(video.playback?.duration).isNotNull()
     }
 
     @Test
