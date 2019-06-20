@@ -189,7 +189,11 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
         return QueryBuilders
             .boolQuery()
             .apply {
-                if (min != null) {
+                if (min == null) {
+                    max?.let {
+                        must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply { to(it) })
+                    }
+                } else {
                     should(
                         QueryBuilders.boolQuery().apply {
                             must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
@@ -208,7 +212,7 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                             })
                             max?.let {
                                 must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
-                                    to(max)
+                                    to(it)
                                 })
                             }
                         }

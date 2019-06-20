@@ -343,7 +343,7 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
     @Nested
     inner class AgeRangeSearches {
         @Test
-        fun `videos within age range with no upper bound`() {
+        fun `videos within query age range`() {
             writeSearchService.upsert(
                 sequenceOf(
                     SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
@@ -366,7 +366,7 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         }
 
         @Test
-        fun `videos within age range lower bound`() {
+        fun `videos within query age range with only lower bound`() {
             writeSearchService.upsert(
                 sequenceOf(
                     SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
@@ -377,6 +377,26 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
             )
 
             val results = readSearchService.search(PaginatedSearchRequest(query = VideoQuery(ageRangeMin = 5)))
+
+            assertThat(results).hasSize(3)
+            assertThat(results).contains("1")
+            assertThat(results).contains("2")
+            assertThat(results).contains("3")
+        }
+
+        @Test
+        fun `videos within query age range with only upper bound`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
+                    SearchableVideoMetadataFactory.create(id = "2", title = "TED", ageRangeMin = 7, ageRangeMax = 11),
+                    SearchableVideoMetadataFactory.create(id = "3", title = "TED", ageRangeMin = 3),
+                    SearchableVideoMetadataFactory.create(id = "4", title = "TED", ageRangeMin = 13),
+                    SearchableVideoMetadataFactory.create(id = "5", title = "TED", ageRangeMin = 15, ageRangeMax = 18)
+                )
+            )
+
+            val results = readSearchService.search(PaginatedSearchRequest(query = VideoQuery(ageRangeMax = 11)))
 
             assertThat(results).hasSize(3)
             assertThat(results).contains("1")

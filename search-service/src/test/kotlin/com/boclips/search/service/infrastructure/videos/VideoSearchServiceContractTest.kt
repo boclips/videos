@@ -722,15 +722,21 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
-                    description = "Fifth world war",
+                    description = "Third world war",
                     ageRangeMin = 3,
                     ageRangeMax = 4
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "4",
-                    description = "Sixth world war",
+                    description = "Fourth world war",
                     ageRangeMin = 15,
                     ageRangeMax = 18
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "5",
+                    description = "Fifth world war",
+                    ageRangeMin = null,
+                    ageRangeMax = null
                 )
             )
         )
@@ -747,7 +753,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
 
         assertThat(results).containsAll(listOf("0", "1", "2"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("4", "3"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("4", "3", "5"))
     }
 
     @ParameterizedTest
@@ -887,6 +893,65 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         assertThat(results).containsAll(listOf("0", "1", "2", "3", "4", "6", "7"))
         assertThat(results).doesNotContainAnyElementsOf(listOf("5"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by age range when query has no min`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    description = "Zeroth world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 18
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "First world war",
+                    ageRangeMin = 3,
+                    ageRangeMax = 7
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "Third world war",
+                    ageRangeMin = 5
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "Fourth world war",
+                    ageRangeMin = 15,
+                    ageRangeMax = 18
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    description = "Fifth world war",
+                    ageRangeMin = 13
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "5",
+                    description = "Sixth world war",
+                    ageRangeMin = null,
+                    ageRangeMax = null
+                )
+            )
+        )
+
+        val results =
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "World war",
+                        ageRangeMax = 11
+                    )
+                )
+            )
+
+        assertThat(results).containsAll(listOf("0", "1", "2"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("3", "4", "5"))
     }
 
     @ParameterizedTest
