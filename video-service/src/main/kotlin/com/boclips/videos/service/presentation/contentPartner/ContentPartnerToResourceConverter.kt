@@ -13,7 +13,8 @@ object ContentPartnerToResourceConverter {
             isOfficial = when (contentPartner.credit) {
                 is Credit.PartnerCredit -> true
                 is Credit.YoutubeCredit -> false
-            }
+            },
+            searchable = contentPartner.searchable
         )
     }
 }

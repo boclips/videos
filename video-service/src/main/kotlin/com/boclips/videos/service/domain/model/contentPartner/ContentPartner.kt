@@ -6,5 +6,6 @@ data class ContentPartner(
     val contentPartnerId: ContentPartnerId,
     val name: String,
     val ageRange: AgeRange,
-    val credit: Credit
+    val credit: Credit,
+    val searchable: Boolean
 )

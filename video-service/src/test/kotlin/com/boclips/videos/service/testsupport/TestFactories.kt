@@ -75,7 +75,8 @@ object TestFactories {
             contentPartnerId = contentPartnerId,
             name = contentPartnerName,
             ageRange = ageRange,
-            credit = Credit.PartnerCredit
+            credit = Credit.PartnerCredit,
+            searchable = true
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -369,13 +370,15 @@ object TestFactories {
         id: ContentPartnerId = ContentPartnerId(ObjectId().toHexString()),
         name: String = "TED",
         ageRange: AgeRange = AgeRange.bounded(5, 11),
-        credit: Credit = Credit.PartnerCredit
+        credit: Credit = Credit.PartnerCredit,
+        searchable: Boolean = true
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
             name = name,
             ageRange = ageRange,
-            credit = credit
+            credit = credit,
+            searchable = searchable
         )
     }
 

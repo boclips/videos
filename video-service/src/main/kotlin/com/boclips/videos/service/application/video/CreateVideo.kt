@@ -49,9 +49,10 @@ class CreateVideo(
         val videoPlayback = findVideoPlayback(playbackId)
 
         val contentPartner =
-            contentPartnerRepository.findByName(createRequest.provider) ?: contentPartnerRepository.create(
+            findContentPartner(createRequest) ?: contentPartnerRepository.create(
                 ContentPartner(
-                    contentPartnerId = ContentPartnerId(value = ObjectId.get().toHexString()),
+                    contentPartnerId = createRequest.providerId?.let(::ContentPartnerId)
+                        ?: ContentPartnerId(value = ObjectId.get().toHexString()),
                     name = createRequest.provider,
                     ageRange = AgeRange.unbounded(),
                     credit = when (videoPlayback) {
@@ -64,7 +65,8 @@ class CreateVideo(
                             Credit.PartnerCredit
                         }
                         else -> throw IllegalStateException("Could not retrieve playback for $videoPlayback")
-                    }
+                    },
+                    searchable = true
                 )
             )
 
@@ -81,6 +83,17 @@ class CreateVideo(
         classifyVideo(createdVideo.videoId.value)
 
         return searchVideo.byId(createdVideo.videoId.value)
+    }
+
+    private fun findContentPartner(
+        createRequest: CreateVideoRequest
+    ): ContentPartner? = when {
+        createRequest.providerId != null ->
+            contentPartnerRepository.findById(ContentPartnerId(value = createRequest.providerId))
+        createRequest.provider != null ->
+            contentPartnerRepository.findByName(createRequest.provider)
+        else ->
+            null
     }
 
     private fun triggerVideoAnalysis(createdVideo: Video) {

@@ -26,7 +26,8 @@ class VideoDocumentConverterTest {
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                 name = "Some name",
                 ageRange = AgeRange.bounded(10, 17),
-                credit = Credit.PartnerCredit
+                credit = Credit.PartnerCredit,
+                searchable = true
             ),
             videoReference = "video-123",
             type = LegacyVideoType.NEWS,

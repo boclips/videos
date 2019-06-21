@@ -9,7 +9,8 @@ class ContentPartnerToResourceConverterTest {
     @Test
     fun `convert content partner to resource`() {
         val contentPartner = TestFactories.createContentPartner(
-            credit = Credit.PartnerCredit
+            credit = Credit.PartnerCredit,
+            searchable = false
         )
 
         val contentPartnerResource = ContentPartnerToResourceConverter.convert(contentPartner)
@@ -18,5 +19,6 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.name).isNotEmpty()
         assertThat(contentPartnerResource.ageRange).isNotNull
         assertThat(contentPartnerResource.isOfficial).isTrue()
+        assertThat(contentPartnerResource.searchable).isFalse()
     }
 }

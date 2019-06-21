@@ -16,12 +16,27 @@ internal class ContentPartnerDocumentConverterTest {
             contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
             name = "The grandest content partner there ever lived",
             ageRange = AgeRange.bounded(5, 11),
-            credit = Credit.PartnerCredit
+            credit = Credit.PartnerCredit,
+            searchable = false
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)
         val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
 
         assertThat(convertedAsset).isEqualTo(original)
+    }
+
+    @Test
+    fun `the content partner is searchable by default`() {
+        val document = ContentPartnerDocument(
+            id = ObjectId.get(),
+            name = "content partner",
+            searchable = null,
+            ageRangeMax = null,
+            ageRangeMin = null
+        )
+
+        val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
+        assertThat(convertedAsset.searchable).isTrue()
     }
 }

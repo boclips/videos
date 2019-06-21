@@ -10,15 +10,28 @@ import org.junit.jupiter.api.Test
 
 class ContentPartnerUpdatesConverterTest {
     @Test
+    fun `creates command for setting searchability`() {
+        val commands = ContentPartnerUpdatesConverter().convert(
+            id = ContentPartnerId(value = "123"),
+            contentPartnerRequest = ContentPartnerRequest(name = "Hello", searchable = true)
+        )
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.SetSearchability } as ContentPartnerUpdateCommand.SetSearchability
+
+        assertThat(command.searchable).isEqualTo(true)
+    }
+
+    @Test
     fun `creates command for updating the name`() {
         val commands = ContentPartnerUpdatesConverter().convert(
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(name = "Hello", ageRange = null)
         )
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceName } as ContentPartnerUpdateCommand.ReplaceName
 
-        assertThat(commands).hasSize(1)
-        assertThat(commands.first().contentPartnerId.value).isEqualTo("123")
-        assertThat((commands.first() as ContentPartnerUpdateCommand.ReplaceName).name).isEqualTo("Hello")
+        assertThat(command.name).isEqualTo("Hello")
+        assertThat(command.contentPartnerId.value).isEqualTo("123")
     }
 
     @Test
@@ -31,11 +44,9 @@ class ContentPartnerUpdatesConverterTest {
                 accreditedToYtChannelId = "test"
             )
         )
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceAgeRange } as ContentPartnerUpdateCommand.ReplaceAgeRange
 
-        assertThat(commands).hasSize(1)
-        assertThat(commands.first().contentPartnerId.value).isEqualTo("123")
-        assertThat((commands.first() as ContentPartnerUpdateCommand.ReplaceAgeRange).ageRange).isEqualTo(
-            AgeRange.bounded(1, 3)
-        )
+        assertThat(command.ageRange).isEqualTo(AgeRange.bounded(1, 3))
     }
 }

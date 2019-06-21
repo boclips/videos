@@ -6,5 +6,6 @@ import javax.validation.Valid
 data class ContentPartnerRequest(
     val name: String? = null,
     val accreditedToYtChannelId: String? = null,
-    @field:Valid var ageRange: AgeRangeRequest? = null
+    @field:Valid var ageRange: AgeRangeRequest? = null,
+    val searchable: Boolean = true
 )

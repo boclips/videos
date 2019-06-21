@@ -24,7 +24,8 @@ class CreateContentPartner(
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                 name = request.name,
                 ageRange = ageRange,
-                credit = request.accreditedToYtChannelId?.let { Credit.YoutubeCredit(it) } ?: Credit.PartnerCredit
+                credit = request.accreditedToYtChannelId?.let { Credit.YoutubeCredit(it) } ?: Credit.PartnerCredit,
+                searchable = request.searchable
             )
         )
     }

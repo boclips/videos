@@ -8,5 +8,6 @@ open class ContentPartnerResource(
     val id: String,
     val name: String,
     val ageRange: AgeRangeResource? = null,
-    val isOfficial: Boolean
+    val isOfficial: Boolean,
+    val searchable: Boolean
 )

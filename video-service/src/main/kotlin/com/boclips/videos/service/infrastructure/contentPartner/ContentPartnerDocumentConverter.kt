@@ -16,7 +16,8 @@ object ContentPartnerDocumentConverter {
             },
             name = contentPartner.name,
             ageRangeMax = contentPartner.ageRange.max(),
-            ageRangeMin = contentPartner.ageRange.min()
+            ageRangeMin = contentPartner.ageRange.min(),
+            searchable = contentPartner.searchable
         )
     }
 
@@ -28,7 +29,8 @@ object ContentPartnerDocumentConverter {
                 document.ageRangeMin,
                 document.ageRangeMax
             ) else AgeRange.unbounded(),
-            credit = document.youtubeChannelId?.let { Credit.YoutubeCredit(channelId = it) } ?: Credit.PartnerCredit
+            credit = document.youtubeChannelId?.let { Credit.YoutubeCredit(channelId = it) } ?: Credit.PartnerCredit,
+            searchable = document.searchable ?: true
         )
     }
 }

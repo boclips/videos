@@ -83,6 +83,11 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
                         updateCommand.ageRange.max()
                     )
                 )
+            is ContentPartnerUpdateCommand.SetSearchability ->
+                set(
+                    ContentPartnerDocument::searchable,
+                    updateCommand.searchable
+                )
         }
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))

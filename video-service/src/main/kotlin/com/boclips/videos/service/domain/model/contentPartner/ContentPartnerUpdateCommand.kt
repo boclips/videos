@@ -9,4 +9,7 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class ReplaceAgeRange(contentPartnerId: ContentPartnerId, val ageRange: AgeRange) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class SetSearchability(contentPartnerId: ContentPartnerId, val searchable: Boolean) :
+        ContentPartnerUpdateCommand(contentPartnerId)
 }

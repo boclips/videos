@@ -11,5 +11,6 @@ data class ContentPartnerDocument(
     val ageRangeMin: Int?,
     val ageRangeMax: Int?,
     val lastModified: Instant? = null,
-    val createdAt: Instant? = null
+    val createdAt: Instant? = null,
+    val searchable: Boolean? = null
 )

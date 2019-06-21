@@ -1,13 +1,11 @@
 package com.boclips.videos.service.infrastructure.contentPartner
 
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,37 +13,37 @@ import java.util.UUID
 
 class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var mongoContentPartnerRespository: MongoContentPartnerRepository
+    lateinit var mongoContentPartnerRepository: MongoContentPartnerRepository
 
     @Test
     fun `can create a content partner`() {
         val contentPartner = TestFactories.createContentPartner()
 
-        val createdAsset = mongoContentPartnerRespository.create(contentPartner = contentPartner)
+        val createdAsset = mongoContentPartnerRepository.create(contentPartner = contentPartner)
 
         assertThat(createdAsset).isEqualTo(contentPartner)
     }
 
     @Test
     fun find() {
-        val originalContentPartner = mongoContentPartnerRespository.create(
+        val originalContentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner()
         )
 
-        val retrievedAsset = mongoContentPartnerRespository.findById(originalContentPartner.contentPartnerId)
+        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.contentPartnerId)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
     }
 
     @Test
     fun `find by youtube channel name`() {
-        val originalContentPartner = mongoContentPartnerRespository.create(
+        val originalContentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(
                 credit = Credit.YoutubeCredit(channelId = "123")
             )
         )
 
-        val retrievedAsset = mongoContentPartnerRespository.findById(originalContentPartner.contentPartnerId)
+        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.contentPartnerId)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
     }
@@ -53,22 +51,22 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun findByName() {
         val contentPartnerName = UUID.randomUUID().toString()
-        val originalContentPartner = mongoContentPartnerRespository.create(
+        val originalContentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(name = contentPartnerName)
         )
 
-        val retrievedAsset = mongoContentPartnerRespository.findByName(contentPartnerName)
+        val retrievedAsset = mongoContentPartnerRepository.findByName(contentPartnerName)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
     }
 
     @Test
     fun `find all content partners`() {
-        mongoContentPartnerRespository.create(
+        mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(name = "my bloody valentine")
         )
 
-        val retrievedAsset = mongoContentPartnerRespository.findAll()
+        val retrievedAsset = mongoContentPartnerRepository.findAll()
 
         assertThat(retrievedAsset).hasSize(1)
         assertThat(retrievedAsset.first()!!.name).isEqualTo("my bloody valentine")
@@ -76,16 +74,16 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `does not update given an empty list of update commands`() {
-        Assertions.assertDoesNotThrow { mongoContentPartnerRespository.update(listOf()) }
+        Assertions.assertDoesNotThrow { mongoContentPartnerRepository.update(listOf()) }
     }
 
     @Test
     fun `replaces name`() {
-        val contentPartner = mongoContentPartnerRespository.create(
+        val contentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(name = "my bloody valentine")
         )
 
-        mongoContentPartnerRespository.update(
+        mongoContentPartnerRepository.update(
             listOf(
                 ContentPartnerUpdateCommand.ReplaceName(
                     contentPartnerId = contentPartner.contentPartnerId,
@@ -94,19 +92,19 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
         )
 
-        val updatedAsset = mongoContentPartnerRespository.findById(contentPartner.contentPartnerId)
+        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
         assertThat(updatedAsset?.name).isEqualTo("new name")
     }
 
     @Test
     fun `replaces age range`() {
-        val contentPartner = mongoContentPartnerRespository.create(
+        val contentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(
                 ageRange = AgeRange.unbounded()
             )
         )
 
-        mongoContentPartnerRespository.update(
+        mongoContentPartnerRepository.update(
             listOf(
                 ContentPartnerUpdateCommand.ReplaceAgeRange(
                     contentPartnerId = contentPartner.contentPartnerId,
@@ -115,8 +113,29 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
         )
 
-        val updatedAsset = mongoContentPartnerRespository.findById(contentPartner.contentPartnerId)!!
+        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
         assertThat(updatedAsset.ageRange.min()).isEqualTo(10)
         assertThat(updatedAsset.ageRange.max()).isEqualTo(20)
+    }
+
+    @Test
+    fun `sets searchability`() {
+        val contentPartner = mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(
+                searchable = false
+            )
+        )
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.SetSearchability(
+                    contentPartnerId = contentPartner.contentPartnerId,
+                    searchable = true
+                )
+            )
+        )
+
+        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+        assertThat(updatedAsset.searchable).isEqualTo(true)
     }
 }

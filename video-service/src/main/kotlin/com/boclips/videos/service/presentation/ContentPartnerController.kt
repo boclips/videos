@@ -33,7 +33,6 @@ class ContentPartnerController(
     private val fetchContentPartners: GetContentPartners,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
 ) {
-
     @RequestMapping(
         "/{contentPartnerId}/videos/{contentPartnerVideoId}",
         method = [RequestMethod.HEAD]
