@@ -530,6 +530,30 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
     }
 
+    @Test
+    fun `can filter public collections by multiple subjects with commas`() {
+        val collectionWithSubject1 = createCollectionWithTitle("My Collection for with Subjects")
+        val collectionWithSubject2 = createCollectionWithTitle("My Collection for with Subjects")
+        val collectionWithoutSubjects = createCollectionWithTitle("My Collection for without Subjects")
+
+        mockMvc.perform(
+            patch(selfLink(collectionWithSubject1)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["SubjectOneId"]}""").asTeacher()
+        )
+        mockMvc.perform(
+            patch(selfLink(collectionWithSubject2)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["SubjectTwoId"]}""").asTeacher()
+        )
+
+        updateCollectionToBePublic(collectionWithSubject1)
+        updateCollectionToBePublic(collectionWithSubject2)
+        updateCollectionToBePublic(collectionWithoutSubjects)
+
+        mockMvc.perform(get("/v1/collections?subject=SubjectOneId,SubjectTwoId&public=true").asTeacher("teacher@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+    }
+
     private fun createCollectionWithTitle(title: String): String {
         val email = "teacher@gmail.com"
         return collectionRepository.create(owner = UserId(email), title = title, createdByBoclips = false).id.value
