@@ -61,7 +61,7 @@ class CollectionsController(
         @RequestParam(required = false) owner: String?,
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) size: Int?,
-        @RequestParam(required = false) subjects: List<String>?
+        @RequestParam(required = false) subject: List<String>?
     ): Resources<*> {
         val collectionFilter = CollectionFilter(
             query = query,
@@ -74,7 +74,7 @@ class CollectionsController(
             owner = owner,
             pageNumber = page?.let { it } ?: 0,
             pageSize = size?.let { it } ?: COLLECTIONS_PAGE_SIZE,
-            subjects = subjects ?: emptyList()
+            subjects = subject ?: emptyList()
         )
 
         val collections = getCollections(collectionFilter)

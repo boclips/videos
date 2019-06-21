@@ -501,7 +501,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         updateCollectionToBePublic(collectionWithSubjectsId)
         updateCollectionToBePublic(collectionWithoutSubjectsId)
 
-        mockMvc.perform(get("/v1/collections?subjects=SubjectOneId&projection=details&public=true").asTeacher("teacher@gmail.com"))
+        mockMvc.perform(get("/v1/collections?subject=SubjectOneId&projection=details&public=true").asTeacher("teacher@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
     }
