@@ -9,16 +9,9 @@ class ContentPartnerUpdatesConverter {
     fun convert(id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest): List<ContentPartnerUpdateCommand> {
         return listOfNotNull(
             updateNameOrNot(id, contentPartnerRequest),
-            updateAgeRangeOrNot(id, contentPartnerRequest),
-            updateSearchable(id, contentPartnerRequest)
+            updateAgeRangeOrNot(id, contentPartnerRequest)
         )
     }
-
-    private fun updateSearchable(
-        id: ContentPartnerId,
-        contentPartnerRequest: ContentPartnerRequest
-    ): ContentPartnerUpdateCommand.SetSearchability =
-        ContentPartnerUpdateCommand.SetSearchability(id, contentPartnerRequest.searchable)
 
     private fun updateNameOrNot(
         id: ContentPartnerId,

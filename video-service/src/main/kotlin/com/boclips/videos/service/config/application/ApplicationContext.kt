@@ -15,6 +15,8 @@ import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
+import com.boclips.videos.service.application.contentPartner.RequestSearchUpdateByContentPartner
+import com.boclips.videos.service.application.contentPartner.SearchUpdateByContentPartner
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
@@ -315,7 +317,11 @@ class ApplicationContext(
 
     @Bean
     fun updateContentPartner(): UpdateContentPartner {
-        return UpdateContentPartner(contentPartnerRepository, videoRepository)
+        return UpdateContentPartner(
+            contentPartnerRepository,
+            videoRepository,
+            getRequestSearchUpdateByContentPartner()
+        )
     }
 
     @Bean
@@ -331,6 +337,23 @@ class ApplicationContext(
     @Bean
     fun getContentPartners(): GetContentPartners {
         return GetContentPartners(contentPartnerRepository, contentPartnersLinkBuilder)
+    }
+
+    @Bean
+    fun getRequestSearchUpdateByContentPartner(): RequestSearchUpdateByContentPartner {
+        return RequestSearchUpdateByContentPartner(
+            topics,
+            contentPartnerRepository
+        )
+    }
+
+    @Bean
+    fun getSearchUpdateByContentPartner(): SearchUpdateByContentPartner {
+        return SearchUpdateByContentPartner(
+            contentPartnerRepository,
+            videoRepository,
+            bulkUpdate()
+        )
     }
 
     private fun getVideoById(

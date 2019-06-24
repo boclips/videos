@@ -77,4 +77,34 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(video.ageRange.min()).isEqualTo(9)
         assertThat(video.ageRange.max()).isEqualTo(14)
     }
+
+    @Test
+    fun `excluding from search enqueues a change for later`() {
+        val originalContentPartner = createContentPartner(
+            TestFactories.createContentPartnerRequest(searchable = true)
+        )
+
+        updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            request = TestFactories.createContentPartnerRequest(searchable = false)
+        )
+
+        val message = messageCollector.forChannel(topics.contentPartnerExclusionFromSearchRequested()).poll()
+        assertThat(message).isNotNull
+    }
+
+    @Test
+    fun `including in search enqueues a change for later`() {
+        val originalContentPartner = createContentPartner(
+            TestFactories.createContentPartnerRequest(searchable = false)
+        )
+
+        updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            request = TestFactories.createContentPartnerRequest(searchable = true)
+        )
+
+        val message = messageCollector.forChannel(topics.contentPartnerInclusionInSearchRequested()).poll()
+        assertThat(message).isNotNull
+    }
 }

@@ -388,12 +388,14 @@ object TestFactories {
             min = 5,
             max = 11
         ),
-        accreditedToYtChannel: String? = null
+        accreditedToYtChannel: String? = null,
+        searchable: Boolean = true
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
             name = name,
             ageRange = ageRange,
-            accreditedToYtChannelId = accreditedToYtChannel
+            accreditedToYtChannelId = accreditedToYtChannel,
+            searchable = searchable
         )
     }
 }

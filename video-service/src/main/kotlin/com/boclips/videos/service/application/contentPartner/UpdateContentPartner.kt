@@ -10,10 +10,20 @@ import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequ
 
 class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val requestSearchUpdateByContentPartner: RequestSearchUpdateByContentPartner
 ) {
     operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
+        val contentPartnerBefore = contentPartnerRepository.findById(contentPartnerId = id)
+
+        if (request.searchable != contentPartnerBefore?.searchable) {
+            requestSearchUpdateByContentPartner.invoke(
+                id,
+                getSearchUpdateRequestType(request.searchable)
+            )
+        }
+
         val updateCommands = ContentPartnerUpdatesConverter().convert(id, request)
 
         contentPartnerRepository.update(updateCommands)
@@ -40,4 +50,11 @@ class UpdateContentPartner(
 
         videoRepository.bulkUpdate(commands)
     }
+
+    private fun getSearchUpdateRequestType(searchable: Boolean): RequestSearchUpdateByContentPartner.RequestType =
+        if (searchable) {
+            RequestSearchUpdateByContentPartner.RequestType.INCLUDE
+        } else {
+            RequestSearchUpdateByContentPartner.RequestType.EXCLUDE
+        }
 }
