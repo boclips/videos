@@ -1,9 +1,6 @@
 package com.boclips.videos.service.client.internal.resources;
 
-import com.boclips.videos.service.client.Collection;
-import com.boclips.videos.service.client.CollectionId;
-import com.boclips.videos.service.client.SubjectId;
-import com.boclips.videos.service.client.VideoId;
+import com.boclips.videos.service.client.*;
 import lombok.Data;
 
 import java.util.List;
@@ -22,8 +19,16 @@ public class CollectionResource {
                 .map(subjectResource -> new SubjectId(subjectResource.getId()))
                 .collect(Collectors.toSet());
 
-        List<VideoId> videos = this.videos.stream()
-                .map(videoResource -> new VideoId(videoResource.get_links().getSelf().toUri()))
+        List<Video> videos = this.videos.stream()
+                .map(videoResource -> Video.builder()
+                        .videoId(new VideoId(videoResource.get_links().getSelf().toUri()))
+                        .title(videoResource.getTitle())
+                        .description(videoResource.getDescription())
+                        .contentPartnerId(videoResource.getContentPartner())
+                        .contentPartnerVideoId(videoResource.getContentPartnerVideoId())
+                        .playback(videoResource.getPlayback() != null ? videoResource.getPlayback().toPlayback() : null)
+                        .build()
+                )
                 .collect(Collectors.toList());
 
         return Collection.builder()

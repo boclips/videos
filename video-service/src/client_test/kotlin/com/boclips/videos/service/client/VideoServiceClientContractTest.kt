@@ -63,13 +63,19 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
-    fun `get a Collection`() {
+    fun `get a Collection returns a collection with shallow details`() {
         val testCollection = getClient().myCollections.component1()
 
         val collection = getClient().get(testCollection.collectionId)
 
         assertThat(collection.title).isEqualTo(testCollection.title)
         assertThat(collection.videos).isNotEmpty
+        collection.videos.map { video ->
+            assertThat(video.videoId.uri.toString()).matches("https?://.*/videos/.*")
+            assertThat(video.title).isNull()
+            assertThat(video.description).isNull()
+            assertThat(video.playback).isNull()
+        }
     }
 
     @Test
@@ -162,7 +168,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
         assertThat(collections).hasSize(2)
         assertThat(collections[0].title).endsWith("collection")
-        assertThat(collections[0].videos[0].uri.toString()).isNotBlank()
+        assertThat(collections[0].videos[0].videoId.uri.toString()).isNotBlank()
         assertThat(collections[0].subjects).containsAnyOf(SubjectId("Math"), SubjectId("French"))
     }
 
@@ -191,7 +197,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val collections: List<Collection> = getClient().getCollectionsByOwner("anotheruser@boclips.com")
 
         assertThat(collections).hasSize(1)
-        assertThat(collections[0].videos[0].uri.toString()).isNotBlank()
+        assertThat(collections[0].videos[0].videoId.uri.toString()).isNotBlank()
         assertThat(collections[0].subjects).containsExactly(SubjectId("Math"))
     }
 }
@@ -203,7 +209,11 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         addSubject("French")
 
         val subjects = setOf(SubjectId("Math"))
-        val videos = listOf(TestFactories.createVideoId())
+        val videos = listOf(
+            Video.builder()
+                .videoId(TestFactories.createVideoId())
+                .build()
+        )
 
         addCollection(
             Collection.builder()
