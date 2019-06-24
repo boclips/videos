@@ -7,7 +7,9 @@ import com.boclips.videos.service.domain.model.collection.CollectionNotFoundExce
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.PlaybackToResourceConverter
@@ -39,7 +41,7 @@ class GetCollectionTest {
             )
         }
         videosLinkBuilder = mock()
-        playbackToResourceConverter = mock()
+        playbackToResourceConverter = PlaybackToResourceConverter(EventsLinkBuilder())
         collectionResourceFactory = CollectionResourceFactory(
             VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
             SubjectToResourceConverter(),
@@ -65,6 +67,41 @@ class GetCollectionTest {
         assertThat(collection.id).isEqualTo(onGetCollection.id.value)
         assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
         assertThat(collection.title).isEqualTo(onGetCollection.title)
+        assertThat(collection.videos).isNotEmpty
+        assertThat(collection.videos.component1().content.id).isNotBlank()
+        assertThat(collection.videos.component1().content.title).isNull()
+        assertThat(collection.videos.component1().content.description).isNull()
+        assertThat(collection.videos.component1().content.playback).isNull()
+    }
+
+    @Test
+    fun `finding collection by ID using details projection`() {
+        val collectionId = CollectionId("collection-123")
+        val onGetCollection = TestFactories.createCollection(
+            id = collectionId,
+            owner = "me@me.com",
+            title = "Freshly found"
+        )
+
+        collectionRepository = mock {
+            on { find(collectionId) } doReturn onGetCollection
+        }
+
+        val collection = GetCollection(collectionRepository, collectionResourceFactory).invoke(
+            collectionId.value,
+            Projection.details
+        )
+
+        assertThat(collection.id).isEqualTo(onGetCollection.id.value)
+        assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
+        assertThat(collection.title).isEqualTo(onGetCollection.title)
+        assertThat(collection.videos).isNotEmpty
+        assertThat(collection.videos.component1().content.id).isNotBlank()
+        assertThat(collection.videos.component1().content.title).isNotBlank()
+        assertThat(collection.videos.component1().content.description).isNotBlank()
+        assertThat(collection.videos.component1().content.playback).isNotNull()
+        assertThat(collection.videos.component1().content.playback?.content?.duration).isNotNull()
+        assertThat(collection.videos.component1().content.playback?.content?.thumbnailUrl).isNotBlank()
     }
 
     @Test

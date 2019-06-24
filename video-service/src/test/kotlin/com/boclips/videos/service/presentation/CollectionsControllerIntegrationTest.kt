@@ -13,6 +13,7 @@ import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.isEmptyOrNullString
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.nullValue
@@ -355,6 +356,52 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.edit").doesNotExist())
             .andExpect(jsonPath("$._links.addVideo").doesNotExist())
             .andExpect(jsonPath("$._links.removeVideo").doesNotExist())
+    }
+
+    @Test
+    fun `fetching a specific collection returns shallow details by default`() {
+        val collectionId = createCollection("collection 1")
+        val videoId = saveVideo(title = "a video title").value
+        addVideo(collectionId, videoId)
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.title", equalTo("collection 1")))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+            .andExpect(jsonPath("$.videos[0].id", equalTo(videoId)))
+            .andExpect(jsonPath("$.videos[0].title", nullValue()))
+            .andExpect(jsonPath("$.videos[0].description", nullValue()))
+            .andExpect(jsonPath("$.videos[0].playback", nullValue()))
+            .andExpect(jsonPath("$.videos[0].subjects", nullValue()))
+            .andExpect(jsonPath("$.videos[0]._links.self.href", not(isEmptyString())))
+            .andReturn()
+    }
+
+    @Test
+    fun `fetching a specific collection using details projection returns deep details`() {
+        val collectionId = createCollection("collection 1")
+        val videoId = saveVideo(title = "a video title").value
+        addVideo(collectionId, videoId)
+
+        mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.title", equalTo("collection 1")))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+            .andExpect(jsonPath("$.videos[0].id", equalTo(videoId)))
+            .andExpect(jsonPath("$.videos[0].title", equalTo("a video title")))
+            .andExpect(jsonPath("$.videos[0].description", equalTo("Some description!")))
+            .andExpect(jsonPath("$.videos[0].playback", not(nullValue())))
+            .andExpect(jsonPath("$.videos[0].playback.duration", not(nullValue())))
+            .andExpect(jsonPath("$.videos[0].playback.thumbnailUrl", not(isEmptyOrNullString())))
+            .andExpect(jsonPath("$.videos[0].subjects", not(nullValue())))
+            .andExpect(jsonPath("$.videos[0]._links.self.href", not(isEmptyString())))
+            .andReturn()
     }
 
     @Test

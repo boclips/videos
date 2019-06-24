@@ -127,8 +127,11 @@ class CollectionsController(
     }
 
     @GetMapping("/{id}")
-    fun show(@PathVariable("id") id: String): Resource<CollectionResource> {
-        return wrapCollection(getCollection(id))
+    fun show(
+        @PathVariable("id") id: String,
+        @RequestParam(required = false) projection: Projection? = Projection.list
+    ): Resource<CollectionResource> {
+        return wrapCollection(getCollection(id, projection ?: Projection.list))
     }
 
     @PutMapping("/{collection_id}/videos/{video_id}")
