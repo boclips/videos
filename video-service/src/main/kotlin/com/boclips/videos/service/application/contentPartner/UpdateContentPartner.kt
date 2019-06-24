@@ -20,7 +20,7 @@ class UpdateContentPartner(
         if (request.searchable != contentPartnerBefore?.searchable) {
             requestSearchUpdateByContentPartner.invoke(
                 id,
-                getSearchUpdateRequestType(request.searchable)
+                getSearchUpdateRequestType(request.searchable!!)
             )
         }
 

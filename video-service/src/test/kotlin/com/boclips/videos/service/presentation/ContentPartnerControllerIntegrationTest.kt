@@ -41,6 +41,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     fun `create a content partner`() {
         val content = """
             {
+                "searchable": false,
                 "name": "TED",
                 "ageRange":
                     {
@@ -63,6 +64,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     fun `create content partner accredited to youtube`() {
         val content = """
             {
+                "searchable": false,
                 "name": "Youtube Channel",
                 "ageRange":
                     {
@@ -86,6 +88,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     fun `updating a content partner`() {
         val originalContent = """
             {
+                "searchable": false,
                 "name": "TED-ED",
                 "ageRange":
                     {
@@ -96,6 +99,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         """
         val updatedContent = """
             {
+                "searchable": false,
                 "name": "TED",
                 "ageRange":
                     {
@@ -109,6 +113,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             post("/v1/content-partners").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(originalContent)
         )
+            .andExpect(status().isCreated)
             .andReturn().response.getHeaders("Location").first()
 
         mockMvc.perform(put(cpUrl).asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(updatedContent))
@@ -125,6 +130,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     fun `get all content partners`() {
         val originalContent = """
             {
+                "searchable": false,
                 "name": "TED-ED",
                 "ageRange":
                     {
