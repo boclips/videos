@@ -63,7 +63,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
-    fun `get a Collection returns a collection with shallow details`() {
+    fun `get a Collection returns a collection with shallow video details`() {
         val testCollection = getClient().myCollections.component1()
 
         val collection = getClient().get(testCollection.collectionId)
@@ -75,6 +75,37 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             assertThat(video.title).isNull()
             assertThat(video.description).isNull()
             assertThat(video.playback).isNull()
+        }
+    }
+
+    @Test
+    fun `get detailed Collection returns a collection with videos prefetched`() {
+        val testCollection = getClient().myCollections.component1()
+
+        val collection = getClient().getDetailed(testCollection.collectionId)
+
+        assertThat(collection.title).isEqualTo(testCollection.title)
+        assertThat(collection.videos).isNotEmpty
+        collection.videos.map { preFetchedVideo ->
+            val video = getClient().get(preFetchedVideo.videoId)
+
+            assertThat(preFetchedVideo.videoId).isEqualTo(video.videoId)
+            assertThat(preFetchedVideo.title)
+                .isNotBlank()
+                .isEqualTo(video.title)
+            assertThat(preFetchedVideo.description)
+                .isNotBlank()
+                .isEqualTo(video.description)
+            assertThat(preFetchedVideo.playback).isNotNull
+            assertThat(preFetchedVideo.playback.playbackId)
+                .isNotBlank()
+                .isEqualTo(video.playback.playbackId)
+            assertThat(preFetchedVideo.playback.duration)
+                .isNotNull()
+                .isEqualTo(video.playback.duration)
+            assertThat(preFetchedVideo.playback.thumbnailUrl)
+                .isNotBlank()
+                .isEqualTo(video.playback.thumbnailUrl)
         }
     }
 
@@ -208,10 +239,19 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         addSubject("Maths")
         addSubject("French")
 
+        val videoId = create(
+            TestFactories.createCreateVideoRequest(
+                title = "Phenomenal test video",
+                description = "the description",
+                playbackId = "test-playback-id",
+                contentProviderVideoId = "collection-video-id"
+            )
+        )
+
         val subjects = setOf(SubjectId("Math"))
         val videos = listOf(
             Video.builder()
-                .videoId(TestFactories.createVideoId())
+                .videoId(videoId)
                 .build()
         )
 

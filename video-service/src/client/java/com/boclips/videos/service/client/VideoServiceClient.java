@@ -68,5 +68,7 @@ public interface VideoServiceClient {
 
     Collection get(CollectionId id);
 
+    Collection getDetailed(CollectionId id);
+
     CollectionId rawIdToCollectionId(String rawId);
 }

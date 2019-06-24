@@ -4,6 +4,7 @@ import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.internal.resources.*;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -73,6 +74,15 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public Collection get(CollectionId id) {
         return restTemplate.getForObject(id.getUri(), CollectionResource.class).toCollection();
+    }
+
+    @Override
+    @SneakyThrows
+    public Collection getDetailed(CollectionId id) {
+        return restTemplate.getForObject(
+                new URI(id.getUri().toString() + "?projection=details"),
+                CollectionResource.class
+        ).toCollection();
     }
 
     @Override

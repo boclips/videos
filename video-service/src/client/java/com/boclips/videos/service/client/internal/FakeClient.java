@@ -11,6 +11,8 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 public class FakeClient implements VideoServiceClient {
 
     private List<CreateVideoRequest> createRequests = new ArrayList<>();
@@ -107,6 +109,21 @@ public class FakeClient implements VideoServiceClient {
                 .filter(collection -> collection.getCollectionId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("FakeClient not pre-populated for given collection ID"));
+    }
+
+    @Override
+    public Collection getDetailed(CollectionId id) {
+        Collection collection = get(id);
+
+        return Collection.builder()
+                .collectionId(collection.getCollectionId())
+                .title(collection.getTitle())
+                .subjects(collection.getSubjects())
+                .videos(collection.getVideos().stream()
+                        .map(video -> videos.get(video.getVideoId()))
+                        .collect(toList())
+                )
+                .build();
     }
 
     @SneakyThrows
