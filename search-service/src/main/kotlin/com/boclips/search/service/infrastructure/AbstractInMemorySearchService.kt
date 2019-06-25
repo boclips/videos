@@ -61,6 +61,10 @@ abstract class AbstractInMemorySearchService<QUERY : SearchQuery<METADATA>, META
         index.remove(videoId)
     }
 
+    override fun bulkRemoveFromSearch(items: List<String>) {
+        items.forEach(this::removeFromSearch)
+    }
+
     abstract fun idsMatching(index: MutableMap<String, METADATA>, videoQuery: QUERY): List<String>
     abstract fun upsertMetadata(index: MutableMap<String, METADATA>, item: METADATA)
 }

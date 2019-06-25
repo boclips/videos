@@ -2,7 +2,6 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.WriteSearchService
 import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -32,27 +31,20 @@ open class BulkUpdateVideo(
 
     private fun disableFromSearch(bulkUpdateRequest: BulkUpdateRequest) {
         val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
+
         videoAccessService.revokeAccess(videoIds)
-
-        bulkUpdateRequest.ids.forEach {
-            writeSearchService.removeFromSearch(it)
-
-            try {
-                legacySearchService.removeFromSearch(it)
-            } catch (e: SolrDocumentNotFound) {
-                logger.warn("Video to be removed was not present in Solr video-id=$it")
-            }
-        }
+        writeSearchService.bulkRemoveFromSearch(bulkUpdateRequest.ids)
+        legacySearchService.bulkRemoveFromSearch(bulkUpdateRequest.ids)
     }
 
     private fun makeSearchable(bulkUpdateRequest: BulkUpdateRequest) {
         val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
         videoAccessService.grantAccess(videoIds)
 
-        videoRepository.findAll(videoIds).let { videoId ->
-            writeSearchService.upsert(videoId.asSequence())
+        videoRepository.findAll(videoIds).let { videos ->
+            writeSearchService.upsert(videos.asSequence())
 
-            legacySearchService.upsert(videoId
+            legacySearchService.upsert(videos
                 .filter { it.isBoclipsHosted() }
                 .map { video -> VideoToLegacyVideoMetadataConverter.convert(video) }
                 .asSequence())

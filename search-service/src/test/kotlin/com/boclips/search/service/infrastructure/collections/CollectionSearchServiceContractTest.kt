@@ -235,6 +235,43 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `can bulk remove collections from index`(
+        readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
+        writeService: WriteSearchService<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    title = "White Gentleman Dancing"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    title = "White Gentleman Dancing"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "3",
+                    title = "White Gentleman Dancing"
+                )
+            )
+        )
+
+        writeService.bulkRemoveFromSearch(listOf("1", "2", "3"))
+
+        assertThat(
+            readService.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        "gentleman"
+                    )
+                )
+            ).isEmpty()
+        )
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and removes the outdated one`(
         readService: ReadSearchService<CollectionMetadata, CollectionQuery>,
         writeService: WriteSearchService<CollectionMetadata>

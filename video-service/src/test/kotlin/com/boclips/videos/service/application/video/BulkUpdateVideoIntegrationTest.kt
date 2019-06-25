@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -10,19 +9,15 @@ import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.isNull
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
@@ -35,7 +30,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoSearchService: VideoSearchService
 
     @Test
-    fun `disableFromSearch sets searchable field on video video to false and removes from search indices`() {
+    fun `disableFromSearch sets searchable field on video to false and removes from search indices`() {
         val videoIds = listOf(saveVideo(searchable = true), saveVideo(searchable = true))
         bulkUpdateVideo(
             BulkUpdateRequest(
@@ -47,21 +42,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == false }
 
         assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
-        videoIds.forEach { verify(legacySearchService).removeFromSearch(it.value) }
-    }
-
-    @Test
-    fun `disableFromSearch ignores Solr document not found errors`() {
-        Mockito.`when`(legacySearchService.removeFromSearch(any())).doAnswer {
-            throw SolrDocumentNotFound(videoId = "")
-        }
-
-        val bulkUpdateRequest = BulkUpdateRequest(
-            ids = listOf(TestFactories.aValidId()),
-            status = VideoResourceStatus.SEARCH_DISABLED
-        )
-
-        assertDoesNotThrow { bulkUpdateVideo(bulkUpdateRequest) }
+        verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
     }
 
     @Test

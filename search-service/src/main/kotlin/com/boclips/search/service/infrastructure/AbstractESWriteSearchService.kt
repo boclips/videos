@@ -57,6 +57,34 @@ abstract class AbstractESWriteSearchService<T>(
         client.delete(request, RequestOptions.DEFAULT)
     }
 
+    override fun bulkRemoveFromSearch(items: List<String>) {
+        items.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+            .forEachIndexed { batchIndex, list ->
+                logger.info { "[Batch $batchIndex] removing ${items.size} item(s)" }
+
+                val request = list
+                    .map {
+                        DeleteRequest(
+                            esIndex.getIndexAlias(),
+                            esIndex.getESType(), it
+                        )
+                    }
+                    .fold(BulkRequest()) { bulkRequest, indexRequest ->
+                        bulkRequest.add(indexRequest)
+                    }
+
+                request.timeout(TimeValue.timeValueMinutes(2))
+                request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
+
+                val result = client.bulk(request, RequestOptions.DEFAULT)
+
+                if (result.hasFailures()) {
+                    throw Error("Batch removed failed: ${result.buildFailureMessage()}")
+                }
+                logger.info { "[Batch $batchIndex] Successfully removed ${result.items.size} item(s)" }
+            }
+    }
+
     override fun upsert(items: Sequence<T>, notifier: ProgressNotifier?) {
         upsertToIndex(items, esIndex.getIndexAlias())
     }

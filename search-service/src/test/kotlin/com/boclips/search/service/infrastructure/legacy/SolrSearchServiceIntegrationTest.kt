@@ -1,9 +1,9 @@
 package com.boclips.search.service.infrastructure.legacy
 
-import com.boclips.search.service.domain.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.legacy.SolrException
+import com.boclips.search.service.domain.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.LegacyVideoMetadataFactory
 import org.apache.solr.client.solrj.impl.HttpSolrClient
 import org.apache.solr.client.solrj.request.CoreAdminRequest
@@ -61,13 +61,15 @@ class SolrSearchServiceIntegrationTest {
 
     @Test
     fun `does not support searching by phrase`() {
-        assertThrows<UnsupportedOperationException> { solrSearchService.search(
-            PaginatedSearchRequest(
-                VideoQuery(
-                    phrase = "phrase"
+        assertThrows<UnsupportedOperationException> {
+            solrSearchService.search(
+                PaginatedSearchRequest(
+                    VideoQuery(
+                        phrase = "phrase"
+                    )
                 )
             )
-        ) }
+        }
     }
 
     @Test
@@ -107,10 +109,52 @@ class SolrSearchServiceIntegrationTest {
     }
 
     @Test
+    fun `bulk removes videos from the index`() {
+        solrSearchService.upsert(
+            sequenceOf(
+                LegacyVideoMetadataFactory.create(id = "1"),
+                LegacyVideoMetadataFactory.create(id = "2"),
+                LegacyVideoMetadataFactory.create(id = "3")
+            )
+        )
+
+        solrSearchService.bulkRemoveFromSearch(listOf("1", "2", "3"))
+
+        val results = solrSearchService.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    ids = listOf("1", "2", "3")
+                )
+            )
+        )
+        assertThat(results).isEmpty()
+    }
+
+    @Test
     fun `throws when video does not exist for deletion`() {
         assertThatThrownBy { solrSearchService.removeFromSearch(videoId = "10") }
             .isInstanceOf(SolrDocumentNotFound::class.java)
             .hasMessage("Video 10 not found")
+    }
+
+    @Test
+    fun `does not fail bulk removal if one videos does not exist`() {
+        solrSearchService.upsert(
+            sequenceOf(
+                LegacyVideoMetadataFactory.create(id = "1")
+            )
+        )
+
+        solrSearchService.bulkRemoveFromSearch(listOf("1", "2"))
+
+        val results = solrSearchService.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    ids = listOf("1", "2")
+                )
+            )
+        )
+        assertThat(results).isEmpty()
     }
 
     @Test

@@ -10,8 +10,6 @@ import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyOrNull
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
@@ -115,7 +113,7 @@ class SearchUpdateByContentPartnerIntegrationTest : AbstractSpringIntegrationTes
             )
 
         assertThat(videoSearchService.count(VideoQuery(ids = listOf(id.value)))).isEqualTo(0)
-        verify(legacySearchService).removeFromSearch(id.value)
+        verify(legacySearchService).bulkRemoveFromSearch(listOf(id.value))
     }
 
     @Test

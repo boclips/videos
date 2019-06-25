@@ -1,11 +1,11 @@
 package com.boclips.search.service.infrastructure.legacy
 
-import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.ProgressNotifier
 import com.boclips.search.service.domain.legacy.LegacySearchService
 import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.legacy.SolrDocumentNotFound
 import com.boclips.search.service.domain.legacy.SolrException
+import com.boclips.search.service.domain.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import mu.KLogging
 import org.apache.solr.client.solrj.SolrQuery
@@ -13,6 +13,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient
 
 class SolrSearchService(host: String, port: Int) : LegacySearchService {
     companion object : KLogging() {
+
         private const val UPSERT_BATCH_SIZE = 2000
     }
 
@@ -64,5 +65,17 @@ class SolrSearchService(host: String, port: Int) : LegacySearchService {
             client.commit()
         }
         logger.info { "Video $videoId removed from Solr" }
+    }
+
+    override fun bulkRemoveFromSearch(items: List<String>) {
+        items.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+            .forEachIndexed { batchIndex, videoBatch ->
+                logger.info { "[Batch $batchIndex] Removing ${videoBatch.size} video(s) in Solr" }
+
+                videoBatch.forEach { client.deleteById(it) }
+                client.commit()
+
+                logger.info { "[Batch $batchIndex] Successfully removed ${videoBatch.size} video(s) in Solr" }
+            }
     }
 }

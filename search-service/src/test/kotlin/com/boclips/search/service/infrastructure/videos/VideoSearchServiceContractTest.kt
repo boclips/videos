@@ -268,6 +268,42 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `can bulk remove videos from index`(
+        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
+        adminService: WriteSearchService<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "White Gentleman Dancing"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "White Gentleman Dancing"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "White Gentleman Dancing"
+                )
+            )
+        )
+
+        adminService.bulkRemoveFromSearch(listOf("1", "2", "3"))
+
+        assertThat(
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "gentleman"
+                    )
+                )
+            ).isEmpty()
+        )
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `creates a new index and removes the outdated one`(
         queryService: ReadSearchService<VideoMetadata, VideoQuery>,
         adminService: WriteSearchService<VideoMetadata>

@@ -32,5 +32,9 @@ abstract class CollectionSearchServiceAdapter<T>(
         writeSearchService.removeFromSearch(collectionId)
     }
 
+    override fun bulkRemoveFromSearch(items: List<String>) {
+        writeSearchService.bulkRemoveFromSearch(items)
+    }
+
     abstract fun convert(document: T): CollectionMetadata
 }

@@ -32,5 +32,9 @@ abstract class VideoSearchServiceAdapter<T>(
         writeSearchService.removeFromSearch(videoId)
     }
 
+    override fun bulkRemoveFromSearch(items: List<String>) {
+        writeSearchService.bulkRemoveFromSearch(items)
+    }
+
     abstract fun convert(document: T): VideoMetadata
 }
