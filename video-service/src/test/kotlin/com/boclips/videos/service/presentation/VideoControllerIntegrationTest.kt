@@ -314,6 +314,24 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns videos of given subjects with comma syntax`() {
+        saveVideo()
+        val mathsVideoId = saveVideo().value
+        val englishVideoId = saveVideo().value
+
+        val mathsId = saveSubject("Maths")
+        val englishId = saveSubject("English")
+        setVideoSubjects(mathsVideoId, mathsId)
+        setVideoSubjects(englishVideoId, englishId)
+
+        mockMvc.perform(get("/v1/videos?subject=${mathsId.value},${englishId.value}").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(mathsVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(englishVideoId)))
+    }
+
+    @Test
     fun `returns 200 for valid video`() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asTeacher())
             .andExpect(status().isOk)
