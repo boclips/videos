@@ -2,11 +2,6 @@ spring:
   jackson:
     serialization:
       write-dates-as-timestamps: false
-  cloud:
-    gcp:
-      pubsub:
-        subscriber:
-          max-ack-extension-period: 60
 
 logging:
   config: "classpath:logback.xml"
