@@ -9,7 +9,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.stereotype.Component
 
 @Component
-class VideosLinkBuilder {
+class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
 
     fun self(videoResource: VideoResource): Link = ControllerLinkBuilder.linkTo(
         ControllerLinkBuilder.methodOn(VideoController::class.java)
@@ -21,11 +21,20 @@ class VideosLinkBuilder {
             .getVideo(null)
     ).withRel("video")
 
-    fun searchVideosLink() = getIfHasRole(UserRoles.VIEW_VIDEOS) {
-        ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .search(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
-        ).withRel("searchVideos")
+    fun searchVideosLink(): Link? {
+        return when {
+            currentUserHasRole(UserRoles.VIEW_ANY_VIDEO) -> Link(
+                getVideosRoot()
+                    .toUriString() + "{?query,sort_by,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject}"
+            ).withRel("searchVideos")
+
+            currentUserHasRole(UserRoles.VIEW_VIDEOS) -> ControllerLinkBuilder.linkTo(
+                ControllerLinkBuilder.methodOn(VideoController::class.java)
+                    .search(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+            ).withRel("searchVideos")
+
+            else -> null
+        }
     }
 
     fun videosLink() =
@@ -57,4 +66,8 @@ class VideosLinkBuilder {
                 .getTranscript(videoResource.id)
         ).withRel("transcript")
     }
+
+    private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()
+        .replacePath("/v1/videos")
+        .replaceQueryParams(null)
 }
