@@ -31,8 +31,11 @@ class CollectionUpdatesConverter {
             }
 
         private fun buildChangeAgeRangeCommand(updateCollectionRequest: UpdateCollectionRequest) =
-            updateCollectionRequest.ageRange?.let {
-                CollectionUpdateCommand.ChangeAgeRangeCommand(it.min, it.max)
+            updateCollectionRequest.ageRange?.let { ageRange ->
+                ageRange.min?.let { min ->
+                    CollectionUpdateCommand.ChangeAgeRangeCommand(min, ageRange.max)
+                }
+
             }
     }
 }

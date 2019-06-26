@@ -76,6 +76,20 @@ class CollectionUpdatesConverterTest {
     }
 
     @Test
+    fun `does not change age range where min and max are null`() {
+        val commands = CollectionUpdatesConverter.convert(
+            UpdateCollectionRequest(
+                ageRange = AgeRangeRequest(
+                    min = null,
+                    max = null
+                )
+            )
+        )
+
+        assertThat(commands).isEmpty()
+    }
+
+    @Test
     fun `turn subjects update to command`() {
         val commands = CollectionUpdatesConverter.convert(
             UpdateCollectionRequest(

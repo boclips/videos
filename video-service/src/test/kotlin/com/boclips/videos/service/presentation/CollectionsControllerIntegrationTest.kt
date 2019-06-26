@@ -517,6 +517,28 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `does not update age range for existing collection if age range in request has null values`() {
+        val collectionId = createCollectionWithTitle("My Collection for more ages")
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.ageRange", nullValue()))
+
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"ageRange": {"min": 3, "max": 9}}""").asTeacher()
+        )
+
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"ageRange": {"min": null, "max": null}}""").asTeacher()
+        )
+
+        getCollection(collectionId)
+            .andExpect(jsonPath("$.ageRange.min", equalTo(3)))
+            .andExpect(jsonPath("$.ageRange.max", equalTo(9)))
+    }
+
+    @Test
     fun `adds two subjects to the existing collection, then rename the collection`() {
         val collectionId = createCollectionWithTitle("My Collection for Subjects")
 
