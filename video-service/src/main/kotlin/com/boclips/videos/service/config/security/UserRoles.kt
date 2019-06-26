@@ -1,7 +1,6 @@
 package com.boclips.videos.service.config.security
 
 object UserRoles {
-    const val E2E: String = "E2E"
     const val CREATE_SUBJECT = "CREATE_SUBJECT"
 
     const val VIEW_EVENTS = "VIEW_EVENTS"
