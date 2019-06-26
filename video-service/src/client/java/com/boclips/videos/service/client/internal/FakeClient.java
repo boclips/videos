@@ -6,6 +6,8 @@ import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.net.URI;
 import java.time.Duration;
@@ -62,7 +64,11 @@ public class FakeClient implements VideoServiceClient {
 
     @Override
     public Video get(VideoId id) {
-        return videos.get(id);
+        if (videos.containsKey(id)) {
+            return videos.get(id);
+        } else {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, id.getUri().toString());
+        }
     }
 
     @Override
@@ -108,7 +114,7 @@ public class FakeClient implements VideoServiceClient {
                 .flatMap(java.util.Collection::stream)
                 .filter(collection -> collection.getCollectionId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("FakeClient not pre-populated for given collection ID"));
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, id.getUri().toString()));
     }
 
     @Override

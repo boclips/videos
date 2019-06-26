@@ -10,10 +10,14 @@ import com.boclips.videos.service.presentation.collections.CreateCollectionReque
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.web.client.HttpClientErrorException
+import java.net.URI
 import java.time.Duration
 
 internal abstract class VideoServiceClientContractTest : AbstractVideoServiceClientSpringIntegrationTest() {
@@ -44,6 +48,23 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
+    fun `404 error is thrown when requested video is not found`() {
+        val realVideoUriString = getClient().create(
+            TestFactories.createCreateVideoRequest(
+                title = "the title",
+                description = "the description",
+                playbackId = "ref-id-123"
+            )
+        ).uri.toString()
+        val invalidId = VideoId(URI("${realVideoUriString.substringBeforeLast("/")}/000000000000000000000000"))
+
+        assertThatThrownBy { getClient().get(invalidId) }
+            .isInstanceOf(HttpClientErrorException::class.java)
+            .extracting("statusCode")
+            .containsOnly(HttpStatus.NOT_FOUND)
+    }
+
+    @Test
     fun `get VideoId for raw identifier`() {
         val rawId = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")).uri.toString()
             .split('/').last()
@@ -60,6 +81,16 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val id = getClient().rawIdToCollectionId(rawId)
 
         assertThat(id.uri.toString()).matches("https?://.*/collections/$rawId")
+    }
+
+    @Test
+    fun `404 error is thrown when requested collection is not found`() {
+        val invalidId = getClient().rawIdToCollectionId("000000000000000000000000")
+
+        assertThatThrownBy { getClient().get(invalidId) }
+            .isInstanceOf(HttpClientErrorException::class.java)
+            .extracting("statusCode")
+            .containsOnly(HttpStatus.NOT_FOUND)
     }
 
     @Test
