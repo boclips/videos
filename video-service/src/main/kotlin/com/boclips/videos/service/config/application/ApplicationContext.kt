@@ -15,7 +15,7 @@ import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
-import com.boclips.videos.service.application.contentPartner.RequestSearchUpdateByContentPartner
+import com.boclips.videos.service.application.contentPartner.RequestBulkVideoSearchUpdateByContentPartner
 import com.boclips.videos.service.application.contentPartner.SearchUpdateByContentPartner
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
@@ -46,6 +46,7 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.config.properties.PubSubVideoSearchabilityUpdateProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.disciplines.DisciplineRepository
@@ -316,11 +317,11 @@ class ApplicationContext(
     }
 
     @Bean
-    fun updateContentPartner(): UpdateContentPartner {
+    fun updateContentPartner(pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties): UpdateContentPartner {
         return UpdateContentPartner(
             contentPartnerRepository,
             videoRepository,
-            getRequestSearchUpdateByContentPartner()
+            getRequestSearchUpdateByContentPartner(pubSubVideoSearchabilityUpdateProperties)
         )
     }
 
@@ -340,10 +341,12 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getRequestSearchUpdateByContentPartner(): RequestSearchUpdateByContentPartner {
-        return RequestSearchUpdateByContentPartner(
+    fun getRequestSearchUpdateByContentPartner(pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties): RequestBulkVideoSearchUpdateByContentPartner {
+        return RequestBulkVideoSearchUpdateByContentPartner(
             topics,
-            contentPartnerRepository
+            contentPartnerRepository,
+            videoRepository,
+            pubSubVideoSearchabilityUpdateProperties.batchSize
         )
     }
 

@@ -11,18 +11,11 @@ import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequ
 class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val videoRepository: VideoRepository,
-    private val requestSearchUpdateByContentPartner: RequestSearchUpdateByContentPartner
+    private val requestVideoSearchUpdateByContentPartner: RequestBulkVideoSearchUpdateByContentPartner
 ) {
     operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
         val contentPartnerBefore = contentPartnerRepository.findById(contentPartnerId = id)
-
-        if (request.searchable != contentPartnerBefore?.searchable) {
-            requestSearchUpdateByContentPartner.invoke(
-                id,
-                getSearchUpdateRequestType(request.searchable!!)
-            )
-        }
 
         val updateCommands = ContentPartnerUpdatesConverter().convert(id, request)
 
@@ -31,6 +24,13 @@ class UpdateContentPartner(
         val contentPartner = contentPartnerRepository.findById(id)
             ?: throw ContentPartnerNotFoundException("Could not find content partner: ${id.value}")
 
+        if (request.searchable != contentPartnerBefore?.searchable) {
+            requestVideoSearchUpdateByContentPartner.invoke(
+                id,
+                getSearchUpdateRequestType(request.searchable!!)
+            )
+        }
+        
         updateContentPartnerInVideos(contentPartner)
 
         return contentPartner
@@ -44,17 +44,22 @@ class UpdateContentPartner(
         val commands = videosAffected.flatMap { video ->
             listOf(
                 VideoUpdateCommand.ReplaceContentPartner(videoId = video.videoId, contentPartner = contentPartner),
-                VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange)
+                VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange),
+                if (contentPartner.searchable) {
+                    VideoUpdateCommand.MakeSearchable(videoId = video.videoId)
+                } else {
+                    VideoUpdateCommand.HideFromSearch(videoId = video.videoId)
+                }
             )
         }
 
         videoRepository.bulkUpdate(commands)
     }
 
-    private fun getSearchUpdateRequestType(searchable: Boolean): RequestSearchUpdateByContentPartner.RequestType =
+    private fun getSearchUpdateRequestType(searchable: Boolean): RequestBulkVideoSearchUpdateByContentPartner.RequestType =
         if (searchable) {
-            RequestSearchUpdateByContentPartner.RequestType.INCLUDE
+            RequestBulkVideoSearchUpdateByContentPartner.RequestType.INCLUDE
         } else {
-            RequestSearchUpdateByContentPartner.RequestType.EXCLUDE
+            RequestBulkVideoSearchUpdateByContentPartner.RequestType.EXCLUDE
         }
 }

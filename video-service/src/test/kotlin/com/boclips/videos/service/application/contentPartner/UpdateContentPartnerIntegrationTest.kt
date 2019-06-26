@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -16,6 +17,9 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
+
+    @Autowired
+    lateinit var videoRepository: VideoRepository
 
     @Autowired
     lateinit var videoService: VideoService
@@ -81,27 +85,74 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createContentPartnerRequest(searchable = true)
         )
 
+        saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
+
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             request = TestFactories.createContentPartnerRequest(searchable = false)
         )
 
-        val message = messageCollector.forChannel(topics.contentPartnerExclusionFromSearchRequested()).poll()
+        val message = messageCollector.forChannel(topics.videosExclusionFromSearchRequested()).poll()
         assertThat(message).isNotNull
     }
 
     @Test
-    fun `including in search enqueues a change for later`() {
+    fun `excluding a content partner from search`() {
+        val originalContentPartner = createContentPartner(
+            TestFactories.createContentPartnerRequest(searchable = true)
+        )
+
+        val updatedContentPartner = updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            request = TestFactories.createContentPartnerRequest(searchable = false)
+        )
+
+        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isFalse()
+    }
+
+    @Test
+    fun `including a content partner from search`() {
         val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(searchable = false)
         )
+
+        val updatedContentPartner = updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            request = TestFactories.createContentPartnerRequest(searchable = true)
+        )
+
+        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
+    }
+
+    @Test
+    fun `excluding a content partner from search also excludes their videos`() {
+        val originalContentPartner = createContentPartner(
+            TestFactories.createContentPartnerRequest(searchable = true)
+        )
+
+        val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = true)
+
+        updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            request = TestFactories.createContentPartnerRequest(searchable = false)
+        )
+
+        assertThat(videoRepository.find(id)!!.searchable).isFalse()
+    }
+
+    @Test
+    fun `including a content partner from search also includes their videos`() {
+        val originalContentPartner = createContentPartner(
+            TestFactories.createContentPartnerRequest(searchable = false)
+        )
+
+        val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
 
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             request = TestFactories.createContentPartnerRequest(searchable = true)
         )
 
-        val message = messageCollector.forChannel(topics.contentPartnerInclusionInSearchRequested()).poll()
-        assertThat(message).isNotNull
+        assertThat(videoRepository.find(id)!!.searchable).isTrue()
     }
 }

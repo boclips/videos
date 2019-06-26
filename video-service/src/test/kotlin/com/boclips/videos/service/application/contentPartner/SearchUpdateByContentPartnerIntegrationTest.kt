@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.events.types.ContentPartnerExclusionFromSearchRequested
-import com.boclips.events.types.ContentPartnerInclusionInSearchRequested
+import com.boclips.events.types.VideosExclusionFromSearchRequested
+import com.boclips.events.types.VideosInclusionInSearchRequested
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -28,86 +28,14 @@ class SearchUpdateByContentPartnerIntegrationTest : AbstractSpringIntegrationTes
     lateinit var videoSearchService: VideoSearchService
 
     @Test
-    fun `disables content partner from search`() {
-        saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
-
-        subscriptions.contentPartnerExclusionFromSearchRequested()
-            .send(
-                MessageBuilder.withPayload(
-                    ContentPartnerExclusionFromSearchRequested.builder()
-                        .contentPartnerId("deadb33f1225df4825e8b8f6")
-                        .build()
-                ).build()
-            )
-
-        assertThat(
-            contentPartnerRepository.findById(ContentPartnerId(value = "deadb33f1225df4825e8b8f6"))?.searchable
-        ).isFalse()
-    }
-
-    @Test
-    fun `enables content partner in search`() {
-        saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
-
-        subscriptions.contentPartnerInclusionInSearchRequested()
-            .send(
-                MessageBuilder.withPayload(
-                    ContentPartnerInclusionInSearchRequested.builder()
-                        .contentPartnerId("deadb33f1225df4825e8b8f6")
-                        .build()
-                ).build()
-            )
-
-        assertThat(
-            contentPartnerRepository.findById(ContentPartnerId(value = "deadb33f1225df4825e8b8f6"))?.searchable
-        ).isTrue()
-    }
-
-    @Test
-    fun `disables videos for that content partner from search`() {
-        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = true)
-
-        subscriptions.contentPartnerExclusionFromSearchRequested()
-            .send(
-                MessageBuilder.withPayload(
-                    ContentPartnerExclusionFromSearchRequested.builder()
-                        .contentPartnerId("deadb33f1225df4825e8b8f6")
-                        .build()
-                ).build()
-            )
-
-        val video = videoRepository.find(id)!!
-        assertThat(video.contentPartner.searchable).isFalse()
-        assertThat(video.searchable).isFalse()
-    }
-
-    @Test
-    fun `enables videos for that content partner in search`() {
-        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = false)
-
-        subscriptions.contentPartnerInclusionInSearchRequested()
-            .send(
-                MessageBuilder.withPayload(
-                    ContentPartnerInclusionInSearchRequested.builder()
-                        .contentPartnerId("deadb33f1225df4825e8b8f6")
-                        .build()
-                ).build()
-            )
-
-        val video = videoRepository.find(id)!!
-        assertThat(video.contentPartner.searchable).isTrue()
-        assertThat(video.searchable).isTrue()
-    }
-
-    @Test
     fun `removes videos from search indices`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = true)
 
-        subscriptions.contentPartnerExclusionFromSearchRequested()
+        subscriptions.videosExclusionFromSearchRequested()
             .send(
                 MessageBuilder.withPayload(
-                    ContentPartnerExclusionFromSearchRequested.builder()
-                        .contentPartnerId("deadb33f1225df4825e8b8f6")
+                    VideosExclusionFromSearchRequested.builder()
+                        .videoIds(listOf(id.value))
                         .build()
                 ).build()
             )
@@ -120,11 +48,11 @@ class SearchUpdateByContentPartnerIntegrationTest : AbstractSpringIntegrationTes
     fun `adds videos to search indices`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = false)
 
-        subscriptions.contentPartnerInclusionInSearchRequested()
+        subscriptions.videosInclusionInSearchRequested()
             .send(
                 MessageBuilder.withPayload(
-                    ContentPartnerInclusionInSearchRequested.builder()
-                        .contentPartnerId("deadb33f1225df4825e8b8f6")
+                    VideosInclusionInSearchRequested.builder()
+                        .videoIds(listOf(id.value))
                         .build()
                 ).build()
             )

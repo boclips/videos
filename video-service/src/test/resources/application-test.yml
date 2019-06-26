@@ -33,3 +33,8 @@ spring:
     gcp:
       pubsub:
         enabled: false
+
+pubsub:
+  video-searchability-update:
+    batch-size:
+      2

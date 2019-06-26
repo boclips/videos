@@ -37,3 +37,8 @@ legacy:
     port: 80
 server:
   use-forward-headers: true
+
+pubsub:
+  video-searchability-update:
+    batch-size:
+      2000

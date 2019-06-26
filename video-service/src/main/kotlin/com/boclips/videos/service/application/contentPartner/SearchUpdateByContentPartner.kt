@@ -1,15 +1,11 @@
 package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.events.config.Subscriptions
-import com.boclips.events.types.ContentPartnerExclusionFromSearchRequested
-import com.boclips.events.types.ContentPartnerInclusionInSearchRequested
+import com.boclips.events.types.VideosExclusionFromSearchRequested
+import com.boclips.events.types.VideosInclusionInSearchRequested
 import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
@@ -23,73 +19,41 @@ class SearchUpdateByContentPartner(
 
     companion object : KLogging();
 
-    @StreamListener(Subscriptions.CONTENT_PARTNER_EXCLUSION_FROM_SEARCH_REQUESTED)
-    operator fun invoke(contentPartnerExclusionFromSearchEvent: ContentPartnerExclusionFromSearchRequested) {
-        val contentPartnerId = ContentPartnerId(value = contentPartnerExclusionFromSearchEvent.contentPartnerId)
-        logger.info { "Excluding content partner videos for ${contentPartnerId.value}" }
-
+    @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_SEARCH_REQUESTED)
+    operator fun invoke(videoExclusionFromSearchEvent: VideosExclusionFromSearchRequested) {
+        logger.info { "Video exclusion event received" }
+        logger.info { "Excluding ${videoExclusionFromSearchEvent.videoIds.size} videos" }
         try {
-            updateSearchabilityOfContentPartner(contentPartnerId, false)
-
-            val videos = videoRepository.findByContentPartnerId(contentPartnerId)
-            updateVideosContentPartner(videos, contentPartnerId)
-
+            val videosIds = videoExclusionFromSearchEvent.videoIds
             bulkUpdateVideo.invoke(
                 BulkUpdateRequest(
-                    ids = videos.map { it.videoId.value },
+                    ids = videosIds,
                     status = VideoResourceStatus.SEARCH_DISABLED
                 )
             )
 
-            logger.info { "Finished excluding content partner videos for ${contentPartnerId.value}" }
+            logger.info { "Finished excluding ${videoExclusionFromSearchEvent.videoIds.size} videos" }
         } catch (ex: Exception) {
-            logger.info { "Exception whilst excluding content partner videos for ${contentPartnerId.value}: ${ex.message}" }
+            logger.info { "Exception whilst excluding videos: ${ex.message}" }
         }
     }
 
-    @StreamListener(Subscriptions.CONTENT_PARTNER_INCLUSION_IN_SEARCH_REQUESTED)
-    operator fun invoke(contentPartnerInclusionInSearchEvent: ContentPartnerInclusionInSearchRequested) {
-        val contentPartnerId = ContentPartnerId(value = contentPartnerInclusionInSearchEvent.contentPartnerId)
-        logger.info { "Including content partner videos for ${contentPartnerId.value}" }
-
+    @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_SEARCH_REQUESTED)
+    operator fun invoke(videosInclusionInSearchRequested: VideosInclusionInSearchRequested) {
+        logger.info { "Video inclusion event received" }
+        logger.info { "Including ${videosInclusionInSearchRequested.videoIds.size} videos" }
         try {
-            updateSearchabilityOfContentPartner(contentPartnerId, true)
-
-            val videos = videoRepository.findByContentPartnerId(contentPartnerId)
-            updateVideosContentPartner(videos, contentPartnerId)
-
+            val videosIds = videosInclusionInSearchRequested.videoIds
             bulkUpdateVideo.invoke(
                 BulkUpdateRequest(
-                    ids = videos.map { it.videoId.value },
+                    ids = videosIds,
                     status = VideoResourceStatus.SEARCHABLE
                 )
             )
 
-            logger.info { "Finished including content partner videos for ${contentPartnerId.value}" }
+            logger.info { "Finished including ${videosInclusionInSearchRequested.videoIds.size} videos" }
         } catch (ex: Exception) {
-            logger.info { "Exception whilst including content partner videos for ${contentPartnerId.value}: ${ex.message}" }
+            logger.info { "Exception whilst including videos: ${ex.message}" }
         }
-    }
-
-    private fun updateSearchabilityOfContentPartner(contentPartnerId: ContentPartnerId, searchable: Boolean) {
-        contentPartnerRepository.update(
-            listOf(
-                ContentPartnerUpdateCommand.SetSearchability(
-                    contentPartnerId = contentPartnerId,
-                    searchable = searchable
-                )
-            )
-        )
-    }
-
-    private fun updateVideosContentPartner(videos: List<Video>, contentPartnerId: ContentPartnerId) {
-        val contentPartner = contentPartnerRepository.findById(contentPartnerId)!!
-
-        videoRepository.bulkUpdate(videos.map {
-            VideoUpdateCommand.ReplaceContentPartner(
-                it.videoId,
-                contentPartner = contentPartner
-            )
-        })
     }
 }

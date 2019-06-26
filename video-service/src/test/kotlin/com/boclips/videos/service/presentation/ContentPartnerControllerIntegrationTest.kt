@@ -177,7 +177,12 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             )
         ).andExpect(status().isNoContent)
 
-        val message = messageCollector.forChannel(topics.contentPartnerExclusionFromSearchRequested()).poll()
+        val message = messageCollector.forChannel(topics.videosExclusionFromSearchRequested()).poll()
+
+
         Assertions.assertThat(message).isNotNull
+        mockMvc.perform(get("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.searchable", equalTo(false)))
     }
 }
