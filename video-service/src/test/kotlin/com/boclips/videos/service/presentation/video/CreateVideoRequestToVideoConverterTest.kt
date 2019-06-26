@@ -132,6 +132,32 @@ class CreateVideoRequestToVideoConverterTest {
             ).legalRestrictions
         ).isEmpty()
     }
+
+    @Test
+    fun `uses content partner searchable flag for if content partner if blacklisted`() {
+        contentPartner = TestFactories.createContentPartner(searchable = false)
+
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(searchable = true),
+            TestFactories.createKalturaPlayback(),
+            contentPartner
+        )
+
+        assertThat(video.searchable).isFalse()
+    }
+
+    @Test
+    fun `uses video searchable flag if content partner is searchable`() {
+        contentPartner = TestFactories.createContentPartner(searchable = true)
+
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(searchable = false),
+            TestFactories.createKalturaPlayback(),
+            contentPartner
+        )
+
+        assertThat(video.searchable).isFalse()
+    }
 }
 
 private fun AbstractThrowableAssert<*, *>.hasBoclipsApiErrorMessage(s: String) {

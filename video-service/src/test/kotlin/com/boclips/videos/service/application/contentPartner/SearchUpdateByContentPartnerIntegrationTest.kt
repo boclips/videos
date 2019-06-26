@@ -130,6 +130,6 @@ class SearchUpdateByContentPartnerIntegrationTest : AbstractSpringIntegrationTes
             )
 
         assertThat(videoSearchService.count(VideoQuery(ids = listOf(id.value)))).isEqualTo(1)
-        verify(legacySearchService, times(2)).upsert(any(), anyOrNull())
+        verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
     }
 }

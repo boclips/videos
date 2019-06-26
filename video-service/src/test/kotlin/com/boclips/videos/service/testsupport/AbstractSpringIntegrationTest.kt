@@ -11,6 +11,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
@@ -18,6 +19,8 @@ import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -26,6 +29,7 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
+import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
@@ -45,7 +49,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.stream.test.binder.MessageCollector
 import org.springframework.messaging.MessageChannel
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.ResultActions
@@ -80,6 +83,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createCollection: CreateCollection
+
+    @Autowired
+    lateinit var createContentPartner: CreateContentPartner
 
     @Autowired
     lateinit var updateCollection: UpdateCollection
@@ -243,6 +249,22 @@ abstract class AbstractSpringIntegrationTest {
         }
 
         return collectionId
+    }
+
+    fun saveContentPartner(
+        name: String = "TeD",
+        ageRange: AgeRangeRequest = AgeRangeRequest(3, 10),
+        accreditedToYtChannel: String? = null,
+        searchable: Boolean = true
+    ): ContentPartner {
+        return createContentPartner(
+            TestFactories.createContentPartnerRequest(
+                name = name,
+                ageRange = ageRange,
+                accreditedToYtChannel = accreditedToYtChannel,
+                searchable = searchable
+            )
+        )
     }
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {

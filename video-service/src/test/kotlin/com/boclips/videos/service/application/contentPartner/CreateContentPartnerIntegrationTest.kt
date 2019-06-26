@@ -17,9 +17,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoService: VideoService
 
-    @Autowired
-    lateinit var createContentPartner: CreateContentPartner
-
     @Test
     fun `creates a content partner and does not overwrite video age ranges`() {
         val videoId = saveVideo(

@@ -57,9 +57,9 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         bulkUpdateVideo(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
 
-        assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == true }
+        assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
         assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-        verify(legacySearchService, times(3)).upsert(any(), anyOrNull())
+        verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
     }
 
     @Test

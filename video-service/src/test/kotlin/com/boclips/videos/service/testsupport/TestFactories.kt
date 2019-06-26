@@ -168,7 +168,8 @@ object TestFactories {
         videoType: String? = "NEWS",
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
-        analyseVideo: Boolean = false
+        analyseVideo: Boolean = false,
+        searchable: Boolean? = true
     ) = CreateVideoRequest(
         provider = provider,
         providerVideoId = providerVideoId,
@@ -180,7 +181,8 @@ object TestFactories {
         videoType = videoType,
         playbackId = playbackId,
         playbackProvider = playbackProvider,
-        analyseVideo = analyseVideo
+        analyseVideo = analyseVideo,
+        searchable = searchable
     )
 
     fun createCollectionRequest(

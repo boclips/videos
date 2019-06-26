@@ -15,9 +15,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var updateContentPartner: UpdateContentPartner
 
     @Autowired
-    lateinit var createContentPartner: CreateContentPartner
-
-    @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Autowired

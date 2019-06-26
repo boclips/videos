@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.video.VideoAnalysisRequested
-import com.boclips.events.types.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
@@ -236,5 +235,40 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
         assertThat(message.payload.toString()).contains("fractions")
+    }
+
+    @Test
+    fun `it does not add to search indices if content partner is not searchable`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        val contentPartner = saveContentPartner(searchable = false)
+
+        val createRequest =
+            TestFactories.createCreateVideoRequest(
+                playbackId = "1234",
+                title = "the latest and greatest Bloomberg video",
+                provider = contentPartner.name
+            )
+
+        createVideo(createRequest)
+
+        val results = videoService.search(
+            VideoSearchQuery(
+                text = "the latest and greatest Bloomberg video",
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 1,
+                pageIndex = 0
+            )
+        )
+
+        assertThat(results).hasSize(0)
+        verifyZeroInteractions(legacySearchService)
     }
 }

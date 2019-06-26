@@ -31,7 +31,11 @@ class CreateVideoRequestToVideoConverter {
             language = null,
             transcript = null,
             topics = emptySet(),
-            searchable = createVideoRequest.searchable ?: true,
+            searchable = if (!contentPartner.searchable) {
+                contentPartner.searchable
+            } else {
+                createVideoRequest.searchable ?: true
+            },
             ageRange = if (createVideoRequest.ageRangeMin !== null) {
                 AgeRange.bounded(createVideoRequest.ageRangeMin, createVideoRequest.ageRangeMax)
             } else {

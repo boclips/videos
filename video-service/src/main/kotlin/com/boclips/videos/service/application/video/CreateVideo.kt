@@ -73,7 +73,11 @@ class CreateVideo(
         val videoToBeCreated = createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner)
         val createdVideo = videoService.create(videoToBeCreated)
 
-        indexVideo(createdVideo)
+
+        if (videoToBeCreated.searchable) {
+            indexVideo(createdVideo)
+        }
+
         videoCounter.increment()
 
         if (createRequest.analyseVideo) {
