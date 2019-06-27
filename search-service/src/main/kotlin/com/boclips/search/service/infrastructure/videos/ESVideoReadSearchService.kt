@@ -87,8 +87,6 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
             .boolQuery()
             .apply {
                 should(matchContentPartnerAndTagsExactly(videoQuery).boost(1000.0F))
-            }
-            .apply {
                 if (videoQuery.phrase.isEmpty()) {
                     must(matchFieldsExceptContentPartner(videoQuery))
                 }
@@ -103,26 +101,16 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
             .boolQuery()
             .apply {
                 must(QueryBuilders.termQuery(ESVideo.CONTENT_PROVIDER, videoQuery.phrase))
-            }
-            .apply {
                 if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
                     must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
                 }
-            }
-            .apply {
                 if (videoQuery.subjects.isNotEmpty()) {
                     must(matchSubjects(videoQuery.subjects))
                 }
-            }
-            .apply {
                 if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
                     must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
                 }
-            }
-            .apply {
                 mustNot(matchTags(videoQuery.excludeTags))
-            }
-            .apply {
                 filter(filterByTag(videoQuery.includeTags))
             }
     }
@@ -136,33 +124,22 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                     should(boostTitleMatch(videoQuery.phrase))
                     should(boostDescriptionMatch(videoQuery.phrase))
                 }
-            }
-            .apply {
                 if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
                     must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
                 }
-            }.apply {
                 if (videoQuery.source != null) {
                     filter(matchSource(videoQuery.source))
                 }
-            }.apply {
                 if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
                     must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
                 }
-            }.apply {
                 if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
                     must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
                 }
-            }
-            .apply {
                 if (videoQuery.subjects.isNotEmpty()) {
                     must(matchSubjects(videoQuery.subjects))
                 }
-            }
-            .apply {
                 mustNot(matchTags(videoQuery.excludeTags))
-            }
-            .apply {
                 filter(filterByTag(videoQuery.includeTags))
             }
     }
