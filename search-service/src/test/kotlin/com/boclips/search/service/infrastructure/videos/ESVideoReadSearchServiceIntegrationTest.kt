@@ -414,6 +414,7 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
 
             assertThat(results).containsExactlyInAnyOrder("1")
         }
+
         @Test
         fun `can filter by age range`() {
             writeSearchService.upsert(
@@ -496,7 +497,7 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
             val results = readSearchService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "TED",
+                        phrase = "TED",
                         source = SourceType.BOCLIPS
                     )
                 )

@@ -101,17 +101,8 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
             .boolQuery()
             .apply {
                 must(QueryBuilders.termQuery(ESVideo.CONTENT_PROVIDER, videoQuery.phrase))
-                if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
-                    must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
-                }
-                if (videoQuery.subjects.isNotEmpty()) {
-                    must(matchSubjects(videoQuery.subjects))
-                }
-                if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
-                    must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
-                }
-                mustNot(matchTags(videoQuery.excludeTags))
-                filter(filterByTag(videoQuery.includeTags))
+
+                generalFilters(videoQuery)
             }
     }
 
@@ -124,24 +115,32 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                     should(boostTitleMatch(videoQuery.phrase))
                     should(boostDescriptionMatch(videoQuery.phrase))
                 }
-                if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
-                    must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
-                }
-                if (videoQuery.source != null) {
-                    filter(matchSource(videoQuery.source))
-                }
-                if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
-                    must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
-                }
-                if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
-                    must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
-                }
-                if (videoQuery.subjects.isNotEmpty()) {
-                    must(matchSubjects(videoQuery.subjects))
-                }
-                mustNot(matchTags(videoQuery.excludeTags))
-                filter(filterByTag(videoQuery.includeTags))
+
+                generalFilters(videoQuery)
             }
+    }
+
+    private fun BoolQueryBuilder.generalFilters(
+        videoQuery: VideoQuery
+    ) {
+        filter(filterByTag(videoQuery.includeTags))
+        mustNot(matchTags(videoQuery.excludeTags))
+
+        if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
+            must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
+        }
+        if (videoQuery.source != null) {
+            filter(matchSource(videoQuery.source))
+        }
+        if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
+            must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
+        }
+        if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
+            must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
+        }
+        if (videoQuery.subjects.isNotEmpty()) {
+            must(matchSubjects(videoQuery.subjects))
+        }
     }
 
     private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
