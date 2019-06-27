@@ -13,12 +13,12 @@ import com.boclips.events.types.collection.VideoAddedToCollection
 import com.boclips.events.types.collection.VideoRemovedFromCollection
 import com.boclips.events.types.video.VideoSegmentPlayed
 import com.boclips.events.types.video.VideosSearched
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.common.Do
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.events.EventService
-import getCurrentUser
 import org.springframework.messaging.Message
 import org.springframework.messaging.support.MessageBuilder
 

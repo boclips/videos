@@ -1,6 +1,8 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.UnauthorizedException
+import com.boclips.videos.service.application.currentUserHasRole
+import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -12,8 +14,6 @@ import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
-import currentUserHasRole
-import getCurrentUserId
 
 class GetCollections(
     private val collectionService: CollectionService,

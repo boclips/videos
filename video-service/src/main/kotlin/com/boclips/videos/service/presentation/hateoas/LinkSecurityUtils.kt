@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.hateoas
 
-import currentUserHasRole
-import getCurrentUserIfNotAnonymous
+import com.boclips.videos.service.application.currentUserHasRole
+import com.boclips.videos.service.application.getCurrentUserIfNotAnonymous
 import org.springframework.hateoas.Link
 
 fun getIfAuthenticated(linkSupplier: (user: String) -> Link): Link? =

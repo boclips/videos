@@ -2,11 +2,11 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.collection.exceptions.CollectionCreationException
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.UserId
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
-import getCurrentUser
 
 class CreateCollection(
     private val collectionRepository: CollectionRepository,

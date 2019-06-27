@@ -1,11 +1,11 @@
 package com.boclips.videos.service.application.collection.security
 
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import getCurrentUserId
 
 fun CollectionRepository.getOwnedCollectionOrThrow(collectionId: String) =
     getCollectionOrThrow(collectionId = collectionId, collectionRepository = this, isForReading = false)

@@ -1,3 +1,5 @@
+package com.boclips.videos.service.application
+
 import com.boclips.security.utils.User
 import com.boclips.security.utils.UserExtractor
 import com.boclips.security.utils.hasRole
