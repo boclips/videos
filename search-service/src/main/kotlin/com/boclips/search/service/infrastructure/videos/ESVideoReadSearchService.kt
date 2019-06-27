@@ -2,7 +2,6 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.ReadSearchService
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
@@ -12,42 +11,35 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.BoolQueryBuilder
-import org.elasticsearch.index.query.IdsQueryBuilder
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.index.query.RangeQueryBuilder
-import org.elasticsearch.index.query.TermQueryBuilder
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 import org.elasticsearch.search.sort.SortOrder
-import java.time.Duration
-import java.time.LocalDate
 
-class ESVideoReadSearchService(val client: RestHighLevelClient) :
-    ReadSearchService<VideoMetadata, VideoQuery> {
+class ESVideoReadSearchService(val client: RestHighLevelClient) : ReadSearchService<VideoMetadata, VideoQuery> {
     companion object : KLogging();
 
-    private val elasticSearchResultConverter =
-        ESVideoConverter()
+    private val elasticSearchResultConverter = ESVideoConverter()
 
     override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
-        return searchElasticSearch(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
+        return search(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
             .map(elasticSearchResultConverter::convert)
             .map { it.id }
     }
 
     override fun count(videoQuery: VideoQuery): Long {
-        return searchElasticSearch(videoQuery = videoQuery, startIndex = 0, windowSize = 1).totalHits
+        return search(videoQuery = videoQuery, startIndex = 0, windowSize = 1).totalHits
     }
 
-    private fun searchElasticSearch(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchHits {
+    private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchHits {
         val esQuery = if (isIdLookup(videoQuery)) {
-            buildIdLookupRequest(videoQuery.ids)
+            lookUpById(videoQuery.ids)
         } else {
-            buildFuzzyRequest(videoQuery)
+            findBySearchTerm(videoQuery)
         }
 
         val request = SearchRequest(
@@ -56,57 +48,56 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                 .from(startIndex)
                 .size(windowSize)
         )
+
         return client.search(request, RequestOptions.DEFAULT).hits
     }
 
-    private fun buildFuzzyRequest(videoQuery: VideoQuery): SearchSourceBuilder {
-        val esQuery = SearchSourceBuilder().query(fuzzyQuery(videoQuery))
+    private fun findBySearchTerm(videoQuery: VideoQuery): SearchSourceBuilder {
+        val mainQuery = SearchSourceBuilder().query(mainQuery(videoQuery))
 
         if (videoQuery.sort === null) {
-            esQuery.addRescorer(rescorer(videoQuery.phrase))
+            mainQuery.addRescorer(rescorer(videoQuery.phrase))
         } else {
-            esQuery.sort(videoQuery.sort.fieldName.name, SortOrder.fromString(videoQuery.sort.order.toString()))
+            mainQuery.sort(videoQuery.sort.fieldName.name, SortOrder.fromString(videoQuery.sort.order.toString()))
         }
 
-        return esQuery
+        return mainQuery
     }
 
-    private fun buildIdLookupRequest(ids: List<String>): SearchSourceBuilder {
-        return SearchSourceBuilder()
-            .query(findMatchesById(ids))
+    private fun lookUpById(ids: List<String>): SearchSourceBuilder {
+        val bunchOfIds = QueryBuilders.idsQuery().addIds(*(ids.toTypedArray()))
+        val lookUpByIdQuery = QueryBuilders.boolQuery().should(bunchOfIds)
+        return SearchSourceBuilder().query(lookUpByIdQuery)
     }
 
-    private fun findMatchesById(ids: List<String>) = idQuery(QueryBuilders.idsQuery().addIds(*(ids.toTypedArray())))
-
-    private fun idQuery(findMatchesById: IdsQueryBuilder?): BoolQueryBuilder {
-        return QueryBuilders.boolQuery().should(findMatchesById)
-    }
-
-    private fun fuzzyQuery(videoQuery: VideoQuery): BoolQueryBuilder? {
+    private fun mainQuery(videoQuery: VideoQuery): BoolQueryBuilder? {
         return QueryBuilders
             .boolQuery()
             .apply {
-                should(matchContentPartnerAndTagsExactly(videoQuery).boost(1000.0F))
+                should(matchContentPartnerExactly(videoQuery).boost(1000.0F))
+
                 if (videoQuery.phrase.isEmpty()) {
-                    must(matchFieldsExceptContentPartner(videoQuery))
+                    must(matchFieldsFuzzy(videoQuery))
                 }
+
                 if (videoQuery.phrase.isNotEmpty()) {
-                    should(matchFieldsExceptContentPartner(videoQuery))
+                    should(matchFieldsFuzzy(videoQuery))
                 }
             }
     }
 
-    private fun matchContentPartnerAndTagsExactly(videoQuery: VideoQuery): BoolQueryBuilder {
+    private fun matchContentPartnerExactly(videoQuery: VideoQuery): BoolQueryBuilder {
         return QueryBuilders
             .boolQuery()
             .apply {
                 must(QueryBuilders.termQuery(ESVideo.CONTENT_PROVIDER, videoQuery.phrase))
 
-                generalFilters(videoQuery)
+                FilterDecorator(this).apply(videoQuery)
+
             }
     }
 
-    private fun matchFieldsExceptContentPartner(videoQuery: VideoQuery): BoolQueryBuilder {
+    private fun matchFieldsFuzzy(videoQuery: VideoQuery): BoolQueryBuilder {
         return QueryBuilders
             .boolQuery()
             .apply {
@@ -116,109 +107,7 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                     should(boostDescriptionMatch(videoQuery.phrase))
                 }
 
-                generalFilters(videoQuery)
-            }
-    }
-
-    private fun BoolQueryBuilder.generalFilters(
-        videoQuery: VideoQuery
-    ) {
-        filter(filterByTag(videoQuery.includeTags))
-        mustNot(matchTags(videoQuery.excludeTags))
-
-        if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
-            must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
-        }
-        if (videoQuery.source != null) {
-            filter(matchSource(videoQuery.source))
-        }
-        if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
-            must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
-        }
-        if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
-            must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
-        }
-        if (videoQuery.subjects.isNotEmpty()) {
-            must(matchSubjects(videoQuery.subjects))
-        }
-    }
-
-    private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
-        val queries = QueryBuilders.boolQuery()
-        for (s: String in subjects) {
-            queries.should(QueryBuilders.matchPhraseQuery(ESVideo.SUBJECTS, s))
-        }
-        return queries
-    }
-
-    private fun matchSource(source: SourceType): TermQueryBuilder {
-        return QueryBuilders.termQuery(
-            ESVideo.SOURCE,
-            source.name.toLowerCase()
-        )
-    }
-
-    private fun beWithinDuration(min: Duration?, max: Duration?): RangeQueryBuilder {
-        val queryBuilder = QueryBuilders.rangeQuery(ESVideo.DURATION_SECONDS)
-
-        min?.let { queryBuilder.from(it.seconds) }
-        max?.let { queryBuilder.to(it.seconds) }
-
-        return queryBuilder
-    }
-
-    private fun beWithinReleaseDate(from: LocalDate?, to: LocalDate?): RangeQueryBuilder {
-        val queryBuilder = QueryBuilders.rangeQuery(ESVideo.RELEASE_DATE)
-
-        from?.let { queryBuilder.from(it) }
-        to?.let { queryBuilder.to(it) }
-
-        return queryBuilder
-    }
-
-    private fun beWithinAgeRange(min: Int?, max: Int?): BoolQueryBuilder {
-        return QueryBuilders
-            .boolQuery()
-            .apply {
-                if (min == null) {
-                    max?.let {
-                        must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply { to(it) })
-                    }
-                } else {
-                    should(
-                        QueryBuilders.boolQuery().apply {
-                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
-                                to(min)
-                            })
-                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MAX).apply {
-                                from(min)
-                            })
-                        }
-                    )
-
-                    should(
-                        QueryBuilders.boolQuery().apply {
-                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
-                                from(min)
-                            })
-                            max?.let {
-                                must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
-                                    to(it)
-                                })
-                            }
-                        }
-                    )
-                }
-            }
-    }
-
-    private fun matchTags(excludeTags: List<String>) =
-        QueryBuilders.termsQuery(ESVideo.TAGS, excludeTags)
-
-    private fun filterByTag(includeTags: List<String>): BoolQueryBuilder? {
-        return includeTags
-            .fold(QueryBuilders.boolQuery()) { acc: BoolQueryBuilder, term: String ->
-                acc.must(QueryBuilders.termQuery(ESVideo.TAGS, term))
+                FilterDecorator(this).apply(videoQuery)
             }
     }
 
