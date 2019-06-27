@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.contentPartner
 
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
 
 data class ContentPartner(
     val contentPartnerId: ContentPartnerId,

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.ageRange
+package com.boclips.videos.service.domain.model.common
 
 sealed class AgeRange {
     companion object {

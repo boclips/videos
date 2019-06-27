@@ -1,11 +1,12 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.LocalDate
 import java.util.Locale
@@ -26,7 +27,8 @@ data class Video(
     val language: Locale?,
     val transcript: String?,
     val searchable: Boolean,
-    val ageRange: AgeRange
+    val ageRange: AgeRange,
+    val rating: UserRating?
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

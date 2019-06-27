@@ -1,17 +1,19 @@
 package com.boclips.videos.service.infrastructure.video.mongo.converters
 
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.Locale
+import java.util.*
 
 class VideoDocumentConverterTest {
     @Test
@@ -50,6 +52,7 @@ class VideoDocumentConverterTest {
                     )
                 )
             ),
+            rating = UserRating(3, UserId("user")),
             ageRange = AgeRange.bounded(11, 16)
         )
 

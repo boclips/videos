@@ -1,10 +1,11 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.Duration
 import java.util.Locale
@@ -21,5 +22,6 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceKeywords(videoId: VideoId, val keywords: Set<String>) : VideoUpdateCommand(videoId)
     class ReplaceAgeRange(videoId: VideoId, val ageRange: AgeRange) : VideoUpdateCommand(videoId)
     class ReplaceContentPartner(videoId: VideoId, val contentPartner: ContentPartner) : VideoUpdateCommand(videoId)
+    class ReplaceRating(videoId: VideoId, val rating: UserRating) : VideoUpdateCommand(videoId)
 }
 

@@ -1,17 +1,11 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.GetVideoTranscript
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
-import com.boclips.videos.service.presentation.video.AdminSearchRequest
-import com.boclips.videos.service.presentation.video.BulkUpdateRequest
-import com.boclips.videos.service.presentation.video.CreateVideoRequest
-import com.boclips.videos.service.presentation.video.VideoResource
+import com.boclips.videos.service.presentation.video.*
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -35,12 +29,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1/videos")
 class VideoController(
-    private val searchVideo: SearchVideo,
-    private val deleteVideo: DeleteVideo,
-    private val createVideo: CreateVideo,
-    private val bulkUpdateVideo: BulkUpdateVideo,
-    private val getVideoTranscript: GetVideoTranscript,
-    private val objectMapper: ObjectMapper
+        private val searchVideo: SearchVideo,
+        private val deleteVideo: DeleteVideo,
+        private val createVideo: CreateVideo,
+        private val bulkUpdateVideo: BulkUpdateVideo,
+        private val rateVideo: RateVideo,
+        private val getVideoTranscript: GetVideoTranscript,
+        private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -163,6 +158,12 @@ class VideoController(
     @PatchMapping
     fun patchMultipleVideos(@RequestBody bulkUpdateRequest: BulkUpdateRequest?): ResponseEntity<Void> {
         bulkUpdateVideo(bulkUpdateRequest)
+        return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
+    }
+
+    @PatchMapping(path = ["/{id}"], params = ["rating"])
+    fun patchRating(@RequestParam rating: Int?, @PathVariable id: String): ResponseEntity<Void> {
+        rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id))
         return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 }

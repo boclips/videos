@@ -11,10 +11,10 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
@@ -29,6 +29,7 @@ import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
@@ -49,36 +50,37 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.Locale
+import java.util.*
 
 object TestFactories {
 
     fun createVideo(
-        videoId: String = ObjectId().toHexString(),
-        title: String = "title",
-        description: String = "description",
-        contentPartnerName: String = "Reuters",
-        contentPartnerId: ContentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
-        contentPartnerVideoId: String = "cp-id-$videoId",
-        playback: VideoPlayback = createKalturaPlayback(),
-        type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
-        keywords: List<String> = listOf("keyword"),
-        subjects: Set<Subject> = emptySet(),
-        releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
-        legalRestrictions: String = "",
-        language: Locale? = null,
-        transcript: String? = null,
-        topics: Set<Topic> = emptySet(),
-        searchable: Boolean = true,
-        ageRange: AgeRange = AgeRange.bounded(5, 12),
-        contentPartner: ContentPartner = ContentPartner(
+            videoId: String = ObjectId().toHexString(),
+            title: String = "title",
+            description: String = "description",
+            contentPartnerName: String = "Reuters",
+            contentPartnerId: ContentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+            contentPartnerVideoId: String = "cp-id-$videoId",
+            playback: VideoPlayback = createKalturaPlayback(),
+            type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+            keywords: List<String> = listOf("keyword"),
+            subjects: Set<Subject> = emptySet(),
+            releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
+            legalRestrictions: String = "",
+            language: Locale? = null,
+            transcript: String? = null,
+            topics: Set<Topic> = emptySet(),
+            searchable: Boolean = true,
+            ageRange: AgeRange = AgeRange.bounded(5, 12),
+            rating: UserRating? = null,
+            contentPartner: ContentPartner = ContentPartner(
             contentPartnerId = contentPartnerId,
             name = contentPartnerName,
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
             searchable = true
         ),
-        videoReference: String = contentPartnerVideoId
+            videoReference: String = contentPartnerVideoId
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -96,7 +98,8 @@ object TestFactories {
             searchable = searchable,
             ageRange = ageRange,
             contentPartner = contentPartner,
-            videoReference = videoReference
+            videoReference = videoReference,
+            rating = rating
         )
     }
 
@@ -194,15 +197,15 @@ object TestFactories {
     )
 
     fun createCollection(
-        id: CollectionId = CollectionId("collection-id"),
-        owner: String = "collection owner",
-        title: String = "collection title",
-        videos: List<VideoId> = listOf(createVideo().videoId),
-        updatedAt: Instant = Instant.now(),
-        isPublic: Boolean = false,
-        createdByBoclips: Boolean = false,
-        bookmarks: Set<UserId> = emptySet(),
-        subjects: Set<SubjectId> = emptySet()
+            id: CollectionId = CollectionId("collection-id"),
+            owner: String = "collection owner",
+            title: String = "collection title",
+            videos: List<VideoId> = listOf(createVideo().videoId),
+            updatedAt: Instant = Instant.now(),
+            isPublic: Boolean = false,
+            createdByBoclips: Boolean = false,
+            bookmarks: Set<UserId> = emptySet(),
+            subjects: Set<SubjectId> = emptySet()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),

@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -42,7 +42,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         assertThat(collection.createdByBoclips).isFalse()
 
         val allCollections = collectionRepository.getByOwner(
-            UserId("this-user"),
+                UserId("this-user"),
             PageRequest(0, 10)
         ).elements
         assertThat(allCollections).contains(collection)

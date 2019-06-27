@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest

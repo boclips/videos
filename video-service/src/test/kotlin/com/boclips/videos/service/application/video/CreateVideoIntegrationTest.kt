@@ -4,7 +4,7 @@ import com.boclips.events.types.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
-import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService

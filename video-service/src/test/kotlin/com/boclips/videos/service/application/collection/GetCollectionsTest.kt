@@ -6,7 +6,7 @@ import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -60,7 +60,7 @@ class GetCollectionsTest {
             on {
                 getBookmarked(
                     PageRequest(0, 1),
-                    UserId("me@me.com")
+                        UserId("me@me.com")
                 )
             } doReturn Page(
                 listOf(

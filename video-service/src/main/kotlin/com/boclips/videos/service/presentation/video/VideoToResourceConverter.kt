@@ -43,7 +43,8 @@ class VideoToResourceConverter(
                 status = getStatus(video),
                 legalRestrictions = video.legalRestrictions,
                 hasTranscripts = video.transcript != null,
-                ageRange = getAgeRange(video)
+                ageRange = getAgeRange(video),
+                rating = video.rating?.rating
             )
         )
     }
@@ -77,7 +78,8 @@ class VideoToResourceConverter(
         videoResource,
         listOfNotNull(
             videosLinkBuilder.self(videoResource),
-            videosLinkBuilder.transcriptLink(videoResource)
+            videosLinkBuilder.transcriptLink(videoResource),
+            videosLinkBuilder.rateLink(videoResource)
         )
     )
 }

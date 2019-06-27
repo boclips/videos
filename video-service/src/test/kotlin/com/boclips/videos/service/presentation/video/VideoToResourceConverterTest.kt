@@ -1,7 +1,9 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
@@ -36,7 +38,8 @@ internal class VideoToResourceConverterTest {
         subjects = setOf(TestFactories.createSubject(name = "Maths")),
         legalRestrictions = "None",
         searchable = true,
-        ageRange = AgeRange.bounded(min = 5, max = 11)
+        ageRange = AgeRange.bounded(min = 5, max = 11),
+        rating = UserRating(rating = 3, userId = UserId("irrelevant"))
     )
 
     val youtubeVideo = createVideo(
@@ -91,6 +94,7 @@ internal class VideoToResourceConverterTest {
         assertThat((videoResource.playback!!.content as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
         assertThat(videoResource.ageRange!!.min).isEqualTo(5)
         assertThat(videoResource.ageRange!!.max).isEqualTo(11)
+        assertThat(videoResource.rating).isEqualTo(3)
     }
 
     @Test

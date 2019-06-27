@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
-import com.boclips.videos.service.domain.model.ageRange.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.common.BoundedAgeRange
+import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -412,6 +412,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(delete("/v1/videos/$videoId").asOperator())
             .andExpect(status().`is`(200))
+    }
+
+    @Test
+    fun `rates video`() {
+        val videoId = saveVideo().value
+
+        mockMvc.perform(patch("/v1/videos/$videoId?rating=3").asTeacher())
+            .andExpect(status().`is`(204))
+
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(videoId)))
+                .andExpect(jsonPath("$.rating", equalTo(3)))
     }
 
     @Test

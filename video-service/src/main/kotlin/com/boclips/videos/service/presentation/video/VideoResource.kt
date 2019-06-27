@@ -23,5 +23,6 @@ data class VideoResource(
     val legalRestrictions: String? = null,
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null,
-    val ageRange: AgeRangeResource? = null
+    val ageRange: AgeRangeResource? = null,
+    val rating: Int? = null
 )

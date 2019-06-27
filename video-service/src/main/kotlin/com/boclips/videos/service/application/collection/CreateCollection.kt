@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateR
 import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.collection.UserId
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 
 class CreateCollection(

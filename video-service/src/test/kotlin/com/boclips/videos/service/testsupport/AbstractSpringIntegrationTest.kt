@@ -16,11 +16,10 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
-import com.boclips.videos.service.domain.model.ageRange.BoundedAgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE

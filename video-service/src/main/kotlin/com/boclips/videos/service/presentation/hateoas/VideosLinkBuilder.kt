@@ -67,6 +67,17 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         ).withRel("transcript")
     }
 
+    fun rateLink(videoResource: VideoResource): Link? {
+        if (!currentUserHasRole(UserRoles.RATE_VIDEOS)) {
+            return null
+        }
+
+        return ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .patchRating(null, videoResource.id!!)
+        ).withRel("rate")
+    }
+
     private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/videos")
         .replaceQueryParams(null)

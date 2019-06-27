@@ -2,14 +2,12 @@ package com.boclips.videos.service.infrastructure.video.mongo
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -17,10 +15,7 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.Document
 import org.bson.types.ObjectId
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.util.Date
@@ -253,6 +248,24 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(updatedAsset.ageRange).isEqualTo(AgeRange.bounded(3, 5))
+    }
+
+    @Test
+    fun `can update user rating`() {
+        val originalAsset = mongoVideoRepository.create(
+            TestFactories.createVideo(
+                title = "original title"
+            )
+        )
+
+        val updatedAsset = mongoVideoRepository.update(
+            VideoUpdateCommand.ReplaceRating(
+                originalAsset.videoId,
+                UserRating(3, UserId("a user"))
+            )
+        )
+
+        assertThat(updatedAsset.rating).isEqualTo(UserRating(3, UserId("a user")))
     }
 
     @Test

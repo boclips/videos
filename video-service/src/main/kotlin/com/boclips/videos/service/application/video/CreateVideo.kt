@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.Video
-import com.boclips.videos.service.domain.model.ageRange.AgeRange
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository

@@ -21,5 +21,6 @@ data class VideoDocument(
     val topics: List<TopicDocument>?,
     val searchable: Boolean,
     val ageRangeMin: Int? = null,
-    val ageRangeMax: Int? = null
+    val ageRangeMax: Int? = null,
+    val rating: List<UserRatingDocument> = emptyList()
 )
