@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.LocalDate
+import java.time.Month
 
 class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
@@ -443,6 +446,64 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
             assertThat(results).containsExactlyInAnyOrder("0")
         }
 
+        @Test
+        fun `can filter by release date`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "0",
+                        releaseDate = LocalDate.of(2019, Month.JANUARY, 10),
+                        contentProvider = "TED"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        releaseDate = LocalDate.of(2019, Month.MAY, 10),
+                        contentProvider = "TED"
+                    )
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "TED",
+                        releaseDateFrom = LocalDate.of(2019, Month.JANUARY, 1),
+                        releaseDateTo = LocalDate.of(2019, Month.FEBRUARY, 1)
+                    )
+                )
+            )
+
+            assertThat(results).containsExactlyInAnyOrder("0")
+        }
+
+        @Test
+        fun `can filter by source`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "0",
+                        source = SourceType.BOCLIPS,
+                        contentProvider = "TED"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        source = SourceType.YOUTUBE,
+                        contentProvider = "TED"
+                    )
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "TED",
+                        source = SourceType.BOCLIPS
+                    )
+                )
+            )
+
+            assertThat(results).containsExactlyInAnyOrder("0")
+        }
     }
 
     @Nested
