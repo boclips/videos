@@ -465,35 +465,6 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `can filter by duration bound`(
-        queryService: ReadSearchService<VideoMetadata, VideoQuery>,
-        adminService: WriteSearchService<VideoMetadata>
-    ) {
-        adminService.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "0", description = "Zeroth world war", durationSeconds = 1),
-                SearchableVideoMetadataFactory.create(id = "1", description = "First world war", durationSeconds = 5),
-                SearchableVideoMetadataFactory.create(id = "2", description = "Second world war", durationSeconds = 10),
-                SearchableVideoMetadataFactory.create(id = "3", description = "Third world war", durationSeconds = 15)
-            )
-        )
-
-        val results = queryService.search(
-            PaginatedSearchRequest(
-                query = VideoQuery(
-                    "World war",
-                    minDuration = Duration.ofSeconds(5),
-                    maxDuration = Duration.ofSeconds(10)
-                )
-            )
-        )
-
-        assertThat(results).containsAll(listOf("1", "2"))
-        assertThat(results).doesNotContainAnyElementsOf(listOf("0", "3"))
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by duration lower bound`(
         queryService: ReadSearchService<VideoMetadata, VideoQuery>,
         adminService: WriteSearchService<VideoMetadata>

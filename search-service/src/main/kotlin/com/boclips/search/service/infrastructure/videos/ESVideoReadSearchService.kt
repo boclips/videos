@@ -105,6 +105,21 @@ class ESVideoReadSearchService(val client: RestHighLevelClient) :
                 must(QueryBuilders.termQuery(ESVideo.CONTENT_PROVIDER, videoQuery.phrase))
             }
             .apply {
+                if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
+                    must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
+                }
+            }
+            .apply {
+                if (videoQuery.subjects.isNotEmpty()) {
+                    must(matchSubjects(videoQuery.subjects))
+                }
+            }
+            .apply {
+                if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
+                    must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
+                }
+            }
+            .apply {
                 mustNot(matchTags(videoQuery.excludeTags))
             }
             .apply {

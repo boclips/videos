@@ -338,6 +338,111 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
 
             assertThat(results).startsWith("3")
         }
+
+        @Test
+        fun `can filter by duration bound`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "0",
+                        description = "Zeroth world war",
+                        durationSeconds = 1,
+                        contentProvider = "TED"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        description = "First world war",
+                        durationSeconds = 5,
+                        contentProvider = "TED"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        description = "Second world war",
+                        durationSeconds = 10,
+                        contentProvider = "TED"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        description = "Third world war",
+                        durationSeconds = 15,
+                        contentProvider = "TED"
+                    )
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "TED",
+                        minDuration = Duration.ofSeconds(5),
+                        maxDuration = Duration.ofSeconds(10)
+                    )
+                )
+            )
+
+            assertThat(results).containsExactlyInAnyOrder("1", "2")
+        }
+
+        @Test
+        fun `can filter by subject`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "0",
+                        subjects = setOf("Maths"),
+                        contentProvider = "TED"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        subjects = setOf("History"),
+                        contentProvider = "TED"
+                    )
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "TED",
+                        subjects = setOf("History")
+                    )
+                )
+            )
+
+            assertThat(results).containsExactlyInAnyOrder("1")
+        }
+        @Test
+        fun `can filter by age range`() {
+            writeSearchService.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "0",
+                        ageRangeMax = 5,
+                        ageRangeMin = 2,
+                        contentProvider = "TED"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        ageRangeMax = 9,
+                        ageRangeMin = 14,
+                        contentProvider = "TED"
+                    )
+                )
+            )
+
+            val results = readSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        "TED",
+                        ageRangeMin = 2,
+                        ageRangeMax = 5
+                    )
+                )
+            )
+
+            assertThat(results).containsExactlyInAnyOrder("0")
+        }
+
     }
 
     @Nested
@@ -346,17 +451,39 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         fun `videos within query age range`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
-                    SearchableVideoMetadataFactory.create(id = "2", title = "TED", ageRangeMin = 3, ageRangeMax = 7),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        title = "TED",
+                        ageRangeMin = 3,
+                        ageRangeMax = 15
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        title = "TED",
+                        ageRangeMin = 3,
+                        ageRangeMax = 7
+                    ),
                     SearchableVideoMetadataFactory.create(id = "3", title = "TED", ageRangeMin = 7),
                     SearchableVideoMetadataFactory.create(id = "4", title = "TED", ageRangeMin = 3),
-                    SearchableVideoMetadataFactory.create(id = "5", title = "TED", ageRangeMin = 15, ageRangeMax = 18),
+                    SearchableVideoMetadataFactory.create(
+                        id = "5",
+                        title = "TED",
+                        ageRangeMin = 15,
+                        ageRangeMax = 18
+                    ),
                     SearchableVideoMetadataFactory.create(id = "6", title = "TED", ageRangeMin = 1, ageRangeMax = 3)
                 )
             )
 
             val results =
-                readSearchService.search(PaginatedSearchRequest(query = VideoQuery(ageRangeMin = 5, ageRangeMax = 11)))
+                readSearchService.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            ageRangeMin = 5,
+                            ageRangeMax = 11
+                        )
+                    )
+                )
 
             assertThat(results).hasSize(4)
             assertThat(results).contains("1")
@@ -369,7 +496,12 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         fun `videos within query age range with only lower bound`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        title = "TED",
+                        ageRangeMin = 3,
+                        ageRangeMax = 15
+                    ),
                     SearchableVideoMetadataFactory.create(id = "2", title = "TED", ageRangeMin = 7),
                     SearchableVideoMetadataFactory.create(id = "3", title = "TED", ageRangeMin = 3),
                     SearchableVideoMetadataFactory.create(id = "4", title = "TED", ageRangeMin = 1, ageRangeMax = 3)
@@ -388,11 +520,26 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         fun `videos within query age range with only upper bound`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", title = "TED", ageRangeMin = 3, ageRangeMax = 15),
-                    SearchableVideoMetadataFactory.create(id = "2", title = "TED", ageRangeMin = 7, ageRangeMax = 11),
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        title = "TED",
+                        ageRangeMin = 3,
+                        ageRangeMax = 15
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        title = "TED",
+                        ageRangeMin = 7,
+                        ageRangeMax = 11
+                    ),
                     SearchableVideoMetadataFactory.create(id = "3", title = "TED", ageRangeMin = 3),
                     SearchableVideoMetadataFactory.create(id = "4", title = "TED", ageRangeMin = 13),
-                    SearchableVideoMetadataFactory.create(id = "5", title = "TED", ageRangeMin = 15, ageRangeMax = 18)
+                    SearchableVideoMetadataFactory.create(
+                        id = "5",
+                        title = "TED",
+                        ageRangeMin = 15,
+                        ageRangeMax = 18
+                    )
                 )
             )
 
@@ -677,7 +824,11 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         fun `all include tags must match`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        description = "banana",
+                        tags = listOf("classroom")
+                    )
                 )
             )
 
@@ -692,7 +843,11 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         fun `all exclude tags must match`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        description = "banana",
+                        tags = listOf("classroom")
+                    )
                 )
             )
 
@@ -714,7 +869,11 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         fun `having include and exclude as the same tag returns no results`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "3", description = "banana", tags = listOf("classroom"))
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        description = "banana",
+                        tags = listOf("classroom")
+                    )
                 )
             )
 
@@ -1145,12 +1304,11 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
         fun `duration, subject`() {
             writeSearchService.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "0", durationSeconds = 50),
                     SearchableVideoMetadataFactory.create(
                         id = "1",
                         durationSeconds = 10,
                         subjects = setOf("subject-two", "subject-three")
-                        ),
+                    ),
                     SearchableVideoMetadataFactory.create(
                         id = "2",
                         durationSeconds = 50,
@@ -1176,5 +1334,4 @@ class ESVideoReadSearchServiceIntegrationTest : EmbeddedElasticSearchIntegration
             assertThat(results).containsExactly("2")
         }
     }
-
 }
