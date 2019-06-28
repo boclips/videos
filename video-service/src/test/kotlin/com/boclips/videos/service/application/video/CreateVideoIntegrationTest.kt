@@ -62,8 +62,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
-                provider = "another-youtube-channel"
+                provider = "another-youtube-channel",
+                playbackId = "1234"
             )
         )
 
@@ -115,7 +115,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val createRequest =
-            TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video")
+            TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234")
         createVideo(createRequest)
 
         val results = videoService.search(
@@ -142,7 +142,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
+        createVideo(TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234"))
 
         verify(legacySearchService).upsert(any(), anyOrNull())
     }
@@ -213,8 +213,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
         createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
                 title = "the latest banana video",
+                playbackId = "1234",
                 playbackProvider = "YOUTUBE"
             )
         )
@@ -234,8 +234,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val video: Resource<VideoResource> = createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
                 videoType = "INSTRUCTIONAL_CLIPS",
+                playbackId = "1234",
                 analyseVideo = true
             )
         )

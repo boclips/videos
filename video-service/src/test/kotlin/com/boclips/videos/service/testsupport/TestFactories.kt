@@ -50,7 +50,7 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.*
+import java.util.Locale
 
 object TestFactories {
 
@@ -172,7 +172,8 @@ object TestFactories {
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
         analyseVideo: Boolean = false,
-        searchable: Boolean? = true
+        searchable: Boolean? = true,
+        subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
         provider = provider,
         providerVideoId = providerVideoId,
@@ -185,7 +186,8 @@ object TestFactories {
         playbackId = playbackId,
         playbackProvider = playbackProvider,
         analyseVideo = analyseVideo,
-        searchable = searchable
+        searchable = searchable,
+        subjects = subjects
     )
 
     fun createCollectionRequest(

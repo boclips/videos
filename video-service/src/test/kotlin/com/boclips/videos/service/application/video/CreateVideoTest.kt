@@ -86,7 +86,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
         )
 
         val createRequest =
-            TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video")
+            TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234")
         createVideo(createRequest)
 
         val results = videoService.search(
@@ -113,7 +113,7 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234", title = "the latest Bloomberg video"))
+        createVideo(TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234"))
 
         verify(legacySearchService).upsert(any(), anyOrNull())
     }
@@ -186,8 +186,8 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
                 title = "the latest banana video",
+                playbackId = "1234",
                 playbackProvider = "YOUTUBE"
             )
         )
@@ -207,8 +207,8 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         val video: Resource<VideoResource> = createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
                 videoType = "INSTRUCTIONAL_CLIPS",
+                playbackId = "1234",
                 analyseVideo = true
             )
         )
@@ -226,9 +226,9 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
+                title = "fractions",
                 videoType = "INSTRUCTIONAL_CLIPS",
-                title = "fractions"
+                playbackId = "1234"
             )
         )
 
@@ -251,9 +251,9 @@ class CreateVideoTest : AbstractSpringIntegrationTest() {
 
         val createRequest =
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
+                provider = contentPartner.name,
                 title = "the latest and greatest Bloomberg video",
-                provider = contentPartner.name
+                playbackId = "1234"
             )
 
         createVideo(createRequest)

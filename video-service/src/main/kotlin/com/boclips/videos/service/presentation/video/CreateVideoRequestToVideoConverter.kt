@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId
@@ -14,7 +15,8 @@ class CreateVideoRequestToVideoConverter {
     fun convert(
         createVideoRequest: CreateVideoRequest,
         videoPlayback: VideoPlayback,
-        contentPartner: ContentPartner
+        contentPartner: ContentPartner,
+        subjects: List<Subject>
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
@@ -37,8 +39,7 @@ class CreateVideoRequestToVideoConverter {
             } else {
                 AgeRange.unbounded()
             },
-
-            subjects = emptySet(),
+            subjects = subjects.toSet(),
             topics = emptySet(),
             language = null,
             transcript = null,

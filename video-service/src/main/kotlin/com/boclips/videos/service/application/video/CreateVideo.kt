@@ -15,6 +15,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
+import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -30,6 +31,7 @@ import org.springframework.hateoas.Resource
 class CreateVideo(
     private val videoService: VideoService,
     private val videoRepository: VideoRepository,
+    private val subjectRepository: SubjectRepository,
     private val contentPartnerRepository: ContentPartnerRepository,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
@@ -61,18 +63,17 @@ class CreateVideo(
                                 findVideoPlaybackMetadata(playbackId) as VideoProviderMetadata.YoutubeMetadata
                             Credit.YoutubeCredit(channelId = metadata.channelId)
                         }
-                        is VideoPlayback.StreamPlayback -> {
-                            Credit.PartnerCredit
-                        }
+                        is VideoPlayback.StreamPlayback -> Credit.PartnerCredit
                         else -> throw IllegalStateException("Could not retrieve playback for $videoPlayback")
                     },
                     searchable = true
                 )
             )
 
-        val videoToBeCreated = createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner)
+        val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
+        val videoToBeCreated =
+            createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, subjects)
         val createdVideo = videoService.create(videoToBeCreated)
-
 
         if (videoToBeCreated.searchable) {
             indexVideo(createdVideo)

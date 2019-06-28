@@ -41,8 +41,7 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
                 "playbackId": "abc1",
-                "playbackProvider": "KALTURA",
-                "subjects": ["Maths"]
+                "playbackProvider": "KALTURA"
             }
         """.trimIndent()
 

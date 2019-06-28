@@ -451,6 +451,41 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `create new video with subjects`() {
+        val subjectId = saveSubject("Maths")
+
+        fakeKalturaClient.addMediaEntry(
+            TestFactories.createMediaEntry(
+                id = "entry-$123",
+                referenceId = "abc1",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        val content = """
+            {
+                "provider": "AP",
+                "providerVideoId": "1",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "videoType": "INSTRUCTIONAL_CLIPS",
+                "playbackId": "abc1",
+                "playbackProvider": "KALTURA",
+                "subject": ["${subjectId.value}"]
+            }
+        """.trimIndent()
+
+        val createdResourceUrl =
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isCreated)
+                .andReturn().response.getHeader("Location")
+    }
+
+    @Test
     fun `returns a helpful error message when request is not valid`() {
         val content = """
             {

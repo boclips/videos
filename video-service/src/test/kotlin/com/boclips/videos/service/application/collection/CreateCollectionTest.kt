@@ -23,8 +23,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     fun `creates collection and associates videos`() {
         val videoId1 = createVideo(
             TestFactories.createCreateVideoRequest(
-                title = "a-video",
                 providerVideoId = "hurray",
+                title = "a-video",
                 playbackId = "hiphip"
             )
         ).content.id

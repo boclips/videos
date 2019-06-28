@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation.video
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException
 import org.assertj.core.api.AbstractThrowableAssert
@@ -19,19 +20,21 @@ class CreateVideoRequestToVideoConverterTest {
     lateinit var converter: CreateVideoRequestToVideoConverter
     lateinit var videoPlayback: VideoPlayback
     lateinit var contentPartner: ContentPartner
+    lateinit var subjects: List<Subject>
 
     @BeforeEach
     fun setUp() {
         converter = CreateVideoRequestToVideoConverter()
         videoPlayback = TestFactories.createKalturaPlayback()
         contentPartner = TestFactories.createContentPartner()
+        subjects = listOf(TestFactories.createSubject())
     }
 
     @Test
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
         val playback = TestFactories.createKalturaPlayback(duration = expectedDuration)
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
 
         assertThat(video.playback.duration).isEqualTo(expectedDuration)
     }
@@ -39,9 +42,24 @@ class CreateVideoRequestToVideoConverterTest {
     @Test
     fun `uses the playback`() {
         val playback = TestFactories.createKalturaPlayback()
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
 
         assertThat(video.playback).isEqualTo(playback)
+    }
+
+    @Test
+    fun `uses the subjects`() {
+        val playback = TestFactories.createKalturaPlayback()
+
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(),
+            playback,
+            contentPartner,
+            subjects
+        )
+
+        assertThat(video.subjects).hasSize(1)
+        assertThat(video.subjects.first().id).isNotNull
     }
 
     @Test
@@ -50,7 +68,8 @@ class CreateVideoRequestToVideoConverterTest {
             converter.convert(
                 TestFactories.createCreateVideoRequest(title = null),
                 videoPlayback,
-                contentPartner
+                contentPartner,
+                subjects
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -63,7 +82,8 @@ class CreateVideoRequestToVideoConverterTest {
             converter.convert(
                 TestFactories.createCreateVideoRequest(description = null),
                 videoPlayback,
-                contentPartner
+                contentPartner,
+                subjects
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -76,7 +96,8 @@ class CreateVideoRequestToVideoConverterTest {
             converter.convert(
                 TestFactories.createCreateVideoRequest(keywords = null),
                 videoPlayback,
-                contentPartner
+                contentPartner,
+                subjects
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -89,7 +110,8 @@ class CreateVideoRequestToVideoConverterTest {
             converter.convert(
                 TestFactories.createCreateVideoRequest(releasedOn = null),
                 videoPlayback,
-                contentPartner
+                contentPartner,
+                subjects
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -102,7 +124,8 @@ class CreateVideoRequestToVideoConverterTest {
             converter.convert(
                 TestFactories.createCreateVideoRequest(providerVideoId = null),
                 videoPlayback,
-                contentPartner
+                contentPartner,
+                subjects
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -115,7 +138,8 @@ class CreateVideoRequestToVideoConverterTest {
             converter.convert(
                 TestFactories.createCreateVideoRequest(videoType = null),
                 videoPlayback,
-                contentPartner
+                contentPartner,
+                subjects
             )
         }
             .isInstanceOf(NonNullableFieldCreateRequestException::class.java)
@@ -128,7 +152,8 @@ class CreateVideoRequestToVideoConverterTest {
             converter.convert(
                 TestFactories.createCreateVideoRequest(legalRestrictions = null),
                 videoPlayback,
-                contentPartner
+                contentPartner,
+                subjects
             ).legalRestrictions
         ).isEmpty()
     }
@@ -140,7 +165,8 @@ class CreateVideoRequestToVideoConverterTest {
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(searchable = true),
             TestFactories.createKalturaPlayback(),
-            contentPartner
+            contentPartner,
+            subjects
         )
 
         assertThat(video.searchable).isFalse()
@@ -153,7 +179,8 @@ class CreateVideoRequestToVideoConverterTest {
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(searchable = false),
             TestFactories.createKalturaPlayback(),
-            contentPartner
+            contentPartner,
+            subjects
         )
 
         assertThat(video.searchable).isFalse()
