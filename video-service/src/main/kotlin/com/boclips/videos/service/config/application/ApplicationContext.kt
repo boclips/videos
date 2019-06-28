@@ -22,6 +22,7 @@ import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.subject.CreateSubject
+import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
@@ -276,6 +277,11 @@ class ApplicationContext(
     @Bean
     fun getSubject(): GetSubject {
         return GetSubject(subjectRepository)
+    }
+
+    @Bean
+    fun deleteSubject(): DeleteSubject {
+        return DeleteSubject(subjectRepository)
     }
 
     @Bean

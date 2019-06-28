@@ -1,8 +1,10 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.subject.CreateSubject
+import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
+import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
@@ -11,6 +13,7 @@ import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -23,6 +26,7 @@ import javax.validation.Valid
 @RequestMapping("/v1/subjects")
 class SubjectController(
     private val getSubject: GetSubject,
+    private val deleteSubject: DeleteSubject,
     private val getSubjects: GetSubjects,
     private val createSubject: CreateSubject,
     private val subjectsLinkBuilder: SubjectsLinkBuilder
@@ -34,7 +38,16 @@ class SubjectController(
 
     @GetMapping
     fun subjects(): Resources<Resource<*>> {
-        return Resources(getSubjects().map { Resource(it, subjectsLinkBuilder.subject(it, "self")) }, subjectsLinkBuilder.subjects("self"))
+        return Resources(
+            getSubjects().map { Resource(it, subjectsLinkBuilder.subject(it, "self")) },
+            subjectsLinkBuilder.subjects("self")
+        )
+    }
+
+    @DeleteMapping("/{id}")
+    fun removeSubjects(@PathVariable id: String): ResponseEntity<Void> {
+        deleteSubject(SubjectId(value = id))
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @PostMapping

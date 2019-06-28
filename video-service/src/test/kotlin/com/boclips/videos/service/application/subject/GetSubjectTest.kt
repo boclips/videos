@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class GetSubjectTest {
-
     @Test
     fun `subject when found returns resource`() {
         val subjectRepository = mock<SubjectRepository>()

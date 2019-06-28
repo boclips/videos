@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -38,6 +39,15 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.id").exists())
             .andExpect(jsonPath("$.name", equalTo("Mathematics")))
             .andExpect(jsonPath("$._links.self.href").exists())
+    }
+
+    @Test
+    fun `deletes a subject`() {
+        val subjectUrl = createSubject("Mathematics")
+            .andReturn().response.getHeader("Location")!!
+
+        mockMvc.perform(delete(subjectUrl).asBoclipsEmployee())
+            .andExpect(status().isOk)
     }
 
     @Test

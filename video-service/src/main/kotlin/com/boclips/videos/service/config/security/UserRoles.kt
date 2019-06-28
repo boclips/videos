@@ -2,6 +2,7 @@ package com.boclips.videos.service.config.security
 
 object UserRoles {
     const val CREATE_SUBJECT = "CREATE_SUBJECT"
+    const val DELETE_SUBJECT = "DELETE_SUBJECT"
 
     const val VIEW_EVENTS = "VIEW_EVENTS"
     const val INSERT_EVENTS = "INSERT_EVENTS"
