@@ -162,8 +162,8 @@ class VideoController(
     }
 
     @PatchMapping(path = ["/{id}"], params = ["rating"])
-    fun patchRating(@RequestParam rating: Int?, @PathVariable id: String): ResponseEntity<Void> {
+    fun patchRating(@RequestParam rating: Int?, @PathVariable id: String): Resource<VideoResource> {
         rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id))
-        return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
+        return this.getVideo(id)
     }
 }

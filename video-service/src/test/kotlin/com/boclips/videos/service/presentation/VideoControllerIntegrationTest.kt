@@ -8,34 +8,19 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asIngestor
-import com.boclips.videos.service.testsupport.asOperator
-import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.*
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasItem
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 import java.time.LocalDate
 
@@ -419,7 +404,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo().value
 
         mockMvc.perform(patch("/v1/videos/$videoId?rating=3").asTeacher())
-            .andExpect(status().`is`(204))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(videoId)))
+                .andExpect(jsonPath("$.rating", equalTo(3)))
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
                 .andExpect(status().isOk)
