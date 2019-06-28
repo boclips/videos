@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.videos.service.application.video
 
 import com.boclips.events.types.VideosExclusionFromSearchRequested
 import com.boclips.events.types.VideosInclusionInSearchRequested
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.support.MessageBuilder
 
-class SearchUpdateByContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
+class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
 

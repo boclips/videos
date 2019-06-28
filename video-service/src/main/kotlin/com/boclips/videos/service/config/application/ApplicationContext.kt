@@ -16,7 +16,6 @@ import com.boclips.videos.service.application.contentPartner.CreateContentPartne
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.RequestBulkVideoSearchUpdateByContentPartner
-import com.boclips.videos.service.application.contentPartner.SearchUpdateByContentPartner
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
@@ -29,6 +28,7 @@ import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
+import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
 import com.boclips.videos.service.application.video.ClassifyVideo
 import com.boclips.videos.service.application.video.CreateVideo
@@ -358,8 +358,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getSearchUpdateByContentPartner(): SearchUpdateByContentPartner {
-        return SearchUpdateByContentPartner(
+    fun getBulkVideoSearchUpdate(): BulkVideoSearchUpdate {
+        return BulkVideoSearchUpdate(
             contentPartnerRepository,
             videoRepository,
             bulkUpdate()

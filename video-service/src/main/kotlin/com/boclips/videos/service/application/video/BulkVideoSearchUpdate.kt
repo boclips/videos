@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.videos.service.application.video
 
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.VideosExclusionFromSearchRequested
@@ -11,7 +11,7 @@ import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
 
-class SearchUpdateByContentPartner(
+class BulkVideoSearchUpdate(
     val contentPartnerRepository: ContentPartnerRepository,
     val videoRepository: VideoRepository,
     val bulkUpdateVideo: BulkUpdateVideo
