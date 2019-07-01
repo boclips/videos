@@ -24,10 +24,11 @@ private fun getCollectionOrThrow(
 
     return when {
         isForReading && collection.isPublic -> collection
-        collection.owner != userId -> throw CollectionAccessNotAuthorizedException(
+        collection.owner == userId -> collection
+        collection.viewerIds.contains(userId) -> collection
+        else -> throw CollectionAccessNotAuthorizedException(
             userId,
             collectionId
         )
-        else -> collection
     }
 }

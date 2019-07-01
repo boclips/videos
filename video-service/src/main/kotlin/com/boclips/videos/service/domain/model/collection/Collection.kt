@@ -10,6 +10,7 @@ import java.time.Instant
 data class Collection(
         val id: CollectionId,
         val owner: UserId,
+        val viewerIds: List<UserId>,
         val title: String,
         val videos: List<VideoId>,
         val updatedAt: Instant,

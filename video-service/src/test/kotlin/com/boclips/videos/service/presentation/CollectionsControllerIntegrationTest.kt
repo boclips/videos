@@ -2,12 +2,16 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.Document
 import org.bson.types.ObjectId
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
@@ -36,6 +40,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
 import java.time.ZonedDateTime
+import java.util.Date
 
 class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -402,6 +407,27 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.videos[0].subjects", not(nullValue())))
             .andExpect(jsonPath("$.videos[0]._links.self.href", not(isEmptyString())))
             .andReturn()
+    }
+
+    @Test
+    fun `fetching a collection as a viewer`() {
+        val collectionId = "5c55697860fef77aa4af323a"
+        val userId = "viewer-123@testing.com"
+        mongoClient
+            .getDatabase(DATABASE_NAME)
+            .getCollection(MongoCollectionRepository.collectionName)
+            .insertOne(
+                Document()
+                    .append("_id", ObjectId(collectionId))
+                    .append("title", "My Videos")
+                    .append("owner", "a4efeee2-0166-4371-ba72-0fa5a13c9aca")
+                    .append("viewerIds", listOf(userId))
+                    .append("updatedAt", Date())
+                    .append("videos", emptyList<VideoId>())
+            )
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(userId))
+            .andExpect(status().isOk)
     }
 
     @Test
