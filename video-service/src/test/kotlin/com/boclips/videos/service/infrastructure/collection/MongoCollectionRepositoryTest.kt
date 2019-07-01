@@ -2,10 +2,10 @@ package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -56,9 +56,9 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val updatedCollection = collectionRepository.find(collection.id)!!
 
             assertThat(updatedCollection.owner).isEqualTo(
-                UserId(
-                    value = "user1"
-                )
+                    UserId(
+                            value = "user1"
+                    )
             )
             assertThat(updatedCollection.videos).hasSize(1)
             assertThat(updatedCollection.videos).contains(video2)
@@ -264,9 +264,9 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
 
             val userCollection = collectionRepository.getByOwner(
-                UserId(
-                    value = "user1"
-                ), PageRequest(0, 10)
+                    UserId(
+                            value = "user1"
+                    ), PageRequest(0, 10)
             )
             assertThat(userCollection.elements).hasSize(1)
             assertThat(userCollection.elements.map { it.id }).contains(collection.id)
@@ -298,17 +298,17 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
             collectionRepository.bookmark(
                 publicBookmarkedCollection.id,
-                UserId("bookmarker")
+                    UserId("bookmarker")
             )
             collectionRepository.update(publicCollection2.id, CollectionUpdateCommand.ChangeVisibilityCommand(true))
             collectionRepository.bookmark(
                 privateCollection.id,
-                UserId("bookmarker")
+                    UserId("bookmarker")
             )
 
             val bookmarkedCollections = collectionRepository.getBookmarked(
                 PageRequest(0, 10),
-                UserId("bookmarker")
+                    UserId("bookmarker")
             )
 
             assertThat(bookmarkedCollections.elements).hasSize(1)
@@ -319,7 +319,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class MigrationTests {
         @Test
-        fun `can retrieve legacy documents`() {
+        fun `can retrieve legacy documents ands marks collections as private when they not contain isPublic property`() {
             mongoClient
                 .getDatabase(DATABASE_NAME)
                 .getCollection(MongoCollectionRepository.collectionName)
@@ -334,30 +334,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val collection = collectionRepository.find(CollectionId(value = "5c55697860fef77aa4af323a"))!!
 
-            assertThat(collection.viewerIds).isEmpty()
             assertThat(collection.isPublic).isEqualTo(false)
-        }
-
-        @Test
-        fun `can map viewerIds`() {
-            val collectionId = "5c55697860fef77aa4af323a"
-            val viewerId = "viewer-123@testing.com"
-            mongoClient
-                .getDatabase(DATABASE_NAME)
-                .getCollection(MongoCollectionRepository.collectionName)
-                .insertOne(
-                    Document()
-                        .append("_id", ObjectId(collectionId))
-                        .append("title", "My Videos")
-                        .append("owner", "a4efeee2-0166-4371-ba72-0fa5a13c9aca")
-                        .append("viewerIds", listOf(viewerId))
-                        .append("updatedAt", Date())
-                        .append("videos", emptyList<VideoId>())
-                )
-
-            val collection = collectionRepository.find(CollectionId(value = collectionId))!!
-
-            assertThat(collection.viewerIds).containsExactlyInAnyOrder(UserId(value = viewerId))
         }
     }
 
@@ -374,18 +351,18 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             collectionRepository.bookmark(
                 collection.id,
-                UserId("user2")
+                    UserId("user2")
             )
             collectionRepository.bookmark(
                 collection.id,
-                UserId("user3")
+                    UserId("user3")
             )
 
             assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
 
             collectionRepository.unbookmark(
                 collection.id,
-                UserId("user2")
+                    UserId("user2")
             )
 
             assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(false)

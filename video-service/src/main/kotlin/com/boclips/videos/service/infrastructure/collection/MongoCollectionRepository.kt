@@ -181,7 +181,6 @@ class MongoCollectionRepository(
             id = CollectionId(value = collectionDocument.id.toHexString()),
             title = collectionDocument.title,
             owner = UserId(value = collectionDocument.owner),
-            viewerIds = collectionDocument.viewerIds?.map { UserId(it) } ?: emptyList(),
             videos = videoIds,
             updatedAt = collectionDocument.updatedAt,
             isPublic = isPubliclyVisible,
