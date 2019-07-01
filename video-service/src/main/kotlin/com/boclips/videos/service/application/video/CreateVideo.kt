@@ -75,17 +75,19 @@ class CreateVideo(
             createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, subjects)
         val createdVideo = videoService.create(videoToBeCreated)
 
+        videoCounter.increment()
+
         if (videoToBeCreated.searchable) {
             indexVideo(createdVideo)
         }
-
-        videoCounter.increment()
 
         if (createRequest.analyseVideo) {
             triggerVideoAnalysis(createdVideo)
         }
 
-        classifyVideo(createdVideo.videoId.value)
+        if (subjects.isEmpty()) {
+            classifyVideo(createdVideo.videoId.value)
+        }
 
         return searchVideo.byId(createdVideo.videoId.value)
     }

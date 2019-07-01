@@ -51,30 +51,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `creates content partner if it does not exist`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
-        )
-
-        createVideo(
-            TestFactories.createCreateVideoRequest(
-                provider = "another-youtube-channel",
-                playbackId = "1234"
-            )
-        )
-
-        val contentPartner = contentPartnerRepository.findByName("another-youtube-channel")
-
-        assertThat(contentPartner!!.name).isEqualTo("another-youtube-channel")
-        assertThat(contentPartner.contentPartnerId).isNotNull
-        assertThat(contentPartner.ageRange).isInstanceOf(UnboundedAgeRange::class.java)
-    }
-
-    @Test
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")
@@ -148,6 +124,44 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `does not populate legacy search when youtube video is created`() {
+        fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
+        createVideo(
+            TestFactories.createCreateVideoRequest(
+                title = "the latest banana video",
+                playbackId = "1234",
+                playbackProvider = "YOUTUBE"
+            )
+        )
+
+        verifyZeroInteractions(legacySearchService)
+    }
+
+    @Test
+    fun `creates content partner if it does not exist`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        createVideo(
+            TestFactories.createCreateVideoRequest(
+                provider = "another-youtube-channel",
+                playbackId = "1234"
+            )
+        )
+
+        val contentPartner = contentPartnerRepository.findByName("another-youtube-channel")
+
+        assertThat(contentPartner!!.name).isEqualTo("another-youtube-channel")
+        assertThat(contentPartner.contentPartnerId).isNotNull
+        assertThat(contentPartner.ageRange).isInstanceOf(UnboundedAgeRange::class.java)
+    }
+
+    @Test
     fun `created video video uses the duration specified by the playback provider`() {
         val playbackProviderDuration = Duration.ofMinutes(2)
 
@@ -209,20 +223,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `does not populate legacy search when youtube video is created`() {
-        fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
-        createVideo(
-            TestFactories.createCreateVideoRequest(
-                title = "the latest banana video",
-                playbackId = "1234",
-                playbackProvider = "YOUTUBE"
-            )
-        )
-
-        verifyZeroInteractions(legacySearchService)
-    }
-
-    @Test
     fun `it requests that the video is analysed`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
@@ -245,5 +245,77 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(video.content.id)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-$123.mp4")
+    }
+
+    @Test
+    fun `it requests that the video subject is classified when no subjects specified`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1234"))
+
+        createVideo(
+            TestFactories.createCreateVideoRequest(
+                title = "fractions",
+                videoType = "INSTRUCTIONAL_CLIPS",
+                playbackId = "1234"
+            )
+        )
+
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+
+        assertThat(message.payload.toString()).contains("fractions")
+    }
+
+    @Test
+    fun `no reclassification of video is requested when subjects are provided`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1234"))
+
+        val subjectId = saveSubject("Mathematics")
+
+        createVideo(
+            TestFactories.createCreateVideoRequest(
+                title = "fractions",
+                videoType = "INSTRUCTIONAL_CLIPS",
+                playbackId = "1234",
+                subjects = setOf(subjectId.value)
+            )
+        )
+
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `it does not add to search indices if content partner is not searchable`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        val contentPartner = saveContentPartner(searchable = false)
+
+        val createRequest =
+            TestFactories.createCreateVideoRequest(
+                provider = contentPartner.name,
+                title = "the latest and greatest Bloomberg video",
+                playbackId = "1234"
+            )
+
+        createVideo(createRequest)
+
+        val results = videoService.search(
+            VideoSearchQuery(
+                text = "the latest and greatest Bloomberg video",
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 1,
+                pageIndex = 0
+            )
+        )
+
+        assertThat(results).hasSize(0)
+        verifyZeroInteractions(legacySearchService)
     }
 }
