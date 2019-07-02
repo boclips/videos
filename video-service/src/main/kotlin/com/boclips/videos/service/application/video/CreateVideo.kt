@@ -85,9 +85,8 @@ class CreateVideo(
             triggerVideoAnalysis(createdVideo)
         }
 
-        if (subjects.isEmpty()) {
-            classifyVideo(createdVideo.videoId.value)
-        }
+        classifyVideo(createdVideo.videoId.value)
+
 
         return searchVideo.byId(createdVideo.videoId.value)
     }

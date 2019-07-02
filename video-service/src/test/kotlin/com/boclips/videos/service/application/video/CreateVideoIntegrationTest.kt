@@ -248,7 +248,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it requests that the video subject is classified when no subjects specified`() {
+    fun `it requests that the video subject is classified`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1234"))
 
         createVideo(
@@ -262,26 +262,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
         assertThat(message.payload.toString()).contains("fractions")
-    }
-
-    @Test
-    fun `no reclassification of video is requested when subjects are provided`() {
-        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1234"))
-
-        val subjectId = saveSubject("Mathematics")
-
-        createVideo(
-            TestFactories.createCreateVideoRequest(
-                title = "fractions",
-                videoType = "INSTRUCTIONAL_CLIPS",
-                playbackId = "1234",
-                subjects = setOf(subjectId.value)
-            )
-        )
-
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
-
-        assertThat(message).isNull()
     }
 
     @Test
