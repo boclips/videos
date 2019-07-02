@@ -11,6 +11,7 @@ import com.boclips.events.types.collection.CollectionSubjectsChanged
 import com.boclips.events.types.collection.CollectionVisibilityChanged
 import com.boclips.events.types.collection.VideoAddedToCollection
 import com.boclips.events.types.collection.VideoRemovedFromCollection
+import com.boclips.events.types.video.VideoPlayerInteractedWith
 import com.boclips.events.types.video.VideoSegmentPlayed
 import com.boclips.events.types.video.VideosSearched
 import com.boclips.videos.service.application.getCurrentUser
@@ -128,6 +129,27 @@ class PubSubEventsService(
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
                     .videoDurationSeconds(videoDurationSeconds)
+            )
+        )
+    }
+
+    override fun savePlayerInteractedWithEvent(
+        playerId: String,
+        videoId: VideoId,
+        videoDurationSeconds: Long,
+        currentTime: Long,
+        type: String,
+        payload: Map<String, Any>
+    ) {
+        topics.videoPlayerInteractedWith().send(
+            msg(
+                VideoPlayerInteractedWith.builder()
+                    .playerId(playerId)
+                    .videoId(videoId.value)
+                    .videoDurationSeconds(videoDurationSeconds)
+                    .currentTime(currentTime)
+                    .type(type)
+                    .payload(payload)
             )
         )
     }

@@ -52,6 +52,47 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `posted player interaction events are being saved`() {
+        val videoId = TestFactories.aValidId()
+
+        val content = """{
+            "playerId": "player-id-123",
+            "videoId": "$videoId",
+            "videoDurationSeconds": 120,
+            "currentTime": 23,
+            "type": "captions-on",
+            "payload": {
+                "kind": "caption-kind",
+                "label": "caption-label",
+                "language": "caption-language",
+                "id": "caption-id"
+            }
+        }""".trimIndent()
+
+        mockMvc.perform(
+            post("/v1/events/player-interaction")
+                .asTeacher(email = "teacher@gmail.com")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+            .andExpect(status().isCreated)
+
+        val message = messageCollector.forChannel(topics.videoPlayerInteractedWith()).poll()
+        assertThat(message).isNotNull
+        assertThat(message.payload.toString()).contains(videoId)
+        assertThat(message.payload.toString()).contains("teacher@gmail.com")
+        assertThat(message.payload.toString()).contains("player-id-123")
+        assertThat(message.payload.toString()).contains(videoId)
+        assertThat(message.payload.toString()).contains("120")
+        assertThat(message.payload.toString()).contains("23")
+        assertThat(message.payload.toString()).contains("captions-on")
+        assertThat(message.payload.toString()).contains("caption-kind")
+        assertThat(message.payload.toString()).contains("caption-label")
+        assertThat(message.payload.toString()).contains("caption-language")
+        assertThat(message.payload.toString()).contains("caption-id")
+    }
+
+    @Test
     fun `playbacks by unathorized users are saved`() {
         val videoId = TestFactories.aValidId()
         mockMvc.perform(

@@ -21,7 +21,8 @@ class PlaybackToResourceConverter(
     ) = Resource(
         resource,
         listOfNotNull(
-            this.eventsLinkBuilder.createPlaybackEventLink()
+            this.eventsLinkBuilder.createPlaybackEventLink(),
+            this.eventsLinkBuilder.createPlayerInteractedWithEventLink()
         )
     )
 

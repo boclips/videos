@@ -26,5 +26,14 @@ interface EventService {
         segmentEndSeconds: Long,
         videoDurationSeconds: Long
     )
+
+    fun savePlayerInteractedWithEvent(
+        playerId: String,
+        videoId: VideoId,
+        videoDurationSeconds: Long,
+        currentTime: Long,
+        type: String,
+        payload: Map<String, Any>
+    )
 }
 

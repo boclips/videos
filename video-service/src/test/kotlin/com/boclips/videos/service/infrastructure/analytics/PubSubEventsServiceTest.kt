@@ -7,6 +7,7 @@ import com.boclips.events.types.collection.CollectionSubjectsChanged
 import com.boclips.events.types.collection.CollectionVisibilityChanged
 import com.boclips.events.types.collection.VideoAddedToCollection
 import com.boclips.events.types.collection.VideoRemovedFromCollection
+import com.boclips.events.types.video.VideoPlayerInteractedWith
 import com.boclips.events.types.video.VideoSegmentPlayed
 import com.boclips.events.types.video.VideosSearched
 import com.boclips.security.testing.setSecurityContext
@@ -252,6 +253,38 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(message.videoDurationSeconds).isEqualTo(50)
         assertThat(message.user.id).isEqualTo("user@example.com")
         assertThat(message.user.isBoclipsEmployee).isFalse()
+    }
+
+    @Test
+    fun savePlayerInteractedWithEvent() {
+        val videoId = aValidId()
+        eventService.savePlayerInteractedWithEvent(
+            videoId = VideoId(videoId),
+            playerId = "player-id",
+            videoDurationSeconds = 50,
+            currentTime = 34,
+            type = "captions-on",
+            payload = mapOf<String, Any>(
+                Pair("kind", "caption-kind"),
+                Pair("language", "caption-language"),
+                Pair("id", "caption-id"),
+                Pair("label", "caption-label")
+            )
+        )
+
+        val message = getMessage(topics.videoPlayerInteractedWith(), VideoPlayerInteractedWith::class)
+        assertThat(message.user.id).isEqualTo("user@example.com")
+        assertThat(message.user.isBoclipsEmployee).isFalse()
+        assertThat(message.playerId).isEqualTo("player-id")
+        assertThat(message.videoId).isEqualTo(videoId)
+        assertThat(message.videoDurationSeconds).isEqualTo(50)
+        assertThat(message.currentTime).isEqualTo(34)
+        assertThat(message.type).isEqualTo("captions-on")
+        assertThat(message.payload.size).isGreaterThan(0)
+        assertThat(message.payload["kind"]).isEqualTo("caption-kind")
+        assertThat(message.payload["id"]).isEqualTo("caption-id")
+        assertThat(message.payload["language"]).isEqualTo("caption-language")
+        assertThat(message.payload["label"]).isEqualTo("caption-label")
     }
 
     @Test
