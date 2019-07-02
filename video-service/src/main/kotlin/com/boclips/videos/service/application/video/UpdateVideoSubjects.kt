@@ -22,10 +22,15 @@ class UpdateVideoSubjects(
         val videoId = VideoId(videoSubjectClassified.videoId)
         try {
             val subjects = subjectRepository.findByIds(videoSubjectClassified.subjects.map { it.id })
-            val updateCommand = VideoUpdateCommand.ReplaceSubjects(videoId, subjects)
-            val updatedVideo = videoRepository.update(updateCommand)
-            videoSearchService.upsert(sequenceOf(updatedVideo))
-            logger.info { "Updates subjects of video ${videoId.value}: ${subjects.joinToString(", ") { it.name }}" }
+            if(subjects.isNotEmpty()) {
+                val updateCommand = VideoUpdateCommand.ReplaceSubjects(videoId, subjects)
+                val updatedVideo = videoRepository.update(updateCommand)
+                videoSearchService.upsert(sequenceOf(updatedVideo))
+                logger.info { "Updates subjects of video ${videoId.value}: ${subjects.joinToString(", ") { it.name }}" }
+            } else {
+                logger.info("Not found", "Subject with id ${videoSubjectClassified.subjects.map { it.id }} cannot be found")
+            }
+
         } catch (e: Exception) {
             logger.error(e) { "Updating subjects of video ${videoId.value} failed and will not be retried" }
         }
