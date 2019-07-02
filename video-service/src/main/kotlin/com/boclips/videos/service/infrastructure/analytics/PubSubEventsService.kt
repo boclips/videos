@@ -138,7 +138,7 @@ class PubSubEventsService(
         videoId: VideoId,
         videoDurationSeconds: Long,
         currentTime: Long,
-        type: String,
+        subtype: String,
         payload: Map<String, Any>
     ) {
         topics.videoPlayerInteractedWith().send(
@@ -148,7 +148,7 @@ class PubSubEventsService(
                     .videoId(videoId.value)
                     .videoDurationSeconds(videoDurationSeconds)
                     .currentTime(currentTime)
-                    .type(type)
+                    .subtype(subtype)
                     .payload(payload)
             )
         )

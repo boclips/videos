@@ -263,7 +263,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             playerId = "player-id",
             videoDurationSeconds = 50,
             currentTime = 34,
-            type = "captions-on",
+            subtype = "captions-on",
             payload = mapOf<String, Any>(
                 Pair("kind", "caption-kind"),
                 Pair("language", "caption-language"),
@@ -279,7 +279,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(message.videoId).isEqualTo(videoId)
         assertThat(message.videoDurationSeconds).isEqualTo(50)
         assertThat(message.currentTime).isEqualTo(34)
-        assertThat(message.type).isEqualTo("captions-on")
+        assertThat(message.subtype).isEqualTo("captions-on")
         assertThat(message.payload.size).isGreaterThan(0)
         assertThat(message.payload["kind"]).isEqualTo("caption-kind")
         assertThat(message.payload["id"]).isEqualTo("caption-id")

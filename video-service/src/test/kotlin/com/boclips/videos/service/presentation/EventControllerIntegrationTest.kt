@@ -60,7 +60,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             "videoId": "$videoId",
             "videoDurationSeconds": 120,
             "currentTime": 23,
-            "type": "captions-on",
+            "subtype": "captions-on",
             "payload": {
                 "kind": "caption-kind",
                 "label": "caption-label",

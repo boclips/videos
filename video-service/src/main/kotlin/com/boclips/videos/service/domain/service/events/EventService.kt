@@ -32,7 +32,7 @@ interface EventService {
         videoId: VideoId,
         videoDurationSeconds: Long,
         currentTime: Long,
-        type: String,
+        subtype: String,
         payload: Map<String, Any>
     )
 }

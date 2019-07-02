@@ -8,7 +8,7 @@ data class CreatePlayerInteractedWithEvent(
     val videoId: String?,
     val videoDurationSeconds: Long?,
     val currentTime: Long?,
-    val type: String?,
+    val subtype: String?,
     val payload: Map<String, Any>?
 ) : EventCommand() {
     override fun isValidOrThrows() {
@@ -16,7 +16,7 @@ data class CreatePlayerInteractedWithEvent(
         if (this.videoId.isNullOrBlank()) throw InvalidEventException("videoId must be specified")
         if (this.videoDurationSeconds === null) throw InvalidEventException("videoDurationSeconds must be specified")
         if (this.currentTime === null) throw InvalidEventException("currentTime must be specified")
-        if (this.type.isNullOrBlank()) throw InvalidEventException("type must be specified")
+        if (this.subtype.isNullOrBlank()) throw InvalidEventException("subtype must be specified")
 
         if (isNullOrNegative(this.videoDurationSeconds)) throw InvalidEventException("videoDurationSeconds must be specified")
     }

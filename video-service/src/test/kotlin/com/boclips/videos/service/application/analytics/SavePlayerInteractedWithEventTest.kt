@@ -17,7 +17,7 @@ class SavePlayerInteractedWithEventTest : AbstractSpringIntegrationTest() {
         videoId = TestFactories.aValidId(),
         videoDurationSeconds = 60,
         currentTime = 54,
-        type = "captions-on",
+        subtype = "captions-on",
         payload = mapOf<String, Any>(
             Pair("kind", "caption-kind"),
             Pair("language", "caption-language"),
