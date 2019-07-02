@@ -199,18 +199,20 @@ object TestFactories {
     )
 
     fun createCollection(
-            id: CollectionId = CollectionId("collection-id"),
-            owner: String = "collection owner",
-            title: String = "collection title",
-            videos: List<VideoId> = listOf(createVideo().videoId),
-            updatedAt: Instant = Instant.now(),
-            isPublic: Boolean = false,
-            createdByBoclips: Boolean = false,
-            bookmarks: Set<UserId> = emptySet(),
-            subjects: Set<SubjectId> = emptySet()
+        id: CollectionId = CollectionId("collection-id"),
+        owner: String = "collection owner",
+        title: String = "collection title",
+        videos: List<VideoId> = listOf(createVideo().videoId),
+        updatedAt: Instant = Instant.now(),
+        isPublic: Boolean = false,
+        createdByBoclips: Boolean = false,
+        bookmarks: Set<UserId> = emptySet(),
+        subjects: Set<SubjectId> = emptySet(),
+        viewerIds: List<UserId> = emptyList()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
+        viewerIds = viewerIds,
         title = title,
         videos = videos,
         updatedAt = updatedAt,
