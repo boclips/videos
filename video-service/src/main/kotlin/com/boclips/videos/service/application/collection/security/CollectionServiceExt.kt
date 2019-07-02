@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import mu.KotlinLogging.logger
 
 fun CollectionRepository.getOwnedCollectionOrThrow(collectionId: String) =
     getCollectionOrThrow(collectionId = collectionId, collectionRepository = this, isForReading = false)
@@ -21,6 +22,11 @@ private fun getCollectionOrThrow(
     val userId = getCurrentUserId()
     val collection = collectionRepository.find(CollectionId(collectionId))
         ?: throw CollectionNotFoundException(collectionId)
+
+    val logger = logger("CollectionServiceExt.getCollectionOrThrow")
+
+    logger.info("userId: <$userId>")
+    logger.info("collection.viewerIds: <${collection.viewerIds}>")
 
     return when {
         isForReading && collection.isPublic -> collection
