@@ -1,23 +1,38 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 
 class VideoAccessService(
     private val videoRepository: VideoRepository
 ) {
-    fun accessible(videoId: VideoId): Boolean {
-        val video = videoRepository.find(videoId)
-
-        video?.let { return it.searchable } ?: throw VideoNotFoundException()
-    }
-
     fun grantAccess(videoIds: List<VideoId>) {
-        videoRepository.bulkUpdate(videoIds.map(VideoUpdateCommand::MakeSearchable))
+        setSearchBlacklist(videoIds, emptySet())
     }
 
     fun revokeAccess(videoIds: List<VideoId>) {
-        videoRepository.bulkUpdate(videoIds.map(VideoUpdateCommand::HideFromSearch))
+        setSearchBlacklist(videoIds, DeliveryMethod.ALL)
+    }
+
+    fun setSearchBlacklist(videoIds: List<VideoId>, deliveryMethods: Set<DeliveryMethod>) {
+        update(videoIds) { videoId ->
+            listOf(
+                VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
+                    videoId = videoId,
+                    deliveryMethods = deliveryMethods
+                ),
+                if (deliveryMethods == DeliveryMethod.ALL) {
+                    VideoUpdateCommand.HideFromSearch(videoId)
+                } else {
+                    VideoUpdateCommand.MakeSearchable(videoId)
+                }
+
+            )
+        }
+    }
+
+    private fun update(videoIds: List<VideoId>, command: (videoId: VideoId) -> List<VideoUpdateCommand>) {
+        videoRepository.bulkUpdate(videoIds.flatMap(command))
     }
 }

@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
@@ -36,7 +37,10 @@ object VideoDocumentConverter {
             searchable = video.searchable,
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
-            rating = UserRatingDocumentConverter.toDocument(video.rating)?.let {listOf(it)} ?: emptyList()
+            rating = UserRatingDocumentConverter.toDocument(video.rating)?.let { listOf(it) } ?: emptyList(),
+            hiddenFromSearchForDeliveryMethods = video.hiddenFromSearchForDeliveryMethods.map(
+                DeliveryMethodDocumentConverter::toDocument
+            ).toSet()
         )
     }
 
@@ -61,7 +65,17 @@ object VideoDocumentConverter {
                 min = document.ageRangeMin,
                 max = document.ageRangeMax
             ) else AgeRange.unbounded(),
-            rating = document.rating.firstOrNull()?.let { UserRatingDocumentConverter.toRating(it) }
+            rating = document.rating.firstOrNull()?.let { UserRatingDocumentConverter.toRating(it) },
+            hiddenFromSearchForDeliveryMethods = document.hiddenFromSearchForDeliveryMethods?.map(
+                DeliveryMethodDocumentConverter::fromDocument
+            )?.toSet() ?: hiddenDeliveryMethodsFromLegacySearchableFlag(document.searchable)
         )
     }
+
+    private fun hiddenDeliveryMethodsFromLegacySearchableFlag(searchable: Boolean): Set<DeliveryMethod> =
+        if (searchable) {
+            emptySet()
+        } else {
+            setOf(DeliveryMethod.DOWNLOAD, DeliveryMethod.STREAM)
+        }
 }

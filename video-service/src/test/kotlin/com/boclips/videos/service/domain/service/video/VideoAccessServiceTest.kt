@@ -1,48 +1,93 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.TestFactories.aValidId
-import com.nhaarman.mockito_kotlin.any
+import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
+import org.springframework.beans.factory.annotation.Autowired
 
-class VideoAccessServiceTest {
-    private lateinit var videoAccessService: VideoAccessService
-    private val videoRepositoryMock = Mockito.mock(VideoRepository::class.java)
+class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
+    @Autowired
+    lateinit var videoAccessService: VideoAccessService
 
-    @BeforeEach
-    fun setUp() {
-        videoAccessService = VideoAccessService(videoRepositoryMock)
+    @Autowired
+    lateinit var videoRepository: VideoRepository
+
+    @Test
+    fun `revoking access hides from all delivery methods`() {
+        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet())
+
+        videoAccessService.revokeAccess(videoIds = listOf(videoId))
+
+        val video = videoRepository.find(videoId = videoId)!!
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
+            setOf(
+                DeliveryMethod.DOWNLOAD,
+                DeliveryMethod.STREAM
+            )
+        )
+        assertThat(video.searchable).isFalse()
     }
 
-    @Nested
-    @DisplayName("check accessibility")
-    inner class AccessibilityTests {
-        @Test
-        fun `returns true if a video is accessible`() {
-            `when`(videoRepositoryMock.find(any()))
-                .thenReturn(TestFactories.createVideo(searchable = true))
+    @Test
+    fun `granting access enables on all delivery methods`() {
+        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.STREAM))
 
-            val isVideoAccessible = videoAccessService.accessible(VideoId(value = aValidId()))
+        videoAccessService.grantAccess(videoIds = listOf(videoId))
 
-            assertThat(isVideoAccessible).isEqualTo(true)
-        }
+        val video = videoRepository.find(videoId = videoId)!!
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEmpty()
+        assertThat(video.searchable).isTrue()
+    }
 
-        @Test
-        fun `returns false if a video is not accessible`() {
-            `when`(videoRepositoryMock.find(any()))
-                .thenReturn(TestFactories.createVideo(searchable = false))
+    @Test
+    fun `blacklists on a subset of delivery methods`() {
+        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet(), searchable = false)
 
-            val isVideoAccessible = videoAccessService.accessible(VideoId(value = aValidId()))
+        videoAccessService.setSearchBlacklist(
+            videoIds = listOf(videoId),
+            deliveryMethods = setOf(DeliveryMethod.STREAM)
+        )
 
-            assertThat(isVideoAccessible).isEqualTo(false)
-        }
+        val video = videoRepository.find(videoId = videoId)!!
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
+            setOf(
+                DeliveryMethod.STREAM
+            )
+        )
+        assertThat(video.searchable).isTrue()
+    }
+
+    @Test
+    fun `blacklisting zero delivery methods enables search`() {
+        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet(), searchable = false)
+
+        videoAccessService.setSearchBlacklist(
+            videoIds = listOf(videoId),
+            deliveryMethods = emptySet()
+        )
+
+        val video = videoRepository.find(videoId = videoId)!!
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEmpty()
+        assertThat(video.searchable).isTrue()
+    }
+
+    @Test
+    fun `blacklisting all delivery methods disables search`() {
+        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet(), searchable = false)
+
+        videoAccessService.setSearchBlacklist(
+            videoIds = listOf(videoId),
+            deliveryMethods = DeliveryMethod.ALL
+        )
+
+        val video = videoRepository.find(videoId = videoId)!!
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
+            DeliveryMethod.ALL
+        )
+
+        assertThat(video.searchable).isFalse()
     }
 }

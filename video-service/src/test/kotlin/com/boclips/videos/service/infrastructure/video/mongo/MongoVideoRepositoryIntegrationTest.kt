@@ -7,7 +7,12 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoFilter
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -15,7 +20,10 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.Document
 import org.bson.types.ObjectId
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.util.Date
@@ -351,6 +359,24 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can update hidden from search for delivery methods`() {
+        val video =
+            mongoVideoRepository.create(TestFactories.createVideo(hiddenFromSearchForDeliveryMethods = emptySet()))
+        mongoVideoRepository.update(
+            VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
+                video.videoId,
+                setOf(DeliveryMethod.DOWNLOAD, DeliveryMethod.STREAM)
+            )
+        )
+        assertThat(mongoVideoRepository.find(video.videoId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
+            setOf(
+                DeliveryMethod.DOWNLOAD,
+                DeliveryMethod.STREAM
+            )
+        )
+    }
+
+    @Test
     fun `updates searchable`() {
         val video = mongoVideoRepository.create(TestFactories.createVideo(searchable = true))
 
@@ -496,7 +522,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @DisplayName(value = "Migration Tests")
     inner class MigrationTests {
         @Test
-        fun `can retrieve legacy video documents but it is not playable`() {
+        fun `can retrieve legacy video documents but they are not playable`() {
             mongoClient
                 .getDatabase(DATABASE_NAME)
                 .getCollection(MongoVideoRepository.collectionName)
@@ -569,6 +595,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("legalRestrictions", "Some restrictions")
                         .append("language", "en")
                         .append("searchable", true)
+                        .append("hiddenFromSearchForDeliveryMethods", emptySet<DeliveryMethodDocument>())
                 )
 
             val video = mongoVideoRepository.find(VideoId(value = "5c55697860fef77aa4af323a"))!!

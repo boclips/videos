@@ -27,6 +27,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlay
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -41,6 +42,7 @@ import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequ
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
+import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.presentation.video.VideoTypeResource
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
@@ -55,32 +57,33 @@ import java.util.Locale
 object TestFactories {
 
     fun createVideo(
-            videoId: String = ObjectId().toHexString(),
-            title: String = "title",
-            description: String = "description",
-            contentPartnerName: String = "Reuters",
-            contentPartnerId: ContentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
-            contentPartnerVideoId: String = "cp-id-$videoId",
-            playback: VideoPlayback = createKalturaPlayback(),
-            type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
-            keywords: List<String> = listOf("keyword"),
-            subjects: Set<Subject> = emptySet(),
-            releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
-            legalRestrictions: String = "",
-            language: Locale? = null,
-            transcript: String? = null,
-            topics: Set<Topic> = emptySet(),
-            searchable: Boolean = true,
-            ageRange: AgeRange = AgeRange.bounded(5, 12),
-            rating: UserRating? = null,
-            contentPartner: ContentPartner = ContentPartner(
+        videoId: String = ObjectId().toHexString(),
+        title: String = "title",
+        description: String = "description",
+        contentPartnerName: String = "Reuters",
+        contentPartnerId: ContentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+        contentPartnerVideoId: String = "cp-id-$videoId",
+        playback: VideoPlayback = createKalturaPlayback(),
+        type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+        keywords: List<String> = listOf("keyword"),
+        subjects: Set<Subject> = emptySet(),
+        releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
+        legalRestrictions: String = "",
+        language: Locale? = null,
+        transcript: String? = null,
+        topics: Set<Topic> = emptySet(),
+        searchable: Boolean = true,
+        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod> = emptySet(),
+        ageRange: AgeRange = AgeRange.bounded(5, 12),
+        rating: UserRating? = null,
+        contentPartner: ContentPartner = ContentPartner(
             contentPartnerId = contentPartnerId,
             name = contentPartnerName,
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
             searchable = true
         ),
-            videoReference: String = contentPartnerVideoId
+        videoReference: String = contentPartnerVideoId
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -96,6 +99,7 @@ object TestFactories {
             transcript = transcript,
             topics = topics,
             searchable = searchable,
+            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
             ageRange = ageRange,
             contentPartner = contentPartner,
             videoReference = videoReference,
@@ -173,6 +177,7 @@ object TestFactories {
         playbackProvider: String? = "KALTURA",
         analyseVideo: Boolean = false,
         searchable: Boolean? = true,
+        hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod>? = emptySet(),
         subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
         provider = provider,
@@ -187,6 +192,7 @@ object TestFactories {
         playbackProvider = playbackProvider,
         analyseVideo = analyseVideo,
         searchable = searchable,
+        hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
         subjects = subjects
     )
 

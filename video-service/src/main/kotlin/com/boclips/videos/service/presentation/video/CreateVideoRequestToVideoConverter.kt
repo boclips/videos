@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId
@@ -18,6 +19,11 @@ class CreateVideoRequestToVideoConverter {
         contentPartner: ContentPartner,
         subjects: List<Subject>
     ): Video {
+        val searchable = if (!contentPartner.searchable) {
+            contentPartner.searchable
+        } else {
+            createVideoRequest.searchable ?: true
+        }
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
             playback = videoPlayback,
@@ -29,11 +35,7 @@ class CreateVideoRequestToVideoConverter {
             videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
             type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
-            searchable = if (!contentPartner.searchable) {
-                contentPartner.searchable
-            } else {
-                createVideoRequest.searchable ?: true
-            },
+            searchable = searchable,
             ageRange = if (createVideoRequest.ageRangeMin !== null) {
                 AgeRange.bounded(createVideoRequest.ageRangeMin, createVideoRequest.ageRangeMax)
             } else {
@@ -43,7 +45,18 @@ class CreateVideoRequestToVideoConverter {
             topics = emptySet(),
             language = null,
             transcript = null,
-            rating = null
+            rating = null,
+            hiddenFromSearchForDeliveryMethods = createVideoRequest.hiddenFromSearchForDeliveryMethods
+                ?.map(VideoResourceDeliveryMethodConverter::fromResource)
+                ?.toSet()
+                ?: deliveryMethodsFromLegacySearchable(searchable)
         )
     }
+
+    private fun deliveryMethodsFromLegacySearchable(searchable: Boolean): Set<DeliveryMethod> =
+        if (searchable) {
+            emptySet()
+        } else {
+            DeliveryMethod.ALL
+        }
 }

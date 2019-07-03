@@ -7,11 +7,23 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.HideFromSearch
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MakeSearchable
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceRating
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.DeliveryMethodDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.UserRatingDocumentConverter
@@ -188,7 +200,10 @@ class MongoVideoRepository(
             is ReplaceTopics -> set(VideoDocument::topics, updateCommand.topics.map(TopicDocumentConverter::toDocument))
             is ReplaceKeywords -> set(VideoDocument::keywords, updateCommand.keywords)
             is ReplacePlayback -> set(VideoDocument::playback, PlaybackConverter.toDocument(updateCommand.playback))
-            is ReplaceRating -> set(VideoDocument::rating, listOf(UserRatingDocumentConverter.toDocument(updateCommand.rating)))
+            is ReplaceRating -> set(
+                VideoDocument::rating,
+                listOf(UserRatingDocumentConverter.toDocument(updateCommand.rating))
+            )
             is ReplaceAgeRange -> combine(
                 set(
                     VideoDocument::ageRangeMin,
@@ -199,7 +214,7 @@ class MongoVideoRepository(
                     updateCommand.ageRange.max()
                 )
             )
-            is VideoUpdateCommand.ReplaceContentPartner -> {
+            is ReplaceContentPartner -> {
                 val contentPartnerDocument =
                     ContentPartnerDocumentConverter.toContentPartnerDocument(updateCommand.contentPartner)
                 set(
@@ -207,6 +222,10 @@ class MongoVideoRepository(
                     contentPartnerDocument.copy(lastModified = Instant.now())
                 )
             }
+            is VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods -> set(
+                VideoDocument::hiddenFromSearchForDeliveryMethods,
+                updateCommand.deliveryMethods.map(DeliveryMethodDocumentConverter::toDocument).toSet()
+            )
         }
     }
 

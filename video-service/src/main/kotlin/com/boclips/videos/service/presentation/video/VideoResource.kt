@@ -20,6 +20,7 @@ data class VideoResource(
     val badges: Set<String> = emptySet(),
     val type: VideoTypeResource? = null,
     val status: VideoResourceStatus? = null,
+    val hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod> = emptySet(),
     val legalRestrictions: String? = null,
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null,

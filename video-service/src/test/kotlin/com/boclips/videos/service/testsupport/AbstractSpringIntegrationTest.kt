@@ -16,9 +16,9 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
-import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -33,6 +33,7 @@ import com.boclips.videos.service.presentation.collections.UpdateCollectionReque
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
+import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -169,7 +170,8 @@ abstract class AbstractSpringIntegrationTest {
         keywords: List<String> = emptyList(),
         searchable: Boolean = true,
         legalRestrictions: String = "",
-        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11)
+        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
+        hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod> = emptySet()
     ): VideoId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(
@@ -204,6 +206,7 @@ abstract class AbstractSpringIntegrationTest {
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
                 searchable = searchable,
+                hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
                 analyseVideo = false,
                 ageRangeMin = ageRange.min(),
                 ageRangeMax = ageRange.max()

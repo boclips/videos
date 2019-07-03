@@ -16,6 +16,7 @@ data class CreateVideoRequest(
     val playbackId: String? = null,
     val playbackProvider: String? = null,
     val searchable: Boolean? = null,
+    val hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod>? = null,
     val analyseVideo: Boolean = true,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,

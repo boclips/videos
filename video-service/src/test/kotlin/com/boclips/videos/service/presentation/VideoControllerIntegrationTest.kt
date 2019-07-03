@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository.Companion.collectionName
+import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -419,14 +420,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo().value
 
         mockMvc.perform(patch("/v1/videos/$videoId?rating=3").asTeacher())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", equalTo(videoId)))
-                .andExpect(jsonPath("$.rating", equalTo(3)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(videoId)))
+            .andExpect(jsonPath("$.rating", equalTo(3)))
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.id", equalTo(videoId)))
-                .andExpect(jsonPath("$.rating", equalTo(3)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(videoId)))
+            .andExpect(jsonPath("$.rating", equalTo(3)))
     }
 
     @Test
@@ -664,7 +665,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it allows videos to be updated in bulk`() {
+    fun `deprecated - bulk updates to status affect status and hidden-from-search fields`() {
         val videoIds = listOf(
             saveVideo(searchable = true).value,
             saveVideo(searchable = true).value,
@@ -677,10 +678,52 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNoContent)
 
-        videoIds.zip(listOf("SEARCH_DISABLED", "SEARCH_DISABLED", "SEARCHABLE")).forEach { (id, status) ->
+        videoIds.zip(
+            listOf(
+                Pair("SEARCH_DISABLED", listOf("DOWNLOAD", "STREAM")),
+                Pair("SEARCH_DISABLED", listOf("DOWNLOAD", "STREAM")),
+                Pair("SEARCHABLE", listOf())
+            )
+        ).forEach { (id, statuses) ->
             mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.status", equalTo(status)))
+                .andExpect(jsonPath("$.status", equalTo(statuses.first)))
+                .andExpect(jsonPath("$.hiddenFromSearchForDeliveryMethods", equalTo(statuses.second)))
+        }
+    }
+
+    @Test
+    fun `bulk updates to search blacklist take effect`() {
+        val videoIds = listOf(
+            saveVideo(
+                hiddenFromSearchForDeliveryMethods = setOf(
+                    VideoResourceDeliveryMethod.DOWNLOAD,
+                    VideoResourceDeliveryMethod.STREAM
+                )
+            ).value,
+            saveVideo().value,
+            saveVideo(
+                hiddenFromSearchForDeliveryMethods = emptySet()
+            ).value
+        )
+
+        mockMvc.perform(
+            patch("/v1/videos").asBoclipsEmployee()
+                .content("""{ "ids": ["${videoIds[0]}", "${videoIds[1]}"], "hiddenFromSearchForDeliveryMethods": ["DOWNLOAD"] }""")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent)
+
+        videoIds.zip(
+            listOf(
+                Pair("SEARCHABLE", listOf("DOWNLOAD")),
+                Pair("SEARCHABLE", listOf("DOWNLOAD")),
+                Pair("SEARCHABLE", emptyList())
+            )
+        ).forEach { (id, statuses) ->
+            mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.status", equalTo(statuses.first)))
+                .andExpect(jsonPath("$.hiddenFromSearchForDeliveryMethods", equalTo(statuses.second)))
         }
     }
 

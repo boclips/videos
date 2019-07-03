@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -53,7 +54,8 @@ class VideoDocumentConverterTest {
                 )
             ),
             rating = UserRating(3, UserId("user")),
-            ageRange = AgeRange.bounded(11, 16)
+            ageRange = AgeRange.bounded(11, 16),
+            hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.STREAM)
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalAsset)

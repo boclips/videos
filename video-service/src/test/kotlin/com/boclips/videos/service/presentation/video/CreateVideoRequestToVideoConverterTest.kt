@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateR
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException
 import org.assertj.core.api.AbstractThrowableAssert
@@ -184,6 +185,40 @@ class CreateVideoRequestToVideoConverterTest {
         )
 
         assertThat(video.searchable).isFalse()
+    }
+
+    @Test
+    fun `uses the hiddenFromSearchForDeliveryMethods`() {
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(
+                hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.DOWNLOAD)
+            ),
+            TestFactories.createKalturaPlayback(),
+            contentPartner,
+            subjects
+        )
+
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethod.DOWNLOAD))
+    }
+
+    @Test
+    fun `falls back to searchable flag when hidden-from-search delivery method is not set`() {
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(
+                searchable = false,
+                hiddenFromSearchForDeliveryMethods = null
+            ),
+            TestFactories.createKalturaPlayback(),
+            contentPartner,
+            subjects
+        )
+
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
+            setOf(
+                DeliveryMethod.DOWNLOAD,
+                DeliveryMethod.STREAM
+            )
+        )
     }
 }
 

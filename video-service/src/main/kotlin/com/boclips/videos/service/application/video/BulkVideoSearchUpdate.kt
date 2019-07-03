@@ -14,7 +14,7 @@ import org.springframework.cloud.stream.annotation.StreamListener
 class BulkVideoSearchUpdate(
     val contentPartnerRepository: ContentPartnerRepository,
     val videoRepository: VideoRepository,
-    val bulkUpdateVideo: BulkUpdateVideo
+    private val bulkUpdateVideo: BulkUpdateVideo
 ) {
 
     companion object : KLogging();

@@ -4,9 +4,11 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
+import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
@@ -16,6 +18,7 @@ import com.nhaarman.mockito_kotlin.isNull
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,51 +32,182 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoSearchService: VideoSearchService
 
-    @Test
-    fun `disableFromSearch sets searchable field on video to false and removes from search indices`() {
-        val videoIds = listOf(saveVideo(searchable = true), saveVideo(searchable = true))
-        bulkUpdateVideo(
-            BulkUpdateRequest(
-                ids = videoIds.map { it.value },
-                status = VideoResourceStatus.SEARCH_DISABLED
+    @Nested
+    inner class UsingDeprecatedStatusField {
+        @Test
+        fun `disabling sets searchable field on video to false, hides from all delivery methods and removes from search indices`() {
+            val videoIds = listOf(saveVideo(searchable = true), saveVideo(searchable = true))
+
+            bulkUpdateVideo(
+                BulkUpdateRequest(
+                    ids = videoIds.map { it.value },
+                    status = VideoResourceStatus.SEARCH_DISABLED
+                )
             )
-        )
 
-        assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable == false }
+            assertThat(videoRepository.findAll(videoIds)).allMatch { !it.searchable }
+            assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
+                .isEqualTo(listOf(DeliveryMethod.ALL, DeliveryMethod.ALL))
 
-        assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
-        verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
+            verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+        }
+
+        @Test
+        fun `enabling sets searchable field on video to true, enables all delivery methods and registers in search indices`() {
+            val videoIds = listOf(saveVideo(searchable = false), saveVideo(searchable = false))
+            bulkUpdateVideo(
+                BulkUpdateRequest(
+                    ids = videoIds.map { it.value },
+                    status = VideoResourceStatus.SEARCH_DISABLED
+                )
+            )
+
+            bulkUpdateVideo(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
+
+            assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
+            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
+            verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
+        }
+
+        @Test
+        fun `disabling YouTube videos does not register them in the legacy search index`() {
+            val videoId = saveVideo(
+                searchable = false,
+                playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}")
+            )
+
+            bulkUpdateVideo(
+                BulkUpdateRequest(
+                    ids = listOf(videoId.value),
+                    status = VideoResourceStatus.SEARCH_DISABLED
+                )
+            )
+
+            bulkUpdateVideo(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCHABLE))
+
+            verify(legacySearchService).upsert(argThat { toList().isEmpty() }, isNull())
+        }
     }
 
-    @Test
-    fun `makeSearchable sets searchable field on video video to true and registers in search indices`() {
-        val videoIds = listOf(saveVideo(searchable = false), saveVideo(searchable = false))
-        bulkUpdateVideo(
-            BulkUpdateRequest(
-                ids = videoIds.map { it.value },
-                status = VideoResourceStatus.SEARCH_DISABLED
+    @Nested
+    inner class UsingResourceDeliveryMethods {
+        @Test
+        fun `can disable from all delivery methods`() {
+            val allDeliveryMethods = setOf(
+                VideoResourceDeliveryMethod.DOWNLOAD,
+                VideoResourceDeliveryMethod.STREAM
             )
-        )
+            val videoIds = listOf(
+                saveVideo(
+                    searchable = true,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
+                ), saveVideo(
+                    searchable = true, hiddenFromSearchForDeliveryMethods = emptySet()
+                )
+            )
 
-        bulkUpdateVideo(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
+            bulkUpdateVideo(
+                BulkUpdateRequest(
+                    ids = videoIds.map { it.value },
+                    status = null,
+                    hiddenFromSearchForDeliveryMethods = allDeliveryMethods
+                )
+            )
 
-        assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
-        assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-        verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
-    }
+            assertThat(videoRepository.findAll(videoIds)).allMatch { !it.searchable }
+            assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
+                .isEqualTo(listOf(DeliveryMethod.ALL, DeliveryMethod.ALL))
 
-    @Test
-    fun `makeSearchable sets searchable field on video video to true and does not register youtube videos in legacy search index`() {
-        val videoId = saveVideo(
-            searchable = false,
-            playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}")
-        )
+            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
+            verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+        }
 
-        bulkUpdateVideo(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCH_DISABLED))
+        @Test
+        fun `disabling stream only removes from stream search index and adds to download search index`() {
+            val videoIds = listOf(
+                saveVideo(
+                    searchable = true,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
+                ), saveVideo(
+                    searchable = true, hiddenFromSearchForDeliveryMethods = emptySet()
+                )
+            )
 
-        bulkUpdateVideo(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCHABLE))
+            bulkUpdateVideo(
+                BulkUpdateRequest(
+                    ids = videoIds.map { it.value },
+                    status = null,
+                    hiddenFromSearchForDeliveryMethods = setOf(
+                        VideoResourceDeliveryMethod.STREAM
+                    )
+                )
+            )
 
-        verify(legacySearchService).upsert(argThat { toList().isEmpty() }, isNull())
+            assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
+            assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
+                .isEqualTo(listOf(setOf(DeliveryMethod.STREAM), setOf(DeliveryMethod.STREAM)))
+
+            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
+
+            verify(legacySearchService, times(3)).upsert(any(), anyOrNull())
+        }
+
+        @Test
+        fun `disabling download only removes from download search index and adds to stream search index`() {
+            val videoIds = listOf(
+                saveVideo(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
+                ), saveVideo(
+                    searchable = false, hiddenFromSearchForDeliveryMethods = emptySet()
+                )
+            )
+
+            bulkUpdateVideo(
+                BulkUpdateRequest(
+                    ids = videoIds.map { it.value },
+                    status = null,
+                    hiddenFromSearchForDeliveryMethods = setOf(
+                        VideoResourceDeliveryMethod.DOWNLOAD
+                    )
+                )
+            )
+
+            assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
+            assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
+                .isEqualTo(listOf(setOf(DeliveryMethod.DOWNLOAD), setOf(DeliveryMethod.DOWNLOAD)))
+
+            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
+            verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+        }
+
+        @Test
+        fun `enabling both adds to both search index`() {
+            val videoIds = listOf(
+                saveVideo(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.DOWNLOAD)
+                ), saveVideo(
+                    searchable = false, hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.STREAM)
+                )
+            )
+
+            bulkUpdateVideo(
+                BulkUpdateRequest(
+                    ids = videoIds.map { it.value },
+                    status = null,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
+                )
+            )
+
+            assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
+            assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
+                .isEqualTo(listOf(emptySet(), emptySet<DeliveryMethod>()))
+
+            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
+            verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
+        }
     }
 
     @Test
