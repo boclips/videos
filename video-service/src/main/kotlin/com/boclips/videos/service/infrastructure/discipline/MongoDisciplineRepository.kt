@@ -20,9 +20,9 @@ class MongoDisciplineRepository(
     override fun findByIds(ids: Iterable<String>): List<Discipline> {
         val objectIds = ids.map { ObjectId(it) }
         return getDisciplineCollection()
-                .find(DisciplineDocument::id `in` objectIds)
-                .map(this::toDiscipline)
-                .toList()
+            .find(DisciplineDocument::id `in` objectIds)
+            .map(this::toDiscipline)
+            .toList()
     }
 
     companion object : KLogging() {
@@ -58,7 +58,10 @@ class MongoDisciplineRepository(
     }
 
     override fun update(discipline: Discipline) {
-        getDisciplineCollection().replaceOne(DisciplineDocument::id eq ObjectId(discipline.id.value), DisciplineDocumentConverter.toDisciplineDocument(discipline))
+        getDisciplineCollection().replaceOne(
+            DisciplineDocument::id eq ObjectId(discipline.id.value),
+            DisciplineDocumentConverter.toDisciplineDocument(discipline)
+        )
     }
 
     private fun getDisciplineCollection() =

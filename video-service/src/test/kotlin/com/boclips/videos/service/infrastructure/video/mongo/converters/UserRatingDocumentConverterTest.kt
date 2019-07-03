@@ -10,8 +10,8 @@ class UserRatingDocumentConverterTest {
     @Test
     fun `converts a user rating to a document and back`() {
         val rating = UserRating(
-                rating = 3,
-                userId = UserId("sdf")
+            rating = 3,
+            userId = UserId("sdf")
         )
 
         val document = UserRatingDocumentConverter.toDocument(rating)
@@ -19,6 +19,7 @@ class UserRatingDocumentConverterTest {
 
         Assertions.assertThat(restoredUserRating).isEqualTo(rating)
     }
+
     @Test
     fun `null rating`() {
         val document = UserRatingDocumentConverter.toDocument(null)

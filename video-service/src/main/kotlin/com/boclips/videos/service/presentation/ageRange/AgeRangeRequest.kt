@@ -2,7 +2,6 @@ package com.boclips.videos.service.presentation.ageRange
 
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
-import javax.validation.constraints.NotNull
 
 data class AgeRangeRequest(
     @field:Min(value = 3, message = "Age range min must be at least 3")

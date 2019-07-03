@@ -62,7 +62,10 @@ class RebuildCollectionIndexTest {
             )
 
         )
-        assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(collectionId2.value, collectionId3.value)
+        assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(
+            collectionId2.value,
+            collectionId3.value
+        )
     }
 
     @Test

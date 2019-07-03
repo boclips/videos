@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 class SearchContext {
-
     @Bean
     @Profile("!fake-search")
     fun legacySearchService(solrProperties: SolrProperties): LegacyVideoSearchService {

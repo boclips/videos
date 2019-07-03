@@ -13,5 +13,4 @@ object DisciplineDocumentConverter {
             subjects = discipline.subjects.map { ObjectId(it.id.value) }
         )
     }
-
 }

@@ -20,6 +20,7 @@ import java.util.stream.Stream
 class CollectionSearchProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
         val inMemorySearchService = InMemoryCollectionSearch()
+
         val esClient = EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient()
         val readSearchService = CollectionIndexReader(esClient)
         val writeSearchService = CollectionIndexWriter(esClient)

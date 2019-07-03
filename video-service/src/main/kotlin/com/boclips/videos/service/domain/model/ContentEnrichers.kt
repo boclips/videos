@@ -12,8 +12,8 @@ class ContentEnrichers {
             return when {
                 contentPartnersExcluded.any {
                     video.contentPartner.name.equals(
-                            other = it,
-                            ignoreCase = true
+                        other = it,
+                        ignoreCase = true
                     )
                 } -> false
                 video.type != LegacyVideoType.STOCK -> true

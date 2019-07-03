@@ -26,7 +26,12 @@ class DisciplinesLinkBuilderTest {
     @Test
     fun disciplines() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
-        assertThat(disciplinesLinkBuilder.disciplines()).isEqualTo(Link("https://localhost/v1/disciplines", "disciplines"))
+        assertThat(disciplinesLinkBuilder.disciplines()).isEqualTo(
+            Link(
+                "https://localhost/v1/disciplines",
+                "disciplines"
+            )
+        )
     }
 
     @Test
@@ -38,19 +43,28 @@ class DisciplinesLinkBuilderTest {
     @Test
     fun `discipline link defaults to self`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
-        assertThat(disciplinesLinkBuilder.discipline(DisciplineResource.from(DisciplineFactory.sample(id = "id")))).isEqualTo(Link("https://localhost/v1/disciplines/id", "self"))
+        assertThat(disciplinesLinkBuilder.discipline(DisciplineResource.from(DisciplineFactory.sample(id = "id")))).isEqualTo(
+            Link("https://localhost/v1/disciplines/id", "self")
+        )
     }
 
     @Test
     fun `discipline link with rel`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
-        assertThat(disciplinesLinkBuilder.discipline(DisciplineResource.from(DisciplineFactory.sample(id = "id")), "rel")).isEqualTo(Link("https://localhost/v1/disciplines/id", "rel"))
+        assertThat(
+            disciplinesLinkBuilder.discipline(
+                DisciplineResource.from(DisciplineFactory.sample(id = "id")),
+                "rel"
+            )
+        ).isEqualTo(Link("https://localhost/v1/disciplines/id", "rel"))
     }
 
     @Test
     fun `subjects for discipline`() {
         setSecurityContext("teacher@boclips.com", UserRoles.UPDATE_DISCIPLINES)
 
-        assertThat(disciplinesLinkBuilder.subjectsForDiscipline(DisciplineResource.from(DisciplineFactory.sample(id = "id")))).isEqualTo(Link("https://localhost/v1/disciplines/id/subjects", "subjects"))
+        assertThat(disciplinesLinkBuilder.subjectsForDiscipline(DisciplineResource.from(DisciplineFactory.sample(id = "id")))).isEqualTo(
+            Link("https://localhost/v1/disciplines/id/subjects", "subjects")
+        )
     }
 }

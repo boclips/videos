@@ -47,16 +47,21 @@ class DisciplinesControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val subject1Url = createSubject("electromagnetism")
         val subject2Url = createSubject("thermodynamics")
 
-        val newDisciplineResponse = createDiscipline(code = "physics", name = "Physics").andReturn().response.contentAsString
+        val newDisciplineResponse =
+            createDiscipline(code = "physics", name = "Physics").andReturn().response.contentAsString
         val subjectsUrl = JsonPath.parse(newDisciplineResponse).read<String>("$._links.subjects.href")
         val disciplineUrl = JsonPath.parse(newDisciplineResponse).read<String>("$._links.self.href")
 
-        mockMvc.perform(put(subjectsUrl).content("""
+        mockMvc.perform(
+            put(subjectsUrl).content(
+                """
                 $subject1Url
                 $subject2Url
-                """.trimIndent())
-            .contentType("text/uri-list")
-            .asBoclipsEmployee())
+                """.trimIndent()
+            )
+                .contentType("text/uri-list")
+                .asBoclipsEmployee()
+        )
             .andExpect(status().isNoContent)
 
         mockMvc.perform(get(disciplineUrl).asTeacher())
@@ -72,12 +77,14 @@ class DisciplinesControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     private fun createDiscipline(code: String, name: String): ResultActions {
         return mockMvc.perform(
-            post("/v1/disciplines").content("""
+            post("/v1/disciplines").content(
+                """
                 {
                   "code": "$code",
                   "name": "$name"
                 }
-                """.trimIndent())
+                """.trimIndent()
+            )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         )

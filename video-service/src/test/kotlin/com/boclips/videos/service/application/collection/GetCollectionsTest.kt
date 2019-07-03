@@ -60,7 +60,7 @@ class GetCollectionsTest {
             on {
                 getBookmarked(
                     PageRequest(0, 1),
-                        UserId("me@me.com")
+                    UserId("me@me.com")
                 )
             } doReturn Page(
                 listOf(

@@ -30,7 +30,7 @@ class UpdateContentPartner(
                 getSearchUpdateRequestType(request.searchable!!)
             )
         }
-        
+
         updateContentPartnerInVideos(contentPartner)
 
         return contentPartner

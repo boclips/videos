@@ -14,8 +14,7 @@ import org.springframework.context.annotation.Profile
 
 @Profile("fake-search")
 @Configuration
-class SearchFakeConfiguration {
-
+class SearchContextFake {
     @Bean
     fun videoMetadataSearchService(): VideoSearchService {
         val inMemoryVideoSearch = InMemoryVideoSearch()

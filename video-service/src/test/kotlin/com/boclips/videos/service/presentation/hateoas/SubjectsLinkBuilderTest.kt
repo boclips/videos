@@ -32,11 +32,21 @@ class SubjectsLinkBuilderTest {
 
     @Test
     fun `subject link defaults to self`() {
-        assertThat(subjectsLinkBuilder.subject(SubjectResource("id"))).isEqualTo(Link("https://localhost/v1/subjects/id", "self"))
+        assertThat(subjectsLinkBuilder.subject(SubjectResource("id"))).isEqualTo(
+            Link(
+                "https://localhost/v1/subjects/id",
+                "self"
+            )
+        )
     }
 
     @Test
     fun `subject link with rel`() {
-        assertThat(subjectsLinkBuilder.subject(SubjectResource("id"), "rel")).isEqualTo(Link("https://localhost/v1/subjects/id", "rel"))
+        assertThat(
+            subjectsLinkBuilder.subject(
+                SubjectResource("id"),
+                "rel"
+            )
+        ).isEqualTo(Link("https://localhost/v1/subjects/id", "rel"))
     }
 }

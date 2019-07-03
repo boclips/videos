@@ -23,7 +23,7 @@ class DeleteCollectionTest {
 
     lateinit var collectionRepository: CollectionRepository
     var collectionSearchService: CollectionSearchService = mock {
-        on { removeFromSearch(any()) }.then {  }
+        on { removeFromSearch(any()) }.then { }
     }
 
     @BeforeEach

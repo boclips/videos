@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.VideosExclusionFromSearchRequested
 import com.boclips.events.types.VideosInclusionInSearchRequested
-import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest

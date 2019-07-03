@@ -42,7 +42,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         assertThat(collection.createdByBoclips).isFalse()
 
         val allCollections = collectionRepository.getByOwner(
-                UserId("this-user"),
+            UserId("this-user"),
             PageRequest(0, 10)
         ).elements
         assertThat(allCollections).contains(collection)

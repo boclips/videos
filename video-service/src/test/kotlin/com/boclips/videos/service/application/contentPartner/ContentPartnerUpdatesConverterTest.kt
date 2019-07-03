@@ -21,7 +21,6 @@ class ContentPartnerUpdatesConverterTest {
         assertThat(command.searchable).isEqualTo(true)
     }
 
-
     @Test
     fun `creates command for updating the name`() {
         val commands = ContentPartnerUpdatesConverter().convert(

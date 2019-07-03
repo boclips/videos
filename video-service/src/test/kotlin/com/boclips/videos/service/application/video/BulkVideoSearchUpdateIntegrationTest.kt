@@ -3,9 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.types.VideosExclusionFromSearchRequested
 import com.boclips.events.types.VideosInclusionInSearchRequested
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyOrNull

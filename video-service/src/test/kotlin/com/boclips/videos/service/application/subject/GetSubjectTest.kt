@@ -15,12 +15,14 @@ class GetSubjectTest {
     @Test
     fun `subject when found returns resource`() {
         val subjectRepository = mock<SubjectRepository>()
-        whenever(subjectRepository.findByIds(listOf("id"))).thenReturn(listOf(
-            Subject(
-                SubjectId("id"),
-                "name"
+        whenever(subjectRepository.findByIds(listOf("id"))).thenReturn(
+            listOf(
+                Subject(
+                    SubjectId("id"),
+                    "name"
+                )
             )
-        ))
+        )
 
         assertThat(GetSubject(subjectRepository)("id")).isEqualTo(SubjectResource("id", "name"))
     }
@@ -31,5 +33,4 @@ class GetSubjectTest {
             GetSubject(mock())("not found")
         }
     }
-
 }

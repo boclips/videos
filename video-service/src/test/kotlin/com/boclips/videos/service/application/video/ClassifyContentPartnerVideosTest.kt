@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 
 class ClassifyContentPartnerVideosTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var classifyContentPartnerVideos : ClassifyContentPartnerVideos
+    lateinit var classifyContentPartnerVideos: ClassifyContentPartnerVideos
 
     @Test
     fun `classifying a video sends a message to the relevant channel`() {

@@ -90,7 +90,16 @@ class UpdateCollectionTest : AbstractSpringIntegrationTest() {
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
 
-        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements.first().id).isEqualTo(collectionId)
+        assertThat(
+            collectionService.search(
+                CollectionSearchQuery(
+                    "title",
+                    emptyList(),
+                    1,
+                    0
+                )
+            ).elements.first().id
+        ).isEqualTo(collectionId)
     }
 
     @Test

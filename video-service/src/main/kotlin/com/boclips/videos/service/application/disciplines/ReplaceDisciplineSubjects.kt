@@ -10,11 +10,15 @@ class ReplaceDisciplineSubjects(
     private val subjectRepository: SubjectRepository
 ) {
     operator fun invoke(disciplineId: String, subjectUris: List<String>): DisciplineResource {
-        val discipline = disciplineRepository.findOne(disciplineId) ?: throw ResourceNotFoundApiException("Discipline not found", "The discipline with id=$disciplineId can't be found")
+        val discipline = disciplineRepository.findOne(disciplineId) ?: throw ResourceNotFoundApiException(
+            "Discipline not found",
+            "The discipline with id=$disciplineId can't be found"
+        )
 
-        return discipline.copy(subjects = subjectRepository.findByIds(subjectUris.map { it.substringAfter("/subjects/") })).let {
-            disciplineRepository.update(discipline = it)
-            DisciplineResource.from(it)
-        }
+        return discipline.copy(subjects = subjectRepository.findByIds(subjectUris.map { it.substringAfter("/subjects/") }))
+            .let {
+                disciplineRepository.update(discipline = it)
+                DisciplineResource.from(it)
+            }
     }
 }

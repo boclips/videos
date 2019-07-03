@@ -159,11 +159,13 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ReplaceSubjectsCommand(subjects = setOf(
-                    SubjectId(
-                        "subject-1"
+                CollectionUpdateCommand.ReplaceSubjectsCommand(
+                    subjects = setOf(
+                        SubjectId(
+                            "subject-1"
+                        )
                     )
-                ))
+                )
             )
         )
 

@@ -1,9 +1,9 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -17,7 +17,9 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)
     class MakeSearchable(videoId: VideoId) : VideoUpdateCommand(videoId)
     class HideFromSearch(videoId: VideoId) : VideoUpdateCommand(videoId)
-    class UpdateHiddenFromSearchForDeliveryMethods(videoId: VideoId, val deliveryMethods: Set<DeliveryMethod>) : VideoUpdateCommand(videoId)
+    class UpdateHiddenFromSearchForDeliveryMethods(videoId: VideoId, val deliveryMethods: Set<DeliveryMethod>) :
+        VideoUpdateCommand(videoId)
+
     class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)
     class ReplaceTranscript(videoId: VideoId, val transcript: String) : VideoUpdateCommand(videoId)
     class ReplaceTopics(videoId: VideoId, val topics: Set<Topic>) : VideoUpdateCommand(videoId)

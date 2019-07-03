@@ -4,7 +4,6 @@ import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.bouncycastle.asn1.x500.style.RFC4519Style.name
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -47,7 +46,7 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `delete a subject`() {
-        val subject = mongoSubjectRepository.create(name="Biology")
+        val subject = mongoSubjectRepository.create(name = "Biology")
 
         mongoSubjectRepository.delete(subject.id);
 
@@ -55,8 +54,8 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `find by Id` () {
-        val subject = mongoSubjectRepository.create(name="Biology")
+    fun `find by Id`() {
+        val subject = mongoSubjectRepository.create(name = "Biology")
 
         val retrievedSubject = mongoSubjectRepository.findById(subject.id)
 

@@ -10,15 +10,16 @@ import java.util.concurrent.CompletableFuture
 open class ClassifyContentPartnerVideos(
     private val videoRepository: VideoRepository,
     private val classifyVideo: ClassifyVideo
-)
-{
+) {
     companion object : KLogging()
 
     @Async
     open operator fun invoke(contentPartner: String?): CompletableFuture<Unit> {
         logger.info { "Requesting subject classification for all instructional videos: $contentPartner" }
         val future = CompletableFuture<Unit>()
-        val filter = contentPartner?.let { VideoFilter.ContentPartnerIs(it) } ?: VideoFilter.LegacyTypeIs(LegacyVideoType.INSTRUCTIONAL_CLIPS)
+        val filter = contentPartner?.let { VideoFilter.ContentPartnerIs(it) } ?: VideoFilter.LegacyTypeIs(
+            LegacyVideoType.INSTRUCTIONAL_CLIPS
+        )
         videoRepository.streamAll(filter) { videos ->
             videos
                 .forEach { video ->

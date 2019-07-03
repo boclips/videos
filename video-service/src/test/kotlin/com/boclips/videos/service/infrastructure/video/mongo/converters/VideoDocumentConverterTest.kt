@@ -14,7 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.*
+import java.util.Locale
 
 class VideoDocumentConverterTest {
     @Test

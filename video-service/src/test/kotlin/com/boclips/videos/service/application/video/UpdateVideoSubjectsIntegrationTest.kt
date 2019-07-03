@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.support.MessageBuilder
 
-
 class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
@@ -25,12 +24,12 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val maths = subjectRepository.create("Maths")
         val subjectTag = Subject.builder()
-                .id(maths.id.value)
-                .build()
+            .id(maths.id.value)
+            .build()
         val event = VideoSubjectClassified.builder()
-                .videoId(videoId.value)
-                .subjects(setOf(subjectTag))
-                .build()
+            .videoId(videoId.value)
+            .subjects(setOf(subjectTag))
+            .build()
 
         subscriptions.videoSubjectClassified().send(MessageBuilder.withPayload(event).build())
 

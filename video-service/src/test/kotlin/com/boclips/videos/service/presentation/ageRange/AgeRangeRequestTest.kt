@@ -68,7 +68,8 @@ class AgeRangeRequestTest {
 
     @Test
     fun `allows an age range with min and max both null`() {
-        val validRequest = TestFactories.createUpdateCollectionRequest(ageRange = AgeRangeRequest(min = null, max = null))
+        val validRequest =
+            TestFactories.createUpdateCollectionRequest(ageRange = AgeRangeRequest(min = null, max = null))
         val violations = validator.validate(validRequest)
         Assertions.assertThat(violations).hasSize(0)
     }

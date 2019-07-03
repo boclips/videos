@@ -10,16 +10,17 @@ import mu.KLogging
 import javax.validation.Valid
 
 open class RateVideo(
-        private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository
 ) {
 
     companion object : KLogging();
 
     open operator fun invoke(@Valid rateVideoRequest: RateVideoRequest) {
-        videoRepository.update(VideoUpdateCommand.ReplaceRating(
+        videoRepository.update(
+            VideoUpdateCommand.ReplaceRating(
                 VideoId(rateVideoRequest.videoId),
                 UserRating(rating = rateVideoRequest.rating!!, userId = getCurrentUserId())
-        ))
+            )
+        )
     }
-
 }

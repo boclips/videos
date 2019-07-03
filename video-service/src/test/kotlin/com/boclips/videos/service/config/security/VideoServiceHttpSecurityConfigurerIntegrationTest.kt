@@ -103,7 +103,7 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
             .andExpect(status().isForbidden)
 
         mockMvc.perform(patch("/v1/videos/${videoId.value}?rating=3").asTeacher())
-                .andExpect(status().`is`(not401Or403()))
+            .andExpect(status().`is`(not401Or403()))
     }
 
     @Test
