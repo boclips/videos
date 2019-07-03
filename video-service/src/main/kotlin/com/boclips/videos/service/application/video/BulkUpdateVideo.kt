@@ -21,7 +21,6 @@ open class BulkUpdateVideo(
     private val legacyVideoSearchService: LegacyVideoSearchService,
     private val videoAccessService: VideoAccessService
 ) {
-
     companion object : KLogging();
 
     open operator fun invoke(bulkUpdateRequest: BulkUpdateRequest?) {
