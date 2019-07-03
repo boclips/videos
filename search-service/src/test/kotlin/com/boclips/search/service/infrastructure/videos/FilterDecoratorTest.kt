@@ -29,7 +29,8 @@ class FilterDecoratorTest {
 
         FilterDecorator(boolQuery).apply(videoQuery)
 
-        assertThat(boolQuery.toString()).isEqualTo("""
+        assertThat(boolQuery.toString()).isEqualTo(
+            """
 {
   "bool" : {
     "must" : [
@@ -182,6 +183,7 @@ class FilterDecoratorTest {
     "boost" : 1.0
   }
 }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 }

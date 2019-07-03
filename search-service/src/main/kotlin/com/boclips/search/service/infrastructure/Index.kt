@@ -5,10 +5,10 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 interface Index {
-    fun getESType() : String
-    fun getIndexAlias() : String
-    fun getIndexWildcard() : String
-    fun generateIndexName() : String
+    fun getESType(): String
+    fun getIndexAlias(): String
+    fun getIndexWildcard(): String
+    fun generateIndexName(): String
 
     companion object {
         fun generateIndexName(prefix: String): String {

@@ -49,8 +49,7 @@ class InMemoryVideoSearch : AbstractInMemorySearch<VideoQuery, VideoMetadata>(),
                 }.filter { entry ->
                     if (videoQuery.ageRangeMin == null && videoQuery.ageRangeMax == null) {
                         true
-                    }
-                    else if (videoQuery.ageRangeMin == null) {
+                    } else if (videoQuery.ageRangeMin == null) {
                         entry.value.ageRangeMin?.let { videoMin ->
                             videoQuery.ageRangeMax != null && videoMin <= videoQuery.ageRangeMax
                         } ?: false
