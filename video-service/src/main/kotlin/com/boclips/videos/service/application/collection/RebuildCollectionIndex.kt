@@ -5,18 +5,16 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
-import org.springframework.stereotype.Component
 import java.util.concurrent.CompletableFuture
 
-@Component
-class RebuildCollectionIndex(
+open class RebuildCollectionIndex(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService
 ) {
     companion object : KLogging()
 
     @Async
-    operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
+    open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
         logger.info("Starting a full reindex")
         val future = CompletableFuture<Unit>()
 

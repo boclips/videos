@@ -29,9 +29,6 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoRepository: VideoRepository
 
-    @Autowired
-    lateinit var videoSearchService: VideoSearchService
-
     @Nested
     inner class UsingDeprecatedStatusField {
         @Test

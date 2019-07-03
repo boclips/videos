@@ -8,7 +8,6 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import org.springframework.stereotype.Component
 
-@Component
 class DefaultCollectionSearch(
     indexReader: IndexReader<CollectionMetadata, CollectionQuery>,
     indexWriter: IndexWriter<CollectionMetadata>

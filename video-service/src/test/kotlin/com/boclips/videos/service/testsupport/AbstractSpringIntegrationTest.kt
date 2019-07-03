@@ -6,7 +6,6 @@ import com.boclips.events.types.Subject
 import com.boclips.events.types.video.VideoSubjectClassified
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.search.service.infrastructure.contracts.AbstractInMemorySearch
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -26,6 +25,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOU
 import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
@@ -64,10 +65,13 @@ import java.util.UUID
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
-    lateinit var searchIndices: List<AbstractInMemorySearch<*, *>>
+    lateinit var legacyVideoSearchService: LegacyVideoSearchService
 
     @Autowired
-    lateinit var legacyVideoSearchService: LegacyVideoSearchService
+    lateinit var videoSearchService: VideoSearchService
+
+    @Autowired
+    lateinit var collectionSearchService: CollectionSearchService
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -143,7 +147,9 @@ abstract class AbstractSpringIntegrationTest {
                 }
         }
 
-        searchIndices.forEach { it.clear() }
+        collectionSearchService.safeRebuildIndex(emptySequence())
+        videoSearchService.safeRebuildIndex(emptySequence())
+
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
 

@@ -20,8 +20,7 @@ import org.elasticsearch.search.rescore.QueryRescoreMode
 import org.elasticsearch.search.rescore.QueryRescorerBuilder
 import org.elasticsearch.search.sort.SortOrder
 
-class VideoIndexReader(val client: RestHighLevelClient) :
-    IndexReader<VideoMetadata, VideoQuery> {
+class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
     companion object : KLogging();
 
     private val elasticSearchResultConverter = VideoDocumentConverter()

@@ -18,13 +18,7 @@ import org.springframework.messaging.support.MessageBuilder
 
 class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var contentPartnerRepository: ContentPartnerRepository
-
-    @Autowired
     lateinit var videoRepository: VideoRepository
-
-    @Autowired
-    lateinit var videoSearchService: VideoSearchService
 
     @Test
     fun `removes videos from search indices`() {
