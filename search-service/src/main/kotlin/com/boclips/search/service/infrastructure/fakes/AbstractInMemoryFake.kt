@@ -1,4 +1,4 @@
-package com.boclips.search.service.infrastructure.contracts
+package com.boclips.search.service.infrastructure.fakes
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
@@ -7,7 +7,8 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.SortOrder
 
-abstract class AbstractInMemorySearch<QUERY : SearchQuery<METADATA>, METADATA> : IndexReader<METADATA, QUERY>,
+abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
+    IndexReader<METADATA, QUERY>,
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
 
@@ -65,6 +66,6 @@ abstract class AbstractInMemorySearch<QUERY : SearchQuery<METADATA>, METADATA> :
         items.forEach(this::removeFromSearch)
     }
 
-    abstract fun idsMatching(index: MutableMap<String, METADATA>, videoQuery: QUERY): List<String>
+    abstract fun idsMatching(index: MutableMap<String, METADATA>, query: QUERY): List<String>
     abstract fun upsertMetadata(index: MutableMap<String, METADATA>, item: METADATA)
 }

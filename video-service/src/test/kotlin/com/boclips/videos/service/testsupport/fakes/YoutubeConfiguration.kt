@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-@Profile("fake-youtube")
+@Profile("fakes-youtube")
 @Configuration
 class YoutubeConfiguration {
     @Bean

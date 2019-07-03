@@ -5,9 +5,9 @@ import com.boclips.search.service.infrastructure.AbstractIndexWriter
 import org.elasticsearch.client.RestHighLevelClient
 
 class CollectionIndexWriter(client: RestHighLevelClient) : AbstractIndexWriter<CollectionMetadata>(
-    CollectionIndexConfiguration(),
-    client,
-    CollectionsIndex
+    indexConfiguration = CollectionIndexConfiguration(),
+    client = client,
+    esIndex = CollectionsIndex
 ) {
     override fun serializeToIndexDocument(entry: CollectionMetadata) = CollectionDocument(
         id = entry.id,

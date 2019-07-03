@@ -1,4 +1,4 @@
-package com.boclips.search.service.infrastructure.contracts
+package com.boclips.search.service.infrastructure.fakes
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
@@ -24,7 +24,7 @@ import java.util.stream.Stream
 
 class SearchServiceProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        val inMemorySearchService = InMemoryVideoSearch()
+        val inMemorySearchService = VideoSearchServiceFake()
         val elasticSearchService = VideoIndexReader(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
         val elasticSearchServiceAdmin = VideoIndexWriter(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
 

@@ -1,4 +1,4 @@
-package com.boclips.search.service.infrastructure.contracts
+package com.boclips.search.service.infrastructure.fakes
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
@@ -19,7 +19,7 @@ import java.util.stream.Stream
 
 class CollectionSearchProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        val inMemorySearchService = InMemoryCollectionSearch()
+        val inMemorySearchService = CollectionSearchServiceFake()
 
         val esClient = EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient()
         val readSearchService = CollectionIndexReader(esClient)

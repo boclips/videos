@@ -22,13 +22,13 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class SearchContext {
     @Bean
-    @Profile("!fake-search")
+    @Profile("!fakes-search")
     fun legacySearchService(solrProperties: SolrProperties): LegacyVideoSearchService {
         return SolrVideoSearchService(host = solrProperties.host, port = solrProperties.port)
     }
 
     @Bean
-    @Profile("!fake-search")
+    @Profile("!fakes-search")
     fun videoSearchService(elasticSearchClient: ElasticSearchClient): VideoSearchService {
         return DefaultVideoSearch(
             VideoIndexReader(elasticSearchClient.buildClient()),
@@ -37,7 +37,7 @@ class SearchContext {
     }
 
     @Bean
-    @Profile("!fake-search")
+    @Profile("!fakes-search")
     fun collectionSearchService(elasticSearchClient: ElasticSearchClient): CollectionSearchService {
         return DefaultCollectionSearch(
             CollectionIndexReader(elasticSearchClient.buildClient()),
@@ -46,7 +46,7 @@ class SearchContext {
     }
 
     @Bean
-    @Profile("!fake-search")
+    @Profile("!fakes-search")
     fun elasticSearchClient(elasticSearchProperties: ElasticSearchProperties): ElasticSearchClient {
         return ElasticSearchClient(
             scheme = elasticSearchProperties.scheme,

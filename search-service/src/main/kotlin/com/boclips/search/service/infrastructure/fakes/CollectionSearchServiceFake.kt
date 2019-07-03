@@ -1,11 +1,11 @@
-package com.boclips.search.service.infrastructure.contracts
+package com.boclips.search.service.infrastructure.fakes
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 
-class InMemoryCollectionSearch : AbstractInMemorySearch<CollectionQuery, CollectionMetadata>(),
+class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, CollectionMetadata>(),
     IndexReader<CollectionMetadata, CollectionQuery>,
     IndexWriter<CollectionMetadata> {
 
