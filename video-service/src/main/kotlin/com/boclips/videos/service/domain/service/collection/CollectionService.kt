@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.search.service.domain.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.CollectionSearchQuery

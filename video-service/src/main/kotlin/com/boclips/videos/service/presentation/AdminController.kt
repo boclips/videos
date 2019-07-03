@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
@@ -23,7 +23,8 @@ import java.util.Locale
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) : ProgressNotifier {
+class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) :
+    ProgressNotifier {
     companion object : KLogging()
 
     override fun send(message: String) {

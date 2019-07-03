@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -23,11 +23,11 @@ import org.junit.jupiter.api.Test
 
 class BuildLegacyDocumentSearchIndexTest {
 
-    lateinit var legacySearchService: LegacySearchService
+    lateinit var legacyVideoSearchService: LegacyVideoSearchService
 
     @BeforeEach
     internal fun setUp() {
-        legacySearchService = mock()
+        legacyVideoSearchService = mock()
     }
 
     @Test
@@ -45,7 +45,7 @@ class BuildLegacyDocumentSearchIndexTest {
                 TestFactories.createVideo(videoId = videoId2, keywords = listOf("keyword"))
             )
         )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacySearchService)
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
@@ -64,7 +64,7 @@ class BuildLegacyDocumentSearchIndexTest {
                 )
             )
         )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacySearchService)
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         rebuildSearchIndex()
 
@@ -82,7 +82,7 @@ class BuildLegacyDocumentSearchIndexTest {
                 )
             )
         )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacySearchService)
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         rebuildSearchIndex()
 
@@ -97,7 +97,7 @@ class BuildLegacyDocumentSearchIndexTest {
             } doThrow (MongoClientException("Boom"))
         }
 
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacySearchService)
+        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }
@@ -117,7 +117,7 @@ class BuildLegacyDocumentSearchIndexTest {
         var upsertedVideos: List<LegacyVideoMetadata>?
 
         argumentCaptor<Sequence<LegacyVideoMetadata>>().apply {
-            verify(legacySearchService).upsert(capture(), anyOrNull())
+            verify(legacyVideoSearchService).upsert(capture(), anyOrNull())
 
             upsertedVideos = firstValue.toList()
         }

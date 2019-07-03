@@ -120,7 +120,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createVideo(TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234"))
 
-        verify(legacySearchService).upsert(any(), anyOrNull())
+        verify(legacyVideoSearchService).upsert(any(), anyOrNull())
     }
 
     @Test
@@ -134,7 +134,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        verifyZeroInteractions(legacySearchService)
+        verifyZeroInteractions(legacyVideoSearchService)
     }
 
     @Test
@@ -296,6 +296,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(results).hasSize(0)
-        verifyZeroInteractions(legacySearchService)
+        verifyZeroInteractions(legacyVideoSearchService)
     }
 }

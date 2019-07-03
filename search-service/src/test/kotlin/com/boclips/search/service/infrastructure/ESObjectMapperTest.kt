@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.infrastructure.videos.ESVideo
+import com.boclips.search.service.infrastructure.videos.VideoDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -11,7 +11,7 @@ class ESObjectMapperTest {
     @Test
     fun `writes dates as strings in ES default format`() {
         val serialisedVideo = ESObjectMapper.get().writeValueAsString(
-            ESVideo(
+            VideoDocument(
                 id = "1",
                 title = "title",
                 description = "description",

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
@@ -38,7 +38,7 @@ class CreateVideo(
     private val videoSearchServiceAdmin: VideoSearchService,
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
-    private val legacySearchService: LegacySearchService,
+    private val legacyVideoSearchService: LegacyVideoSearchService,
     private val classifyVideo: ClassifyVideo,
     private val analyseVideo: AnalyseVideo
 ) {
@@ -114,7 +114,7 @@ class CreateVideo(
         videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
 
         if (createdVideo.isBoclipsHosted()) {
-            legacySearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)), null)
+            legacyVideoSearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)), null)
         }
     }
 

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.config.application
 
 import com.boclips.events.config.Topics
-import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -80,7 +80,7 @@ class ApplicationContext(
     val videoSearchService: VideoSearchService,
     val collectionSearchService: CollectionSearchService,
     val playbackRepository: PlaybackRepository,
-    val legacySearchService: LegacySearchService,
+    val legacyVideoSearchService: LegacyVideoSearchService,
     val collectionService: CollectionService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
@@ -122,7 +122,7 @@ class ApplicationContext(
             videoSearchService,
             playbackRepository,
             videoCounter,
-            legacySearchService,
+            legacyVideoSearchService,
             classifyVideo,
             analyseVideo
         )
@@ -155,7 +155,7 @@ class ApplicationContext(
 
     @Bean
     fun bulkUpdate(): BulkUpdateVideo {
-        return BulkUpdateVideo(videoRepository, videoSearchService, legacySearchService, videoAccessService)
+        return BulkUpdateVideo(videoRepository, videoSearchService, legacyVideoSearchService, videoAccessService)
     }
 
     @Bean
@@ -241,7 +241,7 @@ class ApplicationContext(
 
     @Bean
     fun buildLegacySearchIndex(): BuildLegacySearchIndex {
-        return BuildLegacySearchIndex(videoRepository, legacySearchService)
+        return BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
     }
 
     @Bean

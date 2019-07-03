@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.domain.model.video.VideoFilter.IsSearchable
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService

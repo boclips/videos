@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.ProgressNotifier
-import com.boclips.search.service.domain.legacy.LegacySearchService
+import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.domain.model.video.VideoFilter.IsSearchable
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture
 
 open class BuildLegacySearchIndex(
     private val videoRepository: VideoRepository,
-    private val legacySearchService: LegacySearchService
+    private val legacyVideoSearchService: LegacyVideoSearchService
 ) {
     companion object : KLogging()
 
@@ -28,7 +28,7 @@ open class BuildLegacySearchIndex(
                     .filter { it.isBoclipsHosted() }
                     .map(VideoToLegacyVideoMetadataConverter::convert)
 
-                legacySearchService.upsert(filteredVideos, notifier)
+                legacyVideoSearchService.upsert(filteredVideos, notifier)
             }
 
             logger.info("Building a legacy index done.")

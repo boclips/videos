@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.search.service.domain.ProgressNotifier
+import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import mu.KLogging

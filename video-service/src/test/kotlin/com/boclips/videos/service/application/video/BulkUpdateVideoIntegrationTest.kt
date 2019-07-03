@@ -50,7 +50,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 .isEqualTo(listOf(DeliveryMethod.ALL, DeliveryMethod.ALL))
 
             assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
-            verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+            verify(legacyVideoSearchService).bulkRemoveFromSearch(videoIds.map { it.value })
         }
 
         @Test
@@ -67,7 +67,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
             assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-            verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
+            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
         }
 
         @Test
@@ -86,7 +86,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
             bulkUpdateVideo(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCHABLE))
 
-            verify(legacySearchService).upsert(argThat { toList().isEmpty() }, isNull())
+            verify(legacyVideoSearchService).upsert(argThat { toList().isEmpty() }, isNull())
         }
     }
 
@@ -120,7 +120,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 .isEqualTo(listOf(DeliveryMethod.ALL, DeliveryMethod.ALL))
 
             assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
-            verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+            verify(legacyVideoSearchService).bulkRemoveFromSearch(videoIds.map { it.value })
         }
 
         @Test
@@ -150,7 +150,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
 
-            verify(legacySearchService, times(3)).upsert(any(), anyOrNull())
+            verify(legacyVideoSearchService, times(3)).upsert(any(), anyOrNull())
         }
 
         @Test
@@ -179,7 +179,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 .isEqualTo(listOf(setOf(DeliveryMethod.DOWNLOAD), setOf(DeliveryMethod.DOWNLOAD)))
 
             assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-            verify(legacySearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+            verify(legacyVideoSearchService).bulkRemoveFromSearch(videoIds.map { it.value })
         }
 
         @Test
@@ -206,7 +206,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 .isEqualTo(listOf(emptySet(), emptySet<DeliveryMethod>()))
 
             assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-            verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
+            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
         }
     }
 

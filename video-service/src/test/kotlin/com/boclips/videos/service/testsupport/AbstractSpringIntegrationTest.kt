@@ -5,8 +5,8 @@ import com.boclips.events.config.Topics
 import com.boclips.events.types.Subject
 import com.boclips.events.types.video.VideoSubjectClassified
 import com.boclips.kalturaclient.TestKalturaClient
-import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.search.service.infrastructure.AbstractInMemorySearchService
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.search.service.infrastructure.contracts.AbstractInMemorySearch
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -64,10 +64,10 @@ import java.util.UUID
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
-    lateinit var searchIndices: List<AbstractInMemorySearchService<*, *>>
+    lateinit var searchIndices: List<AbstractInMemorySearch<*, *>>
 
     @Autowired
-    lateinit var legacySearchService: LegacySearchService
+    lateinit var legacyVideoSearchService: LegacyVideoSearchService
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -154,7 +154,7 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
-        reset(legacySearchService)
+        reset(legacyVideoSearchService)
     }
 
     fun saveVideo(

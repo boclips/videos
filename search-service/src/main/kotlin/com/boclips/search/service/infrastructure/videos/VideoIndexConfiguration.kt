@@ -3,7 +3,6 @@ package com.boclips.search.service.infrastructure.videos
 import com.boclips.search.service.infrastructure.IndexConfiguration
 
 class VideoIndexConfiguration : IndexConfiguration {
-
     override fun generateMapping(): Map<String, Any> {
         val contentPartnerField = mapOf(
             "type" to "keyword",

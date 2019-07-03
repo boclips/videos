@@ -38,20 +38,20 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
     private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
         val queries = QueryBuilders.boolQuery()
         for (s: String in subjects) {
-            queries.should(QueryBuilders.matchPhraseQuery(ESVideo.SUBJECTS, s))
+            queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECTS, s))
         }
         return queries
     }
 
     private fun matchSource(source: SourceType): TermQueryBuilder {
         return QueryBuilders.termQuery(
-            ESVideo.SOURCE,
+            VideoDocument.SOURCE,
             source.name.toLowerCase()
         )
     }
 
     private fun beWithinDuration(min: Duration?, max: Duration?): RangeQueryBuilder {
-        val queryBuilder = QueryBuilders.rangeQuery(ESVideo.DURATION_SECONDS)
+        val queryBuilder = QueryBuilders.rangeQuery(VideoDocument.DURATION_SECONDS)
 
         min?.let { queryBuilder.from(it.seconds) }
         max?.let { queryBuilder.to(it.seconds) }
@@ -60,7 +60,7 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
     }
 
     private fun beWithinReleaseDate(from: LocalDate?, to: LocalDate?): RangeQueryBuilder {
-        val queryBuilder = QueryBuilders.rangeQuery(ESVideo.RELEASE_DATE)
+        val queryBuilder = QueryBuilders.rangeQuery(VideoDocument.RELEASE_DATE)
 
         from?.let { queryBuilder.from(it) }
         to?.let { queryBuilder.to(it) }
@@ -74,15 +74,15 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
             .apply {
                 if (min == null) {
                     max?.let {
-                        must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply { to(it) })
+                        must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply { to(it) })
                     }
                 } else {
                     should(
                         QueryBuilders.boolQuery().apply {
-                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
+                            must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply {
                                 to(min)
                             })
-                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MAX).apply {
+                            must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MAX).apply {
                                 from(min)
                             })
                         }
@@ -90,11 +90,11 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
 
                     should(
                         QueryBuilders.boolQuery().apply {
-                            must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
+                            must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply {
                                 from(min)
                             })
                             max?.let {
-                                must(QueryBuilders.rangeQuery(ESVideo.AGE_RANGE_MIN).apply {
+                                must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply {
                                     to(it)
                                 })
                             }
@@ -105,12 +105,12 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
     }
 
     private fun matchTags(excludeTags: List<String>) =
-        QueryBuilders.termsQuery(ESVideo.TAGS, excludeTags)
+        QueryBuilders.termsQuery(VideoDocument.TAGS, excludeTags)
 
     private fun filterByTag(includeTags: List<String>): BoolQueryBuilder? {
         return includeTags
             .fold(QueryBuilders.boolQuery()) { acc: BoolQueryBuilder, term: String ->
-                acc.must(QueryBuilders.termQuery(ESVideo.TAGS, term))
+                acc.must(QueryBuilders.termQuery(VideoDocument.TAGS, term))
             }
     }
 }

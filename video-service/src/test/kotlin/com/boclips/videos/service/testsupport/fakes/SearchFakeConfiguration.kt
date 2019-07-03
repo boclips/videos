@@ -1,8 +1,8 @@
 package com.boclips.videos.service.testsupport.fakes
 
-import com.boclips.search.service.domain.legacy.LegacySearchService
-import com.boclips.search.service.infrastructure.collections.InMemoryCollectionSearchService
-import com.boclips.search.service.infrastructure.videos.InMemoryVideoSearchService
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.search.service.infrastructure.contracts.InMemoryCollectionSearch
+import com.boclips.search.service.infrastructure.contracts.InMemoryVideoSearch
 import com.nhaarman.mockito_kotlin.mock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,13 +13,13 @@ import org.springframework.context.annotation.Profile
 class SearchFakeConfiguration {
 
     @Bean
-    fun videoMetadataSearchService() = InMemoryVideoSearchService()
+    fun videoMetadataSearchService() = InMemoryVideoSearch()
 
     @Bean
-    fun collectionMetadataSearchService() = InMemoryCollectionSearchService()
+    fun collectionMetadataSearchService() = InMemoryCollectionSearch()
 
     @Bean
-    fun legacySearchService(): LegacySearchService {
+    fun legacySearchService(): LegacyVideoSearchService {
         return mock()
     }
 }

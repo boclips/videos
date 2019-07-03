@@ -1,7 +1,7 @@
 package com.boclips.search.service.domain.videos.model
 
-import com.boclips.search.service.domain.model.SearchQuery
-import com.boclips.search.service.domain.model.Sort
+import com.boclips.search.service.domain.common.model.SearchQuery
+import com.boclips.search.service.domain.common.model.Sort
 import java.time.Duration
 import java.time.LocalDate
 

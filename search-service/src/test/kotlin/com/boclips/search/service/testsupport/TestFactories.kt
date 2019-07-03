@@ -2,7 +2,7 @@ package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
-import com.boclips.search.service.domain.legacy.LegacyVideoMetadata
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import java.time.Duration

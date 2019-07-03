@@ -1,14 +1,14 @@
 package com.boclips.collections.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.model.PaginatedSearchRequest
-import com.boclips.search.service.infrastructure.collections.InMemoryCollectionSearchService
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.infrastructure.contracts.InMemoryCollectionSearch
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearchService
+import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockito_kotlin.any
@@ -25,8 +25,8 @@ class RebuildCollectionIndexTest {
 
     @BeforeEach
     fun setUp() {
-        val inMemorySearchService = InMemoryCollectionSearchService()
-        searchService = DefaultCollectionSearchService(inMemorySearchService, inMemorySearchService)
+        val inMemorySearchService = InMemoryCollectionSearch()
+        searchService = DefaultCollectionSearch(inMemorySearchService, inMemorySearchService)
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.boclips.search.service.infrastructure
 
 interface IndexConfiguration {
-
     fun generateMapping(): Map<String, Any>
 
     companion object {
@@ -33,19 +32,17 @@ interface IndexConfiguration {
 
         private fun loadSynonyms(filename: String) = IndexConfiguration::class.java.getResource("/synonyms/$filename")
             .readText().trim().split("\n")
-
     }
 
     object Fields {
-
         val freeText = mapOf(
             "type" to "text",
-            "analyzer" to IndexConfiguration.Companion.Analyzers.ENGLISH,
-            "search_analyzer" to IndexConfiguration.Companion.Analyzers.ENGLISH_SEARCH,
+            "analyzer" to Analyzers.ENGLISH,
+            "search_analyzer" to Analyzers.ENGLISH_SEARCH,
             "fields" to mapOf(
-                IndexConfiguration.FIELD_DESCRIPTOR_SHINGLES to mapOf(
+                FIELD_DESCRIPTOR_SHINGLES to mapOf(
                     "type" to "text",
-                    "analyzer" to IndexConfiguration.Companion.Analyzers.SHINGLES
+                    "analyzer" to Analyzers.SHINGLES
                 )
             )
         )
@@ -57,7 +54,6 @@ interface IndexConfiguration {
         val date = mapOf(
             "type" to "date"
         )
-
     }
 
     fun defaultEnglishSettings(): Map<String, Any> {

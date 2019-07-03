@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video
 import com.boclips.events.types.VideosExclusionFromSearchRequested
 import com.boclips.events.types.VideosInclusionInSearchRequested
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
@@ -41,7 +40,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
         assertThat(videoSearchService.count(VideoQuery(ids = listOf(id.value)))).isEqualTo(0)
-        verify(legacySearchService).bulkRemoveFromSearch(listOf(id.value))
+        verify(legacyVideoSearchService).bulkRemoveFromSearch(listOf(id.value))
     }
 
     @Test
@@ -58,6 +57,6 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
         assertThat(videoSearchService.count(VideoQuery(ids = listOf(id.value)))).isEqualTo(1)
-        verify(legacySearchService, times(1)).upsert(any(), anyOrNull())
+        verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
     }
 }

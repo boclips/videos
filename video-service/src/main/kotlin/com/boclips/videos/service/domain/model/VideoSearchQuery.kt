@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.search.service.domain.model.Sort
-import com.boclips.search.service.domain.model.SortOrder
+import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
