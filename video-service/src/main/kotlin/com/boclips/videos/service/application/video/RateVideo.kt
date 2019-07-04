@@ -7,8 +7,10 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.presentation.video.RateVideoRequest
 import mu.KLogging
+import org.springframework.validation.annotation.Validated
 import javax.validation.Valid
 
+@Validated
 open class RateVideo(
     private val videoRepository: VideoRepository
 ) {

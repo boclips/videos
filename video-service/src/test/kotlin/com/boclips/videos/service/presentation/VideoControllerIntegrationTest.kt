@@ -431,6 +431,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `invalid rating`() {
+        val videoId = saveVideo().value
+
+        mockMvc.perform(patch("/v1/videos/$videoId?rating=").asTeacher())
+            .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
+    }
+
+    @Test
     fun `create new video`() {
         fakeKalturaClient.addMediaEntry(
             TestFactories.createMediaEntry(
