@@ -10,13 +10,14 @@ import java.time.Instant
 class CollectionDocumentConverterTest {
     @Test
     fun `converts a collection document to collection`() {
+        val timeNow = Instant.now()
         val originalAsset = CollectionDocument(
             id = ObjectId(),
             owner = "Hans",
             viewerIds = listOf("Fritz"),
             title = "A truly amazing collection",
             videos = emptyList(),
-            updatedAt = Instant.now(),
+            updatedAt = timeNow,
             visibility = CollectionVisibilityDocument.PRIVATE,
             createdByBoclips = false,
             bookmarks = setOf("user-1"),
@@ -31,7 +32,7 @@ class CollectionDocumentConverterTest {
         assertThat(collection.owner.value).isEqualTo("Hans")
         assertThat(collection.viewerIds).containsExactly(UserId(value = "Fritz"))
         assertThat(collection.title).isEqualTo("A truly amazing collection")
-        assertThat(collection.updatedAt).isNotNull
+        assertThat(collection.updatedAt).isEqualTo(timeNow)
         assertThat(collection.isPublic).isEqualTo(false)
         assertThat(collection.ageRange.min()).isEqualTo(5)
         assertThat(collection.ageRange.max()).isEqualTo(10)
