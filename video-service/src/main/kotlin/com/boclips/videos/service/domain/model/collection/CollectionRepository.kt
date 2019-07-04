@@ -7,15 +7,15 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateComm
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 
 interface CollectionRepository {
-    fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection
     fun find(id: CollectionId): Collection?
     fun findAll(ids: List<CollectionId>): List<Collection>
     fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit)
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
+    fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand)
+    fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection
     fun update(updateCommand: CollectionsUpdateCommand)
     fun delete(id: CollectionId)
-    fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun bookmark(id: CollectionId, user: UserId)
     fun unbookmark(id: CollectionId, user: UserId)
 }

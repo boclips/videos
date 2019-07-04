@@ -61,12 +61,10 @@ class MongoSubjectRepository(
     }
 
     private fun toSubject(subjectDocument: SubjectDocument): Subject {
-        subjectDocument?.let { subjectDocument ->
-            return Subject(
-                id = SubjectId(value = subjectDocument.id.toHexString()),
-                name = subjectDocument.name
-            )
-        }
+        return Subject(
+            id = SubjectId(value = subjectDocument.id.toHexString()),
+            name = subjectDocument.name
+        )
     }
 
     private fun getSubjectCollection() =

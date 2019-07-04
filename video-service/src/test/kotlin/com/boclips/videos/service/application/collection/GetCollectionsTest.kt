@@ -58,7 +58,7 @@ class GetCollectionsTest {
     fun `fetches all bookmarked collections with skinny videos`() {
         collectionRepository = mock {
             on {
-                getBookmarked(
+                getBookmarkedByUser(
                     PageRequest(0, 1),
                     UserId("me@me.com")
                 )

@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subjects.SubjectId
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -27,15 +27,15 @@ class CollectionDocumentConverterTest {
 
         val collection = CollectionDocumentConverter.toCollection(originalAsset)!!
 
-        Assertions.assertThat(collection.id).isNotNull
-        Assertions.assertThat(collection.owner.value).isEqualTo("Hans")
-        Assertions.assertThat(collection.viewerIds).containsExactly(UserId(value = "Fritz"))
-        Assertions.assertThat(collection.title).isEqualTo("A truly amazing collection")
-        Assertions.assertThat(collection.updatedAt).isNotNull
-        Assertions.assertThat(collection.isPublic).isEqualTo(false)
-        Assertions.assertThat(collection.ageRange.min()).isEqualTo(5)
-        Assertions.assertThat(collection.ageRange.max()).isEqualTo(10)
-        Assertions.assertThat(collection.subjects).containsExactly(SubjectId(value = "subject-1"))
-        Assertions.assertThat(collection.bookmarks).containsExactly(UserId(value = "user-1"))
+        assertThat(collection.id).isNotNull
+        assertThat(collection.owner.value).isEqualTo("Hans")
+        assertThat(collection.viewerIds).containsExactly(UserId(value = "Fritz"))
+        assertThat(collection.title).isEqualTo("A truly amazing collection")
+        assertThat(collection.updatedAt).isNotNull
+        assertThat(collection.isPublic).isEqualTo(false)
+        assertThat(collection.ageRange.min()).isEqualTo(5)
+        assertThat(collection.ageRange.max()).isEqualTo(10)
+        assertThat(collection.subjects).containsExactly(SubjectId(value = "subject-1"))
+        assertThat(collection.bookmarks).containsExactly(UserId(value = "user-1"))
     }
 }

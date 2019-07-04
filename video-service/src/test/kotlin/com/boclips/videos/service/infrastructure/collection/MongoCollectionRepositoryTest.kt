@@ -306,7 +306,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 UserId("bookmarker")
             )
 
-            val bookmarkedCollections = collectionRepository.getBookmarked(
+            val bookmarkedCollections = collectionRepository.getBookmarkedByUser(
                 PageRequest(0, 10),
                 UserId("bookmarker")
             )

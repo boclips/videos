@@ -76,12 +76,19 @@ class MongoCollectionRepository(
         return getPagedCollections(pageRequest, criteria)
     }
 
-    override fun getBookmarked(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection> {
+    override fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection> {
         val criteria = and(
             publicCollectionCriteria,
             CollectionDocument::bookmarks contains bookmarkedBy.value
         )
         return getPagedCollections(pageRequest, criteria)
+    }
+
+    override fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit) {
+        val sequence = Sequence { dbCollection().find(publicCollectionCriteria).iterator() }
+            .mapNotNull(CollectionDocumentConverter::toCollection)
+
+        consumer(sequence)
     }
 
     override fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand) {
@@ -124,13 +131,6 @@ class MongoCollectionRepository(
 
     override fun unbookmark(id: CollectionId, user: UserId) {
         updateOne(id, pull(CollectionDocument::bookmarks, user.value))
-    }
-
-    override fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit) {
-        val sequence = Sequence { dbCollection().find(publicCollectionCriteria).iterator() }
-            .mapNotNull(CollectionDocumentConverter::toCollection)
-
-        consumer(sequence)
     }
 
     private fun getPagedCollections(

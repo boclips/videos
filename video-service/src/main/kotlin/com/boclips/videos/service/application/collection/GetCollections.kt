@@ -68,7 +68,7 @@ class GetCollections(
         pageRequest: PageRequest
     ): Page<Collection> {
         return when (collectionFilter.visibility) {
-            CollectionFilter.Visibility.BOOKMARKED -> collectionRepository.getBookmarked(
+            CollectionFilter.Visibility.BOOKMARKED -> collectionRepository.getBookmarkedByUser(
                 pageRequest,
                 getCurrentUserId()
             )
