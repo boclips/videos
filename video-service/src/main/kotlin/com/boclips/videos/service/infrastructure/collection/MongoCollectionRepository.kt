@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -68,6 +69,11 @@ class MongoCollectionRepository(
         val objectIds = ids.map { ObjectId(it.value) }
 
         return dbCollection().find(CollectionDocument::id `in` objectIds)
+            .mapNotNull(CollectionDocumentConverter::toCollection)
+    }
+
+    override fun findAllBySubject(subjectId: SubjectId): List<Collection> {
+        return dbCollection().find(CollectionDocument::subjects contains subjectId.value)
             .mapNotNull(CollectionDocumentConverter::toCollection)
     }
 

@@ -28,6 +28,27 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRepository: CollectionRepository
 
     @Nested
+    inner class Find {
+        @Test
+        fun `find by subject`() {
+            val collection = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Collection title",
+                createdByBoclips = false
+            )
+
+            collectionRepository.update(
+                collection.id,
+                CollectionUpdateCommand.ReplaceSubjects(setOf(SubjectId("subject-1")))
+            )
+
+            val findAllBySubject = collectionRepository.findAllBySubject(SubjectId(value = "subject-1"))
+
+            assertThat(findAllBySubject).hasSize(1)
+        }
+    }
+
+    @Nested
     inner class CreateAndUpdateOne {
         @Test
         fun `can create and add videos to a collection`() {

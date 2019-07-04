@@ -11,4 +11,3 @@ sealed class CollectionUpdateCommand {
     data class ReplaceSubjects(val subjects: Set<SubjectId>) : CollectionUpdateCommand()
     data class ChangeAgeRange(val minAge: Int, val maxAge: Int?) : CollectionUpdateCommand()
 }
-
