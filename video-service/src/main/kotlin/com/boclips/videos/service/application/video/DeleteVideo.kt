@@ -38,7 +38,7 @@ class DeleteVideo(
         videoRepository.delete(videoIdToBeDeleted)
         logger.info { "Removed video $videoIdToBeDeleted from video repository" }
 
-        collectionRepository.update(CollectionsUpdateCommand.RemoveVideoFromAllCollections(videoId = video.videoId))
+        collectionRepository.updateAll(CollectionsUpdateCommand.RemoveVideoFromAllCollections(videoId = video.videoId))
         logger.info { "Removed video from collections" }
 
         if (video.isPlayable()) {

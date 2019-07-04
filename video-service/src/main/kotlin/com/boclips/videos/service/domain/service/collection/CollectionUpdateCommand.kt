@@ -10,4 +10,5 @@ sealed class CollectionUpdateCommand {
     data class ChangeVisibility(val isPublic: Boolean) : CollectionUpdateCommand()
     data class ReplaceSubjects(val subjects: Set<SubjectId>) : CollectionUpdateCommand()
     data class ChangeAgeRange(val minAge: Int, val maxAge: Int?) : CollectionUpdateCommand()
+    data class RemoveSubjectFromCollection(val subjectId: SubjectId) : CollectionUpdateCommand()
 }

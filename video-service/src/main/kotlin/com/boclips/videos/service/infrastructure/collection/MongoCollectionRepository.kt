@@ -97,20 +97,20 @@ class MongoCollectionRepository(
         consumer(sequence)
     }
 
-    override fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand) {
+    override fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand) {
         val updateBson = updateCommands
             .fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
                 combine(
                     partialDocument,
-                    collectionUpdates.toBson(id, updateCommand)
+                    collectionUpdates.toBson(collectionId, updateCommand)
                 )
             }
 
-        updateOne(id, updateBson)
+        updateOne(collectionId, updateBson)
     }
 
-    override fun update(updateCommand: CollectionsUpdateCommand) {
-        when (updateCommand) {
+    override fun updateAll(updateCommand: CollectionsUpdateCommand) {
+        return when (updateCommand) {
             is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {
                 val allCollectionsContainingVideo = dbCollection()
                     .find(CollectionDocument::videos contains updateCommand.videoId.value)
@@ -121,6 +121,16 @@ class MongoCollectionRepository(
 
                     )
                     update(CollectionId(value = collectionDocument.id.toHexString()), command)
+                }
+            }
+            is CollectionsUpdateCommand.RemoveSubjectFromAllCollections -> {
+                val allCollectionsContainingSubject = findAllBySubject(updateCommand.subjectId)
+
+                allCollectionsContainingSubject.forEach { collectionDocument ->
+                    val command = CollectionUpdateCommand.RemoveSubjectFromCollection(
+                        subjectId = updateCommand.subjectId
+                    )
+                    update(collectionDocument.id, command)
                 }
             }
         }

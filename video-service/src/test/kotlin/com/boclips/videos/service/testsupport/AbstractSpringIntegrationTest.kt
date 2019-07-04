@@ -241,13 +241,14 @@ abstract class AbstractSpringIntegrationTest {
         title: String = "collection title",
         videos: List<String> = emptyList(),
         public: Boolean = false,
-        bookmarkedBy: String? = null
+        bookmarkedBy: String? = null,
+        subjects: Set<String> = emptySet()
     ): CollectionId {
         setSecurityContext(owner)
 
         val collectionId = createCollection(TestFactories.createCollectionRequest(title = title, videos = videos)).id
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = public))
+        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = public, subjects = subjects))
         messageCollector.forChannel(topics.collectionVisibilityChanged()).clear()
 
         bookmarkedBy?.let {

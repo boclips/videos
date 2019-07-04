@@ -14,9 +14,9 @@ interface CollectionRepository {
     fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit)
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
     fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
-    fun update(id: CollectionId, vararg updateCommands: CollectionUpdateCommand)
     fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection
-    fun update(updateCommand: CollectionsUpdateCommand)
+    fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand)
+    fun updateAll(updateCommand: CollectionsUpdateCommand)
     fun delete(id: CollectionId)
     fun bookmark(id: CollectionId, user: UserId)
     fun unbookmark(id: CollectionId, user: UserId)

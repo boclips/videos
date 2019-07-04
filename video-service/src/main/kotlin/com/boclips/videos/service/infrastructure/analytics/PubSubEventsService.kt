@@ -93,6 +93,12 @@ class PubSubEventsService(
                             .rangeMax(updateCommand.maxAge)
                     )
                 )
+            is CollectionUpdateCommand.RemoveSubjectFromCollection -> topics.collectionAgeRangeChanged().send(
+                msg(
+                    CollectionSubjectsChanged.builder()
+                        .collectionId(collectionId.value)
+                )
+            )
         }
     }
 

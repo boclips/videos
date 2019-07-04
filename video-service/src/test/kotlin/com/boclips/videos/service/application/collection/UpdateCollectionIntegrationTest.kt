@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
-class UpdateCollectionTest : AbstractSpringIntegrationTest() {
+class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var collectionRepository: CollectionRepository

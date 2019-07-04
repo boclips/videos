@@ -78,7 +78,7 @@ class DeleteCollectionTest {
                 collectionId = collectionId.value
             )
         }
-        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any(), any())
     }
 
     @Test

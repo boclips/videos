@@ -247,26 +247,50 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 CollectionUpdateCommand.AddVideoToCollection(videoId)
             )
 
-            collectionRepository.update(CollectionsUpdateCommand.RemoveVideoFromAllCollections(videoId))
+            collectionRepository.updateAll(CollectionsUpdateCommand.RemoveVideoFromAllCollections(videoId))
 
             assertThat(collectionRepository.find(aGoodCollection.id)!!.videos).isEmpty()
             assertThat(collectionRepository.find(anotherGoodCollection.id)!!.videos).isEmpty()
         }
+
+        @Test
+        fun `removes a subject from all collections`() {
+            val subjectId = SubjectId(value = ObjectId().toHexString())
+            val anotherSubjectId = SubjectId(value = ObjectId().toHexString())
+
+            val aGoodCollection = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Great collection",
+                createdByBoclips = false
+            )
+
+            collectionRepository.update(
+                aGoodCollection.id,
+                CollectionUpdateCommand.ReplaceSubjects(setOf(subjectId, anotherSubjectId))
+            )
+
+            collectionRepository.updateAll(CollectionsUpdateCommand.RemoveSubjectFromAllCollections(subjectId))
+
+            assertThat(collectionRepository.find(aGoodCollection.id)!!.subjects).containsExactly(anotherSubjectId)
+        }
     }
 
-    @Test
-    fun `can delete a collection`() {
-        val collection = collectionRepository.create(
-            owner = UserId(value = "user1"),
-            title = "Starting Title",
-            createdByBoclips = false
-        )
+    @Nested
+    inner class DeleteCollections {
+        @Test
+        fun `can delete a collection`() {
+            val collection = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false
+            )
 
-        collectionRepository.delete(collection.id)
+            collectionRepository.delete(collection.id)
 
-        val deletedCollection = collectionRepository.find(collection.id)
+            val deletedCollection = collectionRepository.find(collection.id)
 
-        assertThat(deletedCollection).isNull()
+            assertThat(deletedCollection).isNull()
+        }
     }
 
     @Nested

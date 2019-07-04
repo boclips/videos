@@ -281,7 +281,7 @@ class ApplicationContext(
 
     @Bean
     fun deleteSubject(): DeleteSubject {
-        return DeleteSubject(subjectRepository)
+        return DeleteSubject(subjectRepository, collectionRepository, collectionSearchService)
     }
 
     @Bean
