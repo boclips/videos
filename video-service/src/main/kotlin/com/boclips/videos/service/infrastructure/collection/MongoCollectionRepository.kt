@@ -110,7 +110,7 @@ class MongoCollectionRepository(
                     .find(CollectionDocument::videos contains updateCommand.videoId.value)
 
                 allCollectionsContainingVideo.forEach { collectionDocument ->
-                    val command = CollectionUpdateCommand.RemoveVideoFromCollectionCommand(
+                    val command = CollectionUpdateCommand.RemoveVideoFromCollection(
                         videoId = updateCommand.videoId
 
                     )

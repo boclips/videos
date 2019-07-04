@@ -18,14 +18,14 @@ class CollectionUpdatesConverter {
         }
 
         private fun buildRenameTitleCommand(updateCollectionRequest: UpdateCollectionRequest) =
-            updateCollectionRequest.title?.let { CollectionUpdateCommand.RenameCollectionCommand(title = it) }
+            updateCollectionRequest.title?.let { CollectionUpdateCommand.RenameCollection(title = it) }
 
         private fun buildChangeVisibilityCommand(updateCollectionRequest: UpdateCollectionRequest) =
-            updateCollectionRequest.isPublic?.let { CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = it) }
+            updateCollectionRequest.isPublic?.let { CollectionUpdateCommand.ChangeVisibility(isPublic = it) }
 
         private fun buildReplaceSubjectCommand(updateCollectionRequest: UpdateCollectionRequest) =
             updateCollectionRequest.subjects?.let {
-                CollectionUpdateCommand.ReplaceSubjectsCommand(subjects = it.map { subjectId ->
+                CollectionUpdateCommand.ReplaceSubjects(subjects = it.map { subjectId ->
                     SubjectId(subjectId)
                 }.toSet())
             }
@@ -33,7 +33,7 @@ class CollectionUpdatesConverter {
         private fun buildChangeAgeRangeCommand(updateCollectionRequest: UpdateCollectionRequest) =
             updateCollectionRequest.ageRange?.let { ageRange ->
                 ageRange.min?.let { min ->
-                    CollectionUpdateCommand.ChangeAgeRangeCommand(min, ageRange.max)
+                    CollectionUpdateCommand.ChangeAgeRange(min, ageRange.max)
                 }
 
             }

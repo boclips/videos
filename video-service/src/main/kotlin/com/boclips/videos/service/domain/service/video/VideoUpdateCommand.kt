@@ -19,7 +19,6 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class HideFromSearch(videoId: VideoId) : VideoUpdateCommand(videoId)
     class UpdateHiddenFromSearchForDeliveryMethods(videoId: VideoId, val deliveryMethods: Set<DeliveryMethod>) :
         VideoUpdateCommand(videoId)
-
     class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)
     class ReplaceTranscript(videoId: VideoId, val transcript: String) : VideoUpdateCommand(videoId)
     class ReplaceTopics(videoId: VideoId, val topics: Set<Topic>) : VideoUpdateCommand(videoId)

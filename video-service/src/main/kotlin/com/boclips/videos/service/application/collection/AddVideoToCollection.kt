@@ -19,12 +19,12 @@ class AddVideoToCollection(
 
         collectionRepository.update(
             CollectionId(collectionId),
-            CollectionUpdateCommand.AddVideoToCollectionCommand(VideoId(videoId))
+            CollectionUpdateCommand.AddVideoToCollection(VideoId(videoId))
         )
 
         eventService.saveUpdateCollectionEvent(
             CollectionId(collectionId), listOf(
-                CollectionUpdateCommand.AddVideoToCollectionCommand(
+                CollectionUpdateCommand.AddVideoToCollection(
                     VideoId(videoId)
                 )
             )

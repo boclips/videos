@@ -64,7 +64,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.AddVideoToCollectionCommand(videoId = VideoId(videoId))
+                CollectionUpdateCommand.AddVideoToCollection(videoId = VideoId(videoId))
             )
         )
 
@@ -81,7 +81,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(aValidId()), updateCommands = listOf(
-                CollectionUpdateCommand.AddVideoToCollectionCommand(videoId = VideoId(aValidId()))
+                CollectionUpdateCommand.AddVideoToCollection(videoId = VideoId(aValidId()))
             )
         )
 
@@ -96,7 +96,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.RemoveVideoFromCollectionCommand(videoId = VideoId(videoId))
+                CollectionUpdateCommand.RemoveVideoFromCollection(videoId = VideoId(videoId))
             )
         )
 
@@ -113,7 +113,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.RenameCollectionCommand(title = "the new title")
+                CollectionUpdateCommand.RenameCollection(title = "the new title")
             )
         )
 
@@ -130,7 +130,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = true)
+                CollectionUpdateCommand.ChangeVisibility(isPublic = true)
             )
         )
 
@@ -145,7 +145,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
     fun collectionMadePrivate() {
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(aValidId()), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeVisibilityCommand(isPublic = false)
+                CollectionUpdateCommand.ChangeVisibility(isPublic = false)
             )
         )
 
@@ -159,7 +159,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ReplaceSubjectsCommand(
+                CollectionUpdateCommand.ReplaceSubjects(
                     subjects = setOf(
                         SubjectId(
                             "subject-1"
@@ -182,7 +182,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeAgeRangeCommand(minAge = 5, maxAge = 9)
+                CollectionUpdateCommand.ChangeAgeRange(minAge = 5, maxAge = 9)
             )
         )
 
@@ -198,7 +198,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
     fun `collectionAgeRangeChanged when no max bound`() {
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(aValidId()), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeAgeRangeCommand(minAge = 5, maxAge = null)
+                CollectionUpdateCommand.ChangeAgeRange(minAge = 5, maxAge = null)
             )
         )
 

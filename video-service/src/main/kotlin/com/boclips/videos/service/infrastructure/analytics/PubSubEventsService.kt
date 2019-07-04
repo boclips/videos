@@ -44,7 +44,7 @@ class PubSubEventsService(
 
     private fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommand: CollectionUpdateCommand) {
         Do exhaustive when (updateCommand) {
-            is CollectionUpdateCommand.AddVideoToCollectionCommand ->
+            is CollectionUpdateCommand.AddVideoToCollection ->
                 topics.videoAddedToCollection().send(
                     msg(
                         VideoAddedToCollection.builder()
@@ -52,7 +52,7 @@ class PubSubEventsService(
                             .videoId(updateCommand.videoId.value)
                     )
                 )
-            is CollectionUpdateCommand.RemoveVideoFromCollectionCommand ->
+            is CollectionUpdateCommand.RemoveVideoFromCollection ->
                 topics.videoRemovedFromCollection().send(
                     msg(
                         VideoRemovedFromCollection.builder()
@@ -60,7 +60,7 @@ class PubSubEventsService(
                             .videoId(updateCommand.videoId.value)
                     )
                 )
-            is CollectionUpdateCommand.RenameCollectionCommand ->
+            is CollectionUpdateCommand.RenameCollection ->
                 topics.collectionRenamed().send(
                     msg(
                         CollectionRenamed.builder()
@@ -68,7 +68,7 @@ class PubSubEventsService(
                             .collectionTitle(updateCommand.title)
                     )
                 )
-            is CollectionUpdateCommand.ChangeVisibilityCommand ->
+            is CollectionUpdateCommand.ChangeVisibility ->
                 topics.collectionVisibilityChanged().send(
                     msg(
                         CollectionVisibilityChanged.builder()
@@ -76,7 +76,7 @@ class PubSubEventsService(
                             .isPublic(updateCommand.isPublic)
                     )
                 )
-            is CollectionUpdateCommand.ReplaceSubjectsCommand ->
+            is CollectionUpdateCommand.ReplaceSubjects ->
                 topics.collectionSubjectsChanged().send(
                     msg(
                         CollectionSubjectsChanged.builder()
@@ -84,7 +84,7 @@ class PubSubEventsService(
                             .subjects(updateCommand.subjects.map { it.value }.toMutableSet())
                     )
                 )
-            is CollectionUpdateCommand.ChangeAgeRangeCommand ->
+            is CollectionUpdateCommand.ChangeAgeRange ->
                 topics.collectionAgeRangeChanged().send(
                     msg(
                         CollectionAgeRangeChanged.builder()

@@ -19,7 +19,7 @@ class CollectionUpdatesConverterTest {
     fun `turn title change to command`() {
         val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title"))
 
-        assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.RenameCollectionCommand::class.java)
+        assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.RenameCollection::class.java)
         assertThat(commands).hasSize(1)
     }
 
@@ -27,7 +27,7 @@ class CollectionUpdatesConverterTest {
     fun `change public visibility of collection to command`() {
         val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = true))
 
-        val command = commands.first() as CollectionUpdateCommand.ChangeVisibilityCommand
+        val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(true)
         assertThat(commands).hasSize(1)
     }
@@ -36,7 +36,7 @@ class CollectionUpdatesConverterTest {
     fun `change private visibility of collection to command`() {
         val commands = CollectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = false))
 
-        val command = commands.first() as CollectionUpdateCommand.ChangeVisibilityCommand
+        val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(false)
         assertThat(commands).hasSize(1)
     }
@@ -54,7 +54,7 @@ class CollectionUpdatesConverterTest {
         val commands =
             CollectionUpdatesConverter.convert(UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)))
 
-        val command = commands.first() as CollectionUpdateCommand.ChangeAgeRangeCommand
+        val command = commands.first() as CollectionUpdateCommand.ChangeAgeRange
         assertThat(command.minAge).isEqualTo(3)
         assertThat(command.maxAge).isEqualTo(5)
     }
@@ -70,7 +70,7 @@ class CollectionUpdatesConverterTest {
             )
         )
 
-        val command = commands.first() as CollectionUpdateCommand.ChangeAgeRangeCommand
+        val command = commands.first() as CollectionUpdateCommand.ChangeAgeRange
         assertThat(command.minAge).isEqualTo(18)
         assertThat(command.maxAge).isNull()
     }
@@ -101,8 +101,8 @@ class CollectionUpdatesConverterTest {
         )
 
         assertThat(commands).hasSize(1)
-        assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.ReplaceSubjectsCommand::class.java)
-        val command = commands.first() as CollectionUpdateCommand.ReplaceSubjectsCommand
+        assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.ReplaceSubjects::class.java)
+        val command = commands.first() as CollectionUpdateCommand.ReplaceSubjects
 
         assertThat(command.subjects).isEqualTo(
             setOf(

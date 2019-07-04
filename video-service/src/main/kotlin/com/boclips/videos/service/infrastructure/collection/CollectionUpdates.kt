@@ -16,12 +16,12 @@ class CollectionUpdates {
         anyUpdateCommand: CollectionUpdateCommand
     ): Bson {
         return when (anyUpdateCommand) {
-            is CollectionUpdateCommand.AddVideoToCollectionCommand -> addVideo(id, anyUpdateCommand.videoId)
-            is CollectionUpdateCommand.RemoveVideoFromCollectionCommand -> removeVideo(id, anyUpdateCommand.videoId)
-            is CollectionUpdateCommand.RenameCollectionCommand -> renameCollection(id, anyUpdateCommand.title)
-            is CollectionUpdateCommand.ChangeVisibilityCommand -> changeVisibility(id, anyUpdateCommand.isPublic)
-            is CollectionUpdateCommand.ReplaceSubjectsCommand -> replaceSubjects(id, anyUpdateCommand.subjects)
-            is CollectionUpdateCommand.ChangeAgeRangeCommand -> replaceAgeRange(
+            is CollectionUpdateCommand.AddVideoToCollection -> addVideo(id, anyUpdateCommand.videoId)
+            is CollectionUpdateCommand.RemoveVideoFromCollection -> removeVideo(id, anyUpdateCommand.videoId)
+            is CollectionUpdateCommand.RenameCollection -> renameCollection(id, anyUpdateCommand.title)
+            is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(id, anyUpdateCommand.isPublic)
+            is CollectionUpdateCommand.ReplaceSubjects -> replaceSubjects(id, anyUpdateCommand.subjects)
+            is CollectionUpdateCommand.ChangeAgeRange -> replaceAgeRange(
                 id,
                 anyUpdateCommand.minAge,
                 anyUpdateCommand.maxAge

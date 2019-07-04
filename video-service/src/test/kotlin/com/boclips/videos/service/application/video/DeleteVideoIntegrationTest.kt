@@ -98,7 +98,7 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val collectionId = saveCollection()
 
-        collectionRepository.update(collectionId, CollectionUpdateCommand.AddVideoToCollectionCommand(videoId))
+        collectionRepository.update(collectionId, CollectionUpdateCommand.AddVideoToCollection(videoId))
 
         deleteVideo(videoId.value)
 
