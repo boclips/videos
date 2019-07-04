@@ -6,7 +6,6 @@ import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
 
 class VideoDocumentConverterTest {
-
     private val elasticSearchResultConverter = VideoDocumentConverter()
 
     @Test

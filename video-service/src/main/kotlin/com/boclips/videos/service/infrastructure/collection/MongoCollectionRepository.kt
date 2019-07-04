@@ -7,10 +7,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.subjects.SubjectId
-import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -38,7 +35,6 @@ class MongoCollectionRepository(
     private val collectionUpdates: CollectionUpdates = CollectionUpdates()
 ) : CollectionRepository {
     companion object : KLogging() {
-
         const val collectionName = "collections"
     }
 
@@ -65,13 +61,14 @@ class MongoCollectionRepository(
         val collectionDocument = dbCollection().findOne(CollectionDocument::id eq ObjectId(id.value))
         logger.info { "Found collection ${id.value}: $collectionDocument" }
 
-        return toCollection(collectionDocument)
+        return CollectionDocumentConverter.toCollection(collectionDocument)
     }
 
     override fun findAll(ids: List<CollectionId>): List<Collection> {
         val objectIds = ids.map { ObjectId(it.value) }
 
-        return dbCollection().find(CollectionDocument::id `in` objectIds).mapNotNull { toCollection(it) }
+        return dbCollection().find(CollectionDocument::id `in` objectIds)
+            .mapNotNull(CollectionDocumentConverter::toCollection)
     }
 
     override fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection> {
@@ -129,6 +126,13 @@ class MongoCollectionRepository(
         updateOne(id, pull(CollectionDocument::bookmarks, user.value))
     }
 
+    override fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit) {
+        val sequence = Sequence { dbCollection().find(publicCollectionCriteria).iterator() }
+            .mapNotNull(CollectionDocumentConverter::toCollection)
+
+        consumer(sequence)
+    }
+
     private fun getPagedCollections(
         pageRequest: PageRequest,
         criteria: Bson
@@ -139,7 +143,7 @@ class MongoCollectionRepository(
             .descendingSort(CollectionDocument::updatedAt)
             .limit(pageRequest.size)
             .skip(offset)
-            .mapNotNull(this::toCollection)
+            .mapNotNull(CollectionDocumentConverter::toCollection)
 
         val totalDocuments = dbCollection().countDocuments(criteria)
         val hasMoreElements = totalDocuments > (pageRequest.size + 1) * pageRequest.page
@@ -165,40 +169,5 @@ class MongoCollectionRepository(
         return mongoClient
             .getDatabase(DATABASE_NAME)
             .getCollection<CollectionDocument>(collectionName)
-    }
-
-    private fun toCollection(collectionDocument: CollectionDocument?): Collection? {
-        if (collectionDocument == null) return null
-        val videoIds = collectionDocument.videos.map { VideoId(value = it) }
-        val subjectIds = collectionDocument.subjects.orEmpty().map {
-            SubjectId(
-                value = it
-            )
-        }.toSet()
-        val isPubliclyVisible = collectionDocument.visibility == CollectionVisibilityDocument.PUBLIC
-
-        return Collection(
-            id = CollectionId(value = collectionDocument.id.toHexString()),
-            title = collectionDocument.title,
-            owner = UserId(value = collectionDocument.owner),
-            viewerIds = collectionDocument.viewerIds?.map { UserId(it) } ?: emptyList(),
-            videos = videoIds,
-            updatedAt = collectionDocument.updatedAt,
-            isPublic = isPubliclyVisible,
-            createdByBoclips = collectionDocument.createdByBoclips ?: false,
-            bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
-            subjects = subjectIds,
-            ageRange = if (collectionDocument.ageRangeMin !== null) AgeRange.bounded(
-                min = collectionDocument.ageRangeMin,
-                max = collectionDocument.ageRangeMax
-            ) else AgeRange.unbounded()
-        )
-    }
-
-    override fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit) {
-        val sequence = Sequence { dbCollection().find(publicCollectionCriteria).iterator() }
-            .mapNotNull(this::toCollection)
-
-        consumer(sequence)
     }
 }

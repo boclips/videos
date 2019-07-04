@@ -49,7 +49,6 @@ class MongoVideoRepository(
     private val mongoClient: MongoClient
 ) : VideoRepository {
     companion object : KLogging() {
-
         const val collectionName = "videos"
     }
 
