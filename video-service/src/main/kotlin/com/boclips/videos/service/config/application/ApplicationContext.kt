@@ -125,7 +125,8 @@ class ApplicationContext(
             videoCounter,
             legacyVideoSearchService,
             classifyVideo,
-            analyseVideo
+            analyseVideo,
+            topics
         )
     }
 

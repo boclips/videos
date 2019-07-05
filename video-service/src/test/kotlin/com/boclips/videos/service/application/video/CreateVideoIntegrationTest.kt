@@ -248,6 +248,17 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `it dispatches a video updated event`() {
+        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1"))
+
+        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1", title = "parabole"))
+
+        val message = messageCollector.forChannel(topics.videoUpdated()).poll()
+
+        assertThat(message.payload.toString()).contains("parabole")
+    }
+
+    @Test
     fun `it requests that the video subject is classified`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1234"))
 

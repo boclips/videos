@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.events.config.Topics
+import com.boclips.events.types.video.VideoUpdated
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
@@ -27,6 +29,7 @@ import io.micrometer.core.instrument.Counter
 import mu.KLogging
 import org.bson.types.ObjectId
 import org.springframework.hateoas.Resource
+import org.springframework.messaging.support.MessageBuilder
 
 class CreateVideo(
     private val videoService: VideoService,
@@ -40,7 +43,8 @@ class CreateVideo(
     private val videoCounter: Counter,
     private val legacyVideoSearchService: LegacyVideoSearchService,
     private val classifyVideo: ClassifyVideo,
-    private val analyseVideo: AnalyseVideo
+    private val analyseVideo: AnalyseVideo,
+    private val topics: Topics
 ) {
     companion object : KLogging()
 
@@ -87,6 +91,7 @@ class CreateVideo(
 
         classifyVideo(createdVideo.videoId.value)
 
+        dispatchVideoUpdated(createdVideo)
 
         return searchVideo.byId(createdVideo.videoId.value)
     }
@@ -108,6 +113,16 @@ class CreateVideo(
         } catch (exception: VideoNotAnalysableException) {
             logger.info { "Video cannot be analysed" }
         }
+    }
+
+    private fun dispatchVideoUpdated(video: Video) {
+        val event = VideoUpdated.builder()
+            .videoId(video.videoId.value)
+            .title(video.title)
+            .contentPartnerName(video.contentPartner.name)
+            .build()
+
+        topics.videoUpdated().send(MessageBuilder.withPayload(event).build())
     }
 
     private fun indexVideo(createdVideo: Video) {
