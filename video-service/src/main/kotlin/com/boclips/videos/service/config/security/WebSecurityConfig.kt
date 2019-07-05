@@ -53,6 +53,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(POST, "/v1/admin/actions/analyse_video/*").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/admin/actions/analyse_videos").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/admin/actions/classify_videos").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/admin/actions/dispatch_video_updated_events").hasRole(ROLE.UPDATE_VIDEOS)
 
             .antMatchers(POST, "/v1/admin/actions/refresh_playbacks").hasRole(ROLE.UPDATE_VIDEOS)
 

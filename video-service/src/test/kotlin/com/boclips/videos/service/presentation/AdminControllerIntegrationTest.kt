@@ -90,6 +90,18 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `dipatch video updated events`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/dispatch_video_updated_events").asOperator())
+            .andExpect(MockMvcResultMatchers.status().isOk)
+    }
+
+    @Test
+    fun `dipatch video updated events returns 403 when user is not allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/dispatch_video_updated_events").asTeacher())
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
     fun `analyse video publishes events`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123"))
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US").asOperator())

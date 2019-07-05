@@ -34,6 +34,7 @@ import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
 import com.boclips.videos.service.application.video.ClassifyVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.RebuildVideoIndex
@@ -370,6 +371,11 @@ class ApplicationContext(
             videoRepository,
             bulkUpdate()
         )
+    }
+
+    @Bean
+    fun dispatchVideoUpdatedEvents(): DispatchVideoUpdatedEvents {
+        return DispatchVideoUpdatedEvents(videoRepository, topics)
     }
 
     private fun getVideoById(

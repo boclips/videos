@@ -7,6 +7,7 @@ import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
+import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestPlaybackUpdate
 import mu.KLogging
@@ -45,6 +46,7 @@ class AdminController(
     private val requestPlaybackUpdate: RequestPlaybackUpdate,
     private val analyseVideo: AnalyseVideo,
     private val analyseContentPartnerVideos: AnalyseContentPartnerVideos,
+    private val dispatchVideoUpdatedEvents: DispatchVideoUpdatedEvents,
     private val classifyContentPartnerVideos: ClassifyContentPartnerVideos
 ) {
     companion object : KLogging()
@@ -95,6 +97,11 @@ class AdminController(
     fun postClassifyVideos(@RequestParam contentPartner: String?): ResponseEntity<Void> {
         classifyContentPartnerVideos(contentPartner)
         return ResponseEntity(HttpStatus.ACCEPTED)
+    }
+
+    @PostMapping("/dispatch_video_updated_events")
+    fun postDispatchVideoUpdatedEvents() {
+        dispatchVideoUpdatedEvents()
     }
 
     private fun asyncWithNotifier(handler: (ResponseEmitterProgressNotifier) -> CompletableFuture<Unit>): ResponseEntity<ResponseBodyEmitter> {
