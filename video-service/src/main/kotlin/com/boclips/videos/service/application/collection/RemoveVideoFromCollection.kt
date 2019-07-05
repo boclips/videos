@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.application.collection.security.getOwnedCollectionOrThrow
+import com.boclips.videos.service.domain.service.collection.getOwnedCollectionOrThrow
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoId
