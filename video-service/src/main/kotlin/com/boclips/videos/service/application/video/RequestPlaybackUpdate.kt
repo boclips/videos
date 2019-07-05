@@ -21,13 +21,12 @@ open class RequestPlaybackUpdate(
     open operator fun invoke(source: String? = null) {
         logger.info("Requesting video playback synchronization for all videos")
 
-        validateSource(source)
+        val filter = getFilter(source)
 
         try {
-            when (source) {
-                KALTURA_FILTER -> videoRepository.streamAll(VideoFilter.IsKaltura, publishToTopic())
-                YOUTUBE_FILTER -> videoRepository.streamAll(VideoFilter.IsYoutube, publishToTopic())
-                else -> videoRepository.streamAll(publishToTopic())
+            when (filter) {
+                null -> videoRepository.streamAll(publishToTopic())
+                else -> videoRepository.streamAll(filter, publishToTopic())
             }
         } catch (ex: Exception) {
             logger.error { "Failed to publish (some) events to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
@@ -47,11 +46,12 @@ open class RequestPlaybackUpdate(
         }
     }
 
-    private fun validateSource(source: String?) {
-        val validSources = listOf(YOUTUBE_FILTER, KALTURA_FILTER)
-
-        if (source != null && !validSources.contains(source.toLowerCase())) {
-            throw InvalidSourceException(source, validSources)
+    private fun getFilter(source: String?): VideoFilter? {
+        return when (source) {
+            KALTURA_FILTER -> VideoFilter.IsKaltura
+            YOUTUBE_FILTER -> VideoFilter.IsYoutube
+            null -> null
+            else -> throw InvalidSourceException(source, listOf(KALTURA_FILTER, YOUTUBE_FILTER))
         }
     }
 }
