@@ -96,7 +96,7 @@ class GetCollectionsTest {
         assertThat(collection.owner).isEqualTo("yoyoyo@public.com")
         assertThat(collection.title).isEqualTo("collection title")
         assertThat(collection.videos).hasSize(1)
-        assertThat(collection.isPublic).isEqualTo(true)
+        assertThat(collection.public).isEqualTo(true)
     }
 
     @Test
@@ -134,7 +134,7 @@ class GetCollectionsTest {
         assertThat(collection.owner).isEqualTo("yoyoyo@public.com")
         assertThat(collection.title).isEqualTo("collection title")
         assertThat(collection.videos).hasSize(1)
-        assertThat(collection.isPublic).isEqualTo(true)
+        assertThat(collection.public).isEqualTo(true)
     }
 
     @Test
@@ -173,7 +173,7 @@ class GetCollectionsTest {
         assertThat(collection.owner).isEqualTo("yoyoyo@public.com")
         assertThat(collection.title).isEqualTo("collection title")
         assertThat(collection.videos).hasSize(1)
-        assertThat(collection.isPublic).isEqualTo(true)
+        assertThat(collection.public).isEqualTo(true)
         assertThat(collection.videos.first().content.title).isEqualTo(video.title)
     }
 

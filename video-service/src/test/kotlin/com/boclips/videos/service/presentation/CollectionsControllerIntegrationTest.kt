@@ -228,11 +228,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `query search public collections`() {
         updateCollectionToBePublic(createCollection("five ponies were eating grass"))
         updateCollectionToBePublic(createCollection("while a car and a truck crashed"))
+        createCollection(title = "the truck was blue and yellow", public = true)
 
         mockMvc.perform(get("/v1/collections?query=truck").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
     }
 
@@ -315,7 +316,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val collectionId = collectionRepository.create(
             owner = UserId("teacher@gmail.com"),
             title = "Collection",
-            createdByBoclips = false
+            createdByBoclips = false,
+            public = false
         ).id.value
 
         val moment = ZonedDateTime.now()
@@ -438,7 +440,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             collectionRepository.create(
                 owner = UserId(email),
                 title = "My Special Collection",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
                 .id.value
 
@@ -651,7 +654,12 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     private fun createCollectionWithTitle(title: String): String {
         val email = "teacher@gmail.com"
-        return collectionRepository.create(owner = UserId(email), title = title, createdByBoclips = false).id.value
+        return collectionRepository.create(
+            owner = UserId(email),
+            title = title,
+            createdByBoclips = false,
+            public = false
+        ).id.value
     }
 
     private fun addVideo(collectionId: String, videoId: String) {
@@ -684,8 +692,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isNoContent)
     }
 
-    private fun createCollection(title: String = "a collection name") =
-        mockMvc.perform(post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
+    private fun createCollection(title: String = "a collection name", public: Boolean = false) =
+        mockMvc.perform(post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title", "public": $public}""").asTeacher())
             .andExpect(status().isCreated)
             .andReturn().response.getHeader("Location")!!.substringAfterLast("/")
 

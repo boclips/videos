@@ -15,10 +15,10 @@ data class CollectionResource(
     val title: String,
     val videos: List<Resource<VideoResource>>,
     val updatedAt: Instant,
-    val isPublic: Boolean,
+    val public: Boolean,
     @get:JsonIgnore
-    val isBookmarked: Boolean,
-    val isMine: Boolean,
+    val bookmarked: Boolean,
+    val mine: Boolean,
     val createdBy: String,
     val subjects: Set<Resource<SubjectResource>>,
     val ageRange: AgeRangeResource?

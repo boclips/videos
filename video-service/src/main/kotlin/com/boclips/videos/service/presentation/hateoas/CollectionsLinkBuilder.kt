@@ -14,13 +14,13 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun collection(id: String?) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { collectionResourceLink(id, "collection") }
 
     fun editCollection(collectionResource: CollectionResource) =
-        if (collectionResource.isMine) collectionResourceLink(collectionResource.id, "edit") else null
+        if (collectionResource.mine) collectionResourceLink(collectionResource.id, "edit") else null
 
     fun removeCollection(collectionResource: CollectionResource) =
-        if (collectionResource.isMine) collectionResourceLink(collectionResource.id, "remove") else null
+        if (collectionResource.mine) collectionResourceLink(collectionResource.id, "remove") else null
 
     fun addVideoToCollection(collectionResource: CollectionResource) =
-        if (collectionResource.isMine) Link(
+        if (collectionResource.mine) Link(
             getCollectionsRoot()
                 .pathSegment(collectionResource.id)
                 .pathSegment("videos")
@@ -28,7 +28,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         ) else null
 
     fun removeVideoFromCollection(collectionResource: CollectionResource) =
-        if (collectionResource.isMine) Link(
+        if (collectionResource.mine) Link(
             getCollectionsRoot()
                 .pathSegment(collectionResource.id)
                 .pathSegment("videos")
@@ -149,7 +149,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     }
 
     fun bookmark(collectionResource: CollectionResource) =
-        if (collectionResource.isBookmarked || collectionResource.isMine || !collectionResource.isPublic) {
+        if (collectionResource.bookmarked || collectionResource.mine || !collectionResource.public) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collectionResource.id)
@@ -159,7 +159,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
 
     fun unbookmark(collectionResource: CollectionResource) =
-        if (!collectionResource.isBookmarked || collectionResource.isMine || !collectionResource.isPublic) {
+        if (!collectionResource.bookmarked || collectionResource.mine || !collectionResource.public) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collectionResource.id)

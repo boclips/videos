@@ -2,8 +2,10 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -17,6 +19,9 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var collectionRepository: CollectionRepository
+
+    @Autowired
+    lateinit var collectionService: CollectionService
 
     @Test
     @WithMockUser("this-user")
@@ -46,6 +51,30 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             PageRequest(0, 10)
         ).elements
         assertThat(allCollections).contains(collection)
+    }
+
+    @Test
+    fun `makes searchable if public`() {
+        val createRequest = TestFactories.createCollectionRequest(
+            title = "title",
+            public = true
+        )
+
+        val collection = createCollection(createRequest)
+
+        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements).isNotEmpty
+        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements.first().id).isEqualTo(collection.id)
+    }
+
+    @Test
+    fun `collection is private by default`() {
+        val createRequest = TestFactories.createCollectionRequest(
+            title = "title"
+        )
+
+        createCollection(createRequest)
+
+        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements).isEmpty()
     }
 
     @Test

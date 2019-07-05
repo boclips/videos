@@ -41,7 +41,7 @@ class MongoCollectionRepository(
 
     private val publicCollectionCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
 
-    override fun create(owner: UserId, title: String, createdByBoclips: Boolean): Collection {
+    override fun create(owner: UserId, title: String, createdByBoclips: Boolean, public: Boolean): Collection {
         val objectId = ObjectId()
         val collectionId = CollectionId(value = objectId.toHexString())
         val document = CollectionDocument(
@@ -50,7 +50,7 @@ class MongoCollectionRepository(
             title = title,
             videos = emptyList(),
             updatedAt = Instant.now(),
-            visibility = CollectionVisibilityDocument.PRIVATE,
+            visibility = if (public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
             createdByBoclips = createdByBoclips
         )
 

@@ -34,7 +34,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Collection title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(
@@ -58,7 +59,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Collection vs Playlist",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = true
             )
 
             collectionRepository.update(
@@ -84,6 +86,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(updatedCollection.videos).hasSize(1)
             assertThat(updatedCollection.videos).contains(video2)
             assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
+            assertThat(updatedCollection.isPublic).isEqualTo(true)
             assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.unbounded())
         }
 
@@ -92,7 +95,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(collection.id, CollectionUpdateCommand.RenameCollection("New Title"))
@@ -107,7 +111,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
             assertThat(collection.isPublic).isEqualTo(false)
 
@@ -126,7 +131,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Alex's Amazing Collection",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(
@@ -157,7 +163,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeAgeRange(3, 5))
@@ -172,7 +179,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeAgeRange(3, null))
@@ -190,7 +198,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collectionV1 = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "My Videos",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
@@ -228,7 +237,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val aGoodCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Great collection",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(
@@ -239,7 +249,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val anotherGoodCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Good collection",
-                createdByBoclips = true
+                createdByBoclips = true,
+                public = false
             )
 
             collectionRepository.update(
@@ -261,7 +272,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val aGoodCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Great collection",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(
@@ -282,7 +294,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.delete(collection.id)
@@ -301,7 +314,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
             collectionRepository.update(
                 collection.id,
@@ -322,19 +336,22 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val publicBookmarkedCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             val publicCollection2 = collectionRepository.create(
                 owner = UserId(value = "user2"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             val privateCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.update(
@@ -414,7 +431,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Collection vs Playlist",
-                createdByBoclips = false
+                createdByBoclips = false,
+                public = false
             )
 
             collectionRepository.bookmark(
@@ -445,17 +463,20 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         val c1 = collectionRepository.create(
             owner = UserId(value = "user1"),
             title = "Starting Title",
-            createdByBoclips = false
+            createdByBoclips = false,
+            public = false
         )
         collectionRepository.create(
             owner = UserId(value = "user1"),
             title = "Starting Title",
-            createdByBoclips = false
+            createdByBoclips = false,
+            public = false
         )
         val c3 = collectionRepository.create(
             owner = UserId(value = "user1"),
             title = "Starting Title",
-            createdByBoclips = false
+            createdByBoclips = false,
+            public = false
         )
         collectionRepository.update(c1.id, CollectionUpdateCommand.ChangeVisibility(true))
         collectionRepository.update(c3.id, CollectionUpdateCommand.ChangeVisibility(true))

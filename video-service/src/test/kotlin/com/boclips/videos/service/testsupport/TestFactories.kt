@@ -198,10 +198,12 @@ object TestFactories {
 
     fun createCollectionRequest(
         title: String? = "collection title",
-        videos: List<String> = listOf()
+        videos: List<String> = listOf(),
+        public: Boolean? = null
     ) = CreateCollectionRequest(
         title = title,
-        videos = videos
+        videos = videos,
+        public = public
     )
 
     fun createCollection(
@@ -247,9 +249,9 @@ object TestFactories {
         title = title,
         videos = videos,
         updatedAt = updatedAt,
-        isPublic = isPublic,
-        isMine = isMine,
-        isBookmarked = isBookmarked,
+        public = isPublic,
+        mine = isMine,
+        bookmarked = isBookmarked,
         createdBy = createdBy,
         subjects = subjects,
         ageRange = ageRange
