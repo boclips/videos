@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+cwd="$(cd "$(dirname "$0")" && pwd)"
+dir=$(mktemp -d -t fly-build-video-service.XXXXX)
+
+tidy () {
+    rm -rf "$dir"
+}
+
+trap tidy EXIT
+
+mkdir "$dir/version"
+echo TEST_VERSION > "$dir/version/version"
+
+YOUTUBE_API_KEY="$(lpass show youtube-playback-provider-contract-test --notes | cut -d' ' -f2)"
+export YOUTUBE_API_KEY
+
+fly --target ci execute \
+    --input source="$cwd" \
+    --input version="$dir/version" \
+    --config "$cwd/video-service/pipeline/tasks/build.yml" \
+    --output dist=fly-dist
