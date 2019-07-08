@@ -4,9 +4,11 @@ import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundE
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 
 class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
@@ -24,10 +26,14 @@ class UpdateContentPartner(
         val contentPartner = contentPartnerRepository.findById(id)
             ?: throw ContentPartnerNotFoundException("Could not find content partner: ${id.value}")
 
-        if (request.searchable != contentPartnerBefore?.searchable) {
+        val searchable =
+            request.hiddenFromSearchForDeliveryMethods?.let { it.map(DeliveryMethodResourceConverter::fromResource) != DeliveryMethod.ALL }
+                ?: request.searchable ?: true
+
+        if (searchable != contentPartnerBefore?.searchable) {
             requestVideoSearchUpdateByContentPartner.invoke(
                 id,
-                getSearchUpdateRequestType(request.searchable!!)
+                getSearchUpdateRequestType(searchable)
             )
         }
 
@@ -45,6 +51,10 @@ class UpdateContentPartner(
             listOf(
                 VideoUpdateCommand.ReplaceContentPartner(videoId = video.videoId, contentPartner = contentPartner),
                 VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange),
+                VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
+                    videoId = video.videoId,
+                    deliveryMethods = contentPartner.hiddenFromSearchForDeliveryMethods
+                ),
                 if (contentPartner.searchable) {
                     VideoUpdateCommand.MakeSearchable(videoId = video.videoId)
                 } else {

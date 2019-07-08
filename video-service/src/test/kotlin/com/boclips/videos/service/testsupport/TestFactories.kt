@@ -39,10 +39,10 @@ import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
-import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.presentation.video.VideoTypeResource
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
@@ -81,7 +81,8 @@ object TestFactories {
             name = contentPartnerName,
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
-            searchable = true
+            searchable = true,
+            hiddenFromSearchForDeliveryMethods = emptySet()
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -177,7 +178,7 @@ object TestFactories {
         playbackProvider: String? = "KALTURA",
         analyseVideo: Boolean = false,
         searchable: Boolean? = true,
-        hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod>? = emptySet(),
+        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = emptySet(),
         subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
         provider = provider,
@@ -388,14 +389,16 @@ object TestFactories {
         name: String = "TED",
         ageRange: AgeRange = AgeRange.bounded(5, 11),
         credit: Credit = Credit.PartnerCredit,
-        searchable: Boolean = true
+        searchable: Boolean = true,
+        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod> = emptySet()
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
             name = name,
             ageRange = ageRange,
             credit = credit,
-            searchable = searchable
+            searchable = searchable,
+            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
         )
     }
 
@@ -406,13 +409,15 @@ object TestFactories {
             max = 11
         ),
         accreditedToYtChannel: String? = null,
-        searchable: Boolean = true
+        searchable: Boolean? = true,
+        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
             name = name,
             ageRange = ageRange,
             accreditedToYtChannelId = accreditedToYtChannel,
-            searchable = searchable
+            searchable = searchable,
+            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
         )
     }
 }

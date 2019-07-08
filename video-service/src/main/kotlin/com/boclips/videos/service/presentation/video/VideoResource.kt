@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.Resource
@@ -20,7 +21,7 @@ data class VideoResource(
     val badges: Set<String> = emptySet(),
     val type: VideoTypeResource? = null,
     val status: VideoResourceStatus? = null,
-    val hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod> = emptySet(),
+    val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet(),
     val legalRestrictions: String? = null,
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null,

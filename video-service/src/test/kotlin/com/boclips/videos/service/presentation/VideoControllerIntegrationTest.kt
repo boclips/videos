@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository.Companion.collectionName
-import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -706,8 +706,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoIds = listOf(
             saveVideo(
                 hiddenFromSearchForDeliveryMethods = setOf(
-                    VideoResourceDeliveryMethod.DOWNLOAD,
-                    VideoResourceDeliveryMethod.STREAM
+                    DeliveryMethodResource.DOWNLOAD,
+                    DeliveryMethodResource.STREAM
                 )
             ).value,
             saveVideo().value,

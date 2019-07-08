@@ -34,7 +34,7 @@ import com.boclips.videos.service.presentation.collections.UpdateCollectionReque
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
-import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -180,7 +180,7 @@ abstract class AbstractSpringIntegrationTest {
         searchable: Boolean = true,
         legalRestrictions: String = "",
         ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
-        hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod> = emptySet()
+        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet()
     ): VideoId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(

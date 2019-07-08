@@ -3,8 +3,10 @@ package com.boclips.videos.service.application.contentPartner
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -19,6 +21,21 @@ class ContentPartnerUpdatesConverterTest {
             commands.find { it is ContentPartnerUpdateCommand.SetSearchability } as ContentPartnerUpdateCommand.SetSearchability
 
         assertThat(command.searchable).isEqualTo(true)
+    }
+
+    @Test
+    fun `creates command for updating delivery methods`() {
+        val commands = ContentPartnerUpdatesConverter().convert(
+            id = ContentPartnerId(value = "123"),
+            contentPartnerRequest = ContentPartnerRequest(
+                name = "Hello",
+                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+            )
+        )
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.SetHiddenDeliveryMethods } as ContentPartnerUpdateCommand.SetHiddenDeliveryMethods
+
+        assertThat(command.methods).isEqualTo(setOf(DeliveryMethod.DOWNLOAD))
     }
 
     @Test

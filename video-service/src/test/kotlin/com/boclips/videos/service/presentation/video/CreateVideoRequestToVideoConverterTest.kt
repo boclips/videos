@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException
 import org.assertj.core.api.AbstractThrowableAssert
@@ -191,7 +192,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `uses the hiddenFromSearchForDeliveryMethods`() {
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(
-                hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.DOWNLOAD)
+                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
             ),
             TestFactories.createKalturaPlayback(),
             contentPartner,

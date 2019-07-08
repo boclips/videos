@@ -9,9 +9,9 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
-import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
-import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethodConverter
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
 
@@ -33,8 +33,8 @@ open class BulkUpdateVideo(
         } ?: updateLegacyRequestStatusInSearch(bulkUpdateRequest)
     }
 
-    private fun convertResourcesToDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod>): Set<DeliveryMethod> {
-        return hiddenFromSearchForDeliveryMethods.map(VideoResourceDeliveryMethodConverter::fromResource).toSet()
+    private fun convertResourcesToDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>): Set<DeliveryMethod> {
+        return hiddenFromSearchForDeliveryMethods.map(DeliveryMethodResourceConverter::fromResource).toSet()
     }
 
     private fun updateDeliveryMethodsInSearch(

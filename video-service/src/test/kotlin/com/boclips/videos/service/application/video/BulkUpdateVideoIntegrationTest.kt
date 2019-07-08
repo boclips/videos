@@ -6,8 +6,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
-import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
@@ -91,8 +91,8 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can disable from all delivery methods`() {
             val allDeliveryMethods = setOf(
-                VideoResourceDeliveryMethod.DOWNLOAD,
-                VideoResourceDeliveryMethod.STREAM
+                DeliveryMethodResource.DOWNLOAD,
+                DeliveryMethodResource.STREAM
             )
             val videoIds = listOf(
                 saveVideo(
@@ -135,7 +135,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     ids = videoIds.map { it.value },
                     status = null,
                     hiddenFromSearchForDeliveryMethods = setOf(
-                        VideoResourceDeliveryMethod.STREAM
+                        DeliveryMethodResource.STREAM
                     )
                 )
             )
@@ -165,7 +165,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     ids = videoIds.map { it.value },
                     status = null,
                     hiddenFromSearchForDeliveryMethods = setOf(
-                        VideoResourceDeliveryMethod.DOWNLOAD
+                        DeliveryMethodResource.DOWNLOAD
                     )
                 )
             )
@@ -183,9 +183,9 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             val videoIds = listOf(
                 saveVideo(
                     searchable = false,
-                    hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.DOWNLOAD)
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
                 ), saveVideo(
-                    searchable = false, hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.STREAM)
+                    searchable = false, hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
                 )
             )
 

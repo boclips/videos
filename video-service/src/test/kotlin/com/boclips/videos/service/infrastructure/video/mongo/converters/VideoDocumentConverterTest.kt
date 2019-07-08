@@ -30,7 +30,8 @@ class VideoDocumentConverterTest {
                 name = "Some name",
                 ageRange = AgeRange.bounded(10, 17),
                 credit = Credit.PartnerCredit,
-                searchable = true
+                searchable = true,
+                hiddenFromSearchForDeliveryMethods = emptySet()
             ),
             videoReference = "video-123",
             type = LegacyVideoType.NEWS,

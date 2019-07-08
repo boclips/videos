@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.contentPartner
 
 import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 
 sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId) {
 
@@ -12,4 +13,8 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class SetSearchability(contentPartnerId: ContentPartnerId, val searchable: Boolean) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class SetHiddenDeliveryMethods(contentPartnerId: ContentPartnerId, val methods: Set<DeliveryMethod>) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
 }

@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import org.bson.types.ObjectId
 
 // TODO refactor to use javax validation in the first place
@@ -47,7 +48,7 @@ class CreateVideoRequestToVideoConverter {
             transcript = null,
             rating = null,
             hiddenFromSearchForDeliveryMethods = createVideoRequest.hiddenFromSearchForDeliveryMethods
-                ?.map(VideoResourceDeliveryMethodConverter::fromResource)
+                ?.map(DeliveryMethodResourceConverter::fromResource)
                 ?.toSet()
                 ?: deliveryMethodsFromLegacySearchable(searchable)
         )

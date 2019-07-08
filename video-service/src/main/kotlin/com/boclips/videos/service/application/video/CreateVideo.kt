@@ -70,7 +70,8 @@ class CreateVideo(
                         is VideoPlayback.StreamPlayback -> Credit.PartnerCredit
                         else -> throw IllegalStateException("Could not retrieve playback for $videoPlayback")
                     },
-                    searchable = true
+                    searchable = true,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
 

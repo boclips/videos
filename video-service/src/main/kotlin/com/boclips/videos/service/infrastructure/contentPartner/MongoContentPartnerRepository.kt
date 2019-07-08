@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.video.mongo.converters.DeliveryMethodDocumentConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoIterable
@@ -87,6 +88,11 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
                 set(
                     ContentPartnerDocument::searchable,
                     updateCommand.searchable
+                )
+            is ContentPartnerUpdateCommand.SetHiddenDeliveryMethods ->
+                set(
+                    ContentPartnerDocument::hiddenFromSearchForDeliveryMethods,
+                    updateCommand.methods.map(DeliveryMethodDocumentConverter::toDocument).toSet()
                 )
         }
 

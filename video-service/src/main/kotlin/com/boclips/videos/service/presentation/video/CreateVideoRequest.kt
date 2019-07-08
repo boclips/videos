@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import java.time.LocalDate
 
 data class CreateVideoRequest(
@@ -16,7 +17,7 @@ data class CreateVideoRequest(
     val playbackId: String? = null,
     val playbackProvider: String? = null,
     val searchable: Boolean? = null,
-    val hiddenFromSearchForDeliveryMethods: Set<VideoResourceDeliveryMethod>? = null,
+    val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null,
     val analyseVideo: Boolean = true,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,

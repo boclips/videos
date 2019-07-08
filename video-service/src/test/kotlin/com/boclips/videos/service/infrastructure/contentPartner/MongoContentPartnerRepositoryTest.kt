@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.contentPartner
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -137,5 +138,26 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
         assertThat(updatedAsset.searchable).isEqualTo(true)
+    }
+
+    @Test
+    fun `sets hidden delivery methods`() {
+        val contentPartner = mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(
+                hiddenFromSearchForDeliveryMethods = emptySet()
+            )
+        )
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.SetHiddenDeliveryMethods(
+                    contentPartnerId = contentPartner.contentPartnerId,
+                    methods = setOf(DeliveryMethod.STREAM)
+                )
+            )
+        )
+
+        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+        assertThat(updatedAsset.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethod.STREAM))
     }
 }

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.contentPartner
 
+import com.boclips.videos.service.infrastructure.video.mongo.DeliveryMethodDocument
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
@@ -12,5 +13,6 @@ data class ContentPartnerDocument(
     val ageRangeMax: Int?,
     val lastModified: Instant? = null,
     val createdAt: Instant? = null,
-    val searchable: Boolean? = null
+    val searchable: Boolean? = null,
+    val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodDocument>? = null
 )

@@ -2,7 +2,7 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.presentation.video.VideoResourceDeliveryMethod
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -33,7 +33,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `granting access enables on all delivery methods`() {
-        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = setOf(VideoResourceDeliveryMethod.STREAM))
+        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM))
 
         videoAccessService.grantAccess(videoIds = listOf(videoId))
 

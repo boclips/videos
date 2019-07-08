@@ -2,12 +2,15 @@ package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -79,80 +82,235 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(video.ageRange.max()).isEqualTo(14)
     }
 
-    @Test
-    fun `excluding from search enqueues a change for later`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(searchable = true)
-        )
+    @Nested
+    inner class UsingDeprecatedSearchableField {
 
-        saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
+        @Test
+        fun `excluding from search enqueues a change for later`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(searchable = true)
+            )
 
-        updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(searchable = false)
-        )
+            saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
 
-        val message = messageCollector.forChannel(topics.videosExclusionFromSearchRequested()).poll()
-        assertThat(message).isNotNull
+            updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(searchable = false)
+            )
+
+            val message = messageCollector.forChannel(topics.videosExclusionFromSearchRequested()).poll()
+            assertThat(message).isNotNull
+        }
+
+        @Test
+        fun `excluding from search sets deprecated state and sets hidden state for all delivery methods`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(searchable = true)
+            )
+
+            val updatedContentPartner = updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(searchable = false)
+            )
+
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isFalse()
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
+                DeliveryMethod.ALL
+            )
+        }
+
+        @Test
+        fun `including from search sets deprecated state and sets hidden state for no delivery methods`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(searchable = false)
+            )
+
+            val updatedContentPartner = updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(searchable = true)
+            )
+
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
+        }
+
+        @Test
+        fun `excluding a content partner from search also excludes their videos`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(searchable = true)
+            )
+
+            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = true)
+
+            updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(searchable = false)
+            )
+
+            assertThat(videoRepository.find(id)!!.searchable).isFalse()
+            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
+        }
+
+        @Test
+        fun `including a content partner from search also includes their videos`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(searchable = false)
+            )
+
+            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
+
+            updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(searchable = true)
+            )
+
+            assertThat(videoRepository.find(id)!!.searchable).isTrue()
+            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
+        }
     }
 
-    @Test
-    fun `excluding a content partner from search`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(searchable = true)
-        )
+    @Nested
+    inner class UsingResourceDeliveryMethods {
+        @Test
+        fun `excluding from all delivery methods sets deprecated state and sets hidden state for all delivery methods`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
+                )
+            )
 
-        val updatedContentPartner = updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(searchable = false)
-        )
+            val updatedContentPartner = updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(
+                    searchable = null,
+                    hiddenFromSearchForDeliveryMethods = setOf(
+                        DeliveryMethodResource.STREAM,
+                        DeliveryMethodResource.DOWNLOAD
+                    )
+                )
+            )
 
-        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isFalse()
-    }
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isFalse()
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
+                DeliveryMethod.ALL
+            )
+        }
 
-    @Test
-    fun `including a content partner from search`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(searchable = false)
-        )
+        @Test
+        fun `including in all delivery methods sets deprecated state and sets hidden state for no delivery methods`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                )
+            )
 
-        val updatedContentPartner = updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(searchable = true)
-        )
+            val updatedContentPartner = updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(
+                    searchable = null,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
+                )
+            )
 
-        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
-    }
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
+        }
 
-    @Test
-    fun `excluding a content partner from search also excludes their videos`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(searchable = true)
-        )
+        @Test
+        fun `excluding from some delivery methods sets deprecated state and sets hidden state for given delivery methods`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                )
+            )
 
-        val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = true)
+            val updatedContentPartner = updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(
+                    searchable = null,
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
+                )
+            )
 
-        updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(searchable = false)
-        )
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
+            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
+                setOf(DeliveryMethod.STREAM)
+            )
+        }
 
-        assertThat(videoRepository.find(id)!!.searchable).isFalse()
-    }
+        @Test
+        fun `excluding a content partner for all delivery methods also excludes their videos`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                )
+            )
 
-    @Test
-    fun `including a content partner from search also includes their videos`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(searchable = false)
-        )
+            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
 
-        val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
+            updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(
+                    searchable = null,
+                    hiddenFromSearchForDeliveryMethods = setOf(
+                        DeliveryMethodResource.STREAM,
+                        DeliveryMethodResource.DOWNLOAD
+                    )
+                )
+            )
 
-        updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(searchable = true)
-        )
+            assertThat(videoRepository.find(id)!!.searchable).isFalse()
+            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
+        }
 
-        assertThat(videoRepository.find(id)!!.searchable).isTrue()
+        @Test
+        fun `excluding a content partner for some delivery methods also excludes their videos`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                )
+            )
+
+            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
+
+            updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(
+                    searchable = null,
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
+                )
+            )
+
+            assertThat(videoRepository.find(id)!!.searchable).isTrue()
+            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethod.STREAM))
+        }
+
+        @Test
+        fun `including a content partner for all delivery methods also includes their videos`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(
+                    searchable = false,
+                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                )
+            )
+
+            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
+
+            updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(
+                    searchable = null,
+                    hiddenFromSearchForDeliveryMethods = emptySet()
+                )
+            )
+
+            assertThat(videoRepository.find(id)!!.searchable).isTrue()
+            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
+        }
     }
 }
