@@ -14,6 +14,11 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
     private val playbackById = mutableMapOf<PlaybackId, YoutubePlayback>()
     private val providerMetadataById = mutableMapOf<PlaybackId, YoutubeMetadata>()
 
+    fun clear() {
+        playbackById.clear()
+        providerMetadataById.clear()
+    }
+
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
         return playbackIds
             .mapNotNull map@{ id ->
@@ -63,9 +68,5 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
         )
 
         return this
-    }
-
-    fun clear() {
-        playbackById.clear()
     }
 }

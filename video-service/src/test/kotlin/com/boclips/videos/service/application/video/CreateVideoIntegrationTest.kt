@@ -126,6 +126,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `does not populate legacy search when youtube video is created`() {
         fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
+        fakeYoutubePlaybackProvider.addMetadata("1234", "channel name", "channel id")
         createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "the latest banana video",
