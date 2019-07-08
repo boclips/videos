@@ -12,7 +12,7 @@ import java.util.Locale
 
 class TestYoutubePlaybackProvider : PlaybackProvider {
     private val playbackById = mutableMapOf<PlaybackId, YoutubePlayback>()
-    private val provderMetadataById = mutableMapOf<PlaybackId, YoutubeMetadata>()
+    private val providerMetadataById = mutableMapOf<PlaybackId, YoutubeMetadata>()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubePlayback> {
         return playbackIds
@@ -48,7 +48,7 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
 
     override fun retrieveProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoProviderMetadata> {
         return playbackIds.mapNotNull map@{ id ->
-            val youtubeMetadata = provderMetadataById[id] ?: return@map null
+            val youtubeMetadata = providerMetadataById[id] ?: return@map null
             (id to youtubeMetadata)
         }.toMap()
     }
@@ -56,7 +56,7 @@ class TestYoutubePlaybackProvider : PlaybackProvider {
     fun addMetadata(youtubeId: String, channelName: String, channelId: String): TestYoutubePlaybackProvider {
         val playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = youtubeId)
 
-        provderMetadataById[playbackId] = YoutubeMetadata(
+        providerMetadataById[playbackId] = YoutubeMetadata(
             channelName = channelName,
             channelId = channelId,
             id = playbackId
