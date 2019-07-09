@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.application.exceptions.SubjectExistsException
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -8,6 +9,8 @@ import com.boclips.videos.service.domain.model.subjects.SubjectId
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
+import com.boclips.web.exceptions.ExceptionDetails
+import com.boclips.web.exceptions.InvalidRequestApiException
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
@@ -52,7 +55,17 @@ class SubjectController(
 
     @PostMapping
     fun createASubject(@Valid @RequestBody createSubjectRequest: CreateSubjectRequest): ResponseEntity<Any> {
-        val subject = createSubject(createSubjectRequest)
+        val subject = try {
+            createSubject(createSubjectRequest)
+        } catch (e: SubjectExistsException) {
+            throw InvalidRequestApiException(
+                ExceptionDetails(
+                    error = "Error creating subject",
+                    message = "The subject ${createSubjectRequest.name} already exists",
+                    status = HttpStatus.CONFLICT
+                )
+            )
+        }
         val headers = HttpHeaders().apply {
             set(HttpHeaders.LOCATION, subjectsLinkBuilder.subject(subject).href)
         }

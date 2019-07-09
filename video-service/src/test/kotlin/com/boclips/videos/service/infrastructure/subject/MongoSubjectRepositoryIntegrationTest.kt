@@ -61,4 +61,13 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(retrievedSubject).isNotNull
     }
+
+    @Test
+    fun `find by name`() {
+        mongoSubjectRepository.create(name = "French")
+
+        val retrievedSubject = mongoSubjectRepository.findByName("French")
+
+        assertThat(retrievedSubject!!.name).isEqualTo("French")
+    }
 }

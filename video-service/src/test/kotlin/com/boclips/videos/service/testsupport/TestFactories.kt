@@ -40,6 +40,7 @@ import com.boclips.videos.service.presentation.collections.CreateCollectionReque
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -112,6 +113,9 @@ object TestFactories {
         Subject(
             id = SubjectId(id), name = name
         )
+
+    fun createSubjectRequest(name: String? = null): CreateSubjectRequest =
+        CreateSubjectRequest(name = name)
 
     fun createMediaEntry(
         id: String = "1",

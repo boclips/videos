@@ -89,12 +89,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             contentProvider = "cp2",
             ageRange = UnboundedAgeRange
         ).value
-
-        setVideoSubjects(kalturaVideoId, saveSubject("Maths"))
     }
 
     @Test
     fun `returns Kaltura videos when query matches`() {
+        setVideoSubjects(kalturaVideoId, saveSubject("Maths"))
+
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))

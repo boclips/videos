@@ -34,6 +34,13 @@ class MongoSubjectRepository(
             .toList()
     }
 
+    override fun findByName(name: String): Subject? {
+        val document = getSubjectCollection()
+            .findOne(SubjectDocument::name eq name) ?: return null
+
+        return toSubject(document)
+    }
+
     override fun create(name: String): Subject {
         val id = ObjectId()
         getSubjectCollection().insertOne(

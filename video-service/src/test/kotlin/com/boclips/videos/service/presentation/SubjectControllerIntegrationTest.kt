@@ -31,6 +31,15 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns a status of 409 (Conflict) when attempting to create a subject with an existing name`() {
+        createSubject("French")
+            .andExpect(status().isCreated)
+
+        createSubject("French")
+            .andExpect(status().isConflict)
+    }
+
+    @Test
     fun `gets a subject`() {
         val subjectUrl = createSubject("Mathematics")
             .andReturn().response.getHeader("Location")!!
