@@ -2,10 +2,8 @@ package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.events.config.Topics
 import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
-import com.boclips.events.types.video.VideosExclusionFromSearchRequested
 import com.boclips.events.types.video.VideosExclusionFromStreamRequested
 import com.boclips.events.types.video.VideosInclusionInDownloadRequested
-import com.boclips.events.types.video.VideosInclusionInSearchRequested
 import com.boclips.events.types.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId

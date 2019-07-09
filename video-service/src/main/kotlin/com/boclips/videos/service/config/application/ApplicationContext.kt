@@ -370,7 +370,8 @@ class ApplicationContext(
         return BulkVideoSearchUpdate(
             contentPartnerRepository,
             videoRepository,
-            bulkUpdate()
+            videoSearchService,
+            legacyVideoSearchService
         )
     }
 

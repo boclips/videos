@@ -1,58 +1,49 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.events.config.Subscriptions
-import com.boclips.events.types.video.VideosExclusionFromSearchRequested
-import com.boclips.events.types.video.VideosInclusionInSearchRequested
+import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
+import com.boclips.events.types.video.VideosExclusionFromStreamRequested
+import com.boclips.events.types.video.VideosInclusionInDownloadRequested
+import com.boclips.events.types.video.VideosInclusionInStreamRequested
+import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.presentation.video.BulkUpdateRequest
-import com.boclips.videos.service.presentation.video.VideoResourceStatus
+import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
 
 class BulkVideoSearchUpdate(
     val contentPartnerRepository: ContentPartnerRepository,
     val videoRepository: VideoRepository,
-    private val bulkUpdateVideo: BulkUpdateVideo
+    private val videoSearchService: VideoSearchService,
+    private val legacyVideoSearchService: LegacyVideoSearchService
 ) {
+    companion object : KLogging()
 
-    companion object : KLogging();
-
-    @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_SEARCH_REQUESTED)
-    operator fun invoke(videoExclusionFromSearchEvent: VideosExclusionFromSearchRequested) {
-        logger.info { "Video exclusion event received" }
-        logger.info { "Excluding ${videoExclusionFromSearchEvent.videoIds.size} videos" }
-        try {
-            val videosIds = videoExclusionFromSearchEvent.videoIds
-            bulkUpdateVideo.invoke(
-                BulkUpdateRequest(
-                    ids = videosIds,
-                    status = VideoResourceStatus.SEARCH_DISABLED
-                )
-            )
-
-            logger.info { "Finished excluding ${videoExclusionFromSearchEvent.videoIds.size} videos" }
-        } catch (ex: Exception) {
-            logger.info { "Exception whilst excluding videos: ${ex.message}" }
-        }
+    @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_STREAM_REQUESTED)
+    operator fun invoke(event: VideosExclusionFromStreamRequested) {
+        videoSearchService.bulkRemoveFromSearch(event.videoIds)
     }
 
-    @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_SEARCH_REQUESTED)
-    operator fun invoke(videosInclusionInSearchRequested: VideosInclusionInSearchRequested) {
-        logger.info { "Video inclusion event received" }
-        logger.info { "Including ${videosInclusionInSearchRequested.videoIds.size} videos" }
-        try {
-            val videosIds = videosInclusionInSearchRequested.videoIds
-            bulkUpdateVideo.invoke(
-                BulkUpdateRequest(
-                    ids = videosIds,
-                    status = VideoResourceStatus.SEARCHABLE
-                )
-            )
+    @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_DOWNLOAD_REQUESTED)
+    operator fun invoke(event: VideosExclusionFromDownloadRequested) {
+        legacyVideoSearchService.bulkRemoveFromSearch(event.videoIds)
+    }
 
-            logger.info { "Finished including ${videosInclusionInSearchRequested.videoIds.size} videos" }
-        } catch (ex: Exception) {
-            logger.info { "Exception whilst including videos: ${ex.message}" }
-        }
+    @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_STREAM_REQUESTED)
+    operator fun invoke(event: VideosInclusionInStreamRequested) {
+        val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })
+        videoSearchService.upsert(videos.asSequence())
+    }
+
+    @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_DOWNLOAD_REQUESTED)
+    operator fun invoke(event: VideosInclusionInDownloadRequested) {
+        val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })
+        legacyVideoSearchService.upsert(videos
+            .filter { it.isBoclipsHosted() }
+            .map { video -> VideoToLegacyVideoMetadataConverter.convert(video) }
+            .asSequence())
     }
 }

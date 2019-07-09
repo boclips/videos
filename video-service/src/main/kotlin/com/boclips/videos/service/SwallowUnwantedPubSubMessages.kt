@@ -46,12 +46,6 @@ class SwallowUnwantedPubSubMessages {
     @StreamListener(Subscriptions.COLLECTION_SUBJECTS_CHANGED)
     fun ignoreCollectionSubjectsChanged() {}
 
-    @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_SEARCH_REQUESTED)
-    fun ignoreVideosInclusionInSearchRequested() {}
-
-    @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_SEARCH_REQUESTED)
-    fun ignoreVideosExclusionFromSearchRequested() {}
-
     @StreamListener(Subscriptions.VIDEO_REMOVED_FROM_COLLECTION)
     fun ignoreVideoRemovedFromCollection() {}
 
