@@ -9,16 +9,17 @@ import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
-import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.video.AdminSearchRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.RateVideoRequest
+import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
 import org.springframework.hateoas.PagedResources
+import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -42,8 +43,7 @@ class VideoController(
     private val bulkUpdateVideo: BulkUpdateVideo,
     private val rateVideo: RateVideo,
     private val getVideoTranscript: GetVideoTranscript,
-    private val objectMapper: ObjectMapper,
-    private val withProjection: WithProjection
+    private val objectMapper: ObjectMapper
 ) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -108,8 +108,9 @@ class VideoController(
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
 
     @GetMapping(path = ["/{id}"], produces = ["application/hal+json"])
-    fun getVideo(@PathVariable("id") id: String?) =
-        withProjection(searchVideo.byId(id))
+    fun getVideo(@PathVariable("id") id: String?): Resource<VideoResource> {
+        return searchVideo.byId(id)
+    }
 
     @DeleteMapping("/{id}")
     fun removeVideo(@PathVariable("id") id: String?) {
@@ -169,6 +170,8 @@ class VideoController(
     }
 
     @PatchMapping(path = ["/{id}"], params = ["rating"])
-    fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
-        rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id)).let { this.getVideo(id) }
+    fun patchRating(@RequestParam rating: Int?, @PathVariable id: String): Resource<VideoResource> {
+        rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id))
+        return this.getVideo(id)
+    }
 }
