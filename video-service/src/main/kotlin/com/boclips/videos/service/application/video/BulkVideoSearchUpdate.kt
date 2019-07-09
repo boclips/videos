@@ -24,26 +24,42 @@ class BulkVideoSearchUpdate(
 
     @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_STREAM_REQUESTED)
     operator fun invoke(event: VideosExclusionFromStreamRequested) {
-        videoSearchService.bulkRemoveFromSearch(event.videoIds)
+        try {
+            videoSearchService.bulkRemoveFromSearch(event.videoIds)
+        } catch (e: Exception) {
+            logger.info { "Could not exclude from search for STREAM because ${e.message}" }
+        }
     }
 
     @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_DOWNLOAD_REQUESTED)
     operator fun invoke(event: VideosExclusionFromDownloadRequested) {
-        legacyVideoSearchService.bulkRemoveFromSearch(event.videoIds)
+        try {
+            legacyVideoSearchService.bulkRemoveFromSearch(event.videoIds)
+        } catch (e: Exception) {
+            logger.info { "Could not exclude from search for DOWNLOAD because ${e.message}" }
+        }
     }
 
     @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_STREAM_REQUESTED)
     operator fun invoke(event: VideosInclusionInStreamRequested) {
-        val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })
-        videoSearchService.upsert(videos.asSequence())
+        try {
+            val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })
+            videoSearchService.upsert(videos.asSequence())
+        } catch (e: Exception) {
+            logger.info { "Could not include in search from STREAM because ${e.message}" }
+        }
     }
 
     @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_DOWNLOAD_REQUESTED)
     operator fun invoke(event: VideosInclusionInDownloadRequested) {
-        val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })
-        legacyVideoSearchService.upsert(videos
-            .filter { it.isBoclipsHosted() }
-            .map { video -> VideoToLegacyVideoMetadataConverter.convert(video) }
-            .asSequence())
+        try {
+            val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })
+            legacyVideoSearchService.upsert(videos
+                .filter { it.isBoclipsHosted() }
+                .map { video -> VideoToLegacyVideoMetadataConverter.convert(video) }
+                .asSequence())
+        } catch (e: Exception) {
+            logger.info { "Could not include in search from DOWNLOAD because ${e.message}" }
+        }
     }
 }
