@@ -2,9 +2,9 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
-import com.boclips.videos.service.presentation.projections.BoclipsInternalView
-import com.boclips.videos.service.presentation.projections.PublicApiView
-import com.boclips.videos.service.presentation.projections.TeachersView
+import com.boclips.videos.service.presentation.projections.BoclipsInternalProjection
+import com.boclips.videos.service.presentation.projections.PublicApiProjection
+import com.boclips.videos.service.presentation.projections.TeachersProjection
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonView
@@ -14,37 +14,37 @@ import java.time.LocalDate
 
 @Relation(collectionRelation = "videos")
 data class VideoResource(
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val id: String? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val title: String? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val description: String? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val releasedOn: LocalDate? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val playback: Resource<PlaybackResource>? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val subjects: Set<String>? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val badges: Set<String> = emptySet(),
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val legalRestrictions: String? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val ageRange: AgeRangeResource? = null,
-    @get:JsonView(PublicApiView::class)
+    @get:JsonView(PublicApiProjection::class)
     val rating: Int? = null,
 
-    @get:JsonView(TeachersView::class)
+    @get:JsonView(TeachersProjection::class)
     val contentPartner: String? = null,
 
-    @get:JsonView(BoclipsInternalView::class)
+    @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
-    @get:JsonView(BoclipsInternalView::class)
+    @get:JsonView(BoclipsInternalProjection::class)
     val contentPartnerVideoId: String? = null,
-    @get:JsonView(BoclipsInternalView::class)
+    @get:JsonView(BoclipsInternalProjection::class)
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet(),
-    @get:JsonView(BoclipsInternalView::class)
+    @get:JsonView(BoclipsInternalProjection::class)
     val status: VideoResourceStatus? = null,
 
     @get:JsonIgnore

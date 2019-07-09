@@ -1,6 +1,11 @@
 package com.boclips.videos.service.config.security
 
 object UserRoles {
+    const val API = "API"
+    const val TEACHER = "TEACHER"
+    const val PUBLISHER = "PUBLISHER"
+    const val BACKOFFICE = "BACKOFFICE"
+
     const val CREATE_SUBJECT = "CREATE_SUBJECT"
     const val DELETE_SUBJECT = "DELETE_SUBJECT"
 
