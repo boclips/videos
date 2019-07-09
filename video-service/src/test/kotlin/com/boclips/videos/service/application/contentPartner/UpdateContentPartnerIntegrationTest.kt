@@ -98,8 +98,8 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 request = TestFactories.createContentPartnerRequest(searchable = false)
             )
 
-            val message = messageCollector.forChannel(topics.videosExclusionFromSearchRequested()).poll()
-            assertThat(message).isNotNull
+            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+            assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
         }
 
         @Test
@@ -171,6 +171,30 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class UsingResourceDeliveryMethods {
+        @Test
+        fun `excluding from search enqueues a change for later`() {
+            val originalContentPartner = createContentPartner(
+                TestFactories.createContentPartnerRequest(
+                    hiddenFromSearchForDeliveryMethods = emptySet(),
+                    searchable = true
+                )
+            )
+
+            saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
+
+            updateContentPartner(
+                contentPartnerId = originalContentPartner.contentPartnerId.value,
+                request = TestFactories.createContentPartnerRequest(
+                    searchable = null,
+                    hiddenFromSearchForDeliveryMethods = setOf(
+                        DeliveryMethodResource.STREAM
+                    )
+                )
+            )
+
+            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+        }
+
         @Test
         fun `excluding from all delivery methods sets deprecated state and sets hidden state for all delivery methods`() {
             val originalContentPartner = createContentPartner(

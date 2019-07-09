@@ -1,11 +1,16 @@
 package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.events.config.Topics
-import com.boclips.events.types.VideosExclusionFromSearchRequested
-import com.boclips.events.types.VideosInclusionInSearchRequested
+import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
+import com.boclips.events.types.video.VideosExclusionFromSearchRequested
+import com.boclips.events.types.video.VideosExclusionFromStreamRequested
+import com.boclips.events.types.video.VideosInclusionInDownloadRequested
+import com.boclips.events.types.video.VideosInclusionInSearchRequested
+import com.boclips.events.types.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import org.springframework.integration.support.MessageBuilder
 
@@ -15,13 +20,7 @@ class RequestBulkVideoSearchUpdateByContentPartner(
     private val videoRepository: VideoRepository,
     private val batchSize: Int
 ) {
-
-    enum class RequestType {
-        INCLUDE,
-        EXCLUDE
-    }
-
-    fun invoke(contentPartnerId: ContentPartnerId, requestType: RequestType) {
+    fun invoke(contentPartnerId: ContentPartnerId, deliveryMethods: Set<DeliveryMethod>) {
         if (contentPartnerRepository.findById(contentPartnerId) == null) {
             throw ContentPartnerNotFoundException("Cannot find Content Partner with id: ${contentPartnerId.value}")
         }
@@ -30,32 +29,40 @@ class RequestBulkVideoSearchUpdateByContentPartner(
             .map { it.videoId.value }
 
         videoIds.windowed(size = batchSize, step = batchSize, partialWindows = true)
-            .forEach { this.publish(requestType, it) }
+            .forEach { this.publish(deliveryMethods, it) }
     }
 
-    private fun publish(requestType: RequestType, videoIds: List<String>) {
-        when (requestType) {
-            RequestType.INCLUDE -> publishInclusion(videoIds)
-            RequestType.EXCLUDE -> publishExclusion(videoIds)
+    private fun publish(deliveryMethods: Set<DeliveryMethod>, videoIds: List<String>) {
+        if (deliveryMethods.contains(DeliveryMethod.STREAM)) {
+            excludeFromStream(videoIds)
+        } else {
+            includeInStream(videoIds)
+        }
+
+        if (deliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
+            excludeFromDownload(videoIds)
+        } else {
+            includeInDownload(videoIds)
         }
     }
 
-    private fun publishInclusion(videoIds: List<String>) {
-        val message = VideosInclusionInSearchRequested
-            .builder()
-            .videoIds(videoIds)
-            .build()
-
-        topics.videosInclusionInSearchRequested()
-            .send(MessageBuilder.withPayload(message).build())
+    private fun includeInStream(videoIds: List<String>) {
+        val message = VideosInclusionInStreamRequested.builder().videoIds(videoIds).build()
+        topics.videosInclusionInStreamRequested().send(MessageBuilder.withPayload(message).build())
     }
 
-    private fun publishExclusion(videoIds: List<String>) {
-        val message = VideosExclusionFromSearchRequested
-            .builder()
-            .videoIds(videoIds)
-            .build()
-        topics.videosExclusionFromSearchRequested()
-            .send(MessageBuilder.withPayload(message).build())
+    private fun excludeFromStream(videoIds: List<String>) {
+        val message = VideosExclusionFromStreamRequested.builder().videoIds(videoIds).build()
+        topics.videosExclusionFromStreamRequested().send(MessageBuilder.withPayload(message).build())
+    }
+
+    private fun includeInDownload(videoIds: List<String>) {
+        val message = VideosInclusionInDownloadRequested.builder().videoIds(videoIds).build()
+        topics.videosInclusionInDownloadRequested().send(MessageBuilder.withPayload(message).build())
+    }
+
+    private fun excludeFromDownload(videoIds: List<String>) {
+        val message = VideosExclusionFromDownloadRequested.builder().videoIds(videoIds).build()
+        topics.videosExclusionFromDownloadRequested().send(MessageBuilder.withPayload(message).build())
     }
 }

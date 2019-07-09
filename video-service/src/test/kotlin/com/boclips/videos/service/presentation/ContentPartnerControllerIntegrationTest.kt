@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
-import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -177,10 +176,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             )
         ).andExpect(status().isNoContent)
 
-        val message = messageCollector.forChannel(topics.videosExclusionFromSearchRequested()).poll()
+        assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+        assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
 
-
-        Assertions.assertThat(message).isNotNull
         mockMvc.perform(get("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.searchable", equalTo(false)))
@@ -203,6 +201,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     }"""
             )
         ).andExpect(status().isNoContent)
+
+        assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
 
         mockMvc.perform(get("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee())
             .andExpect(status().isOk)

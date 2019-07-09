@@ -31,10 +31,10 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -289,5 +289,10 @@ abstract class AbstractSpringIntegrationTest {
             .andExpect(jsonPath("$.error").exists())
             .andExpect(jsonPath("$.message").exists())
             .andExpect(jsonPath("$.path").exists())
+    }
+
+    fun assertThatChannelHasMessages(channel: MessageChannel) {
+        val messageSize = messageCollector.forChannel(channel).size
+        org.assertj.core.api.Assertions.assertThat(messageSize).isGreaterThan(0)
     }
 }

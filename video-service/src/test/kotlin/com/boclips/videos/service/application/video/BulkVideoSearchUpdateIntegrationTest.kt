@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.types.VideosExclusionFromSearchRequested
-import com.boclips.events.types.VideosInclusionInSearchRequested
+import com.boclips.events.types.video.VideosExclusionFromSearchRequested
+import com.boclips.events.types.video.VideosInclusionInSearchRequested
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
