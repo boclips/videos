@@ -1,5 +1,8 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
+import com.boclips.events.types.video.VideosExclusionFromStreamRequested
+import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -44,6 +47,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Autowired
+    lateinit var bulkVideoSearchUpdate: BulkVideoSearchUpdate
+
     lateinit var disabledVideoId: String
     lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String
@@ -71,6 +77,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ageRange = UnboundedAgeRange
         ).value
         changeVideoStatus(disabledVideoId, VideoResourceStatus.SEARCH_DISABLED)
+        bulkVideoSearchUpdate.invoke(event = VideosExclusionFromDownloadRequested.builder().videoIds(listOf(disabledVideoId)).build())
+        bulkVideoSearchUpdate.invoke(event = VideosExclusionFromStreamRequested.builder().videoIds(listOf(disabledVideoId)).build())
 
         youtubeVideoId = saveVideo(
             playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),

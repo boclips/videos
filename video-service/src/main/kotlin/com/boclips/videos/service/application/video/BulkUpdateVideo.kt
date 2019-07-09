@@ -1,14 +1,13 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
+import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoAccessService
-import com.boclips.videos.service.domain.service.video.VideoSearchService
-import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
@@ -16,10 +15,11 @@ import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
 
 open class BulkUpdateVideo(
-    private val videoRepository: VideoRepository,
-    private val videoSearchService: VideoSearchService,
-    private val legacyVideoSearchService: LegacyVideoSearchService,
-    private val videoAccessService: VideoAccessService
+    private val videoAccessService: VideoAccessService,
+    private val includeVideosInSearchForStream: IncludeVideosInSearchForStream,
+    private val excludeVideosFromSearchForStream: ExcludeVideosFromSearchForStream,
+    private val excludeVideosFromSearchForDownload: ExcludeVideosFromSearchForDownload,
+    private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
 ) {
     companion object : KLogging();
 
@@ -29,7 +29,7 @@ open class BulkUpdateVideo(
             val videoIds = bulkUpdateRequest.ids.map(::VideoId)
 
             videoAccessService.setSearchBlacklist(videoIds, deliveryMethods)
-            updateDeliveryMethodsInSearch(videoIds, deliveryMethods)
+            updateDeliveryMethodsInSearch(bulkUpdateRequest.ids, deliveryMethods)
         } ?: updateLegacyRequestStatusInSearch(bulkUpdateRequest)
     }
 
@@ -38,37 +38,32 @@ open class BulkUpdateVideo(
     }
 
     private fun updateDeliveryMethodsInSearch(
-        videoIds: List<VideoId>,
+        videoIds: List<String>,
         deliveryMethods: Set<DeliveryMethod>
     ) {
-        val videos = videoRepository.findAll(videoIds)
-
-        updateStreamDeliveryMethodInSearch(videos, deliveryMethods)
-        updateDownloadDeliveryMethod(videos, deliveryMethods)
+        updateStreamDeliveryMethodInSearch(deliveryMethods, videoIds)
+        updateDownloadDeliveryMethod(deliveryMethods, videoIds)
     }
 
     private fun updateDownloadDeliveryMethod(
-        videos: List<Video>,
-        deliveryMethods: Set<DeliveryMethod>
+        deliveryMethods: Set<DeliveryMethod>,
+        videoIds: List<String>
     ) {
         if (deliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
-            legacyVideoSearchService.bulkRemoveFromSearch(videos.map { it.videoId.value })
+            excludeVideosFromSearchForDownload.invoke(videoIds = videoIds)
         } else {
-            legacyVideoSearchService.upsert(videos
-                .filter { it.isBoclipsHosted() }
-                .map { video -> VideoToLegacyVideoMetadataConverter.convert(video) }
-                .asSequence())
+            includeVideosInSearchForDownload.invoke(videoIds = videoIds)
         }
     }
 
     private fun updateStreamDeliveryMethodInSearch(
-        videos: List<Video>,
-        deliveryMethods: Set<DeliveryMethod>
+        deliveryMethods: Set<DeliveryMethod>,
+        videoIds: List<String>
     ) {
         if (deliveryMethods.contains(DeliveryMethod.STREAM)) {
-            videoSearchService.bulkRemoveFromSearch(videos.map { it.videoId.value })
+            excludeVideosFromSearchForStream.invoke(videoIds = videoIds)
         } else {
-            videoSearchService.upsert(videos.asSequence())
+            includeVideosInSearchForStream.invoke(videoIds = videoIds)
         }
     }
 
@@ -84,21 +79,16 @@ open class BulkUpdateVideo(
         val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
 
         videoAccessService.revokeAccess(videoIds)
-        videoSearchService.bulkRemoveFromSearch(bulkUpdateRequest.ids)
-        legacyVideoSearchService.bulkRemoveFromSearch(bulkUpdateRequest.ids)
+
+        excludeVideosFromSearchForDownload.invoke(bulkUpdateRequest.ids)
+        excludeVideosFromSearchForStream.invoke(bulkUpdateRequest.ids)
     }
 
     private fun makeSearchable(bulkUpdateRequest: BulkUpdateRequest) {
         val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
         videoAccessService.grantAccess(videoIds)
 
-        videoRepository.findAll(videoIds).let { videos ->
-            videoSearchService.upsert(videos.asSequence())
-
-            legacyVideoSearchService.upsert(videos
-                .filter { it.isBoclipsHosted() }
-                .map { video -> VideoToLegacyVideoMetadataConverter.convert(video) }
-                .asSequence())
-        }
+        includeVideosInSearchForDownload.invoke(bulkUpdateRequest.ids)
+        includeVideosInSearchForStream.invoke(bulkUpdateRequest.ids)
     }
 }

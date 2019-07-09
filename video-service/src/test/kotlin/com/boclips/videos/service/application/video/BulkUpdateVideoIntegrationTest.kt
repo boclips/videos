@@ -2,8 +2,6 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
@@ -12,8 +10,6 @@ import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyOrNull
-import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.isNull
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +17,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.UUID
 
 class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -31,7 +26,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class UsingDeprecatedStatusField {
         @Test
-        fun `disabling sets searchable field on video to false, hides from all delivery methods and removes from search indices`() {
+        fun `disabling sets searchable fields to false, hides from all delivery methods and enqueues removal from search indices`() {
             val videoIds = listOf(saveVideo(searchable = true), saveVideo(searchable = true))
 
             bulkUpdateVideo(
@@ -44,13 +39,12 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(videoRepository.findAll(videoIds)).allMatch { !it.searchable }
             assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
                 .isEqualTo(listOf(DeliveryMethod.ALL, DeliveryMethod.ALL))
-
-            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
-            verify(legacyVideoSearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+            assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
         }
 
         @Test
-        fun `enabling sets searchable field on video to true, enables all delivery methods and registers in search indices`() {
+        fun `enabling sets searchable fields to true, enables all delivery methods and enqueues addition to search indices`() {
             val videoIds = listOf(saveVideo(searchable = false), saveVideo(searchable = false))
             bulkUpdateVideo(
                 BulkUpdateRequest(
@@ -61,28 +55,11 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
             bulkUpdateVideo(BulkUpdateRequest(ids = videoIds.map { it.value }, status = VideoResourceStatus.SEARCHABLE))
 
+            assertThat(videoRepository.findAll(videoIds).flatMap { it.hiddenFromSearchForDeliveryMethods })
+                .isEmpty()
             assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
-            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
-        }
-
-        @Test
-        fun `disabling YouTube videos does not register them in the legacy search index`() {
-            val videoId = saveVideo(
-                searchable = false,
-                playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}")
-            )
-
-            bulkUpdateVideo(
-                BulkUpdateRequest(
-                    ids = listOf(videoId.value),
-                    status = VideoResourceStatus.SEARCH_DISABLED
-                )
-            )
-
-            bulkUpdateVideo(BulkUpdateRequest(ids = listOf(videoId.value), status = VideoResourceStatus.SEARCHABLE))
-
-            verify(legacyVideoSearchService).upsert(argThat { toList().isEmpty() }, isNull())
+            assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+            assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
         }
     }
 
@@ -114,9 +91,8 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(videoRepository.findAll(videoIds)).allMatch { !it.searchable }
             assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
                 .isEqualTo(listOf(DeliveryMethod.ALL, DeliveryMethod.ALL))
-
-            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
-            verify(legacyVideoSearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+            assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
         }
 
         @Test
@@ -143,10 +119,8 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
             assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
                 .isEqualTo(listOf(setOf(DeliveryMethod.STREAM), setOf(DeliveryMethod.STREAM)))
-
-            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(0)
-
-            verify(legacyVideoSearchService, times(3)).upsert(any(), anyOrNull())
+            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+            assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
         }
 
         @Test
@@ -173,9 +147,8 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
             assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
                 .isEqualTo(listOf(setOf(DeliveryMethod.DOWNLOAD), setOf(DeliveryMethod.DOWNLOAD)))
-
-            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-            verify(legacyVideoSearchService).bulkRemoveFromSearch(videoIds.map { it.value })
+            assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+            assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
         }
 
         @Test
@@ -200,9 +173,8 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(videoRepository.findAll(videoIds)).allMatch { it.searchable }
             assertThat(videoRepository.findAll(videoIds).map { it.hiddenFromSearchForDeliveryMethods })
                 .isEqualTo(listOf(emptySet(), emptySet<DeliveryMethod>()))
-
-            assertThat(videoSearchService.count(VideoQuery(ids = videoIds.map { it.value }))).isEqualTo(2)
-            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
+            assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+            assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
         }
     }
 

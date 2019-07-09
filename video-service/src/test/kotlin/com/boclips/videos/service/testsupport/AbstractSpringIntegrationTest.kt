@@ -281,6 +281,7 @@ abstract class AbstractSpringIntegrationTest {
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {
         bulkUpdateVideo(BulkUpdateRequest(listOf(id), status))
+
     }
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {

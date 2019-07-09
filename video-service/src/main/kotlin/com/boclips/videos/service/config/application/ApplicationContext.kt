@@ -44,9 +44,13 @@ import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdatePlayback
 import com.boclips.videos.service.application.video.UpdateTranscripts
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
+import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
+import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.properties.PubSubVideoSearchabilityUpdateProperties
@@ -156,8 +160,39 @@ class ApplicationContext(
     }
 
     @Bean
-    fun bulkUpdate(): BulkUpdateVideo {
-        return BulkUpdateVideo(videoRepository, videoSearchService, legacyVideoSearchService, videoAccessService)
+    fun includeVideosInSearchForStream(): IncludeVideosInSearchForStream {
+        return IncludeVideosInSearchForStream(topics = topics)
+    }
+
+    @Bean
+    fun excludeVideosFromSearchForStream(): ExcludeVideosFromSearchForStream {
+        return ExcludeVideosFromSearchForStream(topics = topics)
+    }
+
+    @Bean
+    fun includeVideosInSearchForDownload(): IncludeVideosInSearchForDownload {
+        return IncludeVideosInSearchForDownload(topics = topics)
+    }
+
+    @Bean
+    fun excludeVideosFromSearchForDownload(): ExcludeVideosFromSearchForDownload {
+        return ExcludeVideosFromSearchForDownload(topics = topics)
+    }
+
+    @Bean
+    fun bulkUpdate(
+        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
+        excludeVideosFromSearchForStream: ExcludeVideosFromSearchForStream,
+        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
+        excludeVideosFromSearchForDownload: ExcludeVideosFromSearchForDownload
+    ): BulkUpdateVideo {
+        return BulkUpdateVideo(
+            videoAccessService,
+            includeVideosInSearchForStream,
+            excludeVideosFromSearchForStream,
+            excludeVideosFromSearchForDownload,
+            includeVideosInSearchForDownload
+        )
     }
 
     @Bean
@@ -332,11 +367,15 @@ class ApplicationContext(
     }
 
     @Bean
-    fun updateContentPartner(pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties): UpdateContentPartner {
+    fun updateContentPartner(
+        pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties,
+        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
+        requestSearchUpdateByContentPartner: RequestBulkVideoSearchUpdateByContentPartner
+    ): UpdateContentPartner {
         return UpdateContentPartner(
             contentPartnerRepository,
             videoRepository,
-            getRequestSearchUpdateByContentPartner(pubSubVideoSearchabilityUpdateProperties)
+            requestSearchUpdateByContentPartner
         )
     }
 
@@ -356,12 +395,21 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getRequestSearchUpdateByContentPartner(pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties): RequestBulkVideoSearchUpdateByContentPartner {
+    fun requestSearchUpdateByContentPartner(
+        pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties,
+        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
+        excludeVideosInSearchForStream: ExcludeVideosFromSearchForStream,
+        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
+        excludeVideosInSearchForDownload: ExcludeVideosFromSearchForDownload
+    ): RequestBulkVideoSearchUpdateByContentPartner {
         return RequestBulkVideoSearchUpdateByContentPartner(
-            topics,
             contentPartnerRepository,
             videoRepository,
-            pubSubVideoSearchabilityUpdateProperties.batchSize
+            pubSubVideoSearchabilityUpdateProperties.batchSize,
+            includeVideosInSearchForStream,
+            excludeVideosInSearchForStream,
+            includeVideosInSearchForDownload,
+            excludeVideosInSearchForDownload
         )
     }
 
