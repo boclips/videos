@@ -14,9 +14,11 @@ import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodReso
 import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asOperator
+import com.boclips.videos.service.testsupport.asPublisher
 import com.boclips.videos.service.testsupport.asTeacher
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -341,8 +343,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns 200 for valid video`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asTeacher())
+    fun `returns 200 for valid video as boclips employee`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asPublisher())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
@@ -363,6 +365,56 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+    }
+
+    @Test
+    fun `returns 200 for valid video as teacher`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
+            .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
+            .andExpect(jsonPath("$.description", equalTo("test description 3")))
+            .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
+            .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
+            .andExpect(jsonPath("$.playback.id").exists())
+            .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+            .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
+            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
+            .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+
+            .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
+            .andExpect(jsonPath("$.type").doesNotExist())
+            .andExpect(jsonPath("$.status").doesNotExist())
+    }
+
+    @Test
+    fun `returns 200 for valid video as API user`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asApiUser())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
+            .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
+            .andExpect(jsonPath("$.description", equalTo("test description 3")))
+            .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
+            .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
+            .andExpect(jsonPath("$.playback.id").exists())
+            .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+            .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
+            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
+            .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+
+            .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
+            .andExpect(jsonPath("$.type").doesNotExist())
+            .andExpect(jsonPath("$.status").doesNotExist())
     }
 
     @Test
