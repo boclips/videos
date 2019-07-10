@@ -9,7 +9,8 @@ interface EventService {
         query: String,
         pageIndex: Int,
         pageSize: Int,
-        totalResults: Long
+        totalResults: Long,
+        pageVideoIds: List<String>
     )
 
     fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>)

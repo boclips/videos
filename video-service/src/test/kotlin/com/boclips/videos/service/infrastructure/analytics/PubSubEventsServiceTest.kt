@@ -46,7 +46,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun saveSearchEvent() {
-        eventService.saveSearchEvent(query = "the query", pageIndex = 4, pageSize = 2, totalResults = 20)
+        eventService.saveSearchEvent(query = "the query", pageIndex = 4, pageSize = 2, totalResults = 20, pageVideoIds = listOf("v123"))
 
         val message = getMessage(topics.videosSearched(), VideosSearched::class)
         assertThat(message.query).isEqualTo("the query")
@@ -55,6 +55,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(message.totalResults).isEqualTo(20)
         assertThat(message.user.id).isEqualTo("user@example.com")
         assertThat(message.user.isBoclipsEmployee).isFalse()
+        assertThat(message.pageVideoIds).containsExactly("v123")
     }
 
     @Test

@@ -66,7 +66,8 @@ class GetVideosByQuery(
             query = query,
             pageIndex = pageNumber,
             pageSize = pageSize,
-            totalResults = totalVideos
+            totalResults = totalVideos,
+            pageVideoIds = videos.map { it.videoId.value }
         )
 
         return VideosResource(

@@ -26,7 +26,7 @@ import org.springframework.messaging.support.MessageBuilder
 class PubSubEventsService(
     val topics: Topics
 ) : EventService {
-    override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long) {
+    override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long, pageVideoIds: List<String>) {
         topics.videosSearched().send(
             msg(
                 VideosSearched.builder()
@@ -34,6 +34,7 @@ class PubSubEventsService(
                     .pageIndex(pageIndex)
                     .pageSize(pageSize)
                     .totalResults(totalResults)
+                    .pageVideoIds(pageVideoIds)
             )
         )
     }
