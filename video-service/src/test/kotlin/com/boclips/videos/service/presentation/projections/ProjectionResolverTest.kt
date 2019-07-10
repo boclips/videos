@@ -19,11 +19,9 @@ class ProjectionResolverTest {
     companion object {
         val testCases = Stream.of(
             arrayOf(API) to PublicApiProjection::class,
-            arrayOf(TEACHER) to TeachersProjection::class,
             arrayOf(PUBLISHER) to BoclipsInternalProjection::class,
             arrayOf(BACKOFFICE) to BoclipsInternalProjection::class,
             arrayOf(BACKOFFICE, TEACHER) to BoclipsInternalProjection::class,
-            arrayOf(API, TEACHER) to TeachersProjection::class,
             arrayOf(PUBLISHER, API) to BoclipsInternalProjection::class,
             emptyArray<String>() to PublicApiProjection::class
         )

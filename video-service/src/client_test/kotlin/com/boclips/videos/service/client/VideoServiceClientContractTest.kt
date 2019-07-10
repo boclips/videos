@@ -11,6 +11,7 @@ import com.boclips.videos.service.presentation.collections.UpdateCollectionReque
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,6 +20,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import java.net.URI
 import java.time.Duration
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 internal abstract class VideoServiceClientContractTest : AbstractVideoServiceClientSpringIntegrationTest() {
 
@@ -42,6 +45,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
         assertThat(video.title).isEqualTo("the title")
         assertThat(video.description).isEqualTo("the description")
+        assertThat(video.releasedOn).isCloseTo(LocalDate.now(), within(1, ChronoUnit.DAYS))
         assertThat(video.playback?.playbackId).isEqualTo(playbackId)
         assertThat(video.playback?.thumbnailUrl).isNotBlank()
         assertThat(video.playback?.duration).isNotNull()

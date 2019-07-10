@@ -20,15 +20,7 @@ public class CollectionResource {
                 .collect(Collectors.toSet());
 
         List<Video> videos = this.videos.stream()
-                .map(videoResource -> Video.builder()
-                        .videoId(new VideoId(videoResource.get_links().getSelf().toUri()))
-                        .title(videoResource.getTitle())
-                        .description(videoResource.getDescription())
-                        .contentPartnerId(videoResource.getContentPartner())
-                        .contentPartnerVideoId(videoResource.getContentPartnerVideoId())
-                        .playback(videoResource.getPlayback() != null ? videoResource.getPlayback().toPlayback() : null)
-                        .build()
-                )
+                .map(VideoResource::toVideo)
                 .collect(Collectors.toList());
 
         return Collection.builder()

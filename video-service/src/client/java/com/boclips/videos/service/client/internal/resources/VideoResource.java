@@ -4,6 +4,7 @@ import com.boclips.videos.service.client.Video;
 import com.boclips.videos.service.client.VideoId;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -11,6 +12,7 @@ public class VideoResource {
     private VideoLinks _links = null;
     private String title = null;
     private String description = null;
+    private LocalDate releasedOn = null;
     private Set<String> subjects = null;
     private String contentPartner = null;
     private String contentPartnerVideoId = null;
@@ -21,8 +23,9 @@ public class VideoResource {
                 .videoId(new VideoId(_links.getSelf().toUri()))
                 .title(title)
                 .description(description)
+                .releasedOn(releasedOn)
                 .contentPartnerId(contentPartner)
-                .contentPartnerVideoId("")
+                .contentPartnerVideoId(contentPartnerVideoId)
                 .playback(playback != null ? playback.toPlayback() : null)
                 .build();
     }

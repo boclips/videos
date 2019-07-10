@@ -9,6 +9,7 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
         SecurityMockMvcRequestPostProcessors
             .user(email)
             .roles(
+                UserRoles.TEACHER,
                 UserRoles.VIEW_VIDEOS,
                 UserRoles.RATE_VIDEOS,
                 UserRoles.VIEW_DISCIPLINES,
@@ -21,11 +22,32 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
             )
     )
 
-fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "teacher@boclips.com") =
+fun MockHttpServletRequestBuilder.asPublisher(email: String = "publisher@gmail.com") =
     this.with(
         SecurityMockMvcRequestPostProcessors
             .user(email)
             .roles(
+                UserRoles.VIEW_VIDEOS,
+                UserRoles.PUBLISHER
+            )
+    )
+
+fun MockHttpServletRequestBuilder.asApiUser(email: String = "api-user@gmail.com") =
+    this.with(
+        SecurityMockMvcRequestPostProcessors
+            .user(email)
+            .roles(
+                UserRoles.VIEW_VIDEOS,
+                UserRoles.API
+            )
+    )
+
+fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@boclips.com") =
+    this.with(
+        SecurityMockMvcRequestPostProcessors
+            .user(email)
+            .roles(
+                UserRoles.BACKOFFICE,
                 UserRoles.VIEW_VIDEOS,
                 UserRoles.DOWNLOAD_TRANSCRIPT,
                 UserRoles.VIEW_DISABLED_VIDEOS,
