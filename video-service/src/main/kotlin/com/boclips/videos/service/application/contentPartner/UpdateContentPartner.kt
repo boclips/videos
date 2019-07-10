@@ -45,12 +45,7 @@ class UpdateContentPartner(
                 VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
                     videoId = video.videoId,
                     deliveryMethods = contentPartner.hiddenFromSearchForDeliveryMethods
-                ),
-                if (contentPartner.searchable) {
-                    VideoUpdateCommand.MakeSearchable(videoId = video.videoId)
-                } else {
-                    VideoUpdateCommand.HideFromSearch(videoId = video.videoId)
-                }
+                )
             )
         }
 

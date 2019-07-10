@@ -21,6 +21,7 @@ import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
+import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -75,9 +76,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2018-05-10",
             duration = Duration.ofSeconds(6),
             contentProvider = "cp",
-            ageRange = UnboundedAgeRange
+            ageRange = UnboundedAgeRange,
+            hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM, DeliveryMethodResource.DOWNLOAD)
         ).value
-        changeVideoStatus(disabledVideoId, VideoResourceStatus.SEARCH_DISABLED)
+
         bulkVideoSearchUpdate.invoke(event = VideosExclusionFromDownloadRequested.builder().videoIds(listOf(disabledVideoId)).build())
         bulkVideoSearchUpdate.invoke(event = VideosExclusionFromStreamRequested.builder().videoIds(listOf(disabledVideoId)).build())
 
@@ -360,7 +362,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
             .andExpect(jsonPath("$.type.id", equalTo(3)))
             .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
-            .andExpect(jsonPath("$.status", equalTo("SEARCHABLE")))
             .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
@@ -684,7 +685,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
-            .andExpect(jsonPath("$._embedded.videos[0].status", equalTo("SEARCH_DISABLED")))
+            .andExpect(jsonPath("$._embedded.videos[0].hiddenFromSearchForDeliveryMethods", contains("STREAM", "DOWNLOAD")))
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$disabledVideoId")))
 
             .andExpect(jsonPath("$.page").doesNotExist())
@@ -733,34 +734,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `deprecated - bulk updates to status affect status and hidden-from-search fields`() {
-        val videoIds = listOf(
-            saveVideo(searchable = true).value,
-            saveVideo(searchable = true).value,
-            saveVideo(searchable = true).value
-        )
-
-        mockMvc.perform(
-            patch("/v1/videos").asBoclipsEmployee()
-                .content("""{ "ids": ["${videoIds[0]}", "${videoIds[1]}"], "status": "SEARCH_DISABLED" }""")
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isNoContent)
-
-        videoIds.zip(
-            listOf(
-                Pair("SEARCH_DISABLED", listOf("DOWNLOAD", "STREAM")),
-                Pair("SEARCH_DISABLED", listOf("DOWNLOAD", "STREAM")),
-                Pair("SEARCHABLE", listOf())
-            )
-        ).forEach { (id, statuses) ->
-            mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.status", equalTo(statuses.first)))
-                .andExpect(jsonPath("$.hiddenFromSearchForDeliveryMethods", equalTo(statuses.second)))
-        }
-    }
-
-    @Test
     fun `bulk updates to search blacklist take effect`() {
         val videoIds = listOf(
             saveVideo(
@@ -790,7 +763,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ).forEach { (id, statuses) ->
             mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.status", equalTo(statuses.first)))
                 .andExpect(jsonPath("$.hiddenFromSearchForDeliveryMethods", equalTo(statuses.second)))
         }
     }
@@ -799,19 +771,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `it sorts news by releaseDate descending`() {
         val today = saveVideo(
             title = "Today Video",
-            searchable = true,
             date = LocalDate.now().toString(),
             legacyType = LegacyVideoType.NEWS
         ).value
         val yesterday = saveVideo(
             title = "Yesterday Video",
-            searchable = true,
             date = LocalDate.now().minusDays(1).toString(),
             legacyType = LegacyVideoType.NEWS
         ).value
         val tomorrow = saveVideo(
             title = "Tomorrow Video",
-            searchable = true,
             date = LocalDate.now().plusDays(1).toString(),
             legacyType = LegacyVideoType.NEWS
         ).value
@@ -843,7 +812,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `going to the transcripts endpoint for a video without transcripts returns 404`() {
         val videoId = saveVideo(
             title = "Today Video",
-            searchable = true,
             date = LocalDate.now().toString(),
             legacyType = LegacyVideoType.NEWS
         ).value
@@ -867,7 +835,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `it does not return a transcript uri when there is no transcript`() {
         val videoId = saveVideo(
             title = "Today Video",
-            searchable = true,
             date = LocalDate.now().toString(),
             legacyType = LegacyVideoType.NEWS
         ).value
@@ -881,7 +848,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     private fun saveVideoWithTranscript(): String {
         val videoId = saveVideo(
             title = "Today Video?",
-            searchable = true,
             date = LocalDate.now().toString(),
             legacyType = LegacyVideoType.NEWS
         ).value

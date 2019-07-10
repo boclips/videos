@@ -21,13 +21,7 @@ class VideoAccessService(
                 VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
                     videoId = videoId,
                     deliveryMethods = deliveryMethods
-                ),
-                if (deliveryMethods == DeliveryMethod.ALL) {
-                    VideoUpdateCommand.HideFromSearch(videoId)
-                } else {
-                    VideoUpdateCommand.MakeSearchable(videoId)
-                }
-
+                )
             )
         }
     }

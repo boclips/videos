@@ -36,7 +36,6 @@ class CreateVideoRequestToVideoConverter {
             videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
             type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
-            searchable = searchable,
             ageRange = if (createVideoRequest.ageRangeMin !== null) {
                 AgeRange.bounded(createVideoRequest.ageRangeMin, createVideoRequest.ageRangeMax)
             } else {

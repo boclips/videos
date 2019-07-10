@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyOrNull
@@ -27,7 +28,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `removes videos from stream search index`() {
-        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = true)
+        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
         subscriptions.videosExclusionFromStreamRequested().send(
             MessageBuilder.withPayload(
@@ -40,7 +41,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `removes videos from download search index`() {
-        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = true)
+        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
         subscriptions.videosExclusionFromDownloadRequested().send(
             MessageBuilder.withPayload(
@@ -53,7 +54,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `adds videos to stream search index`() {
-        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = true)
+        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
         subscriptions.videosInclusionInStreamRequested().send(
             MessageBuilder.withPayload(
@@ -66,7 +67,8 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `adds videos to download search index`() {
-        val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6", searchable = false)
+        val cp = saveContentPartner(hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD))
+        val id = saveVideo(contentProviderId = cp.contentPartnerId.value)
 
         subscriptions.videosInclusionInDownloadRequested().send(
             MessageBuilder.withPayload(
@@ -80,7 +82,6 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `does not add Youtube videos into download search index`() {
         val videoId = saveVideo(
-            searchable = false,
             playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}")
         )
 

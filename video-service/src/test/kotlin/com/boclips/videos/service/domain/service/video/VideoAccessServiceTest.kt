@@ -28,7 +28,6 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
                 DeliveryMethod.STREAM
             )
         )
-        assertThat(video.searchable).isFalse()
     }
 
     @Test
@@ -39,12 +38,11 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
 
         val video = videoRepository.find(videoId = videoId)!!
         assertThat(video.hiddenFromSearchForDeliveryMethods).isEmpty()
-        assertThat(video.searchable).isTrue()
     }
 
     @Test
     fun `blacklists on a subset of delivery methods`() {
-        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet(), searchable = false)
+        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet())
 
         videoAccessService.setSearchBlacklist(
             videoIds = listOf(videoId),
@@ -57,37 +55,5 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
                 DeliveryMethod.STREAM
             )
         )
-        assertThat(video.searchable).isTrue()
-    }
-
-    @Test
-    fun `blacklisting zero delivery methods enables search`() {
-        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet(), searchable = false)
-
-        videoAccessService.setSearchBlacklist(
-            videoIds = listOf(videoId),
-            deliveryMethods = emptySet()
-        )
-
-        val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEmpty()
-        assertThat(video.searchable).isTrue()
-    }
-
-    @Test
-    fun `blacklisting all delivery methods disables search`() {
-        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet(), searchable = false)
-
-        videoAccessService.setSearchBlacklist(
-            videoIds = listOf(videoId),
-            deliveryMethods = DeliveryMethod.ALL
-        )
-
-        val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
-            DeliveryMethod.ALL
-        )
-
-        assertThat(video.searchable).isFalse()
     }
 }

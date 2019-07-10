@@ -4,6 +4,6 @@ import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodReso
 
 data class BulkUpdateRequest(
     val ids: List<String>,
-    val status: VideoResourceStatus? = null,
+
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
 )

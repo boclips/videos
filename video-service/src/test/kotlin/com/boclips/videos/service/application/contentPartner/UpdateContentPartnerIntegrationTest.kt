@@ -83,93 +83,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
-    inner class UsingDeprecatedSearchableField {
-
-        @Test
-        fun `excluding from search enqueues a change for later`() {
-            val originalContentPartner = createContentPartner(
-                TestFactories.createContentPartnerRequest(searchable = true)
-            )
-
-            saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
-
-            updateContentPartner(
-                contentPartnerId = originalContentPartner.contentPartnerId.value,
-                request = TestFactories.createContentPartnerRequest(searchable = false)
-            )
-
-            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
-            assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
-        }
-
-        @Test
-        fun `excluding from search sets deprecated state and sets hidden state for all delivery methods`() {
-            val originalContentPartner = createContentPartner(
-                TestFactories.createContentPartnerRequest(searchable = true)
-            )
-
-            val updatedContentPartner = updateContentPartner(
-                contentPartnerId = originalContentPartner.contentPartnerId.value,
-                request = TestFactories.createContentPartnerRequest(searchable = false)
-            )
-
-            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isFalse()
-            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
-                DeliveryMethod.ALL
-            )
-        }
-
-        @Test
-        fun `including from search sets deprecated state and sets hidden state for no delivery methods`() {
-            val originalContentPartner = createContentPartner(
-                TestFactories.createContentPartnerRequest(searchable = false)
-            )
-
-            val updatedContentPartner = updateContentPartner(
-                contentPartnerId = originalContentPartner.contentPartnerId.value,
-                request = TestFactories.createContentPartnerRequest(searchable = true)
-            )
-
-            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
-            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
-        }
-
-        @Test
-        fun `excluding a content partner from search also excludes their videos`() {
-            val originalContentPartner = createContentPartner(
-                TestFactories.createContentPartnerRequest(searchable = true)
-            )
-
-            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = true)
-
-            updateContentPartner(
-                contentPartnerId = originalContentPartner.contentPartnerId.value,
-                request = TestFactories.createContentPartnerRequest(searchable = false)
-            )
-
-            assertThat(videoRepository.find(id)!!.searchable).isFalse()
-            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
-        }
-
-        @Test
-        fun `including a content partner from search also includes their videos`() {
-            val originalContentPartner = createContentPartner(
-                TestFactories.createContentPartnerRequest(searchable = false)
-            )
-
-            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
-
-            updateContentPartner(
-                contentPartnerId = originalContentPartner.contentPartnerId.value,
-                request = TestFactories.createContentPartnerRequest(searchable = true)
-            )
-
-            assertThat(videoRepository.find(id)!!.searchable).isTrue()
-            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
-        }
-    }
-
-    @Nested
     inner class UsingResourceDeliveryMethods {
         @Test
         fun `excluding from search enqueues a change for later`() {
@@ -274,7 +187,10 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
+            val id = saveVideo(
+                contentProviderId = originalContentPartner.contentPartnerId.value,
+                hiddenFromSearchForDeliveryMethods = emptySet()
+            )
 
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
@@ -287,7 +203,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoRepository.find(id)!!.searchable).isFalse()
             assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
         }
 
@@ -300,7 +215,10 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
+            val id = saveVideo(
+                contentProviderId = originalContentPartner.contentPartnerId.value,
+                hiddenFromSearchForDeliveryMethods = emptySet()
+            )
 
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
@@ -310,7 +228,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoRepository.find(id)!!.searchable).isTrue()
             assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethod.STREAM))
         }
 
@@ -323,7 +240,10 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value, searchable = false)
+            val id = saveVideo(
+                contentProviderId = originalContentPartner.contentPartnerId.value,
+                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
+            )
 
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
@@ -333,7 +253,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoRepository.find(id)!!.searchable).isTrue()
             assertThat(videoRepository.find(id)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
         }
     }

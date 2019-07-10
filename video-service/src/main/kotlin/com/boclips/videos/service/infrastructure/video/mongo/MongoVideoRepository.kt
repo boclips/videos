@@ -7,8 +7,6 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.HideFromSearch
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MakeSearchable
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
@@ -37,10 +35,12 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
 import org.litote.kmongo.combine
+import org.litote.kmongo.contains
 import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.not
 import org.litote.kmongo.set
 import java.time.Instant
 import java.util.Optional
@@ -102,9 +102,10 @@ class MongoVideoRepository(
         val filterBson = when (filter) {
             is VideoFilter.ContentPartnerIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name eq filter.contentPartnerName
             is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
-            VideoFilter.IsSearchable -> VideoDocument::searchable eq true
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
+            VideoFilter.IsDownloadable -> not(VideoDocument::hiddenFromSearchForDeliveryMethods contains  DeliveryMethodDocument(DeliveryMethodDocument.DELIVERY_METHOD_DOWNLOAD))
+            VideoFilter.IsStreamable -> not(VideoDocument::hiddenFromSearchForDeliveryMethods contains DeliveryMethodDocument(DeliveryMethodDocument.DELIVERY_METHOD_STREAM))
         }
 
         val sequence = Sequence {
@@ -192,8 +193,6 @@ class MongoVideoRepository(
                 VideoDocument::subjects,
                 updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument)
             )
-            is MakeSearchable -> set(VideoDocument::searchable, true)
-            is HideFromSearch -> set(VideoDocument::searchable, false)
             is ReplaceLanguage -> set(VideoDocument::language, updateCommand.language.toLanguageTag())
             is ReplaceTranscript -> set(VideoDocument::transcript, updateCommand.transcript)
             is ReplaceTopics -> set(VideoDocument::topics, updateCommand.topics.map(TopicDocumentConverter::toDocument))

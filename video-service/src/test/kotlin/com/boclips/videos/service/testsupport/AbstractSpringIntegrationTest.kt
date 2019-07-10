@@ -177,7 +177,6 @@ abstract class AbstractSpringIntegrationTest {
         contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
         legacyType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
-        searchable: Boolean = true,
         legalRestrictions: String = "",
         ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
         hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet()
@@ -214,7 +213,6 @@ abstract class AbstractSpringIntegrationTest {
                 videoType = legacyType.name,
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
-                searchable = searchable,
                 hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
                 analyseVideo = false,
                 ageRangeMin = ageRange.min(),
@@ -279,10 +277,6 @@ abstract class AbstractSpringIntegrationTest {
                 hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
             )
         )
-    }
-
-    fun changeVideoStatus(id: String, status: VideoResourceStatus) {
-        bulkUpdateVideo(BulkUpdateRequest(listOf(id), status))
     }
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {

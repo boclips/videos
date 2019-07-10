@@ -27,7 +27,6 @@ data class Video(
     val topics: Set<Topic>,
     val language: Locale?,
     val transcript: String?,
-    val searchable: Boolean,
     val ageRange: AgeRange,
     val rating: UserRating?,
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod>

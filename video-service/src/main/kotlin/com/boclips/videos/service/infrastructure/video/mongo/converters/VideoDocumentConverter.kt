@@ -34,7 +34,6 @@ object VideoDocumentConverter {
             language = video.language?.toLanguageTag(),
             transcript = video.transcript,
             topics = video.topics.map(TopicDocumentConverter::toDocument),
-            searchable = video.searchable,
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
             rating = UserRatingDocumentConverter.toDocument(video.rating)?.let { listOf(it) } ?: emptyList(),
@@ -60,7 +59,6 @@ object VideoDocumentConverter {
             language = document.language?.let(Locale::forLanguageTag),
             transcript = document.transcript,
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
-            searchable = document.searchable,
             ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
                 min = document.ageRangeMin,
                 max = document.ageRangeMax
@@ -68,14 +66,7 @@ object VideoDocumentConverter {
             rating = document.rating.firstOrNull()?.let { UserRatingDocumentConverter.toRating(it) },
             hiddenFromSearchForDeliveryMethods = document.hiddenFromSearchForDeliveryMethods?.map(
                 DeliveryMethodDocumentConverter::fromDocument
-            )?.toSet() ?: hiddenDeliveryMethodsFromLegacySearchableFlag(document.searchable)
+            )?.toSet() ?: emptySet()
         )
     }
-
-    private fun hiddenDeliveryMethodsFromLegacySearchableFlag(searchable: Boolean): Set<DeliveryMethod> =
-        if (searchable) {
-            emptySet()
-        } else {
-            setOf(DeliveryMethod.DOWNLOAD, DeliveryMethod.STREAM)
-        }
 }

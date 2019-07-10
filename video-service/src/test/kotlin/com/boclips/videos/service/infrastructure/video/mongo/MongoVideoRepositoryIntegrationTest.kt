@@ -84,14 +84,12 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `stream all`() {
         mongoVideoRepository.create(
             TestFactories.createVideo(
-                videoId = TestFactories.aValidId(),
-                searchable = false
+                videoId = TestFactories.aValidId()
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
-                videoId = TestFactories.aValidId(),
-                searchable = true
+                videoId = TestFactories.aValidId()
             )
         )
 
@@ -103,19 +101,37 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `stream all searchable videos`() {
+    fun `stream all streamable videos`() {
         mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
         mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
         mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                searchable = false
+                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.STREAM)
             )
         )
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.IsSearchable) { videos = it.toList() }
+        mongoVideoRepository.streamAll(VideoFilter.IsStreamable) { videos = it.toList() }
+
+        assertThat(videos).hasSize(3)
+    }
+
+    @Test
+    fun `stream all downloadable videos`() {
+        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
+        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
+        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.DOWNLOAD)
+            )
+        )
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.IsDownloadable) { videos = it.toList() }
 
         assertThat(videos).hasSize(3)
     }
@@ -374,19 +390,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 DeliveryMethod.STREAM
             )
         )
-    }
-
-    @Test
-    fun `updates searchable`() {
-        val video = mongoVideoRepository.create(TestFactories.createVideo(searchable = true))
-
-        mongoVideoRepository.update(VideoUpdateCommand.HideFromSearch(video.videoId))
-
-        assertThat(mongoVideoRepository.find(video.videoId)!!.searchable).isEqualTo(false)
-
-        mongoVideoRepository.update(VideoUpdateCommand.MakeSearchable(video.videoId))
-
-        assertThat(mongoVideoRepository.find(video.videoId)!!.searchable).isEqualTo(true)
     }
 
     @Test

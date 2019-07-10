@@ -161,34 +161,6 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
-    fun `uses content partner searchable flag if content partner is blacklisted`() {
-        contentPartner = TestFactories.createContentPartner(searchable = false)
-
-        val video = converter.convert(
-            TestFactories.createCreateVideoRequest(searchable = true),
-            TestFactories.createKalturaPlayback(),
-            contentPartner,
-            subjects
-        )
-
-        assertThat(video.searchable).isFalse()
-    }
-
-    @Test
-    fun `uses video searchable flag if content partner is searchable`() {
-        contentPartner = TestFactories.createContentPartner(searchable = true)
-
-        val video = converter.convert(
-            TestFactories.createCreateVideoRequest(searchable = false),
-            TestFactories.createKalturaPlayback(),
-            contentPartner,
-            subjects
-        )
-
-        assertThat(video.searchable).isFalse()
-    }
-
-    @Test
     fun `uses the hiddenFromSearchForDeliveryMethods`() {
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(

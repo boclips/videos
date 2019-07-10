@@ -21,7 +21,6 @@ class AnalyseVideoIntegrationTest(
     fun `sends an event`() {
         val videoId = saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-            searchable = true,
             duration = Duration.ofSeconds(70)
         ).value
 
@@ -34,25 +33,11 @@ class AnalyseVideoIntegrationTest(
         assertThat(event.language).isEqualTo(Locale.GERMAN)
     }
 
-    @Test
-    fun `does not send events for non searchable videos`() {
-        val videoId = saveVideo(
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-            searchable = false
-        ).value
-
-        analyseVideo(videoId, language = null)
-
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-
-        assertThat(message).isNull()
-    }
 
     @Test
     fun `does not send events for videos not longer than 20s`() {
         val videoId = saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-            searchable = true,
             duration = Duration.ofSeconds(20)
         ).value
 
@@ -67,7 +52,6 @@ class AnalyseVideoIntegrationTest(
     fun `does not send events for non instructional videos`() {
         val videoId = saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-            searchable = true,
             legacyType = LegacyVideoType.NEWS
         ).value
 

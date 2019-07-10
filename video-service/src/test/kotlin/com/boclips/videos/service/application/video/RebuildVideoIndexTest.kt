@@ -39,7 +39,7 @@ class RebuildVideoIndexTest {
 
         val videoRepository = mock<VideoRepository> {
             on {
-                streamAll(eq(VideoFilter.IsSearchable), any())
+                streamAll(eq(VideoFilter.IsStreamable), any())
             } doAnswer { invocations ->
                 val consumer = invocations.getArgument(1) as (Sequence<Video>) -> Unit
 

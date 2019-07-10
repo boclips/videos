@@ -21,11 +21,6 @@ class AnalyseVideo(
         val video = videoService.getPlayableVideo(videoId = VideoId(value = videoId))
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 
-        if (!video.searchable) {
-            logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because it is not searchable" }
-            return
-        }
-
         if (video.type != LegacyVideoType.INSTRUCTIONAL_CLIPS) {
             logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because its legacy type is ${video.type.name}" }
             return

@@ -37,7 +37,6 @@ internal class VideoToResourceConverterTest {
         type = LegacyVideoType.TED_TALKS,
         subjects = setOf(TestFactories.createSubject(name = "Maths")),
         legalRestrictions = "None",
-        searchable = true,
         ageRange = AgeRange.bounded(min = 5, max = 11),
         rating = UserRating(rating = 3, userId = UserId("irrelevant"))
     )
@@ -50,8 +49,7 @@ internal class VideoToResourceConverterTest {
         playback = TestFactories.createYoutubePlayback(),
         type = LegacyVideoType.OTHER,
         subjects = setOf(TestFactories.createSubject(name = "Biology")),
-        legalRestrictions = "Many",
-        searchable = false
+        legalRestrictions = "Many"
     )
 
     @Test
@@ -69,7 +67,6 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.type).isNull()
         assertThat(videoResource.playback).isNull()
         assertThat(videoResource.badges).isNullOrEmpty()
-        assertThat(videoResource.status).isNull()
     }
 
     @Test
@@ -84,7 +81,6 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.type!!.id).isEqualTo(10)
         assertThat(videoResource.type!!.name).isEqualTo("TED Talks")
         assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
-        assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCHABLE)
         assertThat(videoResource.legalRestrictions).isEqualTo("None")
 
         assertThat(videoResource.playback!!.content.type).isEqualTo("STREAM")
@@ -113,7 +109,6 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(21))
         assertThat(videoResource.playback!!.content.id).isEqualTo("444")
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
-        assertThat(videoResource.status).isEqualTo(VideoResourceStatus.SEARCH_DISABLED)
         assertThat(videoResource.legalRestrictions).isEqualTo("Many")
     }
 

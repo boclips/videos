@@ -11,7 +11,6 @@ import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
-import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import mu.KLogging
 
 open class BulkUpdateVideo(
@@ -30,7 +29,7 @@ open class BulkUpdateVideo(
 
             videoAccessService.setSearchBlacklist(videoIds, deliveryMethods)
             updateDeliveryMethodsInSearch(bulkUpdateRequest.ids, deliveryMethods)
-        } ?: updateLegacyRequestStatusInSearch(bulkUpdateRequest)
+        } ?: throw InvalidBulkUpdateRequestException("Null bulk update request cannot be processed")
     }
 
     private fun convertResourcesToDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>): Set<DeliveryMethod> {
@@ -65,30 +64,5 @@ open class BulkUpdateVideo(
         } else {
             includeVideosInSearchForStream.invoke(videoIds = videoIds)
         }
-    }
-
-    private fun updateLegacyRequestStatusInSearch(bulkUpdateRequest: BulkUpdateRequest?) {
-        when (bulkUpdateRequest?.status) {
-            VideoResourceStatus.SEARCHABLE -> makeSearchable(bulkUpdateRequest)
-            VideoResourceStatus.SEARCH_DISABLED -> disableFromSearch(bulkUpdateRequest)
-            null -> throw InvalidBulkUpdateRequestException("Null bulk update request cannot be processed")
-        }
-    }
-
-    private fun disableFromSearch(bulkUpdateRequest: BulkUpdateRequest) {
-        val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
-
-        videoAccessService.revokeAccess(videoIds)
-
-        excludeVideosFromSearchForDownload.invoke(bulkUpdateRequest.ids)
-        excludeVideosFromSearchForStream.invoke(bulkUpdateRequest.ids)
-    }
-
-    private fun makeSearchable(bulkUpdateRequest: BulkUpdateRequest) {
-        val videoIds = bulkUpdateRequest.ids.map { VideoId(value = it) }
-        videoAccessService.grantAccess(videoIds)
-
-        includeVideosInSearchForDownload.invoke(bulkUpdateRequest.ids)
-        includeVideosInSearchForStream.invoke(bulkUpdateRequest.ids)
     }
 }

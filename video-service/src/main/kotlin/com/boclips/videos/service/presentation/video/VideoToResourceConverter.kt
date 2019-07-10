@@ -41,7 +41,6 @@ class VideoToResourceConverter(
                 subjects = video.subjects.map { it.name }.toSet(),
                 badges = getBadges(video),
                 type = VideoTypeResource(id = video.type.id, name = video.type.title),
-                status = getStatus(video),
                 legalRestrictions = video.legalRestrictions,
                 hasTranscripts = video.transcript != null,
                 ageRange = getAgeRange(video),
@@ -65,14 +64,6 @@ class VideoToResourceConverter(
         return when (video.playback) {
             is YoutubePlayback -> setOf(VideoBadge.YOUTUBE.id)
             else -> setOf(VideoBadge.AD_FREE.id)
-        }
-    }
-
-    private fun getStatus(video: Video): VideoResourceStatus {
-        return if (video.searchable) {
-            VideoResourceStatus.SEARCHABLE
-        } else {
-            VideoResourceStatus.SEARCH_DISABLED
         }
     }
 

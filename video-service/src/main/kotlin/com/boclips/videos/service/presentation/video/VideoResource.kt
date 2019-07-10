@@ -42,8 +42,6 @@ data class VideoResource(
     val contentPartnerVideoId: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet(),
-    @get:JsonView(BoclipsInternalProjection::class)
-    val status: VideoResourceStatus? = null,
 
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null

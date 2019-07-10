@@ -73,7 +73,6 @@ object TestFactories {
         language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
-        searchable: Boolean = true,
         hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         rating: UserRating? = null,
@@ -83,7 +82,7 @@ object TestFactories {
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
             searchable = true,
-            hiddenFromSearchForDeliveryMethods = emptySet()
+            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -100,7 +99,6 @@ object TestFactories {
             language = language,
             transcript = transcript,
             topics = topics,
-            searchable = searchable,
             hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
             ageRange = ageRange,
             contentPartner = contentPartner,
@@ -448,7 +446,6 @@ object VideoResourceFactory {
         legalRestrictions: String = "",
         contentPartner: String = "Content Partner",
         badges: Set<String> = emptySet(),
-        status: VideoResourceStatus = VideoResourceStatus.SEARCHABLE,
         hasTranscripts: Boolean = true
     ) = VideoResource(
         id = id,
@@ -462,7 +459,6 @@ object VideoResourceFactory {
         subjects = subjects,
         contentPartner = contentPartner,
         badges = badges,
-        status = status,
         hasTranscripts = hasTranscripts
     )
 }

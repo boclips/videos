@@ -60,7 +60,8 @@ class BuildLegacyDocumentSearchIndexTest {
         val videoRepository = mockvideoRepository(
             videos = sequenceOf(
                 TestFactories.createVideo(
-                    title = ""
+                    title = "",
+                    hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
         )
@@ -78,7 +79,8 @@ class BuildLegacyDocumentSearchIndexTest {
                 TestFactories.createVideo(
                     playback = TestFactories.createYoutubePlayback(
                         playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, "video")
-                    )
+                    ),
+                    hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
         )
@@ -105,7 +107,7 @@ class BuildLegacyDocumentSearchIndexTest {
     private fun mockvideoRepository(videos: Sequence<Video>): VideoRepository {
         return mock {
             on {
-                streamAll(eq(VideoFilter.IsSearchable), any())
+                streamAll(eq(VideoFilter.IsDownloadable), any())
             } doAnswer { invocations ->
                 val consumer = invocations.getArgument(1) as (Sequence<Video>) -> Unit
                 consumer(videos)
