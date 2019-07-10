@@ -10,6 +10,5 @@ open class ContentPartnerResource(
     val name: String,
     val ageRange: AgeRangeResource? = null,
     val isOfficial: Boolean,
-    val searchable: Boolean,
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>
 )

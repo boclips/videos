@@ -84,11 +84,6 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
                         updateCommand.ageRange.max()
                     )
                 )
-            is ContentPartnerUpdateCommand.SetSearchability ->
-                set(
-                    ContentPartnerDocument::searchable,
-                    updateCommand.searchable
-                )
             is ContentPartnerUpdateCommand.SetHiddenDeliveryMethods ->
                 set(
                     ContentPartnerDocument::hiddenFromSearchForDeliveryMethods,

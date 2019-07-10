@@ -9,7 +9,5 @@ data class ContentPartnerRequest(
     val accreditedToYtChannelId: String? = null,
     @field:Valid var ageRange: AgeRangeRequest? = null,
 
-    val searchable: Boolean? = null,
-
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
 )

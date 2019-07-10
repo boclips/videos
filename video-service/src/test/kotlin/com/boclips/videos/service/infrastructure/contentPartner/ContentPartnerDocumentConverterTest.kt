@@ -18,7 +18,6 @@ internal class ContentPartnerDocumentConverterTest {
             name = "The grandest content partner there ever lived",
             ageRange = AgeRange.bounded(5, 11),
             credit = Credit.PartnerCredit,
-            searchable = false,
             hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.DOWNLOAD)
         )
 
@@ -29,32 +28,15 @@ internal class ContentPartnerDocumentConverterTest {
     }
 
     @Test
-    fun `the content partner is searchable by default`() {
+    fun `the content partner is not hidden by default`() {
         val document = ContentPartnerDocument(
             id = ObjectId.get(),
             name = "content partner",
-            searchable = null,
             ageRangeMax = null,
             ageRangeMin = null
         )
 
         val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
-        assertThat(convertedAsset.searchable).isTrue()
-    }
-
-    @Test
-    fun `content partner defaults to searchable when delivery methods is not present`() {
-        val document = ContentPartnerDocument(
-            id = ObjectId.get(),
-            name = "content partner",
-            searchable = false,
-            ageRangeMax = null,
-            ageRangeMin = null,
-            hiddenFromSearchForDeliveryMethods = null
-        )
-
-        val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
-        assertThat(convertedAsset.searchable).isFalse()
-        assertThat(convertedAsset.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
+        assertThat(convertedAsset.hiddenFromSearchForDeliveryMethods).isEmpty()
     }
 }

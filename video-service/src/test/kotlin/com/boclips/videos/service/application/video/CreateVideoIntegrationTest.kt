@@ -278,41 +278,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it does not add to search indices if content partner is not searchable`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
-        )
-
-        val contentPartner = saveContentPartner(searchable = false)
-
-        val createRequest =
-            TestFactories.createCreateVideoRequest(
-                provider = contentPartner.name,
-                title = "the latest and greatest Bloomberg video",
-                playbackId = "1234"
-            )
-
-        createVideo(createRequest)
-
-        val results = videoService.search(
-            VideoSearchQuery(
-                text = "the latest and greatest Bloomberg video",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
-                pageSize = 1,
-                pageIndex = 0
-            )
-        )
-
-        assertThat(results).hasSize(0)
-        verifyZeroInteractions(legacyVideoSearchService)
-    }
-
-    @Test
     fun `it does not add to any search indices if content partner is hidden`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(

@@ -12,18 +12,6 @@ import org.junit.jupiter.api.Test
 
 class ContentPartnerUpdatesConverterTest {
     @Test
-    fun `creates command for setting searchability`() {
-        val commands = ContentPartnerUpdatesConverter().convert(
-            id = ContentPartnerId(value = "123"),
-            contentPartnerRequest = ContentPartnerRequest(name = "Hello", searchable = true)
-        )
-        val command =
-            commands.find { it is ContentPartnerUpdateCommand.SetSearchability } as ContentPartnerUpdateCommand.SetSearchability
-
-        assertThat(command.searchable).isEqualTo(true)
-    }
-
-    @Test
     fun `creates command for updating delivery methods`() {
         val commands = ContentPartnerUpdatesConverter().convert(
             id = ContentPartnerId(value = "123"),

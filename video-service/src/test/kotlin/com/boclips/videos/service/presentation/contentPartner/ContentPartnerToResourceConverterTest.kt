@@ -12,7 +12,6 @@ class ContentPartnerToResourceConverterTest {
     fun `convert content partner to resource`() {
         val contentPartner = TestFactories.createContentPartner(
             credit = Credit.PartnerCredit,
-            searchable = false,
             hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.STREAM)
         )
 
@@ -22,7 +21,6 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.name).isNotEmpty()
         assertThat(contentPartnerResource.ageRange).isNotNull
         assertThat(contentPartnerResource.isOfficial).isTrue()
-        assertThat(contentPartnerResource.searchable).isFalse()
         assertThat(contentPartnerResource.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethodResource.STREAM))
     }
 }

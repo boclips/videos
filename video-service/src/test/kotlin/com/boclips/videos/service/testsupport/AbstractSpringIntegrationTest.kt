@@ -265,7 +265,6 @@ abstract class AbstractSpringIntegrationTest {
         name: String = "TeD",
         ageRange: AgeRangeRequest = AgeRangeRequest(3, 10),
         accreditedToYtChannel: String? = null,
-        searchable: Boolean = true,
         hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
     ): ContentPartner {
         return createContentPartner(
@@ -273,7 +272,6 @@ abstract class AbstractSpringIntegrationTest {
                 name = name,
                 ageRange = ageRange,
                 accreditedToYtChannel = accreditedToYtChannel,
-                searchable = searchable,
                 hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
             )
         )

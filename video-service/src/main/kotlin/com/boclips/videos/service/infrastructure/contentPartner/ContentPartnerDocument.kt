@@ -13,6 +13,5 @@ data class ContentPartnerDocument(
     val ageRangeMax: Int?,
     val lastModified: Instant? = null,
     val createdAt: Instant? = null,
-    val searchable: Boolean? = null,
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodDocument>? = null
 )

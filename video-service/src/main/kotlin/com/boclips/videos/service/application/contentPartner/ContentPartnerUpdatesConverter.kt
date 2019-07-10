@@ -13,7 +13,6 @@ class ContentPartnerUpdatesConverter {
         return listOfNotNull(
             updateNameOrNot(id, contentPartnerRequest),
             updateAgeRangeOrNot(id, contentPartnerRequest),
-            updateSearchableOrNot(id, contentPartnerRequest),
             updateHiddenDeliveryMethodsOrNot(id, contentPartnerRequest)
         )
     }
@@ -24,16 +23,6 @@ class ContentPartnerUpdatesConverter {
     ): ContentPartnerUpdateCommand? =
         getDeliveryMethodsFromRequest(contentPartnerRequest)?.let { deliveryMethods ->
             SetHiddenDeliveryMethods(id, deliveryMethods)
-        } ?: getDeliveryMethodsCommandFromSearchable(id, contentPartnerRequest)
-
-    private fun updateSearchableOrNot(
-        id: ContentPartnerId,
-        contentPartnerRequest: ContentPartnerRequest
-    ): ContentPartnerUpdateCommand.SetSearchability? =
-        getDeliveryMethodsFromRequest(contentPartnerRequest)?.let { deliveryMethods ->
-            ContentPartnerUpdateCommand.SetSearchability(id, deliveryMethods != DeliveryMethod.ALL)
-        } ?: contentPartnerRequest.searchable?.let { searchable ->
-            ContentPartnerUpdateCommand.SetSearchability(id, searchable)
         }
 
     private fun updateNameOrNot(
@@ -56,17 +45,4 @@ class ContentPartnerUpdatesConverter {
 
     private fun getDeliveryMethodsFromRequest(request: ContentPartnerRequest) =
         request.hiddenFromSearchForDeliveryMethods?.map(DeliveryMethodResourceConverter::fromResource)?.toSet()
-
-    private fun getDeliveryMethodsCommandFromSearchable(
-        id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest
-    ) =
-        contentPartnerRequest.searchable?.let { searchable ->
-            SetHiddenDeliveryMethods(
-                id, if (searchable) {
-                    emptySet()
-                } else {
-                    DeliveryMethod.ALL
-                }
-            )
-        }
 }

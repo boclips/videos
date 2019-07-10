@@ -8,6 +8,5 @@ data class ContentPartner(
     val name: String,
     val ageRange: AgeRange,
     val credit: Credit,
-    val searchable: Boolean,
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod>
 )

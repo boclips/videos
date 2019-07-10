@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import org.bson.types.ObjectId
 
@@ -20,11 +21,6 @@ class CreateVideoRequestToVideoConverter {
         contentPartner: ContentPartner,
         subjects: List<Subject>
     ): Video {
-        val searchable = if (!contentPartner.searchable) {
-            contentPartner.searchable
-        } else {
-            createVideoRequest.searchable ?: true
-        }
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
             playback = videoPlayback,
@@ -46,17 +42,18 @@ class CreateVideoRequestToVideoConverter {
             language = null,
             transcript = null,
             rating = null,
-            hiddenFromSearchForDeliveryMethods = createVideoRequest.hiddenFromSearchForDeliveryMethods
-                ?.map(DeliveryMethodResourceConverter::fromResource)
-                ?.toSet()
-                ?: deliveryMethodsFromLegacySearchable(searchable)
+            hiddenFromSearchForDeliveryMethods = if (contentPartner.hiddenFromSearchForDeliveryMethods.isEmpty()) {
+                convertDeliveryMethods(createVideoRequest.hiddenFromSearchForDeliveryMethods)
+                    ?: contentPartner.hiddenFromSearchForDeliveryMethods
+            } else {
+                contentPartner.hiddenFromSearchForDeliveryMethods
+            }
         )
     }
 
-    private fun deliveryMethodsFromLegacySearchable(searchable: Boolean): Set<DeliveryMethod> =
-        if (searchable) {
-            emptySet()
-        } else {
-            DeliveryMethod.ALL
-        }
+    private fun convertDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>?): Set<DeliveryMethod>? {
+        return hiddenFromSearchForDeliveryMethods
+            ?.map(DeliveryMethodResourceConverter::fromResource)
+            ?.toSet()
+    }
 }

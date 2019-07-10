@@ -24,7 +24,7 @@ class CreateContentPartner(
 
         val methods = request.hiddenFromSearchForDeliveryMethods?.let(
             this::getDeliveryMethodsFromResource
-        ) ?: getDeliveryMethodsFromSearchable(request)
+        ) ?: emptySet()
 
         return contentPartnerRepository.create(
             ContentPartner(
@@ -32,20 +32,9 @@ class CreateContentPartner(
                 name = request.name,
                 ageRange = ageRange,
                 credit = request.accreditedToYtChannelId?.let { Credit.YoutubeCredit(it) } ?: Credit.PartnerCredit,
-                searchable = request.searchable ?: searchableFromDeliveryMethods(methods),
                 hiddenFromSearchForDeliveryMethods = methods
             )
         )
-    }
-
-    private fun getDeliveryMethodsFromSearchable(
-        request: ContentPartnerRequest
-    ): Set<DeliveryMethod> {
-        return if (request.searchable == null || request.searchable) {
-            emptySet()
-        } else {
-            DeliveryMethod.ALL
-        }
     }
 
     private fun getDeliveryMethodsFromResource(methods: Set<DeliveryMethodResource>): Set<DeliveryMethod> {

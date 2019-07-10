@@ -175,23 +175,50 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
-    fun `falls back to searchable flag when hidden-from-search delivery method is not set`() {
+    fun `use content partner delivery methods if any are hidden at a content partner level`() {
+        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = DeliveryMethod.ALL)
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(
-                searchable = false,
-                hiddenFromSearchForDeliveryMethods = null
+                providerId = contentPartner.contentPartnerId.value
             ),
             TestFactories.createKalturaPlayback(),
             contentPartner,
             subjects
         )
 
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
-            setOf(
-                DeliveryMethod.DOWNLOAD,
-                DeliveryMethod.STREAM
-            )
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
+    }
+
+    @Test
+    fun `use content partner delivery methods if none are specified`() {
+        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = emptySet())
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(
+                providerId = contentPartner.contentPartnerId.value,
+                hiddenFromSearchForDeliveryMethods =  null
+            ),
+            TestFactories.createKalturaPlayback(),
+            contentPartner,
+            subjects
         )
+
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(emptySet<DeliveryMethod>())
+    }
+
+    @Test
+    fun `use video delivery methods if content partner is not hidden`() {
+        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = emptySet())
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(
+                providerId = contentPartner.contentPartnerId.value,
+                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
+            ),
+            TestFactories.createKalturaPlayback(),
+            contentPartner,
+            subjects
+        )
+
+        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethod.STREAM))
     }
 }
 

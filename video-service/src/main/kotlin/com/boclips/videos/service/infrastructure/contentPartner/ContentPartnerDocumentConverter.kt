@@ -20,7 +20,6 @@ object ContentPartnerDocumentConverter {
             name = contentPartner.name,
             ageRangeMax = contentPartner.ageRange.max(),
             ageRangeMin = contentPartner.ageRange.min(),
-            searchable = contentPartner.searchable,
             hiddenFromSearchForDeliveryMethods = contentPartner.hiddenFromSearchForDeliveryMethods.map(
                 DeliveryMethodDocumentConverter::toDocument
             ).toSet()
@@ -28,8 +27,6 @@ object ContentPartnerDocumentConverter {
     }
 
     fun toContentPartner(document: ContentPartnerDocument): ContentPartner {
-        val searchable = document.searchable ?: true
-
         return ContentPartner(
             contentPartnerId = ContentPartnerId(value = document.id.toString()),
             name = document.name,
@@ -38,10 +35,9 @@ object ContentPartnerDocumentConverter {
                 document.ageRangeMax
             ) else AgeRange.unbounded(),
             credit = document.youtubeChannelId?.let { Credit.YoutubeCredit(channelId = it) } ?: Credit.PartnerCredit,
-            searchable = searchable,
             hiddenFromSearchForDeliveryMethods = document.hiddenFromSearchForDeliveryMethods?.let {
                 convertDeliveryMethodsFromDocument(it)
-            } ?: searchableToDeliveryMethods(searchable)
+            } ?: emptySet()
         )
     }
 
@@ -49,12 +45,4 @@ object ContentPartnerDocumentConverter {
         hiddenFromSearchForDeliveryMethods.map(
             DeliveryMethodDocumentConverter::fromDocument
         ).toSet()
-
-    private fun searchableToDeliveryMethods(searchable: Boolean): Set<DeliveryMethod> {
-        return if (searchable) {
-            emptySet()
-        } else {
-            DeliveryMethod.ALL
-        }
-    }
 }

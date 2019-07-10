@@ -71,7 +71,6 @@ class CreateVideo(
                         is VideoPlayback.StreamPlayback -> Credit.PartnerCredit
                         else -> throw IllegalStateException("Could not retrieve playback for $videoPlayback")
                     },
-                    searchable = true,
                     hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
@@ -83,11 +82,11 @@ class CreateVideo(
 
         videoCounter.increment()
 
-        if (!contentPartner.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.STREAM)) {
+        if (!videoToBeCreated.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.STREAM)) {
             videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
         }
 
-        if (!contentPartner.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
+        if (!videoToBeCreated.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
             if (createdVideo.isBoclipsHosted()) {
                 legacyVideoSearchService.upsert(
                     sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)),

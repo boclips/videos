@@ -81,7 +81,6 @@ object TestFactories {
             name = contentPartnerName,
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
-            searchable = true,
             hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
         ),
         videoReference: String = contentPartnerVideoId
@@ -170,6 +169,7 @@ object TestFactories {
     fun createCreateVideoRequest(
         provider: String? = "AP",
         providerVideoId: String? = "AP-1",
+        providerId: String? = null,
         title: String? = "an AP video",
         description: String? = "an AP video about penguins",
         releasedOn: LocalDate? = LocalDate.now(),
@@ -179,11 +179,11 @@ object TestFactories {
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
         analyseVideo: Boolean = false,
-        searchable: Boolean? = true,
         hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = emptySet(),
         subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
         provider = provider,
+        providerId = providerId,
         providerVideoId = providerVideoId,
         title = title,
         description = description,
@@ -194,7 +194,6 @@ object TestFactories {
         playbackId = playbackId,
         playbackProvider = playbackProvider,
         analyseVideo = analyseVideo,
-        searchable = searchable,
         hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
         subjects = subjects
     )
@@ -391,7 +390,6 @@ object TestFactories {
         name: String = "TED",
         ageRange: AgeRange = AgeRange.bounded(5, 11),
         credit: Credit = Credit.PartnerCredit,
-        searchable: Boolean = true,
         hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod> = emptySet()
     ): ContentPartner {
         return ContentPartner(
@@ -399,7 +397,6 @@ object TestFactories {
             name = name,
             ageRange = ageRange,
             credit = credit,
-            searchable = searchable,
             hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
         )
     }
@@ -411,14 +408,12 @@ object TestFactories {
             max = 11
         ),
         accreditedToYtChannel: String? = null,
-        searchable: Boolean? = true,
         hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
             name = name,
             ageRange = ageRange,
             accreditedToYtChannelId = accreditedToYtChannel,
-            searchable = searchable,
             hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
         )
     }

@@ -41,45 +41,16 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `creating a searchable content partner translates to hiding no delivery methods`() {
-        val contentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
-                name = "My content partner",
-                ageRange = AgeRangeRequest(min = 7, max = 11),
-                searchable = true
-            )
-        )
-
-        assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEqualTo(emptySet<DeliveryMethod>())
-    }
-
-    @Test
-    fun `creating a unsearchable content partner translates to hiding all delivery methods`() {
-        val contentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
-                name = "My content partner",
-                ageRange = AgeRangeRequest(min = 7, max = 11),
-                searchable = false,
-                hiddenFromSearchForDeliveryMethods = null
-            )
-        )
-
-        assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
-    }
-
-    @Test
     fun `content partners are searchable everywhere by default`() {
         val contentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11),
-                searchable = null,
                 hiddenFromSearchForDeliveryMethods = null
             )
         )
 
         assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEmpty()
-        assertThat(contentPartner.searchable).isTrue()
     }
 
     @Test
@@ -88,7 +59,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11),
-                searchable = null,
                 hiddenFromSearchForDeliveryMethods = setOf(
                     DeliveryMethodResource.DOWNLOAD,
                     DeliveryMethodResource.STREAM
@@ -97,7 +67,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
-        assertThat(contentPartner.searchable).isEqualTo(false)
     }
 
     @Test
@@ -106,12 +75,10 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11),
-                searchable = null,
                 hiddenFromSearchForDeliveryMethods = null
             )
         )
 
         assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEqualTo(emptySet<DeliveryMethod>())
-        assertThat(contentPartner.searchable).isEqualTo(true)
     }
 }

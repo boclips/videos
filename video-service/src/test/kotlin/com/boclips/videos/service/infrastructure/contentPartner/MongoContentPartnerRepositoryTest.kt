@@ -120,27 +120,6 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
-    fun `sets searchability`() {
-        val contentPartner = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(
-                searchable = false
-            )
-        )
-
-        mongoContentPartnerRepository.update(
-            listOf(
-                ContentPartnerUpdateCommand.SetSearchability(
-                    contentPartnerId = contentPartner.contentPartnerId,
-                    searchable = true
-                )
-            )
-        )
-
-        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
-        assertThat(updatedAsset.searchable).isEqualTo(true)
-    }
-
-    @Test
     fun `sets hidden delivery methods`() {
         val contentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(

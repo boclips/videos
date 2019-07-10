@@ -88,8 +88,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `excluding from search enqueues a change for later`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    hiddenFromSearchForDeliveryMethods = emptySet(),
-                    searchable = true
+                    hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
 
@@ -98,7 +97,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    searchable = null,
                     hiddenFromSearchForDeliveryMethods = setOf(
                         DeliveryMethodResource.STREAM
                     )
@@ -109,10 +107,9 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `excluding from all delivery methods sets deprecated state and sets hidden state for all delivery methods`() {
+        fun `excluding from all delivery methods sets hidden state for all delivery methods`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    searchable = false,
                     hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
@@ -120,7 +117,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             val updatedContentPartner = updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    searchable = null,
                     hiddenFromSearchForDeliveryMethods = setOf(
                         DeliveryMethodResource.STREAM,
                         DeliveryMethodResource.DOWNLOAD
@@ -128,17 +124,15 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isFalse()
             assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
                 DeliveryMethod.ALL
             )
         }
 
         @Test
-        fun `including in all delivery methods sets deprecated state and sets hidden state for no delivery methods`() {
+        fun `including in all delivery methods sets hidden state for no delivery methods`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    searchable = false,
                     hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
                 )
             )
@@ -146,20 +140,17 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             val updatedContentPartner = updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    searchable = null,
                     hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
 
-            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
             assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEmpty()
         }
 
         @Test
-        fun `excluding from some delivery methods sets deprecated state and sets hidden state for given delivery methods`() {
+        fun `excluding from some delivery methodssets hidden state for given delivery methods`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    searchable = false,
                     hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
                 )
             )
@@ -167,12 +158,10 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             val updatedContentPartner = updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    searchable = null,
                     hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
                 )
             )
 
-            assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.searchable).isTrue()
             assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
                 setOf(DeliveryMethod.STREAM)
             )
@@ -182,7 +171,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `excluding a content partner for all delivery methods also excludes their videos`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    searchable = false,
                     hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
                 )
             )
@@ -195,7 +183,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    searchable = null,
                     hiddenFromSearchForDeliveryMethods = setOf(
                         DeliveryMethodResource.STREAM,
                         DeliveryMethodResource.DOWNLOAD
@@ -210,7 +197,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `excluding a content partner for some delivery methods also excludes their videos`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    searchable = false,
                     hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
                 )
             )
@@ -223,7 +209,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    searchable = null,
                     hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
                 )
             )
@@ -235,7 +220,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `including a content partner for all delivery methods also includes their videos`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    searchable = false,
                     hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
                 )
             )
@@ -248,7 +232,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    searchable = null,
                     hiddenFromSearchForDeliveryMethods = emptySet()
                 )
             )
