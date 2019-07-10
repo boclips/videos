@@ -179,7 +179,6 @@ object TestFactories {
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
         analyseVideo: Boolean = false,
-        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = emptySet(),
         subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
         provider = provider,
@@ -194,7 +193,6 @@ object TestFactories {
         playbackId = playbackId,
         playbackProvider = playbackProvider,
         analyseVideo = analyseVideo,
-        hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
         subjects = subjects
     )
 

@@ -25,13 +25,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 DeliveryMethodResource.DOWNLOAD,
                 DeliveryMethodResource.STREAM
             )
-            val videoIds = listOf(
-                saveVideo(
-                    hiddenFromSearchForDeliveryMethods = emptySet()
-                ), saveVideo(
-                    hiddenFromSearchForDeliveryMethods = emptySet()
-                )
-            )
+            val videoIds = listOf(saveVideo(), saveVideo())
 
             bulkUpdateVideo(
                 BulkUpdateRequest(
@@ -48,13 +42,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `disabling stream only removes from stream search index and adds to download search index`() {
-            val videoIds = listOf(
-                saveVideo(
-                    hiddenFromSearchForDeliveryMethods = emptySet()
-                ), saveVideo(
-                    hiddenFromSearchForDeliveryMethods = emptySet()
-                )
-            )
+            val videoIds = listOf(saveVideo(), saveVideo())
 
             bulkUpdateVideo(
                 BulkUpdateRequest(
@@ -73,13 +61,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `disabling download only removes from download search index and adds to stream search index`() {
-            val videoIds = listOf(
-                saveVideo(
-                    hiddenFromSearchForDeliveryMethods = emptySet()
-                ), saveVideo(
-                    hiddenFromSearchForDeliveryMethods = emptySet()
-                )
-            )
+            val videoIds = listOf(saveVideo(), saveVideo())
 
             bulkUpdateVideo(
                 BulkUpdateRequest(
@@ -98,13 +80,7 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `enabling both adds to both search index`() {
-            val videoIds = listOf(
-                saveVideo(
-                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
-                ), saveVideo(
-                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
-                )
-            )
+            val videoIds = listOf(saveVideo(), saveVideo())
 
             bulkUpdateVideo(
                 BulkUpdateRequest(

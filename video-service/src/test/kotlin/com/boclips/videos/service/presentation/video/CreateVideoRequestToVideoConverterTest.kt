@@ -5,7 +5,6 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.video.DeliveryMethod
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException
 import org.assertj.core.api.AbstractThrowableAssert
@@ -161,22 +160,8 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
-    fun `uses the hiddenFromSearchForDeliveryMethods`() {
-        val video = converter.convert(
-            TestFactories.createCreateVideoRequest(
-                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
-            ),
-            TestFactories.createKalturaPlayback(),
-            contentPartner,
-            subjects
-        )
-
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethod.DOWNLOAD))
-    }
-
-    @Test
-    fun `use content partner delivery methods if any are hidden at a content partner level`() {
-        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = DeliveryMethod.ALL)
+    fun `use content partner delivery methods`() {
+        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = emptySet())
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(
                 providerId = contentPartner.contentPartnerId.value
@@ -186,39 +171,7 @@ class CreateVideoRequestToVideoConverterTest {
             subjects
         )
 
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
-    }
-
-    @Test
-    fun `use content partner delivery methods if none are specified`() {
-        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = emptySet())
-        val video = converter.convert(
-            TestFactories.createCreateVideoRequest(
-                providerId = contentPartner.contentPartnerId.value,
-                hiddenFromSearchForDeliveryMethods =  null
-            ),
-            TestFactories.createKalturaPlayback(),
-            contentPartner,
-            subjects
-        )
-
         assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(emptySet<DeliveryMethod>())
-    }
-
-    @Test
-    fun `use video delivery methods if content partner is not hidden`() {
-        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = emptySet())
-        val video = converter.convert(
-            TestFactories.createCreateVideoRequest(
-                providerId = contentPartner.contentPartnerId.value,
-                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
-            ),
-            TestFactories.createKalturaPlayback(),
-            contentPartner,
-            subjects
-        )
-
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethod.STREAM))
     }
 }
 

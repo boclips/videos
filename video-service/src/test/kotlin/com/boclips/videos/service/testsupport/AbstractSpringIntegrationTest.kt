@@ -178,8 +178,7 @@ abstract class AbstractSpringIntegrationTest {
         legacyType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
-        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
-        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet()
+        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11)
     ): VideoId {
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(
@@ -213,7 +212,6 @@ abstract class AbstractSpringIntegrationTest {
                 videoType = legacyType.name,
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
-                hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
                 analyseVideo = false,
                 ageRangeMin = ageRange.min(),
                 ageRangeMax = ageRange.max()

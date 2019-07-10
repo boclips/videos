@@ -176,8 +176,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             val id = saveVideo(
-                contentProviderId = originalContentPartner.contentPartnerId.value,
-                hiddenFromSearchForDeliveryMethods = emptySet()
+                contentProviderId = originalContentPartner.contentPartnerId.value
             )
 
             updateContentPartner(
@@ -202,8 +201,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             val id = saveVideo(
-                contentProviderId = originalContentPartner.contentPartnerId.value,
-                hiddenFromSearchForDeliveryMethods = emptySet()
+                contentProviderId = originalContentPartner.contentPartnerId.value
             )
 
             updateContentPartner(
@@ -225,8 +223,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             val id = saveVideo(
-                contentProviderId = originalContentPartner.contentPartnerId.value,
-                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM)
+                contentProviderId = originalContentPartner.contentPartnerId.value
             )
 
             updateContentPartner(

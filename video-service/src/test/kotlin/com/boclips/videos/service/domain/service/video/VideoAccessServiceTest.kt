@@ -17,7 +17,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `revoking access hides from all delivery methods`() {
-        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet())
+        val videoId = saveVideo()
 
         videoAccessService.revokeAccess(videoIds = listOf(videoId))
 
@@ -32,7 +32,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `granting access enables on all delivery methods`() {
-        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM))
+        val videoId = saveVideo()
 
         videoAccessService.grantAccess(videoIds = listOf(videoId))
 
@@ -42,7 +42,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `blacklists on a subset of delivery methods`() {
-        val videoId = saveVideo(hiddenFromSearchForDeliveryMethods = emptySet())
+        val videoId = saveVideo()
 
         videoAccessService.setSearchBlacklist(
             videoIds = listOf(videoId),

@@ -82,11 +82,11 @@ class CreateVideo(
 
         videoCounter.increment()
 
-        if (!videoToBeCreated.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.STREAM)) {
+        if (contentPartner.isStreamable()) {
             videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
         }
 
-        if (!videoToBeCreated.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
+        if (contentPartner.isDownloadable()) {
             if (createdVideo.isBoclipsHosted()) {
                 legacyVideoSearchService.upsert(
                     sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)),

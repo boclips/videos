@@ -6,11 +6,8 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import org.bson.types.ObjectId
 
 // TODO refactor to use javax validation in the first place
@@ -42,18 +39,7 @@ class CreateVideoRequestToVideoConverter {
             language = null,
             transcript = null,
             rating = null,
-            hiddenFromSearchForDeliveryMethods = if (contentPartner.hiddenFromSearchForDeliveryMethods.isEmpty()) {
-                convertDeliveryMethods(createVideoRequest.hiddenFromSearchForDeliveryMethods)
-                    ?: contentPartner.hiddenFromSearchForDeliveryMethods
-            } else {
-                contentPartner.hiddenFromSearchForDeliveryMethods
-            }
+            hiddenFromSearchForDeliveryMethods = contentPartner.hiddenFromSearchForDeliveryMethods
         )
-    }
-
-    private fun convertDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>?): Set<DeliveryMethod>? {
-        return hiddenFromSearchForDeliveryMethods
-            ?.map(DeliveryMethodResourceConverter::fromResource)
-            ?.toSet()
     }
 }

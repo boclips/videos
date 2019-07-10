@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
-import com.boclips.videos.service.presentation.video.VideoResourceStatus
+import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asApiUser
@@ -76,12 +76,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2018-05-10",
             duration = Duration.ofSeconds(6),
             contentProvider = "cp",
-            ageRange = UnboundedAgeRange,
-            hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.STREAM, DeliveryMethodResource.DOWNLOAD)
+            ageRange = UnboundedAgeRange
         ).value
 
-        bulkVideoSearchUpdate.invoke(event = VideosExclusionFromDownloadRequested.builder().videoIds(listOf(disabledVideoId)).build())
-        bulkVideoSearchUpdate.invoke(event = VideosExclusionFromStreamRequested.builder().videoIds(listOf(disabledVideoId)).build())
+
+        hideFromAllDeliveryMethods(disabledVideoId)
 
         youtubeVideoId = saveVideo(
             playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
@@ -93,6 +92,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ageRange = UnboundedAgeRange
         ).value
     }
+
 
     @Test
     fun `returns Kaltura videos when query matches`() {
@@ -685,7 +685,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
-            .andExpect(jsonPath("$._embedded.videos[0].hiddenFromSearchForDeliveryMethods", contains("STREAM", "DOWNLOAD")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.videos[0].hiddenFromSearchForDeliveryMethods",
+                    contains("STREAM", "DOWNLOAD")
+                )
+            )
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$disabledVideoId")))
 
             .andExpect(jsonPath("$.page").doesNotExist())
@@ -735,18 +740,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `bulk updates to search blacklist take effect`() {
-        val videoIds = listOf(
-            saveVideo(
-                hiddenFromSearchForDeliveryMethods = setOf(
-                    DeliveryMethodResource.DOWNLOAD,
-                    DeliveryMethodResource.STREAM
-                )
-            ).value,
-            saveVideo().value,
-            saveVideo(
-                hiddenFromSearchForDeliveryMethods = emptySet()
-            ).value
-        )
+        val videoIds = listOf(saveVideo().value, saveVideo().value, saveVideo().value)
 
         mockMvc.perform(
             patch("/v1/videos").asBoclipsEmployee()
@@ -859,6 +853,34 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         return videoId
+    }
+
+
+    private fun hideFromAllDeliveryMethods(videoId: String) {
+        bulkUpdateVideo.invoke(
+            bulkUpdateRequest = BulkUpdateRequest(
+                ids = listOf(videoId),
+                hiddenFromSearchForDeliveryMethods = setOf(
+                    DeliveryMethodResource.STREAM,
+                    DeliveryMethodResource.DOWNLOAD
+                )
+            )
+        )
+
+        bulkVideoSearchUpdate.invoke(
+            event = VideosExclusionFromDownloadRequested.builder().videoIds(
+                listOf(
+                    videoId
+                )
+            ).build()
+        )
+        bulkVideoSearchUpdate.invoke(
+            event = VideosExclusionFromStreamRequested.builder().videoIds(
+                listOf(
+                    videoId
+                )
+            ).build()
+        )
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)
