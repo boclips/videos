@@ -93,7 +93,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `playbacks by unathorized users are saved`() {
+    fun `playbacks by unauthorized users are saved`() {
         val videoId = TestFactories.aValidId()
         mockMvc.perform(
             post("/v1/events/playback")
