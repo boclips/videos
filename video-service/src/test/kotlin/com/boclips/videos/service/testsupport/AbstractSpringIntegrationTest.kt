@@ -4,6 +4,8 @@ import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.Subject
 import com.boclips.events.types.video.VideoSubjectClassified
+import com.boclips.events.types.video.VideosInclusionInDownloadRequested
+import com.boclips.events.types.video.VideosInclusionInStreamRequested
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.security.testing.setSecurityContext
@@ -13,6 +15,7 @@ import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.BulkUpdateVideo
+import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -33,9 +36,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
-import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
-import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.MongoClient
@@ -125,6 +126,9 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createSubject: CreateSubject
 
     @Autowired
+    lateinit var bulkVideoSearchUpdate: BulkVideoSearchUpdate
+
+    @Autowired
     lateinit var updateVideoSubjects: UpdateVideoSubjects
 
     companion object : KLogging() {
@@ -199,7 +203,7 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
-        val id = createVideo(
+        val video = createVideo(
             CreateVideoRequest(
                 provider = contentProvider,
                 providerId = contentProviderId,
@@ -216,7 +220,32 @@ abstract class AbstractSpringIntegrationTest {
                 ageRangeMin = ageRange.min(),
                 ageRangeMax = ageRange.max()
             )
-        ).content.id
+        )
+
+        val id = video.content.id
+
+        val hiddenFromSearchForDeliveryMethods = video.content.hiddenFromSearchForDeliveryMethods
+
+        if (!hiddenFromSearchForDeliveryMethods.contains(DeliveryMethodResource.DOWNLOAD)) {
+            bulkVideoSearchUpdate.invoke(
+                event = VideosInclusionInDownloadRequested.builder().videoIds(
+                    listOf(
+                        id!!
+                    )
+                ).build()
+            )
+        }
+
+
+        if (!hiddenFromSearchForDeliveryMethods.contains(DeliveryMethodResource.STREAM)) {
+            bulkVideoSearchUpdate.invoke(
+                event = VideosInclusionInStreamRequested.builder().videoIds(
+                    listOf(
+                        id
+                    )
+                ).build()
+            )
+        }
 
         return VideoId(id!!)
     }
@@ -286,5 +315,10 @@ abstract class AbstractSpringIntegrationTest {
     fun assertThatChannelHasMessages(channel: MessageChannel) {
         val messageSize = messageCollector.forChannel(channel).size
         org.assertj.core.api.Assertions.assertThat(messageSize).isGreaterThan(0)
+    }
+
+    fun assertThatChannelHasNoMessages(channel: MessageChannel) {
+        val messageSize = messageCollector.forChannel(channel).size
+        org.assertj.core.api.Assertions.assertThat(messageSize).isEqualTo(0)
     }
 }

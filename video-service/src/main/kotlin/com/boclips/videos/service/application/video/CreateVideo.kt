@@ -6,6 +6,8 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -39,13 +41,14 @@ class CreateVideo(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
-    private val videoSearchServiceAdmin: VideoSearchService,
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
     private val legacyVideoSearchService: LegacyVideoSearchService,
     private val classifyVideo: ClassifyVideo,
     private val analyseVideo: AnalyseVideo,
-    private val topics: Topics
+    private val topics: Topics,
+    private val includeVideosInSearchForStream: IncludeVideosInSearchForStream,
+    private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
 ) {
     companion object : KLogging()
 
@@ -83,15 +86,12 @@ class CreateVideo(
         videoCounter.increment()
 
         if (contentPartner.isStreamable()) {
-            videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
+            includeVideosInSearchForStream.invoke(listOf(createdVideo.videoId.value))
         }
 
         if (contentPartner.isDownloadable()) {
             if (createdVideo.isBoclipsHosted()) {
-                legacyVideoSearchService.upsert(
-                    sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)),
-                    null
-                )
+                includeVideosInSearchForDownload.invoke(listOf(createdVideo.videoId.value))
             }
         }
 

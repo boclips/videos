@@ -81,8 +81,12 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `does not add Youtube videos into download search index`() {
+        val contentPartner = saveContentPartner(hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD))
+
         val videoId = saveVideo(
-            playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}")
+            playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, value = "ref-id-${UUID.randomUUID()}"),
+            contentProviderId = contentPartner.contentPartnerId.value
+
         )
 
         subscriptions.videosInclusionInDownloadRequested().send(

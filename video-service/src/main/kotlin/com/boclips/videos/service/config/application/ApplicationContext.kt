@@ -115,7 +115,9 @@ class ApplicationContext(
         searchVideo: SearchVideo,
         videoCounter: Counter,
         classifyVideo: ClassifyVideo,
-        analyseVideo: AnalyseVideo
+        analyseVideo: AnalyseVideo,
+        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
+        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
     ): CreateVideo {
         return CreateVideo(
             videoService,
@@ -124,13 +126,14 @@ class ApplicationContext(
             contentPartnerRepository,
             searchVideo,
             CreateVideoRequestToVideoConverter(),
-            videoSearchService,
             playbackRepository,
             videoCounter,
             legacyVideoSearchService,
             classifyVideo,
             analyseVideo,
-            topics
+            topics,
+            includeVideosInSearchForStream,
+            includeVideosInSearchForDownload
         )
     }
 

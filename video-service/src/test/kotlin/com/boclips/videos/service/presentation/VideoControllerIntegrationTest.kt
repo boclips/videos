@@ -49,9 +49,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    @Autowired
-    lateinit var bulkVideoSearchUpdate: BulkVideoSearchUpdate
-
     lateinit var disabledVideoId: String
     lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String

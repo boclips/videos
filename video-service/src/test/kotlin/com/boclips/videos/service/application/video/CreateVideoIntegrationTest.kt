@@ -95,33 +95,9 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234")
         createVideo(createRequest)
 
-        val results = videoService.search(
-            VideoSearchQuery(
-                text = "the latest bloomberg",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
-                pageSize = 1,
-                pageIndex = 0
-            )
-        )
+        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
 
-        val firstVideoInResults = results.first()
-        assertThat(firstVideoInResults.title).isEqualTo("the latest Bloomberg video")
-    }
-
-    @Test
-    fun `created video is made available in legacy search`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
-        )
-
-        createVideo(TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234"))
-
-        verify(legacyVideoSearchService).upsert(any(), anyOrNull())
     }
 
     @Test
@@ -136,7 +112,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        verifyZeroInteractions(legacyVideoSearchService)
+        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
     }
 
     @Test
@@ -291,7 +267,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             hiddenFromSearchForDeliveryMethods = setOf(
                 DeliveryMethodResource.DOWNLOAD,
                 DeliveryMethodResource.STREAM
-            ))
+            )
+        )
 
         val createRequest =
             TestFactories.createCreateVideoRequest(
@@ -302,22 +279,12 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createVideo(createRequest)
 
-        val results = videoService.search(
-            VideoSearchQuery(
-                text = "the latest and greatest Bloomberg video",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
-                pageSize = 1,
-                pageIndex = 0
-            )
-        )
-
-        assertThat(results).hasSize(0)
-        verifyZeroInteractions(legacyVideoSearchService)
+        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
     }
 
     @Test
-    fun `it does not to download search index if content partner is hidden from download`() {
+    fun `it does not add to download search index if content partner is hidden from download`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
                 id = "entry-$123",
@@ -329,7 +296,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = saveContentPartner(
             hiddenFromSearchForDeliveryMethods = setOf(
                 DeliveryMethodResource.DOWNLOAD
-            ))
+            )
+        )
 
         val createRequest =
             TestFactories.createCreateVideoRequest(
@@ -340,17 +308,36 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createVideo(createRequest)
 
-        val results = videoService.search(
-            VideoSearchQuery(
-                text = "the latest and greatest Bloomberg video",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
-                pageSize = 1,
-                pageIndex = 0
+        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+    }
+
+    @Test
+    fun `it does not add to stream search index if content partner is hidden from stream`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
             )
         )
 
-        assertThat(results).hasSize(1)
-        verifyZeroInteractions(legacyVideoSearchService)
+        val contentPartner = saveContentPartner(
+            hiddenFromSearchForDeliveryMethods = setOf(
+                DeliveryMethodResource.STREAM
+            )
+        )
+
+        val createRequest =
+            TestFactories.createCreateVideoRequest(
+                provider = contentPartner.name,
+                title = "the latest and greatest Bloomberg video",
+                playbackId = "1234"
+            )
+
+        createVideo(createRequest)
+
+        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
     }
 }
