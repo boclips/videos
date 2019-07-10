@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -308,6 +309,83 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(results).hasSize(0)
+        verifyZeroInteractions(legacyVideoSearchService)
+    }
+
+    @Test
+    fun `it does not add to any search indices if content partner is hidden`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        val contentPartner = saveContentPartner(
+            hiddenFromSearchForDeliveryMethods = setOf(
+                DeliveryMethodResource.DOWNLOAD,
+                DeliveryMethodResource.STREAM
+            ))
+
+        val createRequest =
+            TestFactories.createCreateVideoRequest(
+                provider = contentPartner.name,
+                title = "the latest and greatest Bloomberg video",
+                playbackId = "1234"
+            )
+
+        createVideo(createRequest)
+
+        val results = videoService.search(
+            VideoSearchQuery(
+                text = "the latest and greatest Bloomberg video",
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 1,
+                pageIndex = 0
+            )
+        )
+
+        assertThat(results).hasSize(0)
+        verifyZeroInteractions(legacyVideoSearchService)
+    }
+
+    @Test
+    fun `it does not to download search index if content partner is hidden from download`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        val contentPartner = saveContentPartner(
+            hiddenFromSearchForDeliveryMethods = setOf(
+                DeliveryMethodResource.DOWNLOAD
+            ))
+
+        val createRequest =
+            TestFactories.createCreateVideoRequest(
+                provider = contentPartner.name,
+                title = "the latest and greatest Bloomberg video",
+                playbackId = "1234"
+            )
+
+        createVideo(createRequest)
+
+        val results = videoService.search(
+            VideoSearchQuery(
+                text = "the latest and greatest Bloomberg video",
+                includeTags = emptyList(),
+                excludeTags = emptyList(),
+                pageSize = 1,
+                pageIndex = 0
+            )
+        )
+
+        assertThat(results).hasSize(1)
         verifyZeroInteractions(legacyVideoSearchService)
     }
 }

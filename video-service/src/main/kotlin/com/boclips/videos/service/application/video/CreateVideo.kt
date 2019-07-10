@@ -18,6 +18,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -82,8 +83,17 @@ class CreateVideo(
 
         videoCounter.increment()
 
-        if (videoToBeCreated.searchable) {
-            indexVideo(createdVideo)
+        if (!contentPartner.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.STREAM)) {
+            videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
+        }
+
+        if (!contentPartner.hiddenFromSearchForDeliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
+            if (createdVideo.isBoclipsHosted()) {
+                legacyVideoSearchService.upsert(
+                    sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)),
+                    null
+                )
+            }
         }
 
         if (createRequest.analyseVideo) {
@@ -124,14 +134,6 @@ class CreateVideo(
             .build()
 
         topics.videoUpdated().send(MessageBuilder.withPayload(event).build())
-    }
-
-    private fun indexVideo(createdVideo: Video) {
-        videoSearchServiceAdmin.upsert(sequenceOf(createdVideo), null)
-
-        if (createdVideo.isBoclipsHosted()) {
-            legacyVideoSearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(createdVideo)), null)
-        }
     }
 
     private fun findVideoPlayback(playbackId: PlaybackId): VideoPlayback {

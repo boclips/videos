@@ -161,7 +161,7 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
-    fun `uses content partner searchable flag for if content partner if blacklisted`() {
+    fun `uses content partner searchable flag if content partner is blacklisted`() {
         contentPartner = TestFactories.createContentPartner(searchable = false)
 
         val video = converter.convert(

@@ -267,21 +267,22 @@ abstract class AbstractSpringIntegrationTest {
         name: String = "TeD",
         ageRange: AgeRangeRequest = AgeRangeRequest(3, 10),
         accreditedToYtChannel: String? = null,
-        searchable: Boolean = true
+        searchable: Boolean = true,
+        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
     ): ContentPartner {
         return createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = name,
                 ageRange = ageRange,
                 accreditedToYtChannel = accreditedToYtChannel,
-                searchable = searchable
+                searchable = searchable,
+                hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
             )
         )
     }
 
     fun changeVideoStatus(id: String, status: VideoResourceStatus) {
         bulkUpdateVideo(BulkUpdateRequest(listOf(id), status))
-
     }
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {
