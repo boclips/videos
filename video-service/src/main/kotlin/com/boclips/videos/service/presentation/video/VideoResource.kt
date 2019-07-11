@@ -34,12 +34,15 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val rating: Int? = null,
     @get:JsonView(PublicApiProjection::class)
+    val source: String? = null,
+
+    @get:JsonView(BoclipsInternalProjection::class)
     val contentPartner: String? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val contentPartnerVideoId: String? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
-    @get:JsonView(BoclipsInternalProjection::class)
-    val contentPartnerVideoId: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet(),
 

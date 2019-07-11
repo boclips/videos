@@ -2,7 +2,6 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
 import com.boclips.events.types.video.VideosExclusionFromStreamRequested
-import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -89,7 +88,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ageRange = UnboundedAgeRange
         ).value
     }
-
 
     @Test
     fun `returns Kaltura videos when query matches`() {
@@ -349,6 +347,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
             .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
+            .andExpect(jsonPath("$.source", equalTo("cp")))
             .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
             .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-ref-id-123")))
             .andExpect(jsonPath("$.playback.id").exists())
@@ -373,7 +372,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
             .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
+            .andExpect(jsonPath("$.source", equalTo("cp")))
             .andExpect(jsonPath("$.playback.id").exists())
             .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
             .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
@@ -398,7 +397,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
             .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
+            .andExpect(jsonPath("$.source", equalTo("cp")))
             .andExpect(jsonPath("$.playback.id").exists())
             .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
             .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
@@ -851,7 +850,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
         return videoId
     }
-
 
     private fun hideFromAllDeliveryMethods(videoId: String) {
         bulkUpdateVideo.invoke(

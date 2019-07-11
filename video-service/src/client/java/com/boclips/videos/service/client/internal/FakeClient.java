@@ -45,6 +45,7 @@ public class FakeClient implements VideoServiceClient {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .releasedOn(request.getReleasedOn())
+                .source(request.getProvider())
                 .contentPartnerId(request.getProvider())
                 .contentPartnerVideoId(request.getProviderVideoId())
                 .playback(playback)

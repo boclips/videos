@@ -15,12 +15,14 @@ import com.boclips.videos.service.presentation.collections.CreateCollectionReque
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
+import com.boclips.videos.service.presentation.projections.WithProjection
 import mu.KLogging
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.json.MappingJacksonValue
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -46,7 +48,8 @@ class CollectionsController(
     private val getCollections: GetCollections,
     private val bookmarkCollection: BookmarkCollection,
     private val unbookmarkCollection: UnbookmarkCollection,
-    private val collectionsLinkBuilder: CollectionsLinkBuilder
+    private val collectionsLinkBuilder: CollectionsLinkBuilder,
+    private val withProjection: WithProjection
 ) {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
@@ -62,7 +65,7 @@ class CollectionsController(
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) subject: List<String>?
-    ): Resources<*> {
+    ): MappingJacksonValue {
         val collectionFilter = CollectionFilter(
             query = query,
             projection = projection ?: Projection.list,
@@ -82,7 +85,7 @@ class CollectionsController(
         val collectionResources = collections.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
-        return Resources(
+        return withProjection(Resources(
             collectionResources,
             listOfNotNull(
                 collectionsLinkBuilder.projections().list(),
@@ -90,7 +93,7 @@ class CollectionsController(
                 collectionsLinkBuilder.self(),
                 collectionsLinkBuilder.next(collections.pageInfo)
             )
-        )
+        ))
     }
 
     @PostMapping
@@ -103,19 +106,19 @@ class CollectionsController(
     }
 
     @PatchMapping("/{id}")
-    fun patchCollection(@PathVariable("id") id: String, @Valid @RequestBody request: UpdateCollectionRequest?): ResponseEntity<Resource<*>> {
+    fun patchCollection(@PathVariable("id") id: String, @Valid @RequestBody request: UpdateCollectionRequest?): ResponseEntity<Void> {
         updateCollection(id, request)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @PatchMapping("/{id}", params = ["bookmarked=true"])
-    fun patchBookmarkCollection(@PathVariable("id") id: String): Resource<CollectionResource> {
+    fun patchBookmarkCollection(@PathVariable("id") id: String): MappingJacksonValue {
         bookmarkCollection(id)
         return this.show(id)
     }
 
     @PatchMapping("/{id}", params = ["bookmarked=false"])
-    fun patchUnbookmarkCollection(@PathVariable("id") id: String): Resource<CollectionResource> {
+    fun patchUnbookmarkCollection(@PathVariable("id") id: String): MappingJacksonValue {
         unbookmarkCollection(id)
         return this.show(id)
     }
@@ -130,9 +133,7 @@ class CollectionsController(
     fun show(
         @PathVariable("id") id: String,
         @RequestParam(required = false) projection: Projection? = Projection.list
-    ): Resource<CollectionResource> {
-        return wrapCollection(getCollection(id, projection ?: Projection.list))
-    }
+    ) = withProjection(wrapCollection(getCollection(id, projection ?: Projection.list)))
 
     @PutMapping("/{collection_id}/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

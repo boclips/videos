@@ -117,7 +117,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `gets all user collections with full details`() {
         val collectionId = createCollection("collection 1")
         createCollection("collection 2")
-        addVideo(collectionId, saveVideo(title = "a video title").value)
+        addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
 
         mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
@@ -128,6 +128,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].title", equalTo("a video title")))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0].source", equalTo("A content provider")))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0].contentPartner").doesNotExist())
             .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
             .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
@@ -390,7 +392,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `fetching a specific collection using details projection returns deep details`() {
         val collectionId = createCollection("collection 1")
-        val videoId = saveVideo(title = "a video title").value
+        val videoId = saveVideo(title = "a video title", contentProvider = "A content provider").value
         addVideo(collectionId, videoId)
 
         mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asTeacher())
@@ -403,6 +405,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.videos[0].id", equalTo(videoId)))
             .andExpect(jsonPath("$.videos[0].title", equalTo("a video title")))
             .andExpect(jsonPath("$.videos[0].description", equalTo("Some description!")))
+            .andExpect(jsonPath("$.videos[0].source", equalTo("A content provider")))
+            .andExpect(jsonPath("$.videos[0].contentProvider").doesNotExist())
             .andExpect(jsonPath("$.videos[0].playback", not(nullValue())))
             .andExpect(jsonPath("$.videos[0].playback.duration", not(nullValue())))
             .andExpect(jsonPath("$.videos[0].playback.thumbnailUrl", not(isEmptyOrNullString())))

@@ -37,7 +37,8 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
-                playbackId = playbackId
+                playbackId = playbackId,
+                contentProviderId = "test-content-partner"
             )
         )
 
@@ -46,6 +47,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(video.title).isEqualTo("the title")
         assertThat(video.description).isEqualTo("the description")
         assertThat(video.releasedOn).isCloseTo(LocalDate.now(), within(1, ChronoUnit.DAYS))
+        assertThat(video.source).isEqualTo("test-content-partner")
         assertThat(video.playback?.playbackId).isEqualTo(playbackId)
         assertThat(video.playback?.thumbnailUrl).isNotBlank()
         assertThat(video.playback?.duration).isNotNull()
@@ -131,6 +133,12 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             assertThat(preFetchedVideo.description)
                 .isNotBlank()
                 .isEqualTo(video.description)
+            assertThat(preFetchedVideo.releasedOn)
+                .isNotNull()
+                .isEqualTo(video.releasedOn)
+            assertThat(preFetchedVideo.source)
+                .isNotBlank()
+                .isEqualTo(video.source)
             assertThat(preFetchedVideo.playback).isNotNull
             assertThat(preFetchedVideo.playback.playbackId)
                 .isNotBlank()

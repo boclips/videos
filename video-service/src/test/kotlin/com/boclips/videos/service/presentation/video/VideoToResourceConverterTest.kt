@@ -61,6 +61,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.id).isEqualTo(videoId)
         assertThat(videoResource.title).isNull()
         assertThat(videoResource.description).isNull()
+        assertThat(videoResource.source).isEqualTo(videoResource.contentPartner)
         assertThat(videoResource.contentPartner).isNull()
         assertThat(videoResource.contentPartnerVideoId).isNull()
         assertThat(videoResource.subjects).isNullOrEmpty()
@@ -75,6 +76,7 @@ internal class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
+        assertThat(videoResource.source).isEqualTo(videoResource.contentPartner)
         assertThat(videoResource.contentPartner).isEqualTo("WeWork")
         assertThat(videoResource.contentPartnerVideoId).isEqualTo("111")
         assertThat(videoResource.subjects).containsExactly("Maths")
@@ -99,6 +101,7 @@ internal class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
+        assertThat(videoResource.source).isEqualTo(videoResource.contentPartner)
         assertThat(videoResource.contentPartner).isEqualTo("JacekWork")
         assertThat(videoResource.contentPartnerVideoId).isEqualTo("222")
         assertThat(videoResource.subjects).containsExactly("Biology")

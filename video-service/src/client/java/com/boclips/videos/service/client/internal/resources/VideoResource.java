@@ -14,6 +14,7 @@ public class VideoResource {
     private String description = null;
     private LocalDate releasedOn = null;
     private Set<String> subjects = null;
+    private String source = null;
     private String contentPartner = null;
     private String contentPartnerVideoId = null;
     private PlaybackResource playback = null;
@@ -24,6 +25,7 @@ public class VideoResource {
                 .title(title)
                 .description(description)
                 .releasedOn(releasedOn)
+                .source(source)
                 .contentPartnerId(contentPartner)
                 .contentPartnerVideoId(contentPartnerVideoId)
                 .playback(playback != null ? playback.toPlayback() : null)
