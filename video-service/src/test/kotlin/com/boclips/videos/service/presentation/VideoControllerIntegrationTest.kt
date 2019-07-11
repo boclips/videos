@@ -18,6 +18,7 @@ import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
+import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers.contains
@@ -475,15 +476,21 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `rates video`() {
         val videoId = saveVideo().value
 
-        mockMvc.perform(patch("/v1/videos/$videoId?rating=3").asTeacher())
+        val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", equalTo(videoId)))
+            .andReturn().response.contentAsString
+
+        val rateUrl = JsonPath.parse(videoResponse).read<String>("$._links.rate.href")
+
+        mockMvc.perform(patch(rateUrl, 3).asTeacher())
+            .andExpect(status().isOk)
             .andExpect(jsonPath("$.rating", equalTo(3)))
+            .andExpect(jsonPath("$._links.rate").doesNotExist())
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", equalTo(videoId)))
             .andExpect(jsonPath("$.rating", equalTo(3)))
+            .andExpect(jsonPath("$._links.rate").doesNotExist())
     }
 
     @Test

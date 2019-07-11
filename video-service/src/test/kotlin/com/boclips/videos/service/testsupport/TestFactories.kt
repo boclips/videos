@@ -439,7 +439,8 @@ object VideoResourceFactory {
         legalRestrictions: String = "",
         contentPartner: String = "Content Partner",
         badges: Set<String> = emptySet(),
-        hasTranscripts: Boolean = true
+        hasTranscripts: Boolean = true,
+        rating: Int? = null
     ) = VideoResource(
         id = id,
         playback = Resource(playback),
@@ -452,7 +453,8 @@ object VideoResourceFactory {
         subjects = subjects,
         contentPartner = contentPartner,
         badges = badges,
-        hasTranscripts = hasTranscripts
+        hasTranscripts = hasTranscripts,
+        rating = rating
     )
 }
 

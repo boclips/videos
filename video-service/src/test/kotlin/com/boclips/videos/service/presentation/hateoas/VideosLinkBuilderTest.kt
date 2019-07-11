@@ -157,7 +157,7 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `rate link returns a link when authenticated`() {
+    fun `rate link returns a link when appropriate`() {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
         val link = builder.rateLink(VideoResourceFactory.sample(id = "rate-test"))
@@ -167,6 +167,15 @@ class VideosLinkBuilderTest {
         assertThat(link!!.href).isEqualTo("/v1/videos/rate-test?rating={rating}")
         assertThat(link.rel).isEqualTo("rate")
         assertThat(link.isTemplated).isTrue()
+    }
+
+    @Test
+    fun `rate link does not return a link when there is a rating already`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
+
+        val link = builder.rateLink(VideoResourceFactory.sample(rating = 3))
+
+        assertThat(link).isNull()
     }
 
     @Test

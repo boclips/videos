@@ -21,20 +21,18 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             .getVideo(null)
     ).withRel("video")
 
-    fun searchVideosLink(): Link? {
-        return when {
-            currentUserHasRole(UserRoles.VIEW_ANY_VIDEO) -> Link(
-                getVideosRoot()
-                    .toUriString() + "{?query,sort_by,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject}"
-            ).withRel("searchVideos")
+    fun searchVideosLink() = when {
+        currentUserHasRole(UserRoles.VIEW_ANY_VIDEO) -> Link(
+            getVideosRoot()
+                .toUriString() + "{?query,sort_by,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject}"
+        ).withRel("searchVideos")
 
-            currentUserHasRole(UserRoles.VIEW_VIDEOS) -> ControllerLinkBuilder.linkTo(
-                ControllerLinkBuilder.methodOn(VideoController::class.java)
-                    .search(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
-            ).withRel("searchVideos")
+        currentUserHasRole(UserRoles.VIEW_VIDEOS) -> ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .search(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        ).withRel("searchVideos")
 
-            else -> null
-        }
+        else -> null
     }
 
     fun videosLink() =
@@ -52,27 +50,23 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         ).withRel("adminSearch")
     }
 
-    fun transcriptLink(videoResource: VideoResource): Link? {
-        if (!currentUserHasRole(UserRoles.DOWNLOAD_TRANSCRIPT)) {
-            return null
-        }
+    fun transcriptLink(videoResource: VideoResource) = when {
 
-        if (false == videoResource.hasTranscripts) {
-            return null
-        }
+        !currentUserHasRole(UserRoles.DOWNLOAD_TRANSCRIPT) -> null
+        videoResource.hasTranscripts == false -> null
 
-        return ControllerLinkBuilder.linkTo(
+        else -> ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .getTranscript(videoResource.id)
         ).withRel("transcript")
     }
 
-    fun rateLink(videoResource: VideoResource): Link? {
-        if (!currentUserHasRole(UserRoles.RATE_VIDEOS)) {
-            return null
-        }
+    fun rateLink(videoResource: VideoResource) = when {
 
-        return ControllerLinkBuilder.linkTo(
+        !currentUserHasRole(UserRoles.RATE_VIDEOS) -> null
+        videoResource.rating != null -> null
+
+        else -> ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .patchRating(null, videoResource.id!!)
         ).withRel("rate")
