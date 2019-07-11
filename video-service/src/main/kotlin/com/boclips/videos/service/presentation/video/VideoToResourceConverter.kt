@@ -21,7 +21,7 @@ class VideoToResourceConverter(
     }
 
     fun wrapVideoIdsInResource(videoIds: List<VideoId>): List<Resource<VideoResource>> {
-        return videoIds.map { videoId -> wrapResourceWithHateoas(VideoResource(id = videoId.value)) }
+        return videoIds.map { videoId -> wrapResourceWithHateoas(VideoResource(id = videoId.value), null) }
     }
 
     fun fromVideo(video: Video): Resource<VideoResource> {
@@ -49,7 +49,7 @@ class VideoToResourceConverter(
                 hiddenFromSearchForDeliveryMethods = video.hiddenFromSearchForDistributionMethods.map(
                     DeliveryMethodResourceConverter::toResource
                 ).toSet()
-            )
+            ), video
         )
     }
 
@@ -69,13 +69,14 @@ class VideoToResourceConverter(
     }
 
     private fun wrapResourceWithHateoas(
-        videoResource: VideoResource
+        videoResource: VideoResource,
+        video: Video?
     ) = Resource(
         videoResource,
         listOfNotNull(
             videosLinkBuilder.self(videoResource),
             videosLinkBuilder.transcriptLink(videoResource),
-            videosLinkBuilder.rateLink(videoResource)
+            video?.let { videosLinkBuilder.rateLink(it) }
         )
     )
 }

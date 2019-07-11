@@ -2,10 +2,14 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.VideoResourceFactory
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.util.UriComponentsBuilder
 
 class VideosLinkBuilderTest {
+
+    val validVideoId = ObjectId().toHexString()
 
     @AfterEach
     fun cleanUp() {
@@ -157,30 +163,59 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `rate link returns a link when appropriate`() {
+    fun `rate link returns a link when no rating`() {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
-        val link = builder.rateLink(VideoResourceFactory.sample(id = "rate-test"))
+        val link =
+            builder.rateLink(
+                createVideo(
+                    videoId = validVideoId,
+                    ratings = listOf(UserRating(rating = 3, userId = UserId("another-teacher")))
+                )
+            )
 
         assertThat(link).isNotNull
 
-        assertThat(link!!.href).isEqualTo("/v1/videos/rate-test?rating={rating}")
+        assertThat(link!!.href).isEqualTo("/v1/videos/$validVideoId?rating={rating}")
         assertThat(link.rel).isEqualTo("rate")
         assertThat(link.isTemplated).isTrue()
     }
 
     @Test
-    fun `rate link does not return a link when there is a rating already`() {
+    fun `rate link returns a link when no rating by current User`() {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
-        val link = builder.rateLink(VideoResourceFactory.sample(rating = 3.0))
+        val link = builder.rateLink(createVideo(videoId = validVideoId))
+
+        assertThat(link).isNotNull
+
+        assertThat(link!!.href).isEqualTo("/v1/videos/$validVideoId?rating={rating}")
+        assertThat(link.rel).isEqualTo("rate")
+        assertThat(link.isTemplated).isTrue()
+    }
+
+    @Test
+    fun `rate link does not return a link when there is a rating by the current user`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
+
+        val link =
+            builder.rateLink(
+                createVideo(
+                    ratings = listOf(
+                        UserRating(
+                            rating = 3,
+                            userId = UserId("teacher@boclips.com")
+                        )
+                    )
+                )
+            )
 
         assertThat(link).isNull()
     }
 
     @Test
     fun `rate link returns null when not authenticated`() {
-        val link = builder.rateLink(VideoResourceFactory.sample())
+        val link = builder.rateLink(createVideo())
 
         assertThat(link).isNull()
     }

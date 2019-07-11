@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model
 
+import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -47,4 +48,7 @@ data class Video(
         this.ratings.isEmpty() -> null
         else -> this.ratings.map { it.rating }.average()
     }
+
+    fun isRatedByCurrentUser() =
+        ratings.any { it.userId == getCurrentUserId() }
 }

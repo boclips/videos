@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.videos.service.application.currentUserHasRole
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.Link
@@ -61,14 +62,14 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         ).withRel("transcript")
     }
 
-    fun rateLink(videoResource: VideoResource) = when {
+    fun rateLink(video: Video) = when {
 
         !currentUserHasRole(UserRoles.RATE_VIDEOS) -> null
-        videoResource.rating != null -> null
+        video.isRatedByCurrentUser() -> null
 
         else -> ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .patchRating(null, videoResource.id!!)
+                .patchRating(null, video.videoId.value)
         ).withRel("rate")
     }
 
