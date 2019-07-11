@@ -36,7 +36,7 @@ object VideoDocumentConverter {
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
-            rating = UserRatingDocumentConverter.toDocument(video.rating)?.let { listOf(it) } ?: emptyList(),
+            rating = video.ratings.map { UserRatingDocumentConverter.toDocument(it) },
             hiddenFromSearchForDeliveryMethods = video.hiddenFromSearchForDeliveryMethods.map(
                 DeliveryMethodDocumentConverter::toDocument
             ).toSet()
@@ -63,7 +63,7 @@ object VideoDocumentConverter {
                 min = document.ageRangeMin,
                 max = document.ageRangeMax
             ) else AgeRange.unbounded(),
-            rating = document.rating.firstOrNull()?.let { UserRatingDocumentConverter.toRating(it) },
+            ratings = document.rating.map { UserRatingDocumentConverter.toRating(it) },
             hiddenFromSearchForDeliveryMethods = document.hiddenFromSearchForDeliveryMethods?.map(
                 DeliveryMethodDocumentConverter::fromDocument
             )?.toSet() ?: emptySet()

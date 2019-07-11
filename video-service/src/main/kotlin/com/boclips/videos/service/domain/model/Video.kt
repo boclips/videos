@@ -28,7 +28,7 @@ data class Video(
     val language: Locale?,
     val transcript: String?,
     val ageRange: AgeRange,
-    val rating: UserRating?,
+    val ratings: List<UserRating>,
     val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod>
 ) {
     fun isPlayable(): Boolean {
@@ -41,5 +41,10 @@ data class Video(
 
     override fun toString(): String {
         return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}')"
+    }
+
+    fun getRatingAverage() = when {
+        this.ratings.isEmpty() -> null
+        else -> this.ratings.map { it.rating }.average()
     }
 }

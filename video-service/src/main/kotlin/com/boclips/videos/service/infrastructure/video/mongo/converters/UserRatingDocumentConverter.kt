@@ -6,8 +6,8 @@ import com.boclips.videos.service.infrastructure.video.mongo.UserRatingDocument
 
 object UserRatingDocumentConverter {
 
-    fun toDocument(rating: UserRating?): UserRatingDocument? {
-        return rating?.let {
+    fun toDocument(rating: UserRating): UserRatingDocument {
+        return rating.let {
             UserRatingDocument(
                 rating = it.rating,
                 userId = it.userId.value
@@ -15,8 +15,8 @@ object UserRatingDocumentConverter {
         }
     }
 
-    fun toRating(userRatingDocument: UserRatingDocument?): UserRating? {
-        return userRatingDocument?.let {
+    fun toRating(userRatingDocument: UserRatingDocument): UserRating {
+        return userRatingDocument.let {
             UserRating(
                 rating = it.rating,
                 userId = UserId(it.userId)

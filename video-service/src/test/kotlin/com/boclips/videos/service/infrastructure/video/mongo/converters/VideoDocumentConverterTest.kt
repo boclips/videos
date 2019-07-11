@@ -53,7 +53,7 @@ class VideoDocumentConverterTest {
                     )
                 )
             ),
-            rating = UserRating(3, UserId("user")),
+            ratings = listOf(UserRating(3, UserId("user"))),
             ageRange = AgeRange.bounded(11, 16),
             hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.STREAM)
         )

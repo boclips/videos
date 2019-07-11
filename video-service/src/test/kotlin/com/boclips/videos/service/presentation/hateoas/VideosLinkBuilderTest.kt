@@ -173,7 +173,7 @@ class VideosLinkBuilderTest {
     fun `rate link does not return a link when there is a rating already`() {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
-        val link = builder.rateLink(VideoResourceFactory.sample(rating = 3))
+        val link = builder.rateLink(VideoResourceFactory.sample(rating = 3.0))
 
         assertThat(link).isNull()
     }

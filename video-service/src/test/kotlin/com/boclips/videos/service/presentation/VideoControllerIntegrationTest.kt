@@ -476,21 +476,31 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `rates video`() {
         val videoId = saveVideo().value
 
-        val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andReturn().response.contentAsString
-
-        val rateUrl = JsonPath.parse(videoResponse).read<String>("$._links.rate.href")
+        val rateUrl = getRatingLink(videoId)
 
         mockMvc.perform(patch(rateUrl, 3).asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.rating", equalTo(3)))
+            .andExpect(jsonPath("$.rating", equalTo(3.0)))
             .andExpect(jsonPath("$._links.rate").doesNotExist())
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.rating", equalTo(3)))
+            .andExpect(jsonPath("$.rating", equalTo(3.0)))
             .andExpect(jsonPath("$._links.rate").doesNotExist())
+    }
+
+    @Test
+    fun `multiple ratings uses average`() {
+        val videoId = saveVideo().value
+        val rateUrl = getRatingLink(videoId)
+
+        mockMvc.perform(patch(rateUrl, 3).asTeacher("teacher-1"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.rating", equalTo(3.0)))
+
+        mockMvc.perform(patch(rateUrl, 5).asTeacher("teacher-2"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.rating", equalTo(4.0)))
     }
 
     @Test
@@ -840,6 +850,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo(videoId)))
             .andExpect(jsonPath("$._links.transcript.href").doesNotHaveJsonPath())
+    }
+
+    private fun getRatingLink(videoId: String): String {
+        val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andReturn().response.contentAsString
+
+        val rateUrl = JsonPath.parse(videoResponse).read<String>("$._links.rate.href")
+        return rateUrl
     }
 
     private fun saveVideoWithTranscript(): String {

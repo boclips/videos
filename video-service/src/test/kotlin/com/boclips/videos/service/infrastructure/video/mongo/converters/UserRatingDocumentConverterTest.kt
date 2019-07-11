@@ -20,11 +20,4 @@ class UserRatingDocumentConverterTest {
         Assertions.assertThat(restoredUserRating).isEqualTo(rating)
     }
 
-    @Test
-    fun `null rating`() {
-        val document = UserRatingDocumentConverter.toDocument(null)
-        val restoredUserRating = UserRatingDocumentConverter.toRating(document)
-
-        Assertions.assertThat(restoredUserRating).isNull()
-    }
 }

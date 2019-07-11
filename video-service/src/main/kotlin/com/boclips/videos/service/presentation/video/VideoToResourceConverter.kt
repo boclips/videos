@@ -45,7 +45,7 @@ class VideoToResourceConverter(
                 legalRestrictions = video.legalRestrictions,
                 hasTranscripts = video.transcript != null,
                 ageRange = getAgeRange(video),
-                rating = video.rating?.rating,
+                rating = video.getRatingAverage(),
                 hiddenFromSearchForDeliveryMethods = video.hiddenFromSearchForDeliveryMethods.map(
                     DeliveryMethodResourceConverter::toResource
                 ).toSet()

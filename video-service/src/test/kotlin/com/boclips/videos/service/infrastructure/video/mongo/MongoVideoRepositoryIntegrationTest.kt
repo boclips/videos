@@ -282,14 +282,23 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceRating(
+        mongoVideoRepository.update(
+            VideoUpdateCommand.AddRating(
                 originalAsset.videoId,
                 UserRating(3, UserId("a user"))
             )
         )
+        val updatedAsset = mongoVideoRepository.update(
+            VideoUpdateCommand.AddRating(
+                originalAsset.videoId,
+                UserRating(5, UserId("another user"))
+            )
+        )
 
-        assertThat(updatedAsset.rating).isEqualTo(UserRating(3, UserId("a user")))
+        assertThat(updatedAsset.ratings).containsExactlyInAnyOrder(
+            UserRating(3, UserId("a user")),
+            UserRating(5, UserId("another user"))
+        )
     }
 
     @Test

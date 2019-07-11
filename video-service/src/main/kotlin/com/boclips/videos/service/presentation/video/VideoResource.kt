@@ -32,7 +32,7 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val ageRange: AgeRangeResource? = null,
     @get:JsonView(PublicApiProjection::class)
-    val rating: Int? = null,
+    val rating: Double? = null,
     @get:JsonView(PublicApiProjection::class)
     val source: String? = null,
 

@@ -24,6 +24,6 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceKeywords(videoId: VideoId, val keywords: Set<String>) : VideoUpdateCommand(videoId)
     class ReplaceAgeRange(videoId: VideoId, val ageRange: AgeRange) : VideoUpdateCommand(videoId)
     class ReplaceContentPartner(videoId: VideoId, val contentPartner: ContentPartner) : VideoUpdateCommand(videoId)
-    class ReplaceRating(videoId: VideoId, val rating: UserRating) : VideoUpdateCommand(videoId)
+    class AddRating(videoId: VideoId, val rating: UserRating) : VideoUpdateCommand(videoId)
 }
 

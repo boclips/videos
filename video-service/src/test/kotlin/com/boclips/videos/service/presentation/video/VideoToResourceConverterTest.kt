@@ -38,7 +38,7 @@ internal class VideoToResourceConverterTest {
         subjects = setOf(TestFactories.createSubject(name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
-        rating = UserRating(rating = 3, userId = UserId("irrelevant"))
+        ratings = listOf(UserRating(rating = 3, userId = UserId("irrelevant")))
     )
 
     val youtubeVideo = createVideo(
@@ -92,7 +92,7 @@ internal class VideoToResourceConverterTest {
         assertThat((videoResource.playback!!.content as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
         assertThat(videoResource.ageRange!!.min).isEqualTo(5)
         assertThat(videoResource.ageRange!!.max).isEqualTo(11)
-        assertThat(videoResource.rating).isEqualTo(3)
+        assertThat(videoResource.rating).isEqualTo(3.0)
     }
 
     @Test

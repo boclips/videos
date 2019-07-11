@@ -75,7 +75,7 @@ object TestFactories {
         topics: Set<Topic> = emptySet(),
         hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
-        rating: UserRating? = null,
+        ratings: List<UserRating> = emptyList(),
         contentPartner: ContentPartner = ContentPartner(
             contentPartnerId = contentPartnerId,
             name = contentPartnerName,
@@ -102,7 +102,7 @@ object TestFactories {
             ageRange = ageRange,
             contentPartner = contentPartner,
             videoReference = videoReference,
-            rating = rating
+            ratings = ratings
         )
     }
 
@@ -440,7 +440,7 @@ object VideoResourceFactory {
         contentPartner: String = "Content Partner",
         badges: Set<String> = emptySet(),
         hasTranscripts: Boolean = true,
-        rating: Int? = null
+        rating: Double? = null
     ) = VideoResource(
         id = id,
         playback = Resource(playback),

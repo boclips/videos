@@ -13,7 +13,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceRating
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
@@ -41,6 +41,7 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.not
+import org.litote.kmongo.push
 import org.litote.kmongo.set
 import java.time.Instant
 import java.util.Optional
@@ -198,9 +199,9 @@ class MongoVideoRepository(
             is ReplaceTopics -> set(VideoDocument::topics, updateCommand.topics.map(TopicDocumentConverter::toDocument))
             is ReplaceKeywords -> set(VideoDocument::keywords, updateCommand.keywords)
             is ReplacePlayback -> set(VideoDocument::playback, PlaybackConverter.toDocument(updateCommand.playback))
-            is ReplaceRating -> set(
+            is AddRating -> push(
                 VideoDocument::rating,
-                listOf(UserRatingDocumentConverter.toDocument(updateCommand.rating))
+                UserRatingDocumentConverter.toDocument(updateCommand.rating)
             )
             is ReplaceAgeRange -> combine(
                 set(

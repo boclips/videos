@@ -38,7 +38,7 @@ class CreateVideoRequestToVideoConverter {
             topics = emptySet(),
             language = null,
             transcript = null,
-            rating = null,
+            ratings = emptyList(),
             hiddenFromSearchForDeliveryMethods = contentPartner.hiddenFromSearchForDeliveryMethods
         )
     }

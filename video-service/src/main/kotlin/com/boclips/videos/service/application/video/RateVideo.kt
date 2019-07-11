@@ -19,7 +19,7 @@ open class RateVideo(
 
     open operator fun invoke(@Valid rateVideoRequest: RateVideoRequest) {
         videoRepository.update(
-            VideoUpdateCommand.ReplaceRating(
+            VideoUpdateCommand.AddRating(
                 VideoId(rateVideoRequest.videoId),
                 UserRating(rating = rateVideoRequest.rating!!, userId = getCurrentUserId())
             )
