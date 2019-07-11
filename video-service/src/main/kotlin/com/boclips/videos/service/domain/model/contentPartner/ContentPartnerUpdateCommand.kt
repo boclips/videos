@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.contentPartner
 
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 
 sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId) {
 
@@ -11,7 +11,7 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
     class ReplaceAgeRange(contentPartnerId: ContentPartnerId, val ageRange: AgeRange) :
         ContentPartnerUpdateCommand(contentPartnerId)
 
-    class SetHiddenDeliveryMethods(contentPartnerId: ContentPartnerId, val methods: Set<DeliveryMethod>) :
+    class ReplaceDistributionMethods(contentPartnerId: ContentPartnerId, val methods: Set<DistributionMethod>) :
         ContentPartnerUpdateCommand(contentPartnerId)
 
 }

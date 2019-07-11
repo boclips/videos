@@ -21,7 +21,7 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.DeliveryMethodDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.UserRatingDocumentConverter
@@ -105,8 +105,8 @@ class MongoVideoRepository(
             is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
-            VideoFilter.IsDownloadable -> not(VideoDocument::hiddenFromSearchForDeliveryMethods contains  DeliveryMethodDocument(DeliveryMethodDocument.DELIVERY_METHOD_DOWNLOAD))
-            VideoFilter.IsStreamable -> not(VideoDocument::hiddenFromSearchForDeliveryMethods contains DeliveryMethodDocument(DeliveryMethodDocument.DELIVERY_METHOD_STREAM))
+            VideoFilter.IsDownloadable -> not(VideoDocument::hiddenFromSearchForDistributionMethods contains  DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD))
+            VideoFilter.IsStreamable -> not(VideoDocument::hiddenFromSearchForDistributionMethods contains DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_STREAM))
         }
 
         val sequence = Sequence {
@@ -222,8 +222,8 @@ class MongoVideoRepository(
                 )
             }
             is VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods -> set(
-                VideoDocument::hiddenFromSearchForDeliveryMethods,
-                updateCommand.deliveryMethods.map(DeliveryMethodDocumentConverter::toDocument).toSet()
+                VideoDocument::hiddenFromSearchForDistributionMethods,
+                updateCommand.distributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
             )
         }
     }

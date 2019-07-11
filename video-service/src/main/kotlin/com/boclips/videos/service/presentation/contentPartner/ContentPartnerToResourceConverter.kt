@@ -15,9 +15,9 @@ object ContentPartnerToResourceConverter {
                 is Credit.PartnerCredit -> true
                 is Credit.YoutubeCredit -> false
             },
-            hiddenFromSearchForDeliveryMethods = contentPartner.hiddenFromSearchForDeliveryMethods.map(
-                DeliveryMethodResourceConverter::toResource
-            ).toSet()
+            hiddenFromSearchForDeliveryMethods = DeliveryMethodResourceConverter.toDisabledDeliveryMethodResources(
+                contentPartner.distributionMethods
+            )
         )
     }
 }

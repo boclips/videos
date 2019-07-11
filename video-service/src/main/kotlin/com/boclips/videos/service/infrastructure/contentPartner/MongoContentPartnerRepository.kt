@@ -4,8 +4,9 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.mongo.converters.DeliveryMethodDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoIterable
@@ -84,10 +85,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
                         updateCommand.ageRange.max()
                     )
                 )
-            is ContentPartnerUpdateCommand.SetHiddenDeliveryMethods ->
+            is ContentPartnerUpdateCommand.ReplaceDistributionMethods ->
                 set(
-                    ContentPartnerDocument::hiddenFromSearchForDeliveryMethods,
-                    updateCommand.methods.map(DeliveryMethodDocumentConverter::toDocument).toSet()
+                    ContentPartnerDocument::disabledDistributionMethods,
+                    (DistributionMethod.ALL - updateCommand.methods).map(DistributionMethodDocumentConverter::toDocument).toSet()
                 )
         }
 

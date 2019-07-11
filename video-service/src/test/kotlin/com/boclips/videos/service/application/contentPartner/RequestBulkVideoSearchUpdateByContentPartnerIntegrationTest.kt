@@ -6,7 +6,7 @@ import com.boclips.events.types.video.VideosInclusionInDownloadRequested
 import com.boclips.events.types.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -53,7 +53,7 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
         val videoId = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
         requestVideoSearchUpdateByContentPartner.invoke(
-            ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), DeliveryMethod.ALL
+            ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), DistributionMethod.ALL
         )
 
         val downloadRequestedMessage = messageCollector.forChannel(topics.videosExclusionFromDownloadRequested()).poll()
@@ -80,7 +80,7 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
         val videoId = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
         requestVideoSearchUpdateByContentPartner.invoke(
-            ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), setOf(DeliveryMethod.DOWNLOAD)
+            ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), setOf(DistributionMethod.DOWNLOAD)
         )
 
         val downloadExclusionMessage = messageCollector.forChannel(topics.videosExclusionFromDownloadRequested()).poll()
@@ -106,7 +106,7 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
     fun `throws if content partner is fictitious`() {
         assertThrows<ContentPartnerNotFoundException> {
             requestVideoSearchUpdateByContentPartner.invoke(
-                ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), DeliveryMethod.ALL
+                ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), DistributionMethod.ALL
             )
         }
     }
@@ -118,7 +118,7 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
         saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
         requestVideoSearchUpdateByContentPartner.invoke(
-            ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), setOf(DeliveryMethod.STREAM)
+            ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), setOf(DistributionMethod.STREAM)
         )
 
         assertThat(messageCollector.forChannel(topics.videosExclusionFromStreamRequested()).size).isEqualTo(2)

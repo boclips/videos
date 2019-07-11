@@ -752,7 +752,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `bulk updates to search blacklist take effect`() {
+    fun `bulk updates disables videos from search`() {
         val videoIds = listOf(saveVideo().value, saveVideo().value, saveVideo().value)
 
         mockMvc.perform(

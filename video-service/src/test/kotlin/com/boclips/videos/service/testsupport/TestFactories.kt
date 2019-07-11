@@ -27,11 +27,13 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlay
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.subjects.SubjectId
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
+import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
@@ -44,7 +46,6 @@ import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
-import com.boclips.videos.service.presentation.video.VideoResourceStatus
 import com.boclips.videos.service.presentation.video.VideoTypeResource
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
@@ -73,7 +74,7 @@ object TestFactories {
         language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
-        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod> = emptySet(),
+        hiddenFromSearchForDistributionMethods: Set<DistributionMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         ratings: List<UserRating> = emptyList(),
         contentPartner: ContentPartner = ContentPartner(
@@ -81,7 +82,7 @@ object TestFactories {
             name = contentPartnerName,
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
-            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
+            distributionMethods = hiddenFromSearchForDistributionMethods
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -98,7 +99,7 @@ object TestFactories {
             language = language,
             transcript = transcript,
             topics = topics,
-            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods,
+            hiddenFromSearchForDistributionMethods = hiddenFromSearchForDistributionMethods,
             ageRange = ageRange,
             contentPartner = contentPartner,
             videoReference = videoReference,
@@ -388,16 +389,30 @@ object TestFactories {
         name: String = "TED",
         ageRange: AgeRange = AgeRange.bounded(5, 11),
         credit: Credit = Credit.PartnerCredit,
-        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethod> = emptySet()
+        distributionMethods: Set<DistributionMethod> = emptySet()
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
             name = name,
             ageRange = ageRange,
             credit = credit,
-            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
+            distributionMethods = distributionMethods
         )
     }
+
+    fun createContentPartnerDocument(
+        objectId: ObjectId = ObjectId.get(),
+        name: String = "content partner",
+        ageRangeMax: Nothing? = null,
+        ageRangeMin: Nothing? = null,
+        disabledDistributionMethods: Set<DistributionMethodDocument>? = null
+    ) = ContentPartnerDocument(
+        id = objectId,
+        name = name,
+        ageRangeMax = ageRangeMax,
+        ageRangeMin = ageRangeMin,
+        disabledDistributionMethods = disabledDistributionMethods
+    )
 
     fun createContentPartnerRequest(
         name: String? = "TED",

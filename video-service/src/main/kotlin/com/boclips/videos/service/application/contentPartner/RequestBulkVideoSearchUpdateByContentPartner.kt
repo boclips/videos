@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.events.config.Topics
 import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
@@ -8,7 +7,7 @@ import com.boclips.videos.service.application.video.search.IncludeVideosInSearch
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 
 class RequestBulkVideoSearchUpdateByContentPartner(
@@ -20,7 +19,7 @@ class RequestBulkVideoSearchUpdateByContentPartner(
     private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
     private val excludeVideosFromSearchForDownload: ExcludeVideosFromSearchForDownload
 ) {
-    fun invoke(contentPartnerId: ContentPartnerId, deliveryMethods: Set<DeliveryMethod>) {
+    fun invoke(contentPartnerId: ContentPartnerId, disabledDistributionMethods: Set<DistributionMethod>) {
         if (contentPartnerRepository.findById(contentPartnerId) == null) {
             throw ContentPartnerNotFoundException("Cannot find Content Partner with id: ${contentPartnerId.value}")
         }
@@ -29,17 +28,17 @@ class RequestBulkVideoSearchUpdateByContentPartner(
             .map { it.videoId.value }
 
         videoIds.windowed(size = batchSize, step = batchSize, partialWindows = true)
-            .forEach { this.publish(deliveryMethods, it) }
+            .forEach { this.publish(disabledDistributionMethods, it) }
     }
 
-    private fun publish(deliveryMethods: Set<DeliveryMethod>, videoIds: List<String>) {
-        if (deliveryMethods.contains(DeliveryMethod.STREAM)) {
+    private fun publish(distributionMethods: Set<DistributionMethod>, videoIds: List<String>) {
+        if (distributionMethods.contains(DistributionMethod.STREAM)) {
             excludeVideosFromSearchForStream.invoke(videoIds)
         } else {
             includeVideosInSearchForStream.invoke(videoIds)
         }
 
-        if (deliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
+        if (distributionMethods.contains(DistributionMethod.DOWNLOAD)) {
             excludeVideosFromSearchForDownload.invoke(videoIds)
         } else {
             includeVideosInSearchForDownload.invoke(videoIds)

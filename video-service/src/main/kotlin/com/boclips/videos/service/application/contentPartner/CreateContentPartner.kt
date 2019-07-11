@@ -6,9 +6,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.contentPartner.Credit
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import org.bson.types.ObjectId
 
@@ -23,7 +21,7 @@ class CreateContentPartner(
         }
 
         val methods = request.hiddenFromSearchForDeliveryMethods?.let(
-            this::getDeliveryMethodsFromResource
+            DeliveryMethodResourceConverter::toEnabledDistributionMethods
         ) ?: emptySet()
 
         return contentPartnerRepository.create(
@@ -32,17 +30,8 @@ class CreateContentPartner(
                 name = request.name,
                 ageRange = ageRange,
                 credit = request.accreditedToYtChannelId?.let { Credit.YoutubeCredit(it) } ?: Credit.PartnerCredit,
-                hiddenFromSearchForDeliveryMethods = methods
+                distributionMethods = methods
             )
         )
     }
-
-    private fun getDeliveryMethodsFromResource(methods: Set<DeliveryMethodResource>): Set<DeliveryMethod> {
-        return methods.map(
-            DeliveryMethodResourceConverter::fromResource
-        ).toSet()
-    }
-
-    private fun searchableFromDeliveryMethods(methods: Set<DeliveryMethod>?): Boolean =
-        methods != DeliveryMethod.ALL
 }

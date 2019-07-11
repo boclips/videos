@@ -3,8 +3,7 @@ package com.boclips.videos.service.application.contentPartner
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand.SetHiddenDeliveryMethods
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand.ReplaceDistributionMethods
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 
@@ -22,7 +21,7 @@ class ContentPartnerUpdatesConverter {
         contentPartnerRequest: ContentPartnerRequest
     ): ContentPartnerUpdateCommand? =
         getDeliveryMethodsFromRequest(contentPartnerRequest)?.let { deliveryMethods ->
-            SetHiddenDeliveryMethods(id, deliveryMethods)
+            ReplaceDistributionMethods(id, deliveryMethods)
         }
 
     private fun updateNameOrNot(
@@ -44,5 +43,5 @@ class ContentPartnerUpdatesConverter {
         }
 
     private fun getDeliveryMethodsFromRequest(request: ContentPartnerRequest) =
-        request.hiddenFromSearchForDeliveryMethods?.map(DeliveryMethodResourceConverter::fromResource)?.toSet()
+        request.hiddenFromSearchForDeliveryMethods?.let { DeliveryMethodResourceConverter.toEnabledDistributionMethods(it) }
 }

@@ -20,11 +20,9 @@ import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.subjects.SubjectRepository
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.video.VideoResource
@@ -74,7 +72,7 @@ class CreateVideo(
                         is VideoPlayback.StreamPlayback -> Credit.PartnerCredit
                         else -> throw IllegalStateException("Could not retrieve playback for $videoPlayback")
                     },
-                    hiddenFromSearchForDeliveryMethods = emptySet()
+                    distributionMethods = DistributionMethod.ALL
                 )
             )
 

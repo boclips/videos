@@ -4,9 +4,11 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 internal class ContentPartnerDocumentConverterTest {
@@ -18,7 +20,7 @@ internal class ContentPartnerDocumentConverterTest {
             name = "The grandest content partner there ever lived",
             ageRange = AgeRange.bounded(5, 11),
             credit = Credit.PartnerCredit,
-            hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.DOWNLOAD)
+            distributionMethods = setOf(DistributionMethod.DOWNLOAD)
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)
@@ -27,16 +29,62 @@ internal class ContentPartnerDocumentConverterTest {
         assertThat(convertedAsset).isEqualTo(original)
     }
 
-    @Test
-    fun `the content partner is not hidden by default`() {
-        val document = ContentPartnerDocument(
-            id = ObjectId.get(),
-            name = "content partner",
-            ageRangeMax = null,
-            ageRangeMin = null
-        )
+    @Nested
+    inner class DistributionMethods {
+        @Test
+        fun `the content partner is available on all distribution methods by default`() {
+            val document = TestFactories.createContentPartnerDocument()
 
-        val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
-        assertThat(convertedAsset.hiddenFromSearchForDeliveryMethods).isEmpty()
+            val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
+            assertThat(convertedAsset.distributionMethods).isEqualTo(DistributionMethod.ALL)
+        }
+
+        @Test
+        fun `the content partner is available on all distribution methods`() {
+            val contentPartner = TestFactories.createContentPartner(
+                distributionMethods = emptySet()
+            )
+
+            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
+            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+
+            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+        }
+
+        @Test
+        fun `the content partner is not available at all`() {
+            val contentPartner = TestFactories.createContentPartner(
+                distributionMethods = DistributionMethod.ALL
+            )
+
+            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
+            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+
+            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+        }
+
+        @Test
+        fun `the content partner is only available for download`() {
+            val contentPartner = TestFactories.createContentPartner(
+                distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+            )
+
+            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
+            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+
+            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+        }
+
+        @Test
+        fun `the content partner is only available for stream`() {
+            val contentPartner = TestFactories.createContentPartner(
+                distributionMethods = setOf(DistributionMethod.STREAM)
+            )
+
+            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
+            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+
+            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+        }
     }
 }

@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateR
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException
 import org.assertj.core.api.AbstractThrowableAssert
@@ -160,8 +160,9 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
-    fun `use content partner delivery methods`() {
-        val contentPartner = TestFactories.createContentPartner(hiddenFromSearchForDeliveryMethods = emptySet())
+    fun `use content partner enabled delivery methods`() {
+        val contentPartner = TestFactories.createContentPartner(distributionMethods = DistributionMethod.ALL)
+
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(
                 providerId = contentPartner.contentPartnerId.value
@@ -171,7 +172,7 @@ class CreateVideoRequestToVideoConverterTest {
             subjects
         )
 
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(emptySet<DeliveryMethod>())
+        assertThat(video.hiddenFromSearchForDistributionMethods).isEqualTo(emptySet<DistributionMethod>())
     }
 }
 

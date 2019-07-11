@@ -236,7 +236,6 @@ abstract class AbstractSpringIntegrationTest {
             )
         }
 
-
         if (!hiddenFromSearchForDeliveryMethods.contains(DeliveryMethodResource.STREAM)) {
             bulkVideoSearchUpdate.invoke(
                 event = VideosInclusionInStreamRequested.builder().videoIds(

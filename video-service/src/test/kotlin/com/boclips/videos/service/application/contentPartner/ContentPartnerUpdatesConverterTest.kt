@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.contentPartner
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
@@ -21,9 +21,9 @@ class ContentPartnerUpdatesConverterTest {
             )
         )
         val command =
-            commands.find { it is ContentPartnerUpdateCommand.SetHiddenDeliveryMethods } as ContentPartnerUpdateCommand.SetHiddenDeliveryMethods
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceDistributionMethods } as ContentPartnerUpdateCommand.ReplaceDistributionMethods
 
-        assertThat(command.methods).isEqualTo(setOf(DeliveryMethod.DOWNLOAD))
+        assertThat(command.methods).isEqualTo(setOf(DistributionMethod.STREAM))
     }
 
     @Test

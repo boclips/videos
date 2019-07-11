@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.video.search.ExcludeVideosFromSear
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
@@ -32,23 +32,23 @@ open class BulkUpdateVideo(
         } ?: throw InvalidBulkUpdateRequestException("Null bulk update request cannot be processed")
     }
 
-    private fun convertResourcesToDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>): Set<DeliveryMethod> {
+    private fun convertResourcesToDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>): Set<DistributionMethod> {
         return hiddenFromSearchForDeliveryMethods.map(DeliveryMethodResourceConverter::fromResource).toSet()
     }
 
     private fun updateDeliveryMethodsInSearch(
         videoIds: List<String>,
-        deliveryMethods: Set<DeliveryMethod>
+        distributionMethods: Set<DistributionMethod>
     ) {
-        updateStreamDeliveryMethodInSearch(deliveryMethods, videoIds)
-        updateDownloadDeliveryMethod(deliveryMethods, videoIds)
+        updateStreamDeliveryMethodInSearch(distributionMethods, videoIds)
+        updateDownloadDeliveryMethod(distributionMethods, videoIds)
     }
 
     private fun updateDownloadDeliveryMethod(
-        deliveryMethods: Set<DeliveryMethod>,
+        distributionMethods: Set<DistributionMethod>,
         videoIds: List<String>
     ) {
-        if (deliveryMethods.contains(DeliveryMethod.DOWNLOAD)) {
+        if (distributionMethods.contains(DistributionMethod.DOWNLOAD)) {
             excludeVideosFromSearchForDownload.invoke(videoIds = videoIds)
         } else {
             includeVideosInSearchForDownload.invoke(videoIds = videoIds)
@@ -56,10 +56,10 @@ open class BulkUpdateVideo(
     }
 
     private fun updateStreamDeliveryMethodInSearch(
-        deliveryMethods: Set<DeliveryMethod>,
+        distributionMethods: Set<DistributionMethod>,
         videoIds: List<String>
     ) {
-        if (deliveryMethods.contains(DeliveryMethod.STREAM)) {
+        if (distributionMethods.contains(DistributionMethod.STREAM)) {
             excludeVideosFromSearchForStream.invoke(videoIds = videoIds)
         } else {
             includeVideosInSearchForStream.invoke(videoIds = videoIds)

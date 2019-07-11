@@ -61,7 +61,7 @@ class BuildLegacyDocumentSearchIndexTest {
             videos = sequenceOf(
                 TestFactories.createVideo(
                     title = "",
-                    hiddenFromSearchForDeliveryMethods = emptySet()
+                    hiddenFromSearchForDistributionMethods = emptySet()
                 )
             )
         )
@@ -80,7 +80,7 @@ class BuildLegacyDocumentSearchIndexTest {
                     playback = TestFactories.createYoutubePlayback(
                         playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, "video")
                     ),
-                    hiddenFromSearchForDeliveryMethods = emptySet()
+                    hiddenFromSearchForDistributionMethods = emptySet()
                 )
             )
         )

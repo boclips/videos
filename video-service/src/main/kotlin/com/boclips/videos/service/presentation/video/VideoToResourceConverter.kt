@@ -46,7 +46,7 @@ class VideoToResourceConverter(
                 hasTranscripts = video.transcript != null,
                 ageRange = getAgeRange(video),
                 rating = video.getRatingAverage(),
-                hiddenFromSearchForDeliveryMethods = video.hiddenFromSearchForDeliveryMethods.map(
+                hiddenFromSearchForDeliveryMethods = video.hiddenFromSearchForDistributionMethods.map(
                     DeliveryMethodResourceConverter::toResource
                 ).toSet()
             )

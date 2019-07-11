@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -108,7 +108,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.STREAM)
+                hiddenFromSearchForDistributionMethods = setOf(DistributionMethod.STREAM)
             )
         )
 
@@ -126,7 +126,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethod.DOWNLOAD)
+                hiddenFromSearchForDistributionMethods = setOf(DistributionMethod.DOWNLOAD)
             )
         )
 
@@ -386,17 +386,17 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can update hidden from search for delivery methods`() {
         val video =
-            mongoVideoRepository.create(TestFactories.createVideo(hiddenFromSearchForDeliveryMethods = emptySet()))
+            mongoVideoRepository.create(TestFactories.createVideo(hiddenFromSearchForDistributionMethods = emptySet()))
         mongoVideoRepository.update(
             VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
                 video.videoId,
-                setOf(DeliveryMethod.DOWNLOAD, DeliveryMethod.STREAM)
+                setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM)
             )
         )
-        assertThat(mongoVideoRepository.find(video.videoId)!!.hiddenFromSearchForDeliveryMethods).isEqualTo(
+        assertThat(mongoVideoRepository.find(video.videoId)!!.hiddenFromSearchForDistributionMethods).isEqualTo(
             setOf(
-                DeliveryMethod.DOWNLOAD,
-                DeliveryMethod.STREAM
+                DistributionMethod.DOWNLOAD,
+                DistributionMethod.STREAM
             )
         )
     }
@@ -607,7 +607,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("legalRestrictions", "Some restrictions")
                         .append("language", "en")
                         .append("searchable", true)
-                        .append("hiddenFromSearchForDeliveryMethods", emptySet<DeliveryMethodDocument>())
+                        .append("hiddenFromSearchForDistributionMethods", emptySet<DistributionMethodDocument>())
                 )
 
             val video = mongoVideoRepository.find(VideoId(value = "5c55697860fef77aa4af323a"))!!

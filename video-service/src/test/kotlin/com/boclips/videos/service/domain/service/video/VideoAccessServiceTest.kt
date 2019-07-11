@@ -1,8 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,10 +21,10 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
         videoAccessService.revokeAccess(videoIds = listOf(videoId))
 
         val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
+        assertThat(video.hiddenFromSearchForDistributionMethods).isEqualTo(
             setOf(
-                DeliveryMethod.DOWNLOAD,
-                DeliveryMethod.STREAM
+                DistributionMethod.DOWNLOAD,
+                DistributionMethod.STREAM
             )
         )
     }
@@ -37,7 +36,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
         videoAccessService.grantAccess(videoIds = listOf(videoId))
 
         val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEmpty()
+        assertThat(video.hiddenFromSearchForDistributionMethods).isEmpty()
     }
 
     @Test
@@ -46,13 +45,13 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
 
         videoAccessService.setSearchBlacklist(
             videoIds = listOf(videoId),
-            deliveryMethods = setOf(DeliveryMethod.STREAM)
+            distributionMethods = setOf(DistributionMethod.STREAM)
         )
 
         val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDeliveryMethods).isEqualTo(
+        assertThat(video.hiddenFromSearchForDistributionMethods).isEqualTo(
             setOf(
-                DeliveryMethod.STREAM
+                DistributionMethod.STREAM
             )
         )
     }

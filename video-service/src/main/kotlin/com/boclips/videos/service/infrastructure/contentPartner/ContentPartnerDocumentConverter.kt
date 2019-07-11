@@ -4,9 +4,9 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
-import com.boclips.videos.service.infrastructure.video.mongo.DeliveryMethodDocument
-import com.boclips.videos.service.infrastructure.video.mongo.converters.DeliveryMethodDocumentConverter
+import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
+import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
 import org.bson.types.ObjectId
 
 object ContentPartnerDocumentConverter {
@@ -20,9 +20,7 @@ object ContentPartnerDocumentConverter {
             name = contentPartner.name,
             ageRangeMax = contentPartner.ageRange.max(),
             ageRangeMin = contentPartner.ageRange.min(),
-            hiddenFromSearchForDeliveryMethods = contentPartner.hiddenFromSearchForDeliveryMethods.map(
-                DeliveryMethodDocumentConverter::toDocument
-            ).toSet()
+            disabledDistributionMethods = convertToDisabledDistributionMethods(contentPartner)
         )
     }
 
@@ -35,14 +33,23 @@ object ContentPartnerDocumentConverter {
                 document.ageRangeMax
             ) else AgeRange.unbounded(),
             credit = document.youtubeChannelId?.let { Credit.YoutubeCredit(channelId = it) } ?: Credit.PartnerCredit,
-            hiddenFromSearchForDeliveryMethods = document.hiddenFromSearchForDeliveryMethods?.let {
-                convertDeliveryMethodsFromDocument(it)
-            } ?: emptySet()
+            distributionMethods = document.disabledDistributionMethods?.let {
+                convertDistributionMethodsFromDocument(it)
+            } ?: DistributionMethod.ALL
         )
     }
 
-    private fun convertDeliveryMethodsFromDocument(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodDocument>): Set<DeliveryMethod> =
-        hiddenFromSearchForDeliveryMethods.map(
-            DeliveryMethodDocumentConverter::fromDocument
-        ).toSet()
+    private fun convertToDisabledDistributionMethods(contentPartner: ContentPartner): Set<DistributionMethodDocument> {
+        val disabledDistributionMethods = DistributionMethod.ALL - contentPartner.distributionMethods
+
+        return disabledDistributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
+    }
+
+    private fun convertDistributionMethodsFromDocument(distributionMethodsDocument: Set<DistributionMethodDocument>): Set<DistributionMethod> {
+        val disabledDistributionMethods = distributionMethodsDocument
+            .map(DistributionMethodDocumentConverter::fromDocument)
+            .toSet()
+
+        return DistributionMethod.ALL - disabledDistributionMethods
+    }
 }

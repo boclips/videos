@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-enum class DeliveryMethod {
+enum class DistributionMethod {
     DOWNLOAD,
     STREAM;
 

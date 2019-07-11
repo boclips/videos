@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
-import com.boclips.videos.service.domain.model.video.DeliveryMethod
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
@@ -50,7 +50,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEmpty()
+        assertThat(contentPartner.distributionMethods).isEmpty()
     }
 
     @Test
@@ -66,7 +66,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEqualTo(DeliveryMethod.ALL)
+        assertThat(contentPartner.distributionMethods).isEmpty()
     }
 
     @Test
@@ -79,6 +79,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartner.hiddenFromSearchForDeliveryMethods).isEqualTo(emptySet<DeliveryMethod>())
+        assertThat(contentPartner.distributionMethods).isEqualTo(emptySet<DistributionMethod>())
     }
 }
