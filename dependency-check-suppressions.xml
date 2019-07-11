@@ -92,4 +92,13 @@
         <gav regex="true">^org\.springframework:spring-tuple:.*$</gav>
         <cve>CVE-2016-9878</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+       file name: kotlin-reflect-1.3.10.jar
+
+       This jar is promoted to 1.3.41 by our dependency resolution.
+       ]]></notes>
+        <gav regex="true">^org\.jetbrains\.kotlin:kotlin-reflect:1.3.10.*$</gav>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+    </suppress>
 </suppressions>
