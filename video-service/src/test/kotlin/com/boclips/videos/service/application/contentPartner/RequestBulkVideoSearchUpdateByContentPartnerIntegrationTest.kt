@@ -26,8 +26,7 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
         val videoId = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
         requestVideoSearchUpdateByContentPartner.invoke(
-            contentPartnerId = ContentPartnerId(value = "deadb33f1225df4825e8b8f6"),
-            distributionMethods = DistributionMethod.ALL
+            ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), emptySet()
         )
 
         val downloadRequestedMessage = messageCollector.forChannel(topics.videosInclusionInDownloadRequested()).poll()
@@ -57,19 +56,20 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
             ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), DistributionMethod.ALL
         )
 
-        val downloadRequestedMessage = messageCollector.forChannel(topics.videosInclusionInDownloadRequested()).poll()
+        val downloadRequestedMessage = messageCollector.forChannel(topics.videosExclusionFromDownloadRequested()).poll()
         val downloadRequestedEvent =
             objectMapper.readValue(
                 downloadRequestedMessage.payload.toString(),
                 VideosExclusionFromDownloadRequested::class.java
             )
 
-        val streamRequestedMessage = messageCollector.forChannel(topics.videosInclusionInStreamRequested()).poll()
+        val streamRequestedMessage = messageCollector.forChannel(topics.videosExclusionFromStreamRequested()).poll()
         val streamRequestedEvent =
             objectMapper.readValue(
                 streamRequestedMessage.payload.toString(),
                 VideosExclusionFromStreamRequested::class.java
             )
+
 
         assertThat(downloadRequestedEvent.videoIds).contains(videoId.value)
         assertThat(streamRequestedEvent.videoIds).contains(videoId.value)
@@ -83,14 +83,14 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
             ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), setOf(DistributionMethod.DOWNLOAD)
         )
 
-        val downloadExclusionMessage = messageCollector.forChannel(topics.videosInclusionInDownloadRequested()).poll()
+        val downloadExclusionMessage = messageCollector.forChannel(topics.videosExclusionFromDownloadRequested()).poll()
         val downloadExclusionEvent =
             objectMapper.readValue(
                 downloadExclusionMessage.payload.toString(),
                 VideosExclusionFromDownloadRequested::class.java
             )
 
-        val streamInclusionMessage = messageCollector.forChannel(topics.videosExclusionFromStreamRequested()).poll()
+        val streamInclusionMessage = messageCollector.forChannel(topics.videosInclusionInStreamRequested()).poll()
         val streamInclusionEvent =
             objectMapper.readValue(
                 streamInclusionMessage.payload.toString(),
@@ -121,6 +121,6 @@ class RequestBulkVideoSearchUpdateByContentPartnerIntegrationTest : AbstractSpri
             ContentPartnerId(value = "deadb33f1225df4825e8b8f6"), setOf(DistributionMethod.STREAM)
         )
 
-        assertThat(messageCollector.forChannel(topics.videosExclusionFromDownloadRequested()).size).isEqualTo(2)
+        assertThat(messageCollector.forChannel(topics.videosExclusionFromStreamRequested()).size).isEqualTo(2)
     }
 }

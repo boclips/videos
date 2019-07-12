@@ -108,7 +108,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                distributionMethods = setOf(DistributionMethod.STREAM)
+                hiddenFromSearchForDistributionMethods = setOf(DistributionMethod.STREAM)
             )
         )
 
@@ -126,7 +126,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+                hiddenFromSearchForDistributionMethods = setOf(DistributionMethod.DOWNLOAD)
             )
         )
 
@@ -386,14 +386,14 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can update hidden from search for delivery methods`() {
         val video =
-            mongoVideoRepository.create(TestFactories.createVideo(distributionMethods = emptySet()))
+            mongoVideoRepository.create(TestFactories.createVideo(hiddenFromSearchForDistributionMethods = emptySet()))
         mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceDistributionMethods(
+            VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
                 video.videoId,
                 setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM)
             )
         )
-        assertThat(mongoVideoRepository.find(video.videoId)!!.distributionMethods).isEqualTo(
+        assertThat(mongoVideoRepository.find(video.videoId)!!.hiddenFromSearchForDistributionMethods).isEqualTo(
             setOf(
                 DistributionMethod.DOWNLOAD,
                 DistributionMethod.STREAM
@@ -607,7 +607,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("legalRestrictions", "Some restrictions")
                         .append("language", "en")
                         .append("searchable", true)
-                        .append("distributionMethods", emptySet<DistributionMethodDocument>())
+                        .append("hiddenFromSearchForDistributionMethods", emptySet<DistributionMethodDocument>())
                 )
 
             val video = mongoVideoRepository.find(VideoId(value = "5c55697860fef77aa4af323a"))!!

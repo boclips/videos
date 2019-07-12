@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.deliveryMethod
 
-enum class DistributionMethodResource {
+enum class DeliveryMethodResource {
     DOWNLOAD,
     STREAM
 }

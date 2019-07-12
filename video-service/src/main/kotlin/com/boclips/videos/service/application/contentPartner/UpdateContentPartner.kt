@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundE
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
@@ -25,7 +26,7 @@ class UpdateContentPartner(
 
         requestVideoSearchUpdateByContentPartner.invoke(
             contentPartnerId = id,
-            distributionMethods = contentPartner.distributionMethods
+            disabledDistributionMethods = DistributionMethod.ALL - contentPartner.distributionMethods
         )
 
         updateContentPartnerInVideos(contentPartner)
@@ -42,9 +43,9 @@ class UpdateContentPartner(
             listOf(
                 VideoUpdateCommand.ReplaceContentPartner(videoId = video.videoId, contentPartner = contentPartner),
                 VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange),
-                VideoUpdateCommand.ReplaceDistributionMethods(
+                VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
                     videoId = video.videoId,
-                    distributionMethods = contentPartner.distributionMethods
+                    distributionMethods = DistributionMethod.ALL - contentPartner.distributionMethods
                 )
             )
         }

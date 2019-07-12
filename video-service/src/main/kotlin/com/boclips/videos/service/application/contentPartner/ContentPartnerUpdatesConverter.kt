@@ -5,36 +5,34 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand.ReplaceDistributionMethods
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 
 class ContentPartnerUpdatesConverter {
     fun convert(id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest): List<ContentPartnerUpdateCommand> {
         return listOfNotNull(
-            updateNameOrNot(id = id, contentPartnerRequest = contentPartnerRequest),
-            updateAgeRangeOrNot(id = id, contentPartnerRequest = contentPartnerRequest),
-            updateHiddenDeliveryMethodsOrNot(id = id, contentPartnerRequest = contentPartnerRequest)
+            updateNameOrNot(id, contentPartnerRequest),
+            updateAgeRangeOrNot(id, contentPartnerRequest),
+            updateHiddenDeliveryMethodsOrNot(id, contentPartnerRequest)
         )
     }
 
     private fun updateHiddenDeliveryMethodsOrNot(
         id: ContentPartnerId,
         contentPartnerRequest: ContentPartnerRequest
-    ): ContentPartnerUpdateCommand? {
-        return contentPartnerRequest.distributionMethods
-            ?.let {
-                DistributionMethodResourceConverter.toDistributionMethods(it)
-            }
-            ?.let { deliveryMethods ->
-                ReplaceDistributionMethods(contentPartnerId = id, distributionMethods = deliveryMethods)
-            }
-    }
+    ): ContentPartnerUpdateCommand? =
+        getDeliveryMethodsFromRequest(contentPartnerRequest)?.let { deliveryMethods ->
+            ReplaceDistributionMethods(id, deliveryMethods)
+        }
 
     private fun updateNameOrNot(
         id: ContentPartnerId,
         contentPartnerRequest: ContentPartnerRequest
     ): ContentPartnerUpdateCommand.ReplaceName? =
         contentPartnerRequest.name?.let {
-            ContentPartnerUpdateCommand.ReplaceName(contentPartnerId = id, name = it)
+            ContentPartnerUpdateCommand.ReplaceName(
+                id,
+                it
+            )
         }
 
     private fun updateAgeRangeOrNot(
@@ -43,4 +41,7 @@ class ContentPartnerUpdatesConverter {
         contentPartnerRequest.ageRange?.let {
             ContentPartnerUpdateCommand.ReplaceAgeRange(id, AgeRange.bounded(min = it.min, max = it.max))
         }
+
+    private fun getDeliveryMethodsFromRequest(request: ContentPartnerRequest) =
+        request.hiddenFromSearchForDeliveryMethods?.let { DeliveryMethodResourceConverter.toEnabledDistributionMethods(it) }
 }

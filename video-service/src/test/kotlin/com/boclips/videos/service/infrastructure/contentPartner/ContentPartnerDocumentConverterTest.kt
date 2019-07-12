@@ -33,21 +33,10 @@ internal class ContentPartnerDocumentConverterTest {
     inner class DistributionMethods {
         @Test
         fun `the content partner is available on all distribution methods by default`() {
-            val document = TestFactories.createContentPartnerDocument(distributionMethods = null)
+            val document = TestFactories.createContentPartnerDocument()
 
             val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
             assertThat(convertedAsset.distributionMethods).isEqualTo(DistributionMethod.ALL)
-        }
-
-        @Test
-        fun `the content partner from youtube is not available for download by default`() {
-            val document = TestFactories.createContentPartnerDocument(
-                distributionMethods = null,
-                youtubeChannelId = "Awesome channel"
-            )
-
-            val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
-            assertThat(convertedAsset.distributionMethods).containsOnly(DistributionMethod.STREAM)
         }
 
         @Test

@@ -1,8 +1,9 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 
 data class BulkUpdateRequest(
     val ids: List<String>,
-    val distributionMethods: Set<DistributionMethodResource>? = null
+
+    val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
 )

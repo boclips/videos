@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePla
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import org.springframework.hateoas.Resource
@@ -46,8 +46,8 @@ class VideoToResourceConverter(
                 hasTranscripts = video.transcript != null,
                 ageRange = getAgeRange(video),
                 rating = video.getRatingAverage(),
-                distributionMethods = video.distributionMethods.map(
-                    DistributionMethodResourceConverter::toResource
+                hiddenFromSearchForDeliveryMethods = video.hiddenFromSearchForDistributionMethods.map(
+                    DeliveryMethodResourceConverter::toResource
                 ).toSet()
             ), video
         )

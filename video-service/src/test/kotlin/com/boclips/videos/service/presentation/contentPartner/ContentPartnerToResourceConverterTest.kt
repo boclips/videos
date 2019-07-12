@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation.contentPartner
 
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,6 +21,6 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.name).isNotEmpty()
         assertThat(contentPartnerResource.ageRange).isNotNull
         assertThat(contentPartnerResource.isOfficial).isTrue()
-        assertThat(contentPartnerResource.distributionMethods).isEqualTo(setOf(DistributionMethodResource.STREAM))
+        assertThat(contentPartnerResource.hiddenFromSearchForDeliveryMethods).isEqualTo(setOf(DeliveryMethodResource.DOWNLOAD))
     }
 }

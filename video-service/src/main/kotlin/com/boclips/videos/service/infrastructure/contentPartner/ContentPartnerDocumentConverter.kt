@@ -20,9 +20,7 @@ object ContentPartnerDocumentConverter {
             name = contentPartner.name,
             ageRangeMax = contentPartner.ageRange.max(),
             ageRangeMin = contentPartner.ageRange.min(),
-            distributionMethods = contentPartner.distributionMethods
-                .map(DistributionMethodDocumentConverter::toDocument)
-                .toSet()
+            disabledDistributionMethods = convertToDisabledDistributionMethods(contentPartner)
         )
     }
 
@@ -35,27 +33,23 @@ object ContentPartnerDocumentConverter {
                 document.ageRangeMax
             ) else AgeRange.unbounded(),
             credit = document.youtubeChannelId?.let { Credit.YoutubeCredit(channelId = it) } ?: Credit.PartnerCredit,
-            distributionMethods = reconstructDistributionMethods(document)
+            distributionMethods = document.disabledDistributionMethods?.let {
+                convertDistributionMethodsFromDocument(it)
+            } ?: DistributionMethod.ALL
         )
     }
 
-    private fun reconstructDistributionMethods(document: ContentPartnerDocument): Set<DistributionMethod> {
-        return document.distributionMethods?.let {
-            convertDistributionMethodsFromDocument(it)
-        } ?: convertToDefaultDistributionMethods(document)
-    }
+    private fun convertToDisabledDistributionMethods(contentPartner: ContentPartner): Set<DistributionMethodDocument> {
+        val disabledDistributionMethods = DistributionMethod.ALL - contentPartner.distributionMethods
 
-    private fun convertToDefaultDistributionMethods(contentPartnerDocument: ContentPartnerDocument): Set<DistributionMethod> {
-        return if (!contentPartnerDocument.youtubeChannelId.isNullOrBlank()) {
-            setOf(DistributionMethod.STREAM)
-        } else {
-            DistributionMethod.ALL
-        }
+        return disabledDistributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
     }
 
     private fun convertDistributionMethodsFromDocument(distributionMethodsDocument: Set<DistributionMethodDocument>): Set<DistributionMethod> {
-        return distributionMethodsDocument
+        val disabledDistributionMethods = distributionMethodsDocument
             .map(DistributionMethodDocumentConverter::fromDocument)
             .toSet()
+
+        return DistributionMethod.ALL - disabledDistributionMethods
     }
 }

@@ -6,9 +6,8 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.contentPartner.Credit
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
 import org.bson.types.ObjectId
 
 class CreateContentPartner(
@@ -21,9 +20,9 @@ class CreateContentPartner(
             throw InvalidContentPartnerNameException()
         }
 
-        val methods = request.distributionMethods?.let(
-            DistributionMethodResourceConverter::toDistributionMethods
-        ) ?: DistributionMethod.ALL
+        val methods = request.hiddenFromSearchForDeliveryMethods?.let(
+            DeliveryMethodResourceConverter::toEnabledDistributionMethods
+        ) ?: emptySet()
 
         return contentPartnerRepository.create(
             ContentPartner(

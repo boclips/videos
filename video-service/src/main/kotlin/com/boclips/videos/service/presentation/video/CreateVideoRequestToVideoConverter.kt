@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId
@@ -38,7 +39,7 @@ class CreateVideoRequestToVideoConverter {
             topics = emptySet(),
             language = null,
             transcript = null,
-            distributionMethods = contentPartner.distributionMethods,
+            hiddenFromSearchForDistributionMethods = DistributionMethod.ALL - contentPartner.distributionMethods,
             ratings = emptyList()
         )
     }

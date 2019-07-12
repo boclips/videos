@@ -19,7 +19,7 @@ class RequestBulkVideoSearchUpdateByContentPartner(
     private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
     private val excludeVideosFromSearchForDownload: ExcludeVideosFromSearchForDownload
 ) {
-    fun invoke(contentPartnerId: ContentPartnerId, distributionMethods: Set<DistributionMethod>) {
+    fun invoke(contentPartnerId: ContentPartnerId, disabledDistributionMethods: Set<DistributionMethod>) {
         if (contentPartnerRepository.findById(contentPartnerId) == null) {
             throw ContentPartnerNotFoundException("Cannot find Content Partner with id: ${contentPartnerId.value}")
         }
@@ -28,20 +28,20 @@ class RequestBulkVideoSearchUpdateByContentPartner(
             .map { it.videoId.value }
 
         videoIds.windowed(size = batchSize, step = batchSize, partialWindows = true)
-            .forEach { this.publish(distributionMethods, it) }
+            .forEach { this.publish(disabledDistributionMethods, it) }
     }
 
     private fun publish(distributionMethods: Set<DistributionMethod>, videoIds: List<String>) {
         if (distributionMethods.contains(DistributionMethod.STREAM)) {
-            includeVideosInSearchForStream.invoke(videoIds)
-        } else {
             excludeVideosFromSearchForStream.invoke(videoIds)
+        } else {
+            includeVideosInSearchForStream.invoke(videoIds)
         }
 
         if (distributionMethods.contains(DistributionMethod.DOWNLOAD)) {
-            includeVideosInSearchForDownload.invoke(videoIds)
-        } else {
             excludeVideosFromSearchForDownload.invoke(videoIds)
+        } else {
+            includeVideosInSearchForDownload.invoke(videoIds)
         }
     }
 }

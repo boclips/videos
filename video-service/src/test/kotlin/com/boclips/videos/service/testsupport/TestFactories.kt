@@ -41,7 +41,7 @@ import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -74,7 +74,7 @@ object TestFactories {
         language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
-        distributionMethods: Set<DistributionMethod> = emptySet(),
+        hiddenFromSearchForDistributionMethods: Set<DistributionMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         ratings: List<UserRating> = emptyList(),
         contentPartner: ContentPartner = ContentPartner(
@@ -82,7 +82,7 @@ object TestFactories {
             name = contentPartnerName,
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
-            distributionMethods = distributionMethods
+            distributionMethods = hiddenFromSearchForDistributionMethods
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -99,7 +99,7 @@ object TestFactories {
             language = language,
             transcript = transcript,
             topics = topics,
-            distributionMethods = distributionMethods,
+            hiddenFromSearchForDistributionMethods = hiddenFromSearchForDistributionMethods,
             ageRange = ageRange,
             contentPartner = contentPartner,
             videoReference = videoReference,
@@ -402,18 +402,16 @@ object TestFactories {
 
     fun createContentPartnerDocument(
         objectId: ObjectId = ObjectId.get(),
-        youtubeChannelId: String? = null,
         name: String = "content partner",
         ageRangeMax: Nothing? = null,
         ageRangeMin: Nothing? = null,
-        distributionMethods: Set<DistributionMethodDocument>? = null
+        disabledDistributionMethods: Set<DistributionMethodDocument>? = null
     ) = ContentPartnerDocument(
         id = objectId,
-        youtubeChannelId = youtubeChannelId,
         name = name,
         ageRangeMax = ageRangeMax,
         ageRangeMin = ageRangeMin,
-        distributionMethods = distributionMethods
+        disabledDistributionMethods = disabledDistributionMethods
     )
 
     fun createContentPartnerRequest(
@@ -423,13 +421,13 @@ object TestFactories {
             max = 11
         ),
         accreditedToYtChannel: String? = null,
-        distributionMethods: Set<DistributionMethodResource>? = null
+        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
             name = name,
             ageRange = ageRange,
             accreditedToYtChannelId = accreditedToYtChannel,
-            distributionMethods = distributionMethods
+            hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
         )
     }
 }

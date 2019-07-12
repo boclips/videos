@@ -7,13 +7,13 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
@@ -105,8 +105,8 @@ class MongoVideoRepository(
             is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
-            VideoFilter.IsDownloadable -> not(VideoDocument::distributionMethods contains  DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD))
-            VideoFilter.IsStreamable -> not(VideoDocument::distributionMethods contains DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_STREAM))
+            VideoFilter.IsDownloadable -> not(VideoDocument::hiddenFromSearchForDistributionMethods contains  DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD))
+            VideoFilter.IsStreamable -> not(VideoDocument::hiddenFromSearchForDistributionMethods contains DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_STREAM))
         }
 
         val sequence = Sequence {
@@ -221,8 +221,8 @@ class MongoVideoRepository(
                     contentPartnerDocument.copy(lastModified = Instant.now())
                 )
             }
-            is VideoUpdateCommand.ReplaceDistributionMethods -> set(
-                VideoDocument::distributionMethods,
+            is VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods -> set(
+                VideoDocument::hiddenFromSearchForDistributionMethods,
                 updateCommand.distributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
             )
         }

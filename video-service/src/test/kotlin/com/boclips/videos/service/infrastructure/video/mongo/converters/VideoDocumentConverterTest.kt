@@ -9,15 +9,11 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
-import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
-import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.Date
 import java.util.Locale
 
 class VideoDocumentConverterTest {
@@ -59,42 +55,12 @@ class VideoDocumentConverterTest {
             ),
             ratings = listOf(UserRating(3, UserId("user"))),
             ageRange = AgeRange.bounded(11, 16),
-            distributionMethods = setOf(DistributionMethod.STREAM)
+            hiddenFromSearchForDistributionMethods = setOf(DistributionMethod.STREAM)
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalAsset)
         val reconvertedAsset = VideoDocumentConverter.toVideo(document)
 
         assertThat(reconvertedAsset).isEqualTo(originalAsset)
-    }
-
-    @Test
-    internal fun `converts null distributionMethods into ALL distribution methods`() {
-        val videoDocument = VideoDocument(
-            id = ObjectId(),
-            title = "",
-            description = "",
-            source = SourceDocument(
-                contentPartner = TestFactories.createContentPartnerDocument(),
-                videoReference = ""
-            ),
-            playback = TestFactories.createKalturaPlaybackDocument(),
-            legacy = LegacyDocument(LegacyVideoType.NEWS.toString()),
-            keywords = emptyList(),
-            subjects = emptyList(),
-            releaseDate = Date(),
-            legalRestrictions = "",
-            language = "",
-            transcript = "",
-            topics = emptyList(),
-            ageRangeMin = 0,
-            ageRangeMax = 20,
-            rating = emptyList(),
-            distributionMethods = null
-        )
-
-        val video = VideoDocumentConverter.toVideo(videoDocument)
-
-        assertThat(video.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 }

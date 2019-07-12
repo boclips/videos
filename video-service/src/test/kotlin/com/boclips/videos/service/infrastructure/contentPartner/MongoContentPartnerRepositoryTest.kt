@@ -134,7 +134,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
                 listOf(
                     ContentPartnerUpdateCommand.ReplaceDistributionMethods(
                         contentPartnerId = contentPartner.contentPartnerId,
-                        distributionMethods = setOf(DistributionMethod.STREAM)
+                        methods = setOf(DistributionMethod.STREAM)
                     )
                 )
             )
@@ -155,7 +155,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
                 listOf(
                     ContentPartnerUpdateCommand.ReplaceDistributionMethods(
                         contentPartnerId = contentPartner.contentPartnerId,
-                        distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+                        methods = setOf(DistributionMethod.DOWNLOAD)
                     )
                 )
             )
@@ -176,7 +176,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
                 listOf(
                     ContentPartnerUpdateCommand.ReplaceDistributionMethods(
                         contentPartnerId = contentPartner.contentPartnerId,
-                        distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
+                        methods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
                     )
                 )
             )
@@ -197,7 +197,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
                 listOf(
                     ContentPartnerUpdateCommand.ReplaceDistributionMethods(
                         contentPartnerId = contentPartner.contentPartnerId,
-                        distributionMethods = emptySet()
+                        methods = emptySet()
                     )
                 )
             )

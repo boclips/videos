@@ -172,7 +172,7 @@ class CreateVideoRequestToVideoConverterTest {
             subjects
         )
 
-        assertThat(video.distributionMethods).isEqualTo(DistributionMethod.ALL)
+        assertThat(video.hiddenFromSearchForDistributionMethods).isEqualTo(emptySet<DistributionMethod>())
     }
 }
 
