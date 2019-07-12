@@ -18,7 +18,7 @@ class VideoAccessService(
     fun setSearchBlacklist(videoIds: List<VideoId>, distributionMethods: Set<DistributionMethod>) {
         update(videoIds) { videoId ->
             listOf(
-                VideoUpdateCommand.UpdateHiddenFromSearchForDeliveryMethods(
+                VideoUpdateCommand.ReplaceDistributionMethods(
                     videoId = videoId,
                     distributionMethods = distributionMethods
                 )

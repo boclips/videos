@@ -128,7 +128,6 @@ class ApplicationContext(
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
             videoCounter,
-            legacyVideoSearchService,
             classifyVideo,
             analyseVideo,
             topics,

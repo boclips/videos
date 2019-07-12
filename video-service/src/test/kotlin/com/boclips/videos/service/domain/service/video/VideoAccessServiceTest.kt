@@ -21,7 +21,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
         videoAccessService.revokeAccess(videoIds = listOf(videoId))
 
         val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDistributionMethods).isEqualTo(
+        assertThat(video.distributionMethods).isEqualTo(
             setOf(
                 DistributionMethod.DOWNLOAD,
                 DistributionMethod.STREAM
@@ -36,7 +36,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
         videoAccessService.grantAccess(videoIds = listOf(videoId))
 
         val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDistributionMethods).isEmpty()
+        assertThat(video.distributionMethods).isEmpty()
     }
 
     @Test
@@ -49,7 +49,7 @@ class VideoAccessServiceTest : AbstractSpringIntegrationTest() {
         )
 
         val video = videoRepository.find(videoId = videoId)!!
-        assertThat(video.hiddenFromSearchForDistributionMethods).isEqualTo(
+        assertThat(video.distributionMethods).isEqualTo(
             setOf(
                 DistributionMethod.STREAM
             )

@@ -22,5 +22,5 @@ data class VideoDocument(
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
     val rating: List<UserRatingDocument> = emptyList(),
-    val hiddenFromSearchForDistributionMethods: Set<DistributionMethodDocument>?
+    val distributionMethods: Set<DistributionMethodDocument>?
 )

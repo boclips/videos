@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository.Companion.collectionName
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -21,7 +21,6 @@ import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
-import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -66,6 +65,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ageRange = BoundedAgeRange(min = 5, max = 7)
         ).value
 
+        youtubeVideoId = saveVideo(
+            playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
+            title = "elephants took out jobs",
+            description = "it's a video from youtube",
+            date = "2017-02-11",
+            duration = Duration.ofSeconds(56),
+            contentProvider = "cp2",
+            ageRange = UnboundedAgeRange
+        ).value
+
         disabledVideoId = saveVideo(
             playbackId = PlaybackId(value = "ref-id-125", type = PlaybackProviderType.KALTURA),
             title = "elephants eat a lot",
@@ -76,18 +85,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ageRange = UnboundedAgeRange
         ).value
 
-
-        hideFromAllDeliveryMethods(disabledVideoId)
-
-        youtubeVideoId = saveVideo(
-            playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
-            title = "elephants took out jobs",
-            description = "it's a video from youtube",
-            date = "2017-02-11",
-            duration = Duration.ofSeconds(56),
-            contentProvider = "cp2",
-            ageRange = UnboundedAgeRange
-        ).value
+        removeDistributionMethods(disabledVideoId)
     }
 
     @Test
@@ -700,8 +698,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
             .andExpect(
                 jsonPath(
-                    "$._embedded.videos[0].hiddenFromSearchForDeliveryMethods",
-                    contains("STREAM", "DOWNLOAD")
+                    "$._embedded.videos[0].distributionMethods",
+                    hasSize<Int>(0)
                 )
             )
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$disabledVideoId")))
@@ -757,21 +755,22 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(
             patch("/v1/videos").asBoclipsEmployee()
-                .content("""{ "ids": ["${videoIds[0]}", "${videoIds[1]}"], "hiddenFromSearchForDeliveryMethods": ["DOWNLOAD"] }""")
+                .content("""{ "ids": ["${videoIds[0]}", "${videoIds[1]}"], "distributionMethods": ["${DistributionMethodResource.DOWNLOAD}"] }""")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNoContent)
 
-        videoIds.zip(
-            listOf(
-                Pair("SEARCHABLE", listOf("DOWNLOAD")),
-                Pair("SEARCHABLE", listOf("DOWNLOAD")),
-                Pair("SEARCHABLE", emptyList())
-            )
-        ).forEach { (id, statuses) ->
-            mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.hiddenFromSearchForDeliveryMethods", equalTo(statuses.second)))
-        }
+        videoIds
+            .zip(
+                listOf(
+                    listOf(DistributionMethodResource.DOWNLOAD.toString()),
+                    listOf(DistributionMethodResource.DOWNLOAD.toString()),
+                    listOf(DistributionMethodResource.DOWNLOAD.toString(), DistributionMethodResource.STREAM.toString())
+                )
+            ).forEach { (id, statuses) ->
+                mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
+                    .andExpect(status().isOk)
+                    .andExpect(jsonPath("$.distributionMethods", equalTo(statuses)))
+            }
     }
 
     @Test
@@ -877,14 +876,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         return videoId
     }
 
-    private fun hideFromAllDeliveryMethods(videoId: String) {
+    private fun removeDistributionMethods(videoId: String) {
         bulkUpdateVideo.invoke(
             bulkUpdateRequest = BulkUpdateRequest(
                 ids = listOf(videoId),
-                hiddenFromSearchForDeliveryMethods = setOf(
-                    DeliveryMethodResource.STREAM,
-                    DeliveryMethodResource.DOWNLOAD
-                )
+                distributionMethods = emptySet()
             )
         )
 

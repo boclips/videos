@@ -2,7 +2,6 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.config.Topics
 import com.boclips.events.types.video.VideoUpdated
-import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
@@ -41,7 +40,6 @@ class CreateVideo(
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
-    private val legacyVideoSearchService: LegacyVideoSearchService,
     private val classifyVideo: ClassifyVideo,
     private val analyseVideo: AnalyseVideo,
     private val topics: Topics,
@@ -84,12 +82,12 @@ class CreateVideo(
         videoCounter.increment()
 
         if (contentPartner.isStreamable()) {
-            includeVideosInSearchForStream.invoke(listOf(createdVideo.videoId.value))
+            includeVideosInSearchForStream(videoIds = listOf(createdVideo.videoId.value))
         }
 
         if (contentPartner.isDownloadable()) {
             if (createdVideo.isBoclipsHosted()) {
-                includeVideosInSearchForDownload.invoke(listOf(createdVideo.videoId.value))
+                includeVideosInSearchForDownload(videoIds = listOf(createdVideo.videoId.value))
             }
         }
 
