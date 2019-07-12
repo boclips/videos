@@ -1,5 +1,9 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.events.config.subscriptions.VideosExclusionFromDownloadRequestedSubscription
+import com.boclips.events.config.subscriptions.VideosExclusionFromStreamRequestedSubscription
+import com.boclips.events.config.subscriptions.VideosInclusionInDownloadRequestedSubscription
+import com.boclips.events.config.subscriptions.VideosInclusionInStreamRequestedSubscription
 import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
 import com.boclips.events.types.video.VideosExclusionFromStreamRequested
 import com.boclips.events.types.video.VideosInclusionInDownloadRequested
@@ -26,11 +30,23 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoRepository: VideoRepository
 
+    @Autowired
+    lateinit var videosExclusionFromStreamRequestedSubscription: VideosExclusionFromStreamRequestedSubscription
+
+    @Autowired
+    lateinit var videosExclusionFromDownloadRequestedSubscription: VideosExclusionFromDownloadRequestedSubscription
+
+    @Autowired
+    lateinit var videosInclusionInStreamRequestedSubscription: VideosInclusionInStreamRequestedSubscription
+
+    @Autowired
+    lateinit var videosInclusionInDownloadRequestedSubscription: VideosInclusionInDownloadRequestedSubscription
+
     @Test
     fun `removes videos from stream search index`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
-        subscriptions.videosExclusionFromStreamRequested().send(
+        videosExclusionFromStreamRequestedSubscription.channel().send(
             MessageBuilder.withPayload(
                 VideosExclusionFromStreamRequested.builder().videoIds(listOf(id.value)).build()
             ).build()
@@ -43,7 +59,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     fun `removes videos from download search index`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
-        subscriptions.videosExclusionFromDownloadRequested().send(
+        videosExclusionFromDownloadRequestedSubscription.channel().send(
             MessageBuilder.withPayload(
                 VideosExclusionFromDownloadRequested.builder().videoIds(listOf(id.value)).build()
             ).build()
@@ -56,7 +72,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     fun `adds videos to stream search index`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
-        subscriptions.videosInclusionInStreamRequested().send(
+        videosInclusionInStreamRequestedSubscription.channel().send(
             MessageBuilder.withPayload(
                 VideosInclusionInStreamRequested.builder().videoIds(listOf(id.value)).build()
             ).build()
@@ -70,7 +86,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
         val cp = saveContentPartner(hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD))
         val id = saveVideo(contentProviderId = cp.contentPartnerId.value)
 
-        subscriptions.videosInclusionInDownloadRequested().send(
+        videosInclusionInDownloadRequestedSubscription.channel().send(
             MessageBuilder.withPayload(
                 VideosInclusionInDownloadRequested.builder().videoIds(listOf(id.value)).build()
             ).build()
@@ -89,7 +105,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
         )
 
-        subscriptions.videosInclusionInDownloadRequested().send(
+        videosInclusionInDownloadRequestedSubscription.channel().send(
             MessageBuilder.withPayload(
                 VideosInclusionInDownloadRequested.builder().videoIds(listOf(videoId.value)).build()
             ).build()

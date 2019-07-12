@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.events.config.subscriptions.VideoPlaybackSyncRequestedSubscription
 import com.boclips.events.types.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -21,6 +22,9 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var requestPlaybackUpdate: RequestPlaybackUpdate
 
+    @Autowired
+    lateinit var videoPlaybackSyncRequestedSubscription: VideoPlaybackSyncRequestedSubscription
+
     @Test
     fun `subscribes to video playback sync request event and handles it`() {
         val playbackId = TestFactories.createKalturaPlayback().id
@@ -38,8 +42,7 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        subscriptions
-            .videoPlaybackSyncRequested()
+        videoPlaybackSyncRequestedSubscription.channel()
             .send(MessageBuilder.withPayload(event).build())
 
         val updatedAsset = videoRepository.find(videoId)!!
@@ -57,8 +60,7 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
         fakeYoutubePlaybackProvider.clear()
         val event = VideoPlaybackSyncRequested.builder().videoId(videoId.value).build()
 
-        subscriptions
-            .videoPlaybackSyncRequested()
+        videoPlaybackSyncRequestedSubscription.channel()
             .send(MessageBuilder.withPayload(event).build())
     }
 

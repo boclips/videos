@@ -22,12 +22,12 @@ class AnalyseVideo(
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 
         if (video.type != LegacyVideoType.INSTRUCTIONAL_CLIPS) {
-            logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because its legacy type is ${video.type.name}" }
+            logger.info { "Analysis of video $videoId NOT requested because its legacy type is ${video.type.name}" }
             return
         }
 
         if (video.playback.duration.seconds <= 20) {
-            logger.info { "Video $videoId NOT published to ${Topics.VIDEO_ANALYSIS_REQUESTED} because it's too short" }
+            logger.info { "Analysis of video $videoId NOT requested because it's too short" }
             return
         }
 
@@ -39,6 +39,6 @@ class AnalyseVideo(
 
         topics.videoAnalysisRequested().send(MessageBuilder.withPayload(videoToAnalyse).build())
 
-        logger.info { "Video $videoId published to ${Topics.VIDEO_ANALYSIS_REQUESTED}" }
+        logger.info { "Analysis of video $videoId requested" }
     }
 }

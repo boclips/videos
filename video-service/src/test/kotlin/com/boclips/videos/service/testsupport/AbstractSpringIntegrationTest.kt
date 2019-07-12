@@ -1,6 +1,5 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
 import com.boclips.events.types.Subject
 import com.boclips.events.types.video.VideoSubjectClassified
@@ -106,9 +105,6 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var topics: Topics
-
-    @Autowired
-    lateinit var subscriptions: Subscriptions
 
     @Autowired
     lateinit var messageCollector: MessageCollector

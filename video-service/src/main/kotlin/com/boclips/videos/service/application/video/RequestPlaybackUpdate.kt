@@ -29,7 +29,7 @@ open class RequestPlaybackUpdate(
                 else -> videoRepository.streamAll(filter, publishToTopic())
             }
         } catch (ex: Exception) {
-            logger.error { "Failed to publish (some) events to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+            logger.error { "Failed to request playback synchronization for (some) videos" }
         }
     }
 
@@ -41,7 +41,7 @@ open class RequestPlaybackUpdate(
                     .build()
 
                 topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
-                logger.info { "Video ${video.videoId} published to ${Topics.VIDEO_PLAYBACK_SYNC_REQUESTED}" }
+                logger.info { "Playback synchronization requested for video ${video.videoId}" }
             }
         }
     }
