@@ -13,5 +13,6 @@ data class ContentPartnerDocument(
     val ageRangeMax: Int?,
     val lastModified: Instant? = null,
     val createdAt: Instant? = null,
-    val disabledDistributionMethods: Set<DistributionMethodDocument>? = null
-)
+    val distributionMethods: Set<DistributionMethodDocument>? = null
+) {
+}

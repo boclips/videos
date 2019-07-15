@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -20,7 +21,8 @@ class LinksController(
     private val subjectsLinkBuilder: SubjectsLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
-    private val disciplinesLinkBuilder: DisciplinesLinkBuilder
+    private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
+    private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder
 ) {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
@@ -31,6 +33,7 @@ class LinksController(
                 eventsLinkBuilder.createNoResultsEventLink(),
                 collectionsLinkBuilder.publicCollections(),
                 subjectsLinkBuilder.subjects(),
+                distributionMethodsLinkBuilder.distributionMethods(),
                 videosLinkBuilder.adminSearchLink(),
 
                 videosLinkBuilder.videosLink(),

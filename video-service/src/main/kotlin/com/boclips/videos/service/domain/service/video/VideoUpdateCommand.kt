@@ -15,7 +15,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceSubjects(videoId: VideoId, val subjects: List<Subject>) : VideoUpdateCommand(videoId)
     class ReplaceDuration(videoId: VideoId, val duration: Duration) : VideoUpdateCommand(videoId)
     class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)
-    class UpdateHiddenFromSearchForDeliveryMethods(videoId: VideoId, val distributionMethods: Set<DistributionMethod>) :
+    class ReplaceDistributionMethods(videoId: VideoId, val distributionMethods: Set<DistributionMethod>) :
         VideoUpdateCommand(videoId)
 
     class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)

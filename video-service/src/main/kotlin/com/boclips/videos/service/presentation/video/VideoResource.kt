@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.projections.BoclipsInternalProjection
 import com.boclips.videos.service.presentation.projections.PublicApiProjection
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
@@ -44,7 +44,7 @@ data class VideoResource(
     @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)
-    val hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource> = emptySet(),
+    val distributionMethods: Set<DistributionMethodResource> = emptySet(),
 
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null

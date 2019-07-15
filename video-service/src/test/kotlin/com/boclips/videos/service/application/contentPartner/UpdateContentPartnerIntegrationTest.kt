@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -86,7 +86,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `changing distribution method will enqueue a change for later`() {
         val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
-                hiddenFromSearchForDeliveryMethods = emptySet()
+                distributionMethods = emptySet()
             )
         )
 
@@ -95,54 +95,54 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             request = TestFactories.createContentPartnerRequest(
-                hiddenFromSearchForDeliveryMethods = setOf(
-                    DeliveryMethodResource.STREAM
+                distributionMethods = setOf(
+                    DistributionMethodResource.STREAM
                 )
             )
         )
 
-        assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
     }
 
     @Test
     fun `disable download and streaming for content partner`() {
         val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
-                hiddenFromSearchForDeliveryMethods = emptySet()
+                distributionMethods = emptySet()
             )
         )
 
         val updatedContentPartner = updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             request = TestFactories.createContentPartnerRequest(
-                hiddenFromSearchForDeliveryMethods = setOf(
-                    DeliveryMethodResource.STREAM,
-                    DeliveryMethodResource.DOWNLOAD
+                distributionMethods = setOf(
+                    DistributionMethodResource.STREAM,
+                    DistributionMethodResource.DOWNLOAD
                 )
             )
         )
 
-        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.distributionMethods).isEmpty()
+        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.distributionMethods)
+            .isEqualTo(DistributionMethod.ALL)
     }
 
     @Test
     fun `enable downloading and streaming for content partner`() {
         val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
-                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
         )
 
         val updatedContentPartner = updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             request = TestFactories.createContentPartnerRequest(
-                hiddenFromSearchForDeliveryMethods = emptySet()
+                distributionMethods = emptySet()
             )
         )
 
-        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.distributionMethods).isEqualTo(
-            DistributionMethod.ALL
-        )
+        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.distributionMethods)
+            .isEmpty()
     }
 
     @Nested
@@ -151,7 +151,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `changing distribution methods of content partner will change their videos too`() {
             val originalContentPartner = createContentPartner(
                 TestFactories.createContentPartnerRequest(
-                    hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                    distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
                 )
             )
 
@@ -162,14 +162,14 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
                 request = TestFactories.createContentPartnerRequest(
-                    hiddenFromSearchForDeliveryMethods = setOf(
-                        DeliveryMethodResource.STREAM,
-                        DeliveryMethodResource.DOWNLOAD
+                    distributionMethods = setOf(
+                        DistributionMethodResource.STREAM,
+                        DistributionMethodResource.DOWNLOAD
                     )
                 )
             )
 
-            assertThat(videoRepository.find(id)!!.hiddenFromSearchForDistributionMethods).isEqualTo(
+            assertThat(videoRepository.find(id)!!.distributionMethods).isEqualTo(
                 DistributionMethod.ALL
             )
         }

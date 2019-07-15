@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
 import java.time.LocalDate
 
 data class CreateVideoRequest(

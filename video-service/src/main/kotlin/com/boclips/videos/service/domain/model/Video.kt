@@ -30,7 +30,7 @@ data class Video(
     val transcript: String?,
     val ageRange: AgeRange,
     val ratings: List<UserRating>,
-    val hiddenFromSearchForDistributionMethods: Set<DistributionMethod>
+    val distributionMethods: Set<DistributionMethod>
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

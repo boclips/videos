@@ -39,6 +39,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
+            .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
 
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
             .andExpect(jsonPath("$._links.searchVideos").doesNotExist())
@@ -67,6 +68,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
+            .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
             .andExpect(
                 jsonPath(
                     "$._links.searchCollections.href",

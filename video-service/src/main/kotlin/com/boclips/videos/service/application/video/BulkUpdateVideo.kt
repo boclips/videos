@@ -7,14 +7,15 @@ import com.boclips.videos.service.application.video.search.IncludeVideosInSearch
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoAccessService
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResourceConverter
+import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import mu.KLogging
 
 open class BulkUpdateVideo(
-    private val videoAccessService: VideoAccessService,
+    private val videoRepository: VideoRepository,
     private val includeVideosInSearchForStream: IncludeVideosInSearchForStream,
     private val excludeVideosFromSearchForStream: ExcludeVideosFromSearchForStream,
     private val excludeVideosFromSearchForDownload: ExcludeVideosFromSearchForDownload,
@@ -23,17 +24,29 @@ open class BulkUpdateVideo(
     companion object : KLogging();
 
     open operator fun invoke(bulkUpdateRequest: BulkUpdateRequest?) {
-        bulkUpdateRequest?.hiddenFromSearchForDeliveryMethods?.let { deliveryMethodResourcesHiddenFromSearch ->
-            val deliveryMethods = convertResourcesToDeliveryMethods(deliveryMethodResourcesHiddenFromSearch)
+        bulkUpdateRequest?.distributionMethods?.let { distributionMethodsResource ->
+            val distributionMethods = convertResourcesToDistributionMethods(distributionMethodsResource)
             val videoIds = bulkUpdateRequest.ids.map(::VideoId)
 
-            videoAccessService.setSearchBlacklist(videoIds, deliveryMethods)
-            updateDeliveryMethodsInSearch(bulkUpdateRequest.ids, deliveryMethods)
+            val commands = videoIds.map { videoId ->
+                VideoUpdateCommand.ReplaceDistributionMethods(
+                    videoId = videoId,
+                    distributionMethods = bulkUpdateRequest.distributionMethods.map {
+                        DistributionMethodResourceConverter.fromResource(
+                            it
+                        )
+                    }.toSet()
+                )
+            }
+
+            videoRepository.bulkUpdate(commands)
+
+            updateDeliveryMethodsInSearch(bulkUpdateRequest.ids, distributionMethods)
         } ?: throw InvalidBulkUpdateRequestException("Null bulk update request cannot be processed")
     }
 
-    private fun convertResourcesToDeliveryMethods(hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>): Set<DistributionMethod> {
-        return hiddenFromSearchForDeliveryMethods.map(DeliveryMethodResourceConverter::fromResource).toSet()
+    private fun convertResourcesToDistributionMethods(hiddenFromSearchForDistributionMethods: Set<DistributionMethodResource>): Set<DistributionMethod> {
+        return hiddenFromSearchForDistributionMethods.map(DistributionMethodResourceConverter::fromResource).toSet()
     }
 
     private fun updateDeliveryMethodsInSearch(
@@ -49,9 +62,9 @@ open class BulkUpdateVideo(
         videoIds: List<String>
     ) {
         if (distributionMethods.contains(DistributionMethod.DOWNLOAD)) {
-            excludeVideosFromSearchForDownload.invoke(videoIds = videoIds)
-        } else {
             includeVideosInSearchForDownload.invoke(videoIds = videoIds)
+        } else {
+            excludeVideosFromSearchForDownload.invoke(videoIds = videoIds)
         }
     }
 
@@ -60,9 +73,9 @@ open class BulkUpdateVideo(
         videoIds: List<String>
     ) {
         if (distributionMethods.contains(DistributionMethod.STREAM)) {
-            excludeVideosFromSearchForStream.invoke(videoIds = videoIds)
-        } else {
             includeVideosInSearchForStream.invoke(videoIds = videoIds)
+        } else {
+            excludeVideosFromSearchForStream.invoke(videoIds = videoIds)
         }
     }
 }

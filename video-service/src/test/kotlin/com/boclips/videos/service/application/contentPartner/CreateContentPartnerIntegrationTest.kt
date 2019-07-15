@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepo
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -46,39 +46,39 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11),
-                hiddenFromSearchForDeliveryMethods = null
+                distributionMethods = null
             )
         )
 
-        assertThat(contentPartner.distributionMethods).isEmpty()
+        assertThat(contentPartner.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 
     @Test
-    fun `content partners hidden from all delivery methods are unsearchable`() {
+    fun `mark content partners available for stream and download`() {
         val contentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11),
-                hiddenFromSearchForDeliveryMethods = setOf(
-                    DeliveryMethodResource.DOWNLOAD,
-                    DeliveryMethodResource.STREAM
+                distributionMethods = setOf(
+                    DistributionMethodResource.DOWNLOAD,
+                    DistributionMethodResource.STREAM
                 )
             )
         )
 
-        assertThat(contentPartner.distributionMethods).isEmpty()
+        assertThat(contentPartner.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 
     @Test
-    fun `videos are searchable when searchability not specified`() {
+    fun `videos are searchable when distribution methods are not specified`() {
         val contentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
                 ageRange = AgeRangeRequest(min = 7, max = 11),
-                hiddenFromSearchForDeliveryMethods = null
+                distributionMethods = null
             )
         )
 
-        assertThat(contentPartner.distributionMethods).isEqualTo(emptySet<DistributionMethod>())
+        assertThat(contentPartner.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 }

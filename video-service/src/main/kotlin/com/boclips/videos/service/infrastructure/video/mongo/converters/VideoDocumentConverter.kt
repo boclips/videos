@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video.mongo.converters
 
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
@@ -36,7 +37,7 @@ object VideoDocumentConverter {
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
             rating = video.ratings.map { UserRatingDocumentConverter.toDocument(it) },
-            hiddenFromSearchForDistributionMethods = video.hiddenFromSearchForDistributionMethods.map(
+            distributionMethods = video.distributionMethods.map(
                 DistributionMethodDocumentConverter::toDocument
             ).toSet()
         )
@@ -63,9 +64,9 @@ object VideoDocumentConverter {
                 max = document.ageRangeMax
             ) else AgeRange.unbounded(),
             ratings = document.rating.map { UserRatingDocumentConverter.toRating(it) },
-            hiddenFromSearchForDistributionMethods = document.hiddenFromSearchForDistributionMethods?.map(
+            distributionMethods = document.distributionMethods?.map(
                 DistributionMethodDocumentConverter::fromDocument
-            )?.toSet() ?: emptySet()
+            )?.toSet() ?: DistributionMethod.ALL
         )
     }
 }

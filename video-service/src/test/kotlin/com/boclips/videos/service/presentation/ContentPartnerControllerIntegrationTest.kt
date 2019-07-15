@@ -200,13 +200,13 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `disables content partner from stream delivery method`() {
+    fun `disables content partner from stream distribution method`() {
         saveVideo(contentProviderId = "deadb33d1225df4825e8b8f6")
 
         mockMvc.perform(
             put("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
                 """{
-                        "hiddenFromSearchForDeliveryMethods": ["STREAM"],
+                        "distributionMethods": ["STREAM"],
                         "name": "TED",
                         "ageRange":
                         {
@@ -217,11 +217,11 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             )
         ).andExpect(status().isNoContent)
 
-        assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
-        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
+        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
 
         mockMvc.perform(get("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.hiddenFromSearchForDeliveryMethods", equalTo(listOf("STREAM"))))
+            .andExpect(jsonPath("$.distributionMethods", equalTo(listOf("STREAM"))))
     }
 }

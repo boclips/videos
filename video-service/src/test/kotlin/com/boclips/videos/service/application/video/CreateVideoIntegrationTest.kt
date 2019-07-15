@@ -8,15 +8,11 @@ import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.anyOrNull
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.verifyZeroInteractions
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -97,7 +93,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
         assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
-
     }
 
     @Test
@@ -264,38 +259,9 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val contentPartner = saveContentPartner(
-            hiddenFromSearchForDeliveryMethods = setOf(
-                DeliveryMethodResource.DOWNLOAD,
-                DeliveryMethodResource.STREAM
-            )
-        )
-
-        val createRequest =
-            TestFactories.createCreateVideoRequest(
-                provider = contentPartner.name,
-                title = "the latest and greatest Bloomberg video",
-                playbackId = "1234"
-            )
-
-        createVideo(createRequest)
-
-        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
-    }
-
-    @Test
-    fun `it does not add to download search index if content partner is hidden from download`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
-        )
-
-        val contentPartner = saveContentPartner(
-            hiddenFromSearchForDeliveryMethods = setOf(
-                DeliveryMethodResource.DOWNLOAD
+            distributionMethods = setOf(
+                DistributionMethodResource.DOWNLOAD,
+                DistributionMethodResource.STREAM
             )
         )
 
@@ -309,11 +275,11 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         createVideo(createRequest)
 
         assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
     }
 
     @Test
-    fun `it does not add to stream search index if content partner is hidden from stream`() {
+    fun `it does not add to download search index if content partner is hidden from download`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
                 id = "entry-$123",
@@ -323,8 +289,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val contentPartner = saveContentPartner(
-            hiddenFromSearchForDeliveryMethods = setOf(
-                DeliveryMethodResource.STREAM
+            distributionMethods = setOf(
+                DistributionMethodResource.DOWNLOAD
             )
         )
 
@@ -337,7 +303,36 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createVideo(createRequest)
 
-        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
         assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
+        assertThatChannelHasNoMessages(topics.videosExclusionFromStreamRequested())
+    }
+
+    @Test
+    fun `it does not add to download search index`() {
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+
+        val contentPartner = saveContentPartner(
+            distributionMethods = setOf(
+                DistributionMethodResource.STREAM
+            )
+        )
+
+        val createRequest =
+            TestFactories.createCreateVideoRequest(
+                provider = contentPartner.name,
+                title = "the latest and greatest Bloomberg video",
+                playbackId = "1234"
+            )
+
+        createVideo(createRequest)
+
+        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasNoMessages(topics.videosExclusionFromDownloadRequested())
     }
 }

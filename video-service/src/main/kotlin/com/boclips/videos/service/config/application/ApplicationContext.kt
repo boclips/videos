@@ -63,7 +63,6 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
-import com.boclips.videos.service.domain.service.video.VideoAccessService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
@@ -89,7 +88,6 @@ class ApplicationContext(
     val collectionService: CollectionService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
-    val videoAccessService: VideoAccessService,
     val topics: Topics,
     val subjectRepository: SubjectRepository,
     val disciplineRepository: DisciplineRepository,
@@ -128,7 +126,6 @@ class ApplicationContext(
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
             videoCounter,
-            legacyVideoSearchService,
             classifyVideo,
             analyseVideo,
             topics,
@@ -190,7 +187,7 @@ class ApplicationContext(
         excludeVideosFromSearchForDownload: ExcludeVideosFromSearchForDownload
     ): BulkUpdateVideo {
         return BulkUpdateVideo(
-            videoAccessService,
+            videoRepository,
             includeVideosInSearchForStream,
             excludeVideosFromSearchForStream,
             excludeVideosFromSearchForDownload,

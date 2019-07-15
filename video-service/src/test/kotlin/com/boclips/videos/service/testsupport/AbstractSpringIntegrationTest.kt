@@ -34,7 +34,7 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
@@ -221,9 +221,9 @@ abstract class AbstractSpringIntegrationTest {
 
         val id = video.content.id
 
-        val hiddenFromSearchForDeliveryMethods = video.content.hiddenFromSearchForDeliveryMethods
+        val distributionMethods = video.content.distributionMethods
 
-        if (!hiddenFromSearchForDeliveryMethods.contains(DeliveryMethodResource.DOWNLOAD)) {
+        if (distributionMethods.contains(DistributionMethodResource.DOWNLOAD)) {
             bulkVideoSearchUpdate.invoke(
                 event = VideosInclusionInDownloadRequested.builder().videoIds(
                     listOf(
@@ -233,7 +233,7 @@ abstract class AbstractSpringIntegrationTest {
             )
         }
 
-        if (!hiddenFromSearchForDeliveryMethods.contains(DeliveryMethodResource.STREAM)) {
+        if (distributionMethods.contains(DistributionMethodResource.STREAM)) {
             bulkVideoSearchUpdate.invoke(
                 event = VideosInclusionInStreamRequested.builder().videoIds(
                     listOf(
@@ -288,14 +288,14 @@ abstract class AbstractSpringIntegrationTest {
         name: String = "TeD",
         ageRange: AgeRangeRequest = AgeRangeRequest(3, 10),
         accreditedToYtChannel: String? = null,
-        hiddenFromSearchForDeliveryMethods: Set<DeliveryMethodResource>? = null
+        distributionMethods: Set<DistributionMethodResource>? = null
     ): ContentPartner {
         return createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = name,
                 ageRange = ageRange,
                 accreditedToYtChannel = accreditedToYtChannel,
-                hiddenFromSearchForDeliveryMethods = hiddenFromSearchForDeliveryMethods
+                distributionMethods = distributionMethods
             )
         )
     }

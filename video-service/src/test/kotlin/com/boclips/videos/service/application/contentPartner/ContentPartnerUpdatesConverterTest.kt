@@ -6,24 +6,24 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpda
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DeliveryMethodResource
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class ContentPartnerUpdatesConverterTest {
     @Test
-    fun `creates command for updating delivery methods`() {
+    fun `creates command for updating distribution methods`() {
         val commands = ContentPartnerUpdatesConverter().convert(
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(
                 name = "Hello",
-                hiddenFromSearchForDeliveryMethods = setOf(DeliveryMethodResource.DOWNLOAD)
+                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
         )
         val command =
             commands.find { it is ContentPartnerUpdateCommand.ReplaceDistributionMethods } as ContentPartnerUpdateCommand.ReplaceDistributionMethods
 
-        assertThat(command.methods).isEqualTo(setOf(DistributionMethod.STREAM))
+        assertThat(command.distributionMethods).isEqualTo(setOf(DistributionMethod.DOWNLOAD))
     }
 
     @Test
