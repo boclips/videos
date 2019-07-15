@@ -1,9 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideosExclusionFromDownloadRequestedSubscription
-import com.boclips.events.config.subscriptions.VideosExclusionFromStreamRequestedSubscription
-import com.boclips.events.config.subscriptions.VideosInclusionInDownloadRequestedSubscription
-import com.boclips.events.config.subscriptions.VideosInclusionInStreamRequestedSubscription
+import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
 import com.boclips.events.types.video.VideosExclusionFromStreamRequested
 import com.boclips.events.types.video.VideosInclusionInDownloadRequested
@@ -25,7 +22,7 @@ class BulkVideoSearchUpdate(
 ) {
     companion object : KLogging()
 
-    @StreamListener(VideosExclusionFromStreamRequestedSubscription.CHANNEL)
+    @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_STREAM_REQUESTED)
     operator fun invoke(event: VideosExclusionFromStreamRequested) {
         try {
             videoSearchService.bulkRemoveFromSearch(event.videoIds)
@@ -34,7 +31,7 @@ class BulkVideoSearchUpdate(
         }
     }
 
-    @StreamListener(VideosExclusionFromDownloadRequestedSubscription.CHANNEL)
+    @StreamListener(Subscriptions.VIDEOS_EXCLUSION_FROM_DOWNLOAD_REQUESTED)
     operator fun invoke(event: VideosExclusionFromDownloadRequested) {
         try {
             legacyVideoSearchService.bulkRemoveFromSearch(event.videoIds)
@@ -43,7 +40,7 @@ class BulkVideoSearchUpdate(
         }
     }
 
-    @StreamListener(VideosInclusionInStreamRequestedSubscription.CHANNEL)
+    @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_STREAM_REQUESTED)
     operator fun invoke(event: VideosInclusionInStreamRequested) {
         try {
             val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })
@@ -53,7 +50,7 @@ class BulkVideoSearchUpdate(
         }
     }
 
-    @StreamListener(VideosInclusionInDownloadRequestedSubscription.CHANNEL)
+    @StreamListener(Subscriptions.VIDEOS_INCLUSION_IN_DOWNLOAD_REQUESTED)
     operator fun invoke(event: VideosInclusionInDownloadRequested) {
         try {
             val videos = videoRepository.findAll(event.videoIds.map { VideoId(value = it) })

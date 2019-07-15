@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoAnalysedSubscription
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -23,15 +22,12 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoRepository: VideoRepository
 
-    @Autowired
-    lateinit var videoAnalysedSubscription: VideoAnalysedSubscription
-
     @Test
     fun `uploads captions to Kaltura`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = KALTURA, value = "reference-id"))
         val videoAnalysed = createVideoAnalysed(videoId = videoId.value)
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isNotEmpty
     }
@@ -41,7 +37,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo(playbackId = PlaybackId(type = KALTURA, value = "reference-id"))
         val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "\n")
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isEmpty()
     }
@@ -57,7 +53,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo(playbackId = PlaybackId(type = KALTURA, value = "reference-id"))
         val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "\n")
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isEmpty()
     }
@@ -70,7 +66,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
             language = Locale.ITALY
         )
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         val video = videoRepository.find(videoId)!!
 
@@ -85,7 +81,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
             transcript = "bla bla bla"
         )
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         val video = videoRepository.find(videoId)!!
 
@@ -100,7 +96,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
             topics = listOf(createVideoAnalysedTopic(name = "topic name"))
         )
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         val video = videoRepository.find(videoId)!!
 
@@ -122,7 +118,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         val video = videoRepository.find(videoId)!!
 
@@ -135,7 +131,7 @@ class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "the transcript")
 
-        videoAnalysedSubscription.channel().send(MessageBuilder.withPayload(videoAnalysed).build())
+        subscriptions.videoAnalysed().send(MessageBuilder.withPayload(videoAnalysed).build())
 
         assertThat(
             videoSearchService.search(

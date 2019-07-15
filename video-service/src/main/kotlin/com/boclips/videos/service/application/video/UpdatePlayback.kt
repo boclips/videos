@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoPlaybackSyncRequestedSubscription
+import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -20,12 +20,12 @@ class UpdatePlayback(
         handleUpdate(videoId)
     }
 
-    @StreamListener(VideoPlaybackSyncRequestedSubscription.CHANNEL)
+    @StreamListener(Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED)
     operator fun invoke(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
         try {
             handleUpdate(VideoId(value = videoPlaybackSyncRequestedEvent.videoId))
         } catch (ex: Exception) {
-            logger.info { "Failed to process playback synchronization request for video ${videoPlaybackSyncRequestedEvent.videoId}: $ex" }
+            logger.info { "Failed to process ${Subscriptions.VIDEO_PLAYBACK_SYNC_REQUESTED} for ${videoPlaybackSyncRequestedEvent.videoId}: $ex" }
         }
     }
 
