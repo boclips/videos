@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoSubjectClassifiedSubscription
+import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.video.VideoSubjectClassified
 import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -17,7 +17,7 @@ class UpdateVideoSubjects(
 ) {
     companion object : KLogging()
 
-    @StreamListener(VideoSubjectClassifiedSubscription.CHANNEL)
+    @StreamListener(Subscriptions.VIDEO_SUBJECT_CLASSIFIED)
     operator fun invoke(videoSubjectClassified: VideoSubjectClassified) {
         val videoId = VideoId(videoSubjectClassified.videoId)
         try {
