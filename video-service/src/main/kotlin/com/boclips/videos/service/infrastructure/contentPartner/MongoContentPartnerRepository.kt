@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilt
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
+import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
@@ -115,6 +116,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
                 ContentPartnerDocument::youtubeChannelId eq null
             } else {
                 ContentPartnerDocument::youtubeChannelId ne null
+            }
+            is ContentPartnerFilter.AccreditedTo -> when (filter.credit) {
+                is Credit.YoutubeCredit -> ContentPartnerDocument::youtubeChannelId eq filter.credit.channelId
+                Credit.PartnerCredit -> ContentPartnerDocument::youtubeChannelId ne null
             }
         }
 

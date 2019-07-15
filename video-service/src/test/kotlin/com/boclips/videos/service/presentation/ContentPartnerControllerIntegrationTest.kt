@@ -86,6 +86,20 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
     }
 
+
+    @Test
+    fun `can filter content partners by youtube channel`() {
+        saveContentPartner(accreditedToYtChannel = "1234")
+        saveContentPartner(accreditedToYtChannel = null)
+
+        mockMvc.perform(
+            get("/v1/content-partners?accreditedToYtChannelId=1234").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
+            .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(false)))
+    }
+
     @Test
     fun `create content partner accredited to youtube`() {
         val content = """

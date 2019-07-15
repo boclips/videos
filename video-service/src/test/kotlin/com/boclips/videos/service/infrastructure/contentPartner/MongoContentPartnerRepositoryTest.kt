@@ -77,6 +77,23 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
+    fun `find all by accredited to youtube channel id`() {
+        mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(credit = Credit.PartnerCredit)
+        ).contentPartnerId
+
+
+        val accreditedToYtChannelContentPartner = mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
+        ).contentPartnerId
+
+        val retrievedContentPartners =
+            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.AccreditedTo(Credit.YoutubeCredit(channelId = "123"))))
+
+        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(accreditedToYtChannelContentPartner)
+    }
+
+    @Test
     fun `find all with multiple filters`() {
         val toBeFoundContentPartnerId = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")

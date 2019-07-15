@@ -49,8 +49,12 @@ class ContentPartnerController(
     }
 
     @GetMapping
-    fun getContentPartners(@RequestParam("name") name: String?, @RequestParam("isOfficial") isOfficial: Boolean?): Resources<Resource<ContentPartnerResource>> {
-        return fetchContentPartners(name = name, isOfficial = isOfficial)
+    fun getContentPartners(
+        @RequestParam("name") name: String?,
+        @RequestParam("isOfficial") isOfficial: Boolean?,
+        @RequestParam("accreditedToYtChannelId") accreditedToYtChannelId: String?
+    ): Resources<Resource<ContentPartnerResource>> {
+        return fetchContentPartners(name = name, isOfficial = isOfficial, accreditedToYtChannelId = accreditedToYtChannelId)
     }
 
     @GetMapping("/{id}")
