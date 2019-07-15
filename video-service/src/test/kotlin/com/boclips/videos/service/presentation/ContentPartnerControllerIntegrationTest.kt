@@ -5,6 +5,7 @@ import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -57,6 +58,32 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         )
             .andExpect(status().isCreated)
             .andExpect(header().exists("Location"))
+    }
+
+    @Test
+    fun `can filter content partners by name`() {
+        saveContentPartner(name = "hello")
+        saveContentPartner(name = "goodbye")
+
+        mockMvc.perform(
+            get("/v1/content-partners?name=hello").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
+            .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
+    }
+
+    @Test
+    fun `can filter content partners by officiality`() {
+        saveContentPartner(accreditedToYtChannel = "1234")
+        saveContentPartner(accreditedToYtChannel = null)
+
+        mockMvc.perform(
+            get("/v1/content-partners?isOfficial=true").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
+            .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
     }
 
     @Test

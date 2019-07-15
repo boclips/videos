@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
@@ -48,8 +49,8 @@ class ContentPartnerController(
     }
 
     @GetMapping
-    fun getContentPartners(): Resources<Resource<ContentPartnerResource>> {
-        return fetchContentPartners()
+    fun getContentPartners(@RequestParam("name") name: String?, @RequestParam("isOfficial") isOfficial: Boolean?): Resources<Resource<ContentPartnerResource>> {
+        return fetchContentPartners(name = name, isOfficial = isOfficial)
     }
 
     @GetMapping("/{id}")

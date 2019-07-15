@@ -11,8 +11,10 @@ class GetContentPartners(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
 ) {
-    operator fun invoke(): Resources<Resource<ContentPartnerResource>> {
-        val contentPartners = contentPartnerRepository.findAll()
+    operator fun invoke(name: String? = null, isOfficial: Boolean?): Resources<Resource<ContentPartnerResource>> {
+        val filters = ContentPartnerFiltersConverter.convert(name, isOfficial)
+
+        val contentPartners = contentPartnerRepository.findAll(filters)
             .map {
                 Resource(
                     ContentPartnerToResourceConverter.convert(it),

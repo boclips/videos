@@ -31,7 +31,10 @@ class ContentPartnersLinkBuilder {
     fun contentPartnersLink(): Link? {
         return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNERS) {
             ControllerLinkBuilder.linkTo(
-                ControllerLinkBuilder.methodOn(ContentPartnerController::class.java).getContentPartners()
+                ControllerLinkBuilder.methodOn(ContentPartnerController::class.java).getContentPartners(
+                    name = null,
+                    isOfficial = null
+                )
             ).withRel("contentPartners")
         }
     }

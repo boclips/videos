@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.contentPartner
 
 import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.DistributionMethod
@@ -35,6 +36,69 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.contentPartnerId)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
+    }
+
+    @Test
+    fun `find all by name filter`() {
+        val contentPartnerIds = listOf(
+            mongoContentPartnerRepository.create(
+                TestFactories.createContentPartner(name = "hello")
+            ).contentPartnerId,
+            mongoContentPartnerRepository.create(
+                TestFactories.createContentPartner(name = "hello")
+            ).contentPartnerId
+        )
+
+        mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(name = "good day")
+        )
+
+        val retrievedContentPartners =
+            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.NameFilter(name = "hello")))
+
+        assertThat(retrievedContentPartners.map { it.contentPartnerId }).isEqualTo(contentPartnerIds)
+    }
+
+    @Test
+    fun `find all by official filter`() {
+        val officialContentPartnerId = mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(credit = Credit.PartnerCredit)
+        ).contentPartnerId
+
+
+        mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
+        ).contentPartnerId
+
+        val retrievedContentPartners =
+            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.OfficialFilter(isOfficial = true)))
+
+        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(officialContentPartnerId)
+    }
+
+    @Test
+    fun `find all with multiple filters`() {
+        val toBeFoundContentPartnerId = mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")
+        ).contentPartnerId
+
+        mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "shwmae")
+        ).contentPartnerId
+
+        mongoContentPartnerRepository.create(
+            TestFactories.createContentPartner(credit = Credit.PartnerCredit, name = "hello")
+        ).contentPartnerId
+
+        val retrievedContentPartners =
+            mongoContentPartnerRepository.findAll(
+                listOf(
+                    ContentPartnerFilter.OfficialFilter(isOfficial = false),
+                    ContentPartnerFilter.NameFilter(name = "hello")
+                )
+            )
+
+        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(toBeFoundContentPartnerId)
     }
 
     @Test

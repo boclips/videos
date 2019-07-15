@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.contentPartner
 
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
@@ -15,14 +16,17 @@ import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.SetTo
+import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.ne
 import org.litote.kmongo.set
 import java.time.Instant
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartnerRepository {
+
     companion object : KLogging() {
         const val collectionName = "contentPartners"
     }
@@ -46,6 +50,15 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
     override fun findAll(): MongoIterable<ContentPartner> =
         getContentPartnerCollection().find()
             .map { ContentPartnerDocumentConverter.toContentPartner(it) }
+
+    override fun findAll(filters: List<ContentPartnerFilter>): Iterable<ContentPartner> {
+        val bson: Bson = filters.fold(and()) { bson: Bson, filter: ContentPartnerFilter ->
+            and(bson, filterCommandsToBson(filter))
+        }
+
+        return getContentPartnerCollection().find(bson)
+            .map { ContentPartnerDocumentConverter.toContentPartner(it) }
+    }
 
     override fun findById(contentPartnerId: ContentPartnerId): ContentPartner? {
         return findByQuery(toBsonIdFilter(contentPartnerId))
@@ -94,6 +107,16 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))
     }
+
+    private fun filterCommandsToBson(filter: ContentPartnerFilter): Bson =
+        when (filter) {
+            is ContentPartnerFilter.NameFilter -> ContentPartnerDocument::name eq filter.name
+            is ContentPartnerFilter.OfficialFilter -> if (filter.isOfficial) {
+                ContentPartnerDocument::youtubeChannelId eq null
+            } else {
+                ContentPartnerDocument::youtubeChannelId ne null
+            }
+        }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {
         val contentPartner =
