@@ -23,7 +23,7 @@ open class ClassifyContentPartnerVideos(
         videoRepository.streamAll(filter) { videos ->
             videos
                 .forEach { video ->
-                    classifyVideo(video.videoId.value)
+                    classifyVideo(video)
                 }
         }
         logger.info { "Requested subject classification for all instructional videos: $contentPartner" }

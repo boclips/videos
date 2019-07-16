@@ -112,10 +112,7 @@ class ApplicationContext(
     fun createVideo(
         searchVideo: SearchVideo,
         videoCounter: Counter,
-        classifyVideo: ClassifyVideo,
-        analyseVideo: AnalyseVideo,
-        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
+        analyseVideo: AnalyseVideo
     ): CreateVideo {
         return CreateVideo(
             videoService,
@@ -125,12 +122,8 @@ class ApplicationContext(
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
-            videoCounter,
-            classifyVideo,
             analyseVideo,
-            topics,
-            includeVideosInSearchForStream,
-            includeVideosInSearchForDownload
+            topics
         )
     }
 
@@ -160,18 +153,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun includeVideosInSearchForStream(): IncludeVideosInSearchForStream {
-        return IncludeVideosInSearchForStream(topics = topics)
-    }
-
-    @Bean
     fun excludeVideosFromSearchForStream(): ExcludeVideosFromSearchForStream {
         return ExcludeVideosFromSearchForStream(topics = topics)
-    }
-
-    @Bean
-    fun includeVideosInSearchForDownload(): IncludeVideosInSearchForDownload {
-        return IncludeVideosInSearchForDownload(topics = topics)
     }
 
     @Bean
@@ -292,13 +275,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun classifyVideo(): ClassifyVideo {
-        return ClassifyVideo(videoService, topics)
-    }
-
-    @Bean
-    fun classifyContentPartnerVideos(): ClassifyContentPartnerVideos {
-        return ClassifyContentPartnerVideos(videoRepository, classifyVideo())
+    fun classifyContentPartnerVideos(classifyVideo: ClassifyVideo): ClassifyContentPartnerVideos {
+        return ClassifyContentPartnerVideos(videoRepository, classifyVideo)
     }
 
     @Bean

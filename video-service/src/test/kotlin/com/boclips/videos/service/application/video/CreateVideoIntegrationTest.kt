@@ -13,7 +13,6 @@ import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
-import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -28,9 +27,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
-
-    @Autowired
-    lateinit var videoCounter: Counter
 
     @Test
     fun `requesting creation of an existing kaltura video creates the video`() {
@@ -75,39 +71,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
         ).isEqualTo(0)
-    }
-
-    @Test
-    fun `created video becomes available in search`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
-        )
-
-        val createRequest =
-            TestFactories.createCreateVideoRequest(title = "the latest Bloomberg video", playbackId = "1234")
-        createVideo(createRequest)
-
-        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
-    }
-
-    @Test
-    fun `does not populate legacy search when youtube video is created`() {
-        fakeYoutubePlaybackProvider.addVideo("1234", thumbnailUrl = "some-thumb", duration = Duration.ZERO)
-        fakeYoutubePlaybackProvider.addMetadata("1234", "channel name", "channel id")
-        createVideo(
-            TestFactories.createCreateVideoRequest(
-                title = "the latest banana video",
-                playbackId = "1234",
-                playbackProvider = "YOUTUBE"
-            )
-        )
-
-        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
     }
 
     @Test
@@ -177,25 +140,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `bumps video counter`() {
-        val videoCounterBefore = videoCounter.count()
-
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
-        )
-
-        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
-
-        val videoCounterAfter = videoCounter.count()
-
-        assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
-    }
-
-    @Test
     fun `it requests that the video is analysed`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
@@ -232,24 +176,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it requests that the video subject is classified`() {
-        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1234"))
-
-        createVideo(
-            TestFactories.createCreateVideoRequest(
-                title = "fractions",
-                videoType = "INSTRUCTIONAL_CLIPS",
-                playbackId = "1234"
-            )
-        )
-
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
-
-        assertThat(message.payload.toString()).contains("fractions")
-    }
-
-    @Test
-    fun `it does not add to any search indices if content partner is hidden`() {
+    fun `it gets the distribution method from its content parnter`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
                 id = "entry-$123",
@@ -272,67 +199,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 playbackId = "1234"
             )
 
-        createVideo(createRequest)
-
-        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
-    }
-
-    @Test
-    fun `it does not add to download search index if content partner is hidden from download`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
+        val videoResource = createVideo(createRequest)
+        assertThat(videoResource.content.distributionMethods).containsExactlyInAnyOrder(
+            DistributionMethodResource.DOWNLOAD,
+            DistributionMethodResource.STREAM
         )
-
-        val contentPartner = saveContentPartner(
-            distributionMethods = setOf(
-                DistributionMethodResource.DOWNLOAD
-            )
-        )
-
-        val createRequest =
-            TestFactories.createCreateVideoRequest(
-                provider = contentPartner.name,
-                title = "the latest and greatest Bloomberg video",
-                playbackId = "1234"
-            )
-
-        createVideo(createRequest)
-
-        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
-        assertThatChannelHasNoMessages(topics.videosExclusionFromStreamRequested())
-    }
-
-    @Test
-    fun `it does not add to download search index`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
-        )
-
-        val contentPartner = saveContentPartner(
-            distributionMethods = setOf(
-                DistributionMethodResource.STREAM
-            )
-        )
-
-        val createRequest =
-            TestFactories.createCreateVideoRequest(
-                provider = contentPartner.name,
-                title = "the latest and greatest Bloomberg video",
-                playbackId = "1234"
-            )
-
-        createVideo(createRequest)
-
-        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasNoMessages(topics.videosExclusionFromDownloadRequested())
     }
 }

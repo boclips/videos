@@ -2,27 +2,24 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.events.config.Topics
 import com.boclips.events.types.video.VideoSubjectClassificationRequested
+import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoService
 import mu.KLogging
 import org.springframework.messaging.support.MessageBuilder
 
 class ClassifyVideo(
-    private val videoService: VideoService,
     private val topics: Topics
 ) {
     companion object : KLogging()
 
-    operator fun invoke(videoId: String) {
-        val video = try {
-            videoService.getPlayableVideo(videoId = VideoId(value = videoId))
-        } catch (e: Exception) {
+    operator fun invoke(video: Video) {
+        if (!video.isPlayable()) {
+            logger.info("Ignoring subject classification request of video ${video.videoId.value} because it is unplayable")
             return
         }
 
         if (video.type == LegacyVideoType.STOCK || video.type == LegacyVideoType.NEWS) {
-            logger.info { "Ignoring subject classification request of video $videoId because it has type ${video.type}" }
+            logger.info { "Ignoring subject classification request of video ${video.videoId.value} because it has type ${video.type}" }
             return
         }
 
@@ -35,6 +32,6 @@ class ClassifyVideo(
         val message = MessageBuilder.withPayload(videoSubjectClassificationRequested).build()
 
         topics.videoSubjectClassificationRequested().send(message)
-        logger.info { "Publishing subject classification requested event for video $videoId" }
+        logger.info { "Publishing subject classification requested event for video ${video.videoId.value}" }
     }
 }

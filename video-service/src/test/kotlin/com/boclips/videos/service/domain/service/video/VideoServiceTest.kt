@@ -6,9 +6,11 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,6 +23,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
+
+    @Autowired
+    lateinit var videoCounter: Counter
 
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
@@ -140,5 +145,76 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(video.ageRange.min()).isEqualTo(3)
         assertThat(video.ageRange.max()).isEqualTo(7)
+    }
+
+    @Test
+    fun `created video becomes available in search`() {
+        videoService.create(
+            videoToBeCreated = TestFactories.createVideo(
+                distributionMethods = DistributionMethod.ALL
+            )
+        )
+
+        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
+    }
+
+    @Test
+    fun `created video becomes available in stream search only`() {
+        videoService.create(
+            videoToBeCreated =
+            TestFactories.createVideo(distributionMethods = setOf(DistributionMethod.STREAM))
+        )
+
+        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+    }
+
+    @Test
+    fun `created video becomes available in download search only`() {
+        videoService.create(
+            videoToBeCreated = TestFactories.createVideo(distributionMethods = setOf(DistributionMethod.DOWNLOAD))
+        )
+
+        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
+        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
+    }
+
+    @Test
+    fun `created video does not become available in search`() {
+        videoService.create(videoToBeCreated = TestFactories.createVideo(distributionMethods = emptySet()))
+
+        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
+        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+    }
+
+    @Test
+    fun `does not populate legacy search when youtube video is created`() {
+        videoService.create(
+            videoToBeCreated = TestFactories.createVideo(
+                playback = TestFactories.createYoutubePlayback()
+            )
+        )
+
+        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+    }
+
+    @Test
+    fun `bumps video counter when video created`() {
+        val videoCounterBefore = videoCounter.count()
+
+        videoService.create(videoToBeCreated = TestFactories.createVideo())
+
+        val videoCounterAfter = videoCounter.count()
+
+        assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
+    }
+
+    @Test
+    fun `when video is created it requests that the video subject is classified`() {
+        videoService.create(videoToBeCreated = TestFactories.createVideo(title = "fractions"))
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+
+        assertThat(message.payload.toString()).contains("fractions")
     }
 }

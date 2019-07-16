@@ -1,6 +1,10 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.events.config.Topics
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.videos.service.application.video.ClassifyVideo
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
+import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -21,6 +25,7 @@ import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvide
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository
 import com.mongodb.MongoClient
+import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -33,13 +38,36 @@ class DomainContext(val mongoClient: MongoClient) {
         contentPartnerRepository: ContentPartnerRepository,
         videoRepository: VideoRepository,
         videoSearchService: VideoSearchService,
-        playbackRepository: PlaybackRepository
+        playbackRepository: PlaybackRepository,
+        videoCounter: Counter,
+        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
+        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
+        classifyVideo: ClassifyVideo
     ): VideoService {
         return VideoService(
             contentPartnerRepository,
             videoRepository,
-            videoSearchService
+            videoSearchService,
+            videoCounter,
+            includeVideosInSearchForStream,
+            includeVideosInSearchForDownload,
+            classifyVideo
         )
+    }
+
+    @Bean
+    fun classifyVideo(topics: Topics): ClassifyVideo {
+        return ClassifyVideo(topics)
+    }
+
+    @Bean
+    fun includeVideosInSearchForStream(topics: Topics): IncludeVideosInSearchForStream {
+        return IncludeVideosInSearchForStream(topics = topics)
+    }
+
+    @Bean
+    fun includeVideosInSearchForDownload(topics: Topics): IncludeVideosInSearchForDownload {
+        return IncludeVideosInSearchForDownload(topics = topics)
     }
 
     @Bean

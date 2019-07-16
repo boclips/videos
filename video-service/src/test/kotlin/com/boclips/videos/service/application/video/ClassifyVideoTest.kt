@@ -1,7 +1,11 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,9 +17,9 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `publishes events for instructional videos`() {
-        val video = saveVideo(title = "the video title", legacyType = LegacyVideoType.INSTRUCTIONAL_CLIPS)
+        val video = TestFactories.createVideo(title = "the video title", type = LegacyVideoType.INSTRUCTIONAL_CLIPS)
 
-        classifyVideo(video.value)
+        classifyVideo(video)
 
         val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
@@ -25,9 +29,9 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `ignores stock videos`() {
-        val video = saveVideo(legacyType = LegacyVideoType.STOCK)
+        val video = TestFactories.createVideo(type = LegacyVideoType.STOCK)
 
-        classifyVideo(video.value)
+        classifyVideo(video)
 
         val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
@@ -36,9 +40,24 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `ignores news videos`() {
-        val video = saveVideo(legacyType = LegacyVideoType.NEWS)
+        val video = TestFactories.createVideo(type = LegacyVideoType.NEWS)
 
-        classifyVideo(video.value)
+        classifyVideo(video)
+
+        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+
+        assertThat(message).isNull()
+    }
+
+    @Test
+    fun `ignores unplayable video`() {
+        val video = TestFactories.createVideo(
+            playback = VideoPlayback.FaultyPlayback(
+                id = PlaybackId(value = "123", type = PlaybackProviderType.KALTURA)
+            )
+        )
+
+        classifyVideo(video)
 
         val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
