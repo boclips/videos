@@ -39,9 +39,9 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
-            .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
 
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
+            .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.searchVideos").doesNotExist())
             .andExpect(jsonPath("$._links.searchCollections").doesNotExist())
             .andExpect(jsonPath("$._links.videos").doesNotExist())
@@ -68,7 +68,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
-            .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
             .andExpect(
                 jsonPath(
                     "$._links.searchCollections.href",
@@ -101,6 +100,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$._links.videos").doesNotExist())
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
+            .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
     }
@@ -110,6 +110,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
+    }
+
+    @Test
+    fun `when can create or edit videos GET returns distribution methods`() {
+        mockMvc.perform(get("/v1").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
     }
 
     @Test
