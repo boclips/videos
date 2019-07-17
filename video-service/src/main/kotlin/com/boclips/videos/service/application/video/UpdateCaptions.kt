@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.Subscriptions
+import com.boclips.events.config.subscriptions.VideoCaptionsCreatedSubscription
 import com.boclips.events.types.video.VideoCaptionsCreated
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -11,7 +11,7 @@ import org.springframework.cloud.stream.annotation.StreamListener
 class UpdateCaptions(val videoRepository: VideoRepository, private val playbackRepository: PlaybackRepository) {
     companion object : KLogging()
 
-    @StreamListener(Subscriptions.VIDEO_CAPTIONS_CREATED)
+    @StreamListener(VideoCaptionsCreatedSubscription.CHANNEL)
     operator fun invoke(videoCaptionsCreated: VideoCaptionsCreated) {
         try {
             val video = videoRepository.find(VideoId(value = videoCaptionsCreated.videoId))!!

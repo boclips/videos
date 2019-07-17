@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.events.config.subscriptions.VideoSubjectClassifiedSubscription
 import com.boclips.events.types.Subject
 import com.boclips.events.types.video.VideoSubjectClassified
 import com.boclips.videos.service.domain.model.subjects.SubjectRepository
@@ -19,6 +20,9 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var subjectRepository: SubjectRepository
 
+    @Autowired
+    lateinit var videoSubjectClassifiedSubscription: VideoSubjectClassifiedSubscription
+
     @Test
     fun `stores subjects`() {
         val videoId = saveVideo()
@@ -31,7 +35,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
             .subjects(setOf(subjectTag))
             .build()
 
-        subscriptions.videoSubjectClassified().send(MessageBuilder.withPayload(event).build())
+        videoSubjectClassifiedSubscription.channel().send(MessageBuilder.withPayload(event).build())
 
         val video = videoRepository.find(videoId)!!
         assertThat(video.subjects).containsExactly(maths)
@@ -52,7 +56,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
             .subjects(setOf(subjectTag))
             .build()
 
-        subscriptions.videoSubjectClassified().send(MessageBuilder.withPayload(event).build())
+        videoSubjectClassifiedSubscription.channel().send(MessageBuilder.withPayload(event).build())
 
         val video = videoRepository.find(videoId)!!
         assertThat(video.subjects).containsExactly(subject)
