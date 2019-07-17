@@ -11,8 +11,8 @@ import org.springframework.web.util.UriComponentsBuilder
 
 class DistributionMethodsLinkBuilderTest {
     @Test
-    fun `returns link when user can create or update videos`() {
-        setSecurityContext("backoffice@boclips.com", UserRoles.INSERT_VIDEOS, UserRoles.UPDATE_VIDEOS)
+    fun `returns link when user can view distribution methods`() {
+        setSecurityContext("backoffice@boclips.com", UserRoles.VIEW_DISTRIBUTION_METHODS)
 
         val link = builder.distributionMethods()!!
 
@@ -21,7 +21,7 @@ class DistributionMethodsLinkBuilderTest {
     }
 
     @Test
-    fun `does not return link when user is not able to create or update videos`() {
+    fun `does not return link when user is not able to view distribution methods`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
 
         val link = builder.distributionMethods()

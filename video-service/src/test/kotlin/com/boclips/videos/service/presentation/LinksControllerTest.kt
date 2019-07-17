@@ -113,7 +113,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `when can create or edit videos GET returns distribution methods`() {
+    fun `when can view distribution methods GET returns distribution methods`() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))

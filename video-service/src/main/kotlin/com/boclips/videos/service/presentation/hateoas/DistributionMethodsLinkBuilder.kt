@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class DistributionMethodsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
 
     fun distributionMethods(rel: String = "distributionMethods") =
-        getIfHasAnyRole(UserRoles.INSERT_VIDEOS, UserRoles.UPDATE_VIDEOS) {
+        getIfHasAnyRole(UserRoles.VIEW_DISTRIBUTION_METHODS){
             Link(getRoot().toUriString(), rel)
         }
 

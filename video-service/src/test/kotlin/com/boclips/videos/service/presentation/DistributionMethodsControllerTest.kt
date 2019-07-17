@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +18,7 @@ class DistributionMethodsControllerTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can fetch distribution methods`() {
-        mockMvc.perform(get("/v1/distribution-methods"))
+        mockMvc.perform(get("/v1/distribution-methods").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(
