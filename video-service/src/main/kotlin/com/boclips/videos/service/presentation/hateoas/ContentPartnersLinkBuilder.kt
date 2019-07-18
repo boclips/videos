@@ -33,7 +33,7 @@ class ContentPartnersLinkBuilder {
             ControllerLinkBuilder.linkTo(
                 ControllerLinkBuilder.methodOn(ContentPartnerController::class.java).getContentPartners(
                     name = null,
-                    isOfficial = null,
+                    official = null,
                     accreditedToYtChannelId = null
                 )
             ).withRel("contentPartners")

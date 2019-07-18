@@ -1,6 +1,8 @@
 package com.boclips.videos.service.client.internal;
 
 import com.boclips.videos.service.client.*;
+import com.boclips.videos.service.client.exceptions.ContentPartnerExistsException;
+import com.boclips.videos.service.client.exceptions.IllegalContentPartnerRequestException;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import com.boclips.videos.service.client.internal.resources.*;
@@ -13,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -57,6 +60,43 @@ public class ApiClient implements VideoServiceClient {
                 throw new UnsupportedOperationException(e);
             }
         }
+    }
+
+    @Override
+    public ContentPartnerId create(CreateContentPartnerRequest request) {
+        try {
+            val uri = restTemplate.postForLocation(baseUrl + "/v1/content-partners", request);
+            val contentPartnerId = UriIdExtractor.extractId(uri, UriIdExtractor.CONTENT_PARTNER_ID_URI_PATTERN);
+            return ContentPartnerId
+                    .builder()
+                    .value(contentPartnerId)
+                    .build();
+
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().equals(CONFLICT)) {
+                throw new ContentPartnerExistsException();
+            } else if (e.getStatusCode().equals(BAD_REQUEST)) {
+                throw new IllegalContentPartnerRequestException();
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public List<ContentPartner> findOfficialContentPartner(String name) {
+        val params = new HashMap<String, Object>();
+        params.put("name", name);
+        params.put("official", true);
+
+        return getContentPartners(params);
+    }
+
+    @Override
+    public List<ContentPartner> findContentPartnerByYoutubeChannelId(String youtubeChannelId) {
+        val params = new HashMap<String, Object>();
+        params.put("accreditedToYtChannelId", youtubeChannelId);
+
+        return getContentPartners(params);
     }
 
     @Override
@@ -148,5 +188,14 @@ public class ApiClient implements VideoServiceClient {
         }
 
         return linkTemplate;
+    }
+
+    private List<ContentPartner> getContentPartners(HashMap<String, Object> params) {
+        String url = getLinks().get_links().getContentPartners().interpolate(params).getHref();
+
+        return Objects.requireNonNull(restTemplate.getForObject(
+                url,
+                ContentPartnersResource.class
+        )).toContentPartners();
     }
 }

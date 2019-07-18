@@ -51,10 +51,10 @@ class ContentPartnerController(
     @GetMapping
     fun getContentPartners(
         @RequestParam("name", required = false) name: String?,
-        @RequestParam("isOfficial", required = false) isOfficial: Boolean?,
+        @RequestParam("official", required = false) official: Boolean?,
         @RequestParam("accreditedToYtChannelId", required = false) accreditedToYtChannelId: String?
     ): Resources<Resource<ContentPartnerResource>> {
-        return fetchContentPartners(name = name, isOfficial = isOfficial, accreditedToYtChannelId = accreditedToYtChannelId)
+        return fetchContentPartners(name = name, official = official, accreditedToYtChannelId = accreditedToYtChannelId)
     }
 
     @GetMapping("/{id}")

@@ -111,7 +111,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
     private fun filterCommandsToBson(filter: ContentPartnerFilter): Bson =
         when (filter) {
             is ContentPartnerFilter.NameFilter -> ContentPartnerDocument::name eq filter.name
-            is ContentPartnerFilter.OfficialFilter -> if (filter.isOfficial) {
+            is ContentPartnerFilter.OfficialFilter -> if (filter.official) {
                 ContentPartnerDocument::youtubeChannelId eq null
             } else {
                 ContentPartnerDocument::youtubeChannelId ne null

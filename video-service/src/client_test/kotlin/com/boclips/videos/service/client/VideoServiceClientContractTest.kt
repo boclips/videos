@@ -81,6 +81,32 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
+    fun `get official content partners`() {
+        getClient().create(CreateContentPartnerRequest("ted", null))
+        getClient().create(CreateContentPartnerRequest("ted", "123"))
+
+        val contentPartners = getClient().findOfficialContentPartner("ted")
+
+        assertThat(contentPartners).hasSize(1)
+        assertThat(contentPartners[0].name).isEqualTo("ted")
+        assertThat(contentPartners[0].contentPartnerId).isNotNull()
+        assertThat(contentPartners[0].official).isTrue()
+    }
+
+    @Test
+    fun `get youtube content partners`() {
+        getClient().create(CreateContentPartnerRequest("ted", null))
+        getClient().create(CreateContentPartnerRequest("ted", "123"))
+
+        val contentPartners = getClient().findContentPartnerByYoutubeChannelId("123")
+
+        assertThat(contentPartners).hasSize(1)
+        assertThat(contentPartners[0].name).isEqualTo("ted")
+        assertThat(contentPartners[0].contentPartnerId).isNotNull()
+        assertThat(contentPartners[0].official).isFalse()
+    }
+
+    @Test
     fun `get CollectionId for raw identifier`() {
         val rawId = "test-collection-identifier"
 

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.client.internal.resources;
 
+import com.damnhandy.uri.template.UriTemplate;
 import lombok.*;
 
 import java.net.URI;
@@ -17,16 +18,8 @@ public class Link {
     }
 
     public Link interpolate(Map<String, Object> params) {
-        var newHref = href;
-
-        for (Map.Entry<String, Object> keyValue : params.entrySet()) {
-            val valueToReplace = String.format("{%s}", keyValue.getKey());
-            val valueToInsert = keyValue.getValue();
-            newHref = newHref.replace(valueToReplace, valueToInsert.toString());
-        }
-
         val newLink = new Link();
-        newLink.href = newHref;
+        newLink.href = UriTemplate.fromTemplate(href).expand(params);
         return newLink;
     }
 }

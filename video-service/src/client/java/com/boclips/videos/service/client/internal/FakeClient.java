@@ -12,6 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,6 +24,7 @@ public class FakeClient implements VideoServiceClient {
     private Map<VideoId, Playback> playbacks = new HashMap<>();
     private Set<Subject> subjects = new HashSet<>();
     private Map<String, List<Collection>> collectionsByUser = new HashMap<>();
+    private List<ContentPartner> contentPartners = new ArrayList<>();
 
     @Override
     public VideoId create(CreateVideoRequest request) {
@@ -62,6 +64,35 @@ public class FakeClient implements VideoServiceClient {
                 video.getContentPartnerId().equals(contentPartnerId) &&
                         video.getContentPartnerVideoId().equals(contentPartnerVideoId)
         );
+    }
+
+    @Override
+    public ContentPartnerId create(CreateContentPartnerRequest request) {
+        val newContentPartner = ContentPartner.builder()
+                .contentPartnerId(
+                        ContentPartnerId.builder()
+                                .value(nextId())
+                                .build()
+                )
+                .official(request.getAccreditedToYtChannelId() == null)
+                .name(request.getName()).build();
+
+        contentPartners.add(newContentPartner);
+        return newContentPartner.getContentPartnerId();
+    }
+
+    @Override
+    public List<ContentPartner> findOfficialContentPartner(String name) {
+        return contentPartners.stream()
+                .filter(contentPartner -> name.equals(contentPartner.getName()) && contentPartner.getOfficial())
+                .collect(toList());
+    }
+
+    @Override
+    public List<ContentPartner> findContentPartnerByYoutubeChannelId(String youtubeChannelId) {
+        return contentPartners.stream()
+                .filter(contentPartner -> !contentPartner.getOfficial())
+                .collect(Collectors.toList());
     }
 
     @Override

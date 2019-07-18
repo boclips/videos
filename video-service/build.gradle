@@ -38,7 +38,7 @@ sourceSets {
     client_test {
         kotlin {
             compileClasspath += client.output + main.output + test.output
-            runtimeClasspath += main.output + test.output
+            runtimeClasspath += client.output + main.output + test.output
 
             srcDir 'src/client_test/kotlin'
         }
@@ -200,6 +200,8 @@ dependencies {
         exclude group: 'junit', module: 'junit'
     }
 
+    clientImplementation("com.damnhandy:handy-uri-templates:2.1.8")
+
     client_testImplementation sourceSets.main.output
     client_testImplementation sourceSets.test.output
     client_testImplementation sourceSets.client.output
@@ -207,6 +209,7 @@ dependencies {
     client_testImplementation configurations.compile
     client_testImplementation configurations.testImplementation
     client_testImplementation configurations.clientCompile
+    client_testImplementation configurations.clientImplementation
 
     client_testRuntime configurations.runtime
     client_testRuntime configurations.testRuntime

@@ -13,10 +13,10 @@ class GetContentPartners(
 ) {
     operator fun invoke(
         name: String? = null,
-        isOfficial: Boolean? = null,
+        official: Boolean? = null,
         accreditedToYtChannelId: String? = null
     ): Resources<Resource<ContentPartnerResource>> {
-        val filters = ContentPartnerFiltersConverter.convert(name, isOfficial, accreditedToYtChannelId)
+        val filters = ContentPartnerFiltersConverter.convert(name, official, accreditedToYtChannelId)
 
         val contentPartners = contentPartnerRepository.findAll(filters)
             .map {

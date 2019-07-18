@@ -79,7 +79,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         saveContentPartner(accreditedToYtChannel = null)
 
         mockMvc.perform(
-            get("/v1/content-partners?isOfficial=true").asBoclipsEmployee()
+            get("/v1/content-partners?official=true").asBoclipsEmployee()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())

@@ -14,10 +14,10 @@ class ContentPartnerFiltersConverterTest {
     }
 
     @Test
-    fun `creates an isOfficial filter if present`() {
-        val filters = ContentPartnerFiltersConverter.convert(isOfficial = false, accreditedYTChannelId = null)
+    fun `creates an official filter if present`() {
+        val filters = ContentPartnerFiltersConverter.convert(official = false, accreditedYTChannelId = null)
 
-        assertThat(filters).containsExactly(ContentPartnerFilter.OfficialFilter(isOfficial = false))
+        assertThat(filters).containsExactly(ContentPartnerFilter.OfficialFilter(official = false))
     }
 
     @Test

@@ -20,7 +20,7 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.id).isNotEmpty()
         assertThat(contentPartnerResource.name).isNotEmpty()
         assertThat(contentPartnerResource.ageRange).isNotNull
-        assertThat(contentPartnerResource.isOfficial).isTrue()
+        assertThat(contentPartnerResource.official).isTrue()
         assertThat(contentPartnerResource.distributionMethods).isEqualTo(setOf(DistributionMethodResource.STREAM))
     }
 }

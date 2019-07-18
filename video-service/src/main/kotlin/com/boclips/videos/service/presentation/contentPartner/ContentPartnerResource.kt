@@ -9,6 +9,6 @@ open class ContentPartnerResource(
     val id: String,
     val name: String,
     val ageRange: AgeRangeResource? = null,
-    val isOfficial: Boolean,
+    val official: Boolean,
     val distributionMethods: Set<DistributionMethodResource>
 )

@@ -9,4 +9,5 @@ public class Links {
     private Link collection;
     private Link myCollections;
     private Link collectionsByOwner;
+    private Link contentPartners;
 }

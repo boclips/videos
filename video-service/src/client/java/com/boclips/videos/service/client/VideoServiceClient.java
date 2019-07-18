@@ -40,6 +40,12 @@ public interface VideoServiceClient {
 
     Boolean existsByContentPartnerInfo(String contentPartnerId, String contentPartnerVideoId);
 
+    ContentPartnerId create(CreateContentPartnerRequest request);
+
+    List<ContentPartner> findOfficialContentPartner(String name);
+
+    List<ContentPartner> findContentPartnerByYoutubeChannelId(String youtubeChannelId);
+
     Video get(VideoId id);
 
     VideoId rawIdToVideoId(String rawId);

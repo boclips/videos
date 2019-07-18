@@ -71,7 +71,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         ).contentPartnerId
 
         val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.OfficialFilter(isOfficial = true)))
+            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.OfficialFilter(official = true)))
 
         assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(officialContentPartnerId)
     }
@@ -110,7 +110,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         val retrievedContentPartners =
             mongoContentPartnerRepository.findAll(
                 listOf(
-                    ContentPartnerFilter.OfficialFilter(isOfficial = false),
+                    ContentPartnerFilter.OfficialFilter(official = false),
                     ContentPartnerFilter.NameFilter(name = "hello")
                 )
             )

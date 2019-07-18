@@ -11,7 +11,7 @@ object ContentPartnerToResourceConverter {
             id = contentPartner.contentPartnerId.value,
             name = contentPartner.name,
             ageRange = AgeRangeToResourceConverter.convert(contentPartner.ageRange),
-            isOfficial = when (contentPartner.credit) {
+            official = when (contentPartner.credit) {
                 is Credit.PartnerCredit -> true
                 is Credit.YoutubeCredit -> false
             },
