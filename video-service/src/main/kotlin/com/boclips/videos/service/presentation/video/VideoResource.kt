@@ -34,7 +34,7 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val rating: Double? = null,
     @get:JsonView(PublicApiProjection::class)
-    val source: String? = null,
+    val createdBy: String? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
     val contentPartner: String? = null,

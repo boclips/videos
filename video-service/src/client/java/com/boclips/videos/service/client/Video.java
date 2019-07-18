@@ -12,7 +12,7 @@ public class Video {
     private final String title;
     private final String description;
     private final LocalDate releasedOn;
-    private final String source;
+    private final String createdBy;
     private final String contentPartnerId;
     private final String contentPartnerVideoId;
     private final Playback playback;
