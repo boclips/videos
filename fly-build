@@ -12,7 +12,7 @@ trap tidy EXIT
 mkdir "$dir/version"
 echo TEST_VERSION > "$dir/version/version"
 
-YOUTUBE_API_KEY="$(lpass show youtube-playback-provider-contract-test --notes | cut -d' ' -f2)"
+YOUTUBE_API_KEY="$(get-k8s-concourse-secret boclips videos youtube-contract-test-api-key)"
 export YOUTUBE_API_KEY
 
 fly --target ci execute \
