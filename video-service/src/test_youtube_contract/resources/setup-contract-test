@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
-lpass show --notes "youtube-playback-provider-contract-test" > contract-test-setup.yml
+cwd="$(cd "$(dirname "$0")" && pwd)"
+
+api_key="$(decoded-secret boclips.videos concourse-main | jq -r '.["youtube-contract-test-api-key"]')"
+echo "YOUTUBE_API_KEY: $api_key" > "$cwd/contract-test-setup.yml"
