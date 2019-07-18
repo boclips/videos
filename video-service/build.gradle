@@ -31,7 +31,7 @@ idea {
 sourceSets {
     client {
         java {
-            srcDir 'src/client/kotlin'
+            srcDir 'src/client/java'
         }
     }
 
@@ -117,9 +117,11 @@ task testClient(type: Test) {
 }
 
 task buildClient(type: Jar) {
-    from(sourceSets.client.output) {
+    from(sourceSets.client.runtimeClasspath) {
         include '**/*.class'
+        include '**/*.jar'
     }
+
     archiveName("video-service-client-${version}.jar")
 }
 
