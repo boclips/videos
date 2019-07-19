@@ -18,7 +18,7 @@ public class VideoServiceHealthIndicator extends AbstractHealthIndicator {
     @Override
     protected void doHealthCheck(Health.Builder builder) {
         try {
-            videoServiceClient.existsByContentPartnerInfo("non-existing-provider", "video-id");
+            videoServiceClient.existsByContentPartnerInfo("non-existing-providerId", "video-id");
             builder.up();
         } catch (Exception e) {
             logger.warning(e.getMessage());

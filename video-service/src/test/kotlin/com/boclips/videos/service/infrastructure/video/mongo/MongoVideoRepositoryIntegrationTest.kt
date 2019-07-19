@@ -369,7 +369,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `find by content partner and content partner video id`() {
+    fun `find by content partner name and content partner video id`() {
         val video = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
             contentPartnerName = "TED Talks",
@@ -378,9 +378,27 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         mongoVideoRepository.create(video)
 
-        assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks", "ted-id-1")).isTrue()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks", "ted-id-2")).isFalse()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartner("TED Talks abc", "ted-id-1")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerName("TED Talks", "ted-id-1")).isTrue()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerName("TED Talks", "ted-id-2")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerName("TED Talks abc", "ted-id-1")).isFalse()
+    }
+
+    @Test
+    fun `find by content partner id and content partner video id`() {
+        val contentPartnerId = ContentPartnerId(value = "5d319070871956b43f45eb82")
+
+        val video = TestFactories.createVideo(
+            videoId = TestFactories.aValidId(),
+            contentPartnerVideoId = "ted-id-1",
+            contentPartnerId = contentPartnerId
+        )
+
+        mongoVideoRepository.create(video)
+
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId.value, "ted-id-1")).isTrue()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId.value, "ted-id-2")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(ObjectId().toHexString(), "ted-id-1")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId("invalid-hex-string", "ted-id-1")).isFalse()
     }
 
     @Test

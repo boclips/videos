@@ -28,7 +28,7 @@ public class FakeClient implements VideoServiceClient {
 
     @Override
     public VideoId create(CreateVideoRequest request) {
-        if (existsByContentPartnerInfo(request.getProvider(), request.getProviderVideoId())) {
+        if (existsByContentPartnerInfo(request.getProviderId(), request.getProviderVideoId())) {
             throw new VideoExistsException();
         }
 
@@ -48,7 +48,7 @@ public class FakeClient implements VideoServiceClient {
                 .description(request.getDescription())
                 .releasedOn(request.getReleasedOn())
                 .createdBy(request.getProvider())
-                .contentPartnerId(request.getProvider())
+                .contentPartnerId(request.getProviderId())
                 .contentPartnerVideoId(request.getProviderVideoId())
                 .playback(playback)
                 .build();

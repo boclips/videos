@@ -61,6 +61,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
     }
 
     override fun findById(contentPartnerId: ContentPartnerId): ContentPartner? {
+        if (!ObjectId.isValid(contentPartnerId.value)) {
+            return null
+        }
+
         return findByQuery(toBsonIdFilter(contentPartnerId))
     }
 

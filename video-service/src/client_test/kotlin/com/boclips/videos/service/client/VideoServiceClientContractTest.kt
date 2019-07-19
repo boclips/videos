@@ -12,6 +12,7 @@ import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.within
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -38,7 +39,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
                 title = "the title",
                 description = "the description",
                 playbackId = playbackId,
-                contentProviderId = "test-content-partner"
+                contentProvider = "test-content-partner"
             )
         )
 
@@ -183,13 +184,13 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val id1 = getClient().create(
             TestFactories.createCreateVideoRequest(
                 playbackId = "ref-id-123",
-                contentProviderId = "1"
+                contentProvider = "1"
             )
         )
         val id2 = getClient().create(
             TestFactories.createCreateVideoRequest(
                 playbackId = "ref-id-123",
-                contentProviderId = "2"
+                contentProvider = "2"
             )
         )
 
@@ -230,29 +231,31 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `lookup video by content partner id`() {
+        val contentPartnerId = "5d319cf8871956b43f45eb83"
         val request = TestFactories.createCreateVideoRequest(
-            contentProviderId = "ted",
+            contentProviderId = contentPartnerId,
             contentProviderVideoId = "123",
             playbackId = "ref-id-123"
         )
 
         getClient().create(request)
 
-        assertThat(getClient().existsByContentPartnerInfo("ted", "123")).isTrue()
-        assertThat(getClient().existsByContentPartnerInfo("ted", "124")).isFalse()
+        assertThat(getClient().existsByContentPartnerInfo(contentPartnerId, "123")).isTrue()
+        assertThat(getClient().existsByContentPartnerInfo(contentPartnerId, "124")).isFalse()
     }
 
     @Test
     fun `lookup video by content partner id with URL reserved chars`() {
+        val contentPartnerId = "5d319cf8871956b43f45eb83"
         val request = TestFactories.createCreateVideoRequest(
-            contentProviderId = "irrelevant",
+            contentProviderId = contentPartnerId,
             contentProviderVideoId = "?#&SP-123",
             playbackId = "ref-id-123"
         )
 
         getClient().create(request)
 
-        assertThat(getClient().existsByContentPartnerInfo("irrelevant", "?#&SP-123")).isTrue()
+        assertThat(getClient().existsByContentPartnerInfo(contentPartnerId, "?#&SP-123")).isTrue()
     }
 
     @Test

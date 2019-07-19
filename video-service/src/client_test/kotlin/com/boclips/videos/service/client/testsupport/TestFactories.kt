@@ -6,6 +6,7 @@ import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoId
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.TestFactories
+import org.bson.types.ObjectId
 import java.net.URI
 import java.time.LocalDate
 
@@ -22,7 +23,8 @@ object TestFactories {
     }
 
     fun createCreateVideoRequest(
-        contentProviderId: String = "ted",
+        contentProvider: String = "ted",
+        contentProviderId: String = ObjectId().toHexString(),
         contentProviderVideoId: String = "ted-123",
         title: String = "video title",
         description: String = "video description",
@@ -35,7 +37,8 @@ object TestFactories {
         subjects: Set<String> = emptySet()
     ): CreateVideoRequest {
         return CreateVideoRequest.builder()
-            .provider(contentProviderId)
+            .provider(contentProvider)
+            .providerId(contentProviderId)
             .providerVideoId(contentProviderVideoId)
             .title(title)
             .description(description)

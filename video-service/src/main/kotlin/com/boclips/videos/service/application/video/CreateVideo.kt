@@ -5,7 +5,6 @@ import com.boclips.events.types.video.VideoUpdated
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -123,7 +122,7 @@ class CreateVideo(
         contentPartnerName: String,
         contentPartnerVideoId: String
     ) {
-        if (videoRepository.existsVideoFromContentPartner(contentPartnerName, contentPartnerVideoId)) {
+        if (videoRepository.existsVideoFromContentPartnerName(contentPartnerName, contentPartnerVideoId)) {
             throw VideoExists(contentPartnerName, contentPartnerVideoId)
         }
     }

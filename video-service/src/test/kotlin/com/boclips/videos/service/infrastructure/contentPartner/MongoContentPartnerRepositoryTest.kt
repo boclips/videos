@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.contentPartner
 
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.DistributionMethod
@@ -36,6 +37,13 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.contentPartnerId)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
+    }
+
+    @Test
+    fun `findById does not throw for invalid object id`() {
+        val retrievedAsset = mongoContentPartnerRepository.findById(ContentPartnerId("invalid-hex-string"))
+
+        assertThat(retrievedAsset).isNull()
     }
 
     @Test
@@ -82,15 +90,24 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             TestFactories.createContentPartner(credit = Credit.PartnerCredit)
         ).contentPartnerId
 
-
         val accreditedToYtChannelContentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
         ).contentPartnerId
 
         val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.AccreditedTo(Credit.YoutubeCredit(channelId = "123"))))
+            mongoContentPartnerRepository.findAll(
+                listOf(
+                    ContentPartnerFilter.AccreditedTo(
+                        Credit.YoutubeCredit(
+                            channelId = "123"
+                        )
+                    )
+                )
+            )
 
-        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(accreditedToYtChannelContentPartner)
+        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(
+            accreditedToYtChannelContentPartner
+        )
     }
 
     @Test

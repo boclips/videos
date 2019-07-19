@@ -15,7 +15,8 @@ class CreateVideoRequestTest {
 
     private fun buildVideo(
         provider: String = "provider",
-        providerVideoId: String = "provider video id",
+        providerId: String = "providerId",
+        providerVideoId: String = "providerId video id",
         title: String = "title",
         description: String = "description",
         releasedOn: LocalDate = LocalDate.now(),
@@ -28,6 +29,7 @@ class CreateVideoRequestTest {
     ): CreateVideoRequest {
         return CreateVideoRequest.builder()
             .provider(provider)
+            .providerId(providerId)
             .providerVideoId(providerVideoId)
             .title(title)
             .description(description)

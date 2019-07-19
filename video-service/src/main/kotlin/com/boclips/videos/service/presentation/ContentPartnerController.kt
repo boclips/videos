@@ -42,7 +42,7 @@ class ContentPartnerController(
         @PathVariable("contentPartnerId") contentPartnerId: String,
         @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
     ): ResponseEntity<Void> {
-        val exists = videoRepository.existsVideoFromContentPartner(contentPartnerId, contentPartnerVideoId)
+        val exists = videoRepository.existsVideoFromContentPartnerId(contentPartnerId, contentPartnerVideoId)
 
         val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
         return ResponseEntity(status)

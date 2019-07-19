@@ -105,8 +105,16 @@ class MongoVideoRepository(
             is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
-            VideoFilter.IsDownloadable -> not(VideoDocument::distributionMethods contains  DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD))
-            VideoFilter.IsStreamable -> not(VideoDocument::distributionMethods contains DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_STREAM))
+            VideoFilter.IsDownloadable -> not(
+                VideoDocument::distributionMethods contains DistributionMethodDocument(
+                    DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD
+                )
+            )
+            VideoFilter.IsStreamable -> not(
+                VideoDocument::distributionMethods contains DistributionMethodDocument(
+                    DistributionMethodDocument.DELIVERY_METHOD_STREAM
+                )
+            )
         }
 
         val sequence = Sequence {
@@ -162,12 +170,31 @@ class MongoVideoRepository(
         logger.info("Bulk video update: $result")
     }
 
-    override fun existsVideoFromContentPartner(contentPartnerId: String, partnerVideoId: String): Boolean {
+    override fun existsVideoFromContentPartnerName(contentPartnerName: String, partnerVideoId: String): Boolean {
         val videoMatchingFilters = getVideoCollection()
             .find(
                 and(
-                    eq("source.contentPartner.name", contentPartnerId),
+                    eq("source.contentPartner.name", contentPartnerName),
                     eq("source.videoReference", partnerVideoId)
+                )
+            )
+            .first()
+
+        return Optional.ofNullable(videoMatchingFilters).isPresent
+    }
+
+    override fun existsVideoFromContentPartnerId(contentPartnerId: String, partnerVideoId: String): Boolean {
+        if (!ObjectId.isValid(contentPartnerId)) {
+            return false
+        }
+
+        val videoMatchingFilters = getVideoCollection()
+            .find(
+                and(
+                    VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
+                        contentPartnerId
+                    ),
+                    VideoDocument::source / SourceDocument::videoReference eq partnerVideoId
                 )
             )
             .first()

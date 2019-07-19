@@ -25,9 +25,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `video lookup by provider id returns 200 when video exists`() {
+        val contentPartner = saveContentPartner(name = "ted")
         saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
-        mockMvc.perform(head("/v1/content-partners/ted/videos/abc").asIngestor())
+        mockMvc.perform(head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc").asIngestor())
             .andExpect(status().isOk)
     }
 
@@ -85,7 +86,6 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
     }
-
 
     @Test
     fun `can filter content partners by youtube channel`() {
