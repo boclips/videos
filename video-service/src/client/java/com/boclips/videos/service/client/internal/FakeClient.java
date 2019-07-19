@@ -184,6 +184,7 @@ public class FakeClient implements VideoServiceClient {
         illegalPlaybackIds.clear();
         subjects.clear();
         collectionsByUser.clear();
+        contentPartners.clear();
     }
 
     public void addIllegalPlaybackId(String playbackId) {
