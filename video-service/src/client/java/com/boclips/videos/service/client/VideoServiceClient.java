@@ -36,11 +36,11 @@ public interface VideoServiceClient {
         return new ApiClient(baseUrl, restTemplate);
     }
 
-    VideoId create(CreateVideoRequest request);
+    VideoId createVideo(CreateVideoRequest request);
 
     Boolean existsByContentPartnerInfo(String contentPartnerId, String contentPartnerVideoId);
 
-    ContentPartnerId create(CreateContentPartnerRequest request);
+    ContentPartnerId createContentPartner(CreateContentPartnerRequest request);
 
     List<ContentPartner> findOfficialContentPartner(String name);
 

@@ -34,7 +34,7 @@ public class ApiClient implements VideoServiceClient {
     }
 
     @Override
-    public VideoId create(CreateVideoRequest request) {
+    public VideoId createVideo(CreateVideoRequest request) {
         try {
             val uri = restTemplate.postForLocation(baseUrl + "/v1/videos", request);
             return new VideoId(uri);
@@ -63,7 +63,7 @@ public class ApiClient implements VideoServiceClient {
     }
 
     @Override
-    public ContentPartnerId create(CreateContentPartnerRequest request) {
+    public ContentPartnerId createContentPartner(CreateContentPartnerRequest request) {
         try {
             val uri = restTemplate.postForLocation(baseUrl + "/v1/content-partners", request);
             val contentPartnerId = UriIdExtractor.extractId(uri, UriIdExtractor.CONTENT_PARTNER_ID_URI_PATTERN);

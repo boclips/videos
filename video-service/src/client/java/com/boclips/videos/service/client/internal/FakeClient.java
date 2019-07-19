@@ -27,7 +27,7 @@ public class FakeClient implements VideoServiceClient {
     private List<ContentPartner> contentPartners = new ArrayList<>();
 
     @Override
-    public VideoId create(CreateVideoRequest request) {
+    public VideoId createVideo(CreateVideoRequest request) {
         if (existsByContentPartnerInfo(request.getProviderId(), request.getProviderVideoId())) {
             throw new VideoExistsException();
         }
@@ -67,7 +67,7 @@ public class FakeClient implements VideoServiceClient {
     }
 
     @Override
-    public ContentPartnerId create(CreateContentPartnerRequest request) {
+    public ContentPartnerId createContentPartner(CreateContentPartnerRequest request) {
         val newContentPartner = ContentPartner.builder()
                 .contentPartnerId(
                         ContentPartnerId.builder()

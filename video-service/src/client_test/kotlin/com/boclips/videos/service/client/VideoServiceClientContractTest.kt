@@ -12,7 +12,6 @@ import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.within
-import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -34,7 +33,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     @Test
     fun `get a video`() {
         val playbackId = "ref-id-123"
-        val id = getClient().create(
+        val id = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
@@ -56,7 +55,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `404 error is thrown when requested video is not found`() {
-        val realVideoUriString = getClient().create(
+        val realVideoUriString = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
@@ -73,7 +72,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get VideoId for raw identifier`() {
-        val rawId = getClient().create(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")).uri.toString()
+        val rawId = getClient().createVideo(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")).uri.toString()
             .split('/').last()
 
         val id = getClient().rawIdToVideoId(rawId)
@@ -83,8 +82,8 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get official content partners`() {
-        getClient().create(CreateContentPartnerRequest("ted", null))
-        getClient().create(CreateContentPartnerRequest("ted", "123"))
+        getClient().createContentPartner(CreateContentPartnerRequest("ted", null))
+        getClient().createContentPartner(CreateContentPartnerRequest("ted", "123"))
 
         val contentPartners = getClient().findOfficialContentPartner("ted")
 
@@ -96,8 +95,8 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get youtube content partners`() {
-        getClient().create(CreateContentPartnerRequest("ted", null))
-        getClient().create(CreateContentPartnerRequest("ted", "123"))
+        getClient().createContentPartner(CreateContentPartnerRequest("ted", null))
+        getClient().createContentPartner(CreateContentPartnerRequest("ted", "123"))
 
         val contentPartners = getClient().findContentPartnerByYoutubeChannelId("123")
 
@@ -181,13 +180,13 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `create a kaltura video gives a unique id`() {
-        val id1 = getClient().create(
+        val id1 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = "ref-id-123",
                 contentProvider = "1"
             )
         )
-        val id2 = getClient().create(
+        val id2 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = "ref-id-123",
                 contentProvider = "2"
@@ -201,10 +200,10 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     @Test
     fun `create an existing video throws VideoExistsException`() {
         val aVideo = TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")
-        getClient().create(aVideo)
+        getClient().createVideo(aVideo)
 
         assertThrows<VideoExistsException> {
-            getClient().create(aVideo)
+            getClient().createVideo(aVideo)
         }
     }
 
@@ -213,13 +212,13 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val aVideo = TestFactories.createCreateVideoRequest(playbackId = "illegal-video")
 
         assertThrows<IllegalVideoRequestException> {
-            getClient().create(aVideo)
+            getClient().createVideo(aVideo)
         }
     }
 
     @Test
     fun `create a youtube persists video`() {
-        val id1 = getClient().create(
+        val id1 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = "ref-id-123",
                 playbackProvider = PlaybackProvider.YOUTUBE
@@ -238,7 +237,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             playbackId = "ref-id-123"
         )
 
-        getClient().create(request)
+        getClient().createVideo(request)
 
         assertThat(getClient().existsByContentPartnerInfo(contentPartnerId, "123")).isTrue()
         assertThat(getClient().existsByContentPartnerInfo(contentPartnerId, "124")).isFalse()
@@ -253,7 +252,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             playbackId = "ref-id-123"
         )
 
-        getClient().create(request)
+        getClient().createVideo(request)
 
         assertThat(getClient().existsByContentPartnerInfo(contentPartnerId, "?#&SP-123")).isTrue()
     }
@@ -311,7 +310,7 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         addSubject("Maths")
         addSubject("French")
 
-        val videoId = create(
+        val videoId = createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "Phenomenal test video",
                 description = "the description",
