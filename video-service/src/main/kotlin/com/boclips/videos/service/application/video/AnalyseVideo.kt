@@ -1,19 +1,18 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideoAnalysisRequested
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
 import mu.KLogging
-import org.springframework.messaging.support.MessageBuilder
-import java.util.Locale
+import java.util.*
 
 class AnalyseVideo(
     private val videoService: VideoService,
-    private val topics: Topics
+    private val eventBus: EventBus
 ) {
     companion object : KLogging()
 
@@ -37,7 +36,7 @@ class AnalyseVideo(
             .language(language)
             .build()
 
-        topics.videoAnalysisRequested().send(MessageBuilder.withPayload(videoToAnalyse).build())
+        eventBus.publish(videoToAnalyse)
 
         logger.info { "Analysis of video $videoId requested" }
     }

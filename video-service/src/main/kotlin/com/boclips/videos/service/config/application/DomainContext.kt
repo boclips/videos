@@ -1,6 +1,7 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.events.config.Topics
+
+import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.application.video.ClassifyVideo
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
@@ -56,18 +57,18 @@ class DomainContext(val mongoClient: MongoClient) {
     }
 
     @Bean
-    fun classifyVideo(topics: Topics): ClassifyVideo {
-        return ClassifyVideo(topics)
+    fun classifyVideo(eventBus: EventBus): ClassifyVideo {
+        return ClassifyVideo(eventBus)
     }
 
     @Bean
-    fun includeVideosInSearchForStream(topics: Topics): IncludeVideosInSearchForStream {
-        return IncludeVideosInSearchForStream(topics = topics)
+    fun includeVideosInSearchForStream(eventBus: EventBus): IncludeVideosInSearchForStream {
+        return IncludeVideosInSearchForStream(eventBus = eventBus)
     }
 
     @Bean
-    fun includeVideosInSearchForDownload(topics: Topics): IncludeVideosInSearchForDownload {
-        return IncludeVideosInSearchForDownload(topics = topics)
+    fun includeVideosInSearchForDownload(eventBus: EventBus): IncludeVideosInSearchForDownload {
+        return IncludeVideosInSearchForDownload(eventBus = eventBus)
     }
 
     @Bean

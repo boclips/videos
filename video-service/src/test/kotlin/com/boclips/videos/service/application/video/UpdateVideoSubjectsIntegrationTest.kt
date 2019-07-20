@@ -1,8 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoSubjectClassifiedSubscription
-import com.boclips.events.types.Subject
-import com.boclips.events.types.video.VideoSubjectClassified
+import com.boclips.eventbus.events.Subject
+import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -10,7 +9,6 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.messaging.support.MessageBuilder
 
 class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -19,9 +17,6 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var subjectRepository: SubjectRepository
-
-    @Autowired
-    lateinit var videoSubjectClassifiedSubscription: VideoSubjectClassifiedSubscription
 
     @Test
     fun `stores subjects`() {
@@ -35,7 +30,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
             .subjects(setOf(subjectTag))
             .build()
 
-        videoSubjectClassifiedSubscription.channel().send(MessageBuilder.withPayload(event).build())
+        fakeEventBus.publish(event)
 
         val video = videoRepository.find(videoId)!!
         assertThat(video.subjects).containsExactly(maths)
@@ -56,7 +51,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
             .subjects(setOf(subjectTag))
             .build()
 
-        videoSubjectClassifiedSubscription.channel().send(MessageBuilder.withPayload(event).build())
+        fakeEventBus.publish(event)
 
         val video = videoRepository.find(videoId)!!
         assertThat(video.subjects).containsExactly(subject)

@@ -1,14 +1,14 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoSubjectClassifiedSubscription
-import com.boclips.events.types.video.VideoSubjectClassified
+import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.videos.service.domain.model.subjects.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
-import org.springframework.cloud.stream.annotation.StreamListener
+
 
 class UpdateVideoSubjects(
     private val videoRepository: VideoRepository,
@@ -17,7 +17,7 @@ class UpdateVideoSubjects(
 ) {
     companion object : KLogging()
 
-    @StreamListener(VideoSubjectClassifiedSubscription.CHANNEL)
+    @BoclipsEventListener()
     operator fun invoke(videoSubjectClassified: VideoSubjectClassified) {
         val videoId = VideoId(videoSubjectClassified.videoId)
         try {

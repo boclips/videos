@@ -19,6 +19,7 @@ class InfrastructureContext(val mongoProperties: MongoProperties) {
 
     @Bean
     fun mongoClient(): MongoClient {
+        println("Creating bean mongo client")
         return KMongo.createClient(MongoClientURI(mongoProperties.determineUri()))
     }
 }

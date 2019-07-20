@@ -18,7 +18,7 @@ data class VideoDocument(
     val legalRestrictions: String,
     val language: String?,
     val transcript: String?,
-    val topics: List<TopicDocument>?,
+    val eventBus: List<TopicDocument>?,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
     val rating: List<UserRatingDocument> = emptyList(),

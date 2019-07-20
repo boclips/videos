@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.analytics
 
+import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -25,12 +26,10 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     fun `saves the event`() {
         savePlaybackEvent.execute(payload)
 
-        val event = messageCollector.forChannel(topics.videoSegmentPlayed()).poll()
+        val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
-        assertThat(event).isNotNull
-        assertThat(event.payload.toString()).contains("player-id")
-        assertThat(event.payload.toString()).contains("10")
-        assertThat(event.payload.toString()).contains("20")
-        assertThat(event.payload.toString()).contains("60")
+        assertThat(event.segmentEndSeconds).isEqualTo(20L)
+        assertThat(event.segmentStartSeconds).isEqualTo(10L)
+        assertThat(event.videoDurationSeconds).isEqualTo(60L)
     }
 }

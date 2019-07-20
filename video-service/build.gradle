@@ -15,10 +15,10 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-}
 
-ext {
-    set('springCloudVersion', 'Greenwich.SR1')
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 idea {
@@ -143,8 +143,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-    implementation("org.springframework.cloud:spring-cloud-gcp-starter-pubsub")
-    implementation("org.springframework.cloud:spring-cloud-gcp-pubsub-stream-binder")
 
     implementation("org.mongodb:mongo-java-driver:3.10.1")
 
@@ -154,7 +152,7 @@ dependencies {
     implementation('com.github.boclips:boclips-spring-web:0.64.0')
     implementation('com.github.boclips:boclips-spring-security:0.142.0')
     implementation("com.github.boclips:kaltura-client:0.65.0")
-    implementation("com.github.boclips:events:0.73.0")
+    implementation("com.github.boclips:event-bus:1.1.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     implementation("io.github.microutils:kotlin-logging:1.4.9")
@@ -175,7 +173,6 @@ dependencies {
         exclude group: 'junit', module: 'junit'
     }
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation("com.nhaarman:mockito-kotlin:1.5.0")
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -217,10 +214,3 @@ dependencies {
     client_testRuntime configurations.testRuntime
     client_testRuntime configurations.clientRuntime
 }
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
-

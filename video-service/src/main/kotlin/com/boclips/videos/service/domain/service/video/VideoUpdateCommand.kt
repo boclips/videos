@@ -20,7 +20,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
 
     class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)
     class ReplaceTranscript(videoId: VideoId, val transcript: String) : VideoUpdateCommand(videoId)
-    class ReplaceTopics(videoId: VideoId, val topics: Set<Topic>) : VideoUpdateCommand(videoId)
+    class ReplaceTopics(videoId: VideoId, val eventBus: Set<Topic>) : VideoUpdateCommand(videoId)
     class ReplaceKeywords(videoId: VideoId, val keywords: Set<String>) : VideoUpdateCommand(videoId)
     class ReplaceAgeRange(videoId: VideoId, val ageRange: AgeRange) : VideoUpdateCommand(videoId)
     class ReplaceContentPartner(videoId: VideoId, val contentPartner: ContentPartner) : VideoUpdateCommand(videoId)

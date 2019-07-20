@@ -1,10 +1,10 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.events.types.Captions
-import com.boclips.events.types.CaptionsFormat
-import com.boclips.events.types.video.VideoAnalysed
-import com.boclips.events.types.video.VideoAnalysedKeyword
-import com.boclips.events.types.video.VideoAnalysedTopic
+import com.boclips.eventbus.events.Captions
+import com.boclips.eventbus.events.CaptionsFormat
+import com.boclips.eventbus.events.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysedKeyword
+import com.boclips.eventbus.events.video.VideoAnalysedTopic
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
@@ -27,11 +27,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlay
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.subjects.Subject
 import com.boclips.videos.service.domain.model.subjects.SubjectId
-import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
@@ -54,7 +50,7 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.Locale
+import java.util.*
 
 object TestFactories {
 
@@ -73,7 +69,7 @@ object TestFactories {
         legalRestrictions: String = "",
         language: Locale? = null,
         transcript: String? = null,
-        topics: Set<Topic> = emptySet(),
+        eventBus: Set<Topic> = emptySet(),
         distributionMethods: Set<DistributionMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         ratings: List<UserRating> = emptyList(),
@@ -98,7 +94,7 @@ object TestFactories {
             subjects = subjects,
             language = language,
             transcript = transcript,
-            topics = topics,
+            eventBus = eventBus,
             distributionMethods = distributionMethods,
             ageRange = ageRange,
             contentPartner = contentPartner,

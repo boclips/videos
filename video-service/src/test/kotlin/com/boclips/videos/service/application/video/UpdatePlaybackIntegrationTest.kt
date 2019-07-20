@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoPlaybackSyncRequestedSubscription
-import com.boclips.events.types.video.VideoPlaybackSyncRequested
+import com.boclips.eventbus.events.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -9,9 +8,9 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.messaging.support.MessageBuilder
 import java.time.Duration
 
 class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
@@ -21,9 +20,6 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var requestPlaybackUpdate: RequestPlaybackUpdate
-
-    @Autowired
-    lateinit var videoPlaybackSyncRequestedSubscription: VideoPlaybackSyncRequestedSubscription
 
     @Test
     fun `subscribes to video playback sync request event and handles it`() {
@@ -42,8 +38,7 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        videoPlaybackSyncRequestedSubscription.channel()
-            .send(MessageBuilder.withPayload(event).build())
+        fakeEventBus.publish(event)
 
         val updatedAsset = videoRepository.find(videoId)!!
         Assertions.assertThat(updatedAsset.playback).isNotNull
@@ -60,8 +55,7 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
         fakeYoutubePlaybackProvider.clear()
         val event = VideoPlaybackSyncRequested.builder().videoId(videoId.value).build()
 
-        videoPlaybackSyncRequestedSubscription.channel()
-            .send(MessageBuilder.withPayload(event).build())
+        fakeEventBus.publish(event)
     }
 
     @Test
@@ -71,12 +65,8 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
 
         requestPlaybackUpdate.invoke(source = "youtube")
 
-        Assertions.assertThat(messageCollector.forChannel(topics.videoPlaybackSyncRequested()).size).isEqualTo(1)
-
-        val message = messageCollector.forChannel(topics.videoPlaybackSyncRequested()).poll()
-        val event = objectMapper.readValue(message.payload.toString(), VideoPlaybackSyncRequested::class.java)
-
-        Assertions.assertThat(event.videoId).isEqualTo(youtube.value)
+        val event = fakeEventBus.getEventOfType(VideoPlaybackSyncRequested::class.java)
+        assertThat(event.videoId).isEqualTo(youtube.value)
     }
 
     @Test
@@ -86,12 +76,8 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
 
         requestPlaybackUpdate.invoke(source = "kaltura")
 
-        Assertions.assertThat(messageCollector.forChannel(topics.videoPlaybackSyncRequested()).size).isEqualTo(1)
-
-        val message = messageCollector.forChannel(topics.videoPlaybackSyncRequested()).poll()
-        val event = objectMapper.readValue(message.payload.toString(), VideoPlaybackSyncRequested::class.java)
-
-        Assertions.assertThat(event.videoId).isEqualTo(kaltura.value)
+        val event = fakeEventBus.getEventOfType(VideoPlaybackSyncRequested::class.java)
+        assertThat(event.videoId).isEqualTo(kaltura.value)
     }
 
     @Test

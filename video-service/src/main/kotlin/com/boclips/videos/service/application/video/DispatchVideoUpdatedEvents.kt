@@ -1,13 +1,12 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideoUpdated
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import org.springframework.messaging.support.MessageBuilder
 
 class DispatchVideoUpdatedEvents(
     private val videoRepository: VideoRepository,
-    private val topics: Topics
+    private val eventBus: EventBus
 ) {
 
     operator fun invoke() {
@@ -18,7 +17,7 @@ class DispatchVideoUpdatedEvents(
                     .title(video.title)
                     .contentPartnerName(video.contentPartner.name)
                     .build()
-                topics.videoUpdated().send(MessageBuilder.withPayload(event).build())
+                eventBus.publish(event)
             }
         }
     }

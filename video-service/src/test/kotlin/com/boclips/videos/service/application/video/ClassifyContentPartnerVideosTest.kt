@@ -1,7 +1,8 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -15,9 +16,8 @@ class ClassifyContentPartnerVideosTest : AbstractSpringIntegrationTest() {
 
         classifyContentPartnerVideos(null).get()
 
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
+        val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
 
-        Assertions.assertThat(message).isNotNull
-        Assertions.assertThat(message.payload.toString()).contains("matrix multiplication")
+        assertThat(event.title).isEqualTo("matrix multiplication")
     }
 }

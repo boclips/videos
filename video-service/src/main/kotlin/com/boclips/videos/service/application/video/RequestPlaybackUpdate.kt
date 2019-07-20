@@ -1,17 +1,16 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideoPlaybackSyncRequested
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import mu.KLogging
-import org.springframework.messaging.support.MessageBuilder
 
 open class RequestPlaybackUpdate(
     private val videoRepository: VideoRepository,
-    private val topics: Topics
+    private val eventBus: EventBus
 ) {
     companion object : KLogging() {
         const val KALTURA_FILTER = "kaltura"
@@ -40,7 +39,7 @@ open class RequestPlaybackUpdate(
                     .videoId(video.videoId.value)
                     .build()
 
-                topics.videoPlaybackSyncRequested().send(MessageBuilder.withPayload(videoToBeUpdated).build())
+                eventBus.publish(videoToBeUpdated)
                 logger.info { "Playback synchronization requested for video ${video.videoId}" }
             }
         }

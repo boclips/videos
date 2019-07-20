@@ -1,5 +1,8 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
+import com.boclips.eventbus.events.video.VideosInclusionInDownloadRequested
+import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.VideoSearchQuery
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -155,8 +158,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isTrue()
     }
 
     @Test
@@ -166,8 +169,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             TestFactories.createVideo(distributionMethods = setOf(DistributionMethod.STREAM))
         )
 
-        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
     }
 
     @Test
@@ -176,16 +179,16 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             videoToBeCreated = TestFactories.createVideo(distributionMethods = setOf(DistributionMethod.DOWNLOAD))
         )
 
-        assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
-        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isFalse()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isTrue()
     }
 
     @Test
     fun `created video does not become available in search`() {
         videoService.create(videoToBeCreated = TestFactories.createVideo(distributionMethods = emptySet()))
 
-        assertThatChannelHasNoMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isFalse()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
     }
 
     @Test
@@ -196,7 +199,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThatChannelHasNoMessages(topics.videosInclusionInDownloadRequested())
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
     }
 
     @Test
@@ -213,8 +216,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `when video is created it requests that the video subject is classified`() {
         videoService.create(videoToBeCreated = TestFactories.createVideo(title = "fractions"))
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
-        assertThat(message.payload.toString()).contains("fractions")
+        val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
+        assertThat(event.title).isEqualTo("fractions")
     }
 }

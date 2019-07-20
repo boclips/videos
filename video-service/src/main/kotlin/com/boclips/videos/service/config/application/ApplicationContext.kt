@@ -1,6 +1,7 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.events.config.Topics
+
+import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
@@ -88,7 +89,7 @@ class ApplicationContext(
     val collectionService: CollectionService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
-    val topics: Topics,
+    val eventBus: EventBus,
     val subjectRepository: SubjectRepository,
     val disciplineRepository: DisciplineRepository,
     val contentPartnerRepository: ContentPartnerRepository,
@@ -123,7 +124,7 @@ class ApplicationContext(
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
             analyseVideo,
-            topics
+            eventBus
         )
     }
 
@@ -154,12 +155,12 @@ class ApplicationContext(
 
     @Bean
     fun excludeVideosFromSearchForStream(): ExcludeVideosFromSearchForStream {
-        return ExcludeVideosFromSearchForStream(topics = topics)
+        return ExcludeVideosFromSearchForStream(eventBus = eventBus)
     }
 
     @Bean
     fun excludeVideosFromSearchForDownload(): ExcludeVideosFromSearchForDownload {
-        return ExcludeVideosFromSearchForDownload(topics = topics)
+        return ExcludeVideosFromSearchForDownload(eventBus = eventBus)
     }
 
     @Bean
@@ -266,7 +267,7 @@ class ApplicationContext(
 
     @Bean
     fun analyseVideo(): AnalyseVideo {
-        return AnalyseVideo(videoService, topics)
+        return AnalyseVideo(videoService, eventBus)
     }
 
     @Bean
@@ -281,7 +282,7 @@ class ApplicationContext(
 
     @Bean
     fun refreshVideoDurations(): RequestPlaybackUpdate {
-        return RequestPlaybackUpdate(videoRepository, topics)
+        return RequestPlaybackUpdate(videoRepository, eventBus)
     }
 
     @Bean
@@ -403,7 +404,7 @@ class ApplicationContext(
 
     @Bean
     fun dispatchVideoUpdatedEvents(): DispatchVideoUpdatedEvents {
-        return DispatchVideoUpdatedEvents(videoRepository, topics)
+        return DispatchVideoUpdatedEvents(videoRepository, eventBus)
     }
 
     private fun getVideoById(

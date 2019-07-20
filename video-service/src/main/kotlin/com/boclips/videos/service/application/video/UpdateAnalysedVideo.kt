@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoAnalysedSubscription
-import com.boclips.events.types.video.VideoAnalysed
-import com.boclips.events.types.video.VideoAnalysedTopic
+import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.events.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysedTopic
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Topic
@@ -14,7 +14,6 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import mu.KLogging
-import org.springframework.cloud.stream.annotation.StreamListener
 
 class UpdateAnalysedVideo(
     private val playbackRepository: PlaybackRepository,
@@ -23,7 +22,7 @@ class UpdateAnalysedVideo(
 ) {
     companion object : KLogging()
 
-    @StreamListener(VideoAnalysedSubscription.CHANNEL)
+    @BoclipsEventListener
     operator fun invoke(videoAnalysed: VideoAnalysed) {
         val videoId = videoAnalysed.videoId
         logger.info { "Updating analysed video $videoId" }
@@ -87,7 +86,7 @@ class UpdateAnalysedVideo(
         playbackRepository.uploadCaptions(video.playback.id, analysedVideo.captions)
     }
 
-    private fun convertTopics(topics: List<VideoAnalysedTopic>): Set<Topic> {
-        return topics.map(Topic.Companion::fromAnalysedVideoTopic).toSet()
+    private fun convertTopics(eventBus: List<VideoAnalysedTopic>): Set<Topic> {
+        return eventBus.map(Topic.Companion::fromAnalysedVideoTopic).toSet()
     }
 }

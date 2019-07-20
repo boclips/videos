@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.playback
 
-import com.boclips.events.types.Captions
+import com.boclips.eventbus.events.Captions
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.http.KalturaClientApiException

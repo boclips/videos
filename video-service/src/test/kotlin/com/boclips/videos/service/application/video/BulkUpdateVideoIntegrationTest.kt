@@ -1,5 +1,9 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.eventbus.events.video.VideosExclusionFromDownloadRequested
+import com.boclips.eventbus.events.video.VideosExclusionFromStreamRequested
+import com.boclips.eventbus.events.video.VideosInclusionInDownloadRequested
+import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -36,8 +40,9 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     emptySet()
                 )
             )
-            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
-            assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
+
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosExclusionFromStreamRequested::class.java)).isTrue()
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosExclusionFromDownloadRequested::class.java)).isTrue()
         }
 
         @Test
@@ -53,8 +58,9 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(videoRepository.findAll(videoIds).map { it.distributionMethods })
                 .isEqualTo(listOf(setOf(DistributionMethod.STREAM), setOf(DistributionMethod.STREAM)))
-            assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-            assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
+
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosExclusionFromDownloadRequested::class.java)).isTrue()
         }
 
         @Test
@@ -72,8 +78,9 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(videoRepository.findAll(videoIds).map { it.distributionMethods })
                 .isEqualTo(listOf(setOf(DistributionMethod.DOWNLOAD), setOf(DistributionMethod.DOWNLOAD)))
-            assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
-            assertThatChannelHasMessages(topics.videosExclusionFromStreamRequested())
+
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isTrue()
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosExclusionFromStreamRequested::class.java)).isTrue()
         }
 
         @Test
@@ -93,8 +100,8 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     DistributionMethod.ALL
                 )
             )
-            assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-            assertThatChannelHasMessages(topics.videosInclusionInDownloadRequested())
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
+            assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isTrue()
         }
     }
 

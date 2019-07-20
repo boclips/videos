@@ -1,12 +1,11 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideosExclusionFromStreamRequested
-import org.springframework.integration.support.MessageBuilder
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideosExclusionFromStreamRequested
 
-class ExcludeVideosFromSearchForStream(private val topics: Topics) {
+class ExcludeVideosFromSearchForStream(private val eventBus: EventBus) {
     operator fun invoke(videoIds: List<String>) {
         val message = VideosExclusionFromStreamRequested.builder().videoIds(videoIds).build()
-        topics.videosExclusionFromStreamRequested().send(MessageBuilder.withPayload(message).build())
+        eventBus.publish(message)
     }
 }

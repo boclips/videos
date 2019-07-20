@@ -44,7 +44,7 @@ class VideoDocumentConverterTest {
             legalRestrictions = "legal restrictions",
             language = Locale.GERMANY,
             transcript = "hello",
-            topics = setOf(
+            eventBus = setOf(
                 Topic(
                     name = "topic name",
                     language = Locale.forLanguageTag("es-ES"),
@@ -86,7 +86,7 @@ class VideoDocumentConverterTest {
             legalRestrictions = "",
             language = "",
             transcript = "",
-            topics = emptyList(),
+            eventBus = emptyList(),
             ageRangeMin = 0,
             ageRangeMax = 20,
             rating = emptyList(),

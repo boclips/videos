@@ -1,13 +1,12 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoPlaybackSyncRequestedSubscription
-import com.boclips.events.types.video.VideoPlaybackSyncRequested
+import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.events.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
-import org.springframework.cloud.stream.annotation.StreamListener
 
 class UpdatePlayback(
     private val videoRepository: VideoRepository,
@@ -20,7 +19,7 @@ class UpdatePlayback(
         handleUpdate(videoId)
     }
 
-    @StreamListener(VideoPlaybackSyncRequestedSubscription.CHANNEL)
+    @BoclipsEventListener()
     operator fun invoke(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
         try {
             handleUpdate(VideoId(value = videoPlaybackSyncRequestedEvent.videoId))

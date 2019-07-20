@@ -1,12 +1,12 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideosInclusionInStreamRequested
-import org.springframework.integration.support.MessageBuilder
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 
-class IncludeVideosInSearchForStream(private val topics: Topics) {
+class IncludeVideosInSearchForStream(private val eventBus: EventBus) {
     operator fun invoke(videoIds: List<String>) {
-        val message = VideosInclusionInStreamRequested.builder().videoIds(videoIds).build()
-        topics.videosInclusionInStreamRequested().send(MessageBuilder.withPayload(message).build())
+        val event = VideosInclusionInStreamRequested.builder().videoIds(videoIds).build()
+
+        eventBus.publish(event)
     }
 }

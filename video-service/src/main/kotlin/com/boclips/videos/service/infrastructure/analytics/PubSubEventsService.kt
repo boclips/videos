@@ -1,33 +1,24 @@
 package com.boclips.videos.service.infrastructure.analytics
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.User
-import com.boclips.events.types.base.Event
-import com.boclips.events.types.base.UserEvent
-import com.boclips.events.types.collection.CollectionAgeRangeChanged
-import com.boclips.events.types.collection.CollectionBookmarkChanged
-import com.boclips.events.types.collection.CollectionRenamed
-import com.boclips.events.types.collection.CollectionSubjectsChanged
-import com.boclips.events.types.collection.CollectionVisibilityChanged
-import com.boclips.events.types.collection.VideoAddedToCollection
-import com.boclips.events.types.collection.VideoRemovedFromCollection
-import com.boclips.events.types.video.VideoPlayerInteractedWith
-import com.boclips.events.types.video.VideoSegmentPlayed
-import com.boclips.events.types.video.VideosSearched
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.User
+import com.boclips.eventbus.events.base.UserEvent
+import com.boclips.eventbus.events.collection.*
+import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
+import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.common.Do
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.events.EventService
-import org.springframework.messaging.Message
-import org.springframework.messaging.support.MessageBuilder
 
 class PubSubEventsService(
-    val topics: Topics
+    val eventBus: EventBus
 ) : EventService {
     override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long, pageVideoIds: List<String>) {
-        topics.videosSearched().send(
+        eventBus.publish(
             msg(
                 VideosSearched.builder()
                     .query(query)
@@ -46,7 +37,7 @@ class PubSubEventsService(
     private fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommand: CollectionUpdateCommand) {
         Do exhaustive when (updateCommand) {
             is CollectionUpdateCommand.AddVideoToCollection ->
-                topics.videoAddedToCollection().send(
+                eventBus.publish(
                     msg(
                         VideoAddedToCollection.builder()
                             .collectionId(collectionId.value)
@@ -54,7 +45,7 @@ class PubSubEventsService(
                     )
                 )
             is CollectionUpdateCommand.RemoveVideoFromCollection ->
-                topics.videoRemovedFromCollection().send(
+                eventBus.publish(
                     msg(
                         VideoRemovedFromCollection.builder()
                             .collectionId(collectionId.value)
@@ -62,7 +53,7 @@ class PubSubEventsService(
                     )
                 )
             is CollectionUpdateCommand.RenameCollection ->
-                topics.collectionRenamed().send(
+                eventBus.publish(
                     msg(
                         CollectionRenamed.builder()
                             .collectionId(collectionId.value)
@@ -70,7 +61,7 @@ class PubSubEventsService(
                     )
                 )
             is CollectionUpdateCommand.ChangeVisibility ->
-                topics.collectionVisibilityChanged().send(
+                eventBus.publish(
                     msg(
                         CollectionVisibilityChanged.builder()
                             .collectionId(collectionId.value)
@@ -78,7 +69,7 @@ class PubSubEventsService(
                     )
                 )
             is CollectionUpdateCommand.ReplaceSubjects ->
-                topics.collectionSubjectsChanged().send(
+                eventBus.publish(
                     msg(
                         CollectionSubjectsChanged.builder()
                             .collectionId(collectionId.value)
@@ -86,7 +77,7 @@ class PubSubEventsService(
                     )
                 )
             is CollectionUpdateCommand.ChangeAgeRange ->
-                topics.collectionAgeRangeChanged().send(
+                eventBus.publish(
                     msg(
                         CollectionAgeRangeChanged.builder()
                             .collectionId(collectionId.value)
@@ -94,7 +85,7 @@ class PubSubEventsService(
                             .rangeMax(updateCommand.maxAge)
                     )
                 )
-            is CollectionUpdateCommand.RemoveSubjectFromCollection -> topics.collectionAgeRangeChanged().send(
+            is CollectionUpdateCommand.RemoveSubjectFromCollection -> eventBus.publish(
                 msg(
                     CollectionSubjectsChanged.builder()
                         .collectionId(collectionId.value)
@@ -104,7 +95,7 @@ class PubSubEventsService(
     }
 
     override fun saveBookmarkCollectionEvent(collectionId: CollectionId) {
-        topics.collectionBookmarkChanged().send(
+        eventBus.publish(
             msg(
                 CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(true)
             )
@@ -112,7 +103,7 @@ class PubSubEventsService(
     }
 
     override fun saveUnbookmarkCollectionEvent(collectionId: CollectionId) {
-        topics.collectionBookmarkChanged().send(
+        eventBus.publish(
             msg(
                 CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(false)
             )
@@ -127,7 +118,7 @@ class PubSubEventsService(
         segmentEndSeconds: Long,
         videoDurationSeconds: Long
     ) {
-        topics.videoSegmentPlayed().send(
+        eventBus.publish(
             msg(
                 VideoSegmentPlayed.builder()
                     .videoId(videoId.value)
@@ -148,7 +139,7 @@ class PubSubEventsService(
         subtype: String,
         payload: Map<String, Any>
     ) {
-        topics.videoPlayerInteractedWith().send(
+        eventBus.publish(
             msg(
                 VideoPlayerInteractedWith.builder()
                     .playerId(playerId)
@@ -161,18 +152,16 @@ class PubSubEventsService(
         )
     }
 
-    private fun msg(builder: UserEvent.UserEventBuilder<*, *>): Message<*> {
+    private fun msg(builder: UserEvent.UserEventBuilder<*, *>): UserEvent {
         val user = getCurrentUser().let {
             User.builder()
                 .id(it.id)
                 .isBoclipsEmployee(it.boclipsEmployee)
                 .build()
         }
-        return MessageBuilder.withPayload<Event?>(
-            builder
+        return builder
                 .user(user)
                 .url(RefererHeaderExtractor.getReferer())
                 .build()
-        ).build()
     }
 }

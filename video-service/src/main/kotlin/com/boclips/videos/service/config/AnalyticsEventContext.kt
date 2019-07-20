@@ -1,6 +1,7 @@
 package com.boclips.videos.service.config
 
-import com.boclips.events.config.Topics
+import com.boclips.eventbus.EventBus
+
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.domain.service.events.EventService
@@ -10,13 +11,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class AnalyticsEventContext(private val topics: Topics) {
+class AnalyticsEventContext(private val eventBus: EventBus) {
 
     @Bean
-    fun analyticsEventService(mongoClient: MongoClient): EventService = PubSubEventsService(topics)
+    fun analyticsEventService(mongoClient: MongoClient): EventService = PubSubEventsService(eventBus)
 
     @Bean
     fun savePlaybackEvent(eventService: EventService): SavePlaybackEvent {
+        println("creating bean save playback event")
         return SavePlaybackEvent(eventService = eventService)
     }
 

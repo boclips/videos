@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -48,11 +49,10 @@ class AddVideoToCollectionTest : AbstractSpringIntegrationTest() {
 
         addVideoToCollection(collectionId.value, videoId.value)
 
-        val message = messageCollector.forChannel(topics.videoAddedToCollection()).poll()
+        val event = fakeEventBus.getEventOfType(VideoAddedToCollection::class.java)
 
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(collectionId.value)
-        assertThat(message.payload.toString()).contains(videoId.value)
-        assertThat(message.payload.toString()).contains("me@me.com")
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.videoId).isEqualTo(videoId.value)
+        assertThat(event.user.id).isEqualTo("me@me.com")
     }
 }

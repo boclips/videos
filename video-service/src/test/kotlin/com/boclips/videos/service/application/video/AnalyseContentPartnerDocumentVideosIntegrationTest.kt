@@ -1,10 +1,10 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.messaging.Message
 
 class AnalyseContentPartnerDocumentVideosIntegrationTest(
     @Autowired val analyseContentPartnerVideos: AnalyseContentPartnerVideos
@@ -18,10 +18,6 @@ class AnalyseContentPartnerDocumentVideosIntegrationTest(
 
         analyseContentPartnerVideos("Ted", language = null)
 
-        val messages = mutableListOf<Message<*>>().apply {
-            messageCollector.forChannel(topics.videoAnalysisRequested()).drainTo(this)
-        }
-
-        assertThat(messages).hasSize(2)
+        assertThat(fakeEventBus.countEventsOfType(VideoAnalysisRequested::class.java)).isEqualTo(2)
     }
 }

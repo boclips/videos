@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideoUpdated
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
@@ -26,7 +26,6 @@ import com.boclips.videos.service.presentation.video.VideoResource
 import mu.KLogging
 import org.bson.types.ObjectId
 import org.springframework.hateoas.Resource
-import org.springframework.messaging.support.MessageBuilder
 
 class CreateVideo(
     private val videoService: VideoService,
@@ -37,7 +36,7 @@ class CreateVideo(
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
     private val analyseVideo: AnalyseVideo,
-    private val topics: Topics
+    private val eventBus: EventBus
 ) {
     companion object : KLogging()
 
@@ -107,7 +106,7 @@ class CreateVideo(
             .contentPartnerName(video.contentPartner.name)
             .build()
 
-        topics.videoUpdated().send(MessageBuilder.withPayload(event).build())
+        eventBus.publish(event)
     }
 
     private fun findVideoPlayback(playbackId: PlaybackId): VideoPlayback {

@@ -1,12 +1,11 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
-import org.springframework.integration.support.MessageBuilder
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideosExclusionFromDownloadRequested
 
-class ExcludeVideosFromSearchForDownload(private val topics: Topics) {
+class ExcludeVideosFromSearchForDownload(private val eventBus: EventBus) {
     operator fun invoke(videoIds: List<String>) {
         val message = VideosExclusionFromDownloadRequested.builder().videoIds(videoIds).build()
-        topics.videosExclusionFromDownloadRequested().send(MessageBuilder.withPayload(message).build())
+        eventBus.publish(message)
     }
 }

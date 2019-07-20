@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -48,11 +49,10 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
         setSecurityContext("me@me.com")
         unbookmarkCollection(collectionId.value)
 
-        val message = messageCollector.forChannel(topics.collectionBookmarkChanged()).poll()
+        val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
 
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(collectionId.value)
-        assertThat(message.payload.toString()).contains("me@me.com")
-        assertThat(message.payload.toString()).contains("false")
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.isBookmarked).isFalse()
     }
 }

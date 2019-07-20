@@ -1,20 +1,15 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideoCaptionsCreatedSubscription
-import com.boclips.events.types.video.VideoCaptionsCreated
+import com.boclips.eventbus.events.video.VideoCaptionsCreated
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.messaging.support.MessageBuilder
+
 
 class UpdateCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
-
-    @Autowired
-    lateinit var videoCaptionsCreatedSubscription: VideoCaptionsCreatedSubscription
 
     @Test
     fun `updates captions of a video`() {
@@ -25,9 +20,7 @@ class UpdateCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             .captions(TestFactories.createCaptions(content = "caption content"))
             .build()
 
-        val message = MessageBuilder.withPayload(captionsCreated).build()
-
-        videoCaptionsCreatedSubscription.channel().send(message)
+        fakeEventBus.publish(captionsCreated)
 
         val allVideoCaptions = fakeKalturaClient.getCaptionFilesByReferenceId("entry-id")
         assertThat(allVideoCaptions).isNotEmpty

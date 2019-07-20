@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
+import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asTeacher
@@ -39,16 +41,16 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isCreated)
 
-        val message = messageCollector.forChannel(topics.videoSegmentPlayed()).poll()
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(videoId)
-        assertThat(message.payload.toString()).contains("teacher@gmail.com")
-        assertThat(message.payload.toString()).contains("135")
-        assertThat(message.payload.toString()).contains("f249f486-fc04-48f7-7361-4413c13a4183")
-        assertThat(message.payload.toString()).contains("1469")
-        assertThat(message.payload.toString()).contains("1470")
-        assertThat(message.payload.toString()).contains("610")
-        assertThat(message.payload.toString()).contains("https://teachers.boclips.com/videos?q=abc")
+        val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
+
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.user.id).isEqualTo("teacher@gmail.com")
+        assertThat(event.videoIndex).isEqualTo(135)
+        assertThat(event.playerId).isEqualTo("f249f486-fc04-48f7-7361-4413c13a4183")
+        assertThat(event.segmentStartSeconds).isEqualTo(1469L)
+        assertThat(event.segmentEndSeconds).isEqualTo(1470L)
+        assertThat(event.videoDurationSeconds).isEqualTo(610L)
+        assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
     }
 
     @Test
@@ -77,19 +79,18 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isCreated)
 
-        val message = messageCollector.forChannel(topics.videoPlayerInteractedWith()).poll()
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(videoId)
-        assertThat(message.payload.toString()).contains("teacher@gmail.com")
-        assertThat(message.payload.toString()).contains("player-id-123")
-        assertThat(message.payload.toString()).contains(videoId)
-        assertThat(message.payload.toString()).contains("120")
-        assertThat(message.payload.toString()).contains("23")
-        assertThat(message.payload.toString()).contains("captions-on")
-        assertThat(message.payload.toString()).contains("caption-kind")
-        assertThat(message.payload.toString()).contains("caption-label")
-        assertThat(message.payload.toString()).contains("caption-language")
-        assertThat(message.payload.toString()).contains("caption-id")
+        val event = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
+
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.user.id).isEqualTo("teacher@gmail.com")
+        assertThat(event.playerId).isEqualTo("player-id-123")
+        assertThat(event.videoDurationSeconds).isEqualTo(120L)
+        assertThat(event.currentTime).isEqualTo(23L)
+        assertThat(event.subtype).isEqualTo("captions-on")
+        assertThat(event.payload).containsEntry("kind", "caption-kind")
+        assertThat(event.payload).containsEntry("label", "caption-label")
+        assertThat(event.payload).containsEntry("language", "caption-language")
+        assertThat(event.payload).containsEntry("id", "caption-id")
     }
 
     @Test

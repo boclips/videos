@@ -1,22 +1,18 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.video.VideosInclusionInDownloadRequested
+import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -217,8 +213,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             )
         ).andExpect(status().isNoContent)
 
-        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
-        assertThatChannelHasMessages(topics.videosExclusionFromDownloadRequested())
+
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
 
         mockMvc.perform(get("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee())
             .andExpect(status().isOk)

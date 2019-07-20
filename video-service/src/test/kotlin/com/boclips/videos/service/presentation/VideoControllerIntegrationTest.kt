@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
-import com.boclips.events.types.video.VideosExclusionFromStreamRequested
+import com.boclips.eventbus.events.video.VideosExclusionFromDownloadRequested
+import com.boclips.eventbus.events.video.VideosExclusionFromStreamRequested
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId

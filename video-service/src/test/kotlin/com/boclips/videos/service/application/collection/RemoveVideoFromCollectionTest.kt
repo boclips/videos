@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -36,12 +37,11 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
 
         removeVideoFromCollection(collectionId.value, videoId.value)
 
-        val message = messageCollector.forChannel(topics.videoRemovedFromCollection()).poll()
+        val event = fakeEventBus.getEventOfType(VideoRemovedFromCollection::class.java)
 
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(videoId.value)
-        assertThat(message.payload.toString()).contains(collectionId.value)
-        assertThat(message.payload.toString()).contains("owner@collection.com")
+        assertThat(event.videoId).isEqualTo(videoId.value)
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.user.id).isEqualTo("owner@collection.com")
     }
 
     @Test

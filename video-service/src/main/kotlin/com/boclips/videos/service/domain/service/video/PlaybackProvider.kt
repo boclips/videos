@@ -1,10 +1,10 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.events.types.Captions
+import com.boclips.eventbus.events.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
-import java.util.Locale
+import java.util.*
 
 interface PlaybackProvider {
     fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback>

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.analytics
 
+import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -30,16 +31,15 @@ class SavePlayerInteractedWithEventTest : AbstractSpringIntegrationTest() {
     fun `saves the event`() {
         savePlayerInteractedWithEvent.execute(payload)
 
-        val event = messageCollector.forChannel(topics.videoPlayerInteractedWith()).poll()
+        val firedEvent = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
 
-        assertThat(event).isNotNull
-        assertThat(event.payload.toString()).contains("player-id")
-        assertThat(event.payload.toString()).contains("captions-on")
-        assertThat(event.payload.toString()).contains("60")
-        assertThat(event.payload.toString()).contains("54")
-        assertThat(event.payload.toString()).contains("caption-kind")
-        assertThat(event.payload.toString()).contains("caption-language")
-        assertThat(event.payload.toString()).contains("caption-id")
-        assertThat(event.payload.toString()).contains("caption-label")
+        assertThat(firedEvent.playerId).isEqualTo("player-id")
+        assertThat(firedEvent.subtype).isEqualTo("captions-on")
+        assertThat(firedEvent.videoDurationSeconds).isEqualTo(60)
+        assertThat(firedEvent.currentTime).isEqualTo(54L)
+        assertThat(firedEvent.payload).containsEntry("kind", "caption-kind")
+        assertThat(firedEvent.payload).containsEntry("language", "caption-language")
+        assertThat(firedEvent.payload).containsEntry("id", "caption-id")
+        assertThat(firedEvent.payload).containsEntry("label", "caption-label")
     }
 }

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.contentPartner
 
+import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.DistributionMethod
@@ -101,7 +102,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThatChannelHasMessages(topics.videosInclusionInStreamRequested())
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
     }
 
     @Test

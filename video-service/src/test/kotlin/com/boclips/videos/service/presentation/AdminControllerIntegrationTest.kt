@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -107,11 +108,11 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
+        val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
-        assertThat(message.payload.toString()).contains(videoId.value)
-        assertThat(message.payload.toString()).contains("https://download/video-entry-123.mp4")
-        assertThat(message.payload.toString()).contains("en_US")
+        assertThat(event.videoId).contains(videoId.value)
+        assertThat(event.videoUrl).contains("https://download/video-entry-123.mp4")
+        assertThat(event.language.toLanguageTag()).isEqualTo("en-US")
     }
 
     @Test
@@ -127,9 +128,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
 
     @Test
@@ -138,10 +137,9 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
+        val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains("es_ES")
+        assertThat(event.language.toLanguageTag()).isEqualTo("es-ES")
     }
 
     @Test
@@ -154,9 +152,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator())
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
 
     @Test
@@ -164,9 +160,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
 
     @Test
@@ -179,13 +173,9 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `classify content partner videos returns 403 when user is not allowed`() {
-        messageCollector.forChannel(topics.videoSubjectClassificationRequested()).clear()
-
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
 }

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -21,10 +22,10 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
         classifyVideo(video)
 
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
 
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains("the video title")
+        val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
+
+        assertThat(event.title).isEqualTo("the video title")
     }
 
     @Test
@@ -33,9 +34,7 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
         classifyVideo(video)
 
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoSubjectClassificationRequested::class.java)).isFalse()
     }
 
     @Test
@@ -44,9 +43,7 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
         classifyVideo(video)
 
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoSubjectClassificationRequested::class.java)).isFalse()
     }
 
     @Test
@@ -59,8 +56,6 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
         classifyVideo(video)
 
-        val message = messageCollector.forChannel(topics.videoSubjectClassificationRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoSubjectClassificationRequested::class.java)).isFalse()
     }
 }

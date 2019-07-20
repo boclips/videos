@@ -1,13 +1,9 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.subscriptions.VideosExclusionFromDownloadRequestedSubscription
-import com.boclips.events.config.subscriptions.VideosExclusionFromStreamRequestedSubscription
-import com.boclips.events.config.subscriptions.VideosInclusionInDownloadRequestedSubscription
-import com.boclips.events.config.subscriptions.VideosInclusionInStreamRequestedSubscription
-import com.boclips.events.types.video.VideosExclusionFromDownloadRequested
-import com.boclips.events.types.video.VideosExclusionFromStreamRequested
-import com.boclips.events.types.video.VideosInclusionInDownloadRequested
-import com.boclips.events.types.video.VideosInclusionInStreamRequested
+import com.boclips.eventbus.events.video.VideosExclusionFromDownloadRequested
+import com.boclips.eventbus.events.video.VideosExclusionFromStreamRequested
+import com.boclips.eventbus.events.video.VideosInclusionInDownloadRequested
+import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
@@ -19,33 +15,16 @@ import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.messaging.support.MessageBuilder
 
 class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoRepository: VideoRepository
 
-    @Autowired
-    lateinit var videosExclusionFromStreamRequestedSubscription: VideosExclusionFromStreamRequestedSubscription
-
-    @Autowired
-    lateinit var videosExclusionFromDownloadRequestedSubscription: VideosExclusionFromDownloadRequestedSubscription
-
-    @Autowired
-    lateinit var videosInclusionInStreamRequestedSubscription: VideosInclusionInStreamRequestedSubscription
-
-    @Autowired
-    lateinit var videosInclusionInDownloadRequestedSubscription: VideosInclusionInDownloadRequestedSubscription
-
     @Test
     fun `removes videos from stream search index`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
-        videosExclusionFromStreamRequestedSubscription.channel().send(
-            MessageBuilder.withPayload(
-                VideosExclusionFromStreamRequested.builder().videoIds(listOf(id.value)).build()
-            ).build()
-        )
+        fakeEventBus.publish(VideosExclusionFromStreamRequested.builder().videoIds(listOf(id.value)).build())
 
         assertThat(videoSearchService.count(VideoQuery(ids = listOf(id.value)))).isEqualTo(0)
     }
@@ -54,11 +33,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     fun `removes videos from download search index`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
-        videosExclusionFromDownloadRequestedSubscription.channel().send(
-            MessageBuilder.withPayload(
-                VideosExclusionFromDownloadRequested.builder().videoIds(listOf(id.value)).build()
-            ).build()
-        )
+        fakeEventBus.publish(VideosExclusionFromDownloadRequested.builder().videoIds(listOf(id.value)).build())
 
         verify(legacyVideoSearchService).bulkRemoveFromSearch(listOf(id.value))
     }
@@ -67,11 +42,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
     fun `adds videos to stream search index`() {
         val id = saveVideo(contentProviderId = "deadb33f1225df4825e8b8f6")
 
-        videosInclusionInStreamRequestedSubscription.channel().send(
-            MessageBuilder.withPayload(
-                VideosInclusionInStreamRequested.builder().videoIds(listOf(id.value)).build()
-            ).build()
-        )
+        fakeEventBus.publish(VideosInclusionInStreamRequested.builder().videoIds(listOf(id.value)).build())
 
         assertThat(videoSearchService.count(VideoQuery(ids = listOf(id.value)))).isEqualTo(1)
     }
@@ -81,11 +52,7 @@ class BulkVideoSearchUpdateIntegrationTest : AbstractSpringIntegrationTest() {
         val cp = saveContentPartner(distributionMethods = setOf(DistributionMethodResource.STREAM))
         val id = saveVideo(contentProviderId = cp.contentPartnerId.value)
 
-        videosInclusionInDownloadRequestedSubscription.channel().send(
-            MessageBuilder.withPayload(
-                VideosInclusionInDownloadRequested.builder().videoIds(listOf(id.value)).build()
-            ).build()
-        )
+        fakeEventBus.publish(VideosInclusionInDownloadRequested.builder().videoIds(listOf(id.value)).build())
 
         verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
     }

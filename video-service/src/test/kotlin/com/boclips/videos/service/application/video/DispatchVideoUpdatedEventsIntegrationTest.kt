@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,9 +17,7 @@ class DispatchVideoUpdatedEventsIntegrationTest : AbstractSpringIntegrationTest(
 
         dispatchVideoUpdatedEvents()
 
-        val message = messageCollector.forChannel(topics.videoUpdated()).poll()
-
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains("waterfalls")
+        val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
+        assertThat(event.title).isEqualTo("waterfalls")
     }
 }

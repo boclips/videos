@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.eventbus.events.collection.CollectionRenamed
+import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.CollectionSearchQuery
@@ -37,12 +39,11 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateCollection(collectionId.value, UpdateCollectionRequest(title = "new title"))
 
-        val message = messageCollector.forChannel(topics.collectionRenamed()).poll()
+        val event = fakeEventBus.getEventOfType(CollectionRenamed::class.java)
 
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(collectionId.value)
-        assertThat(message.payload.toString()).contains("me@me.com")
-        assertThat(message.payload.toString()).contains("new title")
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.collectionTitle).isEqualTo("new title")
     }
 
     @Test
@@ -51,12 +52,11 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
 
-        val message = messageCollector.forChannel(topics.collectionVisibilityChanged()).poll()
+        val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
 
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(collectionId.value)
-        assertThat(message.payload.toString()).contains("me@me.com")
-        assertThat(message.payload.toString()).contains("true")
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.isPublic).isTrue()
     }
 
     @Test

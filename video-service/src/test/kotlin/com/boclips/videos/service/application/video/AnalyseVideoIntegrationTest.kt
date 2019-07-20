@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.types.video.VideoAnalysisRequested
+import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.util.Locale
+import java.util.*
 
 class AnalyseVideoIntegrationTest(
     @Autowired val analyseVideo: AnalyseVideo
@@ -26,8 +26,8 @@ class AnalyseVideoIntegrationTest(
 
         analyseVideo(videoId, language = Locale.GERMAN)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-        val event = objectMapper.readValue(message.payload.toString(), VideoAnalysisRequested::class.java)
+        val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
+
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
         assertThat(event.language).isEqualTo(Locale.GERMAN)
@@ -43,9 +43,7 @@ class AnalyseVideoIntegrationTest(
 
         analyseVideo(videoId, language = null)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
 
     @Test
@@ -57,9 +55,7 @@ class AnalyseVideoIntegrationTest(
 
         analyseVideo(videoId, language = null)
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-
-        assertThat(message).isNull()
+        assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
 
     @Test

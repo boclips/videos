@@ -1,15 +1,9 @@
 package com.boclips.videos.service.infrastructure.analytics
 
-import com.boclips.events.types.collection.CollectionAgeRangeChanged
-import com.boclips.events.types.collection.CollectionBookmarkChanged
-import com.boclips.events.types.collection.CollectionRenamed
-import com.boclips.events.types.collection.CollectionSubjectsChanged
-import com.boclips.events.types.collection.CollectionVisibilityChanged
-import com.boclips.events.types.collection.VideoAddedToCollection
-import com.boclips.events.types.collection.VideoRemovedFromCollection
-import com.boclips.events.types.video.VideoPlayerInteractedWith
-import com.boclips.events.types.video.VideoSegmentPlayed
-import com.boclips.events.types.video.VideosSearched
+import com.boclips.eventbus.events.collection.*
+import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
+import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.subjects.SubjectId
@@ -19,17 +13,14 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.asTeacher
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.messaging.MessageChannel
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import kotlin.reflect.KClass
 
 class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
@@ -48,14 +39,15 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
     fun saveSearchEvent() {
         eventService.saveSearchEvent(query = "the query", pageIndex = 4, pageSize = 2, totalResults = 20, pageVideoIds = listOf("v123"))
 
-        val message = getMessage(topics.videosSearched(), VideosSearched::class)
-        assertThat(message.query).isEqualTo("the query")
-        assertThat(message.pageIndex).isEqualTo(4)
-        assertThat(message.pageSize).isEqualTo(2)
-        assertThat(message.totalResults).isEqualTo(20)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.pageVideoIds).containsExactly("v123")
+        val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
+
+        assertThat(event.query).isEqualTo("the query")
+        assertThat(event.pageIndex).isEqualTo(4)
+        assertThat(event.pageSize).isEqualTo(2)
+        assertThat(event.totalResults).isEqualTo(20)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.pageVideoIds).containsExactly("v123")
     }
 
     @Test
@@ -69,11 +61,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.videoAddedToCollection(), VideoAddedToCollection::class)
-        assertThat(message.videoId).isEqualTo(videoId)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
+        val event = fakeEventBus.getEventOfType(VideoAddedToCollection::class.java)
+
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
     }
 
     @Test
@@ -86,8 +79,8 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.videoAddedToCollection(), VideoAddedToCollection::class)
-        assertThat(message.user.isBoclipsEmployee).isTrue()
+        val event = fakeEventBus.getEventOfType(VideoAddedToCollection::class.java)
+        assertThat(event.user.isBoclipsEmployee).isTrue()
     }
 
     @Test
@@ -101,11 +94,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.videoRemovedFromCollection(), VideoRemovedFromCollection::class)
-        assertThat(message.videoId).isEqualTo(videoId)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
+        val event = fakeEventBus.getEventOfType(VideoRemovedFromCollection::class.java)
+
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
     }
 
     @Test
@@ -118,11 +112,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.collectionRenamed(), CollectionRenamed::class)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.collectionTitle).isEqualTo("the new title")
+        val event = fakeEventBus.getEventOfType(CollectionRenamed::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.collectionTitle).isEqualTo("the new title")
     }
 
     @Test
@@ -135,11 +130,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.collectionVisibilityChanged(), CollectionVisibilityChanged::class)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.isPublic).isTrue()
+        val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.isPublic).isTrue()
     }
 
     @Test
@@ -150,8 +146,9 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.collectionVisibilityChanged(), CollectionVisibilityChanged::class)
-        assertThat(message.isPublic).isFalse()
+        val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
+
+        assertThat(event.isPublic).isFalse()
     }
 
     @Test
@@ -170,11 +167,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.collectionSubjectsChanged(), CollectionSubjectsChanged::class)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.subjects).containsExactly("subject-1")
+        val event = fakeEventBus.getEventOfType(CollectionSubjectsChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.subjects).containsExactly("subject-1")
     }
 
     @Test
@@ -187,12 +185,13 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.collectionAgeRangeChanged(), CollectionAgeRangeChanged::class)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.rangeMin).isEqualTo(5)
-        assertThat(message.rangeMax).isEqualTo(9)
+        val event = fakeEventBus.getEventOfType(CollectionAgeRangeChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.rangeMin).isEqualTo(5)
+        assertThat(event.rangeMax).isEqualTo(9)
     }
 
     @Test
@@ -203,8 +202,9 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.collectionAgeRangeChanged(), CollectionAgeRangeChanged::class)
-        assertThat(message.rangeMax as Any?).isNull()
+        val event = fakeEventBus.getEventOfType(CollectionAgeRangeChanged::class.java)
+
+        assertThat(event.rangeMax as Any?).isNull()
     }
 
     @Test
@@ -214,11 +214,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             collectionId = CollectionId(collectionId)
         )
 
-        val message = getMessage(topics.collectionBookmarkChanged(), CollectionBookmarkChanged::class)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.isBookmarked).isTrue()
+        val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.isBookmarked).isTrue()
     }
 
     @Test
@@ -228,11 +229,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             collectionId = CollectionId(collectionId)
         )
 
-        val message = getMessage(topics.collectionBookmarkChanged(), CollectionBookmarkChanged::class)
-        assertThat(message.collectionId).isEqualTo(collectionId)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.isBookmarked).isFalse()
+        val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.isBookmarked).isFalse()
     }
 
     @Test
@@ -247,15 +249,16 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             videoDurationSeconds = 50
         )
 
-        val message = getMessage(topics.videoSegmentPlayed(), VideoSegmentPlayed::class)
-        assertThat(message.videoId).isEqualTo(videoId)
-        assertThat(message.videoIndex).isEqualTo(2)
-        assertThat(message.playerId).isEqualTo("player-id")
-        assertThat(message.segmentStartSeconds).isEqualTo(123)
-        assertThat(message.segmentEndSeconds).isEqualTo(345)
-        assertThat(message.videoDurationSeconds).isEqualTo(50)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
+        val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
+
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.videoIndex).isEqualTo(2)
+        assertThat(event.playerId).isEqualTo("player-id")
+        assertThat(event.segmentStartSeconds).isEqualTo(123)
+        assertThat(event.segmentEndSeconds).isEqualTo(345)
+        assertThat(event.videoDurationSeconds).isEqualTo(50)
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
     }
 
     @Test
@@ -275,19 +278,20 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = getMessage(topics.videoPlayerInteractedWith(), VideoPlayerInteractedWith::class)
-        assertThat(message.user.id).isEqualTo("user@example.com")
-        assertThat(message.user.isBoclipsEmployee).isFalse()
-        assertThat(message.playerId).isEqualTo("player-id")
-        assertThat(message.videoId).isEqualTo(videoId)
-        assertThat(message.videoDurationSeconds).isEqualTo(50)
-        assertThat(message.currentTime).isEqualTo(34)
-        assertThat(message.subtype).isEqualTo("captions-on")
-        assertThat(message.payload.size).isGreaterThan(0)
-        assertThat(message.payload["kind"]).isEqualTo("caption-kind")
-        assertThat(message.payload["id"]).isEqualTo("caption-id")
-        assertThat(message.payload["language"]).isEqualTo("caption-language")
-        assertThat(message.payload["label"]).isEqualTo("caption-label")
+        val event = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
+
+        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.playerId).isEqualTo("player-id")
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.videoDurationSeconds).isEqualTo(50)
+        assertThat(event.currentTime).isEqualTo(34L)
+        assertThat(event.subtype).isEqualTo("captions-on")
+        assertThat(event.payload.size).isGreaterThan(0)
+        assertThat(event.payload["kind"]).isEqualTo("caption-kind")
+        assertThat(event.payload["id"]).isEqualTo("caption-id")
+        assertThat(event.payload["language"]).isEqualTo("caption-language")
+        assertThat(event.payload["label"]).isEqualTo("caption-label")
     }
 
     @Test
@@ -299,14 +303,8 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-        val message = getMessage(topics.videosSearched(), VideosSearched::class)
-        assertThat(message.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
-    }
+        val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
 
-    private fun <T : Any> getMessage(topicChannel: MessageChannel, cls: KClass<T>): T {
-        val message = messageCollector.forChannel(topicChannel).poll()
-        assertThat(message).isNotNull
-        val objectMapper = ObjectMapper()
-        return objectMapper.readValue(message.payload.toString(), cls.java)
+        assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
     }
 }

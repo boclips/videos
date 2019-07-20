@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -172,9 +173,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 1
         )
 
-        val message = messageCollector.forChannel(topics.videosSearched()).poll()
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains("why are camels so tall")
+        val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
+        assertThat(event.query).isEqualTo("why are camels so tall")
     }
 
     @Test

@@ -1,10 +1,8 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.Subject
-import com.boclips.events.types.video.VideoSubjectClassified
-import com.boclips.events.types.video.VideosInclusionInDownloadRequested
-import com.boclips.events.types.video.VideosInclusionInStreamRequested
+import com.boclips.eventbus.events.Subject
+import com.boclips.eventbus.events.video.VideoSubjectClassified
+import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.security.testing.setSecurityContext
@@ -33,11 +31,11 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -48,15 +46,13 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.cloud.stream.test.binder.MessageCollector
-import org.springframework.messaging.MessageChannel
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -104,16 +100,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var mongoClient: MongoClient
 
     @Autowired
-    lateinit var topics: Topics
-
-    @Autowired
-    lateinit var messageCollector: MessageCollector
-
-    @Autowired
-    lateinit var messageChannels: List<MessageChannel>
-
-    @Autowired
-    lateinit var objectMapper: ObjectMapper
+    lateinit var fakeEventBus: SynchronousFakeEventBus
 
     @Autowired
     lateinit var createSubject: CreateSubject
@@ -153,12 +140,7 @@ abstract class AbstractSpringIntegrationTest {
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
 
-        messageChannels.forEach { channel ->
-            try {
-                messageCollector.forChannel(channel).clear()
-            } catch (e: Exception) {
-            }
-        }
+        fakeEventBus.clearState()
 
         reset(legacyVideoSearchService)
     }
@@ -177,6 +159,11 @@ abstract class AbstractSpringIntegrationTest {
         legalRestrictions: String = "",
         ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11)
     ): VideoId {
+        createContentPartner(ContentPartnerRequest(
+            name = contentProvider,
+            distributionMethods = setOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM))
+        )
+
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(
                 createMediaEntry(
@@ -217,27 +204,7 @@ abstract class AbstractSpringIntegrationTest {
 
         val id = video.content.id
 
-        val distributionMethods = video.content.distributionMethods
-
-        if (distributionMethods.contains(DistributionMethodResource.DOWNLOAD)) {
-            bulkVideoSearchUpdate.invoke(
-                event = VideosInclusionInDownloadRequested.builder().videoIds(
-                    listOf(
-                        id!!
-                    )
-                ).build()
-            )
-        }
-
-        if (distributionMethods.contains(DistributionMethodResource.STREAM)) {
-            bulkVideoSearchUpdate.invoke(
-                event = VideosInclusionInStreamRequested.builder().videoIds(
-                    listOf(
-                        id
-                    )
-                ).build()
-            )
-        }
+        fakeEventBus.clearState()
 
         return VideoId(id!!)
     }
@@ -269,13 +236,13 @@ abstract class AbstractSpringIntegrationTest {
         val collectionId = createCollection(TestFactories.createCollectionRequest(title = title, videos = videos)).id
 
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = public, subjects = subjects))
-        messageCollector.forChannel(topics.collectionVisibilityChanged()).clear()
 
         bookmarkedBy?.let {
             setSecurityContext(it)
             bookmarkCollection(collectionId.value)
-            messageCollector.forChannel(topics.collectionBookmarkChanged()).clear()
         }
+
+        fakeEventBus.clearState()
 
         return collectionId
     }
@@ -286,7 +253,7 @@ abstract class AbstractSpringIntegrationTest {
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null
     ): ContentPartner {
-        return createContentPartner(
+        val createdContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = name,
                 ageRange = ageRange,
@@ -294,6 +261,10 @@ abstract class AbstractSpringIntegrationTest {
                 distributionMethods = distributionMethods
             )
         )
+
+        fakeEventBus.clearState()
+
+        return createdContentPartner
     }
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {
@@ -302,15 +273,5 @@ abstract class AbstractSpringIntegrationTest {
             .andExpect(jsonPath("$.error").exists())
             .andExpect(jsonPath("$.message").exists())
             .andExpect(jsonPath("$.path").exists())
-    }
-
-    fun assertThatChannelHasMessages(channel: MessageChannel) {
-        val messageSize = messageCollector.forChannel(channel).size
-        org.assertj.core.api.Assertions.assertThat(messageSize).isGreaterThan(0)
-    }
-
-    fun assertThatChannelHasNoMessages(channel: MessageChannel) {
-        val messageSize = messageCollector.forChannel(channel).size
-        org.assertj.core.api.Assertions.assertThat(messageSize).isEqualTo(0)
     }
 }

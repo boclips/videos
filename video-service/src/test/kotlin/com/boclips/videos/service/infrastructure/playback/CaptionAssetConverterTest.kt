@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.playback
 
-import com.boclips.events.types.CaptionsFormat.VTT
+import com.boclips.eventbus.events.CaptionsFormat.VTT
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset

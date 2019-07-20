@@ -442,7 +442,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `replaces topics`() {
+    fun `replaces eventBus`() {
         val video = mongoVideoRepository.create(TestFactories.createVideo(transcript = null))
         val topic = Topic(
             name = "Bayesian Methods",
@@ -455,7 +455,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
-        assertThat(updatedAsset!!.topics).containsExactly(topic)
+        assertThat(updatedAsset!!.eventBus).containsExactly(topic)
     }
 
     @Test

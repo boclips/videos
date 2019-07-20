@@ -1,14 +1,13 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideoSubjectClassificationRequested
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import mu.KLogging
-import org.springframework.messaging.support.MessageBuilder
 
 class ClassifyVideo(
-    private val topics: Topics
+    private val eventBus: EventBus
 ) {
     companion object : KLogging()
 
@@ -29,9 +28,7 @@ class ClassifyVideo(
             .description(video.description)
             .build()
 
-        val message = MessageBuilder.withPayload(videoSubjectClassificationRequested).build()
-
-        topics.videoSubjectClassificationRequested().send(message)
+        eventBus.publish(videoSubjectClassificationRequested)
         logger.info { "Publishing subject classification requested event for video ${video.videoId.value}" }
     }
 }

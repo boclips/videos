@@ -1,10 +1,10 @@
 package com.boclips.videos.service.domain.model.playback
 
-import com.boclips.events.types.Captions
+import com.boclips.eventbus.events.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
-import java.util.Locale
+import java.util.*
 
 class PlaybackRepository(
     private val kalturaPlaybackProvider: PlaybackProvider,

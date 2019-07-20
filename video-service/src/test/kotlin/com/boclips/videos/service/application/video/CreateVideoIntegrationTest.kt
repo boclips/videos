@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.events.types.video.VideoAnalysisRequested
+import com.boclips.eventbus.events.video.VideoAnalysisRequested
+import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
@@ -157,8 +158,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val message = messageCollector.forChannel(topics.videoAnalysisRequested()).poll()
-        val event = objectMapper.readValue(message.payload.toString(), VideoAnalysisRequested::class.java)
+        val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
         assertThat(event.videoId).isEqualTo(video.content.id)
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-$123.mp4")
@@ -170,9 +170,9 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createVideo(TestFactories.createCreateVideoRequest(playbackId = "1", title = "parabole"))
 
-        val message = messageCollector.forChannel(topics.videoUpdated()).poll()
+        val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
 
-        assertThat(message.payload.toString()).contains("parabole")
+        assertThat(event.title).contains("parabole")
     }
 
     @Test

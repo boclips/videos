@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
@@ -72,11 +73,9 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
         setSecurityContext("someone@else.com")
         bookmarkCollection(collectionId.value)
 
-        val message = messageCollector.forChannel(topics.collectionBookmarkChanged()).poll()
-
-        assertThat(message).isNotNull
-        assertThat(message.payload.toString()).contains(collectionId.value)
-        assertThat(message.payload.toString()).contains("someone@else.com")
-        assertThat(message.payload.toString()).contains("true")
+        val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.user.id).isEqualTo("someone@else.com")
+        assertThat(event.isBookmarked).isTrue()
     }
 }
