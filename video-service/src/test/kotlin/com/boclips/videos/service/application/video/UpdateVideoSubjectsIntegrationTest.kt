@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.events.Subject
 import com.boclips.eventbus.events.video.VideoSubjectClassified
-import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories

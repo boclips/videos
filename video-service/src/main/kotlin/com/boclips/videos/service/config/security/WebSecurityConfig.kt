@@ -47,6 +47,11 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(PUT, "/v1/disciplines/*/subjects").hasRole(ROLE.UPDATE_DISCIPLINES)
             .antMatchers(POST, "/v1/disciplines").hasRole(ROLE.INSERT_DISCIPLINES)
 
+            .antMatchers(GET, "/v1/tags").hasRole(ROLE.VIEW_TAGS)
+            .antMatchers(GET, "/v1/tags/*").hasRole(ROLE.VIEW_TAGS)
+            .antMatchers(POST, "/v1/tags").hasRole(ROLE.INSERT_TAGS)
+            .antMatchers(DELETE, "/v1/tags/*").hasRole(ROLE.DELETE_TAGS)
+
             .antMatchers(POST, "/v1/admin/actions/rebuild_video_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .antMatchers(POST, "/v1/admin/actions/rebuild_collection_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .antMatchers(POST, "/v1/admin/actions/build_legacy_search_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)

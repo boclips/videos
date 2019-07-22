@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.model.collection
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.Instant
 

@@ -18,16 +18,22 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
-import com.boclips.videos.service.domain.model.disciplines.Discipline
-import com.boclips.videos.service.domain.model.disciplines.DisciplineId
+import com.boclips.videos.service.domain.model.discipline.Discipline
+import com.boclips.videos.service.domain.model.discipline.DisciplineId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
-import com.boclips.videos.service.domain.model.subjects.Subject
-import com.boclips.videos.service.domain.model.subjects.SubjectId
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.tag.Tag
+import com.boclips.videos.service.domain.model.tag.TagId
+import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
@@ -40,6 +46,7 @@ import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequ
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
+import com.boclips.videos.service.presentation.tag.CreateTagRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoTypeResource
@@ -50,7 +57,7 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.*
+import java.util.Locale
 
 object TestFactories {
 
@@ -110,6 +117,15 @@ object TestFactories {
 
     fun createSubjectRequest(name: String? = null): CreateSubjectRequest =
         CreateSubjectRequest(name = name)
+
+
+    fun createTag(id: String = aValidId(), name: String = id): Tag =
+        Tag(
+            id = TagId(id), name = name
+        )
+
+    fun createTagRequest(name: String? = null): CreateTagRequest =
+        CreateTagRequest(name = name)
 
     fun createMediaEntry(
         id: String = "1",

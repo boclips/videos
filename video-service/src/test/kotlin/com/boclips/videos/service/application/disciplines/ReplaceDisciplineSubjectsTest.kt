@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.disciplines
 
-import com.boclips.videos.service.domain.model.disciplines.DisciplineRepository
-import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
+import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.presentation.disciplines.DisciplineResource
 import com.boclips.videos.service.testsupport.DisciplineFactory
 import com.nhaarman.mockito_kotlin.whenever

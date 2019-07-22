@@ -26,6 +26,10 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
+import com.boclips.videos.service.application.tag.CreateTag
+import com.boclips.videos.service.application.tag.DeleteTag
+import com.boclips.videos.service.application.tag.GetTag
+import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
 import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
@@ -57,9 +61,10 @@ import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.properties.PubSubVideoSearchabilityUpdateProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
-import com.boclips.videos.service.domain.model.disciplines.DisciplineRepository
+import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -91,6 +96,7 @@ class ApplicationContext(
     val eventService: EventService,
     val eventBus: EventBus,
     val subjectRepository: SubjectRepository,
+    val tagRepository: TagRepository,
     val disciplineRepository: DisciplineRepository,
     val contentPartnerRepository: ContentPartnerRepository,
     val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
@@ -308,6 +314,26 @@ class ApplicationContext(
     @Bean
     fun createSubject(): CreateSubject {
         return CreateSubject(subjectRepository)
+    }
+
+    @Bean
+    fun getTag(): GetTag {
+        return GetTag(tagRepository)
+    }
+
+    @Bean
+    fun deleteTag(): DeleteTag {
+        return DeleteTag(tagRepository)
+    }
+
+    @Bean
+    fun getTags(): GetTags {
+        return GetTags(tagRepository)
+    }
+
+    @Bean
+    fun createTag(): CreateTag {
+        return CreateTag(tagRepository)
     }
 
     @Bean

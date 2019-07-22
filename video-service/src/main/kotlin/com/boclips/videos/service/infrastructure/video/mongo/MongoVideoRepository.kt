@@ -21,6 +21,7 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
+import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter.toSubjectDocument
 import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter

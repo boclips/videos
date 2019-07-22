@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.subject
 
-import com.boclips.videos.service.domain.model.subjects.Subject
-import com.boclips.videos.service.domain.model.subjects.SubjectId
-import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import mu.KLogging

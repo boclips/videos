@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.disciplines
 
-import com.boclips.videos.service.domain.model.disciplines.Discipline
+import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import org.springframework.hateoas.Resource

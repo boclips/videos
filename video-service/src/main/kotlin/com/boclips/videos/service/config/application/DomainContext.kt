@@ -9,9 +9,10 @@ import com.boclips.videos.service.application.video.search.IncludeVideosInSearch
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
-import com.boclips.videos.service.domain.model.disciplines.DisciplineRepository
+import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -24,6 +25,7 @@ import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepos
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
+import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository
 import com.mongodb.MongoClient
 import io.micrometer.core.instrument.Counter
@@ -95,6 +97,11 @@ class DomainContext(val mongoClient: MongoClient) {
     @Bean
     fun subjectRepository(): SubjectRepository {
         return MongoSubjectRepository(mongoClient)
+    }
+
+    @Bean
+    fun tagtRepository(): TagRepository {
+        return MongoTagRepository(mongoClient)
     }
 
     @Bean

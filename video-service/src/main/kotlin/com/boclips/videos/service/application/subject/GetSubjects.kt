@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.presentation.subject.SubjectResource
 
 class GetSubjects(

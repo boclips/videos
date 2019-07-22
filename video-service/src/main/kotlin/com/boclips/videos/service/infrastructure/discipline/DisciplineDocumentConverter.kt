@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.discipline
 
-import com.boclips.videos.service.domain.model.disciplines.Discipline
+import com.boclips.videos.service.domain.model.discipline.Discipline
 import org.bson.types.ObjectId
 
 object DisciplineDocumentConverter {

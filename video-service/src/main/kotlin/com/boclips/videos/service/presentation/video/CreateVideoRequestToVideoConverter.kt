@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId

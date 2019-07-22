@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.disciplines
+package com.boclips.videos.service.domain.model.discipline
 
 interface DisciplineRepository {
     fun findAll(): List<Discipline>

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 
 sealed class CollectionsUpdateCommand {

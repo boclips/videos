@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.discipline
 
-import com.boclips.videos.service.domain.model.disciplines.Discipline
-import com.boclips.videos.service.domain.model.disciplines.DisciplineId
-import com.boclips.videos.service.domain.model.disciplines.DisciplineRepository
-import com.boclips.videos.service.domain.model.subjects.SubjectRepository
+import com.boclips.videos.service.domain.model.discipline.Discipline
+import com.boclips.videos.service.domain.model.discipline.DisciplineId
+import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
+import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import mu.KLogging

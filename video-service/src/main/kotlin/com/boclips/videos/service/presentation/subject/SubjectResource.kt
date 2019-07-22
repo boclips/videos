@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.subject
 
-import com.boclips.videos.service.domain.model.subjects.Subject
+import com.boclips.videos.service.domain.model.subject.Subject
 import org.springframework.hateoas.core.Relation
 
 @Relation(collectionRelation = "subjects")

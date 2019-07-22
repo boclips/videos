@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.subject
 
-import com.boclips.videos.service.domain.model.subjects.Subject
-import com.boclips.videos.service.domain.model.subjects.SubjectId
+import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.subject.SubjectId
 import org.bson.types.ObjectId
 
 object SubjectDocumentConverter {
