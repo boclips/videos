@@ -1,13 +1,13 @@
 package com.boclips.videos.service.infrastructure.playback
 
-import com.boclips.eventbus.events.CaptionsFormat.VTT
+import com.boclips.eventbus.events.video.CaptionsFormat
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.Locale
+import java.util.*
 
 class CaptionAssetConverterTest {
 
@@ -44,6 +44,6 @@ class CaptionAssetConverterTest {
 
     @Test
     fun `sets format`() {
-        assertThat(getCaptionAsset(createCaptions(format = VTT)).fileType).isEqualTo(CaptionFormat.WEBVTT)
+        assertThat(getCaptionAsset(createCaptions(format = CaptionsFormat.VTT)).fileType).isEqualTo(CaptionFormat.WEBVTT)
     }
 }

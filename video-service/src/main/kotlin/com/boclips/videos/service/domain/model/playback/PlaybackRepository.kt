@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.playback
 
-import com.boclips.eventbus.events.Captions
+import com.boclips.eventbus.events.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.service.video.PlaybackProvider

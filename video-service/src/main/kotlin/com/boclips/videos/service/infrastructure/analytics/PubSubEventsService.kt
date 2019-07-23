@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.analytics
 
 import com.boclips.eventbus.EventBus
-import com.boclips.eventbus.events.User
 import com.boclips.eventbus.events.base.UserEvent
 import com.boclips.eventbus.events.collection.*
+import com.boclips.eventbus.events.user.User
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched

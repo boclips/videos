@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.eventbus.events.Subject
+import com.boclips.eventbus.events.video.Subject
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository

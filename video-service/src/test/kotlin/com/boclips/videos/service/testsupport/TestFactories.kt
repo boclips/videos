@@ -1,10 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.eventbus.events.Captions
-import com.boclips.eventbus.events.CaptionsFormat
-import com.boclips.eventbus.events.video.VideoAnalysed
-import com.boclips.eventbus.events.video.VideoAnalysedKeyword
-import com.boclips.eventbus.events.video.VideoAnalysedTopic
+import com.boclips.eventbus.events.video.*
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
