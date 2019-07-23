@@ -376,6 +376,16 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(bookmarkedCollections.elements).hasSize(1)
             assertThat(bookmarkedCollections.elements.map { it.id }).contains(publicBookmarkedCollection.id)
         }
+
+        @Test
+        fun `find will ignore invalid IDs`() {
+            assertThat(collectionRepository.find(id = CollectionId(value = "1234"))).isNull()
+        }
+
+        @Test
+        fun `findAll will ignore invalid IDs`() {
+            assertThat(collectionRepository.findAll(ids = listOf(CollectionId(value = "1234")))).isEmpty()
+        }
     }
 
     @Nested

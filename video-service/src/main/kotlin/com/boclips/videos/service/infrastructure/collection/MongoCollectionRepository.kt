@@ -18,6 +18,7 @@ import mu.KLogging
 import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.bson.types.ObjectId.isValid
 import org.litote.kmongo.`in`
 import org.litote.kmongo.addToSet
 import org.litote.kmongo.and
@@ -59,6 +60,11 @@ class MongoCollectionRepository(
     }
 
     override fun find(id: CollectionId): Collection? {
+        if (!isValid(id.value)) {
+            logger.info { "Collection Id ${id.value} is invalid object id" }
+            return null
+        }
+
         val collectionDocument = dbCollection().findOne(CollectionDocument::id eq ObjectId(id.value))
         logger.info { "Found collection ${id.value}: $collectionDocument" }
 
@@ -66,7 +72,10 @@ class MongoCollectionRepository(
     }
 
     override fun findAll(ids: List<CollectionId>): List<Collection> {
-        val objectIds = ids.map { ObjectId(it.value) }
+        val objectIds = ids.filter {
+            logger.info { "Collection Id ${it.value} is invalid object id" }
+            isValid(it.value)
+        }.map { ObjectId(it.value) }
 
         return dbCollection().find(CollectionDocument::id `in` objectIds)
             .mapNotNull(CollectionDocumentConverter::toCollection)
