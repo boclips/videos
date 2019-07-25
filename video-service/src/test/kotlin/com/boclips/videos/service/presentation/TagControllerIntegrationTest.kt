@@ -67,6 +67,7 @@ class TagControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.tags", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.tags[0].id").exists())
             .andExpect(jsonPath("$._embedded.tags[0].label", equalTo("Explainer")))
+            .andExpect(jsonPath("$._embedded.tags[0]._links.self.href").exists())
             .andExpect(jsonPath("$._links.self.href").exists())
     }
 
