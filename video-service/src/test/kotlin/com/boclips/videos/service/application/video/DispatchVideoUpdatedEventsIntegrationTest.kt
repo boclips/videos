@@ -18,6 +18,6 @@ class DispatchVideoUpdatedEventsIntegrationTest : AbstractSpringIntegrationTest(
         dispatchVideoUpdatedEvents()
 
         val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
-        assertThat(event.title).isEqualTo("waterfalls")
+        assertThat(event.video.title).isEqualTo("waterfalls")
     }
 }

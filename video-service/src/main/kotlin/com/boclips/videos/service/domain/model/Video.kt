@@ -1,18 +1,15 @@
 package com.boclips.videos.service.domain.model
 
+import com.boclips.eventbus.domain.video.Video
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import java.time.LocalDate
-import java.util.Locale
+import java.util.*
 
 data class Video(
     val videoId: VideoId,
@@ -53,4 +50,18 @@ data class Video(
 
     fun isRatedByCurrentUser() =
         ratings.any { it.userId == getCurrentUserId() }
+
+    fun toEvent(): Video {
+        val subjects = subjects.map(Subject::toEvent)
+
+        return Video.builder()
+            .id(videoId.toEvent())
+            .title(title)
+            .contentPartner(contentPartner.toEvent())
+            .subjects(subjects)
+            .ageRange(ageRange.toEvent())
+            .build()
+    }
+
+
 }

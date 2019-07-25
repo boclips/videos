@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
-import com.boclips.eventbus.events.video.VideoUpdated
+import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.VideoSearchQuery
@@ -165,14 +165,14 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it dispatches a video updated event`() {
+    fun `it dispatches a video created event`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1"))
 
         createVideo(TestFactories.createCreateVideoRequest(playbackId = "1", title = "parabole"))
 
-        val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
+        val event = fakeEventBus.getEventOfType(VideoCreated::class.java)
 
-        assertThat(event.title).contains("parabole")
+        assertThat(event.video.title).isEqualTo("parabole")
     }
 
     @Test

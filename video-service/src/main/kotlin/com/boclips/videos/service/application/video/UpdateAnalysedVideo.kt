@@ -1,18 +1,15 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
-import com.boclips.eventbus.events.video.VideoAnalysedTopic
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
 import mu.KLogging
 
 class UpdateAnalysedVideo(

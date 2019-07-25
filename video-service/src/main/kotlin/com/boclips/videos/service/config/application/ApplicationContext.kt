@@ -3,21 +3,8 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.videos.service.application.collection.AddVideoToCollection
-import com.boclips.videos.service.application.collection.BookmarkCollection
-import com.boclips.videos.service.application.collection.CreateCollection
-import com.boclips.videos.service.application.collection.DeleteCollection
-import com.boclips.videos.service.application.collection.GetCollection
-import com.boclips.videos.service.application.collection.GetCollections
-import com.boclips.videos.service.application.collection.RebuildCollectionIndex
-import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
-import com.boclips.videos.service.application.collection.UnbookmarkCollection
-import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.videos.service.application.contentPartner.CreateContentPartner
-import com.boclips.videos.service.application.contentPartner.GetContentPartner
-import com.boclips.videos.service.application.contentPartner.GetContentPartners
-import com.boclips.videos.service.application.contentPartner.RequestBulkVideoSearchUpdateByContentPartner
-import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
+import com.boclips.videos.service.application.collection.*
+import com.boclips.videos.service.application.contentPartner.*
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
@@ -30,35 +17,8 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
-import com.boclips.videos.service.application.video.AnalyseVideo
-import com.boclips.videos.service.application.video.BuildLegacySearchIndex
-import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
-import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
-import com.boclips.videos.service.application.video.ClassifyVideo
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
-import com.boclips.videos.service.application.video.GetVideoTranscript
-import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.RebuildVideoIndex
-import com.boclips.videos.service.application.video.RequestPlaybackUpdate
-import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.application.video.UpdateAnalysedVideo
-import com.boclips.videos.service.application.video.UpdateCaptions
-import com.boclips.videos.service.application.video.UpdatePlayback
-import com.boclips.videos.service.application.video.UpdateTranscripts
-import com.boclips.videos.service.application.video.UpdateVideoSubjects
-import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
-import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
-import com.boclips.videos.service.application.video.search.GetAllVideosById
-import com.boclips.videos.service.application.video.search.GetVideoById
-import com.boclips.videos.service.application.video.search.GetVideosByQuery
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
-import com.boclips.videos.service.application.video.search.SearchQueryConverter
-import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.search.*
 import com.boclips.videos.service.config.properties.PubSubVideoSearchabilityUpdateProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -130,8 +90,7 @@ class ApplicationContext(
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
-            analyseVideo,
-            eventBus
+            analyseVideo
         )
     }
 

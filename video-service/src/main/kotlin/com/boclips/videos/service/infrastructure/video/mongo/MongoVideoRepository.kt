@@ -7,29 +7,12 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDistributionMethods
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter.toSubjectDocument
-import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.UserRatingDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.UserTagDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.VideoDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.*
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
@@ -48,7 +31,8 @@ import org.litote.kmongo.not
 import org.litote.kmongo.push
 import org.litote.kmongo.set
 import java.time.Instant
-import java.util.Optional
+import java.util.*
+import kotlin.collections.toList
 
 class MongoVideoRepository(
     private val mongoClient: MongoClient
@@ -67,7 +51,7 @@ class MongoVideoRepository(
     }
 
     override fun findAll(videoIds: List<VideoId>): List<Video> {
-        val objectIds = videoIds.map { ObjectId(it.value) }
+        val objectIds = videoIds.map { it.value }.distinct().map { ObjectId(it) }
 
         val videos = getVideoCollection()
             .find(VideoDocument::id `in` objectIds)
@@ -160,8 +144,8 @@ class MongoVideoRepository(
         return find(videoId) ?: throw VideoNotFoundException(videoId)
     }
 
-    override fun bulkUpdate(commands: List<VideoUpdateCommand>) {
-        if (commands.isEmpty()) return
+    override fun bulkUpdate(commands: List<VideoUpdateCommand>): List<Video> {
+        if (commands.isEmpty()) return emptyList()
 
         val updateDocs = commands.map { updateCommand ->
             UpdateOneModel<VideoDocument>(
@@ -172,6 +156,8 @@ class MongoVideoRepository(
 
         val result = getVideoCollection().bulkWrite(updateDocs)
         logger.info("Bulk video update: $result")
+
+        return findAll(commands.map { it.videoId })
     }
 
     override fun existsVideoFromContentPartnerName(contentPartnerName: String, partnerVideoId: String): Boolean {

@@ -1,5 +1,7 @@
 package com.boclips.videos.service.domain.model.common
 
+import com.boclips.eventbus.domain.AgeRange as EventAgeRange
+
 sealed class AgeRange {
     companion object {
         fun bounded(min: Int?, max: Int?) =
@@ -17,6 +19,10 @@ sealed class AgeRange {
     fun max() = when (this) {
         is BoundedAgeRange -> this.max
         UnboundedAgeRange -> null
+    }
+
+    fun toEvent(): EventAgeRange {
+        return EventAgeRange.builder().min(min()).max(max()).build()
     }
 }
 

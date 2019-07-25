@@ -1,10 +1,10 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.eventbus.events.video.Captions
-import com.boclips.eventbus.events.video.CaptionsFormat
+import com.boclips.eventbus.domain.video.Captions
+import com.boclips.eventbus.domain.video.CaptionsFormat
+import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
+import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
-import com.boclips.eventbus.events.video.VideoAnalysedKeyword
-import com.boclips.eventbus.events.video.VideoAnalysedTopic
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
@@ -30,11 +30,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
@@ -58,7 +54,7 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.Locale
+import java.util.*
 
 object TestFactories {
 

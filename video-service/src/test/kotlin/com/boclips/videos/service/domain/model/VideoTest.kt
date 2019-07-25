@@ -1,8 +1,10 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -46,5 +48,27 @@ class VideoTest {
         val video = createVideo(ratings = listOf(UserRating(rating = 3, userId = UserId("anothertheacher"))))
 
         assertThat(video.isRatedByCurrentUser()).isFalse()
+    }
+
+    @Test
+    fun `toEvent creates a video event object`() {
+        val id = TestFactories.aValidId()
+        val video = createVideo(
+            videoId = id,
+            title = "the title",
+            contentPartnerName = "the content partner",
+            subjects = setOf(TestFactories.createSubject(name = "physics")),
+            ageRange = AgeRange.bounded(5, 10)
+        )
+
+        val videoEvent = video.toEvent()
+
+        assertThat(videoEvent.id.value).isEqualTo(id)
+        assertThat(videoEvent.title).isEqualTo("the title")
+        assertThat(videoEvent.contentPartner.name).isEqualTo("the content partner")
+        assertThat(videoEvent.subjects).hasSize(1)
+        assertThat(videoEvent.subjects.first().name).isEqualTo("physics")
+        assertThat(videoEvent.ageRange.min).isEqualTo(5)
+        assertThat(videoEvent.ageRange.max).isEqualTo(10)
     }
 }

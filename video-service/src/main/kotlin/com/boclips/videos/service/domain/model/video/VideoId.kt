@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
 import org.bson.types.ObjectId
+import com.boclips.eventbus.domain.video.VideoId as EventVideoId
 
 class VideoId(value: String) {
     val value: String
@@ -32,5 +33,9 @@ class VideoId(value: String) {
 
     override fun hashCode(): Int {
         return value.hashCode()
+    }
+
+    fun toEvent() : EventVideoId {
+        return EventVideoId.of(value)
     }
 }

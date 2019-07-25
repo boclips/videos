@@ -12,11 +12,7 @@ class DispatchVideoUpdatedEvents(
     operator fun invoke() {
         videoRepository.streamAll { videos ->
             videos.forEach { video ->
-                val event = VideoUpdated.builder()
-                    .videoId(video.videoId.value)
-                    .title(video.title)
-                    .contentPartnerName(video.contentPartner.name)
-                    .build()
+                val event = VideoUpdated.of(video.toEvent())
                 eventBus.publish(event)
             }
         }

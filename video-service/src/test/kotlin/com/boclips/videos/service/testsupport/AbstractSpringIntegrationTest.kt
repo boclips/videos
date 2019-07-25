@@ -1,6 +1,5 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.eventbus.events.video.Subject
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
@@ -35,7 +34,6 @@ import com.boclips.videos.service.presentation.collections.UpdateCollectionReque
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
-import com.boclips.videos.service.presentation.tag.CreateTagRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.mongodb.MongoClient
@@ -223,7 +221,7 @@ abstract class AbstractSpringIntegrationTest {
         updateVideoSubjects(
             VideoSubjectClassified.builder()
                 .videoId(videoId)
-                .subjects(subjectIds.map { Subject.builder().id(it.value).build() }.toSet())
+                .subjects(subjectIds.map { com.boclips.eventbus.domain.SubjectId(it.value) }.toSet())
                 .build()
         )
     }

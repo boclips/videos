@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.video.EventPublishingVideoRepository
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -34,7 +35,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Configuration
-class DomainContext(val mongoClient: MongoClient) {
+class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
 
     @Bean
     fun videoService(
@@ -91,7 +92,7 @@ class DomainContext(val mongoClient: MongoClient) {
 
     @Bean
     fun videoRepository(): VideoRepository {
-        return MongoVideoRepository(mongoClient)
+        return EventPublishingVideoRepository(MongoVideoRepository(mongoClient), eventBus)
     }
 
     @Bean
@@ -100,7 +101,7 @@ class DomainContext(val mongoClient: MongoClient) {
     }
 
     @Bean
-    fun tagtRepository(): TagRepository {
+    fun tagRepository(): TagRepository {
         return MongoTagRepository(mongoClient)
     }
 

@@ -1,7 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.eventbus.EventBus
-import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
@@ -35,8 +33,7 @@ class CreateVideo(
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
-    private val analyseVideo: AnalyseVideo,
-    private val eventBus: EventBus
+    private val analyseVideo: AnalyseVideo
 ) {
     companion object : KLogging()
 
@@ -75,8 +72,6 @@ class CreateVideo(
             triggerVideoAnalysis(createdVideo)
         }
 
-        dispatchVideoUpdated(createdVideo)
-
         return searchVideo.byId(createdVideo.videoId.value)
     }
 
@@ -97,16 +92,6 @@ class CreateVideo(
         } catch (exception: VideoNotAnalysableException) {
             logger.info { "Video cannot be analysed" }
         }
-    }
-
-    private fun dispatchVideoUpdated(video: Video) {
-        val event = VideoUpdated.builder()
-            .videoId(video.videoId.value)
-            .title(video.title)
-            .contentPartnerName(video.contentPartner.name)
-            .build()
-
-        eventBus.publish(event)
     }
 
     private fun findVideoPlayback(playbackId: PlaybackId): VideoPlayback {

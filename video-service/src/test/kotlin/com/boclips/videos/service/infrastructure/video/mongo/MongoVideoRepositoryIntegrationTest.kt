@@ -7,12 +7,7 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -26,13 +21,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var mongoVideoRepository: MongoVideoRepository
+    lateinit var mongoVideoRepository: VideoRepository
 
     val maths = TestFactories.createSubject(name = "Maths")
     val biology = TestFactories.createSubject(name = "Biology")
@@ -368,10 +362,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mongoVideoRepository.bulkUpdate(updates)
+        val updatedVideos = mongoVideoRepository.bulkUpdate(updates)
 
-        val updatedVideo1 = mongoVideoRepository.find(originalVideo1.videoId)!!
-        val updatedVideo2 = mongoVideoRepository.find(originalVideo2.videoId)!!
+        val updatedVideo1 = updatedVideos.find { it.videoId == originalVideo1.videoId }!!
+        val updatedVideo2 = updatedVideos.find { it.videoId == originalVideo2.videoId }!!
 
         assertThat(updatedVideo1).isEqualToIgnoringGivenFields(originalVideo1, "subjects", "duration", "playback")
         assertThat(updatedVideo1.playback.duration).isEqualTo(Duration.ofMinutes(10))
