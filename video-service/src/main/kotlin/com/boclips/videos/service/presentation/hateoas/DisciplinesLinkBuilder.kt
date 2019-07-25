@@ -3,11 +3,8 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.disciplines.DisciplineResource
 import org.springframework.hateoas.Link
-import org.springframework.stereotype.Component
 
-@Component
 class DisciplinesLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
-
     fun disciplines(rel: String = "disciplines") = getIfHasRole(UserRoles.VIEW_DISCIPLINES) {
         Link(getDisciplineRoot().toUriString(), rel)
     }

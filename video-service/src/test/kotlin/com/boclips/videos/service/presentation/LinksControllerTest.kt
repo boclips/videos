@@ -25,13 +25,11 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     private lateinit var mockMvc: MockMvc
 
     @Test
-    fun `when not authenticated`() {
+    fun `as a not authenticated`() {
         mockMvc.perform(get("/v1"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.video.href", containsString("/videos/{id}")))
             .andExpect(jsonPath("$._links.video.templated", equalTo(true)))
-            .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/events/playback")))
-            .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href", endsWith("/events/no-search-results")))
             .andExpect(
                 jsonPath(
                     "$._links.publicCollections.href",
@@ -40,6 +38,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
 
+            .andExpect(jsonPath("$._links.createPlaybackEvent.href").doesNotExist())
+            .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href").doesNotExist())
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
             .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.searchVideos").doesNotExist())
@@ -55,7 +55,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `when authenticated user`() {
+    fun `as an authenticated user`() {
         val userId = "teacher@teacher.com"
         mockMvc.perform(get("/v1").asTeacher(userId))
             .andDo(MockMvcResultHandlers.print())
@@ -109,21 +109,38 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `when can view restricted videos GET returns admin search`() {
+    fun `as a teacher I see deprecated links`() {
+        mockMvc.perform(get("/v1").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.createPlaybackEvent.href").exists())
+            .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href").exists())
+    }
+
+    @Test
+    fun `as Boclips employee see admin search`() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
     }
 
     @Test
-    fun `when can view distribution methods GET returns distribution methods`() {
+    fun `as Boclips employee see distribution methods`() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
     }
 
     @Test
-    fun `link to any users collection included when user has access rights`() {
+    fun `as Boclips employee I can view content partners link with correct role`() {
+        mockMvc.perform(get("/v1").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
+            .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
+            .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
+    }
+
+    @Test
+    fun `as subject classifier I can link to any users collection included when user has access rights`() {
         mockMvc.perform(get("/v1").asSubjectClassifier())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.collectionsByOwner.href", containsString("/collections?")))
@@ -145,14 +162,5 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             UriTemplate(searchUrlTemplate).expand(mapOf(("query" to "phrase"), ("size" to 1), ("page" to 1)))
 
         assertThat(searchUrl.toASCIIString()).endsWith("/videos?query=phrase&size=1&page=1")
-    }
-
-    @Test
-    fun `can view content partners link with correct role`() {
-        mockMvc.perform(get("/v1").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
-            .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
-            .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
     }
 }

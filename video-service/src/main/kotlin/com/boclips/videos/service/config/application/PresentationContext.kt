@@ -1,5 +1,7 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.videos.service.presentation.projections.RoleBasedProjectionResolver
 import com.boclips.videos.service.presentation.projections.WithProjection
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -22,4 +24,9 @@ class PresentationContext {
 
     @Bean
     fun withProjection() = WithProjection(projectionResolver())
+
+    @Bean
+    fun disciplinesLinkBuilder(uriComponentsBuilderFactory: UriComponentsBuilderFactory): DisciplinesLinkBuilder {
+        return DisciplinesLinkBuilder(uriComponentsBuilderFactory)
+    }
 }

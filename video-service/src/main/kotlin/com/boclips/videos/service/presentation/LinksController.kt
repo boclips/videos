@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -8,6 +9,7 @@ import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.getIfHasRole
 import org.springframework.hateoas.Resource
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,8 +33,8 @@ class LinksController(
         return Resource(
             "", listOfNotNull(
                 videosLinkBuilder.videoLink(),
-                eventsLinkBuilder.createPlaybackEventLink(),
-                eventsLinkBuilder.createNoResultsEventLink(),
+                getIfHasRole(UserRoles.TEACHER) { eventsLinkBuilder.createPlaybackEventLink() },
+                getIfHasRole(UserRoles.TEACHER) { eventsLinkBuilder.createNoResultsEventLink() },
                 collectionsLinkBuilder.publicCollections(),
                 subjectsLinkBuilder.subjects(),
                 distributionMethodsLinkBuilder.distributionMethods(),
