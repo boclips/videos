@@ -9,9 +9,9 @@ import org.junit.jupiter.api.assertThrows
 
 class CreateTagTest: AbstractSpringIntegrationTest() {
     @Test
-    fun `throws when missing name`() {
+    fun `throws when missing label`() {
         val createRequest = TestFactories.createTagRequest(
-            name = null
+            label = null
         )
 
         assertThrows<NonNullableFieldCreateRequestException> { createTag(createRequest) }
@@ -19,7 +19,7 @@ class CreateTagTest: AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when tag already exists`() {
-        val createRequest = TestFactories.createTagRequest(name = "Music")
+        val createRequest = TestFactories.createTagRequest(label = "Music")
 
         createTag(createRequest)
 

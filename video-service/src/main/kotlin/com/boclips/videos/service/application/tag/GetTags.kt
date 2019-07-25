@@ -8,6 +8,6 @@ class GetTags(
 ) {
     operator fun invoke(): List<TagResource> {
         return tagRepository.findAll()
-            .map { tag -> TagResource(id = tag.id.value, name = tag.name) }
+            .map { tag -> TagResource(id = tag.id.value, label = tag.label) }
     }
 }

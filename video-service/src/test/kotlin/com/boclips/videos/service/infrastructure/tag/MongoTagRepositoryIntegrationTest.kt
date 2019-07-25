@@ -13,19 +13,19 @@ class MongoTagRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find all tags`() {
-        mongoTagRepository.create(name = "Mathematics")
-        mongoTagRepository.create(name = "French")
+        mongoTagRepository.create(label = "Mathematics")
+        mongoTagRepository.create(label = "French")
 
         val tags = mongoTagRepository.findAll()
 
         assertThat(tags).hasSize(2)
         assertThat(tags.first().id).isNotNull
-        assertThat(tags.first().name).isEqualTo("Mathematics")
+        assertThat(tags.first().label).isEqualTo("Mathematics")
     }
 
     @Test
     fun `find by ids`() {
-        val maths = mongoTagRepository.create(name = "Mathematics")
+        val maths = mongoTagRepository.create(label = "Mathematics")
         val nonExistingTagId = TestFactories.aValidId()
 
         val tags = mongoTagRepository.findByIds(listOf(maths.id.value, nonExistingTagId))
@@ -35,27 +35,27 @@ class MongoTagRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create a tag`() {
-        mongoTagRepository.create(name = "Mathematics")
+        mongoTagRepository.create(label = "Mathematics")
 
         val tags = mongoTagRepository.findAll()
 
         assertThat(tags).hasSize(1)
         assertThat(tags.first().id).isNotNull
-        assertThat(tags.first().name).isEqualTo("Mathematics")
+        assertThat(tags.first().label).isEqualTo("Mathematics")
     }
 
     @Test
     fun `delete a tag`() {
-        val tag = mongoTagRepository.create(name = "Biology")
+        val tag = mongoTagRepository.create(label = "Biology")
 
-        mongoTagRepository.delete(tag.id);
+        mongoTagRepository.delete(tag.id)
 
         assertThat(mongoTagRepository.findAll()).isEmpty()
     }
 
     @Test
     fun `find by Id`() {
-        val tag = mongoTagRepository.create(name = "Biology")
+        val tag = mongoTagRepository.create(label = "Biology")
 
         val retrievedTag = mongoTagRepository.findById(tag.id)
 
@@ -63,11 +63,11 @@ class MongoTagRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `find by name`() {
-        mongoTagRepository.create(name = "French")
+    fun `find by label`() {
+        mongoTagRepository.create(label = "French")
 
-        val retrievedTag = mongoTagRepository.findByName("French")
+        val retrievedTag = mongoTagRepository.findByLabel("French")
 
-        assertThat(retrievedTag!!.name).isEqualTo("French")
+        assertThat(retrievedTag!!.label).isEqualTo("French")
     }
 }

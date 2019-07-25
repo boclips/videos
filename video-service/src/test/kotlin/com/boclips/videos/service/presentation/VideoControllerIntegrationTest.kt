@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
@@ -511,6 +512,37 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `tags video`() {
+        val videoId = saveVideo().value
+
+        val tagVideoUrl = getTaggingLink(videoId)
+        val tagUrl = createTag("A tag").andReturn().response.getHeader("Location")!!
+
+        mockMvc.perform(patch(tagVideoUrl).content(tagUrl)
+            .contentType("text/uri-list").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.bestFor.label", equalTo("A tag")))
+            .andExpect(jsonPath("$._links.tag").doesNotExist())
+
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.bestFor.label", equalTo("A tag")))
+            .andExpect(jsonPath("$._links.tag").doesNotExist())
+    }
+
+    @Test
+    fun `invalid tagging`() {
+        val videoId = saveVideo().value
+
+        val tagUrl = getTaggingLink(videoId)
+
+        mockMvc.perform(patch(tagUrl).content("not really a tag")
+            .contentType("text/uri-list").asTeacher())
+            .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
+    }
+
+    @Test
     fun `create new video`() {
         fakeKalturaClient.addMediaEntry(
             TestFactories.createMediaEntry(
@@ -860,6 +892,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         return rateUrl
     }
 
+    private fun getTaggingLink(videoId: String): String {
+        val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andReturn().response.contentAsString
+
+        val tagUrl = JsonPath.parse(videoResponse).read<String>("$._links.tag.href")
+        return tagUrl
+    }
+
     private fun saveVideoWithTranscript(): String {
         val videoId = saveVideo(
             title = "Today Video?",
@@ -901,5 +942,20 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)
+
+    fun createTag(name: String): ResultActions {
+        return mockMvc.perform(
+            post("/v1/tags").content(
+                """
+                {
+                  "label": "$name",
+                  "UserId": "User-1"
+                }
+                """.trimIndent()
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+    }
 }
 

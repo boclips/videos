@@ -61,7 +61,7 @@ class TagController(
             throw InvalidRequestApiException(
                 ExceptionDetails(
                     error = "Error creating tag",
-                    message = "The tag ${createTagRequest.name} already exists",
+                    message = "The tag ${createTagRequest.label} already exists",
                     status = HttpStatus.CONFLICT
                 )
             )

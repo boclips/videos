@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
@@ -30,6 +31,7 @@ data class Video(
     val transcript: String?,
     val ageRange: AgeRange,
     val ratings: List<UserRating>,
+    val tag: UserTag?,
     val distributionMethods: Set<DistributionMethod>
 ) {
     fun isPlayable(): Boolean {

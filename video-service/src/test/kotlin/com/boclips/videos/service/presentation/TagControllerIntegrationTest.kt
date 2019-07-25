@@ -16,19 +16,19 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class TagsControllerIntegrationTest : AbstractSpringIntegrationTest() {
+class TagControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mockMvc: MockMvc
 
     @Test
     fun `create a tag`() {
-        createTag(name = "Explainer")
+        createTag(label = "Explainer")
             .andExpect(status().isCreated)
     }
 
     @Test
-    fun `returns a status of 409 (Conflict) when attempting to create a tag with an existing name`() {
+    fun `returns a status of 409 (Conflict) when attempting to create a tag with an existing label`() {
         createTag("Explainer")
             .andExpect(status().isCreated)
 
@@ -44,7 +44,7 @@ class TagsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get(tagUrl).asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.name", equalTo("Explainer")))
+            .andExpect(jsonPath("$.label", equalTo("Explainer")))
             .andExpect(jsonPath("$._links.self.href").exists())
     }
 
@@ -59,23 +59,23 @@ class TagsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns list of tags`() {
-        createTag(name = "Explainer")
-        createTag(name = "That other thing")
+        createTag(label = "Explainer")
+        createTag(label = "That other thing")
 
         mockMvc.perform(get("/v1/tags").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.tags", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.tags[0].id").exists())
-            .andExpect(jsonPath("$._embedded.tags[0].name", equalTo("Explainer")))
+            .andExpect(jsonPath("$._embedded.tags[0].label", equalTo("Explainer")))
             .andExpect(jsonPath("$._links.self.href").exists())
     }
 
-    private fun createTag(name: String): ResultActions {
+    fun createTag(label: String): ResultActions {
         return mockMvc.perform(
             post("/v1/tags").content(
                 """
                 {
-                  "name": "$name"
+                  "label": "$label"
                 }
                 """.trimIndent()
             )

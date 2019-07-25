@@ -73,6 +73,17 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         ).withRel("rate")
     }
 
+    fun tagLink(video: Video) = when {
+
+        !currentUserHasRole(UserRoles.TAG_VIDEOS) -> null
+        video.tag != null -> null
+
+        else -> ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .patchTag(video.videoId.value, null)
+        ).withRel("tag")
+    }
+
     private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/videos")
         .replaceQueryParams(null)

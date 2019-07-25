@@ -4,6 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.testsupport.TestFactories.createUserTag
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.VideoResourceFactory
 import com.nhaarman.mockito_kotlin.mock
@@ -216,6 +217,47 @@ class VideosLinkBuilderTest {
     @Test
     fun `rate link returns null when not authenticated`() {
         val link = builder.rateLink(createVideo())
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `tag link returns a link when no best for tag`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.TAG_VIDEOS)
+
+        val link =
+            builder.tagLink(
+                createVideo(
+                    videoId = validVideoId,
+                    tag = null
+                )
+            )
+
+        assertThat(link).isNotNull
+
+        assertThat(link!!.href).isEqualTo("/v1/videos/$validVideoId/tags")
+        assertThat(link.rel).isEqualTo("tag")
+        assertThat(link.isTemplated).isFalse()
+    }
+
+    @Test
+    fun `tag link does not return a link when existing best for tag`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.TAG_VIDEOS)
+
+        val link =
+            builder.tagLink(
+                createVideo(
+                    videoId = validVideoId,
+                    tag = createUserTag()
+                )
+            )
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `tag link returns null when not authenticated`() {
+        val link = builder.tagLink(createVideo())
 
         assertThat(link).isNull()
     }

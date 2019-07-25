@@ -39,6 +39,7 @@ object UserRoles {
     const val VIEW_DISCIPLINES = "VIEW_DISCIPLINES"
     const val VIEW_DISTRIBUTION_METHODS = "VIEW_DISTRIBUTION_METHODS"
 
+    const val TAG_VIDEOS = "TAG_VIDEOS"
     const val INSERT_TAGS = "INSERT_TAGS"
     const val DELETE_TAGS = "DELETE_TAGS"
     const val VIEW_TAGS = "VIEW_TAGS"

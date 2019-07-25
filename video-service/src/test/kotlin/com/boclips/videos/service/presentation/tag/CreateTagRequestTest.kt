@@ -18,25 +18,25 @@ class CreateTagRequestTest {
 
     @Test
     fun `validates name being null`() {
-        val violations = validator.validate(CreateTagRequest(name = null))
+        val violations = validator.validate(CreateTagRequest(label = null))
 
         Assertions.assertThat(violations).hasSize(1)
-        Assertions.assertThat(violations.first().message).isEqualTo("Tag name is required")
+        Assertions.assertThat(violations.first().message).isEqualTo("Tag label is required")
     }
 
     @Test
-    fun `validates minimum length of name`() {
-        val violations = validator.validate(CreateTagRequest(name = "a"))
+    fun `validates minimum length of label`() {
+        val violations = validator.validate(CreateTagRequest(label = "a"))
 
         Assertions.assertThat(violations).hasSize(1)
-        Assertions.assertThat(violations.first().message).isEqualTo("Tag name must be between 1 and 100 characters")
+        Assertions.assertThat(violations.first().message).isEqualTo("Tag label must be between 1 and 100 characters")
     }
 
     @Test
-    fun `validates maximum length of name`() {
-        val violations = validator.validate(CreateTagRequest(name = StringUtils.repeat("X", 101)))
+    fun `validates maximum length of label`() {
+        val violations = validator.validate(CreateTagRequest(label = StringUtils.repeat("X", 101)))
 
         Assertions.assertThat(violations).hasSize(1)
-        Assertions.assertThat(violations.first().message).isEqualTo("Tag name must be between 1 and 100 characters")
+        Assertions.assertThat(violations.first().message).isEqualTo("Tag label must be between 1 and 100 characters")
     }
 }

@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.SortKey
@@ -14,6 +15,7 @@ import com.boclips.videos.service.presentation.video.AdminSearchRequest
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.RateVideoRequest
+import com.boclips.videos.service.presentation.video.TagVideoRequest
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -44,7 +46,8 @@ class VideoController(
     private val rateVideo: RateVideo,
     private val getVideoTranscript: GetVideoTranscript,
     private val objectMapper: ObjectMapper,
-    private val withProjection: WithProjection
+    private val withProjection: WithProjection,
+    private val tagVideo: TagVideo
 ) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -172,4 +175,8 @@ class VideoController(
     @PatchMapping(path = ["/{id}"], params = ["rating"])
     fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
         rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id)).let { this.getVideo(id) }
+
+    @PatchMapping(path = ["/{id}/tags"])
+    fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
+        tagVideo(TagVideoRequest(id, tagUrl)).let { this.getVideo(id) }
 }

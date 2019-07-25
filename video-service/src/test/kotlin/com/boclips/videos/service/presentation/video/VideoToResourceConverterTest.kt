@@ -38,7 +38,9 @@ internal class VideoToResourceConverterTest {
         subjects = setOf(TestFactories.createSubject(name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
-        ratings = listOf(UserRating(rating = 3, userId = UserId("irrelevant")))
+        ratings = listOf(UserRating(rating = 3, userId = UserId("irrelevant"))),
+        tag = TestFactories.createUserTag("tag-id","tag-label","user-id")
+
     )
 
     val youtubeVideo = createVideo(
@@ -49,7 +51,8 @@ internal class VideoToResourceConverterTest {
         playback = TestFactories.createYoutubePlayback(),
         type = LegacyVideoType.OTHER,
         subjects = setOf(TestFactories.createSubject(name = "Biology")),
-        legalRestrictions = "Many"
+        legalRestrictions = "Many",
+        tag = TestFactories.createUserTag("tag-id","tag-label","user-id")
     )
 
     @Test
@@ -93,6 +96,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.ageRange!!.min).isEqualTo(5)
         assertThat(videoResource.ageRange!!.max).isEqualTo(11)
         assertThat(videoResource.rating).isEqualTo(3.0)
+        assertThat(videoResource.bestFor).isEqualTo(TagResource("tag-label"))
     }
 
     @Test
@@ -113,6 +117,8 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.content.id).isEqualTo("444")
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
         assertThat(videoResource.legalRestrictions).isEqualTo("Many")
+        assertThat(videoResource.bestFor).isEqualTo(TagResource("tag-label"))
+
     }
 
     @Test

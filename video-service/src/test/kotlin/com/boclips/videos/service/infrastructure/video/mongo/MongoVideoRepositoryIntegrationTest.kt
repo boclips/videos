@@ -302,6 +302,20 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can update video tag`() {
+        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo())
+        val tag = TestFactories.createUserTag(label = "Alex", userId = "user-1")
+        val updatedAsset = mongoVideoRepository.update(
+            VideoUpdateCommand.ReplaceTag(
+                originalAsset.videoId, tag
+
+            )
+        )
+
+        assertThat(updatedAsset.tag!!.tag.label).isEqualTo("Alex")
+    }
+
+    @Test
     fun `update throws when video not found`() {
         assertThrows<VideoNotFoundException> {
             mongoVideoRepository.update(

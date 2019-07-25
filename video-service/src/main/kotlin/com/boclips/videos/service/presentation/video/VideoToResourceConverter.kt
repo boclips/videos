@@ -48,7 +48,8 @@ class VideoToResourceConverter(
                 rating = video.getRatingAverage(),
                 distributionMethods = video.distributionMethods.map(
                     DistributionMethodResourceConverter::toResource
-                ).toSet()
+                ).toSet(),
+                bestFor = video.tag?.let { TagResource(it.tag.label) }
             ), video
         )
     }
@@ -76,7 +77,8 @@ class VideoToResourceConverter(
         listOfNotNull(
             videosLinkBuilder.self(videoResource),
             videosLinkBuilder.transcriptLink(videoResource),
-            video?.let { videosLinkBuilder.rateLink(it) }
+            video?.let { videosLinkBuilder.rateLink(it) },
+            video?.let { videosLinkBuilder.tagLink(it) }
         )
     )
 }

@@ -73,6 +73,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(GET, "/v1/videos*").hasRole(ROLE.VIEW_VIDEOS)
             .antMatchers(GET, "/v1/videos/*/transcript").hasRole(ROLE.DOWNLOAD_TRANSCRIPT)
             .antMatchers(GET, "/v1/videos/*").permitAll()
+            .antMatchers(PATCH, "/v1/videos/*/tags").hasRole(ROLE.TAG_VIDEOS)
 
             .antMatchers(POST, "/v1/collections").hasRole(ROLE.INSERT_COLLECTIONS)
             .antMatchers(GET, "/v1/collections").hasRole(ROLE.VIEW_COLLECTIONS)

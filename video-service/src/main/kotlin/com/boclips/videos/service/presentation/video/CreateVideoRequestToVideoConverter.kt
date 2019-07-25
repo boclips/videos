@@ -39,7 +39,8 @@ class CreateVideoRequestToVideoConverter {
             language = null,
             transcript = null,
             distributionMethods = contentPartner.distributionMethods,
-            ratings = emptyList()
+            ratings = emptyList(),
+            tag = null
         )
     }
 }

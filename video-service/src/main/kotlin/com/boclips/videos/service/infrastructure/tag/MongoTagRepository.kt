@@ -4,6 +4,8 @@ import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.video.mongo.TagDocument
+import com.boclips.videos.service.infrastructure.video.mongo.UserTagDocument
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.bson.types.ObjectId
@@ -18,8 +20,8 @@ class MongoTagRepository(
     override fun findByIds(ids: Iterable<String>): List<Tag> {
         val objectIds = ids.map { ObjectId(it) }
         return getTagCollection()
-            .find(TagDocument::id `in` objectIds)
-            .map(this::toTag)
+            .find(UserTagDocument::id `in` objectIds)
+            .map(::toTag)
             .toList()
     }
 
@@ -30,29 +32,29 @@ class MongoTagRepository(
     override fun findAll(): List<Tag> {
         return getTagCollection()
             .find()
-            .map(this::toTag)
+            .map(::toTag)
             .toList()
     }
 
-    override fun findByName(name: String): Tag? {
+    override fun findByLabel(label: String): Tag? {
         val document = getTagCollection()
-            .findOne(TagDocument::name eq name) ?: return null
+            .findOne(UserTagDocument::label eq label) ?: return null
 
         return toTag(document)
     }
 
-    override fun create(name: String): Tag {
+    override fun create(label: String): Tag {
         val id = ObjectId()
         getTagCollection().insertOne(
             TagDocument(
                 id = id,
-                name = name
+                label = label
             )
         )
         return Tag(
             id = TagId(
                 value = id.toHexString()
-            ), name = name
+            ), label = label
         )
     }
 
@@ -70,7 +72,7 @@ class MongoTagRepository(
     private fun toTag(tagDocument: TagDocument): Tag {
         return Tag(
             id = TagId(value = tagDocument.id.toHexString()),
-            name = tagDocument.name
+            label = tagDocument.label
         )
     }
 

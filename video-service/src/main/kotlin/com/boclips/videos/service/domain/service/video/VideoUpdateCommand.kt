@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -25,5 +26,6 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceAgeRange(videoId: VideoId, val ageRange: AgeRange) : VideoUpdateCommand(videoId)
     class ReplaceContentPartner(videoId: VideoId, val contentPartner: ContentPartner) : VideoUpdateCommand(videoId)
     class AddRating(videoId: VideoId, val rating: UserRating) : VideoUpdateCommand(videoId)
+    class ReplaceTag(videoId: VideoId, val tag: UserTag) : VideoUpdateCommand(videoId)
 }
 

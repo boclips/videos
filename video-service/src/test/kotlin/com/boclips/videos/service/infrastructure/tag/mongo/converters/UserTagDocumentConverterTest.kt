@@ -7,12 +7,12 @@ import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class TagDocumentConverterTest {
+class UserTagDocumentConverterTest {
 
     @Test
     fun `convert a tag to document and back`() {
         val originalTag = Tag(
-            id = TagId(aValidId()), name = "maths"
+            id = TagId(aValidId()), label = "maths"
         )
 
         val document = TagDocumentConverter.toTagDocument(originalTag)

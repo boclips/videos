@@ -37,6 +37,7 @@ object VideoDocumentConverter {
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
             rating = video.ratings.map { UserRatingDocumentConverter.toDocument(it) },
+            tags = video.tag?.let { listOf(UserTagDocumentConverter.toDocument(it)) } ?: emptyList(),
             distributionMethods = video.distributionMethods.map(
                 DistributionMethodDocumentConverter::toDocument
             ).toSet()
@@ -66,7 +67,8 @@ object VideoDocumentConverter {
             ratings = document.rating.map { UserRatingDocumentConverter.toRating(it) },
             distributionMethods = document.distributionMethods?.map(
                 DistributionMethodDocumentConverter::fromDocument
-            )?.toSet() ?: DistributionMethod.ALL
+            )?.toSet() ?: DistributionMethod.ALL,
+            tag = document.tags.firstOrNull()?.let { UserTagDocumentConverter.toTag(it) }
         )
     }
 }

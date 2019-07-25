@@ -10,11 +10,13 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDistributionMethods
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -26,6 +28,7 @@ import com.boclips.videos.service.infrastructure.video.mongo.converters.Distribu
 import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.UserRatingDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.UserTagDocumentConverter
 import com.boclips.videos.service.infrastructure.video.mongo.converters.VideoDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.and
@@ -231,6 +234,10 @@ class MongoVideoRepository(
                 VideoDocument::rating,
                 UserRatingDocumentConverter.toDocument(updateCommand.rating)
             )
+            is ReplaceTag -> set(
+                VideoDocument::tags,
+                listOf(UserTagDocumentConverter.toDocument(updateCommand.tag))
+            )
             is ReplaceAgeRange -> combine(
                 set(
                     VideoDocument::ageRangeMin,
@@ -249,7 +256,7 @@ class MongoVideoRepository(
                     contentPartnerDocument.copy(lastModified = Instant.now())
                 )
             }
-            is VideoUpdateCommand.ReplaceDistributionMethods -> set(
+            is ReplaceDistributionMethods -> set(
                 VideoDocument::distributionMethods,
                 updateCommand.distributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
             )

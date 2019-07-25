@@ -34,13 +34,14 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val rating: Double? = null,
     @get:JsonView(PublicApiProjection::class)
+    val bestFor: TagResource? = null,
+    @get:JsonView(PublicApiProjection::class)
     val createdBy: String? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
     val contentPartner: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val contentPartnerVideoId: String? = null,
-
     @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)
@@ -48,4 +49,9 @@ data class VideoResource(
 
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null
+)
+
+data class TagResource(
+    @get:JsonView(PublicApiProjection::class)
+    val label: String
 )

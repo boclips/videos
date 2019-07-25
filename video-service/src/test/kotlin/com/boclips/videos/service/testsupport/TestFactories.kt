@@ -1,6 +1,10 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.eventbus.events.video.*
+import com.boclips.eventbus.events.video.Captions
+import com.boclips.eventbus.events.video.CaptionsFormat
+import com.boclips.eventbus.events.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysedKeyword
+import com.boclips.eventbus.events.video.VideoAnalysedTopic
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
@@ -25,6 +29,7 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
+import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
@@ -76,6 +81,7 @@ object TestFactories {
         distributionMethods: Set<DistributionMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         ratings: List<UserRating> = emptyList(),
+        tag: UserTag? = null,
         contentPartner: ContentPartner = ContentPartner(
             contentPartnerId = contentPartnerId,
             name = contentPartnerName,
@@ -102,7 +108,8 @@ object TestFactories {
             ageRange = ageRange,
             contentPartner = contentPartner,
             videoReference = videoReference,
-            ratings = ratings
+            ratings = ratings,
+            tag = tag
         )
     }
 
@@ -115,13 +122,19 @@ object TestFactories {
         CreateSubjectRequest(name = name)
 
 
-    fun createTag(id: String = aValidId(), name: String = id): Tag =
-        Tag(
-            id = TagId(id), name = name
+    fun createUserTag(id: String = aValidId(), label: String = id, userId: String = "user id"): UserTag =
+        UserTag(
+            tag = TestFactories.createTag(id, label),
+            userId = UserId(userId)
         )
 
-    fun createTagRequest(name: String? = null): CreateTagRequest =
-        CreateTagRequest(name = name)
+    fun createTag(id: String = aValidId(), label: String = id): Tag =
+        Tag(
+            id = TagId(id), label = label
+        )
+
+    fun createTagRequest(label: String? = null): CreateTagRequest =
+        CreateTagRequest(label = label)
 
     fun createMediaEntry(
         id: String = "1",

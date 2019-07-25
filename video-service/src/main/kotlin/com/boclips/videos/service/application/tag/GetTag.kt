@@ -11,7 +11,7 @@ class GetTag(
         return tagRepository.findByIds(listOf(tagId)).firstOrNull()?.let {
             TagResource(
                 id = it.id.value,
-                name = it.name
+                label = it.label
             )
         } ?: throw ResourceNotFoundApiException("Not found", "Tag with id $tagId cannot be found")
     }

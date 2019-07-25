@@ -6,16 +6,17 @@ import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.presentation.tag.CreateTagRequest
 import com.boclips.videos.service.presentation.tag.TagResource
 
-class CreateTag(
+
+open class CreateTag(
     private val tagRepository: TagRepository
 ) {
     operator fun invoke(request: CreateTagRequest): TagResource {
-        val tagName = getOrThrow(request.name, "name")
+        val tagLabel = getOrThrow(request.label, "label")
 
-        if (tagRepository.findByName(tagName) != null) {
-            throw TagExistsException(tagName)
+        if (tagRepository.findByLabel(tagLabel) != null) {
+            throw TagExistsException(tagLabel)
         }
-        return tagRepository.create(name = tagName)
-            .let { TagResource(id = it.id.value, name = it.name) }
+        return tagRepository.create(label = tagLabel)
+            .let { TagResource(id = it.id.value, label = it.label) }
     }
 }

@@ -44,6 +44,7 @@ import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestPlaybackUpdate
+import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdatePlayback
@@ -137,6 +138,11 @@ class ApplicationContext(
     @Bean
     fun rateVideo(): RateVideo {
         return RateVideo(videoRepository)
+    }
+
+    @Bean
+    fun tagVideo(): TagVideo {
+        return TagVideo(videoRepository, tagRepository)
     }
 
     @Bean
