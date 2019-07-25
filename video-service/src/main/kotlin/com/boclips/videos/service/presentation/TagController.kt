@@ -67,7 +67,7 @@ class TagController(
             )
         }
         val headers = HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, tagsLinkBuilder.tag(tag).href)
+            set(HttpHeaders.LOCATION, tagsLinkBuilder.tag(tag)?.href)
         }
         return ResponseEntity(headers, HttpStatus.CREATED)
     }

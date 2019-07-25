@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.config.security.UserRoles.VIEW_TAGS
 import com.boclips.videos.service.presentation.tag.TagResource
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -14,6 +16,7 @@ class TagsLinkBuilderTest {
 
     @BeforeEach
     internal fun setUp() {
+        setSecurityContext("bambi", VIEW_TAGS)
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
 
@@ -48,5 +51,12 @@ class TagsLinkBuilderTest {
                 "rel"
             )
         ).isEqualTo(Link("https://localhost/v1/tags/id", "rel"))
+    }
+
+    @Test
+    fun `when no view tags role`() {
+        setSecurityContext("bambi")
+        assertThat(tagsLinkBuilder.tags()).isNull()
+        assertThat(tagsLinkBuilder.tag(TagResource("id"))).isNull()
     }
 }
