@@ -12,6 +12,12 @@ class CollectionResourceFactory(
     private val subjectToResourceConverter: SubjectToResourceConverter,
     private val videoService: VideoService
 ) {
+    fun buildCollectionResource(collection: Collection, projection: Projection) =
+        when (projection) {
+            Projection.list -> buildCollectionListResource(collection)
+            Projection.details -> buildCollectionDetailsResource(collection)
+        }
+
     fun buildCollectionDetailsResource(collection: Collection): CollectionResource {
         return CollectionResource(
             id = collection.id.value,
@@ -43,10 +49,4 @@ class CollectionResourceFactory(
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange)
         )
     }
-
-    fun buildCollectionResource(collection: Collection, projection: Projection) =
-        when (projection) {
-            Projection.list -> buildCollectionListResource(collection)
-            Projection.details -> buildCollectionDetailsResource(collection)
-        }
 }
