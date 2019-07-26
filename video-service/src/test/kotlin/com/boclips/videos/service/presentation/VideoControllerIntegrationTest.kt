@@ -102,7 +102,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
             .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp")))
             .andExpect(jsonPath("$._embedded.videos[0].legalRestrictions", equalTo("None")))
-            .andExpect(jsonPath("$._embedded.videos[0].subjects[0]", equalTo("Maths")))
+            .andExpect(jsonPath("$._embedded.videos[0].subjects[0].id").exists())
+            .andExpect(jsonPath("$._embedded.videos[0].subjects[0].name", equalTo("Maths")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
             .andExpect(
@@ -518,8 +519,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val tagVideoUrl = getTaggingLink(videoId)
         val tagUrl = createTag("A tag").andReturn().response.getHeader("Location")!!
 
-        mockMvc.perform(patch(tagVideoUrl).content(tagUrl)
-            .contentType("text/uri-list").asTeacher())
+        mockMvc.perform(
+            patch(tagVideoUrl).content(tagUrl)
+                .contentType("text/uri-list").asTeacher()
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.bestFor.label", equalTo("A tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
@@ -536,8 +539,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val tagUrl = getTaggingLink(videoId)
 
-        mockMvc.perform(patch(tagUrl).content("not really a tag")
-            .contentType("text/uri-list").asTeacher())
+        mockMvc.perform(
+            patch(tagUrl).content("not really a tag")
+                .contentType("text/uri-list").asTeacher()
+        )
             .andExpect(status().isBadRequest)
             .andExpectApiErrorPayload()
     }
@@ -614,7 +619,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get(createdResourceUrl!!).asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.subjects[0]", equalTo("Maths")))
+            .andExpect(jsonPath("$.subjects[0].name", equalTo("Maths")))
+            .andExpect(jsonPath("$.subjects[0].id").exists())
     }
 
     @Test

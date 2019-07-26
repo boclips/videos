@@ -4,6 +4,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.projections.BoclipsInternalProjection
 import com.boclips.videos.service.presentation.projections.PublicApiProjection
+import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonView
@@ -24,7 +25,7 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val playback: Resource<PlaybackResource>? = null,
     @get:JsonView(PublicApiProjection::class)
-    val subjects: Set<String>? = null,
+    val subjects: Set<SubjectResource>? = null,
     @get:JsonView(PublicApiProjection::class)
     val badges: Set<String> = emptySet(),
     @get:JsonView(PublicApiProjection::class)

@@ -7,6 +7,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
+import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import org.springframework.hateoas.Resource
 import org.springframework.stereotype.Component
@@ -39,7 +40,7 @@ class VideoToResourceConverter(
                 contentPartnerVideoId = video.videoReference,
                 releasedOn = video.releasedOn,
                 playback = getPlayback(video),
-                subjects = video.subjects.map { it.name }.toSet(),
+                subjects = video.subjects.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
                 badges = getBadges(video),
                 type = VideoTypeResource(id = video.type.id, name = video.type.title),
                 legalRestrictions = video.legalRestrictions,

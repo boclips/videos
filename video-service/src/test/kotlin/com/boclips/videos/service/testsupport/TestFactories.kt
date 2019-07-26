@@ -468,7 +468,7 @@ object VideoResourceFactory {
         contentPartnerVideoId: String = "cp-id-$id",
         playback: PlaybackResource = PlaybackResourceFactory.sample(),
         type: VideoTypeResource = VideoTypeResourceFactory.sample(),
-        subjects: Set<String> = emptySet(),
+        subjects: Set<SubjectResource> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         legalRestrictions: String = "",
         contentPartner: String = "Content Partner",

@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
+import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -17,17 +18,9 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 
 internal class VideoToResourceConverterTest {
-
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
-
-    @BeforeEach
-    fun setUp() {
-        videosLinkBuilder = mock()
-        playbackToResourceConverter = PlaybackToResourceConverter(mock())
-        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
-    }
 
     val kalturaVideo = createVideo(
         title = "Do what you love",
@@ -35,11 +28,11 @@ internal class VideoToResourceConverterTest {
         contentPartnerName = "WeWork",
         contentPartnerVideoId = "111",
         type = LegacyVideoType.TED_TALKS,
-        subjects = setOf(TestFactories.createSubject(name = "Maths")),
+        subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
         ratings = listOf(UserRating(rating = 3, userId = UserId("irrelevant"))),
-        tag = TestFactories.createUserTag("tag-id","tag-label","user-id")
+        tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id")
 
     )
 
@@ -50,10 +43,17 @@ internal class VideoToResourceConverterTest {
         contentPartnerVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
         type = LegacyVideoType.OTHER,
-        subjects = setOf(TestFactories.createSubject(name = "Biology")),
+        subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
         legalRestrictions = "Many",
-        tag = TestFactories.createUserTag("tag-id","tag-label","user-id")
+        tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id")
     )
+
+    @BeforeEach
+    fun setUp() {
+        videosLinkBuilder = mock()
+        playbackToResourceConverter = PlaybackToResourceConverter(mock())
+        videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
+    }
 
     @Test
     fun `converts a video from AssetId`() {
@@ -82,7 +82,12 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.createdBy).isEqualTo(videoResource.contentPartner)
         assertThat(videoResource.contentPartner).isEqualTo("WeWork")
         assertThat(videoResource.contentPartnerVideoId).isEqualTo("111")
-        assertThat(videoResource.subjects).containsExactly("Maths")
+        assertThat(videoResource.subjects).containsExactly(
+            SubjectResource(
+                id = "maths-subject-id",
+                name = "Maths"
+            )
+        )
         assertThat(videoResource.type!!.id).isEqualTo(10)
         assertThat(videoResource.type!!.name).isEqualTo("TED Talks")
         assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
@@ -108,7 +113,12 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.createdBy).isEqualTo(videoResource.contentPartner)
         assertThat(videoResource.contentPartner).isEqualTo("JacekWork")
         assertThat(videoResource.contentPartnerVideoId).isEqualTo("222")
-        assertThat(videoResource.subjects).containsExactly("Biology")
+        assertThat(videoResource.subjects).containsExactly(
+            SubjectResource(
+                id = "biology-subject-id",
+                name = "Biology"
+            )
+        )
         assertThat(videoResource.type!!.id).isEqualTo(0)
         assertThat(videoResource.type!!.name).isEqualTo("Other")
         assertThat(videoResource.playback!!.content.type).isEqualTo("YOUTUBE")
@@ -118,7 +128,6 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
         assertThat(videoResource.legalRestrictions).isEqualTo("Many")
         assertThat(videoResource.bestFor).isEqualTo(TagResource("tag-label"))
-
     }
 
     @Test
