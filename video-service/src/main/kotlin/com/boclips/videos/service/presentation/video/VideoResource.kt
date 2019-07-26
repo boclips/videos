@@ -25,7 +25,7 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val playback: Resource<PlaybackResource>? = null,
     @get:JsonView(PublicApiProjection::class)
-    val subjects: Set<SubjectResource>? = null,
+    val subjects: Set<SubjectResource>? = emptySet(),
     @get:JsonView(PublicApiProjection::class)
     val badges: Set<String> = emptySet(),
     @get:JsonView(PublicApiProjection::class)

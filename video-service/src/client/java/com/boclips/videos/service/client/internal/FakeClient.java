@@ -15,14 +15,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public class FakeClient implements VideoServiceClient {
-
     private List<CreateVideoRequest> createRequests = new ArrayList<>();
     private Map<VideoId, Video> videos = new HashMap<>();
     private Set<String> illegalPlaybackIds = new HashSet<>();
     private Map<VideoId, Playback> playbacks = new HashMap<>();
-    private Set<Subject> subjects = new HashSet<>();
+    private Map<SubjectId, Subject> subjects = new HashMap<>();
     private Map<String, List<Collection>> collectionsByUser = new HashMap<>();
     private List<ContentPartner> contentPartners = new ArrayList<>();
 
@@ -37,11 +37,19 @@ public class FakeClient implements VideoServiceClient {
         }
 
         val videoId = rawIdToVideoId(nextId());
+
         Playback playback = Playback.builder()
                 .playbackId(request.getPlaybackId())
                 .duration(Duration.ofMinutes(7))
                 .thumbnailUrl("https://thumbnailz.org/img/" + nextId())
                 .build();
+
+        Set<Subject> videoSubjects = request.getSubjects().stream()
+                .map(subjectId -> {
+                    return subjects.get(SubjectId.builder().value(subjectId).build());
+                })
+                .collect(toSet());
+
         val video = Video.builder()
                 .videoId(videoId)
                 .title(request.getTitle())
@@ -51,10 +59,13 @@ public class FakeClient implements VideoServiceClient {
                 .contentPartnerId(request.getProviderId())
                 .contentPartnerVideoId(request.getProviderVideoId())
                 .playback(playback)
+                .subjects(videoSubjects)
                 .build();
+
         videos.put(videoId, video);
         playbacks.put(videoId, playback);
         createRequests.add(request);
+
         return videoId;
     }
 
@@ -112,7 +123,7 @@ public class FakeClient implements VideoServiceClient {
 
     @Override
     public List<Subject> getSubjects() {
-        return new ArrayList<>(subjects);
+        return new ArrayList<>(subjects.values());
     }
 
     @Override
@@ -201,7 +212,7 @@ public class FakeClient implements VideoServiceClient {
     }
 
     public Subject addSubject(Subject subject) {
-        subjects.add(subject);
+        subjects.put(subject.getId(), subject);
         return subject;
     }
 }

@@ -32,17 +32,22 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get a video`() {
+        val client = getClient()
+
+        val subject = client.subjects.first { it.name == "Maths" }
+
         val playbackId = "ref-id-123"
-        val id = getClient().createVideo(
+        val id = client.createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
                 playbackId = playbackId,
-                contentProvider = "test-content-partner"
+                contentProvider = "test-content-partner",
+                subjects = setOf(subject.id.value)
             )
         )
 
-        val video = getClient().get(id)
+        val video = client.get(id)
 
         assertThat(video.title).isEqualTo("the title")
         assertThat(video.description).isEqualTo("the description")
@@ -51,6 +56,10 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(video.playback?.playbackId).isEqualTo(playbackId)
         assertThat(video.playback?.thumbnailUrl).isNotBlank()
         assertThat(video.playback?.duration).isNotNull()
+
+        assertThat(video.subjects).hasSize(1)
+        assertThat(video.subjects.first().id.value).isEqualTo(subject.id.value)
+        assertThat(video.subjects.first().name).isEqualTo(subject.name)
     }
 
     @Test
@@ -72,8 +81,9 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get VideoId for raw identifier`() {
-        val rawId = getClient().createVideo(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")).uri.toString()
-            .split('/').last()
+        val rawId =
+            getClient().createVideo(TestFactories.createCreateVideoRequest(playbackId = "ref-id-123")).uri.toString()
+                .split('/').last()
 
         val id = getClient().rawIdToVideoId(rawId)
 
@@ -307,7 +317,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
     val fakeClient = VideoServiceClient.getFakeClient().apply {
         addIllegalPlaybackId("illegal-video")
-        addSubject("Maths")
+        val maths = addSubject("Maths")
         addSubject("French")
 
         val videoId = createVideo(
@@ -315,7 +325,8 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
                 title = "Phenomenal test video",
                 description = "the description",
                 playbackId = "test-playback-id",
-                contentProviderVideoId = "collection-video-id"
+                contentProviderVideoId = "collection-video-id",
+                subjects = setOf(maths.id.value)
             )
         )
 
@@ -357,7 +368,6 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
 }
 
 internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTest() {
-    val realClient = VideoServiceClient.getUnauthorisedApiClient("http://localhost:9876")
 
     @BeforeEach
     fun setUp() {
@@ -385,5 +395,5 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
         }
     }
 
-    override fun getClient() = realClient
+    override fun getClient() = VideoServiceClient.getUnauthorisedApiClient("http://localhost:9876")
 }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Builder(toBuilder = true)
 @Data
@@ -16,4 +17,5 @@ public class Video {
     private final String contentPartnerId;
     private final String contentPartnerVideoId;
     private final Playback playback;
+    private final Set<Subject> subjects;
 }
