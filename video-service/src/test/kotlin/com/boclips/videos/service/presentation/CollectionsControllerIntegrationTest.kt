@@ -384,7 +384,7 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.videos[0].title", nullValue()))
             .andExpect(jsonPath("$.videos[0].description", nullValue()))
             .andExpect(jsonPath("$.videos[0].playback", nullValue()))
-            .andExpect(jsonPath("$.videos[0].subjects", nullValue()))
+            .andExpect(jsonPath("$.videos[0].subjects", hasSize<Any>(0)))
             .andExpect(jsonPath("$.videos[0]._links.self.href", not(isEmptyString())))
             .andReturn()
     }
