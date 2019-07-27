@@ -49,26 +49,4 @@ class VideoTest {
 
         assertThat(video.isRatedByCurrentUser()).isFalse()
     }
-
-    @Test
-    fun `toEvent creates a video event object`() {
-        val id = TestFactories.aValidId()
-        val video = createVideo(
-            videoId = id,
-            title = "the title",
-            contentPartnerName = "the content partner",
-            subjects = setOf(TestFactories.createSubject(name = "physics")),
-            ageRange = AgeRange.bounded(5, 10)
-        )
-
-        val videoEvent = video.toEvent()
-
-        assertThat(videoEvent.id.value).isEqualTo(id)
-        assertThat(videoEvent.title).isEqualTo("the title")
-        assertThat(videoEvent.contentPartner.name).isEqualTo("the content partner")
-        assertThat(videoEvent.subjects).hasSize(1)
-        assertThat(videoEvent.subjects.first().name).isEqualTo("physics")
-        assertThat(videoEvent.ageRange.min).isEqualTo(5)
-        assertThat(videoEvent.ageRange.max).isEqualTo(10)
-    }
 }

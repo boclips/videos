@@ -5,8 +5,10 @@ import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.EventConverter
 
-class EventPublishingVideoRepository(private val videoRepository: VideoRepository, private val eventBus: EventBus) : VideoRepository by videoRepository {
+class EventPublishingVideoRepository(private val videoRepository: VideoRepository, private val eventBus: EventBus) :
+    VideoRepository by videoRepository {
 
     override fun update(command: VideoUpdateCommand): Video {
         val video = videoRepository.update(command)
@@ -33,12 +35,14 @@ class EventPublishingVideoRepository(private val videoRepository: VideoRepositor
     }
 
     private fun publishVideoUpdated(video: Video) {
-        eventBus.publish(VideoUpdated.of(video.toEvent()))
+        eventBus.publish(VideoUpdated.of(EventConverter().toVideoPayload(video)))
     }
 
     private fun publishVideoCreated(video: Video) {
-        eventBus.publish(VideoCreated(video.toEvent()))
+        eventBus.publish(
+            VideoCreated.builder()
+                .video(EventConverter().toVideoPayload(video))
+                .build()
+        )
     }
-
-
 }

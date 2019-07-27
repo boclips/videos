@@ -10,7 +10,6 @@ data class Topic(
     val parent: Topic?
 ) {
     companion object {
-
         fun fromAnalysedVideoTopic(assignedTopic: VideoAnalysedTopic): Topic {
             return Topic(
                 name = assignedTopic.name,

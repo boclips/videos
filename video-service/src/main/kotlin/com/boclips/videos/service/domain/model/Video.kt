@@ -1,15 +1,18 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.eventbus.domain.video.Video
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.LocalDate
-import java.util.*
+import java.util.Locale
 
 data class Video(
     val videoId: VideoId,
@@ -39,10 +42,6 @@ data class Video(
         return playback is VideoPlayback.StreamPlayback
     }
 
-    override fun toString(): String {
-        return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}')"
-    }
-
     fun getRatingAverage() = when {
         this.ratings.isEmpty() -> null
         else -> this.ratings.map { it.rating }.average()
@@ -51,17 +50,7 @@ data class Video(
     fun isRatedByCurrentUser() =
         ratings.any { it.userId == getCurrentUserId() }
 
-    fun toEvent(): Video {
-        val subjects = subjects.map(Subject::toEvent)
-
-        return Video.builder()
-            .id(videoId.toEvent())
-            .title(title)
-            .contentPartner(contentPartner.toEvent())
-            .subjects(subjects)
-            .ageRange(ageRange.toEvent())
-            .build()
+    override fun toString(): String {
+        return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}')"
     }
-
-
 }

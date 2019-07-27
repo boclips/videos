@@ -18,8 +18,4 @@ data class ContentPartner(
     fun isDownloadable(): Boolean {
         return distributionMethods.contains(DistributionMethod.DOWNLOAD)
     }
-
-    fun toEvent(): EventContentPartner {
-        return EventContentPartner.of(name)
-    }
 }

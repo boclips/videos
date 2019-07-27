@@ -34,8 +34,4 @@ class VideoId(value: String) {
     override fun hashCode(): Int {
         return value.hashCode()
     }
-
-    fun toEvent() : EventVideoId {
-        return EventVideoId.of(value)
-    }
 }
