@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.playback
 
-
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.kalturaclient.captionasset.CaptionAsset

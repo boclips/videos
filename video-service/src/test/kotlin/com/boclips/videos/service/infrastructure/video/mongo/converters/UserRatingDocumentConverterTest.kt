@@ -19,5 +19,4 @@ class UserRatingDocumentConverterTest {
 
         Assertions.assertThat(restoredUserRating).isEqualTo(rating)
     }
-
 }

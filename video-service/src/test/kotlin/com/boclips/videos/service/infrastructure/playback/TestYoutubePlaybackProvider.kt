@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.playback
 
-
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType

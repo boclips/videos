@@ -9,7 +9,8 @@ class DistributionMethodResourceConverterTest {
     fun `converts set of distribution methods from resources`() {
         val deliveryMethodResources = setOf(DistributionMethodResource.DOWNLOAD)
 
-        val convertedDistributionMethod = DistributionMethodResourceConverter.toDistributionMethods(deliveryMethodResources)
+        val convertedDistributionMethod =
+            DistributionMethodResourceConverter.toDistributionMethods(deliveryMethodResources)
 
         assertThat(convertedDistributionMethod).containsExactly(DistributionMethod.DOWNLOAD)
     }
@@ -18,7 +19,8 @@ class DistributionMethodResourceConverterTest {
     fun `converts set of delivery methods`() {
         val distributionMethods = setOf(DistributionMethod.DOWNLOAD)
 
-        val convertedDeliveryMethods = DistributionMethodResourceConverter.toDeliveryMethodResources(distributionMethods)
+        val convertedDeliveryMethods =
+            DistributionMethodResourceConverter.toDeliveryMethodResources(distributionMethods)
 
         assertThat(convertedDeliveryMethods).containsExactly(DistributionMethodResource.DOWNLOAD)
     }

@@ -1,5 +1,5 @@
 package com.boclips.videos.service.presentation.projections
 
 interface ResourceProjection
-interface PublicApiProjection: ResourceProjection
-interface BoclipsInternalProjection: PublicApiProjection
+interface PublicApiProjection : ResourceProjection
+interface BoclipsInternalProjection : PublicApiProjection

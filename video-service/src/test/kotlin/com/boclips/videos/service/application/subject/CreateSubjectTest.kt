@@ -7,7 +7,7 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class CreateSubjectTest: AbstractSpringIntegrationTest() {
+class CreateSubjectTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws when missing name`() {
         val createRequest = TestFactories.createSubjectRequest(
@@ -23,6 +23,6 @@ class CreateSubjectTest: AbstractSpringIntegrationTest() {
 
         createSubject(createRequest)
 
-        assertThrows<SubjectExistsException> { createSubject(createRequest)  }
+        assertThrows<SubjectExistsException> { createSubject(createRequest) }
     }
 }

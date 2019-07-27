@@ -7,7 +7,7 @@ import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Locale
 
 class CaptionAssetConverterTest {
 

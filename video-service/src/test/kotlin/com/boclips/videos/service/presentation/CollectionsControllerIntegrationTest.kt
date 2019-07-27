@@ -21,7 +21,6 @@ import org.hamcrest.Matchers.isEmptyOrNullString
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.nullValue
-import org.hamcrest.collection.IsIn
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate

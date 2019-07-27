@@ -4,7 +4,7 @@ import com.boclips.eventbus.domain.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
-import java.util.*
+import java.util.Locale
 
 class PlaybackRepository(
     private val kalturaPlaybackProvider: PlaybackProvider,

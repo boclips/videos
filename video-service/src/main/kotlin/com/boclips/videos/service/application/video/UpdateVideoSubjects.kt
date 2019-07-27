@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
-
 class UpdateVideoSubjects(
     private val videoRepository: VideoRepository,
     private val subjectRepository: SubjectRepository,

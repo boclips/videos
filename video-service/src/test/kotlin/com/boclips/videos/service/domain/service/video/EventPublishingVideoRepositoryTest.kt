@@ -37,7 +37,10 @@ class EventPublishingVideoRepositoryTest : AbstractSpringIntegrationTest() {
 
         val subjects = listOf(subjectRepository.create("Maths"))
 
-        val updateCommands = listOf(VideoUpdateCommand.ReplaceAgeRange(video1, AgeRange.bounded(5, 11)), VideoUpdateCommand.ReplaceSubjects(video2, subjects))
+        val updateCommands = listOf(
+            VideoUpdateCommand.ReplaceAgeRange(video1, AgeRange.bounded(5, 11)),
+            VideoUpdateCommand.ReplaceSubjects(video2, subjects)
+        )
 
         eventPublishingVideoRepository.bulkUpdate(updateCommands)
 

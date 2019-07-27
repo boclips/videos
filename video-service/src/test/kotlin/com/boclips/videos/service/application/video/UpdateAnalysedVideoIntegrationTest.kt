@@ -14,7 +14,7 @@ import com.boclips.videos.service.testsupport.TestFactories.createVideoAnalysedT
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.*
+import java.util.Locale
 
 class UpdateAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 

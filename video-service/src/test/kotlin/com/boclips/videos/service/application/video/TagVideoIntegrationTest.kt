@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.video.TagVideoRequest

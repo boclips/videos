@@ -63,7 +63,16 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         val collection = createCollection(createRequest)
 
         assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements).isNotEmpty
-        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements.first().id).isEqualTo(collection.id)
+        assertThat(
+            collectionService.search(
+                CollectionSearchQuery(
+                    "title",
+                    emptyList(),
+                    1,
+                    0
+                )
+            ).elements.first().id
+        ).isEqualTo(collection.id)
     }
 
     @Test

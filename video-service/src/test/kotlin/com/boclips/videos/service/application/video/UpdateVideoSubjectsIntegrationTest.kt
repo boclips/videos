@@ -59,7 +59,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val maths = subjectRepository.create("Maths")
 
-        val subjectTag =  SubjectId(maths.id.value)
+        val subjectTag = SubjectId(maths.id.value)
 
         val event = VideoSubjectClassified.builder()
             .videoId(videoId.value)

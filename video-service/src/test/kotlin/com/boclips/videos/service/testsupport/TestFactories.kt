@@ -122,7 +122,6 @@ object TestFactories {
     fun createSubjectRequest(name: String? = null): CreateSubjectRequest =
         CreateSubjectRequest(name = name)
 
-
     fun createUserTag(id: String = aValidId(), label: String = id, userId: String = "user id"): UserTag =
         UserTag(
             tag = TestFactories.createTag(id, label),

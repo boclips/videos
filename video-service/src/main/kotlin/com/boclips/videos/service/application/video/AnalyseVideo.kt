@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
 import mu.KLogging
-import java.util.*
+import java.util.Locale
 
 class AnalyseVideo(
     private val videoService: VideoService,

@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.presentation.tag.CreateTagRequest
 import com.boclips.videos.service.presentation.tag.TagResource
 
-
 open class CreateTag(
     private val tagRepository: TagRepository
 ) {

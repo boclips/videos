@@ -4,7 +4,7 @@ import com.boclips.eventbus.domain.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
-import java.util.*
+import java.util.Locale
 
 interface PlaybackProvider {
     fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback>

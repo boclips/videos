@@ -9,7 +9,10 @@ import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import mu.KLogging
 
 class UpdateAnalysedVideo(

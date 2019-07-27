@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.domain.service.collection.getReadableCollectionOrThrow
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.getReadableCollectionOrThrow
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory

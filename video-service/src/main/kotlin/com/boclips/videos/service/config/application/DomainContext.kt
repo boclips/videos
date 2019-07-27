@@ -1,6 +1,5 @@
 package com.boclips.videos.service.config.application
 
-
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.application.video.ClassifyVideo

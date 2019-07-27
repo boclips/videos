@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.util.*
+import java.util.Locale
 
 class AnalyseVideoIntegrationTest(
     @Autowired val analyseVideo: AnalyseVideo
@@ -32,7 +32,6 @@ class AnalyseVideoIntegrationTest(
         assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
         assertThat(event.language).isEqualTo(Locale.GERMAN)
     }
-
 
     @Test
     fun `does not send events for videos not longer than 20s`() {

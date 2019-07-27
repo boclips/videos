@@ -407,7 +407,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collection.viewerIds).isEmpty()
             assertThat(collection.isPublic).isEqualTo(false)
         }
-        
+
         @Test
         fun `can map viewerIds`() {
             val collectionId = "5c55697860fef77aa4af323a"

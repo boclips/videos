@@ -7,7 +7,13 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoFilter
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -21,7 +27,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 

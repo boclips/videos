@@ -11,7 +11,9 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
     class ReplaceAgeRange(contentPartnerId: ContentPartnerId, val ageRange: AgeRange) :
         ContentPartnerUpdateCommand(contentPartnerId)
 
-    class ReplaceDistributionMethods(contentPartnerId: ContentPartnerId, val distributionMethods: Set<DistributionMethod>) :
+    class ReplaceDistributionMethods(
+        contentPartnerId: ContentPartnerId,
+        val distributionMethods: Set<DistributionMethod>
+    ) :
         ContentPartnerUpdateCommand(contentPartnerId)
-
 }

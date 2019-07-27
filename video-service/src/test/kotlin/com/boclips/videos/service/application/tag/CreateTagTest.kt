@@ -7,7 +7,7 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class CreateTagTest: AbstractSpringIntegrationTest() {
+class CreateTagTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws when missing label`() {
         val createRequest = TestFactories.createTagRequest(
@@ -23,6 +23,6 @@ class CreateTagTest: AbstractSpringIntegrationTest() {
 
         createTag(createRequest)
 
-        assertThrows<TagExistsException> { createTag(createRequest)  }
+        assertThrows<TagExistsException> { createTag(createRequest) }
     }
 }

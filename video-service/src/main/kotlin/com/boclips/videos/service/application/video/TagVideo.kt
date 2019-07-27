@@ -27,7 +27,12 @@ open class TagVideo(
         val tag = try {
             tagRepository.findById(TagId(tagVideoRequest.tagUrl!!.substringAfterLast("/")))
         } catch (e: Exception) {
-            throw InvalidRequestApiException(ExceptionDetails("Invalid tag URL", "The tag URL is malformed or cannot be processed"))
+            throw InvalidRequestApiException(
+                ExceptionDetails(
+                    "Invalid tag URL",
+                    "The tag URL is malformed or cannot be processed"
+                )
+            )
         } ?: throw ResourceNotFoundApiException("Invalid tag URL", "The tag URL cannot be found")
 
         videoRepository.update(

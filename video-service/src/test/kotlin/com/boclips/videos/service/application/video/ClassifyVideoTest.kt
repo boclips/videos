@@ -22,7 +22,6 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
 
         classifyVideo(video)
 
-
         val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
 
         assertThat(event.title).isEqualTo("the video title")

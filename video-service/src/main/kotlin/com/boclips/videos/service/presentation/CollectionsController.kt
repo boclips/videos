@@ -85,15 +85,17 @@ class CollectionsController(
         val collectionResources = collections.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
-        return withProjection(Resources(
-            collectionResources,
-            listOfNotNull(
-                collectionsLinkBuilder.projections().list(),
-                collectionsLinkBuilder.projections().details(),
-                collectionsLinkBuilder.self(),
-                collectionsLinkBuilder.next(collections.pageInfo)
+        return withProjection(
+            Resources(
+                collectionResources,
+                listOfNotNull(
+                    collectionsLinkBuilder.projections().list(),
+                    collectionsLinkBuilder.projections().details(),
+                    collectionsLinkBuilder.self(),
+                    collectionsLinkBuilder.next(collections.pageInfo)
+                )
             )
-        ))
+        )
     }
 
     @PostMapping

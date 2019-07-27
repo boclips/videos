@@ -16,7 +16,8 @@ internal class ContentPartnerTest {
 
     @Test
     fun `is downloadable if not hidden for download`() {
-        val contentPartner = TestFactories.createContentPartner(distributionMethods =  setOf(DistributionMethod.DOWNLOAD))
+        val contentPartner =
+            TestFactories.createContentPartner(distributionMethods = setOf(DistributionMethod.DOWNLOAD))
 
         assertThat(contentPartner.isDownloadable()).isTrue()
     }

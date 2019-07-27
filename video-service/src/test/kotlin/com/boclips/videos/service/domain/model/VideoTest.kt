@@ -1,10 +1,8 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
