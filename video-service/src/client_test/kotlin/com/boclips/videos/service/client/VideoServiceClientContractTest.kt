@@ -3,6 +3,7 @@ package com.boclips.videos.service.client
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
+import com.boclips.videos.service.client.internal.FakeClient
 import com.boclips.videos.service.client.testsupport.AbstractVideoServiceClientSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.domain.model.subject.SubjectRepository
@@ -279,9 +280,6 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val collections: List<Collection> = getClient().myCollections
 
         assertThat(collections).hasSize(2)
-        assertThat(collections[0].title).endsWith("collection")
-        assertThat(collections[0].videos[0].videoId.uri.toString()).isNotBlank()
-        assertThat(collections[0].subjects).containsAnyOf(SubjectId("Math"), SubjectId("French"))
     }
 
     @Test
@@ -299,24 +297,27 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         setSecurityContext("anotheruser@boclips.com")
         val collection = createCollection(
             CreateCollectionRequest(
-                title = "a collection",
+                title = "another user's collection",
                 videos = listOf(videoId.value)
             )
         )
-
-        updateCollection(collection.id.value, UpdateCollectionRequest(subjects = setOf("Math")))
+        val cookingSubject = subjectRepository.create("Cooking")
+        updateCollection(collection.id.value, UpdateCollectionRequest(subjects = setOf(cookingSubject.id.value)))
 
         val collections: List<Collection> = getClient().getCollectionsByOwner("anotheruser@boclips.com")
 
         assertThat(collections).hasSize(1)
+        assertThat(collections[0].title).isEqualTo("another user's collection")
         assertThat(collections[0].videos[0].videoId.uri.toString()).isNotBlank()
-        assertThat(collections[0].subjects).containsExactly(SubjectId("Math"))
+        assertThat(collections[0].subjects.first().id).isNotNull()
+        assertThat(collections[0].subjects.first().name).isNotNull()
     }
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
-    val fakeClient = VideoServiceClient.getFakeClient().apply {
+    val fakeClient: FakeClient = VideoServiceClient.getFakeClient().apply {
         addIllegalPlaybackId("illegal-video")
+
         val maths = addSubject("Maths")
         addSubject("French")
 
@@ -329,8 +330,6 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
                 subjects = setOf(maths.id.value)
             )
         )
-
-        val subjects = setOf(SubjectId("Math"))
         val videos = listOf(
             Video.builder()
                 .videoId(videoId)
@@ -341,7 +340,7 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
             Collection.builder()
                 .collectionId(TestFactories.createCollectionId())
                 .title("first collection")
-                .subjects(subjects)
+                .subjects(setOf(maths))
                 .videos(videos)
                 .build()
         )
@@ -357,7 +356,7 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
             Collection.builder()
                 .collectionId(TestFactories.createCollectionId())
                 .title("another user's collection")
-                .subjects(subjects)
+                .subjects(setOf(maths))
                 .videos(videos)
                 .build(),
             "anotheruser@boclips.com"
@@ -368,7 +367,6 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
 }
 
 internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTest() {
-
     @BeforeEach
     fun setUp() {
         fakeKalturaClient.addMediaEntry(
@@ -381,17 +379,17 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
         fakeYoutubePlaybackProvider.addVideo("ref-id-123", "http://my-little-pony.com", Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("ref-id-123", "http://my-little-pony.com", "channelId")
 
-        subjectRepository.create("Maths")
-        subjectRepository.create("French")
+        val mathsSubject = subjectRepository.create("Maths")
+        val frenchSubject = subjectRepository.create("French")
 
         val videoId = saveVideo()
 
         setSecurityContext("user@boclips.com")
         createCollection(CreateCollectionRequest(title = "first collection", videos = listOf(videoId.value))).apply {
-            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf("Math")))
+            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf(mathsSubject.id.value)))
         }
         createCollection(CreateCollectionRequest(title = "second collection", videos = listOf(videoId.value))).apply {
-            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf("French")))
+            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf(frenchSubject.id.value)))
         }
     }
 

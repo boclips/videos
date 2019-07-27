@@ -7,12 +7,28 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDistributionMethods
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.*
+import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.UserRatingDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.UserTagDocumentConverter
+import com.boclips.videos.service.infrastructure.video.mongo.converters.VideoDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
@@ -31,8 +47,7 @@ import org.litote.kmongo.not
 import org.litote.kmongo.push
 import org.litote.kmongo.set
 import java.time.Instant
-import java.util.*
-import kotlin.collections.toList
+import java.util.Optional
 
 class MongoVideoRepository(
     private val mongoClient: MongoClient
@@ -64,7 +79,7 @@ class MongoVideoRepository(
 
     override fun findByContentPartnerName(contentPartnerName: String): List<Video> {
         return getVideoCollection()
-            .find(VideoDocument::source.div(SourceDocument::contentPartner).div(ContentPartnerDocument::name) eq contentPartnerName)
+            .find((VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name) eq contentPartnerName)
             .map(VideoDocumentConverter::toVideo)
             .toList()
     }
@@ -213,7 +228,10 @@ class MongoVideoRepository(
             )
             is ReplaceLanguage -> set(VideoDocument::language, updateCommand.language.toLanguageTag())
             is ReplaceTranscript -> set(VideoDocument::transcript, updateCommand.transcript)
-            is ReplaceTopics -> set(VideoDocument::eventBus, updateCommand.eventBus.map(TopicDocumentConverter::toDocument))
+            is ReplaceTopics -> set(
+                VideoDocument::eventBus,
+                updateCommand.eventBus.map(TopicDocumentConverter::toDocument)
+            )
             is ReplaceKeywords -> set(VideoDocument::keywords, updateCommand.keywords)
             is ReplacePlayback -> set(VideoDocument::playback, PlaybackConverter.toDocument(updateCommand.playback))
             is AddRating -> push(

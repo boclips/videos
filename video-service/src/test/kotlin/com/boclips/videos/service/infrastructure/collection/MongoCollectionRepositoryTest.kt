@@ -7,12 +7,12 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.Document
 import org.bson.types.ObjectId
@@ -38,12 +38,14 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
 
+            val subject = TestFactories.createSubject()
+
             collectionRepository.update(
                 collection.id,
-                CollectionUpdateCommand.ReplaceSubjects(setOf(SubjectId("subject-1")))
+                CollectionUpdateCommand.ReplaceSubjects(setOf(subject))
             )
 
-            val findAllBySubject = collectionRepository.findAllBySubject(SubjectId(value = "subject-1"))
+            val findAllBySubject = collectionRepository.findAllBySubject(subject.id)
 
             assertThat(findAllBySubject).hasSize(1)
         }
@@ -135,27 +137,23 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
 
+            val originalSubject = TestFactories.createSubject()
+
             collectionRepository.update(
                 collection.id,
-                CollectionUpdateCommand.ReplaceSubjects(
-                    setOf(
-                        SubjectId(
-                            "2"
-                        )
-                    )
-                )
+                CollectionUpdateCommand.ReplaceSubjects(setOf(originalSubject))
             )
 
-            val updatedSubject = SubjectId("1")
+            val newSubject = TestFactories.createSubject()
 
             collectionRepository.update(
                 collection.id,
-                CollectionUpdateCommand.ReplaceSubjects(setOf(updatedSubject))
+                CollectionUpdateCommand.ReplaceSubjects(setOf(newSubject))
             )
 
             val updatedCollection = collectionRepository.find(collection.id)
 
-            assertThat(updatedCollection!!.subjects).containsExactly(updatedSubject)
+            assertThat(updatedCollection!!.subjects).containsExactly(newSubject)
         }
 
         @Test
@@ -266,9 +264,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `removes a subject from all collections`() {
-            val subjectId = SubjectId(value = ObjectId().toHexString())
-            val anotherSubjectId = SubjectId(value = ObjectId().toHexString())
-
             val aGoodCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),
                 title = "Great collection",
@@ -276,14 +271,17 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
 
+            val subject = TestFactories.createSubject()
+            val anotherSubject = TestFactories.createSubject()
+
             collectionRepository.update(
                 aGoodCollection.id,
-                CollectionUpdateCommand.ReplaceSubjects(setOf(subjectId, anotherSubjectId))
+                CollectionUpdateCommand.ReplaceSubjects(setOf(subject, anotherSubject))
             )
 
-            collectionRepository.updateAll(CollectionsUpdateCommand.RemoveSubjectFromAllCollections(subjectId))
+            collectionRepository.updateAll(CollectionsUpdateCommand.RemoveSubjectFromAllCollections(subject.id))
 
-            assertThat(collectionRepository.find(aGoodCollection.id)!!.subjects).containsExactly(anotherSubjectId)
+            assertThat(collectionRepository.find(aGoodCollection.id)!!.subjects).containsExactly(anotherSubject)
         }
     }
 
@@ -409,7 +407,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collection.viewerIds).isEmpty()
             assertThat(collection.isPublic).isEqualTo(false)
         }
-
+        
         @Test
         fun `can map viewerIds`() {
             val collectionId = "5c55697860fef77aa4af323a"

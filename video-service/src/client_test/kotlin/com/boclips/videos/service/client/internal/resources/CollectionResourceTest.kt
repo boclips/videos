@@ -1,6 +1,5 @@
 package com.boclips.videos.service.client.internal.resources
 
-import com.boclips.videos.service.client.SubjectId
 import com.boclips.videos.service.client.VideoId
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -19,7 +18,10 @@ class CollectionResourceTest {
         val resource = CollectionResource().apply {
             _links = CollectionLinks(Link(collectionUri))
             title = "the title"
-            subjects = setOf(SubjectResource().apply { this.id = "maths" })
+            subjects = setOf(SubjectResource().apply {
+                this.id = "maths-123"
+                this.name = "Maths"
+            })
             videos = listOf(VideoResource().apply {
                 _links =
                     VideoLinks().apply { self = Link().apply { href = "https://video-service.com/v1/videos/$videoId" } }
@@ -39,7 +41,7 @@ class CollectionResourceTest {
         val collection = resource.toCollection()
         assertThat(collection.collectionId.uri.toString()).isEqualTo(collectionUri)
         assertThat(collection.title).isEqualTo("the title")
-        assertThat(collection.subjects).containsExactly(SubjectId.builder().value("maths").build())
+        assertThat(collection.subjects.map { it.name }).containsExactly("Maths")
         assertThat(collection.videos).isNotEmpty
 
         val video = collection.videos.component1()

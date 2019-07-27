@@ -496,25 +496,6 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `adds two subjects to the existing collection`() {
-        val collectionId = createCollectionWithTitle("My Collection for Subjects")
-
-        getCollection(collectionId)
-            .andExpect(jsonPath("$.subjects", hasSize<Any>(0)))
-
-        mockMvc.perform(
-            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["SubjectOneId", "SubjectTwoId"]}""").asTeacher()
-        )
-            .andExpect(status().isNoContent)
-
-        getCollection(collectionId)
-            .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
-            .andExpect(jsonPath("$.subjects[0].id", IsIn(listOf("SubjectOneId", "SubjectTwoId"))))
-            .andExpect(jsonPath("$.subjects[1].id", IsIn(listOf("SubjectOneId", "SubjectTwoId"))))
-    }
-
-    @Test
     fun `validates collection update request`() {
         val collectionId = createCollectionWithTitle("My Collection for ages")
 
@@ -572,86 +553,75 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `adds two subjects to the existing collection, then rename the collection`() {
+    fun `adds two subjects to the existing collection, then rename the collection, subjects persist`() {
         val collectionId = createCollectionWithTitle("My Collection for Subjects")
 
         getCollection(collectionId)
             .andExpect(jsonPath("$.subjects", hasSize<Any>(0)))
 
+        val frenchSubject = saveSubject("French")
+        val germanSubject = saveSubject("German")
+
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["SubjectOneId", "SubjectTwoId"]}""").asTeacher()
+                .content("""{"subjects": ["${frenchSubject.value}", "${germanSubject.value}"]}""").asTeacher()
         )
             .andExpect(status().isNoContent)
 
         updateCollectionToBePublicAndRename(collectionId, "My new shiny title")
 
-        getCollection(collectionId)
-            .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
+        getCollection(collectionId).andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
     }
 
     @Test
     fun `can filter public collections by subjects`() {
-        val collectionWithSubjectsId = createCollectionWithTitle("My Collection for with Subjects")
-        val collectionWithoutSubjectsId = createCollectionWithTitle("My Collection for without Subjects")
+        val frenchCollection = createCollectionWithTitle("My Collection for with Subjects")
+        val unclassifiedCollection = createCollectionWithTitle("My Collection for without Subjects")
+
+        val frenchSubject = saveSubject("French")
 
         mockMvc.perform(
-            patch(selfLink(collectionWithSubjectsId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["SubjectOneId"]}""").asTeacher()
+            patch(selfLink(frenchCollection)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["${frenchSubject.value}"]}""").asTeacher()
         )
 
-        updateCollectionToBePublic(collectionWithSubjectsId)
-        updateCollectionToBePublic(collectionWithoutSubjectsId)
+        updateCollectionToBePublic(frenchCollection)
+        updateCollectionToBePublic(unclassifiedCollection)
 
-        mockMvc.perform(get("/v1/collections?subject=SubjectOneId&projection=details&public=true").asTeacher("teacher@gmail.com"))
+        mockMvc.perform(
+            get("/v1/collections?subject=${frenchSubject.value}&projection=details&public=true")
+                .asTeacher("teacher@gmail.com")
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
     }
 
     @Test
-    fun `can filter public collections by multiple subjects`() {
-        val collectionWithSubject1 = createCollectionWithTitle("My Collection for with Subjects")
-        val collectionWithSubject2 = createCollectionWithTitle("My Collection for with Subjects")
-        val collectionWithoutSubjects = createCollectionWithTitle("My Collection for without Subjects")
-
-        mockMvc.perform(
-            patch(selfLink(collectionWithSubject1)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["SubjectOneId"]}""").asTeacher()
-        )
-        mockMvc.perform(
-            patch(selfLink(collectionWithSubject2)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["SubjectTwoId"]}""").asTeacher()
-        )
-
-        updateCollectionToBePublic(collectionWithSubject1)
-        updateCollectionToBePublic(collectionWithSubject2)
-        updateCollectionToBePublic(collectionWithoutSubjects)
-
-        mockMvc.perform(get("/v1/collections?subject=SubjectOneId&subject=SubjectTwoId&public=true").asTeacher("teacher@gmail.com"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
-    }
-
-    @Test
     fun `can filter public collections by multiple subjects with commas`() {
-        val collectionWithSubject1 = createCollectionWithTitle("My Collection for with Subjects")
-        val collectionWithSubject2 = createCollectionWithTitle("My Collection for with Subjects")
+        val frenchCollection = createCollectionWithTitle("French Collection for with Subjects")
+        val germanCollection = createCollectionWithTitle("German Collection for with Subjects")
         val collectionWithoutSubjects = createCollectionWithTitle("My Collection for without Subjects")
 
+        val frenchSubject = saveSubject("French")
+        val germanSubject = saveSubject("German")
+
         mockMvc.perform(
-            patch(selfLink(collectionWithSubject1)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["SubjectOneId"]}""").asTeacher()
+            patch(selfLink(frenchCollection)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["${frenchSubject.value}"]}""").asTeacher()
         )
         mockMvc.perform(
-            patch(selfLink(collectionWithSubject2)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["SubjectTwoId"]}""").asTeacher()
+            patch(selfLink(germanCollection)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["${germanSubject.value}"]}""").asTeacher()
         )
 
-        updateCollectionToBePublic(collectionWithSubject1)
-        updateCollectionToBePublic(collectionWithSubject2)
+        updateCollectionToBePublic(frenchCollection)
+        updateCollectionToBePublic(germanCollection)
         updateCollectionToBePublic(collectionWithoutSubjects)
 
-        mockMvc.perform(get("/v1/collections?subject=SubjectOneId,SubjectTwoId&public=true").asTeacher("teacher@gmail.com"))
+        mockMvc.perform(
+            get("/v1/collections?subject=${frenchSubject.value},${germanSubject.value}&public=true")
+                .asTeacher("teacher@gmail.com")
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
     }

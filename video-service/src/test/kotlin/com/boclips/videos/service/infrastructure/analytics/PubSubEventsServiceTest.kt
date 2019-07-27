@@ -1,16 +1,22 @@
 package com.boclips.videos.service.infrastructure.analytics
 
-import com.boclips.eventbus.events.collection.*
+import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
+import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
+import com.boclips.eventbus.events.collection.CollectionRenamed
+import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
+import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
+import com.boclips.eventbus.events.collection.VideoAddedToCollection
+import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
@@ -37,7 +43,13 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun saveSearchEvent() {
-        eventService.saveSearchEvent(query = "the query", pageIndex = 4, pageSize = 2, totalResults = 20, pageVideoIds = listOf("v123"))
+        eventService.saveSearchEvent(
+            query = "the query",
+            pageIndex = 4,
+            pageSize = 2,
+            totalResults = 20,
+            pageVideoIds = listOf("v123")
+        )
 
         val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
 
@@ -154,14 +166,13 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun collectionSubjectsChanged() {
         val collectionId = aValidId()
+        val aSubject = TestFactories.createSubject()
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
                 CollectionUpdateCommand.ReplaceSubjects(
                     subjects = setOf(
-                        SubjectId(
-                            "subject-1"
-                        )
+                        aSubject
                     )
                 )
             )
@@ -172,7 +183,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.collectionId).isEqualTo(collectionId)
         assertThat(event.user.id).isEqualTo("user@example.com")
         assertThat(event.user.isBoclipsEmployee).isFalse()
-        assertThat(event.subjects).containsExactly("subject-1")
+        assertThat(event.subjects).containsExactly(aSubject.id.value)
     }
 
     @Test

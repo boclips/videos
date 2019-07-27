@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ class CollectionDocumentConverterTest {
             visibility = CollectionVisibilityDocument.PRIVATE,
             createdByBoclips = false,
             bookmarks = setOf("user-1"),
-            subjects = setOf("subject-1"),
+            subjects = setOf(TestFactories.createSubjectDocument(name = "subject-1")),
             ageRangeMax = 10,
             ageRangeMin = 5
         )
@@ -36,7 +36,9 @@ class CollectionDocumentConverterTest {
         assertThat(collection.isPublic).isEqualTo(false)
         assertThat(collection.ageRange.min()).isEqualTo(5)
         assertThat(collection.ageRange.max()).isEqualTo(10)
-        assertThat(collection.subjects).containsExactly(SubjectId(value = "subject-1"))
         assertThat(collection.bookmarks).containsExactly(UserId(value = "user-1"))
+
+        assertThat(collection.subjects.first().name).isEqualTo("subject-1")
+        assertThat(collection.subjects.first().id.value).isNotBlank()
     }
 }

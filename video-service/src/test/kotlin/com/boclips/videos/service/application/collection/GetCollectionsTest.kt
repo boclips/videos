@@ -7,7 +7,6 @@ import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -187,7 +186,7 @@ class GetCollectionsTest {
                     TestFactories.createCollection(
                         id = CollectionId("collection-id"),
                         isPublic = true,
-                        subjects = setOf(SubjectId("1"))
+                        subjects = setOf(TestFactories.createSubject())
                     ),
                     TestFactories.createCollection(isPublic = true)
                 ), PageInfo(true)
@@ -209,10 +208,9 @@ class GetCollectionsTest {
         val collection = collections.elements.first()
 
         assertThat(collection.id).isEqualTo("collection-id")
-        assertThat(collection.subjects).hasSize(1)
 
-        val subject = collection.subjects.first()
-        assertThat(subject.content.id).isEqualTo("1")
+        assertThat(collection.subjects).hasSize(1)
+        assertThat(collection.subjects.first().content.id).isNotBlank()
     }
 
     @Test
@@ -229,7 +227,7 @@ class GetCollectionsTest {
                             title = "collection title",
                             videos = listOf(video.videoId),
                             isPublic = true,
-                            subjects = setOf(SubjectId("1"))
+                            subjects = setOf(TestFactories.createSubject())
                         )
                     ), PageInfo(false)
                 )

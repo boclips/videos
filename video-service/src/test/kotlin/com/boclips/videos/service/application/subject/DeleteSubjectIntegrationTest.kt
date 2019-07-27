@@ -24,20 +24,20 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `when deleting subject, it deletes the subject from collections and updates index`() {
-        val subjectId = subjectRepository.create("Biology").id
-        val collectionWithSubject = saveCollection(subjects = setOf(subjectId.value))
+        val subject = subjectRepository.create("Biology")
+        val collectionWithSubject = saveCollection(subjects = setOf(subject))
 
-        deleteSubject(subjectId)
+        deleteSubject(subject.id)
 
-        assertThat(subjectRepository.findById(subjectId)).isNull()
+        assertThat(subjectRepository.findById(subject.id)).isNull()
 
         val collection = collectionRepository.find(collectionWithSubject)!!
-        assertThat(collection.subjects).doesNotContain(subjectId)
+        assertThat(collection.subjects.map { it.id }).doesNotContain(subject.id)
 
         assertThat(
             collectionService.count(
                 CollectionSearchQuery(
-                    subjectIds = listOf(subjectId.value),
+                    subjectIds = listOf(subject.id.value),
                     text = null,
                     pageIndex = 0,
                     pageSize = 10

@@ -1,11 +1,15 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.infrastructure.DocumentWithId
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import mu.KLogging
 import org.bson.conversions.Bson
+import org.bson.types.ObjectId
 import org.litote.kmongo.addToSet
 import org.litote.kmongo.combine
 import org.litote.kmongo.pull
@@ -14,10 +18,7 @@ import org.litote.kmongo.set
 class CollectionUpdates {
     companion object : KLogging()
 
-    fun toBson(
-        id: CollectionId,
-        anyUpdateCommand: CollectionUpdateCommand
-    ): Bson {
+    fun toBson(id: CollectionId, anyUpdateCommand: CollectionUpdateCommand): Bson {
         return when (anyUpdateCommand) {
             is CollectionUpdateCommand.AddVideoToCollection -> addVideo(id, anyUpdateCommand.videoId)
             is CollectionUpdateCommand.RemoveVideoFromCollection -> removeVideo(id, anyUpdateCommand.videoId)
@@ -36,22 +37,16 @@ class CollectionUpdates {
     private fun replaceAgeRange(collectionId: CollectionId, min: Int, max: Int?): Bson {
         logger.info { "Prepare replacing age range for collection $collectionId" }
         return combine(
-            set(
-                CollectionDocument::ageRangeMin,
-                min
-            ),
-            set(
-                CollectionDocument::ageRangeMax,
-                max
-            )
+            set(CollectionDocument::ageRangeMin, min),
+            set(CollectionDocument::ageRangeMax, max)
         )
     }
 
-    private fun replaceSubjects(collectionId: CollectionId, subjects: Set<SubjectId>): Bson {
+    private fun replaceSubjects(collectionId: CollectionId, subjects: Set<Subject>): Bson {
         logger.info { "Prepare replacing subjects for collection $collectionId" }
         return set(
             CollectionDocument::subjects,
-            subjects.map { subjectId -> subjectId.value }
+            subjects.map { SubjectDocument(id = ObjectId(it.id.value), name = it.name) }
         )
     }
 
@@ -62,7 +57,7 @@ class CollectionUpdates {
 
     private fun removeSubject(collectionId: CollectionId, subjectId: SubjectId): Bson {
         logger.info { "Prepare subject for removal from collection $collectionId" }
-        return pull(CollectionDocument::subjects, subjectId.value)
+        return pull(CollectionDocument::subjects, DocumentWithId(_id = ObjectId(subjectId.value)))
     }
 
     private fun addVideo(collectionId: CollectionId, videoId: VideoId): Bson {

@@ -17,7 +17,7 @@ public class Collection {
     @NonNull
     private final List<Video> videos;
     @NonNull
-    private final Set<SubjectId> subjects;
+    private final Set<Subject> subjects;
 }
 
 

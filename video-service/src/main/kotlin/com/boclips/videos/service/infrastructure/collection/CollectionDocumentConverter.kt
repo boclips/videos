@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 
@@ -11,9 +12,10 @@ object CollectionDocumentConverter {
     fun toCollection(collectionDocument: CollectionDocument?): Collection? {
         if (collectionDocument == null) return null
         val videoIds = collectionDocument.videos.map { VideoId(value = it) }
-        val subjectIds = collectionDocument.subjects.orEmpty().map {
-            SubjectId(
-                value = it
+        val subjects = collectionDocument.subjects.orEmpty().map {
+            Subject(
+                id = SubjectId(value = it.id.toHexString()),
+                name = it.name
             )
         }.toSet()
         val isPubliclyVisible = collectionDocument.visibility == CollectionVisibilityDocument.PUBLIC
@@ -28,7 +30,7 @@ object CollectionDocumentConverter {
             isPublic = isPubliclyVisible,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
             bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
-            subjects = subjectIds,
+            subjects = subjects,
             ageRange = if (collectionDocument.ageRangeMin !== null) AgeRange.bounded(
                 min = collectionDocument.ageRangeMin,
                 max = collectionDocument.ageRangeMax

@@ -3,7 +3,13 @@ package com.boclips.videos.service.infrastructure.analytics
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.domain.user.User
 import com.boclips.eventbus.events.base.UserEvent
-import com.boclips.eventbus.events.collection.*
+import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
+import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
+import com.boclips.eventbus.events.collection.CollectionRenamed
+import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
+import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
+import com.boclips.eventbus.events.collection.VideoAddedToCollection
+import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
@@ -17,7 +23,13 @@ import com.boclips.videos.service.domain.service.events.EventService
 class PubSubEventsService(
     val eventBus: EventBus
 ) : EventService {
-    override fun saveSearchEvent(query: String, pageIndex: Int, pageSize: Int, totalResults: Long, pageVideoIds: List<String>) {
+    override fun saveSearchEvent(
+        query: String,
+        pageIndex: Int,
+        pageSize: Int,
+        totalResults: Long,
+        pageVideoIds: List<String>
+    ) {
         eventBus.publish(
             msg(
                 VideosSearched.builder()
@@ -73,7 +85,7 @@ class PubSubEventsService(
                     msg(
                         CollectionSubjectsChanged.builder()
                             .collectionId(collectionId.value)
-                            .subjects(updateCommand.subjects.map { it.value }.toMutableSet())
+                            .subjects(updateCommand.subjects.map { it.id.value }.toMutableSet())
                     )
                 )
             is CollectionUpdateCommand.ChangeAgeRange ->
@@ -160,8 +172,8 @@ class PubSubEventsService(
                 .build()
         }
         return builder
-                .user(user)
-                .url(RefererHeaderExtractor.getReferer())
-                .build()
+            .user(user)
+            .url(RefererHeaderExtractor.getReferer())
+            .build()
     }
 }

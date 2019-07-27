@@ -22,6 +22,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -52,7 +53,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -162,9 +163,11 @@ abstract class AbstractSpringIntegrationTest {
         legalRestrictions: String = "",
         ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11)
     ): VideoId {
-        createContentPartner(ContentPartnerRequest(
-            name = contentProvider,
-            distributionMethods = setOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM))
+        createContentPartner(
+            ContentPartnerRequest(
+                name = contentProvider,
+                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM)
+            )
         )
 
         when (playbackId.type) {
@@ -232,13 +235,16 @@ abstract class AbstractSpringIntegrationTest {
         videos: List<String> = emptyList(),
         public: Boolean = false,
         bookmarkedBy: String? = null,
-        subjects: Set<String> = emptySet()
+        subjects: Set<Subject> = emptySet()
     ): CollectionId {
         setSecurityContext(owner)
 
         val collectionId = createCollection(TestFactories.createCollectionRequest(title = title, videos = videos)).id
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = public, subjects = subjects))
+        updateCollection(
+            collectionId.value,
+            UpdateCollectionRequest(isPublic = public, subjects = subjects.map { it.id.value }.toSet())
+        )
 
         bookmarkedBy?.let {
             setSecurityContext(it)

@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import mu.KLogging
@@ -25,6 +26,7 @@ import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
 import org.litote.kmongo.descendingSort
+import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
@@ -42,7 +44,12 @@ class MongoCollectionRepository(
 
     private val publicCollectionCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
 
-    override fun create(owner: UserId, title: String, createdByBoclips: Boolean, public: Boolean): Collection {
+    override fun create(
+        owner: UserId,
+        title: String,
+        createdByBoclips: Boolean,
+        public: Boolean
+    ): Collection {
         val objectId = ObjectId()
         val collectionId = CollectionId(value = objectId.toHexString())
         val document = CollectionDocument(
@@ -52,7 +59,8 @@ class MongoCollectionRepository(
             videos = emptyList(),
             updatedAt = Instant.now(),
             visibility = if (public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
-            createdByBoclips = createdByBoclips
+            createdByBoclips = createdByBoclips,
+            subjects = emptySet()
         )
 
         dbCollection().insertOne(document)
@@ -82,7 +90,7 @@ class MongoCollectionRepository(
     }
 
     override fun findAllBySubject(subjectId: SubjectId): List<Collection> {
-        return dbCollection().find(CollectionDocument::subjects contains subjectId.value)
+        return dbCollection().find(CollectionDocument::subjects / SubjectDocument::id eq ObjectId(subjectId.value))
             .mapNotNull(CollectionDocumentConverter::toCollection)
     }
 
@@ -109,10 +117,7 @@ class MongoCollectionRepository(
     override fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand) {
         val updateBson = updateCommands
             .fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
-                combine(
-                    partialDocument,
-                    collectionUpdates.toBson(collectionId, updateCommand)
-                )
+                combine(partialDocument, collectionUpdates.toBson(collectionId, updateCommand))
             }
 
         updateOne(collectionId, updateBson)
