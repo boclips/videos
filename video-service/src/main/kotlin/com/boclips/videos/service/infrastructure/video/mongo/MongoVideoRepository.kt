@@ -57,12 +57,8 @@ class MongoVideoRepository(
     }
 
     override fun find(videoId: VideoId): Video? {
-        val videoOrNull = getVideoCollection().findOne(VideoDocument::id eq ObjectId(videoId.value))
+        return getVideoCollection().findOne(VideoDocument::id eq ObjectId(videoId.value))
             ?.let(VideoDocumentConverter::toVideo)
-
-        logger.info { "Found video ${videoId.value}" }
-
-        return videoOrNull
     }
 
     override fun findAll(videoIds: List<VideoId>): List<Video> {

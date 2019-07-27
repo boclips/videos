@@ -69,7 +69,6 @@ class MongoCollectionRepository(
 
     override fun find(id: CollectionId): Collection? {
         if (!isValid(id.value)) {
-            logger.info { "Collection Id ${id.value} is invalid object id" }
             return null
         }
 
@@ -81,7 +80,6 @@ class MongoCollectionRepository(
 
     override fun findAll(ids: List<CollectionId>): List<Collection> {
         val objectIds = ids.filter {
-            logger.info { "Collection Id ${it.value} is invalid object id" }
             isValid(it.value)
         }.map { ObjectId(it.value) }
 
