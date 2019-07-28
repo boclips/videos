@@ -1,7 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.videos.service.application.video.ClassifyVideo
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
@@ -21,8 +20,7 @@ class VideoService(
     private val videoRepository: VideoRepository,
     private val videoSearchService: VideoSearchService,
     private val includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-    private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
-    private val classifyVideo: ClassifyVideo
+    private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
 ) {
     companion object : KLogging()
 
@@ -76,8 +74,6 @@ class VideoService(
         }
 
         val createdVideo = videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
-
-        classifyVideo(createdVideo)
 
         if (videoToBeCreated.contentPartner.isStreamable()) {
             includeVideosInSearchForStream(videoIds = listOf(createdVideo.videoId.value))

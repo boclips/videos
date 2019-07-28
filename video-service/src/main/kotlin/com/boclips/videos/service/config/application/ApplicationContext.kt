@@ -33,8 +33,6 @@ import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
-import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
-import com.boclips.videos.service.application.video.ClassifyVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
@@ -49,6 +47,7 @@ import com.boclips.videos.service.application.video.UpdatePlayback
 import com.boclips.videos.service.application.video.UpdateTranscripts
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.application.video.VideoAnalysisService
+import com.boclips.videos.service.application.video.VideoClassificationService
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
 import com.boclips.videos.service.application.video.search.GetAllVideosById
@@ -119,7 +118,8 @@ class ApplicationContext(
     fun createVideo(
         searchVideo: SearchVideo,
         videoCounter: Counter,
-        videoAnalysisService: VideoAnalysisService
+        videoAnalysisService: VideoAnalysisService,
+        videoClassificationService: VideoClassificationService
     ): CreateVideo {
         return CreateVideo(
             videoService,
@@ -130,7 +130,8 @@ class ApplicationContext(
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
             videoCounter,
-            videoAnalysisService
+            videoAnalysisService,
+            videoClassificationService
         )
     }
 
@@ -280,12 +281,7 @@ class ApplicationContext(
     fun videoAnalysisService(): VideoAnalysisService {
         return VideoAnalysisService(videoRepository, videoService, eventBus)
     }
-
-    @Bean
-    fun classifyContentPartnerVideos(classifyVideo: ClassifyVideo): ClassifyContentPartnerVideos {
-        return ClassifyContentPartnerVideos(videoRepository, classifyVideo)
-    }
-
+    
     @Bean
     fun refreshVideoDurations(): RequestPlaybackUpdate {
         return RequestPlaybackUpdate(videoRepository, eventBus)

@@ -11,16 +11,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class ClassifyVideoTest : AbstractSpringIntegrationTest() {
+class VideoClassificationServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var classifyVideo: ClassifyVideo
+    lateinit var videoClassificationService: VideoClassificationService
 
     @Test
     fun `publishes events for instructional videos`() {
         val video = TestFactories.createVideo(title = "the video title", type = LegacyVideoType.INSTRUCTIONAL_CLIPS)
 
-        classifyVideo(video)
+        videoClassificationService.classifyVideo(video)
 
         val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
 
@@ -31,7 +31,7 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
     fun `ignores stock videos`() {
         val video = TestFactories.createVideo(type = LegacyVideoType.STOCK)
 
-        classifyVideo(video)
+        videoClassificationService.classifyVideo(video)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoSubjectClassificationRequested::class.java)).isFalse()
     }
@@ -40,7 +40,7 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
     fun `ignores news videos`() {
         val video = TestFactories.createVideo(type = LegacyVideoType.NEWS)
 
-        classifyVideo(video)
+        videoClassificationService.classifyVideo(video)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoSubjectClassificationRequested::class.java)).isFalse()
     }
@@ -53,8 +53,19 @@ class ClassifyVideoTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        classifyVideo(video)
+        videoClassificationService.classifyVideo(video)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoSubjectClassificationRequested::class.java)).isFalse()
+    }
+
+    @Test
+    fun `classifying a video sends a message to the relevant channel`() {
+        saveVideo(title = "matrix multiplication")
+
+        videoClassificationService.classifyVideosByContentPartner(null).get()
+
+        val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
+
+        assertThat(event.title).isEqualTo("matrix multiplication")
     }
 }

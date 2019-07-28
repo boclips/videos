@@ -4,7 +4,6 @@ import com.boclips.videos.service.application.exceptions.VideoNotAnalysableExcep
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
@@ -16,6 +15,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -35,7 +35,8 @@ class CreateVideo(
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
-    private val videoAnalysisService: VideoAnalysisService
+    private val videoAnalysisService: VideoAnalysisService,
+    private val videoClassificationService: VideoClassificationService
 ) {
     companion object : KLogging()
 
@@ -73,6 +74,8 @@ class CreateVideo(
         if (createRequest.analyseVideo) {
             triggerVideoAnalysis(createdVideo)
         }
+
+        videoClassificationService.classifyVideo(createdVideo)
 
         videoCounter.increment()
 

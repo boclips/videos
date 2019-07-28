@@ -2,10 +2,12 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
+import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -214,6 +216,22 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `bumps video counter when video created`() {
         val videoCounterBefore = videoCounter.count()
 
+        createAVideo("the latest and greatest Bloomberg video")
+
+        val videoCounterAfter = videoCounter.count()
+
+        assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
+    }
+
+    @Test
+    fun `when video is created it requests that the video subject is classified`() {
+        createAVideo("the latest and greatest Bloomberg video")
+
+        val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
+        assertThat(event.title).isEqualTo("the latest and greatest Bloomberg video")
+    }
+
+    private fun createAVideo(title: String) {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
                 id = "entry-$123",
@@ -224,14 +242,11 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val createRequest =
             TestFactories.createCreateVideoRequest(
-                title = "the latest and greatest Bloomberg video",
-                playbackId = "1234"
+                title = title,
+                playbackId = "1234",
+                videoType = LegacyVideoType.INSTRUCTIONAL_CLIPS.toString()
             )
 
         createVideo(createRequest)
-
-        val videoCounterAfter = videoCounter.count()
-
-        assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
     }
 }

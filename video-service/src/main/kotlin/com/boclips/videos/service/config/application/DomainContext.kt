@@ -2,7 +2,7 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.videos.service.application.video.ClassifyVideo
+import com.boclips.videos.service.application.video.VideoClassificationService
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.config.properties.YoutubeProperties
@@ -28,7 +28,6 @@ import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.mongodb.MongoClient
-import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -43,22 +42,15 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
         videoSearchService: VideoSearchService,
         playbackRepository: PlaybackRepository,
         includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
-        classifyVideo: ClassifyVideo
+        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
     ): VideoService {
         return VideoService(
             contentPartnerRepository,
             videoRepository,
             videoSearchService,
             includeVideosInSearchForStream,
-            includeVideosInSearchForDownload,
-            classifyVideo
+            includeVideosInSearchForDownload
         )
-    }
-
-    @Bean
-    fun classifyVideo(eventBus: EventBus): ClassifyVideo {
-        return ClassifyVideo(eventBus)
     }
 
     @Bean
@@ -83,7 +75,7 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
     }
 
     @Bean
-    fun collectionRepository(videoService: VideoService): CollectionRepository {
+    fun collectionRepository(): CollectionRepository {
         return MongoCollectionRepository(mongoClient)
     }
 
@@ -92,7 +84,8 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
         return EventPublishingVideoRepository(
             MongoVideoRepository(
                 mongoClient
-            ), eventBus)
+            ), eventBus
+        )
     }
 
     @Bean

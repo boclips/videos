@@ -4,7 +4,7 @@ import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
-import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
+import com.boclips.videos.service.application.video.VideoClassificationService
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestPlaybackUpdate
@@ -44,7 +44,7 @@ class AdminController(
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
     private val requestPlaybackUpdate: RequestPlaybackUpdate,
     private val dispatchVideoUpdatedEvents: DispatchVideoUpdatedEvents,
-    private val classifyContentPartnerVideos: ClassifyContentPartnerVideos,
+    private val videoClassificationService: VideoClassificationService,
     private val videoAnalysisService: VideoAnalysisService
 ) {
     companion object : KLogging()
@@ -93,7 +93,7 @@ class AdminController(
 
     @PostMapping("/classify_videos")
     fun postClassifyVideos(@RequestParam contentPartner: String?): ResponseEntity<Void> {
-        classifyContentPartnerVideos(contentPartner)
+        videoClassificationService.classifyVideosByContentPartner(contentPartner)
         return ResponseEntity(HttpStatus.ACCEPTED)
     }
 

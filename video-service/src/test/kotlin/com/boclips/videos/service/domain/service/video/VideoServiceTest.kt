@@ -198,12 +198,4 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
     }
-
-    @Test
-    fun `when video is created it requests that the video subject is classified`() {
-        videoService.create(videoToBeCreated = TestFactories.createVideo(title = "fractions"))
-
-        val event = fakeEventBus.getEventOfType(VideoSubjectClassificationRequested::class.java)
-        assertThat(event.title).isEqualTo("fractions")
-    }
 }
