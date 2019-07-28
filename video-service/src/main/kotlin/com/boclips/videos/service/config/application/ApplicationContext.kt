@@ -36,13 +36,12 @@ import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
-import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
-import com.boclips.videos.service.application.video.UpdateTranscripts
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
@@ -148,8 +147,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun updateVideoTranscripts(): UpdateTranscripts {
-        return UpdateTranscripts(videoRepository)
+    fun updateVideoTranscripts(): VideoTranscriptService {
+        return VideoTranscriptService(videoRepository)
     }
 
     @Bean
@@ -332,11 +331,6 @@ class ApplicationContext(
     @Bean
     fun replaceDisciplineSubjects(): ReplaceDisciplineSubjects {
         return ReplaceDisciplineSubjects(disciplineRepository, subjectRepository)
-    }
-
-    @Bean
-    fun getVideoTranscript(): GetVideoTranscript {
-        return GetVideoTranscript(videoRepository)
     }
 
     @Bean

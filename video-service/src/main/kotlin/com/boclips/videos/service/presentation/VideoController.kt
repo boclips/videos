@@ -3,9 +3,9 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.TagVideo
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.SortKey
@@ -44,7 +44,7 @@ class VideoController(
     private val createVideo: CreateVideo,
     private val bulkUpdateVideo: BulkUpdateVideo,
     private val rateVideo: RateVideo,
-    private val getVideoTranscript: GetVideoTranscript,
+    private val videoTranscriptService: VideoTranscriptService,
     private val objectMapper: ObjectMapper,
     private val withProjection: WithProjection,
     private val tagVideo: TagVideo
@@ -121,9 +121,9 @@ class VideoController(
     }
 
     @GetMapping("/{id}/transcript")
-    fun getTranscript(@PathVariable("id") id: String?): ResponseEntity<String> {
-        val videoTranscript = getVideoTranscript(id)
-        val videoTitle = searchVideo.byId(id).content.title!!.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+    fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
+        val videoTranscript = videoTranscriptService.getTranscript(videoId)
+        val videoTitle = searchVideo.byId(videoId).content.title!!.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
 
         val headers = HttpHeaders()
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$videoTitle.txt\"")

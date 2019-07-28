@@ -2,16 +2,33 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.video.VideoTranscriptCreated
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoTranscriptNotFound
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
-class UpdateTranscripts(val videoRepository: VideoRepository) {
+class VideoTranscriptService(val videoRepository: VideoRepository) {
     companion object : KLogging()
 
+    fun getTranscript(rawVideoId: String?): String {
+        if (rawVideoId == null || rawVideoId.isBlank()) {
+            throw VideoNotFoundException()
+        }
+
+        val videoId = VideoId(value = rawVideoId)
+        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
+
+        if (video.transcript == null) {
+            throw VideoTranscriptNotFound(videoId)
+        }
+
+        return video.transcript
+    }
+
     @BoclipsEventListener
-    operator fun invoke(videoTranscriptCreated: VideoTranscriptCreated) {
+    fun videoTranscriptReceived(videoTranscriptCreated: VideoTranscriptCreated) {
         try {
             val video = videoRepository.find(VideoId(value = videoTranscriptCreated.videoId))!!
 
