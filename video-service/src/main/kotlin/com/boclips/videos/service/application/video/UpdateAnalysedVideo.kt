@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.VideoId

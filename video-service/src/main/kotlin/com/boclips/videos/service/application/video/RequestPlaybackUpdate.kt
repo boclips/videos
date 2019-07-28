@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoPlaybackSyncRequested
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import mu.KLogging

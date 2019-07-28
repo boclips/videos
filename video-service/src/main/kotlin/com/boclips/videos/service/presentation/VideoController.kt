@@ -8,7 +8,7 @@ import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.SortKey
+import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.video.AdminSearchRequest

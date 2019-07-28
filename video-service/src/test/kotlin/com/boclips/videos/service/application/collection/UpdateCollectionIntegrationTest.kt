@@ -4,7 +4,7 @@ import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
-import com.boclips.videos.service.domain.model.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -109,6 +109,13 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
 
-        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements).isEmpty()
+        assertThat(collectionService.search(
+            CollectionSearchQuery(
+                "title",
+                emptyList(),
+                1,
+                0
+            )
+        ).elements).isEmpty()
     }
 }

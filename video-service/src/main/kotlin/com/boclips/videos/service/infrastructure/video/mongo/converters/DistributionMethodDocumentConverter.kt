@@ -14,6 +14,6 @@ object DistributionMethodDocumentConverter {
         when (document.deliveryMethod) {
             DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD -> DistributionMethod.DOWNLOAD
             DistributionMethodDocument.DELIVERY_METHOD_STREAM -> DistributionMethod.STREAM
-            else -> throw UnknownDeliveryMethod()
+            else -> throw UnknownDeliveryMethodException()
         }
 }

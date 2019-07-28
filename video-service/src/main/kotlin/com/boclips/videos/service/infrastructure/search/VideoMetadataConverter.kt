@@ -2,8 +2,8 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.videos.service.domain.model.ContentEnrichers
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.service.video.ContentEnrichers
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 
 object VideoMetadataConverter {

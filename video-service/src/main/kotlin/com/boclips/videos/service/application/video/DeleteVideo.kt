@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId

@@ -1,6 +1,7 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.Video
 
 class ContentEnrichers {
     companion object {

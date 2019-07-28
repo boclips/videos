@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 

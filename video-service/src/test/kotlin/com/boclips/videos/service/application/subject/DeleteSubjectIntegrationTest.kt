@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.videos.service.domain.model.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.collection.CollectionService

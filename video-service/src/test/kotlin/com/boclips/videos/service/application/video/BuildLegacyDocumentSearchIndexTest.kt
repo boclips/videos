@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoFilter

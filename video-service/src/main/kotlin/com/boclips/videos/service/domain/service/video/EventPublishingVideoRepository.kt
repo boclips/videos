@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoUpdated
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.EventConverter
 

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.Video
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 

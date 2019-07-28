@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import mu.KLogging
 

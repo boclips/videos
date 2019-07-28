@@ -1,8 +1,10 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.model.video
 
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

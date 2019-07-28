@@ -1,11 +1,11 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.model.video
 
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.videos.service.domain.model.SortKey.RELEASE_DATE
+import com.boclips.videos.service.domain.model.video.SortKey.RELEASE_DATE
 import java.time.Duration
 import java.time.LocalDate
 

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.model.video
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.common.UserId

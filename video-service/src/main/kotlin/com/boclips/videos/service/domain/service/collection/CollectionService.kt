@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.collection
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
-import com.boclips.videos.service.domain.model.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository

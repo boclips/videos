@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.domain.model.Video
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource

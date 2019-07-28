@@ -1,6 +1,6 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.service
 
-import com.boclips.videos.service.domain.model.ContentEnrichers.Companion.isClassroom
+import com.boclips.videos.service.domain.service.video.ContentEnrichers.Companion.isClassroom
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat

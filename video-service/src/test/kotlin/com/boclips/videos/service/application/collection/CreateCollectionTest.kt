@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.common.PageRequest
-import com.boclips.videos.service.domain.model.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -62,7 +62,14 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest)
 
-        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements).isNotEmpty
+        assertThat(collectionService.search(
+            CollectionSearchQuery(
+                "title",
+                emptyList(),
+                1,
+                0
+            )
+        ).elements).isNotEmpty
         assertThat(
             collectionService.search(
                 CollectionSearchQuery(
@@ -83,7 +90,14 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         createCollection(createRequest)
 
-        assertThat(collectionService.search(CollectionSearchQuery("title", emptyList(), 1, 0)).elements).isEmpty()
+        assertThat(collectionService.search(
+            CollectionSearchQuery(
+                "title",
+                emptyList(),
+                1,
+                0
+            )
+        ).elements).isEmpty()
     }
 
     @Test
