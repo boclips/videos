@@ -59,10 +59,6 @@ open class VideoPlaybackService(
         }
     }
 
-    fun updateVideoPlayback(videoId: VideoId) {
-        handleUpdate(videoId)
-    }
-
     @BoclipsEventListener
     fun updateVideoPlayback(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
         try {
