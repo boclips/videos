@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
-import com.boclips.videos.service.application.video.BuildLegacySearchIndex
+import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.VideoClassificationService
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.RebuildVideoIndex
@@ -41,7 +41,7 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 class AdminController(
     private val rebuildVideoIndex: RebuildVideoIndex,
     private val rebuildCollectionIndex: RebuildCollectionIndex,
-    private val buildLegacySearchIndex: BuildLegacySearchIndex,
+    private val rebuildLegacySearchIndex: RebuildLegacySearchIndex,
     private val videoPlaybackService: VideoPlaybackService,
     private val dispatchVideoUpdatedEvents: DispatchVideoUpdatedEvents,
     private val videoClassificationService: VideoClassificationService,
@@ -61,7 +61,7 @@ class AdminController(
 
     @PostMapping("/build_legacy_search_index")
     fun buildLegacySearchIndex(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(buildLegacySearchIndex::invoke)
+        return asyncWithNotifier(rebuildLegacySearchIndex::invoke)
     }
 
     @PostMapping("/refresh_playbacks")

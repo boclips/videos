@@ -21,7 +21,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class BuildLegacyDocumentSearchIndexTest {
+class RebuildLegacyDocumentSearchIndexTest {
 
     lateinit var legacyVideoSearchService: LegacyVideoSearchService
 
@@ -45,7 +45,7 @@ class BuildLegacyDocumentSearchIndexTest {
                 TestFactories.createVideo(videoId = videoId2, keywords = listOf("keyword"))
             )
         )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
+        val rebuildSearchIndex = RebuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
@@ -65,7 +65,7 @@ class BuildLegacyDocumentSearchIndexTest {
                 )
             )
         )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
+        val rebuildSearchIndex = RebuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         rebuildSearchIndex()
 
@@ -84,7 +84,7 @@ class BuildLegacyDocumentSearchIndexTest {
                 )
             )
         )
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
+        val rebuildSearchIndex = RebuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         rebuildSearchIndex()
 
@@ -99,7 +99,7 @@ class BuildLegacyDocumentSearchIndexTest {
             } doThrow (MongoClientException("Boom"))
         }
 
-        val rebuildSearchIndex = BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
+        val rebuildSearchIndex = RebuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
 
         assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }

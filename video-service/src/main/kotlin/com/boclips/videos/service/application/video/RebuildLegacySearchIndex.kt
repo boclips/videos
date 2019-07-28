@@ -9,7 +9,7 @@ import mu.KLogging
 import org.springframework.scheduling.annotation.Async
 import java.util.concurrent.CompletableFuture
 
-open class BuildLegacySearchIndex(
+open class RebuildLegacySearchIndex(
     private val videoRepository: VideoRepository,
     private val legacyVideoSearchService: LegacyVideoSearchService
 ) {

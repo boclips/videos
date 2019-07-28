@@ -30,7 +30,7 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.BuildLegacySearchIndex
+import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.CreateVideo
@@ -272,8 +272,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun buildLegacySearchIndex(): BuildLegacySearchIndex {
-        return BuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
+    fun buildLegacySearchIndex(): RebuildLegacySearchIndex {
+        return RebuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
     }
 
     @Bean
