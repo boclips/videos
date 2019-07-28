@@ -1,7 +1,7 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.infrastructure.video.mongo.TopicDocument
+import com.boclips.videos.service.infrastructure.video.TopicDocument
 import java.util.Locale
 
 object TopicDocumentConverter {

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo
+package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.video.Video

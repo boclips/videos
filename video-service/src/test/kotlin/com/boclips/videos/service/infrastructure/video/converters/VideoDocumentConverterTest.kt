@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
@@ -9,9 +9,9 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
-import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
-import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
+import com.boclips.videos.service.infrastructure.video.LegacyDocument
+import com.boclips.videos.service.infrastructure.video.SourceDocument
+import com.boclips.videos.service.infrastructure.video.VideoDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId

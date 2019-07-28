@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository.Companion.collectionName
+import com.boclips.videos.service.infrastructure.video.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest

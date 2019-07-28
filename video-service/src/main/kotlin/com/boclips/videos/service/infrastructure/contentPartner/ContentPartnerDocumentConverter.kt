@@ -5,8 +5,8 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
-import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
+import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
+import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import org.bson.types.ObjectId
 
 object ContentPartnerDocumentConverter {

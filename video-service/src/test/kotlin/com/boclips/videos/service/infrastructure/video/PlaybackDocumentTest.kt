@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo
+package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat

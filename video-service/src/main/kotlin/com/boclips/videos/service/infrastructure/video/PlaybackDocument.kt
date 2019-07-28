@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo
+package com.boclips.videos.service.infrastructure.video
 
 import java.time.Instant
 

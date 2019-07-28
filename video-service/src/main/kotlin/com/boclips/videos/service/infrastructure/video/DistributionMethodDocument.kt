@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo
+package com.boclips.videos.service.infrastructure.video
 
 data class DistributionMethodDocument(val deliveryMethod: String) {
     companion object {

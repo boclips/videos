@@ -1,6 +1,6 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
+import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

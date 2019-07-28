@@ -1,10 +1,10 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
+import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import mu.KLogging
 import java.time.Duration
 import java.time.Instant

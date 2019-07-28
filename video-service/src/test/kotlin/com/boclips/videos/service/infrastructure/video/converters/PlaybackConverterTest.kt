@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType

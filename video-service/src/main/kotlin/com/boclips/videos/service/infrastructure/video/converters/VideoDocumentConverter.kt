@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -7,9 +7,9 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.LegacyDocument
-import com.boclips.videos.service.infrastructure.video.mongo.SourceDocument
-import com.boclips.videos.service.infrastructure.video.mongo.VideoDocument
+import com.boclips.videos.service.infrastructure.video.LegacyDocument
+import com.boclips.videos.service.infrastructure.video.SourceDocument
+import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.util.Date
@@ -36,8 +36,16 @@ object VideoDocumentConverter {
             eventBus = video.eventBus.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
-            rating = video.ratings.map { UserRatingDocumentConverter.toDocument(it) },
-            tags = video.tag?.let { listOf(UserTagDocumentConverter.toDocument(it)) } ?: emptyList(),
+            rating = video.ratings.map {
+                UserRatingDocumentConverter.toDocument(
+                    it
+                )
+            },
+            tags = video.tag?.let { listOf(
+                UserTagDocumentConverter.toDocument(
+                    it
+                )
+            ) } ?: emptyList(),
             distributionMethods = video.distributionMethods.map(
                 DistributionMethodDocumentConverter::toDocument
             ).toSet()
@@ -64,11 +72,19 @@ object VideoDocumentConverter {
                 min = document.ageRangeMin,
                 max = document.ageRangeMax
             ) else AgeRange.unbounded(),
-            ratings = document.rating.map { UserRatingDocumentConverter.toRating(it) },
+            ratings = document.rating.map {
+                UserRatingDocumentConverter.toRating(
+                    it
+                )
+            },
             distributionMethods = document.distributionMethods?.map(
                 DistributionMethodDocumentConverter::fromDocument
             )?.toSet() ?: DistributionMethod.ALL,
-            tag = document.tags.firstOrNull()?.let { UserTagDocumentConverter.toTag(it) }
+            tag = document.tags.firstOrNull()?.let {
+                UserTagDocumentConverter.toTag(
+                    it
+                )
+            }
         )
     }
 }

@@ -1,10 +1,10 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.infrastructure.video.mongo.UserTagDocument
+import com.boclips.videos.service.infrastructure.video.UserTagDocument
 import org.bson.types.ObjectId
 
 object UserTagDocumentConverter {

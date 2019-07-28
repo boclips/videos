@@ -37,8 +37,8 @@ import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
-import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
-import com.boclips.videos.service.infrastructure.video.mongo.PlaybackDocument
+import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
+import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource

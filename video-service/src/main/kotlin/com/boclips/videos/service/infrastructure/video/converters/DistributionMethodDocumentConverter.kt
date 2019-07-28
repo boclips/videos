@@ -1,12 +1,14 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.infrastructure.video.mongo.DistributionMethodDocument
+import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 
 object DistributionMethodDocumentConverter {
     fun toDocument(distributionMethod: DistributionMethod): DistributionMethodDocument =
         when (distributionMethod) {
-            DistributionMethod.DOWNLOAD -> DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD)
+            DistributionMethod.DOWNLOAD -> DistributionMethodDocument(
+                DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD
+            )
             DistributionMethod.STREAM -> DistributionMethodDocument(DistributionMethodDocument.DELIVERY_METHOD_STREAM)
         }
 

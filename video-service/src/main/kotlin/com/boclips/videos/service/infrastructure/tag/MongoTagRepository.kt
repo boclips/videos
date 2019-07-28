@@ -4,8 +4,8 @@ import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.mongo.TagDocument
-import com.boclips.videos.service.infrastructure.video.mongo.UserTagDocument
+import com.boclips.videos.service.infrastructure.video.TagDocument
+import com.boclips.videos.service.infrastructure.video.UserTagDocument
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.bson.types.ObjectId

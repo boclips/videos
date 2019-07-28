@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.tag
 
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
-import com.boclips.videos.service.infrastructure.video.mongo.TagDocument
+import com.boclips.videos.service.infrastructure.video.TagDocument
 import org.bson.types.ObjectId
 
 object TagDocumentConverter {

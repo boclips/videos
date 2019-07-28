@@ -26,7 +26,7 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
-import com.boclips.videos.service.infrastructure.video.mongo.MongoVideoRepository
+import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.mongodb.MongoClient
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
@@ -91,7 +91,10 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
 
     @Bean
     fun videoRepository(): VideoRepository {
-        return EventPublishingVideoRepository(MongoVideoRepository(mongoClient), eventBus)
+        return EventPublishingVideoRepository(
+            MongoVideoRepository(
+                mongoClient
+            ), eventBus)
     }
 
     @Bean

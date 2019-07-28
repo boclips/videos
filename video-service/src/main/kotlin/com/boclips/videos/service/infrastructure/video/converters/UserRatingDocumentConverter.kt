@@ -1,8 +1,8 @@
-package com.boclips.videos.service.infrastructure.video.mongo.converters
+package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.infrastructure.video.mongo.UserRatingDocument
+import com.boclips.videos.service.infrastructure.video.UserRatingDocument
 
 object UserRatingDocumentConverter {
 

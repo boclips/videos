@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepo
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoIterable

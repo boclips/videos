@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo
+package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.codecs.pojo.annotations.BsonId

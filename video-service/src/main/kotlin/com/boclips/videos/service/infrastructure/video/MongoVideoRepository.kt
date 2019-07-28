@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.mongo
+package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.video.Video
@@ -23,12 +23,12 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.DistributionMethodDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.PlaybackConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.TopicDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.UserRatingDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.UserTagDocumentConverter
-import com.boclips.videos.service.infrastructure.video.mongo.converters.VideoDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
+import com.boclips.videos.service.infrastructure.video.converters.TopicDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.UserTagDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.VideoDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
@@ -264,5 +264,7 @@ class MongoVideoRepository(
     }
 
     private fun getVideoCollection() =
-        mongoClient.getDatabase(DATABASE_NAME).getCollection<VideoDocument>(collectionName)
+        mongoClient.getDatabase(DATABASE_NAME).getCollection<VideoDocument>(
+            collectionName
+        )
 }
