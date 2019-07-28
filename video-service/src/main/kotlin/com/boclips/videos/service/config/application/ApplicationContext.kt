@@ -30,7 +30,6 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.CreateVideo
@@ -38,9 +37,9 @@ import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateTranscripts
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
@@ -142,11 +141,6 @@ class ApplicationContext(
     @Bean
     fun tagVideo(): TagVideo {
         return TagVideo(videoRepository, tagRepository)
-    }
-
-    @Bean
-    fun updateAnalysedVideo(): UpdateAnalysedVideo {
-        return UpdateAnalysedVideo(playbackRepository, videoRepository, videoSearchService)
     }
 
     @Bean
@@ -278,7 +272,7 @@ class ApplicationContext(
 
     @Bean
     fun videoAnalysisService(): VideoAnalysisService {
-        return VideoAnalysisService(videoRepository, videoService, eventBus)
+        return VideoAnalysisService(videoRepository, videoService, eventBus, videoSearchService, playbackRepository)
     }
 
     @Bean

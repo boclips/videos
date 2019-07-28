@@ -37,6 +37,15 @@ open class VideoPlaybackService(
         }
     }
 
+    @BoclipsEventListener
+    fun updateVideoPlayback(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
+        try {
+            handleUpdate(VideoId(value = videoPlaybackSyncRequestedEvent.videoId))
+        } catch (ex: Exception) {
+            logger.info { "Failed to process playback synchronization request for video ${videoPlaybackSyncRequestedEvent.videoId}: $ex" }
+        }
+    }
+
     private fun publishToTopic(): (Sequence<Video>) -> Unit {
         return { sequence ->
             sequence.forEach { video ->
@@ -56,15 +65,6 @@ open class VideoPlaybackService(
             YOUTUBE_FILTER -> VideoFilter.IsYoutube
             null -> null
             else -> throw InvalidSourceException(source, listOf(KALTURA_FILTER, YOUTUBE_FILTER))
-        }
-    }
-
-    @BoclipsEventListener
-    fun updateVideoPlayback(videoPlaybackSyncRequestedEvent: VideoPlaybackSyncRequested) {
-        try {
-            handleUpdate(VideoId(value = videoPlaybackSyncRequestedEvent.videoId))
-        } catch (ex: Exception) {
-            logger.info { "Failed to process playback synchronization request for video ${videoPlaybackSyncRequestedEvent.videoId}: $ex" }
         }
     }
 

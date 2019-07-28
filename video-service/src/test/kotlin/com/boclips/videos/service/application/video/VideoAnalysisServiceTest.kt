@@ -1,81 +1,63 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.eventbus.events.video.VideoAnalysisRequested
-import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
-import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import org.assertj.core.api.Assertions
+import com.boclips.eventbus.EventBus
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.testsupport.TestFactories
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import java.time.Duration
-import java.util.Locale
 
-internal class VideoAnalysisServiceTest(@Autowired val videoAnalysisService: VideoAnalysisService) :
-    AbstractSpringIntegrationTest() {
+class VideoAnalysisServiceTest {
+    lateinit var playbackRepository: PlaybackRepository
+    lateinit var videoRepository: VideoRepository
+    lateinit var videoClassificationService: VideoAnalysisService
+    lateinit var videoSearchService: VideoSearchService
+    lateinit var videoService: VideoService
+    lateinit var eventBus: EventBus
 
-    @Test
-    fun `sends an event`() {
-        val videoId = saveVideo(
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-            duration = Duration.ofSeconds(70)
-        ).value
-
-        videoAnalysisService.analysePlayableVideo(videoId, language = Locale.GERMAN)
-
-        val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
-
-        Assertions.assertThat(event.videoId).isEqualTo(videoId)
-        Assertions.assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
-        Assertions.assertThat(event.language).isEqualTo(Locale.GERMAN)
+    @BeforeEach
+    fun setUp() {
+        playbackRepository = mock()
+        videoRepository = mock()
+        videoSearchService = mock()
+        videoService = mock()
+        eventBus = mock()
+        videoClassificationService =
+            VideoAnalysisService(videoRepository, videoService, eventBus, videoSearchService, playbackRepository)
     }
 
     @Test
-    fun `does not send events for videos not longer than 20s`() {
-        val videoId = saveVideo(
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-            duration = Duration.ofSeconds(20)
-        ).value
+    fun `handles exceptions in video lookups`() {
+        whenever(videoRepository.find(any())).thenThrow(RuntimeException::class.java)
 
-        videoAnalysisService.analysePlayableVideo(videoId, language = null)
-
-        Assertions.assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
-    }
-
-    @Test
-    fun `does not send events for non instructional videos`() {
-        val videoId = saveVideo(
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-            legacyType = LegacyVideoType.NEWS
-        ).value
-
-        videoAnalysisService.analysePlayableVideo(videoId, language = null)
-
-        Assertions.assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
-    }
-
-    @Test
-    fun `throws on youtube videos`() {
-        val videoId =
-            saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "youtube-id")).value
-
-        org.junit.jupiter.api.assertThrows<VideoNotAnalysableException> {
-            videoAnalysisService.analysePlayableVideo(
-                videoId,
-                language = null
-            )
+        assertDoesNotThrow {
+            videoClassificationService.videoAnalysed(TestFactories.createVideoAnalysed())
         }
     }
 
     @Test
-    fun `it should only send analyse messages for Ted`() {
-        saveVideo(contentProvider = "Ted")
-        saveVideo(contentProvider = "Ted")
-        saveVideo(contentProvider = "Bob")
+    fun `handles exceptions in caption uploads`() {
+        whenever(videoRepository.find(any())).thenReturn(TestFactories.createVideo())
+        whenever(playbackRepository.uploadCaptions(any(), any())).thenThrow(RuntimeException::class.java)
 
-        videoAnalysisService.analyseVideosOfContentPartner("Ted", language = null)
+        assertDoesNotThrow {
+            videoClassificationService.videoAnalysed(TestFactories.createVideoAnalysed())
+        }
+    }
 
-        Assertions.assertThat(fakeEventBus.countEventsOfType(VideoAnalysisRequested::class.java)).isEqualTo(2)
+    @Test
+    fun `handles exceptions in metadata updates`() {
+        whenever(videoRepository.find(any())).thenReturn(TestFactories.createVideo())
+        whenever(videoRepository.bulkUpdate(any())).thenThrow(RuntimeException::class.java)
+
+        assertDoesNotThrow {
+            videoClassificationService.videoAnalysed(TestFactories.createVideoAnalysed())
+        }
     }
 }
