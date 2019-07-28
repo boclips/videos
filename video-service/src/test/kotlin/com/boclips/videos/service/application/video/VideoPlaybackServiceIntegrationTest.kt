@@ -13,13 +13,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
+class VideoPlaybackServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoRepository: VideoRepository
 
     @Autowired
-    lateinit var requestPlaybackUpdate: RequestPlaybackUpdate
+    lateinit var videoPlaybackService: VideoPlaybackService
 
     @Test
     fun `subscribes to video playback sync request event and handles it`() {
@@ -63,7 +63,7 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
         val youtube = saveVideo(playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.YOUTUBE))
         saveVideo(playbackId = PlaybackId(value = "12331", type = PlaybackProviderType.KALTURA))
 
-        requestPlaybackUpdate.invoke(source = "youtube")
+        videoPlaybackService.requestUpdate(source = "youtube")
 
         val event = fakeEventBus.getEventOfType(VideoPlaybackSyncRequested::class.java)
         assertThat(event.videoId).isEqualTo(youtube.value)
@@ -74,7 +74,7 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
         saveVideo(playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.YOUTUBE))
         val kaltura = saveVideo(playbackId = PlaybackId(value = "12331", type = PlaybackProviderType.KALTURA))
 
-        requestPlaybackUpdate.invoke(source = "kaltura")
+        videoPlaybackService.requestUpdate(source = "kaltura")
 
         val event = fakeEventBus.getEventOfType(VideoPlaybackSyncRequested::class.java)
         assertThat(event.videoId).isEqualTo(kaltura.value)
@@ -83,7 +83,17 @@ class UpdatePlaybackIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws for invalid source`() {
         org.junit.jupiter.api.assertThrows<InvalidSourceException> {
-            requestPlaybackUpdate.invoke(source = "blah")
+            videoPlaybackService.requestUpdate(source = "blah")
         }
+    }
+
+    @Test
+    fun `publishes one event per video to be updated`() {
+        saveVideo()
+        saveVideo()
+
+        videoPlaybackService.requestUpdate()
+
+        assertThat(fakeEventBus.countEventsOfType(VideoPlaybackSyncRequested::class.java)).isEqualTo(2)
     }
 }

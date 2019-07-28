@@ -7,7 +7,7 @@ import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.VideoClassificationService
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.RebuildVideoIndex
-import com.boclips.videos.service.application.video.RequestPlaybackUpdate
+import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import mu.KLogging
 import org.springframework.http.HttpStatus
@@ -42,7 +42,7 @@ class AdminController(
     private val rebuildVideoIndex: RebuildVideoIndex,
     private val rebuildCollectionIndex: RebuildCollectionIndex,
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
-    private val requestPlaybackUpdate: RequestPlaybackUpdate,
+    private val videoPlaybackService: VideoPlaybackService,
     private val dispatchVideoUpdatedEvents: DispatchVideoUpdatedEvents,
     private val videoClassificationService: VideoClassificationService,
     private val videoAnalysisService: VideoAnalysisService
@@ -66,7 +66,7 @@ class AdminController(
 
     @PostMapping("/refresh_playbacks")
     fun refreshVideoDurations(@RequestParam source: String?): ResponseEntity<Void> {
-        requestPlaybackUpdate(source)
+        videoPlaybackService.requestUpdate(source)
         return ResponseEntity(HttpStatus.OK)
     }
 

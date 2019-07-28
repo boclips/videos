@@ -39,15 +39,14 @@ import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.GetVideoTranscript
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.RebuildVideoIndex
-import com.boclips.videos.service.application.video.RequestPlaybackUpdate
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateAnalysedVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
-import com.boclips.videos.service.application.video.UpdatePlayback
 import com.boclips.videos.service.application.video.UpdateTranscripts
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoClassificationService
+import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
 import com.boclips.videos.service.application.video.search.GetAllVideosById
@@ -281,15 +280,10 @@ class ApplicationContext(
     fun videoAnalysisService(): VideoAnalysisService {
         return VideoAnalysisService(videoRepository, videoService, eventBus)
     }
-    
-    @Bean
-    fun refreshVideoDurations(): RequestPlaybackUpdate {
-        return RequestPlaybackUpdate(videoRepository, eventBus)
-    }
 
     @Bean
-    fun updatePlayback(): UpdatePlayback {
-        return UpdatePlayback(videoRepository, playbackRepository)
+    fun videoPlaybackService(): VideoPlaybackService {
+        return VideoPlaybackService(videoRepository, eventBus, playbackRepository)
     }
 
     @Bean
