@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.video
+package com.boclips.videos.service.application.subject
 
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 import java.util.concurrent.CompletableFuture
 
 @Component
-class VideoClassificationService(
+class SubjectClassificationService(
     private val videoRepository: VideoRepository,
     private val eventBus: EventBus
 ) {

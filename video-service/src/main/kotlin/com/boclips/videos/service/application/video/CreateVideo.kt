@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
+import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
@@ -36,7 +37,7 @@ class CreateVideo(
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
     private val videoAnalysisService: VideoAnalysisService,
-    private val videoClassificationService: VideoClassificationService
+    private val subjectClassificationService: SubjectClassificationService
 ) {
     companion object : KLogging()
 
@@ -75,7 +76,7 @@ class CreateVideo(
             triggerVideoAnalysis(createdVideo)
         }
 
-        videoClassificationService.classifyVideo(createdVideo)
+        subjectClassificationService.classifyVideo(createdVideo)
 
         videoCounter.increment()
 

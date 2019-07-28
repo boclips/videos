@@ -44,7 +44,7 @@ import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateTranscripts
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.application.video.VideoClassificationService
+import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
@@ -117,7 +117,7 @@ class ApplicationContext(
         searchVideo: SearchVideo,
         videoCounter: Counter,
         videoAnalysisService: VideoAnalysisService,
-        videoClassificationService: VideoClassificationService
+        subjectClassificationService: SubjectClassificationService
     ): CreateVideo {
         return CreateVideo(
             videoService,
@@ -129,7 +129,7 @@ class ApplicationContext(
             playbackRepository,
             videoCounter,
             videoAnalysisService,
-            videoClassificationService
+            subjectClassificationService
         )
     }
 
