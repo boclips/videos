@@ -145,8 +145,8 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `analyse content partner videos returns 400 for YouTube channels`() {
         saveVideo(
-            contentProvider = "TheYoutuber",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "id")
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "id"),
+            contentProvider = "TheYoutuber"
         )
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator())

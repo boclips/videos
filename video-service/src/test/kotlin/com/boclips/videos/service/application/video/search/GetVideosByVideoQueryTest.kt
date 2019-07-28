@@ -19,8 +19,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can search for empty query`() {
         saveVideo(
-            title = "a youtube video",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1")
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1"),
+            title = "a youtube video"
         )
 
         val result = searchVideo.byQuery(
@@ -76,20 +76,20 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns paginated results`() {
         saveVideo(
-            title = "a youtube video",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1")
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1"),
+            title = "a youtube video"
         )
         saveVideo(
-            title = "a youtube video",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-2")
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-2"),
+            title = "a youtube video"
         )
         saveVideo(
-            title = "a another video",
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-3")
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-3"),
+            title = "a another video"
         )
         saveVideo(
-            title = "a youtube video",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-4")
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-4"),
+            title = "a youtube video"
         )
 
         val result = searchVideo.byQuery(
@@ -146,7 +146,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "banana", legacyType = LegacyVideoType.STOCK)
         val newsAndClassroomVideoId = saveVideo(title = "banana", legacyType = LegacyVideoType.NEWS)
         saveVideo(title = "banana", legacyType = LegacyVideoType.INSTRUCTIONAL_CLIPS)
-        saveVideo(title = "banana", legacyType = LegacyVideoType.NEWS, contentProvider = "AP")
+        saveVideo(title = "banana", contentProvider = "AP", legacyType = LegacyVideoType.NEWS)
 
         val videos = searchVideo.byQuery(
             query = "banana",
@@ -202,12 +202,12 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can filter by source`() {
         saveVideo(
-            title = "why are camels so tall 1",
-            playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.KALTURA)
+            playbackId = PlaybackId(value = "1233", type = PlaybackProviderType.KALTURA),
+            title = "why are camels so tall 1"
         )
         saveVideo(
-            title = "why are camels so tall 2",
-            playbackId = PlaybackId(value = "1234", type = PlaybackProviderType.YOUTUBE)
+            playbackId = PlaybackId(value = "1234", type = PlaybackProviderType.YOUTUBE),
+            title = "why are camels so tall 2"
         )
 
         val results = searchVideo.byQuery(

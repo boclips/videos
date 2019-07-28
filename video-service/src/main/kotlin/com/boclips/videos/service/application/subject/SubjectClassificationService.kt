@@ -21,8 +21,7 @@ import java.util.concurrent.CompletableFuture
 class SubjectClassificationService(
     private val videoRepository: VideoRepository,
     private val eventBus: EventBus,
-    private val subjectRepository: SubjectRepository,
-    private val videoSearchService: VideoSearchService
+    private val subjectRepository: SubjectRepository
 ) {
     companion object : KLogging()
 
@@ -72,8 +71,7 @@ class SubjectClassificationService(
             val subjects = subjectRepository.findByIds(videoSubjectClassified.subjects.map { it.value })
             if (subjects.isNotEmpty()) {
                 val updateCommand = VideoUpdateCommand.ReplaceSubjects(videoId, subjects)
-                val updatedVideo = videoRepository.update(updateCommand)
-                videoSearchService.upsert(sequenceOf(updatedVideo))
+                videoRepository.update(updateCommand)
                 logger.info { "Updates subjects of video ${videoId.value}: ${subjects.joinToString(", ") { it.name }}" }
             } else {
                 logger.info(

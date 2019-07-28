@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -30,6 +30,7 @@ import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocu
 import com.boclips.videos.service.infrastructure.video.converters.UserTagDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.VideoDocumentConverter
 import com.mongodb.MongoClient
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.UpdateOneModel
@@ -62,15 +63,16 @@ class MongoVideoRepository(
     }
 
     override fun findAll(videoIds: List<VideoId>): List<Video> {
-        val objectIds = videoIds.map { it.value }.distinct().map { ObjectId(it) }
+        val uniqueVideoIds = videoIds.distinct()
+        val uniqueObjectIds = uniqueVideoIds.map { it.value }.distinct().map { ObjectId(it) }
 
         val videos = getVideoCollection()
-            .find(VideoDocument::id `in` objectIds)
+            .find(VideoDocument::id `in` uniqueObjectIds)
             .map(VideoDocumentConverter::toVideo)
             .map { it.videoId to it }
             .toMap()
 
-        return videoIds.mapNotNull { videoId -> videos[videoId] }
+        return uniqueVideoIds.mapNotNull { videoId -> videos[videoId] }
     }
 
     override fun findByContentPartnerName(contentPartnerName: String): List<Video> {
@@ -263,8 +265,7 @@ class MongoVideoRepository(
         }
     }
 
-    private fun getVideoCollection() =
-        mongoClient.getDatabase(DATABASE_NAME).getCollection<VideoDocument>(
-            collectionName
-        )
+    private fun getVideoCollection(): MongoCollection<VideoDocument> {
+        return mongoClient.getDatabase(DATABASE_NAME).getCollection<VideoDocument>(collectionName)
+    }
 }

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
+import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -14,8 +15,7 @@ import com.boclips.videos.service.testsupport.TestFactories.createKalturaCaption
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAnalysed
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAnalysedKeyword
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAnalysedTopic
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -106,6 +106,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             fakeEventBus.publish(videoAnalysed)
 
             assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isNotEmpty
+            assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(1)
         }
 
         @Test
@@ -170,7 +171,8 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
         @Test
         fun `stores eventBus`() {
-            val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "reference-id"))
+            val videoId =
+                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "reference-id"))
             val videoAnalysed = createVideoAnalysed(
                 videoId = videoId.value,
                 topics = listOf(createVideoAnalysedTopic(name = "topic name"))

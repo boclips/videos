@@ -16,7 +16,6 @@ import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
-import com.boclips.videos.service.application.contentPartner.RequestBulkVideoSearchUpdateByContentPartner
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
@@ -32,7 +31,6 @@ import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
@@ -41,16 +39,13 @@ import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
-import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoPlaybackService
-import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
-import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
+import com.boclips.videos.service.application.video.VideoSearchUpdater
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.properties.PubSubVideoSearchabilityUpdateProperties
@@ -152,29 +147,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun excludeVideosFromSearchForStream(): ExcludeVideosFromSearchForStream {
-        return ExcludeVideosFromSearchForStream(eventBus = eventBus)
-    }
-
-    @Bean
-    fun excludeVideosFromSearchForDownload(): ExcludeVideosFromSearchForDownload {
-        return ExcludeVideosFromSearchForDownload(eventBus = eventBus)
-    }
-
-    @Bean
-    fun bulkUpdate(
-        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-        excludeVideosFromSearchForStream: ExcludeVideosFromSearchForStream,
-        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
-        excludeVideosFromSearchForDownload: ExcludeVideosFromSearchForDownload
-    ): BulkUpdateVideo {
-        return BulkUpdateVideo(
-            videoRepository,
-            includeVideosInSearchForStream,
-            excludeVideosFromSearchForStream,
-            excludeVideosFromSearchForDownload,
-            includeVideosInSearchForDownload
-        )
+    fun bulkVideoUpdate(): BulkUpdateVideo {
+        return BulkUpdateVideo(videoRepository)
     }
 
     @Bean
@@ -265,7 +239,7 @@ class ApplicationContext(
 
     @Bean
     fun videoAnalysisService(): VideoAnalysisService {
-        return VideoAnalysisService(videoRepository, videoService, eventBus, videoSearchService, playbackRepository)
+        return VideoAnalysisService(videoRepository, videoService, eventBus, playbackRepository)
     }
 
     @Bean
@@ -344,15 +318,11 @@ class ApplicationContext(
     }
 
     @Bean
-    fun updateContentPartner(
-        pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties,
-        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-        requestSearchUpdateByContentPartner: RequestBulkVideoSearchUpdateByContentPartner
-    ): UpdateContentPartner {
+    fun updateContentPartner(pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties)
+        : UpdateContentPartner {
         return UpdateContentPartner(
             contentPartnerRepository,
-            videoRepository,
-            requestSearchUpdateByContentPartner
+            videoRepository
         )
     }
 
@@ -372,35 +342,6 @@ class ApplicationContext(
     }
 
     @Bean
-    fun requestSearchUpdateByContentPartner(
-        pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties,
-        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-        excludeVideosInSearchForStream: ExcludeVideosFromSearchForStream,
-        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
-        excludeVideosInSearchForDownload: ExcludeVideosFromSearchForDownload
-    ): RequestBulkVideoSearchUpdateByContentPartner {
-        return RequestBulkVideoSearchUpdateByContentPartner(
-            contentPartnerRepository,
-            videoRepository,
-            pubSubVideoSearchabilityUpdateProperties.batchSize,
-            includeVideosInSearchForStream,
-            excludeVideosInSearchForStream,
-            includeVideosInSearchForDownload,
-            excludeVideosInSearchForDownload
-        )
-    }
-
-    @Bean
-    fun getBulkVideoSearchUpdate(): BulkVideoSearchUpdate {
-        return BulkVideoSearchUpdate(
-            contentPartnerRepository,
-            videoRepository,
-            videoSearchService,
-            legacyVideoSearchService
-        )
-    }
-
-    @Bean
     fun dispatchVideoUpdatedEvents(): DispatchVideoUpdatedEvents {
         return DispatchVideoUpdatedEvents(videoRepository, eventBus)
     }
@@ -408,6 +349,16 @@ class ApplicationContext(
     @Bean
     fun collectionUpdatesConverter(): CollectionUpdatesConverter {
         return CollectionUpdatesConverter(subjectRepository)
+    }
+
+    @Bean
+    fun bulkUpdateVideo(): BulkUpdateVideo {
+        return BulkUpdateVideo(videoRepository)
+    }
+
+    @Bean
+    fun videoUpdateService(): VideoSearchUpdater {
+        return VideoSearchUpdater(videoRepository, videoSearchService, legacyVideoSearchService)
     }
 
     private fun getVideoById(videoToResourceConverter: VideoToResourceConverter): GetVideoById {

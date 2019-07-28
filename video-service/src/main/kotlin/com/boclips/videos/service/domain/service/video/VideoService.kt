@@ -3,8 +3,6 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -18,9 +16,7 @@ import mu.KLogging
 class VideoService(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val videoRepository: VideoRepository,
-    private val videoSearchService: VideoSearchService,
-    private val includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-    private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
+    private val videoSearchService: VideoSearchService
 ) {
     companion object : KLogging()
 
@@ -73,19 +69,7 @@ class VideoService(
                 ?.apply { newAgeRange = this.ageRange }
         }
 
-        val createdVideo = videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
-
-        if (videoToBeCreated.contentPartner.isStreamable()) {
-            includeVideosInSearchForStream(videoIds = listOf(createdVideo.videoId.value))
-        }
-
-        if (videoToBeCreated.contentPartner.isDownloadable()) {
-            if (createdVideo.isBoclipsHosted()) {
-                includeVideosInSearchForDownload(videoIds = listOf(createdVideo.videoId.value))
-            }
-        }
-
-        return createdVideo
+        return videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
     }
 
     fun getPlayableVideos(contentPartnerId: ContentPartnerId): List<Video> {

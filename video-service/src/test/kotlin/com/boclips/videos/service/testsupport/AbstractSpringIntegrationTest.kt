@@ -13,8 +13,8 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.VideoSearchUpdater
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
@@ -110,7 +110,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createTag: CreateTag
 
     @Autowired
-    lateinit var bulkVideoSearchUpdate: BulkVideoSearchUpdate
+    lateinit var searchUpdater: VideoSearchUpdater
 
     @Autowired
     lateinit var subjectClassificationService: SubjectClassificationService
@@ -150,7 +150,10 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun saveVideo(
-        playbackId: PlaybackId = PlaybackId(type = KALTURA, value = "ref-id-${UUID.randomUUID()}"),
+        playbackId: PlaybackId = PlaybackId(
+            type = KALTURA,
+            value = "ref-id-${UUID.randomUUID()}"
+        ),
         title: String = "Some title!",
         description: String = "Some description!",
         date: String = "2018-01-01",
@@ -161,14 +164,13 @@ abstract class AbstractSpringIntegrationTest {
         legacyType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
-        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11)
-    ): VideoId {
-        createContentPartner(
-            ContentPartnerRequest(
-                name = contentProvider,
-                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM)
-            )
+        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
+        distributionMethods: Set<DistributionMethodResource> = setOf(
+            DistributionMethodResource.DOWNLOAD,
+            DistributionMethodResource.STREAM
         )
+    ): VideoId {
+        createContentPartner(ContentPartnerRequest(name = contentProvider, distributionMethods = distributionMethods))
 
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(

@@ -77,9 +77,9 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `remove deletes a video from Kaltura`() {
         val videoId = saveVideo(
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123"),
             title = "Some title",
-            description = "test description 3",
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
+            description = "test description 3"
         )
 
         deleteVideo(videoId.value)
@@ -91,9 +91,9 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `remove deletes a video from collections`() {
         val videoId = saveVideo(
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123"),
             title = "Some title",
-            description = "test description 3",
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
+            description = "test description 3"
         )
 
         val collectionId = saveCollection()

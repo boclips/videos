@@ -10,8 +10,7 @@ import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequ
 
 class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
-    private val videoRepository: VideoRepository,
-    private val requestVideoSearchUpdateByContentPartner: RequestBulkVideoSearchUpdateByContentPartner
+    private val videoRepository: VideoRepository
 ) {
     operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
@@ -22,11 +21,6 @@ class UpdateContentPartner(
 
         val contentPartner = contentPartnerRepository.findById(id)
             ?: throw ContentPartnerNotFoundException("Could not find content partner: ${id.value}")
-
-        requestVideoSearchUpdateByContentPartner.invoke(
-            contentPartnerId = id,
-            distributionMethods = contentPartner.distributionMethods
-        )
 
         updateContentPartnerInVideos(contentPartner)
 

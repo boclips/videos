@@ -71,6 +71,15 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `lookup videos only return videos once`() {
+        val id1 = mongoVideoRepository.create(TestFactories.createVideo()).videoId
+
+        val videos = mongoVideoRepository.findAll(listOf(id1, id1, id1))
+
+        assertThat(videos.map { it.videoId }).containsExactly(id1)
+    }
+
+    @Test
     fun `delete a video`() {
         val id = TestFactories.aValidId()
         val originalAsset = TestFactories.createVideo(videoId = id)

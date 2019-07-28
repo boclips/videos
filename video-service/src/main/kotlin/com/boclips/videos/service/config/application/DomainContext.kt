@@ -2,8 +2,6 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
-import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -39,27 +37,13 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
         contentPartnerRepository: ContentPartnerRepository,
         videoRepository: VideoRepository,
         videoSearchService: VideoSearchService,
-        playbackRepository: PlaybackRepository,
-        includeVideosInSearchForStream: IncludeVideosInSearchForStream,
-        includeVideosInSearchForDownload: IncludeVideosInSearchForDownload
+        playbackRepository: PlaybackRepository
     ): VideoService {
         return VideoService(
             contentPartnerRepository,
             videoRepository,
-            videoSearchService,
-            includeVideosInSearchForStream,
-            includeVideosInSearchForDownload
+            videoSearchService
         )
-    }
-
-    @Bean
-    fun includeVideosInSearchForStream(eventBus: EventBus): IncludeVideosInSearchForStream {
-        return IncludeVideosInSearchForStream(eventBus = eventBus)
-    }
-
-    @Bean
-    fun includeVideosInSearchForDownload(eventBus: EventBus): IncludeVideosInSearchForDownload {
-        return IncludeVideosInSearchForDownload(eventBus = eventBus)
     }
 
     @Bean

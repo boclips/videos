@@ -1,11 +1,8 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.eventbus.events.video.VideosInclusionInDownloadRequested
-import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
-import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -203,7 +200,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `disables content partner from stream distribution method`() {
+    fun `enables content partner for streaming`() {
         saveVideo(contentProviderId = "deadb33d1225df4825e8b8f6")
 
         mockMvc.perform(
@@ -219,10 +216,6 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     }"""
             )
         ).andExpect(status().isNoContent)
-
-
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
 
         mockMvc.perform(get("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee())
             .andExpect(status().isOk)

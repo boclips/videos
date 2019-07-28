@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
+import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.DistributionMethod
@@ -84,28 +84,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `changing distribution method will enqueue a change for later`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
-                distributionMethods = emptySet()
-            )
-        )
-
-        saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
-
-        updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(
-                distributionMethods = setOf(
-                    DistributionMethodResource.STREAM
-                )
-            )
-        )
-
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
-    }
-
-    @Test
     fun `disable download and streaming for content partner`() {
         val originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
@@ -156,9 +134,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val id = saveVideo(
-                contentProviderId = originalContentPartner.contentPartnerId.value
-            )
+            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
 
             updateContentPartner(
                 contentPartnerId = originalContentPartner.contentPartnerId.value,
@@ -170,9 +146,8 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoRepository.find(id)!!.distributionMethods).isEqualTo(
-                DistributionMethod.ALL
-            )
+            assertThat(videoRepository.find(id)!!.distributionMethods).isEqualTo(DistributionMethod.ALL)
+            assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(1)
         }
     }
 }

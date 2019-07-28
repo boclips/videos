@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.eventbus.events.video.VideosExclusionFromDownloadRequested
-import com.boclips.eventbus.events.video.VideosExclusionFromStreamRequested
+import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -21,6 +20,7 @@ import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -788,12 +788,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `bulk updates disables videos from search`() {
+    fun `bulk updates disables videos through streaming search`() {
         val videoIds = listOf(saveVideo().value, saveVideo().value, saveVideo().value)
 
         mockMvc.perform(
             patch("/v1/videos").asBoclipsEmployee()
-                .content("""{ "ids": ["${videoIds[0]}", "${videoIds[1]}"], "distributionMethods": ["${DistributionMethodResource.DOWNLOAD}"] }""")
+                .content("""{ 
+                    "ids": ["${videoIds[0]}", "${videoIds[1]}"], 
+                    "distributionMethods": ["${DistributionMethodResource.DOWNLOAD}"] }
+                    """.trimMargin())
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNoContent)
 
@@ -809,6 +812,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     .andExpect(status().isOk)
                     .andExpect(jsonPath("$.distributionMethods", equalTo(statuses)))
             }
+
+        assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(2)
     }
 
     @Test
@@ -866,7 +871,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it returns a transcript uri when there is a transcript to download`() {
+    fun `it returns a transcript URI when there is a transcript to download`() {
         val videoId = saveVideoWithTranscript()
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
@@ -907,6 +912,21 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         return tagUrl
     }
 
+    private fun createTag(name: String): ResultActions {
+        return mockMvc.perform(
+            post("/v1/tags").content(
+                """
+                {
+                  "label": "$name",
+                  "UserId": "User-1"
+                }
+                """.trimIndent()
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+    }
+
     private fun saveVideoWithTranscript(): String {
         val videoId = saveVideo(
             title = "Today Video?",
@@ -930,38 +950,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 distributionMethods = emptySet()
             )
         )
-
-        bulkVideoSearchUpdate.invoke(
-            event = VideosExclusionFromDownloadRequested.builder().videoIds(
-                listOf(
-                    videoId
-                )
-            ).build()
-        )
-        bulkVideoSearchUpdate.invoke(
-            event = VideosExclusionFromStreamRequested.builder().videoIds(
-                listOf(
-                    videoId
-                )
-            ).build()
-        )
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)
-
-    fun createTag(name: String): ResultActions {
-        return mockMvc.perform(
-            post("/v1/tags").content(
-                """
-                {
-                  "label": "$name",
-                  "UserId": "User-1"
-                }
-                """.trimIndent()
-            )
-                .contentType(MediaType.APPLICATION_JSON)
-                .asBoclipsEmployee()
-        )
-    }
 }
 

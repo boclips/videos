@@ -1,19 +1,14 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
-import com.boclips.eventbus.events.video.VideosInclusionInDownloadRequested
-import com.boclips.eventbus.events.video.VideosInclusionInStreamRequested
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -30,8 +25,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
         saveVideo(
-            title = "a kaltura video",
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1"),
+            title = "a kaltura video"
         )
 
         val videos = videoService.search(
@@ -52,8 +47,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `retrieve videos by query returns Youtube videos`() {
         saveVideo(
-            title = "a youtube video",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123")
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"),
+            title = "a youtube video"
         )
 
         val videos = videoService.search(
@@ -74,8 +69,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `count videos`() {
         saveVideo(
-            title = "a youtube video",
-            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123")
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"),
+            title = "a youtube video"
         )
 
         val size = videoService.count(
@@ -145,57 +140,5 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(video.ageRange.min()).isEqualTo(3)
         assertThat(video.ageRange.max()).isEqualTo(7)
-    }
-
-    @Test
-    fun `created video becomes available in search`() {
-        videoService.create(
-            videoToBeCreated = TestFactories.createVideo(
-                distributionMethods = DistributionMethod.ALL
-            )
-        )
-
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isTrue()
-    }
-
-    @Test
-    fun `created video becomes available in stream search only`() {
-        videoService.create(
-            videoToBeCreated =
-            TestFactories.createVideo(distributionMethods = setOf(DistributionMethod.STREAM))
-        )
-
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isTrue()
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
-    }
-
-    @Test
-    fun `created video becomes available in download search only`() {
-        videoService.create(
-            videoToBeCreated = TestFactories.createVideo(distributionMethods = setOf(DistributionMethod.DOWNLOAD))
-        )
-
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isFalse()
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isTrue()
-    }
-
-    @Test
-    fun `created video does not become available in search`() {
-        videoService.create(videoToBeCreated = TestFactories.createVideo(distributionMethods = emptySet()))
-
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInStreamRequested::class.java)).isFalse()
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
-    }
-
-    @Test
-    fun `does not populate legacy search when youtube video is created`() {
-        videoService.create(
-            videoToBeCreated = TestFactories.createVideo(
-                playback = TestFactories.createYoutubePlayback()
-            )
-        )
-
-        assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
     }
 }
