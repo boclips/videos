@@ -221,7 +221,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofMinutes(1)
             )
         )
-        
+
         val createRequest =
             TestFactories.createCreateVideoRequest(
                 title = "the latest and greatest Bloomberg video",

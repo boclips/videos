@@ -60,7 +60,7 @@ class VideoService(
         if (videoIds.size != videos.size) {
             logger.info {
                 val videosNotFound = videoIds - videos.map { it.videoId }
-                "Some of the requested video videos could not be found. Ids found: $videosNotFound"
+                "Some of the requested video videos could not be found. Ids not found: $videosNotFound"
             }
         }
 
