@@ -27,9 +27,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
 
-    @Autowired
-    lateinit var videoCounter: Counter
-
     @Test
     fun `retrieve videos by query returns Kaltura videos`() {
         saveVideo(
@@ -200,17 +197,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideosInclusionInDownloadRequested::class.java)).isFalse()
-    }
-
-    @Test
-    fun `bumps video counter when video created`() {
-        val videoCounterBefore = videoCounter.count()
-
-        videoService.create(videoToBeCreated = TestFactories.createVideo())
-
-        val videoCounterAfter = videoCounter.count()
-
-        assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
     }
 
     @Test

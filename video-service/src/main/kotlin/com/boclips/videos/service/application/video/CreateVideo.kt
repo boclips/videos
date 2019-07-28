@@ -21,6 +21,7 @@ import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.video.VideoResource
+import io.micrometer.core.instrument.Counter
 import mu.KLogging
 import org.bson.types.ObjectId
 import org.springframework.hateoas.Resource
@@ -33,7 +34,8 @@ class CreateVideo(
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
-    private val analyseVideo: AnalyseVideo
+    private val analyseVideo: AnalyseVideo,
+    private val videoCounter: Counter
 ) {
     companion object : KLogging()
 
@@ -71,6 +73,8 @@ class CreateVideo(
         if (createRequest.analyseVideo) {
             triggerVideoAnalysis(createdVideo)
         }
+
+        videoCounter.increment()
 
         return searchVideo.byId(createdVideo.videoId.value)
     }

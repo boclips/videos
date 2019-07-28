@@ -130,7 +130,8 @@ class ApplicationContext(
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
-            analyseVideo
+            analyseVideo,
+            videoCounter
         )
     }
 

@@ -4,16 +4,17 @@ import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
+import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -28,6 +29,9 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
+
+    @Autowired
+    lateinit var videoCounter: Counter
 
     @Test
     fun `requesting creation of an existing kaltura video creates the video`() {
@@ -176,7 +180,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it gets the distribution method from its content parnter`() {
+    fun `it gets the distribution method from its content partner`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
                 id = "entry-$123",
@@ -204,5 +208,30 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
         )
+    }
+
+    @Test
+    fun `bumps video counter when video created`() {
+        val videoCounterBefore = videoCounter.count()
+
+        fakeKalturaClient.addMediaEntry(
+            createMediaEntry(
+                id = "entry-$123",
+                referenceId = "1234",
+                duration = Duration.ofMinutes(1)
+            )
+        )
+        
+        val createRequest =
+            TestFactories.createCreateVideoRequest(
+                title = "the latest and greatest Bloomberg video",
+                playbackId = "1234"
+            )
+
+        createVideo(createRequest)
+
+        val videoCounterAfter = videoCounter.count()
+
+        assertThat(videoCounterAfter).isEqualTo(videoCounterBefore + 1)
     }
 }

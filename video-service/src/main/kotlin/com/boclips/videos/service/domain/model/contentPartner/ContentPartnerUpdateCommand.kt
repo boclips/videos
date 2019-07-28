@@ -12,8 +12,6 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
         ContentPartnerUpdateCommand(contentPartnerId)
 
     class ReplaceDistributionMethods(
-        contentPartnerId: ContentPartnerId,
-        val distributionMethods: Set<DistributionMethod>
-    ) :
-        ContentPartnerUpdateCommand(contentPartnerId)
+        contentPartnerId: ContentPartnerId, val distributionMethods: Set<DistributionMethod>
+    ) : ContentPartnerUpdateCommand(contentPartnerId)
 }

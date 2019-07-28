@@ -6,22 +6,20 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForDownload
 import com.boclips.videos.service.application.video.search.IncludeVideosInSearchForStream
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.infrastructure.convertPageToIndex
-import io.micrometer.core.instrument.Counter
 import mu.KLogging
 
 class VideoService(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val videoRepository: VideoRepository,
     private val videoSearchService: VideoSearchService,
-    private val videoCounter: Counter,
     private val includeVideosInSearchForStream: IncludeVideosInSearchForStream,
     private val includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
     private val classifyVideo: ClassifyVideo
@@ -78,8 +76,6 @@ class VideoService(
         }
 
         val createdVideo = videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
-
-        videoCounter.increment()
 
         classifyVideo(createdVideo)
 

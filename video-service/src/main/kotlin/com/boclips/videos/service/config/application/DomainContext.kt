@@ -42,7 +42,6 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
         videoRepository: VideoRepository,
         videoSearchService: VideoSearchService,
         playbackRepository: PlaybackRepository,
-        videoCounter: Counter,
         includeVideosInSearchForStream: IncludeVideosInSearchForStream,
         includeVideosInSearchForDownload: IncludeVideosInSearchForDownload,
         classifyVideo: ClassifyVideo
@@ -51,7 +50,6 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
             contentPartnerRepository,
             videoRepository,
             videoSearchService,
-            videoCounter,
             includeVideosInSearchForStream,
             includeVideosInSearchForDownload,
             classifyVideo
