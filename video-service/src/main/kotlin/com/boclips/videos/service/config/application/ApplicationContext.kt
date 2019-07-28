@@ -26,6 +26,7 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
+import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
@@ -42,9 +43,7 @@ import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateTranscripts
-import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
@@ -151,11 +150,6 @@ class ApplicationContext(
     @Bean
     fun updateVideoTranscripts(): UpdateTranscripts {
         return UpdateTranscripts(videoRepository)
-    }
-
-    @Bean
-    fun updateVideoSubjects(): UpdateVideoSubjects {
-        return UpdateVideoSubjects(videoRepository, subjectRepository, videoSearchService)
     }
 
     @Bean

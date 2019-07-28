@@ -10,11 +10,11 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
+import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.UpdateVideoSubjects
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
@@ -113,7 +113,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var bulkVideoSearchUpdate: BulkVideoSearchUpdate
 
     @Autowired
-    lateinit var updateVideoSubjects: UpdateVideoSubjects
+    lateinit var subjectClassificationService: SubjectClassificationService
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null
@@ -221,7 +221,7 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun setVideoSubjects(videoId: String, vararg subjectIds: SubjectId) {
-        updateVideoSubjects(
+        subjectClassificationService.videoClassified(
             VideoSubjectClassified.builder()
                 .videoId(videoId)
                 .subjects(subjectIds.map { com.boclips.eventbus.domain.SubjectId(it.value) }.toSet())

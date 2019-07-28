@@ -9,12 +9,8 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 
 class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTest() {
-
-    @Autowired
-    lateinit var subjectClassificationService: SubjectClassificationService
 
     @Test
     fun `publishes events for instructional videos`() {
