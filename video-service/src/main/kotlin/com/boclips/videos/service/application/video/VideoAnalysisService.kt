@@ -5,18 +5,29 @@ import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import mu.KLogging
 import java.util.Locale
 
-class AnalyseVideo(
+class VideoAnalysisService(
+    private val videoRepository: VideoRepository,
     private val videoService: VideoService,
     private val eventBus: EventBus
 ) {
     companion object : KLogging()
 
-    operator fun invoke(videoId: String, language: Locale?) {
+    fun analyseVideosOfContentPartner(contentPartner: String, language: Locale?) {
+        videoRepository.streamAll(VideoFilter.ContentPartnerIs(contentPartner)) { videos ->
+            videos.forEach { video ->
+                analysePlayableVideo(video.videoId.value, language)
+            }
+        }
+    }
+
+    fun analysePlayableVideo(videoId: String, language: Locale?) {
         val video = videoService.getPlayableVideo(videoId = VideoId(value = videoId))
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 

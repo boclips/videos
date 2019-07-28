@@ -34,8 +34,8 @@ class CreateVideo(
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
-    private val analyseVideo: AnalyseVideo,
-    private val videoCounter: Counter
+    private val videoCounter: Counter,
+    private val videoAnalysisService: VideoAnalysisService
 ) {
     companion object : KLogging()
 
@@ -92,7 +92,7 @@ class CreateVideo(
 
     private fun triggerVideoAnalysis(createdVideo: Video) {
         try {
-            analyseVideo(createdVideo.videoId.value, null)
+            videoAnalysisService.analysePlayableVideo(createdVideo.videoId.value, null)
         } catch (exception: VideoNotAnalysableException) {
             logger.info { "Video cannot be analysed" }
         }

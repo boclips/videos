@@ -3,13 +3,12 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
-import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
-import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.ClassifyContentPartnerVideos
 import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.RequestPlaybackUpdate
+import com.boclips.videos.service.application.video.VideoAnalysisService
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -44,10 +43,9 @@ class AdminController(
     private val rebuildCollectionIndex: RebuildCollectionIndex,
     private val buildLegacySearchIndex: BuildLegacySearchIndex,
     private val requestPlaybackUpdate: RequestPlaybackUpdate,
-    private val analyseVideo: AnalyseVideo,
-    private val analyseContentPartnerVideos: AnalyseContentPartnerVideos,
     private val dispatchVideoUpdatedEvents: DispatchVideoUpdatedEvents,
-    private val classifyContentPartnerVideos: ClassifyContentPartnerVideos
+    private val classifyContentPartnerVideos: ClassifyContentPartnerVideos,
+    private val videoAnalysisService: VideoAnalysisService
 ) {
     companion object : KLogging()
 
@@ -75,7 +73,7 @@ class AdminController(
     @PostMapping("/analyse_video/{videoId}")
     fun postAnalyseVideo(@PathVariable videoId: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
-            analyseVideo(videoId, language = language)
+            videoAnalysisService.analysePlayableVideo(videoId, language = language)
         } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
@@ -86,7 +84,7 @@ class AdminController(
     @PostMapping("/analyse_videos")
     fun postAnalyseVideos(@RequestParam contentPartner: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
-            analyseContentPartnerVideos(contentPartner, language = language)
+            videoAnalysisService.analyseVideosOfContentPartner(contentPartner, language = language)
         } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }

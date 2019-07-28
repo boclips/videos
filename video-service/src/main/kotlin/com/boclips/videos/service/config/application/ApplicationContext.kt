@@ -30,8 +30,6 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.AnalyseContentPartnerVideos
-import com.boclips.videos.service.application.video.AnalyseVideo
 import com.boclips.videos.service.application.video.BuildLegacySearchIndex
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.BulkVideoSearchUpdate
@@ -50,6 +48,7 @@ import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdatePlayback
 import com.boclips.videos.service.application.video.UpdateTranscripts
 import com.boclips.videos.service.application.video.UpdateVideoSubjects
+import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForDownload
 import com.boclips.videos.service.application.video.search.ExcludeVideosFromSearchForStream
 import com.boclips.videos.service.application.video.search.GetAllVideosById
@@ -120,7 +119,7 @@ class ApplicationContext(
     fun createVideo(
         searchVideo: SearchVideo,
         videoCounter: Counter,
-        analyseVideo: AnalyseVideo
+        videoAnalysisService: VideoAnalysisService
     ): CreateVideo {
         return CreateVideo(
             videoService,
@@ -130,8 +129,8 @@ class ApplicationContext(
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
-            analyseVideo,
-            videoCounter
+            videoCounter,
+            videoAnalysisService
         )
     }
 
@@ -278,13 +277,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun analyseVideo(): AnalyseVideo {
-        return AnalyseVideo(videoService, eventBus)
-    }
-
-    @Bean
-    fun analyseContentPartnerVideos(): AnalyseContentPartnerVideos {
-        return AnalyseContentPartnerVideos(videoRepository, analyseVideo())
+    fun videoAnalysisService(): VideoAnalysisService {
+        return VideoAnalysisService(videoRepository, videoService, eventBus)
     }
 
     @Bean
