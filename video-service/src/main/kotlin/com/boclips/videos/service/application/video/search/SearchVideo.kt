@@ -6,8 +6,10 @@ import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideosResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
+import org.springframework.hateoas.Resource
 
 class SearchVideo(
     private val getVideoById: GetVideoById,
@@ -19,9 +21,13 @@ class SearchVideo(
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?) = getVideoById(resolveToAssetId(id)!!)
+    fun byId(id: String?): Resource<VideoResource> {
+        return getVideoById(resolveToAssetId(id)!!)
+    }
 
-    fun byIds(ids: List<String>) = getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) })
+    fun byIds(ids: List<String>): List<Resource<VideoResource>> {
+        return getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) })
+    }
 
     fun byQuery(
         query: String?,

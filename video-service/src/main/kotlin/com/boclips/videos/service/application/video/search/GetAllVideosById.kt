@@ -10,7 +10,6 @@ class GetAllVideosById(
     private val videoService: VideoService,
     private val videoToResourceConverter: VideoToResourceConverter
 ) {
-
     operator fun invoke(videoIds: List<VideoId>): List<Resource<VideoResource>> {
         return videoService.getPlayableVideo(videoIds.toSet().toList())
             .let(videoToResourceConverter::wrapVideosInResource)
