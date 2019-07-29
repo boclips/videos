@@ -13,15 +13,15 @@ class BroadcastVideos(
     companion object: KLogging()
 
     operator fun invoke() {
-        val batchSize = 100
+        val batchSize = 500
         val eventConverter = EventConverter()
         videoRepository.streamAll { allVideos ->
             allVideos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEachIndexed { batchIndex, batchOfVideos ->
                 logger.info { "Dispatching video broadcast events: batch $batchIndex" }
-                batchOfVideos.forEach { video ->
-                    val event = VideoBroadcastRequested(eventConverter.toVideoPayload(video))
-                    eventBus.publish(event)
+                val events = batchOfVideos.map { video ->
+                    VideoBroadcastRequested(eventConverter.toVideoPayload(video))
                 }
+                eventBus.publish(events)
             }
         }
     }
