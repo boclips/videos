@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,11 +12,11 @@ class DispatchVideoUpdatedEventsIntegrationTest : AbstractSpringIntegrationTest(
 
     @Test
     fun `dispatches an event for every video`() {
-        saveVideo(title = "waterfalls")
+        saveVideo(title = "title 1")
+        saveVideo(title = "title 2")
 
         dispatchVideoUpdatedEvents()
 
-        val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
-        assertThat(event.video.title).isEqualTo("waterfalls")
+        assertThat(fakeEventBus.receivedEvents).hasSize(2)
     }
 }

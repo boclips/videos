@@ -10,10 +10,14 @@ class DispatchVideoUpdatedEvents(
     private val eventBus: EventBus
 ) {
     operator fun invoke() {
-        videoRepository.streamAll { videos ->
-            videos.forEach { video ->
-                val event = VideoUpdated.of(EventConverter().toVideoPayload(video))
-                eventBus.publish(event)
+        val batchSize = 100
+        val eventConverter = EventConverter()
+        videoRepository.streamAll { allVideos ->
+            allVideos.windowed(size = batchSize, step = batchSize, partialWindows = true).forEach { batchOfVideos ->
+                batchOfVideos.forEach { video ->
+                    val event = VideoUpdated.of(eventConverter.toVideoPayload(video))
+                    eventBus.publish(event)
+                }
             }
         }
     }
