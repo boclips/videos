@@ -33,7 +33,7 @@ import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
+import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildVideoIndex
@@ -342,8 +342,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun dispatchVideoUpdatedEvents(): DispatchVideoUpdatedEvents {
-        return DispatchVideoUpdatedEvents(videoRepository, eventBus)
+    fun dispatchVideoUpdatedEvents(): BroadcastVideos {
+        return BroadcastVideos(videoRepository, eventBus)
     }
 
     @Bean

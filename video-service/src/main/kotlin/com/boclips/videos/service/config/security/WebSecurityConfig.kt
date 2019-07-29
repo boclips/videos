@@ -4,13 +4,7 @@ import com.boclips.security.EnableBoclipsSecurity
 import com.boclips.security.HttpSecurityConfigurer
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.http.HttpMethod.DELETE
-import org.springframework.http.HttpMethod.GET
-import org.springframework.http.HttpMethod.HEAD
-import org.springframework.http.HttpMethod.OPTIONS
-import org.springframework.http.HttpMethod.PATCH
-import org.springframework.http.HttpMethod.POST
-import org.springframework.http.HttpMethod.PUT
+import org.springframework.http.HttpMethod.*
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.stereotype.Component
 import com.boclips.videos.service.config.security.UserRoles as ROLE
@@ -58,7 +52,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(POST, "/v1/admin/actions/analyse_video/*").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/admin/actions/analyse_videos").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/admin/actions/classify_videos").hasRole(ROLE.UPDATE_VIDEOS)
-            .antMatchers(POST, "/v1/admin/actions/dispatch_video_updated_events").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/admin/actions/broadcast_videos").hasRole(ROLE.UPDATE_VIDEOS)
 
             .antMatchers(POST, "/v1/admin/actions/refresh_playbacks").hasRole(ROLE.UPDATE_VIDEOS)
 

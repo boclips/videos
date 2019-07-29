@@ -3,23 +3,15 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
-import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.subject.SubjectClassificationService
-import com.boclips.videos.service.application.video.DispatchVideoUpdatedEvents
-import com.boclips.videos.service.application.video.RebuildVideoIndex
-import com.boclips.videos.service.application.video.VideoPlaybackService
-import com.boclips.videos.service.application.video.VideoAnalysisService
+import com.boclips.videos.service.application.video.*
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -43,7 +35,7 @@ class AdminController(
     private val rebuildCollectionIndex: RebuildCollectionIndex,
     private val rebuildLegacySearchIndex: RebuildLegacySearchIndex,
     private val videoPlaybackService: VideoPlaybackService,
-    private val dispatchVideoUpdatedEvents: DispatchVideoUpdatedEvents,
+    private val broadcastVideos: BroadcastVideos,
     private val subjectClassificationService: SubjectClassificationService,
     private val videoAnalysisService: VideoAnalysisService
 ) {
@@ -97,9 +89,9 @@ class AdminController(
         return ResponseEntity(HttpStatus.ACCEPTED)
     }
 
-    @PostMapping("/dispatch_video_updated_events")
+    @PostMapping("/broadcast_videos")
     fun postDispatchVideoUpdatedEvents() {
-        dispatchVideoUpdatedEvents()
+        broadcastVideos()
     }
 
     private fun asyncWithNotifier(handler: (ResponseEmitterProgressNotifier) -> CompletableFuture<Unit>): ResponseEntity<ResponseBodyEmitter> {
