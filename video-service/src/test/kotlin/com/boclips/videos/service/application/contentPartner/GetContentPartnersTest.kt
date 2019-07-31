@@ -12,23 +12,20 @@ class GetContentPartnersTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can fetch content partners by name`() {
         val contentPartner1 = saveContentPartner(name = "hello")
-        val contentPartner2 = saveContentPartner(name = "hello")
         saveContentPartner(name = "good night")
 
         val contentPartners = getContentPartners.invoke(name = "hello", official = null)
 
         val returnedContentPartnerIds = contentPartners.content.map { it.content.id }
         assertThat(returnedContentPartnerIds).containsExactly(
-            contentPartner1.contentPartnerId.value,
-            contentPartner2.contentPartnerId.value
+            contentPartner1.contentPartnerId.value
         )
     }
 
     @Test
     fun `can fetch content partners by officiality`() {
-        saveContentPartner(accreditedToYtChannel = "1234")
-        saveContentPartner(accreditedToYtChannel = "1234")
-        val officialContentPartner = saveContentPartner(accreditedToYtChannel = null)
+        saveContentPartner(name = "Youtube CP Name", accreditedToYtChannel = "1234")
+        val officialContentPartner = saveContentPartner(name = "CP Name", accreditedToYtChannel = null)
 
         val contentPartners = getContentPartners.invoke(official = true)
 
@@ -38,8 +35,8 @@ class GetContentPartnersTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can fetch content partners by YT channel ID`() {
-        saveContentPartner(accreditedToYtChannel = "1236")
-        val contentPartnerWithYtId = saveContentPartner(accreditedToYtChannel = "1234")
+        saveContentPartner(name = "cp-1", accreditedToYtChannel = "1236")
+        val contentPartnerWithYtId = saveContentPartner(name = "cp-2", accreditedToYtChannel = "1234")
 
         val contentPartners = getContentPartners.invoke(accreditedToYtChannelId = "1234")
 

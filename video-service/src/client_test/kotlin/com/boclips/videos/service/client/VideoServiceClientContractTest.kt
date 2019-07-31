@@ -94,7 +94,6 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     @Test
     fun `get official content partners`() {
         getClient().createContentPartner(CreateContentPartnerRequest("ted", null))
-        getClient().createContentPartner(CreateContentPartnerRequest("ted", "123"))
 
         val contentPartners = getClient().findOfficialContentPartner("ted")
 
@@ -106,7 +105,6 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get youtube content partners`() {
-        getClient().createContentPartner(CreateContentPartnerRequest("ted", null))
         getClient().createContentPartner(CreateContentPartnerRequest("ted", "123"))
 
         val contentPartners = getClient().findContentPartnerByYoutubeChannelId("123")

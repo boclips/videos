@@ -8,6 +8,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.contentPartner.ContentPartnerConflictException
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
@@ -170,7 +171,11 @@ abstract class AbstractSpringIntegrationTest {
             DistributionMethodResource.STREAM
         )
     ): VideoId {
-        createContentPartner(ContentPartnerRequest(name = contentProvider, distributionMethods = distributionMethods))
+        try {
+            createContentPartner(ContentPartnerRequest(name = contentProvider, distributionMethods = distributionMethods))
+        } catch (e: ContentPartnerConflictException) {
+            // that's OK, fear not
+        }
 
         when (playbackId.type) {
             KALTURA -> fakeKalturaClient.addMediaEntry(

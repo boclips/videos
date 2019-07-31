@@ -39,7 +39,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `create a content partner`() {
+    fun `creates content partner and rejects an existing content partner`() {
         val content = """
             {
                 "searchable": false,
@@ -53,12 +53,16 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         """
 
         mockMvc.perform(
-            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
-                content
-            )
+            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content)
         )
             .andExpect(status().isCreated)
             .andExpect(header().exists("Location"))
+
+        mockMvc.perform(
+            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content)
+        )
+            .andExpect(status().isConflict)
+            .andExpectApiErrorPayload()
     }
 
     @Test
@@ -76,8 +80,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter content partners by officiality`() {
-        saveContentPartner(accreditedToYtChannel = "1234")
-        saveContentPartner(accreditedToYtChannel = null)
+        saveContentPartner(name = "cp-1", accreditedToYtChannel = "1234")
+        saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
 
         mockMvc.perform(
             get("/v1/content-partners?official=true").asBoclipsEmployee()
@@ -89,8 +93,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter content partners by youtube channel`() {
-        saveContentPartner(accreditedToYtChannel = "1234")
-        saveContentPartner(accreditedToYtChannel = null)
+        saveContentPartner(name = "cp-1", accreditedToYtChannel = "1234")
+        saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
 
         mockMvc.perform(
             get("/v1/content-partners?accreditedToYtChannelId=1234").asBoclipsEmployee()

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.videos.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
