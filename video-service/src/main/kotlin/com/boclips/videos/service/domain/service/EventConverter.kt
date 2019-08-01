@@ -5,15 +5,16 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.eventbus.domain.video.PlaybackProviderType
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {
         val subjects = toSubjectPayload(video.subjects)
-
         return com.boclips.eventbus.domain.video.Video.builder()
             .id(com.boclips.eventbus.domain.video.VideoId(video.videoId.value))
             .title(video.title)
             .contentPartner(toContentPartnerPayload(video.contentPartner))
+            .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
             .subjects(subjects)
             .ageRange(toAgeRangePayload(video.ageRange))
             .build()
