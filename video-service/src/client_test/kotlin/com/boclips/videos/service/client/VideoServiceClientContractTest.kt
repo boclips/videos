@@ -281,6 +281,33 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
+    fun `fetch own collections detailed returns collections with deep video information`() {
+        val collections: List<Collection> = getClient().myCollectionsDetailed
+
+        assertThat(collections)
+            .hasSize(2)
+            .flatExtracting("videos")
+            .extracting("playback")
+            .extracting("thumbnailUrl").allSatisfy {
+                assertThat(it as String).isNotBlank()
+            }
+    }
+
+    @Test
+    // TODO Include viewable collections in this test once it's a first-class concept
+    fun `getCollectionsDetailed returns private collections I'm allowed to see (I own or have permission to see) with details`() {
+        val collections: List<Collection> = getClient().collectionsDetailed
+
+        assertThat(collections)
+            .hasSize(2)
+            .flatExtracting("videos")
+            .extracting("playback")
+            .extracting("thumbnailUrl").allSatisfy {
+                assertThat(it as String).isNotBlank()
+            }
+    }
+
+    @Test
     fun `specify page size when fetching collections`() {
         val collections: List<Collection> =
             getClient().getMyCollections(VideoServiceClient.PageSpec.builder().pageSize(1).build())

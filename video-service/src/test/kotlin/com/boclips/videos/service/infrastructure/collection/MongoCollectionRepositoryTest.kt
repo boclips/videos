@@ -330,6 +330,21 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `can retrieve collections of viewer`() {
+            val viewerId = "viewer1"
+            val collection = collectionRepository.createWithViewers(
+                owner = UserId(value = "user1"),
+                title = "",
+                viewerIds = listOf(viewerId)
+            )
+
+            val viewerCollections = collectionRepository.getByViewer(UserId(viewerId), PageRequest(0, 10))
+
+            assertThat(viewerCollections.elements).hasSize(1)
+            assertThat(viewerCollections.elements.map { it.id }).contains(collection.id)
+        }
+
+        @Test
         fun `can retrieve bookmarked collections`() {
             val publicBookmarkedCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),

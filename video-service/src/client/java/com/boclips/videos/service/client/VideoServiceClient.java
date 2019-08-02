@@ -52,11 +52,23 @@ public interface VideoServiceClient {
 
     List<Subject> getSubjects();
 
+    default List<Collection> getCollectionsDetailed() {
+        return getCollectionsDetailed(new PageSpec());
+    }
+
+    List<Collection> getCollectionsDetailed(PageSpec pageSpec);
+
     default List<Collection> getMyCollections() {
         return getMyCollections(new PageSpec());
     }
 
     List<Collection> getMyCollections(PageSpec pageSpec);
+
+    default List<Collection> getMyCollectionsDetailed() {
+        return getMyCollectionsDetailed(new PageSpec());
+    }
+
+    List<Collection> getMyCollectionsDetailed(PageSpec pageSpec);
 
     default List<Collection> getCollectionsByOwner(String owner) {
         return getCollectionsByOwner(owner, new PageSpec());

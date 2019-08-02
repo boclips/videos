@@ -67,6 +67,25 @@ class MongoCollectionRepository(
         return find(collectionId) ?: throw CollectionNotCreatedException("Failed to create collection $collectionId")
     }
 
+    override fun createWithViewers(owner: UserId, title: String, viewerIds: List<String>): Collection {
+        val objectId = ObjectId()
+        val collectionId = CollectionId(value = objectId.toHexString())
+        val document = CollectionDocument(
+            id = objectId,
+            owner = owner.value,
+            title = title,
+            videos = emptyList(),
+            updatedAt = Instant.now(),
+            visibility = CollectionVisibilityDocument.PRIVATE,
+            createdByBoclips = false,
+            subjects = emptySet(),
+            viewerIds = viewerIds
+        )
+
+        dbCollection().insertOne(document)
+        return find(collectionId) ?: throw CollectionNotCreatedException("Failed to create collection $collectionId")
+    }
+
     override fun find(id: CollectionId): Collection? {
         if (!isValid(id.value)) {
             return null
@@ -94,6 +113,11 @@ class MongoCollectionRepository(
 
     override fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection> {
         val criteria = CollectionDocument::owner eq owner.value
+        return getPagedCollections(pageRequest, criteria)
+    }
+
+    override fun getByViewer(viewer: UserId, pageRequest: PageRequest): Page<Collection> {
+        val criteria = CollectionDocument::viewerIds contains viewer.value
         return getPagedCollections(pageRequest, criteria)
     }
 

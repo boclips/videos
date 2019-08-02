@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
+import com.boclips.videos.service.application.collection.GetViewerCollections
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
@@ -190,6 +191,19 @@ class ApplicationContext(
                 videoService
             )
         )
+    }
+
+    @Bean
+    fun getViewerCollections(
+        collectionRepository: CollectionRepository,
+        videosLinkBuilder: VideosLinkBuilder,
+        playbackToResourceConverter: PlaybackToResourceConverter
+    ): GetViewerCollections {
+        return GetViewerCollections(collectionRepository, CollectionResourceFactory(
+            VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+            SubjectToResourceConverter(),
+            videoService
+        ))
     }
 
     @Bean

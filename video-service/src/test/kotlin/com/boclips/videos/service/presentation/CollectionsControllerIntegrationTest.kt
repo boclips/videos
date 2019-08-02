@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
@@ -180,6 +181,25 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
+    }
+
+    @Test
+    fun `get collections by viewer with deep video information`() {
+        val viewer = "viewer@test.com"
+
+        val savedVideoId = saveVideo()
+        val collection = createCollectionForViewer(viewer)
+        addVideo(collection.id.value, savedVideoId.value)
+
+        mockMvc.perform(get("/v1/collections/dont-do-this-at-home").asApiUser(viewer))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
+            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0].playback.thumbnailUrl", not(isEmptyString())))
     }
 
     @Test
@@ -669,6 +689,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title", "public": $public}""").asTeacher())
             .andExpect(status().isCreated)
             .andReturn().response.getHeader("Location")!!.substringAfterLast("/")
+
+    private fun createCollectionForViewer(viewerId: String) = collectionRepository.createWithViewers(UserId("teacher@gmail.com"), "Viewer collection", listOf(viewerId))
 
     private fun getCollection(collectionId: String, user: String = "teacher@gmail.com"): ResultActions {
         return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(user))

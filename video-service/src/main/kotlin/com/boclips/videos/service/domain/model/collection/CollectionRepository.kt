@@ -13,8 +13,10 @@ interface CollectionRepository {
     fun findAllBySubject(subjectId: SubjectId): List<Collection>
     fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit)
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
+    fun getByViewer(viewer: UserId, pageRequest: PageRequest): Page<Collection>
     fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun create(owner: UserId, title: String, createdByBoclips: Boolean, public: Boolean): Collection
+    fun createWithViewers(owner: UserId, title: String, viewerIds: List<String>): Collection
     fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand)
     fun updateAll(updateCommand: CollectionsUpdateCommand)
     fun delete(id: CollectionId)

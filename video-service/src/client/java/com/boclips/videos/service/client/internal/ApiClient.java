@@ -16,8 +16,10 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 import static org.springframework.http.HttpStatus.*;
 
 public class ApiClient implements VideoServiceClient {
@@ -148,13 +150,44 @@ public class ApiClient implements VideoServiceClient {
     }
 
     @Override
-    public List<Collection> getMyCollections(PageSpec pageSpec) {
+    public List<Collection> getCollectionsDetailed(PageSpec pageSpec) {
+        // TODO Remove this hack and implement a proper way of retrieving viewable collections
         this.linkTemplate = getLinks();
-        Link collectionsLink = linkTemplate.get_links().getMyCollections();
-        if (collectionsLink == null) {
+        Link collectionLink = linkTemplate.get_links().getCollection();
+        if (collectionLink == null) {
+            throw new UnsupportedOperationException("No 'collection' link. Check user roles.");
+        }
+
+        List<Collection> viewerCollections = getCollections(
+                uri(collectionLink.interpolate(singletonMap("id", "dont-do-this-at-home"))),
+                pageSpec
+        );
+
+        List<Collection> myCollections = getMyCollectionsDetailed(pageSpec);
+
+        return concat(viewerCollections.stream(), myCollections.stream()).collect(toList());
+    }
+
+    @Override
+    public List<Collection> getMyCollections(PageSpec pageSpec) {
+        return getCollections(uri(myCollectionsLink()), pageSpec);
+    }
+
+    @Override
+    public List<Collection> getMyCollectionsDetailed(PageSpec pageSpec) {
+        return getCollections(
+                uri(myCollectionsLink()).replaceQueryParam("projection", "details"),
+                pageSpec
+        );
+    }
+
+    private Link myCollectionsLink() {
+        this.linkTemplate = getLinks();
+        Link myCollectionsLink = linkTemplate.get_links().getMyCollections();
+        if (myCollectionsLink == null) {
             throw new UnsupportedOperationException("No 'my collections' link. Check user roles.");
         }
-        return getCollections(uri(collectionsLink), pageSpec);
+        return myCollectionsLink;
     }
 
     @Override
@@ -175,7 +208,7 @@ public class ApiClient implements VideoServiceClient {
         return restTemplate.getForObject(uri.build().toUri(), CollectionsResource.class)
                 .getCollections().stream()
                 .map(CollectionResource::toCollection)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private UriComponentsBuilder uri(Link link) {

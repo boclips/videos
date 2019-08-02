@@ -24,6 +24,7 @@ public class FakeClient implements VideoServiceClient {
     private Map<VideoId, Playback> playbacks = new HashMap<>();
     private Map<SubjectId, Subject> subjects = new HashMap<>();
     private Map<String, List<Collection>> collectionsByUser = new HashMap<>();
+    private Map<String, List<Collection>> detailedCollectionsByUser = new HashMap<>();
     private List<ContentPartner> contentPartners = new ArrayList<>();
 
     @Override
@@ -127,17 +128,30 @@ public class FakeClient implements VideoServiceClient {
     }
 
     @Override
+    public List<Collection> getCollectionsDetailed(PageSpec pageSpec) {
+        // TODO Include the viewer collections once it's a fist-class concept
+        return getMyCollectionsDetailed(pageSpec);
+    }
+
+    @Override
     public List<Collection> getMyCollections(PageSpec pageSpec) {
         return getCollectionsByOwner("user@boclips.com", pageSpec);
     }
 
     @Override
-    public List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec) {
-        List<Collection> allUserCollections = getCollections(owner);
+    public List<Collection> getMyCollectionsDetailed(PageSpec pageSpec) {
+        return trimToPageSize(getDetailedCollections("user@boclips.com"), pageSpec);
+    }
 
+    @Override
+    public List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec) {
+        return trimToPageSize(getCollections(owner), pageSpec);
+    }
+
+    private List<Collection> trimToPageSize(List<Collection> collections, PageSpec pageSpec) {
         int pageSize = pageSpec.getPageSize() != null ? pageSpec.getPageSize() : 30;
-        int itemsToRemove = Math.min(pageSize, allUserCollections.size());
-        return Collections.unmodifiableList(allUserCollections.subList(0, itemsToRemove));
+        int itemsToRemove = Math.min(pageSize, collections.size());
+        return Collections.unmodifiableList(collections.subList(0, itemsToRemove));
     }
 
     public void addCollection(Collection collection) {
@@ -146,10 +160,24 @@ public class FakeClient implements VideoServiceClient {
 
     public void addCollection(Collection collection, String owner) {
         getCollections(owner).add(collection);
+        getDetailedCollections(owner).add(Collection.builder()
+                .collectionId(collection.getCollectionId())
+                .subjects(collection.getSubjects())
+                .title(collection.getTitle())
+                .videos(collection.getVideos().stream()
+                        .map(video -> videos.get(video.getVideoId()))
+                        .collect(toList())
+                )
+                .build()
+        );
     }
 
     private List<Collection> getCollections(String user) {
         return collectionsByUser.computeIfAbsent(user, u -> new ArrayList<>());
+    }
+
+    private List<Collection> getDetailedCollections(String user) {
+        return detailedCollectionsByUser.computeIfAbsent(user, u -> new ArrayList<>());
     }
 
     @Override
@@ -195,6 +223,7 @@ public class FakeClient implements VideoServiceClient {
         illegalPlaybackIds.clear();
         subjects.clear();
         collectionsByUser.clear();
+        detailedCollectionsByUser.clear();
         contentPartners.clear();
     }
 
