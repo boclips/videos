@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
+import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -31,7 +32,7 @@ internal class VideoToResourceConverterTest {
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
-        ratings = listOf(UserRating(rating = 3, userId = UserId("irrelevant"))),
+        ratings = listOf(UserRating(rating = 3, userId = UserId("user-id"))),
         tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id")
 
     )
@@ -50,6 +51,7 @@ internal class VideoToResourceConverterTest {
 
     @BeforeEach
     fun setUp() {
+        setSecurityContext("user-id")
         videosLinkBuilder = mock()
         playbackToResourceConverter = PlaybackToResourceConverter(mock())
         videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
@@ -101,6 +103,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.ageRange!!.min).isEqualTo(5)
         assertThat(videoResource.ageRange!!.max).isEqualTo(11)
         assertThat(videoResource.rating).isEqualTo(3.0)
+        assertThat(videoResource.yourRating).isEqualTo(3.0)
         assertThat(videoResource.bestFor).isEqualTo(TagResource("tag-label"))
     }
 

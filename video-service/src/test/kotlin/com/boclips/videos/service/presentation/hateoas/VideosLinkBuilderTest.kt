@@ -196,7 +196,7 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `rate link does not return a link when there is a rating by the current user`() {
+    fun `rate link returns a link when there is a rating by the current user`() {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
         val link =
@@ -211,7 +211,8 @@ class VideosLinkBuilderTest {
                 )
             )
 
-        assertThat(link).isNull()
+        assertThat(link!!.href).isNotNull()
+        assertThat(link.rel).isEqualTo("rate")
     }
 
     @Test

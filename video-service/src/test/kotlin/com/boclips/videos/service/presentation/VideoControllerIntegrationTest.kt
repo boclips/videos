@@ -481,26 +481,35 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(patch(rateUrl, 3).asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.rating", equalTo(3.0)))
-            .andExpect(jsonPath("$._links.rate").doesNotExist())
+            .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
+            .andExpect(jsonPath("$._links.rate.href").exists())
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.rating", equalTo(3.0)))
-            .andExpect(jsonPath("$._links.rate").doesNotExist())
+            .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
+            .andExpect(jsonPath("$._links.rate").exists())
     }
 
     @Test
-    fun `multiple ratings uses average`() {
+    fun `multiple ratings uses average but overrides same user's rating`() {
         val videoId = saveVideo().value
         val rateUrl = getRatingLink(videoId)
+
+        mockMvc.perform(patch(rateUrl, 1).asTeacher("teacher-1"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.rating", equalTo(1.0)))
+            .andExpect(jsonPath("$.yourRating", equalTo(1.0)))
 
         mockMvc.perform(patch(rateUrl, 3).asTeacher("teacher-1"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.rating", equalTo(3.0)))
+            .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
 
         mockMvc.perform(patch(rateUrl, 5).asTeacher("teacher-2"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.rating", equalTo(4.0)))
+            .andExpect(jsonPath("$.yourRating", equalTo(5.0)))
     }
 
     @Test

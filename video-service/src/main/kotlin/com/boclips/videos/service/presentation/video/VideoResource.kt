@@ -35,6 +35,8 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val rating: Double? = null,
     @get:JsonView(PublicApiProjection::class)
+    val yourRating: Double? = null,
+    @get:JsonView(PublicApiProjection::class)
     val bestFor: TagResource? = null,
     @get:JsonView(PublicApiProjection::class)
     val createdBy: String? = null,

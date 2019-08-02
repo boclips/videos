@@ -7,28 +7,12 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDistributionMethods
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
-import com.boclips.videos.service.infrastructure.video.converters.TopicDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.UserTagDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.VideoDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.*
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.and
@@ -37,18 +21,10 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.`in`
-import org.litote.kmongo.combine
-import org.litote.kmongo.contains
-import org.litote.kmongo.div
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.not
-import org.litote.kmongo.push
-import org.litote.kmongo.set
+import org.litote.kmongo.*
 import java.time.Instant
-import java.util.Optional
+import java.util.*
+import kotlin.collections.toList
 
 class MongoVideoRepository(
     private val mongoClient: MongoClient
@@ -149,12 +125,38 @@ class MongoVideoRepository(
 
     override fun update(command: VideoUpdateCommand): Video {
         val videoId = command.videoId
-        getVideoCollection().updateOne(
-            VideoDocument::id eq ObjectId(videoId.value),
-            updatedOperation(command)
-        )
+        // https://jira.mongodb.org/browse/SERVER-1050
+        // We can consolidate this into 1 command when we upgrade to mongo 4.2, but right now it is BETA in Atlas
+        // In the meanwhile we need 2 queries, therefore, we cannot use the commands to build criteria
+        // I do not see the point of major refactor as it'll be feasible in a few weeks/months and anyway the
+        // code inconsistency is isolated where the root issue is (mongodb persistence layer)
+        if (command is AddRating) {
+            addRating(command)
+        } else {
+            getVideoCollection().updateOne(
+                    VideoDocument::id eq ObjectId(videoId.value),
+                    updatedOperation(command)
+            )
+        }
 
         return find(videoId) ?: throw VideoNotFoundException(videoId)
+    }
+
+    private fun addRating(addRating: AddRating) {
+        getVideoCollection().updateOne(
+                VideoDocument::id eq ObjectId(addRating.videoId.value),
+                pullByFilter(
+                        VideoDocument::rating,
+                        UserRatingDocument::userId eq addRating.rating.userId.value
+                )
+        )
+        getVideoCollection().updateOne(
+                VideoDocument::id eq ObjectId(addRating.videoId.value),
+                push(
+                        VideoDocument::rating,
+                        UserRatingDocumentConverter.toDocument(addRating.rating)
+                )
+        )
     }
 
     override fun bulkUpdate(commands: List<VideoUpdateCommand>): List<Video> {
@@ -232,10 +234,7 @@ class MongoVideoRepository(
             )
             is ReplaceKeywords -> set(VideoDocument::keywords, updateCommand.keywords)
             is ReplacePlayback -> set(VideoDocument::playback, PlaybackConverter.toDocument(updateCommand.playback))
-            is AddRating -> push(
-                VideoDocument::rating,
-                UserRatingDocumentConverter.toDocument(updateCommand.rating)
-            )
+            is AddRating -> throw IllegalStateException("cannot add rating in a single query")
             is ReplaceTag -> set(
                 VideoDocument::tags,
                 listOf(UserTagDocumentConverter.toDocument(updateCommand.tag))

@@ -10,7 +10,7 @@ import com.boclips.videos.service.domain.service.EventConverter
 class EventPublishingVideoRepository(private val videoRepository: VideoRepository, private val eventBus: EventBus) :
     VideoRepository by videoRepository {
 
-    override fun update(command: VideoUpdateCommand): Video {
+    override fun  update(command: VideoUpdateCommand): Video {
         val video = videoRepository.update(command)
 
         publishVideoUpdated(video)

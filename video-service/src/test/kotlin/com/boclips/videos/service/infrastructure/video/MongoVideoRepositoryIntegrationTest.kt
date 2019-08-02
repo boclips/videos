@@ -298,6 +298,12 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 UserRating(3, UserId("a user"))
             )
         )
+        mongoVideoRepository.update(
+            VideoUpdateCommand.AddRating(
+                originalAsset.videoId,
+                UserRating(3, UserId("another user"))
+            )
+        )
         val updatedAsset = mongoVideoRepository.update(
             VideoUpdateCommand.AddRating(
                 originalAsset.videoId,

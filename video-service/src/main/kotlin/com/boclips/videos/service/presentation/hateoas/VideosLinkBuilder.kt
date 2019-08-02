@@ -62,12 +62,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         ).withRel("transcript")
     }
 
-    fun rateLink(video: Video) = when {
-
-        !currentUserHasRole(UserRoles.RATE_VIDEOS) -> null
-        video.isRatedByCurrentUser() -> null
-
-        else -> ControllerLinkBuilder.linkTo(
+    fun rateLink(video: Video) = getIfHasRole(UserRoles.RATE_VIDEOS) {
+         ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .patchRating(null, video.videoId.value)
         ).withRel("rate")
