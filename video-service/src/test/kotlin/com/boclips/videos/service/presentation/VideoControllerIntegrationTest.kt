@@ -566,10 +566,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
+        val contentPartnerId = saveContentPartner().contentPartnerId.value
+
         val content = """
             {
                 "provider": "AP",
                 "providerVideoId": "1",
+                "providerId": "$contentPartnerId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",
@@ -595,6 +598,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `create new video with subjects`() {
         val subjectId = saveSubject("Maths")
+        val contentPartnerId = saveContentPartner().contentPartnerId.value
 
         fakeKalturaClient.addMediaEntry(
             TestFactories.createMediaEntry(
@@ -608,6 +612,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             {
                 "provider": "AP",
                 "providerVideoId": "1",
+                "providerId": "$contentPartnerId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",
@@ -634,10 +639,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns a helpful error message when request is not valid`() {
+        val contentPartnerId = saveContentPartner().contentPartnerId.value
+
         val content = """
             {
                 "provider": "AP",
-                "providerVideoId": "1"
+                "providerVideoId": "1",
+                "providerId": "$contentPartnerId"
             }
         """.trimIndent()
 
@@ -656,10 +664,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
+        val contentPartnerId = saveContentPartner(name = "AP").contentPartnerId.value
+
         val content = """
             {
                 "provider": "AP",
                 "providerVideoId": "1",
+                "providerId": "$contentPartnerId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",
@@ -802,10 +813,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(
             patch("/v1/videos").asBoclipsEmployee()
-                .content("""{ 
+                .content(
+                    """{
                     "ids": ["${videoIds[0]}", "${videoIds[1]}"], 
                     "distributionMethods": ["${DistributionMethodResource.DOWNLOAD}"] }
-                    """.trimMargin())
+                    """.trimMargin()
+                )
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNoContent)
 

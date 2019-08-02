@@ -6,9 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class GetContentPartnersTest : AbstractSpringIntegrationTest() {
-    @Autowired
-    lateinit var getContentPartners: GetContentPartners
-
     @Test
     fun `can fetch content partners by name`() {
         val contentPartner1 = saveContentPartner(name = "hello")

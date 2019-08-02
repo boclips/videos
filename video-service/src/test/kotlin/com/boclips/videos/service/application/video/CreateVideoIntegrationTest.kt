@@ -3,9 +3,10 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
+import com.boclips.videos.service.application.contentPartner.ContentPartnerNotFoundException
+import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -45,7 +46,14 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+
+        val resource = createVideo(
+            TestFactories.createCreateVideoRequest(
+                playbackId = "1234",
+                providerId = contentPartner.contentPartnerId.value
+            )
+        )
 
         assertThat(videoService.getPlayableVideo(VideoId(resource.content.id!!))).isNotNull
     }
@@ -54,17 +62,32 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
 
         val resource =
-            createVideo(TestFactories.createCreateVideoRequest(playbackId = "8889", playbackProvider = "YOUTUBE"))
+            createVideo(
+                TestFactories.createCreateVideoRequest(
+                    playbackId = "8889",
+                    playbackProvider = "YOUTUBE",
+                    providerId = contentPartner.contentPartnerId.value
+                )
+            )
 
         assertThat(videoService.getPlayableVideo(VideoId(resource.content.id!!))).isNotNull
     }
 
     @Test
     fun `requesting creation of video without playback ignores video and throws`() {
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+
+
         assertThrows<VideoPlaybackNotFound> {
-            createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+            createVideo(
+                TestFactories.createCreateVideoRequest(
+                    playbackId = "1234",
+                    providerId = contentPartner.contentPartnerId.value
+                )
+            )
         }
 
         assertThat(
@@ -81,7 +104,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `creates content partner if it does not exist`() {
+    fun `throws if content partner if it does not exist`() {
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
                 id = "entry-$123",
@@ -90,18 +113,22 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        createVideo(
-            TestFactories.createCreateVideoRequest(
-                provider = "another-youtube-channel",
-                playbackId = "1234"
+        assertThrows<ContentPartnerNotFoundException> {
+            createVideo(
+                TestFactories.createCreateVideoRequest(
+                    provider = "another-youtube-channel",
+                    playbackId = "1234",
+                    providerId = "4321"
+                )
             )
-        )
+        }
+    }
 
-        val contentPartner = contentPartnerRepository.findByName("another-youtube-channel")
-
-        assertThat(contentPartner!!.name).isEqualTo("another-youtube-channel")
-        assertThat(contentPartner.contentPartnerId).isNotNull
-        assertThat(contentPartner.ageRange).isInstanceOf(UnboundedAgeRange::class.java)
+    @Test
+    fun `throws if provider id is null`() {
+        assertThrows<InvalidCreateRequestException> {
+            createVideo(TestFactories.createCreateVideoRequest(providerId = null))
+        }
     }
 
     @Test
@@ -116,7 +143,14 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val resource = createVideo(TestFactories.createCreateVideoRequest(playbackId = "1234"))
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+
+        val resource = createVideo(
+            TestFactories.createCreateVideoRequest(
+                playbackId = "1234",
+                providerId = contentPartner.contentPartnerId.value
+            )
+        )
 
         val video = videoService.getPlayableVideo(VideoId(resource.content.id!!))
 
@@ -126,7 +160,13 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when create request is incomplete`() {
-        val createRequest = TestFactories.createCreateVideoRequest(description = null, playbackProvider = "KALTURA")
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+
+        val createRequest = TestFactories.createCreateVideoRequest(
+            description = null,
+            playbackProvider = "KALTURA",
+            providerId = contentPartner.contentPartnerId.value
+        )
 
         fakeKalturaClient.addMediaEntry(
             createMediaEntry(
@@ -141,7 +181,12 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when playback provider ID or type are missing`() {
-        val createRequest = TestFactories.createCreateVideoRequest(playbackId = null, playbackProvider = null)
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val createRequest = TestFactories.createCreateVideoRequest(
+            playbackId = null,
+            playbackProvider = null,
+            providerId = contentPartner.contentPartnerId.value
+        )
 
         assertThrows<VideoPlaybackNotFound> { createVideo(createRequest) }
     }
@@ -156,11 +201,14 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+
         val video: Resource<VideoResource> = createVideo(
             TestFactories.createCreateVideoRequest(
                 videoType = "INSTRUCTIONAL_CLIPS",
                 playbackId = "1234",
-                analyseVideo = true
+                analyseVideo = true,
+                providerId = contentPartner.contentPartnerId.value
             )
         )
 
@@ -174,7 +222,15 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `it dispatches a video created event`() {
         fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1"))
 
-        createVideo(TestFactories.createCreateVideoRequest(playbackId = "1", title = "parabole"))
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+
+        createVideo(
+            TestFactories.createCreateVideoRequest(
+                playbackId = "1",
+                title = "parabole",
+                providerId = contentPartner.contentPartnerId.value
+            )
+        )
 
         val event = fakeEventBus.getEventOfType(VideoCreated::class.java)
 
@@ -202,7 +258,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createCreateVideoRequest(
                 provider = contentPartner.name,
                 title = "the latest and greatest Bloomberg video",
-                playbackId = "1234"
+                playbackId = "1234",
+                providerId = contentPartner.contentPartnerId.value
             )
 
         val videoResource = createVideo(createRequest)
@@ -240,11 +297,14 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
+        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+
         val createRequest =
             TestFactories.createCreateVideoRequest(
                 title = title,
                 playbackId = "1234",
-                videoType = LegacyVideoType.INSTRUCTIONAL_CLIPS.toString()
+                videoType = LegacyVideoType.INSTRUCTIONAL_CLIPS.toString(),
+                providerId = contentPartner.contentPartnerId.value
             )
 
         createVideo(createRequest)

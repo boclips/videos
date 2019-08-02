@@ -29,10 +29,13 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
+        val contentPartnerId = saveContentPartner().contentPartnerId.value
+
         val content = """
             {
                 "provider": "AP",
                 "providerVideoId": "1",
+                "providerId": "$contentPartnerId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",

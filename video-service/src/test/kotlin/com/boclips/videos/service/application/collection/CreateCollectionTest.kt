@@ -2,8 +2,8 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.common.PageRequest
-import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -26,14 +26,24 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     @WithMockUser("this-user")
     fun `creates collection and associates videos`() {
+        val contentPartner = saveContentPartner()
+
         val videoId1 = createVideo(
             TestFactories.createCreateVideoRequest(
                 providerVideoId = "hurray",
                 title = "a-video",
-                playbackId = "hiphip"
+                playbackId = "hiphip",
+                providerId = contentPartner.contentPartnerId.value
             )
         ).content.id
-        val videoId2 = createVideo(TestFactories.createCreateVideoRequest(title = "another-video")).content.id
+
+        val videoId2 = createVideo(
+            TestFactories.createCreateVideoRequest(
+                title = "another-video",
+                providerId = contentPartner.contentPartnerId.value
+            )
+        ).content.id
+
         val createRequest = TestFactories.createCollectionRequest(
             title = "title",
             videos = listOf("http://localhost/v1/videos/$videoId1", "http://localhost/v1/videos/$videoId2")
@@ -62,14 +72,16 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest)
 
-        assertThat(collectionService.search(
-            CollectionSearchQuery(
-                "title",
-                emptyList(),
-                1,
-                0
-            )
-        ).elements).isNotEmpty
+        assertThat(
+            collectionService.search(
+                CollectionSearchQuery(
+                    "title",
+                    emptyList(),
+                    1,
+                    0
+                )
+            ).elements
+        ).isNotEmpty
         assertThat(
             collectionService.search(
                 CollectionSearchQuery(
@@ -90,14 +102,16 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         createCollection(createRequest)
 
-        assertThat(collectionService.search(
-            CollectionSearchQuery(
-                "title",
-                emptyList(),
-                1,
-                0
-            )
-        ).elements).isEmpty()
+        assertThat(
+            collectionService.search(
+                CollectionSearchQuery(
+                    "title",
+                    emptyList(),
+                    1,
+                    0
+                )
+            ).elements
+        ).isEmpty()
     }
 
     @Test

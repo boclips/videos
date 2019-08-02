@@ -205,10 +205,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `enables content partner for streaming`() {
-        saveVideo(contentProviderId = "deadb33d1225df4825e8b8f6")
+        val id = saveContentPartner().contentPartnerId.value
 
         mockMvc.perform(
-            put("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+            put("/v1/content-partners/$id").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
                 """{
                         "distributionMethods": ["STREAM"],
                         "name": "TED",
@@ -221,7 +221,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             )
         ).andExpect(status().isNoContent)
 
-        mockMvc.perform(get("/v1/content-partners/deadb33d1225df4825e8b8f6").asBoclipsEmployee())
+        mockMvc.perform(get("/v1/content-partners/$id").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.distributionMethods", equalTo(listOf("STREAM"))))
     }

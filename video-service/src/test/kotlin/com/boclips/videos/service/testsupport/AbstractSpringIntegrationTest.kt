@@ -10,6 +10,7 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentPartner.ContentPartnerConflictException
 import com.boclips.videos.service.application.contentPartner.CreateContentPartner
+import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
@@ -88,6 +89,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createContentPartner: CreateContentPartner
+
+    @Autowired
+    lateinit var getContentPartners: GetContentPartners
 
     @Autowired
     lateinit var updateCollection: UpdateCollection
@@ -171,10 +175,15 @@ abstract class AbstractSpringIntegrationTest {
             DistributionMethodResource.STREAM
         )
     ): VideoId {
-        try {
-            createContentPartner(ContentPartnerRequest(name = contentProvider, distributionMethods = distributionMethods))
+        val retrievedContentPartnerId = try {
+            createContentPartner(
+                ContentPartnerRequest(
+                    name = contentProvider,
+                    distributionMethods = distributionMethods
+                )
+            ).contentPartnerId.value
         } catch (e: ContentPartnerConflictException) {
-            // that's OK, fear not
+            getContentPartners.invoke(name = contentProvider).firstOrNull()?.content?.id
         }
 
         when (playbackId.type) {
@@ -199,7 +208,7 @@ abstract class AbstractSpringIntegrationTest {
         val video = createVideo(
             CreateVideoRequest(
                 provider = contentProvider,
-                providerId = contentProviderId,
+                providerId = contentProviderId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
                 title = title,
                 description = description,
