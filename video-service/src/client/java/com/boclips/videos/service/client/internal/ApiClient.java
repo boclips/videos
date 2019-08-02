@@ -224,11 +224,10 @@ public class ApiClient implements VideoServiceClient {
     }
 
     private List<ContentPartner> getContentPartners(HashMap<String, Object> params) {
-        String url = getLinks().get_links().getContentPartners().interpolate(params).getHref();
+        URI uri = getLinks().get_links().getContentPartners().interpolate(params).toUri();
 
-        return Objects.requireNonNull(restTemplate.getForObject(
-                url,
-                ContentPartnersResource.class
-        )).toContentPartners();
+        return Objects.requireNonNull(
+                restTemplate.getForObject(uri, ContentPartnersResource.class)
+        ).toContentPartners();
     }
 }

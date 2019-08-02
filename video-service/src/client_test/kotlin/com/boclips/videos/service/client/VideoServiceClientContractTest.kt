@@ -93,25 +93,37 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get official content partners`() {
-        getClient().createContentPartner(CreateContentPartnerRequest("ted", null))
+        val id = getClient().createContentPartner(
+            CreateContentPartnerRequest
+                .builder()
+                .name("ted ed")
+                .accreditedToYtChannelId(null)
+                .build()
+        )
 
-        val contentPartners = getClient().findOfficialContentPartner("ted")
+        val contentPartners = getClient().findOfficialContentPartner("ted ed")
 
         assertThat(contentPartners).hasSize(1)
-        assertThat(contentPartners[0].name).isEqualTo("ted")
-        assertThat(contentPartners[0].contentPartnerId).isNotNull()
+        assertThat(contentPartners[0].name).isEqualTo("ted ed")
+        assertThat(contentPartners[0].contentPartnerId).isEqualTo(id)
         assertThat(contentPartners[0].official).isTrue()
     }
 
     @Test
     fun `get youtube content partners`() {
-        getClient().createContentPartner(CreateContentPartnerRequest("ted", "123"))
+        val id = getClient().createContentPartner(
+            CreateContentPartnerRequest
+                .builder()
+                .name("ted")
+                .accreditedToYtChannelId("123")
+                .build()
+        )
 
         val contentPartners = getClient().findContentPartnerByYoutubeChannelId("123")
 
         assertThat(contentPartners).hasSize(1)
         assertThat(contentPartners[0].name).isEqualTo("ted")
-        assertThat(contentPartners[0].contentPartnerId).isNotNull()
+        assertThat(contentPartners[0].contentPartnerId).isEqualTo(id)
         assertThat(contentPartners[0].official).isFalse()
     }
 
