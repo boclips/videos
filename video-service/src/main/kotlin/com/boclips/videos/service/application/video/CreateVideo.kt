@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.contentPartner.ContentPartnerNotFo
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
-import com.boclips.videos.service.application.video.exceptions.VideoExists
+import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
@@ -52,7 +53,15 @@ class CreateVideo(
 
         val videoToBeCreated =
             createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, subjects)
-        val createdVideo = videoService.create(videoToBeCreated)
+
+        val createdVideo = try {
+            videoService.create(videoToBeCreated)
+        } catch (ex: VideoNotCreatedException) {
+            throw VideoAssetAlreadyExistsException(
+                ex.video.contentPartner.name,
+                ex.video.videoReference
+            )
+        }
 
         if (createRequest.analyseVideo) {
             triggerVideoAnalysis(createdVideo)

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -164,7 +163,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThrows<VideoExists> {
+            assertThrows<VideoNotCreatedException> {
                 videoService.create(
                     TestFactories.createVideo(
                         contentPartnerId = contentPartner.contentPartnerId,

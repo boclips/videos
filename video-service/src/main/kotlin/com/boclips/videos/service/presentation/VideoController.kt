@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.VideoTranscriptService
-import com.boclips.videos.service.application.video.exceptions.VideoExists
+import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
@@ -135,7 +135,7 @@ class VideoController(
     fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
             createVideo(createVideoRequest)
-        } catch (e: VideoExists) {
+        } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(
                 ExceptionDetails(
                     "Error creating video",
