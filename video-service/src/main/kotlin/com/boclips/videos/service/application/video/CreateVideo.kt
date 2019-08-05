@@ -46,14 +46,12 @@ class CreateVideo(
         val contentPartner = findContentPartner(createRequest)
             ?: throw ContentPartnerNotFoundException("Could not find content partner with id: ${createRequest.providerId}")
 
-        ensureVideoIsUnique(contentPartner, createRequest.providerVideoId!!)
-
         val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
         val videoPlayback = findVideoPlayback(playbackId)
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 
-        val videoToBeCreated = createVideoRequestToVideoConverter
-            .convert(createRequest, videoPlayback, contentPartner, subjects)
+        val videoToBeCreated =
+            createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, subjects)
         val createdVideo = videoService.create(videoToBeCreated)
 
         if (createRequest.analyseVideo) {
@@ -84,18 +82,5 @@ class CreateVideo(
 
     private fun findVideoPlayback(playbackId: PlaybackId): VideoPlayback {
         return playbackRepository.find(playbackId) ?: throw VideoPlaybackNotFound(playbackId)
-    }
-
-    private fun ensureVideoIsUnique(
-        contentPartner: ContentPartner,
-        contentPartnerVideoId: String
-    ) {
-        if (videoRepository.existsVideoFromContentPartnerId(
-                contentPartner.contentPartnerId.value,
-                contentPartnerVideoId
-            )
-        ) {
-            throw VideoExists(contentPartner.name, contentPartnerVideoId)
-        }
     }
 }

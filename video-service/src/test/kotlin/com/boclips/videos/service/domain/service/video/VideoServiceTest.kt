@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -13,6 +14,7 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 class VideoServiceTest : AbstractSpringIntegrationTest() {
@@ -146,6 +148,29 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             assertThat(video.ageRange.min()).isEqualTo(3)
             assertThat(video.ageRange.max()).isEqualTo(7)
+        }
+
+        @Test
+        fun `do not create video when duplicate`() {
+            val contentPartner = contentPartnerRepository.create(
+                contentPartner = TestFactories.createContentPartner(name = "Our content partner")
+            )
+
+            videoService.create(
+                TestFactories.createVideo(
+                    contentPartnerId = contentPartner.contentPartnerId,
+                    videoReference = "video-123"
+                )
+            )
+
+            assertThrows<VideoExists> {
+                videoService.create(
+                    TestFactories.createVideo(
+                        contentPartnerId = contentPartner.contentPartnerId,
+                        videoReference = "video-123"
+                    )
+                )
+            }
         }
     }
 }

@@ -7,12 +7,28 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDistributionMethods
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.*
+import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
+import com.boclips.videos.service.infrastructure.video.converters.TopicDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.UserTagDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.VideoDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.and
@@ -21,10 +37,19 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.*
+import org.litote.kmongo.`in`
+import org.litote.kmongo.combine
+import org.litote.kmongo.contains
+import org.litote.kmongo.div
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.not
+import org.litote.kmongo.pullByFilter
+import org.litote.kmongo.push
+import org.litote.kmongo.set
 import java.time.Instant
-import java.util.*
-import kotlin.collections.toList
+import java.util.Optional
 
 class MongoVideoRepository(
     private val mongoClient: MongoClient
@@ -134,8 +159,8 @@ class MongoVideoRepository(
             addRating(command)
         } else {
             getVideoCollection().updateOne(
-                    VideoDocument::id eq ObjectId(videoId.value),
-                    updatedOperation(command)
+                VideoDocument::id eq ObjectId(videoId.value),
+                updatedOperation(command)
             )
         }
 
@@ -144,18 +169,18 @@ class MongoVideoRepository(
 
     private fun addRating(addRating: AddRating) {
         getVideoCollection().updateOne(
-                VideoDocument::id eq ObjectId(addRating.videoId.value),
-                pullByFilter(
-                        VideoDocument::rating,
-                        UserRatingDocument::userId eq addRating.rating.userId.value
-                )
+            VideoDocument::id eq ObjectId(addRating.videoId.value),
+            pullByFilter(
+                VideoDocument::rating,
+                UserRatingDocument::userId eq addRating.rating.userId.value
+            )
         )
         getVideoCollection().updateOne(
-                VideoDocument::id eq ObjectId(addRating.videoId.value),
-                push(
-                        VideoDocument::rating,
-                        UserRatingDocumentConverter.toDocument(addRating.rating)
-                )
+            VideoDocument::id eq ObjectId(addRating.videoId.value),
+            push(
+                VideoDocument::rating,
+                UserRatingDocumentConverter.toDocument(addRating.rating)
+            )
         )
     }
 
@@ -188,8 +213,8 @@ class MongoVideoRepository(
         return Optional.ofNullable(videoMatchingFilters).isPresent
     }
 
-    override fun existsVideoFromContentPartnerId(contentPartnerId: String, partnerVideoId: String): Boolean {
-        if (!ObjectId.isValid(contentPartnerId)) {
+    override fun existsVideoFromContentPartnerId(contentPartnerId: ContentPartnerId, partnerVideoId: String): Boolean {
+        if (!ObjectId.isValid(contentPartnerId.value)) {
             return false
         }
 
@@ -197,7 +222,7 @@ class MongoVideoRepository(
             .find(
                 and(
                     VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
-                        contentPartnerId
+                        contentPartnerId.value
                     ),
                     VideoDocument::source / SourceDocument::videoReference eq partnerVideoId
                 )

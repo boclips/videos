@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
@@ -11,6 +10,7 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -425,10 +425,21 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         mongoVideoRepository.create(video)
 
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId.value, "ted-id-1")).isTrue()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId.value, "ted-id-2")).isFalse()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(ObjectId().toHexString(), "ted-id-1")).isFalse()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId("invalid-hex-string", "ted-id-1")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId, "ted-id-1")).isTrue()
+        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId, "ted-id-2")).isFalse()
+
+        assertThat(
+            mongoVideoRepository.existsVideoFromContentPartnerId(
+                ContentPartnerId(value = ObjectId().toHexString()),
+                "ted-id-1"
+            )
+        ).isFalse()
+        assertThat(
+            mongoVideoRepository.existsVideoFromContentPartnerId(
+                ContentPartnerId("invalid-hex-string"),
+                "ted-id-1"
+            )
+        ).isFalse()
     }
 
     @Test

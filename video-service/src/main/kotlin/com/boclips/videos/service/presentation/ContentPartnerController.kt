@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.contentPartner.CreateContentPartne
 import com.boclips.videos.service.application.contentPartner.GetContentPartner
 import com.boclips.videos.service.application.contentPartner.GetContentPartners
 import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
 import com.boclips.videos.service.presentation.contentPartner.ContentPartnerResource
@@ -42,7 +43,10 @@ class ContentPartnerController(
         @PathVariable("contentPartnerId") contentPartnerId: String,
         @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
     ): ResponseEntity<Void> {
-        val exists = videoRepository.existsVideoFromContentPartnerId(contentPartnerId, contentPartnerVideoId)
+        val exists = videoRepository.existsVideoFromContentPartnerId(
+            ContentPartnerId(value = contentPartnerId),
+            contentPartnerVideoId
+        )
 
         val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
         return ResponseEntity(status)

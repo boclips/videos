@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.videos.service.application.video.exceptions.VideoExists
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
@@ -62,6 +63,14 @@ class VideoService(
     }
 
     fun create(videoToBeCreated: Video): Video {
+        if (videoRepository.existsVideoFromContentPartnerId(
+                videoToBeCreated.contentPartner.contentPartnerId,
+                videoToBeCreated.videoReference
+            )
+        ) {
+            throw VideoExists(videoToBeCreated.contentPartner.name, videoToBeCreated.videoReference)
+        }
+
         var newAgeRange = videoToBeCreated.ageRange
 
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
