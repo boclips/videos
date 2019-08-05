@@ -23,7 +23,13 @@ class CreateContentPartner(
             DistributionMethodResourceConverter::toDistributionMethods
         ) ?: DistributionMethod.ALL
 
-        if (contentPartnerRepository.findByName(request.name!!) != null) {
+        val filters = ContentPartnerFiltersConverter.convert(
+            name = request.name!!,
+            official = request.accreditedToYtChannelId == null,
+            accreditedYTChannelId = request.accreditedToYtChannelId
+        )
+
+        if (contentPartnerRepository.findAll(filters).toList().isNotEmpty()) {
             throw ContentPartnerConflictException(request.name)
         }
 

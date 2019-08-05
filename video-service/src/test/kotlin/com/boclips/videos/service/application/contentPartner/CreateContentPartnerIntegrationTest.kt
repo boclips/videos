@@ -50,4 +50,23 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(contentPartner.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
+
+    @Test
+    fun `can create an official content partner with the same name as a youtube content partner`() {
+        val youtubeContentPartner = createContentPartner(
+            TestFactories.createContentPartnerRequest(
+                name = "Tsitsipas",
+                accreditedToYtChannel = "23456789"
+            )
+        )
+
+        val officialContentPartner = createContentPartner(
+            TestFactories.createContentPartnerRequest(
+                name = "Tsitsipas",
+                accreditedToYtChannel = null
+            )
+        )
+
+        assertThat(officialContentPartner.contentPartnerId).isNotEqualTo(youtubeContentPartner)
+    }
 }
