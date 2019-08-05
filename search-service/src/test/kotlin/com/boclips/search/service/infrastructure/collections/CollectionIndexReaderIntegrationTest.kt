@@ -33,7 +33,10 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     @Test
     fun `can retrieve collections word matching`() {
         collectionIndexWriter.safeRebuildIndex(
-            sequenceOf(SearchableCollectionMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1", title = "Cheeky Boy Dancing"),
+                SearchableCollectionMetadataFactory.create(id = "2", title = "Cheeky Girl Dancing")
+            )
         )
 
         val results =
