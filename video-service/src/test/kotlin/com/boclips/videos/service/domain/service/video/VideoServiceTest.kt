@@ -132,7 +132,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `create video with no age range`() {
-            contentPartnerRepository.create(
+            val contentPartner = contentPartnerRepository.create(
                 contentPartner = TestFactories.createContentPartner(
                     name = "Our content partner",
                     ageRange = AgeRange.bounded(3, 7)
@@ -142,6 +142,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val video = videoService.create(
                 TestFactories.createVideo(
                     contentPartnerName = "Our content partner",
+                    contentPartnerId = contentPartner.contentPartnerId,
                     ageRange = AgeRange.unbounded()
                 )
             )

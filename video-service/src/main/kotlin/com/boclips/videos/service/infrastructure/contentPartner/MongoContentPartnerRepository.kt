@@ -68,10 +68,6 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
         return findByQuery(toBsonIdFilter(contentPartnerId))
     }
 
-    override fun findByName(contentPartnerName: String): ContentPartner? {
-        return findByQuery(ContentPartnerDocument::name eq contentPartnerName)
-    }
-
     override fun update(updateCommands: List<ContentPartnerUpdateCommand>) {
         if (updateCommands.isEmpty()) {
             return

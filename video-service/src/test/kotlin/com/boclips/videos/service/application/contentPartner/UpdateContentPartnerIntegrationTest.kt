@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -46,13 +47,21 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val deletedContentPartner = contentPartnerRepository.findByName(contentPartnerName = "My content partner")
-        assertThat(deletedContentPartner).isNull()
+        val deletedContentPartner =
+            contentPartnerRepository.findAll(listOf(ContentPartnerFilter.NameFilter(name = "My content partner")))
 
-        val updatedContentPartner = contentPartnerRepository.findByName(
-            contentPartnerName = "My better content partner"
-        )
-        assertThat(updatedContentPartner!!.name).isEqualTo("My better content partner")
+        assertThat(deletedContentPartner).isEmpty()
+
+        val updatedContentPartner = contentPartnerRepository.findAll(
+            listOf(
+                ContentPartnerFilter.NameFilter(
+                    name = "My better content partner"
+                )
+            )
+        ).first()
+
+
+        assertThat(updatedContentPartner.name).isEqualTo("My better content partner")
     }
 
     @Test

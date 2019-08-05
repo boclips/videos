@@ -149,18 +149,6 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
-    fun findByName() {
-        val contentPartnerName = UUID.randomUUID().toString()
-        val originalContentPartner = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(name = contentPartnerName)
-        )
-
-        val retrievedAsset = mongoContentPartnerRepository.findByName(contentPartnerName)
-
-        assertThat(retrievedAsset).isEqualTo(originalContentPartner)
-    }
-
-    @Test
     fun `find all content partners`() {
         mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(name = "my bloody valentine")
