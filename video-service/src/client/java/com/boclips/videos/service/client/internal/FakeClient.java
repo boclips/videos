@@ -51,12 +51,20 @@ public class FakeClient implements VideoServiceClient {
                 })
                 .collect(toSet());
 
+        final val createdBy = contentPartners.stream()
+                .filter(
+                        contentPartner -> contentPartner.getContentPartnerId().getValue().equals(request.getProviderId())
+                )
+                .findFirst()
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, request.getProviderId()))
+                .getName();
+
         val video = Video.builder()
                 .videoId(videoId)
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .releasedOn(request.getReleasedOn())
-                .createdBy(request.getProvider())
+                .createdBy(createdBy)
                 .contentPartnerId(request.getProviderId())
                 .contentPartnerVideoId(request.getProviderVideoId())
                 .playback(playback)

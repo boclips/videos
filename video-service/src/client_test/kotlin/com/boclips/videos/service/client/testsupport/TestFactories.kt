@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.testsupport
 
 import com.boclips.videos.service.client.CollectionId
+import com.boclips.videos.service.client.CreateContentPartnerRequest
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoId
@@ -11,6 +12,15 @@ import java.net.URI
 import java.time.LocalDate
 
 object TestFactories {
+    fun createContentPartnerRequest(
+        name: String = "TeD",
+        accreditedToYtChannelId: String? = null
+    ): CreateContentPartnerRequest {
+        return CreateContentPartnerRequest.builder()
+            .name(name)
+            .accreditedToYtChannelId(accreditedToYtChannelId)
+            .build()
+    }
 
     fun createVideoId(): VideoId {
         val id = TestFactories.aValidId()
@@ -23,7 +33,6 @@ object TestFactories {
     }
 
     fun createCreateVideoRequest(
-        contentProvider: String = "ted",
         contentProviderId: String = ObjectId().toHexString(),
         contentProviderVideoId: String = "ted-123",
         title: String = "video title",
@@ -37,7 +46,6 @@ object TestFactories {
         subjects: Set<String> = emptySet()
     ): CreateVideoRequest {
         return CreateVideoRequest.builder()
-            .provider(contentProvider)
             .providerId(contentProviderId)
             .providerVideoId(contentProviderVideoId)
             .title(title)

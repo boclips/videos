@@ -12,7 +12,6 @@ import java.util.Set;
 @Data
 public class CreateVideoRequest {
     private final @NonNull String providerId;
-    private final @NonNull String provider;
     private final @NonNull String providerVideoId;
     private final @NonNull String title;
     private final @NonNull String description;

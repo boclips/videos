@@ -37,7 +37,8 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
         val subject = client.subjects.first { it.name == "Maths" }
 
-        val contentPartner = saveContentPartner(name = "test-content-partner")
+        val contentPartnerId =
+            client.createContentPartner(TestFactories.createContentPartnerRequest(name = "test-content-partner"))
 
         val playbackId = "ref-id-123"
         val id = client.createVideo(
@@ -45,8 +46,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
                 title = "the title",
                 description = "the description",
                 playbackId = playbackId,
-                contentProviderId = contentPartner.contentPartnerId.value,
-                contentProvider = contentPartner.name,
+                contentProviderId = contentPartnerId.value,
                 subjects = setOf(subject.id.value)
             )
         )
@@ -68,14 +68,15 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `404 error is thrown when requested video is not found`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        val contentPartnerId =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest())
 
         val realVideoUriString = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
                 playbackId = "ref-id-123",
-                contentProviderId = contentPartnerId
+                contentProviderId = contentPartnerId.value
             )
         ).uri.toString()
         val invalidId = VideoId(URI("${realVideoUriString.substringBeforeLast("/")}/000000000000000000000000"))
@@ -88,13 +89,14 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `get VideoId for raw identifier`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        val contentPartnerId =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest())
 
         val rawId =
             getClient().createVideo(
                 TestFactories.createCreateVideoRequest(
                     playbackId = "ref-id-123",
-                    contentProviderId = contentPartnerId
+                    contentProviderId = contentPartnerId.value
                 )
             ).uri.toString()
                 .split('/').last()
@@ -214,7 +216,9 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `create a kaltura video gives a unique id`() {
-        val contentPartnerId1 = saveContentPartner().contentPartnerId.value
+        val contentPartnerId1 =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest())
+                .value
 
         val id1 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
@@ -223,7 +227,8 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             )
         )
 
-        val contentPartnerId2 = saveContentPartner(name = "hello").contentPartnerId.value
+        val contentPartnerId2 =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest(name = "hello")).value
 
         val id2 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
@@ -238,7 +243,9 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `create an existing video throws VideoExistsException`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        val contentPartnerId =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest())
+                .value
 
         val aVideo =
             TestFactories.createCreateVideoRequest(playbackId = "ref-id-123", contentProviderId = contentPartnerId)
@@ -260,7 +267,9 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `create a youtube persists video`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        val contentPartnerId =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest())
+                .value
 
         val id1 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
@@ -275,7 +284,9 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `lookup video by content partner id`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        val contentPartnerId =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest())
+                .value
 
         val request = TestFactories.createCreateVideoRequest(
             contentProviderId = contentPartnerId,
@@ -291,7 +302,9 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
     @Test
     fun `lookup video by content partner id with URL reserved chars`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        val contentPartnerId =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest())
+                .value
 
         val request = TestFactories.createCreateVideoRequest(
             contentProviderId = contentPartnerId,
@@ -384,11 +397,14 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
         val maths = addSubject("Maths")
         addSubject("French")
 
+        val createdContentPartnerId = createContentPartner(TestFactories.createContentPartnerRequest(name = "TED"))
+
         val videoId = createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "Phenomenal test video",
                 description = "the description",
                 playbackId = "test-playback-id",
+                contentProviderId = createdContentPartnerId.value,
                 contentProviderVideoId = "collection-video-id",
                 subjects = setOf(maths.id.value)
             )

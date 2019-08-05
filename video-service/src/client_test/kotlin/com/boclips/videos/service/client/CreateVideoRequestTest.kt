@@ -14,7 +14,6 @@ class CreateVideoRequestTest {
     }
 
     private fun buildVideo(
-        provider: String = "provider",
         providerId: String = "providerId",
         providerVideoId: String = "providerId video id",
         title: String = "title",
@@ -28,7 +27,6 @@ class CreateVideoRequestTest {
         subjects: Set<String> = emptySet()
     ): CreateVideoRequest {
         return CreateVideoRequest.builder()
-            .provider(provider)
             .providerId(providerId)
             .providerVideoId(providerVideoId)
             .title(title)
