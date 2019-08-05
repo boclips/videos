@@ -356,7 +356,7 @@ class ApplicationContext(
     }
 
     @Bean
-    fun dispatchVideoUpdatedEvents(): BroadcastVideos {
+    fun broadcastVideos(): BroadcastVideos {
         return BroadcastVideos(videoRepository, eventBus)
     }
 

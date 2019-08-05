@@ -90,7 +90,7 @@ class AdminController(
     }
 
     @PostMapping("/broadcast_videos")
-    fun postDispatchVideoUpdatedEvents() {
+    fun issueBroadcastVideos() {
         broadcastVideos()
     }
 
