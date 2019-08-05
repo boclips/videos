@@ -43,18 +43,17 @@ class CreateVideo(
             throw InvalidCreateRequestException("providerId cannot be null")
         }
 
-        val contentPartner =
-            findContentPartner(createRequest)
-                ?: throw ContentPartnerNotFoundException("Could not find content partner with id: ${createRequest.providerId}")
+        val contentPartner = findContentPartner(createRequest)
+            ?: throw ContentPartnerNotFoundException("Could not find content partner with id: ${createRequest.providerId}")
 
         ensureVideoIsUnique(contentPartner, createRequest.providerVideoId!!)
 
         val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
         val videoPlayback = findVideoPlayback(playbackId)
-
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
-        val videoToBeCreated =
-            createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, subjects)
+
+        val videoToBeCreated = createVideoRequestToVideoConverter
+            .convert(createRequest, videoPlayback, contentPartner, subjects)
         val createdVideo = videoService.create(videoToBeCreated)
 
         if (createRequest.analyseVideo) {

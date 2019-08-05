@@ -570,7 +570,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val content = """
             {
-                "provider": "AP",
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId",
                 "title": "AP title",
@@ -610,7 +609,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val content = """
             {
-                "provider": "AP",
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId",
                 "title": "AP title",
@@ -643,7 +641,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val content = """
             {
-                "provider": "AP",
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId"
             }
@@ -668,7 +665,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val content = """
             {
-                "provider": "AP",
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId",
                 "title": "AP title",
@@ -701,7 +697,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns 400 when creating a video without an existing playback`() {
         val content = """
             {
-                "provider": "AP",
                 "providerVideoId": "1",
                 "title": "AP title",
                 "description": "AP description",

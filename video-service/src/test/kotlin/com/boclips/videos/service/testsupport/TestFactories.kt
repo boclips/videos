@@ -203,7 +203,6 @@ object TestFactories {
         analyseVideo: Boolean = false,
         subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
-        provider = provider,
         providerId = providerId,
         providerVideoId = providerVideoId,
         title = title,

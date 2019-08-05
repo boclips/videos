@@ -207,7 +207,6 @@ abstract class AbstractSpringIntegrationTest {
 
         val video = createVideo(
             CreateVideoRequest(
-                provider = contentProvider,
                 providerId = contentProviderId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
                 title = title,
