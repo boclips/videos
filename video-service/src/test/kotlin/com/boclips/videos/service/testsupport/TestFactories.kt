@@ -10,7 +10,6 @@ import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -34,6 +33,7 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
@@ -78,7 +78,7 @@ object TestFactories {
         legalRestrictions: String = "",
         language: Locale? = null,
         transcript: String? = null,
-        eventBus: Set<Topic> = emptySet(),
+        topics: Set<Topic> = emptySet(),
         distributionMethods: Set<DistributionMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         ratings: List<UserRating> = emptyList(),
@@ -104,7 +104,7 @@ object TestFactories {
             subjects = subjects,
             language = language,
             transcript = transcript,
-            eventBus = eventBus,
+            topics = topics,
             distributionMethods = distributionMethods,
             ageRange = ageRange,
             contentPartner = contentPartner,
@@ -189,7 +189,6 @@ object TestFactories {
     }
 
     fun createCreateVideoRequest(
-        provider: String? = "AP",
         providerVideoId: String? = "AP-1",
         providerId: String? = null,
         title: String? = "an AP video",

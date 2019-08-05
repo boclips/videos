@@ -35,7 +35,7 @@ class CreateVideoRequestToVideoConverter {
                 AgeRange.unbounded()
             },
             subjects = subjects.toSet(),
-            eventBus = emptySet(),
+            topics = emptySet(),
             language = null,
             transcript = null,
             distributionMethods = contentPartner.distributionMethods,

@@ -182,8 +182,8 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
             val video = videoRepository.find(videoId)!!
 
-            assertThat(video.eventBus).hasSize(1)
-            assertThat(video.eventBus.first().name).isEqualTo("topic name")
+            assertThat(video.topics).hasSize(1)
+            assertThat(video.topics.first().name).isEqualTo("topic name")
         }
 
         @Test

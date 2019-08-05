@@ -21,7 +21,7 @@ data class Video(
     val type: LegacyVideoType,
     val legalRestrictions: String,
     val subjects: Set<Subject>,
-    val eventBus: Set<Topic>,
+    val topics: Set<Topic>,
     val language: Locale?,
     val transcript: String?,
     val ageRange: AgeRange,

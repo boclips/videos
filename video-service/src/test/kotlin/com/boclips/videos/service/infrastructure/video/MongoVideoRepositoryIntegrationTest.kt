@@ -496,7 +496,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
-        assertThat(updatedAsset!!.eventBus).containsExactly(topic)
+        assertThat(updatedAsset!!.topics).containsExactly(topic)
     }
 
     @Test

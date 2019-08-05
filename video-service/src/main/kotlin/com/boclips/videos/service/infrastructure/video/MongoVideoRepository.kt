@@ -254,7 +254,7 @@ class MongoVideoRepository(
             is ReplaceLanguage -> set(VideoDocument::language, updateCommand.language.toLanguageTag())
             is ReplaceTranscript -> set(VideoDocument::transcript, updateCommand.transcript)
             is ReplaceTopics -> set(
-                VideoDocument::eventBus,
+                VideoDocument::topics,
                 updateCommand.eventBus.map(TopicDocumentConverter::toDocument)
             )
             is ReplaceKeywords -> set(VideoDocument::keywords, updateCommand.keywords)

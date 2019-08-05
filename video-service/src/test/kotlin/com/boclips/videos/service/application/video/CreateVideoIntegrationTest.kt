@@ -116,7 +116,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThrows<ContentPartnerNotFoundException> {
             createVideo(
                 TestFactories.createCreateVideoRequest(
-                    provider = "another-youtube-channel",
                     playbackId = "1234",
                     providerId = "4321"
                 )
@@ -256,7 +255,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val createRequest =
             TestFactories.createCreateVideoRequest(
-                provider = contentPartner.name,
                 title = "the latest and greatest Bloomberg video",
                 playbackId = "1234",
                 providerId = contentPartner.contentPartnerId.value
