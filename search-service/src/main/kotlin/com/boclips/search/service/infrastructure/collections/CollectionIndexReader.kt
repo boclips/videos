@@ -4,7 +4,6 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -15,16 +14,13 @@ import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import org.elasticsearch.search.rescore.QueryRescoreMode
-import org.elasticsearch.search.rescore.QueryRescorerBuilder
 import org.elasticsearch.search.sort.SortOrder
 
 class CollectionIndexReader(val client: RestHighLevelClient) :
     IndexReader<CollectionMetadata, CollectionQuery> {
     companion object : KLogging();
 
-    private val elasticSearchResultConverter =
-        CollectionDocumentConverter()
+    private val elasticSearchResultConverter = CollectionDocumentConverter()
 
     override fun search(searchRequest: PaginatedSearchRequest<CollectionQuery>): List<String> {
         return searchElasticSearch(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
@@ -50,7 +46,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
         val esQuery = SearchSourceBuilder().query(fuzzyQuery(query))
 
         if (!query.phrase.isBlank()) {
-            esQuery.addRescorer(rescorer(query.phrase))
+            esQuery
         } else if (query.sort != null) {
             esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
         }
@@ -68,13 +64,10 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                             .boolQuery()
                             .must(
                                 QueryBuilders
-                                    .multiMatchQuery(
-                                        query.phrase,
+                                    .matchQuery(
                                         CollectionDocument.TITLE,
-                                        "${CollectionDocument.TITLE}.std"
+                                        query.phrase
                                     )
-                                    .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                                    .fuzziness(Fuzziness.ONE)
                             )
                             .should(QueryBuilders.matchPhraseQuery(CollectionDocument.TITLE, query.phrase))
                     )
@@ -90,16 +83,5 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                     )
                 }
             }
-    }
-
-    private fun rescorer(phrase: String?): QueryRescorerBuilder {
-        val rescoreQuery = QueryBuilders.multiMatchQuery(
-            phrase,
-            "title.$FIELD_DESCRIPTOR_SHINGLES"
-        )
-            .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-        return QueryRescorerBuilder(rescoreQuery)
-            .windowSize(100)
-            .setScoreMode(QueryRescoreMode.Total)
     }
 }

@@ -46,6 +46,21 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     }
 
     @Test
+    fun `wtf`() {
+        collectionIndexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1", title = "Cold War"),
+                SearchableCollectionMetadataFactory.create(id = "2", title = "The Great War WWI")
+            )
+        )
+
+        val results =
+            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "ear")))
+
+        Assertions.assertThat(results).isEmpty()
+    }
+
+    @Test
     fun `cannot retrieve collections part-word matching`() {
         collectionIndexWriter.safeRebuildIndex(
             sequenceOf(SearchableCollectionMetadataFactory.create(id = "100", title = "Beautiful Boy Dancing"))
