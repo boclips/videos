@@ -46,7 +46,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     }
 
     @Test
-    fun `wtf`() {
+    fun `does not multi match word parts`() {
         collectionIndexWriter.safeRebuildIndex(
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(id = "1", title = "Cold War"),
