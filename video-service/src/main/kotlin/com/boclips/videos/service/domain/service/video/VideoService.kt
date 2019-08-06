@@ -67,6 +67,7 @@ class VideoService(
                 videoToBeCreated.videoReference
             )
         ) {
+            logger.info { "Detected duplicate for $videoToBeCreated." }
             throw VideoNotCreatedException(videoToBeCreated)
         }
 

@@ -46,6 +46,6 @@ data class Video(
         ratings.any { it.userId == getCurrentUserId() }
 
     override fun toString(): String {
-        return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}')"
+        return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}', videoReference='$videoReference')"
     }
 }
