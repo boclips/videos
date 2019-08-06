@@ -23,7 +23,8 @@ class CollectionDocumentConverterTest {
             bookmarks = setOf("user-1"),
             subjects = setOf(TestFactories.createSubjectDocument(name = "subject-1")),
             ageRangeMax = 10,
-            ageRangeMin = 5
+            ageRangeMin = 5,
+            description = "Good description"
         )
 
         val collection = CollectionDocumentConverter.toCollection(originalAsset)!!
@@ -37,7 +38,7 @@ class CollectionDocumentConverterTest {
         assertThat(collection.ageRange.min()).isEqualTo(5)
         assertThat(collection.ageRange.max()).isEqualTo(10)
         assertThat(collection.bookmarks).containsExactly(UserId(value = "user-1"))
-
+        assertThat(collection.description).isEqualTo("Good description")
         assertThat(collection.subjects.first().name).isEqualTo("subject-1")
         assertThat(collection.subjects.first().id.value).isNotBlank()
     }

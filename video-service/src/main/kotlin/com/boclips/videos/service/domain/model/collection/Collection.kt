@@ -18,7 +18,8 @@ data class Collection(
     val createdByBoclips: Boolean,
     val bookmarks: Set<UserId>,
     val subjects: Set<Subject>,
-    val ageRange: AgeRange
+    val ageRange: AgeRange,
+    val description: String?
 ) {
     fun createdBy(): String {
         return if (createdByBoclips) {

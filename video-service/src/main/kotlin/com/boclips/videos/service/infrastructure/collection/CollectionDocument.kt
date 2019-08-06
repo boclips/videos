@@ -17,5 +17,6 @@ data class CollectionDocument(
     val bookmarks: Set<String> = emptySet(),
     val subjects: Set<SubjectDocument>? = emptySet(),
     val ageRangeMin: Int? = null,
-    val ageRangeMax: Int? = null
+    val ageRangeMax: Int? = null,
+    val description: String? = null
 )

@@ -31,6 +31,7 @@ class CollectionUpdates {
                 anyUpdateCommand.maxAge
             )
             is CollectionUpdateCommand.RemoveSubjectFromCollection -> removeSubject(id, anyUpdateCommand.subjectId)
+            is CollectionUpdateCommand.ChangeDescription -> changeDescription(id, anyUpdateCommand.description)
         }
     }
 
@@ -75,5 +76,11 @@ class CollectionUpdates {
 
         logger.info { "Prepare visibility change of collection $collectionId to $visibility" }
         return set(CollectionDocument::visibility, visibility)
+    }
+
+    private fun changeDescription(collectionId: CollectionId, description: String): Bson {
+        logger.info { "Prepare for replacing description of collection $collectionId" }
+
+        return set(CollectionDocument::description, description)
     }
 }

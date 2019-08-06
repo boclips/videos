@@ -21,7 +21,9 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                 ageRange.min?.let { min ->
                     CollectionUpdateCommand.ChangeAgeRange(min, ageRange.max)
                 }
-            }
+            },
+            updateCollectionRequest.description?.let { CollectionUpdateCommand.ChangeDescription(description = it) }
+
         )
     }
 }

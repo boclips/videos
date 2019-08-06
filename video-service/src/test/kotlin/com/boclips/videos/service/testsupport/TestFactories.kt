@@ -236,7 +236,8 @@ object TestFactories {
         createdByBoclips: Boolean = false,
         bookmarks: Set<UserId> = emptySet(),
         subjects: Set<Subject> = emptySet(),
-        viewerIds: List<UserId> = emptyList()
+        viewerIds: List<UserId> = emptyList(),
+        description: String? = "collection description"
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
@@ -248,7 +249,8 @@ object TestFactories {
         createdByBoclips = createdByBoclips,
         bookmarks = bookmarks,
         subjects = subjects,
-        ageRange = AgeRange.unbounded()
+        ageRange = AgeRange.unbounded(),
+        description = description
     )
 
     fun createCollectionResource(

@@ -189,6 +189,22 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `can create a collection and then change its description`() {
+            val collection = collectionRepository.create(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false,
+                public = false
+            )
+
+            collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeDescription("New collection description"))
+
+            val updatedCollection = collectionRepository.find(collection.id)!!
+
+            assertThat(updatedCollection.description).isEqualTo("New collection description")
+        }
+
+        @Test
         fun `updatedAt timestamp on modifying changes`() {
             val video1 = saveVideo()
 

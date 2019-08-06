@@ -34,7 +34,8 @@ object CollectionDocumentConverter {
             ageRange = if (collectionDocument.ageRangeMin !== null) AgeRange.bounded(
                 min = collectionDocument.ageRangeMin,
                 max = collectionDocument.ageRangeMax
-            ) else AgeRange.unbounded()
+            ) else AgeRange.unbounded(),
+            description = collectionDocument.description
         )
     }
 }

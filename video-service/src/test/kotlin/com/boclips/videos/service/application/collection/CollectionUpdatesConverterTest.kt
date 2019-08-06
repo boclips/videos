@@ -117,4 +117,16 @@ class CollectionUpdatesConverterTest {
 
         assertThat(command.subjects).isEqualTo(setOf(subject))
     }
+
+    @Test
+    fun `Turn description into command`() {
+        val commands = collectionUpdatesConverter.convert(
+            UpdateCollectionRequest(
+                description = "New description"
+            )
+        )
+
+        val command = commands.first() as CollectionUpdateCommand.ChangeDescription
+        assertThat(command.description).isEqualTo("New description")
+    }
 }

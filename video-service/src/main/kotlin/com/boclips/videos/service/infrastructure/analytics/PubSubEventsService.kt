@@ -5,6 +5,7 @@ import com.boclips.eventbus.domain.user.User
 import com.boclips.eventbus.events.base.UserEvent
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
+import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
@@ -101,6 +102,14 @@ class PubSubEventsService(
                 msg(
                     CollectionSubjectsChanged.builder()
                         .collectionId(collectionId.value)
+                )
+            )
+
+            is CollectionUpdateCommand.ChangeDescription -> eventBus.publish(
+                msg(
+                    CollectionDescriptionChanged.builder()
+                        .collectionId(collectionId.value)
+                        .description(updateCommand.description)
                 )
             )
         }

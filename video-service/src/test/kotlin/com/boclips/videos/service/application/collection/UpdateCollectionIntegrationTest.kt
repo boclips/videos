@@ -1,12 +1,13 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
-import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -57,6 +58,19 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.user.id).isEqualTo("me@me.com")
         assertThat(event.isPublic).isTrue()
+    }
+
+    @Test
+    fun `logs an event when changing description`() {
+        val collectionId = saveCollection(owner = "me@me.com")
+
+        updateCollection(collectionId.value, UpdateCollectionRequest(description = "New Description"))
+
+        val event = fakeEventBus.getEventOfType(CollectionDescriptionChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.description).isEqualTo("New Description")
     }
 
     @Test
