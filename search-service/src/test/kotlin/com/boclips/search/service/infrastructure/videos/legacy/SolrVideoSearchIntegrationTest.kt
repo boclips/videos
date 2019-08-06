@@ -128,13 +128,6 @@ class SolrSearchServiceIntegrationTest {
     }
 
     @Test
-    fun `throws when video does not exist for deletion`() {
-        assertThatThrownBy { solrVideoSearch.removeFromSearch(itemId = "10") }
-            .isInstanceOf(LegacyDocumentNotFound::class.java)
-            .hasMessage("Video 10 not found in legacy index")
-    }
-
-    @Test
     fun `does not fail bulk removal if one videos does not exist`() {
         solrVideoSearch.upsert(
             sequenceOf(

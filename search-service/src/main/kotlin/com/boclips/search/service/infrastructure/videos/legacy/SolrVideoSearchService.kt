@@ -57,8 +57,7 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
             } catch (ex: Exception) {
                 throw SolrException(ex)
             }
-
-        runAndThrow { client.getById(itemId) } ?: throw LegacyDocumentNotFound(itemId)
+        
         runAndThrow {
             client.deleteById(itemId)
             client.commit()
