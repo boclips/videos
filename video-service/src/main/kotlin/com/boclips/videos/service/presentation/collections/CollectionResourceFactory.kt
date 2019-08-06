@@ -30,7 +30,8 @@ class CollectionResourceFactory(
             bookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
-            ageRange = AgeRangeToResourceConverter.convert(collection.ageRange)
+            ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
+            description = collection.description
         )
     }
 
@@ -46,7 +47,8 @@ class CollectionResourceFactory(
             bookmarked = collection.isBookmarked(),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
-            ageRange = AgeRangeToResourceConverter.convert(collection.ageRange)
+            ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
+            description = collection.description
         )
     }
 }

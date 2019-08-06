@@ -264,7 +264,8 @@ object TestFactories {
         isMine: Boolean = false,
         createdBy: String = "Johnny Bravo",
         subjects: Set<Resource<SubjectResource>> = emptySet(),
-        ageRange: AgeRangeResource? = null
+        ageRange: AgeRangeResource? = null,
+        description: String? = null
     ) = CollectionResource(
         id = id,
         owner = owner,
@@ -276,7 +277,8 @@ object TestFactories {
         bookmarked = isBookmarked,
         createdBy = createdBy,
         subjects = subjects,
-        ageRange = ageRange
+        ageRange = ageRange,
+        description = description
     )
 
     fun aValidId(): String {

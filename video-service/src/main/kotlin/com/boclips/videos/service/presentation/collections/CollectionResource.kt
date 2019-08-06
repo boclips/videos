@@ -21,5 +21,6 @@ data class CollectionResource(
     val mine: Boolean,
     val createdBy: String,
     val subjects: Set<Resource<SubjectResource>>,
-    val ageRange: AgeRangeResource?
+    val ageRange: AgeRangeResource?,
+    val description: String?
 )

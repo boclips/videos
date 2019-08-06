@@ -55,7 +55,8 @@ class GetCollectionTest {
         val onGetCollection = TestFactories.createCollection(
             id = collectionId,
             owner = "me@me.com",
-            title = "Freshly found"
+            title = "Freshly found",
+            description = "My description"
         )
 
         collectionRepository = mock {
@@ -67,6 +68,7 @@ class GetCollectionTest {
         assertThat(collection.id).isEqualTo(onGetCollection.id.value)
         assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
         assertThat(collection.title).isEqualTo(onGetCollection.title)
+        assertThat(collection.description).isEqualTo(onGetCollection.description)
         assertThat(collection.videos).isNotEmpty
         assertThat(collection.videos.component1().content.id).isNotBlank()
         assertThat(collection.videos.component1().content.title).isNull()
