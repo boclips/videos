@@ -162,7 +162,7 @@ dependencies {
     implementation("org.bouncycastle:bcprov-jdk15on:1.60")
     implementation('org.litote.kmongo:kmongo:3.9.2')
     implementation('io.sentry:sentry-logback:1.7.21')
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.8") // vulnerability problem
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.9.2")
 
     // repeated versions used in search service
     implementation('org.apache.solr:solr-solrj:7.7.1')
