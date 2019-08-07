@@ -39,11 +39,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 import java.time.LocalDate
+import javax.servlet.http.Cookie
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -412,6 +414,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
             .andExpect(jsonPath("$.type").doesNotExist())
             .andExpect(jsonPath("$.status").doesNotExist())
+    }
+
+    @Test
+    fun `sets playback consumer cookie when not already present`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
+            .andExpect(status().isOk)
+            .andExpect(cookie().exists(Cookies.PLAYBACK_CONSUMER_DEVICE))
+            .andExpect(cookie().httpOnly(Cookies.PLAYBACK_CONSUMER_DEVICE, true))
+            .andExpect(cookie().secure(Cookies.PLAYBACK_CONSUMER_DEVICE, true))
+            .andExpect(cookie().maxAge(Cookies.PLAYBACK_CONSUMER_DEVICE, Duration.ofDays(30).seconds.toInt()))
+    }
+
+    @Test
+    fun `does not set a playback consumer cookie if already present`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").cookie(Cookie(Cookies.PLAYBACK_CONSUMER_DEVICE, "a-consumer-id")))
+            .andExpect(status().isOk)
+            .andExpect(cookie().doesNotExist(Cookies.PLAYBACK_CONSUMER_DEVICE))
     }
 
     @Test

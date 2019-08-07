@@ -25,16 +25,18 @@ import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.json.MappingJacksonValue
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/videos")
@@ -112,8 +114,14 @@ class VideoController(
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
 
     @GetMapping(path = ["/{id}"])
-    fun getVideo(@PathVariable("id") id: String?, @RequestHeader headers: HttpHeaders? = null) =
-        withProjection(searchVideo.byId(id))
+    fun getVideo(@PathVariable("id") id: String?, @CookieValue(Cookies.PLAYBACK_CONSUMER_DEVICE) playbackConsumer: String? = null): ResponseEntity<MappingJacksonValue> {
+        val headers = HttpHeaders()
+        if(playbackConsumer == null) {
+            headers.add("Set-Cookie", "${Cookies.PLAYBACK_CONSUMER_DEVICE}=${UUID.randomUUID()}; Max-Age=2592000; HttpOnly; Secure")
+        }
+
+        return ResponseEntity(withProjection(searchVideo.byId(id)), headers, HttpStatus.OK)
+    }
 
     @DeleteMapping("/{id}")
     fun removeVideo(@PathVariable("id") id: String?) {
