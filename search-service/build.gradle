@@ -25,7 +25,7 @@ def elasticSearchVersion = "6.5.4"
 def junitVersion = "5.3.1"
 
 dependencies {
-    compile("com.fasterxml.jackson.core:jackson-databind:2.9.8")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.9.9.2")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
     compile("org.elasticsearch:elasticsearch:${elasticSearchVersion}")
