@@ -25,7 +25,8 @@ interface EventService {
         playerId: String,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
-        videoDurationSeconds: Long
+        videoDurationSeconds: Long,
+        playbackDevice: String?
     )
 
     fun savePlayerInteractedWithEvent(

@@ -137,7 +137,8 @@ class PubSubEventsService(
         playerId: String,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
-        videoDurationSeconds: Long
+        videoDurationSeconds: Long,
+        playbackDevice: String?
     ) {
         eventBus.publish(
             msg(
@@ -148,6 +149,7 @@ class PubSubEventsService(
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
                     .videoDurationSeconds(videoDurationSeconds)
+                    .playbackDevice(playbackDevice)
             )
         )
     }

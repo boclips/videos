@@ -420,18 +420,18 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `sets playback consumer cookie when not already present`() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
             .andExpect(status().isOk)
-            .andExpect(cookie().exists(Cookies.PLAYBACK_CONSUMER_DEVICE))
-            .andExpect(cookie().httpOnly(Cookies.PLAYBACK_CONSUMER_DEVICE, true))
-            .andExpect(cookie().path(Cookies.PLAYBACK_CONSUMER_DEVICE, "/"))
-            .andExpect(cookie().secure(Cookies.PLAYBACK_CONSUMER_DEVICE, true))
-            .andExpect(cookie().maxAge(Cookies.PLAYBACK_CONSUMER_DEVICE, Duration.ofDays(30).seconds.toInt()))
+            .andExpect(cookie().exists(Cookies.PLAYBACK_DEVICE))
+            .andExpect(cookie().httpOnly(Cookies.PLAYBACK_DEVICE, true))
+            .andExpect(cookie().path(Cookies.PLAYBACK_DEVICE, "/"))
+            .andExpect(cookie().secure(Cookies.PLAYBACK_DEVICE, true))
+            .andExpect(cookie().maxAge(Cookies.PLAYBACK_DEVICE, Duration.ofDays(30).seconds.toInt()))
     }
 
     @Test
     fun `does not set a playback consumer cookie if already present`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId").cookie(Cookie(Cookies.PLAYBACK_CONSUMER_DEVICE, "a-consumer-id")))
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").cookie(Cookie(Cookies.PLAYBACK_DEVICE, "a-consumer-id")))
             .andExpect(status().isOk)
-            .andExpect(cookie().doesNotExist(Cookies.PLAYBACK_CONSUMER_DEVICE))
+            .andExpect(cookie().doesNotExist(Cookies.PLAYBACK_DEVICE))
     }
 
     @Test

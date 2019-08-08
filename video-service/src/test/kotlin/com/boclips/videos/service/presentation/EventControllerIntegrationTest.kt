@@ -12,6 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import javax.servlet.http.Cookie
 
 class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -37,6 +38,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .asTeacher(email = "teacher@gmail.com")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Referer", "https://teachers.boclips.com/videos?q=abc")
+                .cookie(Cookie(Cookies.PLAYBACK_DEVICE, "device-id"))
                 .content(content)
         )
             .andExpect(status().isCreated)
@@ -51,6 +53,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.segmentEndSeconds).isEqualTo(1470L)
         assertThat(event.videoDurationSeconds).isEqualTo(610L)
         assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
+        assertThat(event.playbackDevice).isEqualTo("device-id")
     }
 
     @Test

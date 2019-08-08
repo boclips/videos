@@ -24,7 +24,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `saves the event`() {
-        savePlaybackEvent.execute(payload)
+        savePlaybackEvent.execute(payload, playbackDevice = null)
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 

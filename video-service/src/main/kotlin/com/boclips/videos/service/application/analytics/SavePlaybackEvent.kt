@@ -7,7 +7,7 @@ import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 class SavePlaybackEvent(
     private val eventService: EventService
 ) {
-    fun execute(event: CreatePlaybackEventCommand?) {
+    fun execute(event: CreatePlaybackEventCommand?, playbackDevice: String?) {
 
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
@@ -18,7 +18,8 @@ class SavePlaybackEvent(
             videoIndex = event.videoIndex,
             segmentStartSeconds = event.segmentStartSeconds!!,
             segmentEndSeconds = event.segmentEndSeconds!!,
-            videoDurationSeconds = event.videoDurationSeconds!!
+            videoDurationSeconds = event.videoDurationSeconds!!,
+            playbackDevice = playbackDevice
         )
     }
 }

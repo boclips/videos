@@ -257,7 +257,8 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             playerId = "player-id",
             segmentStartSeconds = 123,
             segmentEndSeconds = 345,
-            videoDurationSeconds = 50
+            videoDurationSeconds = 50,
+            playbackDevice = "device-id"
         )
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
@@ -270,6 +271,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.videoDurationSeconds).isEqualTo(50)
         assertThat(event.user.id).isEqualTo("user@example.com")
         assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.playbackDevice).isEqualTo("device-id")
     }
 
     @Test
