@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.json.MappingJacksonValue
 import org.springframework.web.bind.annotation.CookieValue
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -113,11 +114,12 @@ class VideoController(
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
 
+    @CrossOrigin(allowCredentials = "true")
     @GetMapping(path = ["/{id}"])
     fun getVideo(@PathVariable("id") id: String?, @CookieValue(Cookies.PLAYBACK_CONSUMER_DEVICE) playbackConsumer: String? = null): ResponseEntity<MappingJacksonValue> {
         val headers = HttpHeaders()
         if(playbackConsumer == null) {
-            headers.add("Set-Cookie", "${Cookies.PLAYBACK_CONSUMER_DEVICE}=${UUID.randomUUID()}; Max-Age=2592000; HttpOnly; Secure")
+            headers.add("Set-Cookie", "${Cookies.PLAYBACK_CONSUMER_DEVICE}=${UUID.randomUUID()}; Max-Age=2592000; Path=/; HttpOnly; SameSite=None; Secure")
         }
 
         return ResponseEntity(withProjection(searchVideo.byId(id)), headers, HttpStatus.OK)

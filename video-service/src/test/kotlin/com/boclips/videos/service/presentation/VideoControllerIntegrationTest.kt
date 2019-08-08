@@ -422,6 +422,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(cookie().exists(Cookies.PLAYBACK_CONSUMER_DEVICE))
             .andExpect(cookie().httpOnly(Cookies.PLAYBACK_CONSUMER_DEVICE, true))
+            .andExpect(cookie().path(Cookies.PLAYBACK_CONSUMER_DEVICE, "/"))
             .andExpect(cookie().secure(Cookies.PLAYBACK_CONSUMER_DEVICE, true))
             .andExpect(cookie().maxAge(Cookies.PLAYBACK_CONSUMER_DEVICE, Duration.ofDays(30).seconds.toInt()))
     }
