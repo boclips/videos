@@ -9,6 +9,7 @@ import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.eventbus.events.video.VideoVisited
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -305,6 +306,15 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.payload["id"]).isEqualTo("caption-id")
         assertThat(event.payload["language"]).isEqualTo("caption-language")
         assertThat(event.payload["label"]).isEqualTo("caption-label")
+    }
+
+    @Test
+    fun `video visited event contains video id`() {
+        val videoId = aValidId()
+        eventService.saveVideoVisitedEvent(videoId = VideoId(videoId))
+        val event = fakeEventBus.getEventOfType(VideoVisited::class.java)
+
+        assertThat(event.videoId).isEqualTo(videoId)
     }
 
     @Test

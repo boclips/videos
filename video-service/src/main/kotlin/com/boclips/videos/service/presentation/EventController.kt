@@ -2,10 +2,12 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
+import com.boclips.videos.service.application.analytics.SaveVideoVisitedEvent
 import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
+import com.boclips.videos.service.presentation.event.CreateVideoVisitedEventCommand
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CookieValue
@@ -19,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController
 class EventController(
     private val savePlaybackEvent: SavePlaybackEvent,
     private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
-    private val reportNoResults: ReportNoResults
+    private val reportNoResults: ReportNoResults,
+    private val saveVideoVisited: SaveVideoVisitedEvent
 ) {
 
     @PostMapping("/playback")
@@ -37,6 +40,12 @@ class EventController(
     @PostMapping("/no-search-results")
     fun logNoSearchResultsEvent(@RequestBody noSearchResultsEvent: CreateNoSearchResultsEventCommand?): ResponseEntity<Void> {
         reportNoResults.execute(noSearchResultsEvent)
+        return ResponseEntity(HttpStatus.CREATED)
+    }
+
+    @PostMapping("/video-visited")
+    fun logVideoVisitedEvent(@RequestBody videoVisitedEventCommand: CreateVideoVisitedEventCommand?): ResponseEntity<Void> {
+        saveVideoVisited.execute(videoVisitedEventCommand)
         return ResponseEntity(HttpStatus.CREATED)
     }
 }

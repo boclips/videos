@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.eventbus.events.video.VideoVisited
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asTeacher
@@ -134,5 +135,24 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
         )
             .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `post video visited event`() {
+        val videoId = TestFactories.aValidId()
+        mockMvc.perform(
+            post("/v1/events/video-visited")
+                .asTeacher("matt@matt.matt")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Referer", "https://teachers.boclips.com/videos/123")
+                .content("""{ "videoId": "$videoId" }""")
+        )
+            .andExpect(status().isCreated)
+
+        val event = fakeEventBus.getEventOfType(VideoVisited::class.java)
+
+        assertThat(event.videoId).isEqualTo(videoId)
+        assertThat(event.user.id).isEqualTo("matt@matt.matt")
+        assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos/123")
     }
 }
