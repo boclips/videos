@@ -7,5 +7,5 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("no-security")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class AbstractVideoServiceClientSpringIntegrationTest : AbstractSpringIntegrationTest() {
-
+    val videoServiceUrl = "http://localhost:9876"
 }

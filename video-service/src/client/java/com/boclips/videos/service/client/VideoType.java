@@ -13,4 +13,12 @@ public enum VideoType {
     SHORT_PROGRAMME,
     TED_TALKS,
     TED_ED;
+
+    public static VideoType fromId(Integer id) {
+        try {
+            return VideoType.values()[id];
+        } catch (Exception e) {
+            return VideoType.OTHER;
+        }
+    }
 }

@@ -472,5 +472,5 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
         }
     }
 
-    override fun getClient() = VideoServiceClient.getUnauthorisedApiClient("http://localhost:9876")
+    override fun getClient() = VideoServiceClient.getUnauthorisedApiClient(videoServiceUrl)
 }

@@ -13,4 +13,18 @@ class LegacyDocumentVideoTypeTest {
 
         assertThat(allVideoServiceTypes).containsExactlyElementsOf(allVideoClientTypes)
     }
+
+    @Test
+    fun `get type for video service type`() {
+        val id = VideoServiceVideoType.INSTRUCTIONAL_CLIPS.id
+
+        assertThat(VideoType.fromId(id)).isEqualTo(VideoType.INSTRUCTIONAL_CLIPS)
+    }
+
+    @Test
+    fun `returns other for a bad id`() {
+        val id = -5
+
+        assertThat(VideoType.fromId(id)).isEqualTo(VideoType.OTHER)
+    }
 }

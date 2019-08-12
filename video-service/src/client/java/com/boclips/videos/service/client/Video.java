@@ -18,4 +18,5 @@ public class Video {
     private final String contentPartnerVideoId;
     private final Playback playback;
     private final Set<Subject> subjects;
+    private final VideoType type;
 }

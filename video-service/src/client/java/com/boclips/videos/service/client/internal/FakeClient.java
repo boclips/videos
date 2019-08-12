@@ -26,6 +26,7 @@ public class FakeClient implements VideoServiceClient {
     private Map<String, List<Collection>> collectionsByUser = new HashMap<>();
     private Map<String, List<Collection>> detailedCollectionsByUser = new HashMap<>();
     private List<ContentPartner> contentPartners = new ArrayList<>();
+    private Boolean useInternalProjection = false;
 
     @Override
     public VideoId createVideo(CreateVideoRequest request) {
@@ -59,7 +60,7 @@ public class FakeClient implements VideoServiceClient {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, request.getProviderId()))
                 .getName();
 
-        val video = Video.builder()
+        val videoBuilder = Video.builder()
                 .videoId(videoId)
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -68,8 +69,13 @@ public class FakeClient implements VideoServiceClient {
                 .contentPartnerId(request.getProviderId())
                 .contentPartnerVideoId(request.getProviderVideoId())
                 .playback(playback)
-                .subjects(videoSubjects)
-                .build();
+                .subjects(videoSubjects);
+
+        if (useInternalProjection) {
+            videoBuilder.type(request.getVideoType());
+        }
+
+        val video = videoBuilder.build();
 
         videos.put(videoId, video);
         playbacks.put(videoId, playback);
@@ -246,6 +252,10 @@ public class FakeClient implements VideoServiceClient {
                         .name(subjectName)
                         .build()
         );
+    }
+
+    public void setUseInternalProjection(Boolean useInternalProjection) {
+        this.useInternalProjection = useInternalProjection;
     }
 
     public Subject addSubject(Subject subject) {

@@ -1,9 +1,6 @@
 package com.boclips.videos.service.client.internal.resources;
 
-import com.boclips.videos.service.client.Subject;
-import com.boclips.videos.service.client.SubjectId;
-import com.boclips.videos.service.client.Video;
-import com.boclips.videos.service.client.VideoId;
+import com.boclips.videos.service.client.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -22,6 +19,7 @@ public class VideoResource {
     private String contentPartner = null;
     private String contentPartnerVideoId = null;
     private PlaybackResource playback = null;
+    private VideoTypeResource type = null;
 
     public Video toVideo() {
         return Video.builder()
@@ -41,7 +39,16 @@ public class VideoResource {
                             .name(subjectResource.getName())
                             .build();
                 }).collect(Collectors.toSet()))
+                .type(getType(type))
                 .build();
+    }
+
+    private VideoType getType(VideoTypeResource typeResource) {
+        if (typeResource == null) {
+            return null;
+        }
+
+        return VideoType.fromId(Integer.valueOf(typeResource.getId()));
     }
 
 }

@@ -30,9 +30,13 @@ public interface VideoServiceClient {
     }
 
     static VideoServiceClient getUnauthorisedApiClient(String baseUrl) {
+        return getUnauthorisedApiClient(baseUrl, "user@boclips.com");
+    }
+
+    static VideoServiceClient getUnauthorisedApiClient(String baseUrl, String user) {
         final RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(
-                new BasicAuthenticationInterceptor("user@boclips.com", "reallySecurePassword123"));
+                new BasicAuthenticationInterceptor(user, "reallySecurePassword123"));
         return new ApiClient(baseUrl, restTemplate);
     }
 
