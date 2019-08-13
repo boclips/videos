@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
 import org.springframework.stereotype.Component

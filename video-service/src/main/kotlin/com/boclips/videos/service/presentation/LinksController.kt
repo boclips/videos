@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.security.utils.UserExtractor.getIfAuthenticated
+import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.ContentPartnersLinkBuilder
@@ -9,8 +11,6 @@ import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.getIfAuthenticated
-import com.boclips.videos.service.presentation.hateoas.getIfHasRole
 import org.springframework.hateoas.Resource
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping

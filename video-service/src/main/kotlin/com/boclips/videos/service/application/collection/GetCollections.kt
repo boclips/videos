@@ -1,15 +1,15 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.videos.service.application.UnauthorizedException
-import com.boclips.videos.service.application.currentUserHasRole
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.CollectionResource

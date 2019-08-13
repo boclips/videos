@@ -150,7 +150,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     implementation('com.github.boclips:boclips-spring-web:0.64.0')
-    implementation('com.github.boclips:boclips-spring-security:0.142.0')
+    implementation('com.github.boclips:boclips-spring-security:0.174.0')
     implementation("com.github.boclips:kaltura-client:0.78.0")
     implementation("com.github.boclips:event-bus:1.23.0")
 

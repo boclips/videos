@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.projections
 
-import com.boclips.videos.service.application.currentUserHasAnyRole
+import com.boclips.security.utils.UserExtractor.currentUserHasAnyRole
 import com.boclips.videos.service.config.security.UserRoles.BACKOFFICE
 import com.boclips.videos.service.config.security.UserRoles.PUBLISHER
 

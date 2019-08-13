@@ -1,6 +1,8 @@
 package com.boclips.videos.service.presentation.hateoas
 
-import com.boclips.videos.service.application.currentUserHasRole
+import com.boclips.security.utils.UserExtractor.currentUserHasRole
+import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
+import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.VideoController
