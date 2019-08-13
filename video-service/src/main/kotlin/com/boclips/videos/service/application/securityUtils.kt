@@ -6,4 +6,4 @@ import com.boclips.videos.service.domain.model.common.UserId
 
 fun getCurrentUserId() = UserId(value = getCurrentUser().id)
 
-fun getCurrentUser() = UserExtractor.getCurrentUser() ?: User(false, "anonymous", emptySet())
+fun getCurrentUser() = UserExtractor.getCurrentUser() ?: User(false, "anonymousUser", emptySet())
