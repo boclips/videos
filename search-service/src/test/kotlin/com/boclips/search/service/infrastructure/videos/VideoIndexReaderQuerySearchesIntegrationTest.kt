@@ -208,6 +208,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
                 PaginatedSearchRequest(query = VideoQuery("second world war"))
             )
         ).containsExactly("1")
+
         assertThat(
             videoIndexReader.search(
                 PaginatedSearchRequest(query = VideoQuery("second world"))
@@ -242,5 +243,43 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         assertThat(results).containsExactly("1")
+    }
+
+    @Test
+    fun `literal match should score higher than stem match in title`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "empirical"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "empirical"),
+                SearchableVideoMetadataFactory.create(id = "3", title = "empire"),
+                SearchableVideoMetadataFactory.create(id = "4", title = "empir"),
+                SearchableVideoMetadataFactory.create(id = "5", title = "empirical")
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("empire"))
+        )
+
+        assertThat(results).startsWith("3")
+    }
+
+    @Test
+    fun `literal match should score higher than stem match in description`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                 SearchableVideoMetadataFactory.create(id = "1", description = "empirical"),
+                SearchableVideoMetadataFactory.create(id = "2", description = "empirical"),
+                SearchableVideoMetadataFactory.create(id = "3", description = "empire"),
+                SearchableVideoMetadataFactory.create(id = "4", description = "empir"),
+                SearchableVideoMetadataFactory.create(id = "5", description = "empirical")
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("empire"))
+        )
+
+        assertThat(results).startsWith("3")
     }
 }

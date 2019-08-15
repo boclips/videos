@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.infrastructure.IndexConfiguration
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
@@ -124,9 +125,9 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .multiMatchQuery(
                 phrase,
                 VideoDocument.TITLE,
-                "${VideoDocument.TITLE}.std",
+                "${VideoDocument.TITLE}.${IndexConfiguration.FIELD_DESCRIPTOR_UNSTEMMED}",
                 VideoDocument.DESCRIPTION,
-                "${VideoDocument.DESCRIPTION}.std",
+                "${VideoDocument.DESCRIPTION}.${IndexConfiguration.FIELD_DESCRIPTOR_UNSTEMMED}",
                 VideoDocument.TRANSCRIPT,
                 VideoDocument.KEYWORDS
             )

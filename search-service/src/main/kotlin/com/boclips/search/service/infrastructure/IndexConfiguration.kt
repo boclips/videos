@@ -5,11 +5,13 @@ interface IndexConfiguration {
 
     companion object {
         const val FIELD_DESCRIPTOR_SHINGLES = "shingles"
+        const val FIELD_DESCRIPTOR_UNSTEMMED = "unstemmed"
 
         object Analyzers {
             const val ENGLISH = "english_analyzer"
             const val ENGLISH_SEARCH = "english_search_analyzer"
             const val SHINGLES = "shingle_analyzer"
+            const val UNSTEMMED = "unstemmed_analyzer"
         }
 
         object Filters {
@@ -43,6 +45,10 @@ interface IndexConfiguration {
                 FIELD_DESCRIPTOR_SHINGLES to mapOf(
                     "type" to "text",
                     "analyzer" to Analyzers.SHINGLES
+                ),
+                FIELD_DESCRIPTOR_UNSTEMMED to mapOf(
+                    "type" to "text",
+                    "analyzer" to Analyzers.UNSTEMMED
                 )
             )
         )
@@ -117,6 +123,12 @@ interface IndexConfiguration {
                         "filter" to listOf(
                             Filters.PREDEFINED_LOWERCASE,
                             Filters.SHINGLES
+                        )
+                    ),
+                    Analyzers.UNSTEMMED to mapOf(
+                        "tokenizer" to "standard",
+                        "filter" to listOf(
+                            "lowercase"
                         )
                     )
                 ),
