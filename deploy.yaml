@@ -9,7 +9,7 @@ environments:
     urls:
       - video-service.boclips.com
   staging:
-    replicas: 1
+    replicas: 2
     urls:
       - video-service.staging-boclips.com
   testing:
