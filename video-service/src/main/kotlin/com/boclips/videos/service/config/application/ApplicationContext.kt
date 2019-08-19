@@ -31,10 +31,10 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
+import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildVideoIndex
@@ -63,7 +63,9 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
+import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
@@ -165,13 +167,15 @@ class ApplicationContext(
     @Bean
     fun getCollection(
         videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        playbackToResourceConverter: PlaybackToResourceConverter,
+        attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetCollection {
         return GetCollection(
             collectionRepository,
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
+                AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
             )
         )
@@ -180,7 +184,8 @@ class ApplicationContext(
     @Bean
     fun getPublicCollections(
         videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        playbackToResourceConverter: PlaybackToResourceConverter,
+        attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetCollections {
         return GetCollections(
             collectionService,
@@ -188,6 +193,7 @@ class ApplicationContext(
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
+                AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
             )
         )
@@ -197,11 +203,13 @@ class ApplicationContext(
     fun getViewerCollections(
         collectionRepository: CollectionRepository,
         videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        playbackToResourceConverter: PlaybackToResourceConverter,
+        attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetViewerCollections {
         return GetViewerCollections(collectionRepository, CollectionResourceFactory(
             VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
             SubjectToResourceConverter(),
+            AttachmentToResourceConverter(attachmentsLinkBuilder),
             videoService
         ))
     }

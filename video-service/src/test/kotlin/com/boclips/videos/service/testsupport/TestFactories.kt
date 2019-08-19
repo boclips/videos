@@ -10,6 +10,7 @@ import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamUrls
+import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -124,7 +125,7 @@ object TestFactories {
 
     fun createUserTag(id: String = aValidId(), label: String = id, userId: String = "user id"): UserTag =
         UserTag(
-            tag = TestFactories.createTag(id, label),
+            tag = createTag(id, label),
             userId = UserId(userId)
         )
 
@@ -237,7 +238,8 @@ object TestFactories {
         bookmarks: Set<UserId> = emptySet(),
         subjects: Set<Subject> = emptySet(),
         viewerIds: List<UserId> = emptyList(),
-        description: String? = "collection description"
+        description: String = "collection description",
+        attachments: Set<Attachment> = emptySet()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
@@ -250,7 +252,8 @@ object TestFactories {
         bookmarks = bookmarks,
         subjects = subjects,
         ageRange = AgeRange.unbounded(),
-        description = description
+        description = description,
+        attachments = attachments
     )
 
     fun createCollectionResource(
@@ -278,7 +281,8 @@ object TestFactories {
         createdBy = createdBy,
         subjects = subjects,
         ageRange = ageRange,
-        description = description
+        description = description,
+        attachments = emptySet()
     )
 
     fun aValidId(): String {

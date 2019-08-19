@@ -1,6 +1,9 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.attachment.AttachmentId
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -24,7 +27,15 @@ class CollectionDocumentConverterTest {
             subjects = setOf(TestFactories.createSubjectDocument(name = "subject-1")),
             ageRangeMax = 10,
             ageRangeMin = 5,
-            description = "Good description"
+            description = "Good description",
+            attachments = setOf(
+                AttachmentDocument(
+                    id = ObjectId(),
+                    description = "description",
+                    type = "LESSON_PLAN",
+                    linkToResource = "https://example.com/download"
+                )
+            )
         )
 
         val collection = CollectionDocumentConverter.toCollection(originalAsset)!!
@@ -41,5 +52,10 @@ class CollectionDocumentConverterTest {
         assertThat(collection.description).isEqualTo("Good description")
         assertThat(collection.subjects.first().name).isEqualTo("subject-1")
         assertThat(collection.subjects.first().id.value).isNotBlank()
+        assertThat(collection.attachments).hasSize(1);
+        assertThat(collection.attachments.first().attachmentId).isNotNull
+        assertThat(collection.attachments.first().description).isEqualTo("description")
+        assertThat(collection.attachments.first().type).isEqualTo(AttachmentType.LESSON_PLAN)
+        assertThat(collection.attachments.first().linkToResource).isEqualTo("https://example.com/download")
     }
 }

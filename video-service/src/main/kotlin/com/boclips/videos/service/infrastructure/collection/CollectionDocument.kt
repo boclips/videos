@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -18,5 +19,6 @@ data class CollectionDocument(
     val subjects: Set<SubjectDocument>? = emptySet(),
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
-    val description: String? = null
+    val description: String? = null,
+    val attachments: Set<AttachmentDocument>? = emptySet()
 )

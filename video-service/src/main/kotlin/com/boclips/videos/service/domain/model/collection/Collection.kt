@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.videos.service.application.getCurrentUserId
+import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.Subject
@@ -19,7 +20,8 @@ data class Collection(
     val bookmarks: Set<UserId>,
     val subjects: Set<Subject>,
     val ageRange: AgeRange,
-    val description: String?
+    val description: String?,
+    val attachments: Set<Attachment>
 ) {
     fun createdBy(): String {
         return if (createdByBoclips) {

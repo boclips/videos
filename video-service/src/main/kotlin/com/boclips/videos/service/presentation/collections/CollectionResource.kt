@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.collections
 
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
+import com.boclips.videos.service.presentation.attachments.AttachmentResource
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -22,5 +23,6 @@ data class CollectionResource(
     val createdBy: String,
     val subjects: Set<Resource<SubjectResource>>,
     val ageRange: AgeRangeResource?,
-    val description: String?
+    val description: String?,
+    val attachments: Set<Resource<AttachmentResource>>?
 )

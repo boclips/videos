@@ -8,7 +8,9 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
@@ -31,6 +33,7 @@ class GetCollectionTest {
     lateinit var collectionResourceFactory: CollectionResourceFactory
     lateinit var videoService: VideoService
     lateinit var videosLinkBuilder: VideosLinkBuilder
+    lateinit var attachmentsLinkBuilder: AttachmentsLinkBuilder
 
     @BeforeEach
     fun setUp() {
@@ -41,10 +44,12 @@ class GetCollectionTest {
             )
         }
         videosLinkBuilder = mock()
+        attachmentsLinkBuilder = mock()
         playbackToResourceConverter = PlaybackToResourceConverter(EventsLinkBuilder())
         collectionResourceFactory = CollectionResourceFactory(
             VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
             SubjectToResourceConverter(),
+            AttachmentToResourceConverter(attachmentsLinkBuilder),
             videoService
         )
     }

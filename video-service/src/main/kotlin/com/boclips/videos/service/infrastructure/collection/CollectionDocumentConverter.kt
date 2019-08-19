@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 
 object CollectionDocumentConverter {
     fun toCollection(collectionDocument: CollectionDocument?): Collection? {
@@ -35,7 +36,10 @@ object CollectionDocumentConverter {
                 min = collectionDocument.ageRangeMin,
                 max = collectionDocument.ageRangeMax
             ) else AgeRange.unbounded(),
-            description = collectionDocument.description
+            description = collectionDocument.description,
+            attachments = collectionDocument.attachments?.map {
+                AttachmentDocumentConverter.convert(it)
+            }?.toSet().orEmpty()
         )
     }
 }

@@ -4,6 +4,8 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
+import com.boclips.videos.service.infrastructure.collection.CollectionVisibilityDocument
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
@@ -21,6 +23,7 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyOrNullString
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -645,6 +648,40 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
     }
 
+    @Test
+    fun `will return an attachment in details projection`() {
+        val collectionId = "5c55697860fef77aa4af323b"
+
+        createCollectionWithAttachment(collectionId, "description", "LESSON_PLAN", "https://example.com/download")
+
+        mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.attachments", hasSize<Any>(1)))
+            .andExpect(jsonPath("$.attachments[0].id", notNullValue()))
+            .andExpect(jsonPath("$.attachments[0].description", equalTo("description")))
+            .andExpect(jsonPath("$.attachments[0].type", equalTo("LESSON_PLAN")))
+            .andExpect(jsonPath("$.attachments[0]._links.download.href", equalTo("https://example.com/download")))
+    }
+
+    @Test
+    fun `will return an attachment in list projection`() {
+        val collectionId = "5c55697860fef77aa4af323b"
+
+        createCollectionWithAttachment(collectionId, "description", "LESSON_PLAN", "https://example.com/download")
+
+        mockMvc.perform(get("/v1/collections/$collectionId?projection=list").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.attachments", hasSize<Any>(1)))
+            .andExpect(jsonPath("$.attachments[0].id", notNullValue()))
+            .andExpect(jsonPath("$.attachments[0].description", equalTo("description")))
+            .andExpect(jsonPath("$.attachments[0].type", equalTo("LESSON_PLAN")))
+            .andExpect(jsonPath("$.attachments[0]._links.download.href", equalTo("https://example.com/download")))
+    }
+
     private fun createCollectionWithTitle(title: String): String {
         val email = "teacher@gmail.com"
         return collectionRepository.create(
@@ -653,6 +690,36 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             createdByBoclips = false,
             public = false
         ).id.value
+    }
+
+    private fun createCollectionWithAttachment(
+        collectionId: String,
+        description: String,
+        type: String,
+        linkToResource: String
+    ) {
+        mongoClient
+            .getDatabase(DATABASE_NAME)
+            .getCollection(MongoCollectionRepository.collectionName)
+            .insertOne(
+                Document()
+                    .append("_id", ObjectId(collectionId))
+                    .append("title", "Collection With Attachment")
+                    .append("owner", "a4efeee2-0166-4371-ba72-0fa5a13c9aca")
+                    .append("visibility", CollectionVisibilityDocument.PUBLIC)
+                    .append("updatedAt", Date())
+                    .append("videos", emptyList<VideoId>())
+                    .append(
+                        "attachments", setOf(
+                            AttachmentDocument(
+                                id = ObjectId(),
+                                description = description,
+                                type = type,
+                                linkToResource = linkToResource
+                            )
+                        )
+                    )
+            )
     }
 
     private fun addVideo(collectionId: String, videoId: String) {
@@ -690,7 +757,8 @@ class CollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isCreated)
             .andReturn().response.getHeader("Location")!!.substringAfterLast("/")
 
-    private fun createCollectionForViewer(viewerId: String) = collectionRepository.createWithViewers(UserId("teacher@gmail.com"), "Viewer collection", listOf(viewerId))
+    private fun createCollectionForViewer(viewerId: String) =
+        collectionRepository.createWithViewers(UserId("teacher@gmail.com"), "Viewer collection", listOf(viewerId))
 
     private fun getCollection(collectionId: String, user: String = "teacher@gmail.com"): ResultActions {
         return mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(user))

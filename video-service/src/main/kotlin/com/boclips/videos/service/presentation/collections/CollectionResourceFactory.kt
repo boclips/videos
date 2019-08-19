@@ -4,12 +4,14 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
+import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 
 class CollectionResourceFactory(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val subjectToResourceConverter: SubjectToResourceConverter,
+    private val attachmentToResourceConverter: AttachmentToResourceConverter,
     private val videoService: VideoService
 ) {
     fun buildCollectionResource(collection: Collection, projection: Projection) =
@@ -31,7 +33,8 @@ class CollectionResourceFactory(
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
-            description = collection.description
+            description = collection.description,
+            attachments = attachmentToResourceConverter.wrapAttachmentsInResource(collection.attachments)
         )
     }
 
@@ -48,7 +51,8 @@ class CollectionResourceFactory(
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
-            description = collection.description
+            description = collection.description,
+            attachments = attachmentToResourceConverter.wrapAttachmentsInResource(collection.attachments)
         )
     }
 }
