@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 import java.time.LocalDate
+import java.time.Year
 import javax.servlet.http.Cookie
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -424,7 +425,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(cookie().httpOnly(Cookies.PLAYBACK_DEVICE, true))
             .andExpect(cookie().path(Cookies.PLAYBACK_DEVICE, "/"))
             .andExpect(cookie().secure(Cookies.PLAYBACK_DEVICE, true))
-            .andExpect(cookie().maxAge(Cookies.PLAYBACK_DEVICE, Duration.ofDays(30).seconds.toInt()))
+            .andExpect(cookie().maxAge(Cookies.PLAYBACK_DEVICE, Duration.ofDays(365).seconds.toInt()))
     }
 
     @Test
@@ -830,7 +831,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             patch("/v1/videos").asBoclipsEmployee()
                 .content(
                     """{
-                    "ids": ["${videoIds[0]}", "${videoIds[1]}"], 
+                    "ids": ["${videoIds[0]}", "${videoIds[1]}"],
                     "distributionMethods": ["${DistributionMethodResource.DOWNLOAD}"] }
                     """.trimMargin()
                 )
