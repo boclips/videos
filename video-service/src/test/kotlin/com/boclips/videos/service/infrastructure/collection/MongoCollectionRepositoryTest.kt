@@ -29,6 +29,29 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class Find {
+
+        @Test
+        fun `findAll preserves order`() {
+            val owner = UserId(value = "user1")
+            val id1 = collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+            val id2 = collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+            val id3 = collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+
+            val collections = collectionRepository.findAll(listOf(id2, id3, id1))
+
+            assertThat(collections.map { it.id }).containsExactly(id2, id3, id1)
+        }
+
+        @Test
+        fun `find will ignore invalid IDs`() {
+            assertThat(collectionRepository.find(id = CollectionId(value = "1234"))).isNull()
+        }
+
+        @Test
+        fun `findAll will ignore invalid IDs`() {
+            assertThat(collectionRepository.findAll(ids = listOf(CollectionId(value = "1234")))).isEmpty()
+        }
+
         @Test
         fun `find by subject`() {
             val collection = collectionRepository.create(
@@ -404,16 +427,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             assertThat(bookmarkedCollections.elements).hasSize(1)
             assertThat(bookmarkedCollections.elements.map { it.id }).contains(publicBookmarkedCollection.id)
-        }
-
-        @Test
-        fun `find will ignore invalid IDs`() {
-            assertThat(collectionRepository.find(id = CollectionId(value = "1234"))).isNull()
-        }
-
-        @Test
-        fun `findAll will ignore invalid IDs`() {
-            assertThat(collectionRepository.findAll(ids = listOf(CollectionId(value = "1234")))).isEmpty()
         }
     }
 

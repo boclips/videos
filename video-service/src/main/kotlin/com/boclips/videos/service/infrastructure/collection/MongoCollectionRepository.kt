@@ -98,12 +98,13 @@ class MongoCollectionRepository(
     }
 
     override fun findAll(ids: List<CollectionId>): List<Collection> {
-        val objectIds = ids.filter {
-            isValid(it.value)
-        }.map { ObjectId(it.value) }
+        val objectIds = ids.filter { isValid(it.value) }.map { ObjectId(it.value) }
 
-        return dbCollection().find(CollectionDocument::id `in` objectIds)
+        val collections: Map<CollectionId, Collection> = dbCollection().find(CollectionDocument::id `in` objectIds)
             .mapNotNull(CollectionDocumentConverter::toCollection)
+            .map { it.id to it }.toMap()
+
+        return ids.mapNotNull { id -> collections[id] }
     }
 
     override fun findAllBySubject(subjectId: SubjectId): List<Collection> {
