@@ -37,6 +37,29 @@ class VideoSearchUpdater(
     }
 
     private fun updateIndexWith(updatedVideo: Video) {
+        try {
+            updateDownloadIndex(updatedVideo)
+        } catch (e: Exception) {
+            logger.info {
+                "Failed to update video: ${updatedVideo.videoId} for ${DistributionMethod.DOWNLOAD}" +
+                    "Exception: ${e.message}"
+            }
+        }
+
+        updateStreamIndex(updatedVideo)
+    }
+
+    private fun updateStreamIndex(updatedVideo: Video) {
+        if (updatedVideo.distributionMethods.contains(DistributionMethod.STREAM)) {
+            videoSearchService.upsert(sequenceOf(updatedVideo))
+            logger.info { "Indexed video ${updatedVideo.videoId} for ${DistributionMethod.STREAM}" }
+        } else {
+            videoSearchService.removeFromSearch(updatedVideo.videoId.value)
+            logger.info { "Removed video ${updatedVideo.videoId} from ${DistributionMethod.STREAM}" }
+        }
+    }
+
+    private fun updateDownloadIndex(updatedVideo: Video) {
         if (updatedVideo.distributionMethods.contains(DistributionMethod.DOWNLOAD)) {
             if (updatedVideo.isBoclipsHosted()) {
                 legacyVideoSearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(updatedVideo)))
@@ -45,14 +68,6 @@ class VideoSearchUpdater(
         } else {
             legacyVideoSearchService.removeFromSearch(updatedVideo.videoId.value)
             logger.info { "Removed video ${updatedVideo.videoId} from ${DistributionMethod.DOWNLOAD}" }
-        }
-
-        if (updatedVideo.distributionMethods.contains(DistributionMethod.STREAM)) {
-            videoSearchService.upsert(sequenceOf(updatedVideo))
-            logger.info { "Indexed video ${updatedVideo.videoId} for ${DistributionMethod.STREAM}" }
-        } else {
-            videoSearchService.removeFromSearch(updatedVideo.videoId.value)
-            logger.info { "Removed video ${updatedVideo.videoId} from ${DistributionMethod.STREAM}" }
         }
     }
 }

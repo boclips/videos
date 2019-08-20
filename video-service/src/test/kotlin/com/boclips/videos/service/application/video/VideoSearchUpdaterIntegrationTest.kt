@@ -13,6 +13,7 @@ import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.reset
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -81,6 +82,27 @@ class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
+        }
+    }
+
+    @Nested
+    inner class ErrorHandling {
+        @Test
+        fun `streaming index is still updated if removing from legacy search service fails`() {
+            whenever(legacyVideoSearchService.removeFromSearch(any())).thenThrow(RuntimeException())
+
+            val video = createVideo(distributionMethods = setOf(DistributionMethod.STREAM))
+
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
+        }
+
+        @Test
+        fun `streaming index is still updated if adding to legacy search service fails`() {
+            val video = createVideo(distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD))
+
+            whenever(legacyVideoSearchService.upsert(any(), any())).thenThrow(RuntimeException())
+
             assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
         }
     }
