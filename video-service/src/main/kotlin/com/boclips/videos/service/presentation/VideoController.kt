@@ -5,9 +5,11 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.TagVideo
+import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
@@ -26,6 +28,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.json.MappingJacksonValue
+import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -46,6 +49,7 @@ class VideoController(
     private val deleteVideo: DeleteVideo,
     private val createVideo: CreateVideo,
     private val bulkUpdateVideo: BulkUpdateVideo,
+    private val updateVideo: UpdateVideo,
     private val rateVideo: RateVideo,
     private val videoTranscriptService: VideoTranscriptService,
     private val objectMapper: ObjectMapper,
@@ -185,6 +189,10 @@ class VideoController(
     @PatchMapping(path = ["/{id}"], params = ["rating"])
     fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
         rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id)).let { this.getVideo(id) }
+
+    @PatchMapping(path = ["/{id}"], params = ["title"])
+    fun patchVideo(@PathVariable id: String, @RequestParam title: String?) =
+        updateVideo(id, title).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}/tags"])
     fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =

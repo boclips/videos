@@ -40,6 +40,7 @@ import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
+import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.VideoSearchUpdater
@@ -132,6 +133,11 @@ class ApplicationContext(
     @Bean
     fun rateVideo(): RateVideo {
         return RateVideo(videoRepository)
+    }
+
+    @Bean
+    fun updateVideo(): UpdateVideo {
+        return UpdateVideo(videoRepository)
     }
 
     @Bean

@@ -1,6 +1,9 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.getCurrentUserId
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -18,6 +21,8 @@ open class RateVideo(
     companion object : KLogging();
 
     open operator fun invoke(@Valid rateVideoRequest: RateVideoRequest) {
+        if(!getCurrentUser().hasRole(UserRoles.RATE_VIDEOS)) throw OperationForbiddenException()
+
         videoRepository.update(
             VideoUpdateCommand.AddRating(
                 VideoId(rateVideoRequest.videoId),

@@ -26,5 +26,6 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceContentPartner(videoId: VideoId, val contentPartner: ContentPartner) : VideoUpdateCommand(videoId)
     class AddRating(videoId: VideoId, val rating: UserRating) : VideoUpdateCommand(videoId)
     class ReplaceTag(videoId: VideoId, val tag: UserTag) : VideoUpdateCommand(videoId)
+    class ReplaceTitle(videoId: VideoId, val title: String) : VideoUpdateCommand(videoId)
 }
 

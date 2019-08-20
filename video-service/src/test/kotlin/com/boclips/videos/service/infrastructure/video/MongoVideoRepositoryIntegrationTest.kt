@@ -212,7 +212,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update playback`() {
+    fun `update playback`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideo(
                 playback = TestFactories.createKalturaPlayback(playbackId = "ref-id-1")
@@ -247,7 +247,16 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update subjects`() {
+    fun `update title`() {
+        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo(title = "old title"))
+
+        val updatedAsset = mongoVideoRepository.update(VideoUpdateCommand.ReplaceTitle(originalAsset.videoId, "new title"))
+
+        assertThat(updatedAsset.title).isEqualTo("new title")
+    }
+
+    @Test
+    fun `update subjects`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideo(
                 title = "original title",
@@ -267,7 +276,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update age range`() {
+    fun `update age range`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideo(
                 title = "original title"
@@ -285,7 +294,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update user rating`() {
+    fun `update user rating`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideo(
                 title = "original title"
@@ -318,7 +327,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update video tag`() {
+    fun `update video tag`() {
         val originalAsset = mongoVideoRepository.create(TestFactories.createVideo())
         val tag = TestFactories.createUserTag(label = "Alex", userId = "user-1")
         val updatedAsset = mongoVideoRepository.update(

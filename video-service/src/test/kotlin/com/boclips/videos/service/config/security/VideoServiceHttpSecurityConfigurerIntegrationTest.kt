@@ -93,6 +93,14 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
+    fun `teachers cannot update videos`() {
+        val videoId = saveVideo().value
+
+        mockMvc.perform(patch("/v1/videos/$videoId?title=kaboom").asTeacher())
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
     fun `only teachers can rate`() {
         val videoId = saveVideo()
 

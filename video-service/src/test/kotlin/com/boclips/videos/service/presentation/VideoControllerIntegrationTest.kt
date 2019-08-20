@@ -512,6 +512,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `update video title`() {
+        val videoId = saveVideo().value
+
+        mockMvc.perform(patch("/v1/videos/$videoId?title=dance").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.title", equalTo("dance")))
+
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.title", equalTo("dance")))
+    }
+
+    @Test
     fun `multiple ratings uses average but overrides same user's rating`() {
         val videoId = saveVideo().value
         val rateUrl = getRatingLink(videoId)
