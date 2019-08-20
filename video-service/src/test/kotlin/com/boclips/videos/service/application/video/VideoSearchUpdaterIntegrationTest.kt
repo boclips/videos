@@ -87,6 +87,80 @@ class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
+    inner class OnVideosUpdated {
+        @Test
+        fun `add stream videos to stream index`() {
+            val videos = listOf(createVideo(setOf(DistributionMethod.STREAM)))
+
+            fakeEventBus.publish(
+                com.boclips.eventbus.events.video.VideosUpdated.builder()
+                    .videos(videos.map { EventConverter().toVideoPayload(it) })
+                    .build()
+            )
+
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(1)
+            verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
+        }
+
+        @Test
+        fun `add download videos to download index`() {
+            val videos = listOf(createVideo(setOf(DistributionMethod.DOWNLOAD)))
+
+            fakeEventBus.publish(
+                com.boclips.eventbus.events.video.VideosUpdated.builder()
+                    .videos(videos.map { EventConverter().toVideoPayload(it) })
+                    .build()
+            )
+
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(0)
+            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
+        }
+
+        @Test
+        fun `add updated videos to correct index`() {
+            val downloadVideo = createVideo(setOf(DistributionMethod.DOWNLOAD))
+            val streamVideo = createVideo(setOf(DistributionMethod.STREAM))
+            val unindexedVideo = createVideo(emptySet())
+
+            val videos = listOf(
+                downloadVideo,
+                streamVideo,
+                unindexedVideo
+            )
+
+            fakeEventBus.publish(
+                com.boclips.eventbus.events.video.VideosUpdated.builder()
+                    .videos(videos.map { EventConverter().toVideoPayload(it) })
+                    .build()
+            )
+
+            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
+            verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(1)
+        }
+
+        @Test
+        fun `ignores missing video in bulk update`() {
+            val savedVideo = createVideo(setOf(DistributionMethod.STREAM))
+            val missingVideo = TestFactories.createVideo()
+
+            fakeEventBus.publish(
+                com.boclips.eventbus.events.video.VideosUpdated.builder()
+                    .videos(
+                        listOf(
+                            EventConverter().toVideoPayload(savedVideo),
+                            EventConverter().toVideoPayload(missingVideo)
+                        )
+                    )
+                    .build()
+            )
+
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(savedVideo.videoId.value)))).isEqualTo(1)
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(missingVideo.videoId.value)))).isEqualTo(0)
+        }
+    }
+
+    @Nested
     inner class ErrorHandling {
         @Test
         fun `streaming index is still updated if removing from legacy search service fails`() {

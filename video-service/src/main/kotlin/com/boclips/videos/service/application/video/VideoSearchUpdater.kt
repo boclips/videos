@@ -36,6 +36,32 @@ class VideoSearchUpdater(
         updateIndexWith(updatedVideo)
     }
 
+    @BoclipsEventListener
+    fun videosUpdated(videosUpdatedEvent: com.boclips.eventbus.events.video.VideosUpdated) {
+        val videos = videosUpdatedEvent.videos.mapNotNull {
+            videoRepository.find(VideoId(it.id.value)) ?: logger.info {"Video ${it.id.value} not found" }.let { null }
+        }
+
+        bulkUpdateStreamIndex(videos)
+        bulkUpdateDownloadIndex(videos)
+    }
+
+    private fun bulkUpdateStreamIndex(updatedVideos: List<Video>) {
+        val videosToUpsert = updatedVideos.filter { it.distributionMethods.contains(DistributionMethod.STREAM) }
+        val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.STREAM) }
+
+        videoSearchService.upsert(videosToUpsert.asSequence())
+        videoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
+    }
+
+    private fun bulkUpdateDownloadIndex(updatedVideos: List<Video>) {
+        val videosToUpsert = updatedVideos.filter { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
+        val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
+
+        legacyVideoSearchService.upsert(videosToUpsert.map(VideoToLegacyVideoMetadataConverter::convert).asSequence())
+        legacyVideoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
+    }
+
     private fun updateIndexWith(updatedVideo: Video) {
         try {
             updateDownloadIndex(updatedVideo)

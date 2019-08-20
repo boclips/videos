@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.eventbus.events.video.VideoUpdated
+import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -45,7 +45,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 import java.time.LocalDate
-import java.time.Year
 import javax.servlet.http.Cookie
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -851,7 +850,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     .andExpect(jsonPath("$.distributionMethods", equalTo(statuses)))
             }
 
-        assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(2)
+        assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
+
+        val videosUpdated = fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos.map { it.id.value }
+        assertThat(videosUpdated).containsExactlyInAnyOrder(
+            videoIds[0],
+            videoIds[1]
+        )
     }
 
     @Test

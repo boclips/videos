@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoUpdated
+import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -31,7 +32,7 @@ class EventPublishingVideoRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `publishes VideoUpdated events when bulkUpdate called`() {
+    fun `publishes VideosUpdated event when bulkUpdate called`() {
         val video1 = saveVideo()
         val video2 = saveVideo()
 
@@ -44,7 +45,7 @@ class EventPublishingVideoRepositoryTest : AbstractSpringIntegrationTest() {
 
         eventPublishingVideoRepository.bulkUpdate(updateCommands)
 
-        assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(2)
+        assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
     }
 
     @Test

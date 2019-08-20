@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
-import com.boclips.eventbus.events.video.VideoUpdated
+import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -106,7 +106,10 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             fakeEventBus.publish(videoAnalysed)
 
             assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isNotEmpty
-            assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(1)
+            assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
+
+            val videoUpdated = fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos
+            assertThat(videoUpdated).hasSize(1)
         }
 
         @Test

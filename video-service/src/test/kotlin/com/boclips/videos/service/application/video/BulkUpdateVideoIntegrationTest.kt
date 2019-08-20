@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.events.video.VideoUpdated
+import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -34,7 +35,8 @@ class BulkUpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(2);
+        assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos).hasSize(2)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.contentPartner
 
 import com.boclips.eventbus.events.video.VideoUpdated
+import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -156,7 +157,8 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(videoRepository.find(id)!!.distributionMethods).isEqualTo(DistributionMethod.ALL)
-            assertThat(fakeEventBus.countEventsOfType(VideoUpdated::class.java)).isEqualTo(1)
+            assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
+            assertThat(fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos).hasSize(1)
         }
     }
 }
