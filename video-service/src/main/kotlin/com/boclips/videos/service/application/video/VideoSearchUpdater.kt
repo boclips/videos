@@ -51,7 +51,10 @@ class VideoSearchUpdater(
         val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.STREAM) }
 
         videoSearchService.upsert(videosToUpsert.asSequence())
+        logger.info {"Indexed ${videosToUpsert.size} videos for ${DistributionMethod.STREAM}"}
+
         videoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
+        logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.STREAM}" }
     }
 
     private fun bulkUpdateDownloadIndex(updatedVideos: List<Video>) {
@@ -59,7 +62,10 @@ class VideoSearchUpdater(
         val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
 
         legacyVideoSearchService.upsert(videosToUpsert.map(VideoToLegacyVideoMetadataConverter::convert).asSequence())
+        logger.info {"Indexed ${videosToUpsert.size} videos for ${DistributionMethod.DOWNLOAD}"}
+
         legacyVideoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
+        logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.DOWNLOAD}" }
     }
 
     private fun updateIndexWith(updatedVideo: Video) {
