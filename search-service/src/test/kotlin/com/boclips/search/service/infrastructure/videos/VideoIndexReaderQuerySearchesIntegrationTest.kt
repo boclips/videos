@@ -19,7 +19,35 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     }
 
     @Test
-    fun `words appear in sequence in title increases rank`() {
+    fun `matches on some words but not all`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "one two")
+            )
+        )
+
+        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("one four")))
+
+        assertThat(results.first()).isEqualTo("1")
+    }
+
+    @Test
+    fun `matches one field vs many`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "six two", description = "three four"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "six three", description = "two four")
+            )
+        )
+
+        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("six two")))
+
+        assertThat(results).hasSize(2)
+        assertThat(results.first()).isEqualTo("1")
+    }
+
+    @Test
+    fun `words appear in sequence in title increases score`() {
         videoIndexWriter.upsert(
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy"),
@@ -36,7 +64,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     }
 
     @Test
-    fun `words appear in sequence in description increases rank`() {
+    fun `words appear in sequence in description increases score`() {
         videoIndexWriter.upsert(
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
