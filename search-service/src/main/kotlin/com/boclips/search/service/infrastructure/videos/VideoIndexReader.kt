@@ -45,19 +45,24 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             esQuery
                 .from(startIndex)
                 .size(windowSize)
+                .explain(true)
         )
 
         return client.search(request, RequestOptions.DEFAULT).hits
     }
 
     private fun findBySearchTerm(videoQuery: VideoQuery): SearchSourceBuilder {
-        val mainQuery = SearchSourceBuilder().query(mainQuery(videoQuery))
+        val query = mainQuery(videoQuery.phrase)
+
+        FilterDecorator(query).apply(videoQuery)
+
+        val esQuery = SearchSourceBuilder().query(query)
 
         videoQuery.sort?.let { sort ->
-            mainQuery.sort(sort.fieldName.name, SortOrder.fromString(sort.order.toString()))
+            esQuery.sort(sort.fieldName.name, SortOrder.fromString(sort.order.toString()))
         }
 
-        return mainQuery
+        return esQuery
     }
 
     private fun lookUpById(ids: List<String>): SearchSourceBuilder {
@@ -66,46 +71,19 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         return SearchSourceBuilder().query(lookUpByIdQuery)
     }
 
-    private fun mainQuery(videoQuery: VideoQuery): BoolQueryBuilder? {
+    private fun mainQuery(phrase: String): BoolQueryBuilder {
+        val boolQuery = QueryBuilders.boolQuery()
 
-        return QueryBuilders
-            .boolQuery()
-            .apply {
-                should(matchContentPartnerExactly(videoQuery).boost(1000.0F))
+        if(phrase.isBlank()) {
+            return boolQuery
+        }
 
-                if (videoQuery.phrase.isEmpty()) {
-                    must(matchFieldsFuzzy(videoQuery))
-                }
-
-                if (videoQuery.phrase.isNotEmpty()) {
-                    should(matchFieldsFuzzy(videoQuery))
-                }
-            }
-    }
-
-    private fun matchContentPartnerExactly(videoQuery: VideoQuery): BoolQueryBuilder {
-        return QueryBuilders
-            .boolQuery()
-            .apply {
-                must(QueryBuilders.termQuery(VideoDocument.CONTENT_PROVIDER, videoQuery.phrase))
-
-                FilterDecorator(this).apply(videoQuery)
-
-            }
-    }
-
-    private fun matchFieldsFuzzy(videoQuery: VideoQuery): BoolQueryBuilder {
-        return QueryBuilders
-            .boolQuery()
-            .apply {
-                if (videoQuery.phrase.isNotEmpty()) {
-                    must(matchTitleDescriptionKeyword(videoQuery.phrase))
-                    should(boostTitleMatch(videoQuery.phrase))
-                    should(boostDescriptionMatch(videoQuery.phrase))
-                }
-
-                FilterDecorator(this).apply(videoQuery)
-            }
+        return boolQuery
+            .should(matchTitleDescriptionKeyword(phrase))
+            .should(boostTitleMatch(phrase))
+            .should(boostDescriptionMatch(phrase))
+            .should(QueryBuilders.termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
+            .minimumShouldMatch(1)
     }
 
     private fun boostDescriptionMatch(phrase: String?): MatchPhraseQueryBuilder {

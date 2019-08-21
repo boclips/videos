@@ -25,19 +25,19 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
-                    subjects = setOf("my-fancy-subject")
+                    subjects = setOf("maths")
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "TED",
-                    subjects = setOf("my-less-fancy-subject")
+                    subjects = setOf("physics")
                 )
             )
         )
 
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
-                query = VideoQuery(subjects = setOf("my-fancy-subject"))
+                query = VideoQuery(subjects = setOf("maths"))
             )
         )
 
