@@ -15,12 +15,13 @@ class VideoIndexConfiguration : IndexConfiguration {
         )
         return mapOf(
             "properties" to mapOf(
-                "title" to IndexConfiguration.Fields.freeText,
-                "description" to IndexConfiguration.Fields.freeText,
-                "contentProvider" to contentPartnerField,
-                "releaseDate" to IndexConfiguration.Fields.date,
-                "transcript" to IndexConfiguration.Fields.freeText,
-                "keywords" to keywordField
+                VideoDocument.TITLE to IndexConfiguration.Fields.freeText,
+                VideoDocument.DESCRIPTION to IndexConfiguration.Fields.freeText,
+                VideoDocument.SUBJECTS to IndexConfiguration.Fields.stringArray,
+                VideoDocument.CONTENT_PROVIDER to contentPartnerField,
+                VideoDocument.RELEASE_DATE to IndexConfiguration.Fields.date,
+                VideoDocument.TRANSCRIPT to IndexConfiguration.Fields.freeText,
+                VideoDocument.KEYWORDS to keywordField
             )
         )
     }

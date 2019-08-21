@@ -9,8 +9,8 @@ interface IndexConfiguration {
         object Analyzers {
             const val ENGLISH = "english_analyzer"
             const val ENGLISH_SEARCH = "english_search_analyzer"
-            const val SHINGLES = "shingle_analyzer"
             const val UNSTEMMED = "unstemmed_analyzer"
+            const val UNSTEMMED_SYNONYMS = "unstemmed_synonyms"
         }
 
         object Filters {
@@ -52,7 +52,8 @@ interface IndexConfiguration {
         )
 
         val stringArray = mapOf(
-            "type" to "text"
+            "type" to "text",
+            "analyzer" to Analyzers.UNSTEMMED_SYNONYMS
         )
         val date = mapOf(
             "type" to "date"
@@ -103,6 +104,13 @@ interface IndexConfiguration {
                             Filters.ENGLISH_STOP
                         )
                     ),
+                    Analyzers.UNSTEMMED_SYNONYMS to mapOf(
+                        "tokenizer" to "standard",
+                        "filter" to listOf(
+                            Filters.PREDEFINED_LOWERCASE,
+                            Filters.ENGLISH_SYNONYMS
+                        )
+                    ),
                     Analyzers.ENGLISH_SEARCH to mapOf(
                         "tokenizer" to "standard",
                         "filter" to listOf(
@@ -112,14 +120,6 @@ interface IndexConfiguration {
                             Filters.ENGLISH_STEMMER,
                             Filters.ENGLISH_SYNONYMS,
                             Filters.ENGLISH_STOP
-                        )
-                    ),
-                    Analyzers.SHINGLES to mapOf(
-                        "type" to "custom",
-                        "tokenizer" to "standard",
-                        "filter" to listOf(
-                            Filters.PREDEFINED_LOWERCASE,
-                            Filters.SHINGLES
                         )
                     ),
                     Analyzers.UNSTEMMED to mapOf(

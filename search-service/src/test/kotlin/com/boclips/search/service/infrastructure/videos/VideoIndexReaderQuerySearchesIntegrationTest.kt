@@ -310,4 +310,84 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         assertThat(results).startsWith("3")
     }
+
+    @Test
+    fun `phrase match in subject`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("art history")),
+                SearchableVideoMetadataFactory.create(id = "2", subjects = setOf("history")),
+                SearchableVideoMetadataFactory.create(id = "3", subjects = setOf("geography"))
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("history"))
+        )
+
+        assertThat(results).containsExactly("2", "1")
+    }
+
+    @Test
+    fun `phrase match in subject when multiple subjects`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("art history", "sport"))
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("art history"))
+        )
+
+        assertThat(results).containsExactly("1")
+    }
+
+    @Test
+    fun `phrase match in subject and other fields`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "history of mathematics", subjects = setOf("mathematics")),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Roman Empire", subjects = setOf("history"))
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("history"))
+        )
+
+        assertThat(results).containsExactly("2", "1")
+    }
+
+    @Test
+    fun `phrase match partially in subject and partially in other fields`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("sport")),
+                SearchableVideoMetadataFactory.create(id = "2", title = "fractions", subjects = setOf("mathematics")),
+                SearchableVideoMetadataFactory.create(id = "3", title = "fractions", subjects = setOf("politics"))
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("mathematics fractions"))
+        )
+
+        assertThat(results).containsExactly("2", "3")
+    }
+
+    @Test
+    fun `phrase match in subject via a synonym`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("mathematics"))
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("maths"))
+        )
+
+        assertThat(results).containsExactly("1")
+    }
 }

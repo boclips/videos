@@ -64,6 +64,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     .fuzziness(Fuzziness.ZERO)
                 )
                 .should(QueryBuilders.termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
+                .should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECTS,phrase).boost(1000F))
                 .minimumShouldMatch(1)
         }
 
