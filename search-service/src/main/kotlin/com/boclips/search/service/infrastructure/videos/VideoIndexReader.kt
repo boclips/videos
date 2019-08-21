@@ -5,7 +5,6 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.IndexConfiguration
-import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.FIELD_DESCRIPTOR_SHINGLES
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -17,8 +16,6 @@ import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import org.elasticsearch.search.rescore.QueryRescoreMode
-import org.elasticsearch.search.rescore.QueryRescorerBuilder
 import org.elasticsearch.search.sort.SortOrder
 
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
@@ -56,10 +53,8 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     private fun findBySearchTerm(videoQuery: VideoQuery): SearchSourceBuilder {
         val mainQuery = SearchSourceBuilder().query(mainQuery(videoQuery))
 
-        if (videoQuery.sort === null) {
-            mainQuery.addRescorer(rescorer(videoQuery.phrase))
-        } else {
-            mainQuery.sort(videoQuery.sort.fieldName.name, SortOrder.fromString(videoQuery.sort.order.toString()))
+        videoQuery.sort?.let { sort ->
+            mainQuery.sort(sort.fieldName.name, SortOrder.fromString(sort.order.toString()))
         }
 
         return mainQuery
@@ -72,6 +67,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     }
 
     private fun mainQuery(videoQuery: VideoQuery): BoolQueryBuilder? {
+
         return QueryBuilders
             .boolQuery()
             .apply {
@@ -134,18 +130,6 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
             .minimumShouldMatch("75%")
             .fuzziness(Fuzziness.ZERO)
-    }
-
-    private fun rescorer(phrase: String?): QueryRescorerBuilder {
-        val rescoreQuery = QueryBuilders.multiMatchQuery(
-            phrase,
-            "title.$FIELD_DESCRIPTOR_SHINGLES",
-            "description.$FIELD_DESCRIPTOR_SHINGLES"
-        )
-            .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-        return QueryRescorerBuilder(rescoreQuery)
-            .windowSize(100)
-            .setScoreMode(QueryRescoreMode.Total)
     }
 
     private fun isIdLookup(videoQuery: VideoQuery) = videoQuery.ids.isNotEmpty()

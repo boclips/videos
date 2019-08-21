@@ -4,7 +4,6 @@ interface IndexConfiguration {
     fun generateMapping(): Map<String, Any>
 
     companion object {
-        const val FIELD_DESCRIPTOR_SHINGLES = "shingles"
         const val FIELD_DESCRIPTOR_UNSTEMMED = "unstemmed"
 
         object Analyzers {
@@ -42,10 +41,6 @@ interface IndexConfiguration {
             "analyzer" to Analyzers.ENGLISH,
             "search_analyzer" to Analyzers.ENGLISH_SEARCH,
             "fields" to mapOf(
-                FIELD_DESCRIPTOR_SHINGLES to mapOf(
-                    "type" to "text",
-                    "analyzer" to Analyzers.SHINGLES
-                ),
                 FIELD_DESCRIPTOR_UNSTEMMED to mapOf(
                     "type" to "text",
                     "analyzer" to Analyzers.UNSTEMMED
