@@ -34,6 +34,7 @@ import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.or
 import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
@@ -45,7 +46,6 @@ import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
-import org.litote.kmongo.not
 import org.litote.kmongo.pullByFilter
 import org.litote.kmongo.push
 import org.litote.kmongo.set
@@ -108,12 +108,14 @@ class MongoVideoRepository(
             is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
-            VideoFilter.IsDownloadable -> not(
+            VideoFilter.IsDownloadable -> or(
+                VideoDocument::distributionMethods eq null,
                 VideoDocument::distributionMethods contains DistributionMethodDocument(
                     DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD
                 )
             )
-            VideoFilter.IsStreamable -> not(
+            VideoFilter.IsStreamable -> or(
+                VideoDocument::distributionMethods eq null,
                 VideoDocument::distributionMethods contains DistributionMethodDocument(
                     DistributionMethodDocument.DELIVERY_METHOD_STREAM
                 )

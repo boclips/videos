@@ -25,6 +25,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.litote.kmongo.eq
+import org.litote.kmongo.set
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.util.Date
@@ -112,27 +114,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `stream all streamable videos`() {
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
-        mongoVideoRepository.create(
-            TestFactories.createVideo(
-                videoId = TestFactories.aValidId(),
-                distributionMethods = setOf(DistributionMethod.STREAM)
-            )
-        )
-
-        var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.IsStreamable) { videos = it.toList() }
-
-        assertThat(videos).hasSize(3)
-    }
-
-    @Test
-    fun `stream all downloadable videos`() {
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
-        mongoVideoRepository.create(TestFactories.createVideo(videoId = TestFactories.aValidId()))
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
@@ -140,10 +121,45 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
+        val streamableVideos = listOf(
+            createVideoWithLegacyDistributionMethods(),
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    videoId = TestFactories.aValidId(),
+                    distributionMethods = setOf(DistributionMethod.STREAM)
+                )
+            )
+        )
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.IsStreamable) { videos = it.toList() }
+
+        assertThat(videos).isEqualTo(streamableVideos)
+    }
+
+    @Test
+    fun `stream all downloadable videos`() {
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                distributionMethods = setOf(DistributionMethod.STREAM)
+            )
+        )
+
+        val downloadableVideos = listOf(
+            createVideoWithLegacyDistributionMethods(),
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    videoId = TestFactories.aValidId(),
+                    distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+                )
+            )
+        )
+
         var videos: List<Video> = emptyList()
         mongoVideoRepository.streamAll(VideoFilter.IsDownloadable) { videos = it.toList() }
 
-        assertThat(videos).hasSize(3)
+        assertThat(videos).isEqualTo(downloadableVideos)
     }
 
     @Test
@@ -250,7 +266,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update title`() {
         val originalAsset = mongoVideoRepository.create(TestFactories.createVideo(title = "old title"))
 
-        val updatedAsset = mongoVideoRepository.update(VideoUpdateCommand.ReplaceTitle(originalAsset.videoId, "new title"))
+        val updatedAsset =
+            mongoVideoRepository.update(VideoUpdateCommand.ReplaceTitle(originalAsset.videoId, "new title"))
 
         assertThat(updatedAsset.title).isEqualTo("new title")
     }
@@ -686,5 +703,19 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(video.playback.id.value).isEqualTo("some-id")
             assertThat(video.playback.id.type.name).isEqualTo("KALTURA")
         }
+    }
+
+    private fun createVideoWithLegacyDistributionMethods(): Video {
+        val legacyVideo = mongoVideoRepository.create(TestFactories.createVideo())
+
+        mongoClient
+            .getDatabase(DATABASE_NAME)
+            .getCollection(MongoVideoRepository.collectionName)
+            .updateOne(
+                VideoDocument::id eq ObjectId(legacyVideo.videoId.value),
+                set(VideoDocument::distributionMethods, null)
+            )
+
+        return mongoVideoRepository.find(legacyVideo.videoId)!!
     }
 }
