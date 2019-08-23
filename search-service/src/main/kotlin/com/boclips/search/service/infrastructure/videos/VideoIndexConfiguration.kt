@@ -17,7 +17,7 @@ class VideoIndexConfiguration : IndexConfiguration {
             "properties" to mapOf(
                 VideoDocument.TITLE to IndexConfiguration.Fields.freeText,
                 VideoDocument.DESCRIPTION to IndexConfiguration.Fields.freeText,
-                VideoDocument.SUBJECTS to IndexConfiguration.Fields.stringArray,
+                VideoDocument.SUBJECT_IDS to IndexConfiguration.Fields.stringArray,
                 VideoDocument.CONTENT_PROVIDER to contentPartnerField,
                 VideoDocument.RELEASE_DATE to IndexConfiguration.Fields.date,
                 VideoDocument.TRANSCRIPT to IndexConfiguration.Fields.freeText,

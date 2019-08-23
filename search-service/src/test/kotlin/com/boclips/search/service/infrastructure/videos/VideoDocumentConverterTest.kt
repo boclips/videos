@@ -27,7 +27,7 @@ class VideoDocumentConverterTest {
                 "transcript": "A great transcript",
                 "ageRangeMin": "3",
                 "ageRangeMax": "11",
-                "subjects": ["boring-subject"]
+                "subjectIds": ["boring-subject"]
             }
         """.trimIndent()
             )
@@ -49,8 +49,7 @@ class VideoDocumentConverterTest {
                 transcript = "A great transcript",
                 ageRangeMin = 3,
                 ageRangeMax = 11,
-                subjects = setOf("boring-subject"),
-                subjectIds = null
+                subjectIds = setOf("boring-subject")
             )
         )
     }

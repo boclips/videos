@@ -38,7 +38,7 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
     private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
         val queries = QueryBuilders.boolQuery()
         for (s: String in subjects) {
-            queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECTS, s))
+            queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECT_IDS, s))
         }
         return queries
     }

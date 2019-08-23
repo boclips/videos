@@ -129,7 +129,7 @@ class FilterDecoratorTest {
           "should" : [
             {
               "match_phrase" : {
-                "subjects" : {
+                "subjectIds" : {
                   "query" : "subject-123",
                   "slop" : 0,
                   "zero_terms_query" : "NONE",

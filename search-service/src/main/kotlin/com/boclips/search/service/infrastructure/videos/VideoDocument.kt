@@ -17,7 +17,6 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(TRANSCRIPT) val transcript: String?,
     @param:JsonProperty(AGE_RANGE_MIN) val ageRangeMin: Int?,
     @param:JsonProperty(AGE_RANGE_MAX) val ageRangeMax: Int?,
-    @param:JsonProperty(SUBJECTS) val subjects: Set<String>?,
     @param:JsonProperty(SUBJECT_IDS) val subjectIds: Set<String>?
 
 ) {
@@ -34,7 +33,6 @@ data class VideoDocument @JsonCreator constructor(
         const val TRANSCRIPT = "transcript"
         const val AGE_RANGE_MIN = "ageRangeMin"
         const val AGE_RANGE_MAX = "ageRangeMax"
-        const val SUBJECTS = "subjects"
         const val SUBJECT_IDS = "subjectIds"
     }
 }
