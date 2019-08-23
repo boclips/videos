@@ -43,9 +43,11 @@ object SearchableVideoMetadataFactory {
 
 object TestFactories {
     fun createSubjectMetadata(
-        id: String = "subject-id"
+        id: String = "subject-id",
+        name: String = "subject-name"
     ) = SubjectMetadata(
-        id = id
+        id = id,
+        name = name
     )
 }
 

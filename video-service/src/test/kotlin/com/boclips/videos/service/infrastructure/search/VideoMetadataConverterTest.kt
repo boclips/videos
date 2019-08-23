@@ -36,8 +36,8 @@ class VideoMetadataConverterTest {
             ageRange = AgeRange.bounded(5, 11),
             subjects = setOf(
                 Subject(
-                    id = SubjectId(value = "1"),
-                    name = "fancy"
+                    id = SubjectId(value = "subject-id"),
+                    name = "subject name"
                 )
             )
         )
@@ -59,7 +59,7 @@ class VideoMetadataConverterTest {
                 ageRangeMin = 5,
                 ageRangeMax = 11,
                 subjects = setOf(
-                    SubjectMetadata(id = "1")
+                    SubjectMetadata(id = "subject-id", name = "subject name")
                 )
             )
         )

@@ -22,7 +22,7 @@ object VideoMetadataConverter {
             transcript = video.transcript,
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
-            subjects = video.subjects.map {SubjectMetadata(id = it.id.value)}.toSet()
+            subjects = video.subjects.map {SubjectMetadata(id = it.id.value, name = it.name)}.toSet()
         )
     }
 

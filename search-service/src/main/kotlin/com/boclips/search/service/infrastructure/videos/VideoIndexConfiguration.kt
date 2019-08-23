@@ -18,6 +18,7 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.TITLE to IndexConfiguration.Fields.freeText,
                 VideoDocument.DESCRIPTION to IndexConfiguration.Fields.freeText,
                 VideoDocument.SUBJECT_IDS to IndexConfiguration.Fields.stringArray,
+                VideoDocument.SUBJECT_NAMES to IndexConfiguration.Fields.stringArray,
                 VideoDocument.CONTENT_PROVIDER to contentPartnerField,
                 VideoDocument.RELEASE_DATE to IndexConfiguration.Fields.date,
                 VideoDocument.TRANSCRIPT to IndexConfiguration.Fields.freeText,

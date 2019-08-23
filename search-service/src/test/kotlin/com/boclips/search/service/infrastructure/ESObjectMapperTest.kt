@@ -24,7 +24,8 @@ class ESObjectMapperTest {
                 transcript = null,
                 ageRangeMin = 3,
                 ageRangeMax = 11,
-                subjectIds = setOf("boring-subject")
+                subjectIds = setOf("boring-subject"),
+                subjectNames = setOf("boring-names")
             )
         )
 
