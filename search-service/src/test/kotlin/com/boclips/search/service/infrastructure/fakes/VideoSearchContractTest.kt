@@ -11,7 +11,9 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
+import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
+import com.boclips.search.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -972,12 +974,12 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "0",
                     title = "TED",
-                    subjects = setOf("subject-one")
+                    subjects = setOf(createSubjectMetadata("subject-one"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
-                    subjects = setOf("subject-two")
+                    subjects = setOf(createSubjectMetadata("subject-two"))
                 )
             )
         )
@@ -1005,17 +1007,17 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "0",
                     title = "TED",
-                    subjects = setOf("subject-one", "subject-two")
+                    subjects = setOf(createSubjectMetadata(id="subject-one"), createSubjectMetadata(id = "subject-two"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
-                    subjects = setOf("subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-three"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "TED",
-                    subjects = setOf("subject-two", "subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three"))
                 )
             )
         )
@@ -1044,22 +1046,22 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "0",
                     title = "TED",
-                    subjects = setOf("subject-one")
+                    subjects = setOf(createSubjectMetadata("subject-one"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
-                    subjects = setOf("subject-two")
+                    subjects = setOf(createSubjectMetadata("subject-two"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "TED",
-                    subjects = setOf("subject-two", "subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "TED",
-                    subjects = setOf("subject-four", "subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-four"), createSubjectMetadata("subject-three"))
                 )
             )
         )

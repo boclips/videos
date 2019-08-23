@@ -69,7 +69,7 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                     } else {
                         query.subjects.any { querySubject ->
                             entry.value.subjects.any { videoSubject ->
-                                videoSubject.contains(querySubject)
+                                videoSubject.id.contains(querySubject)
                             }
                         }
                     }

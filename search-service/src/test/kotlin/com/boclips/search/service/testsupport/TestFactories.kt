@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import java.time.Duration
 import java.time.LocalDate
@@ -22,7 +23,7 @@ object SearchableVideoMetadataFactory {
         transcript: String? = null,
         ageRangeMin: Int? = 3,
         ageRangeMax: Int? = 11,
-        subjects: Set<String> = emptySet()
+        subjects: Set<SubjectMetadata> = emptySet()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -37,6 +38,14 @@ object SearchableVideoMetadataFactory {
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
         subjects = subjects
+    )
+}
+
+object TestFactories {
+    fun createSubjectMetadata(
+        id: String = "subject-id"
+    ) = SubjectMetadata(
+        id = id
     )
 }
 

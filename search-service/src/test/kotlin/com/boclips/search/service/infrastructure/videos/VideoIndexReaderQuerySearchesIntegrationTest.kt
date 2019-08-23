@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
+import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -315,9 +316,9 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("art history")),
-                SearchableVideoMetadataFactory.create(id = "2", subjects = setOf("history")),
-                SearchableVideoMetadataFactory.create(id = "3", subjects = setOf("geography"))
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata("art history"))),
+                SearchableVideoMetadataFactory.create(id = "2", subjects = setOf(createSubjectMetadata("history"))),
+                SearchableVideoMetadataFactory.create(id = "3", subjects = setOf(createSubjectMetadata("geography")))
             )
         )
 
@@ -332,7 +333,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject when multiple subjects`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("art history", "sport"))
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata("art history"), createSubjectMetadata("sport")))
             )
         )
 
@@ -347,8 +348,8 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject and other fields`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "history of mathematics", subjects = setOf("mathematics")),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Roman Empire", subjects = setOf("history"))
+                SearchableVideoMetadataFactory.create(id = "1", title = "history of mathematics", subjects = setOf(createSubjectMetadata("mathematics"))),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Roman Empire", subjects = setOf(createSubjectMetadata("history")))
             )
         )
 
@@ -363,9 +364,9 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match partially in subject and partially in other fields`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("sport")),
-                SearchableVideoMetadataFactory.create(id = "2", title = "fractions", subjects = setOf("mathematics")),
-                SearchableVideoMetadataFactory.create(id = "3", title = "fractions", subjects = setOf("politics"))
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata("sport"))),
+                SearchableVideoMetadataFactory.create(id = "2", title = "fractions", subjects = setOf(createSubjectMetadata("mathematics"))),
+                SearchableVideoMetadataFactory.create(id = "3", title = "fractions", subjects = setOf(createSubjectMetadata("politics")))
             )
         )
 
@@ -380,7 +381,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject via a synonym`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf("mathematics"))
+                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata("mathematics")))
             )
         )
 

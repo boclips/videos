@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
+import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -46,20 +47,20 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     title = "TED",
                     ageRangeMin = 3,
                     ageRangeMax = 15,
-                    subjects = setOf("subject-1")
+                    subjects = setOf(createSubjectMetadata("subject-1"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "TED",
                     ageRangeMin = 7,
-                    subjects = setOf("subject-1")
+                    subjects = setOf(createSubjectMetadata("subject-1"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "TED",
                     ageRangeMin = 3,
                     ageRangeMax = 5,
-                    subjects = setOf("subject-2")
+                    subjects = setOf(createSubjectMetadata("subject-2"))
                 )
             )
         )
@@ -153,20 +154,20 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     title = "TED",
                     ageRangeMin = 3,
                     ageRangeMax = 15,
-                    subjects = setOf("subject-1")
+                    subjects = setOf(createSubjectMetadata("subject-1"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "TED",
                     ageRangeMin = 7,
-                    subjects = setOf("subject-1")
+                    subjects = setOf(createSubjectMetadata("subject-1"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "Intercom Learning",
                     ageRangeMin = 3,
                     ageRangeMax = 5,
-                    subjects = setOf("subject-2")
+                    subjects = setOf(createSubjectMetadata("subject-2"))
                 )
             )
         )
@@ -192,12 +193,12 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
-                    subjects = setOf("subject-one", "subject-two")
+                    subjects = setOf(createSubjectMetadata("subject-one"), createSubjectMetadata("subject-two"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "HELLO",
-                    subjects = setOf("subject-two", "subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three"))
                 )
             )
         )
@@ -222,13 +223,13 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
-                    subjects = setOf("subject-one", "subject-two"),
+                    subjects = setOf(createSubjectMetadata("subject-one"), createSubjectMetadata("subject-two")),
                     tags = listOf("classroom")
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "HELLO",
-                    subjects = setOf("subject-two", "subject-three"),
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three")),
                     tags = listOf("news")
                 )
             )
@@ -341,17 +342,17 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     durationSeconds = 10,
-                    subjects = setOf("subject-two", "subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     durationSeconds = 50,
-                    subjects = setOf("subject-two", "subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three"))
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     durationSeconds = 100,
-                    subjects = setOf("subject-two", "subject-three")
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three"))
                 )
             )
         )

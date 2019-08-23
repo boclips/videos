@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -57,7 +58,9 @@ class VideoMetadataConverterTest {
                 transcript = "a great transcript",
                 ageRangeMin = 5,
                 ageRangeMax = 11,
-                subjects = setOf("1")
+                subjects = setOf(
+                    SubjectMetadata(id = "1")
+                )
             )
         )
     }

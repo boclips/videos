@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
+import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -159,12 +160,12 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             sequenceOf(
                 SearchableVideoMetadataFactory.create(
                     id = "0",
-                    subjects = setOf("Maths"),
+                    subjects = setOf(createSubjectMetadata("Maths")),
                     contentProvider = "TED"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "1",
-                    subjects = setOf("History"),
+                    subjects = setOf(createSubjectMetadata("History")),
                     contentProvider = "TED"
                 )
             )
