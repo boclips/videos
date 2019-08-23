@@ -52,7 +52,7 @@ class VideoSearchQuery(
                 releaseDateTo = releaseDateTo,
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
-                subjects = subjects
+                subjectIds = subjects
             )
         }
     }

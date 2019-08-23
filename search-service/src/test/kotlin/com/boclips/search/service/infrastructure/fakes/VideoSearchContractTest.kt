@@ -13,7 +13,6 @@ import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
-import com.boclips.search.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -988,7 +987,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjects = setOf("subject-one")
+                    subjectIds = setOf("subject-one")
                 )
             )
         )
@@ -1026,7 +1025,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjects = setOf("subject-three")
+                    subjectIds = setOf("subject-three")
                 )
             )
         )
@@ -1070,7 +1069,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjects = setOf("subject-one", "subject-two")
+                    subjectIds = setOf("subject-one", "subject-two")
                 )
             )
         )

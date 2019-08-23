@@ -175,7 +175,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    subjects = setOf("History")
+                    subjectIds = setOf("History")
                 )
             )
         )

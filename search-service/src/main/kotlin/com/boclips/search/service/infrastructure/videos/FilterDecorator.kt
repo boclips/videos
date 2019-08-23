@@ -30,8 +30,8 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
         if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
             existingQuery.must(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
         }
-        if (videoQuery.subjects.isNotEmpty()) {
-            existingQuery.must(matchSubjects(videoQuery.subjects))
+        if (videoQuery.subjectIds.isNotEmpty()) {
+            existingQuery.must(matchSubjects(videoQuery.subjectIds))
         }
     }
 

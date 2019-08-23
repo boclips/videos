@@ -17,7 +17,7 @@ class FilterDecoratorTest {
             phrase = "some phrase",
             ageRangeMax = 10,
             ageRangeMin = 5,
-            subjects = setOf("subject-123"),
+            subjectIds = setOf("subject-123"),
             maxDuration = Duration.ofSeconds(100),
             minDuration = Duration.ofSeconds(20),
             source = SourceType.BOCLIPS,

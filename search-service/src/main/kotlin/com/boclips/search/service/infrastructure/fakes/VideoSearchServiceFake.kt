@@ -64,10 +64,10 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                     }
 
                 }.filter { entry ->
-                    if (query.subjects.isEmpty()) {
+                    if (query.subjectIds.isEmpty()) {
                         true
                     } else {
-                        query.subjects.any { querySubject ->
+                        query.subjectIds.any { querySubject ->
                             entry.value.subjects.any { videoSubject ->
                                 videoSubject.id.contains(querySubject)
                             }

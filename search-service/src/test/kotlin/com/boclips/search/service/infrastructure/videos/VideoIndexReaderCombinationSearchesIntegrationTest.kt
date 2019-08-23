@@ -70,7 +70,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 query = VideoQuery(
                     ageRangeMin = 3,
                     ageRangeMax = 5,
-                    subjects = setOf("subject-1")
+                    subjectIds = setOf("subject-1")
                 )
             )
         )
@@ -178,7 +178,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     phrase = "Intercom Learning",
                     ageRangeMin = 3,
                     ageRangeMax = 5,
-                    subjects = setOf("subject-1")
+                    subjectIds = setOf("subject-1")
                 )
             )
         )
@@ -207,7 +207,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjects = setOf("subject-two")
+                    subjectIds = setOf("subject-two")
                 )
             )
         )
@@ -238,7 +238,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    subjects = setOf("subject-two"),
+                    subjectIds = setOf("subject-two"),
                     includeTags = listOf("news")
                 )
             )
@@ -360,7 +360,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    subjects = setOf("subject-two"),
+                    subjectIds = setOf("subject-two"),
                     minDuration = Duration.ofSeconds(49),
                     maxDuration = Duration.ofSeconds(51)
                 )

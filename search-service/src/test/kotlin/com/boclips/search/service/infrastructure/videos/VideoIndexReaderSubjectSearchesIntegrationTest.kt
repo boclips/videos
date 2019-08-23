@@ -38,7 +38,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
 
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
-                query = VideoQuery(subjects = setOf("maths"))
+                query = VideoQuery(subjectIds = setOf("maths"))
             )
         )
 
@@ -70,7 +70,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
 
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
-                query = VideoQuery(subjects = setOf("subject-one", "subject-two"))
+                query = VideoQuery(subjectIds = setOf("subject-one", "subject-two"))
             )
         )
 
@@ -104,7 +104,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    subjects = setOf("subject-two")
+                    subjectIds = setOf("subject-two")
                 )
             )
         )
@@ -130,7 +130,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "",
-                    subjects = setOf("biology-987")
+                    subjectIds = setOf("biology-987")
                 )
             )
         )
