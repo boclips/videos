@@ -22,7 +22,8 @@ class VideoIndexWriter(client: RestHighLevelClient) : AbstractIndexWriter<VideoM
         transcript = entry.transcript,
         ageRangeMax = entry.ageRangeMax,
         ageRangeMin = entry.ageRangeMin,
-        subjects = entry.subjects.map { subject -> subject.id }.toSet()
+        subjects = entry.subjects.map { subject -> subject.id }.toSet(),
+        subjectIds = entry.subjects.map { subject -> subject.id }.toSet()
     )
 
     override fun getIdentifier(entry: VideoMetadata) = entry.id

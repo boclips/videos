@@ -49,7 +49,8 @@ class VideoDocumentConverterTest {
                 transcript = "A great transcript",
                 ageRangeMin = 3,
                 ageRangeMax = 11,
-                subjects = setOf("boring-subject")
+                subjects = setOf("boring-subject"),
+                subjectIds = null
             )
         )
     }
