@@ -53,7 +53,7 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public Boolean existsByContentPartnerInfo(String contentPartnerId, String contentPartnerVideoId) {
         try {
-            restTemplate.headForHeaders(baseUrl + "/v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}", contentPartnerId, contentPartnerVideoId);
+            restTemplate.postForEntity(baseUrl + "/v1/content-partners/{contentPartnerId}/videos/search", contentPartnerVideoId,String.class, contentPartnerId);
             return true;
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == NOT_FOUND) {

@@ -279,6 +279,24 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
     }
 
     @Test
+    fun `probe video existence posting requires a special role`() {
+        mockMvc.perform(post("/v1/content-partners/ted/videos/post"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asOperator())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asIngestor())
+            .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
     fun `only people with dedicated role can rebuild search index`() {
         mockMvc.perform(post("/v1/admin/actions/rebuild_video_index").asTeacher())
             .andExpect(status().isForbidden)

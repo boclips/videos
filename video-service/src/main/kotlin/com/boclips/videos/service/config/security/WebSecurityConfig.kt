@@ -4,7 +4,13 @@ import com.boclips.security.EnableBoclipsSecurity
 import com.boclips.security.HttpSecurityConfigurer
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.http.HttpMethod.*
+import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.HEAD
+import org.springframework.http.HttpMethod.OPTIONS
+import org.springframework.http.HttpMethod.PATCH
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod.PUT
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.stereotype.Component
 import com.boclips.videos.service.config.security.UserRoles as ROLE
@@ -78,6 +84,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(DELETE, "/v1/collections/*/videos/*").hasRole(ROLE.UPDATE_COLLECTIONS)
 
             .antMatchers(HEAD, "/v1/content-partners/*/videos/*").hasRole(ROLE.INSERT_VIDEOS)
+            .antMatchers(POST, "/v1/content-partners/*/videos/search").hasRole(ROLE.INSERT_VIDEOS)
             .antMatchers(POST, "/v1/content-partners").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
             .antMatchers(GET, "/v1/content-partners").hasRole(ROLE.INSERT_CONTENT_PARTNERS)
             .antMatchers(PATCH, "/v1/content-partners/*").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)

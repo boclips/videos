@@ -39,6 +39,31 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
+    fun `post video lookup by provider id returns 200 when video exists`() {
+        val contentPartner = saveContentPartner(name = "ted")
+        saveVideo(contentProvider = "ted", contentProviderVideoId = "https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
+
+        mockMvc.perform(
+            post("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/search")
+                .content("https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
+                .contentType(MediaType.TEXT_PLAIN)
+                .asIngestor()
+        )
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `post video lookup by provider id returns 404 when video does not exist`() {
+        mockMvc.perform(
+            post("/v1/content-partners/ted/videos/search")
+                .content("https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
+                .contentType(MediaType.TEXT_PLAIN)
+                .asIngestor()
+        )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
     fun `creates content partner and rejects an existing content partner`() {
         val content = """
             {

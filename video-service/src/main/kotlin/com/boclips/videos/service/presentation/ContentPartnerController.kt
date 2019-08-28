@@ -52,6 +52,20 @@ class ContentPartnerController(
         return ResponseEntity(status)
     }
 
+    @PostMapping("/{contentPartnerId}/videos/search")
+    fun postSearchVideoByProviderId(
+        @PathVariable("contentPartnerId") contentPartnerId: String,
+        @RequestBody contentPartnerVideoId: String
+    ): ResponseEntity<Void> {
+        val exists = videoRepository.existsVideoFromContentPartnerId(
+            ContentPartnerId(value = contentPartnerId),
+            contentPartnerVideoId
+        )
+
+        val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
+        return ResponseEntity(status)
+    }
+
     @GetMapping
     fun getContentPartners(
         @RequestParam("name", required = false) name: String?,
