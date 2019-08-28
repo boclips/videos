@@ -4,6 +4,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
@@ -61,15 +62,20 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns list of subjects`() {
-        createSubject("Mathematics")
-        createSubject("French")
+        val createdSubject = saveSubject("Maths")
+        saveSubject("French")
 
         mockMvc.perform(get("/v1/subjects").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.subjects[0].name").exists())
-            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(
+                jsonPath(
+                    "$._embedded.subjects[0]._links.self.href",
+                    endsWith("/subjects/${createdSubject.value}")
+                )
+            )
     }
 
     private fun createSubject(name: String): ResultActions {
