@@ -43,6 +43,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.util.UriComponentsBuilder
 import java.time.Duration
 import java.time.LocalDate
 import javax.servlet.http.Cookie
@@ -81,7 +82,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         disabledVideoId = saveVideo(
             playbackId = PlaybackId(value = "ref-id-125", type = PlaybackProviderType.KALTURA),
             title = "elephants eat a lot",
-            description = "this video got disabled because it offended overweight people",
+            description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
             date = "2018-05-10",
             duration = Duration.ofSeconds(6),
             contentProvider = "cp",
@@ -92,7 +93,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns Kaltura videos when query matches`() {
+    fun `search videos as teacher`() {
         setVideoSubjects(kalturaVideoId, saveSubject("Maths"))
 
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
@@ -515,7 +516,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update video title`() {
         val videoId = saveVideo().value
 
-        mockMvc.perform(patch("/v1/videos/$videoId?title=dance").asBoclipsEmployee())
+        val updateLink = getUpdateLink(videoId).build(mapOf("title" to "dance"))
+
+        mockMvc.perform(patch(updateLink).asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.title", equalTo("dance")))
 
@@ -955,8 +958,17 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andReturn().response.contentAsString
 
-        val rateUrl = JsonPath.parse(videoResponse).read<String>("$._links.rate.href")
-        return rateUrl
+        return JsonPath.parse(videoResponse).read("$._links.rate.href")
+    }
+
+    private fun getUpdateLink(videoId: String): UriComponentsBuilder {
+        val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andReturn().response.contentAsString
+
+        val link = JsonPath.parse(videoResponse).read<String>("$._links.update.href")
+
+        return UriComponentsBuilder.fromHttpUrl(link)
     }
 
     private fun getTaggingLink(videoId: String): String {

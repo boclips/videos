@@ -262,4 +262,24 @@ class VideosLinkBuilderTest {
 
         assertThat(link).isNull()
     }
+
+    @Test
+    fun `update link is null when user us not allowed`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val link = builder.updateLink(createVideo(videoId = validVideoId))
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `update link is there when user is allowed`() {
+        setSecurityContext("boclip@boclips.com", UserRoles.UPDATE_VIDEOS)
+
+        val link = builder.updateLink(createVideo(videoId = validVideoId))
+
+        assertThat(link).isNotNull
+        assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId?title={title}")
+        assertThat(link?.rel).isEqualTo("update")
+    }
 }

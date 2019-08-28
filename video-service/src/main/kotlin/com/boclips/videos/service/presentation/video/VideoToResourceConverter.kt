@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.getCurrentUserId
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
@@ -81,6 +81,7 @@ class VideoToResourceConverter(
             videosLinkBuilder.self(videoResource),
             videosLinkBuilder.transcriptLink(videoResource),
             video?.let { videosLinkBuilder.rateLink(it) },
+            video?.let { videosLinkBuilder.updateLink(it) },
             video?.let { videosLinkBuilder.tagLink(it) }
         )
     )
