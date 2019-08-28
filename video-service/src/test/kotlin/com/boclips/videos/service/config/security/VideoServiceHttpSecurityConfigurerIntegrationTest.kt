@@ -280,19 +280,19 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `probe video existence posting requires a special role`() {
-        mockMvc.perform(post("/v1/content-partners/ted/videos/post"))
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search"))
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asTeacher())
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asTeacher())
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asReporter())
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asReporter())
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asOperator())
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asOperator())
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(post("/v1/content-partners/ted/videos/post").asIngestor())
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asIngestor())
             .andExpect(status().`is`(not401Or403()))
     }
 
