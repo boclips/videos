@@ -23,7 +23,7 @@ abstract class AbstractIndexWriter<T>(
     private val esIndex: Index
 ) : IndexWriter<T> {
     companion object : KLogging() {
-        private const val UPSERT_BATCH_SIZE = 2000
+        private const val UPSERT_BATCH_SIZE = 1000
     }
 
     init {
