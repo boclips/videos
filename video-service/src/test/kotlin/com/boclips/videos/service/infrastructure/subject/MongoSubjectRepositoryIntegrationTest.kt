@@ -70,4 +70,14 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(retrievedSubject!!.name).isEqualTo("French")
     }
+
+    @Test
+    fun `update a name of a subject`() {
+        val subject = mongoSubjectRepository.create(name = "French")
+
+        mongoSubjectRepository.updateName(subject.id, "German")
+
+        val updatedSubject = mongoSubjectRepository.findById(subject.id)
+        assertThat(updatedSubject!!.name).isEqualTo("German")
+    }
 }

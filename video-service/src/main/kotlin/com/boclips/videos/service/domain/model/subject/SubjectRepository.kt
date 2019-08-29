@@ -7,4 +7,5 @@ interface SubjectRepository {
     fun findByName(name: String): Subject?
     fun create(name: String): Subject
     fun delete(id: SubjectId)
+    fun updateName(subjectId: SubjectId, name: String)
 }

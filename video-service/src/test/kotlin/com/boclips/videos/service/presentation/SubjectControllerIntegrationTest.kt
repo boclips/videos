@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -76,6 +77,31 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     endsWith("/subjects/${createdSubject.value}")
                 )
             )
+    }
+
+    @Test
+    fun `teachers cannot modify subjects`() {
+        val createdSubject = saveSubject("Maths")
+
+        mockMvc.perform(post("/v1/subjects/${createdSubject.value}").asTeacher())
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `modify subject name`() {
+        val createdSubject = saveSubject("Maths")
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/v1/subjects/${createdSubject.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(
+                    """{ "name": "Mathematics" }""".trim()
+                )
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(get("/v1/subjects/${createdSubject.value}").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.name", equalTo("Mathematics")))
     }
 
     private fun createSubject(name: String): ResultActions {

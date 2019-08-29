@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
+import com.boclips.videos.service.application.subject.UpdateSubject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -32,6 +34,7 @@ class SubjectController(
     private val deleteSubject: DeleteSubject,
     private val getSubjects: GetSubjects,
     private val createSubject: CreateSubject,
+    private val updateSubject: UpdateSubject,
     private val subjectsLinkBuilder: SubjectsLinkBuilder
 ) {
 
@@ -51,6 +54,12 @@ class SubjectController(
     fun removeSubjects(@PathVariable id: String): ResponseEntity<Void> {
         deleteSubject(SubjectId(value = id))
         return ResponseEntity(HttpStatus.OK)
+    }
+
+    @PutMapping("/{id}")
+    fun changeSubjects(@PathVariable id: String, @RequestBody createSubjectRequest: CreateSubjectRequest): ResponseEntity<Void> {
+        updateSubject(SubjectId(value = id), createSubjectRequest.name)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @PostMapping

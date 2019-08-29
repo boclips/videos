@@ -27,6 +27,7 @@ import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.subject.SubjectClassificationService
+import com.boclips.videos.service.application.subject.UpdateSubject
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
@@ -212,12 +213,14 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetViewerCollections {
-        return GetViewerCollections(collectionRepository, CollectionResourceFactory(
-            VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
-            SubjectToResourceConverter(),
-            AttachmentToResourceConverter(attachmentsLinkBuilder),
-            videoService
-        ))
+        return GetViewerCollections(
+            collectionRepository, CollectionResourceFactory(
+                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+                SubjectToResourceConverter(),
+                AttachmentToResourceConverter(attachmentsLinkBuilder),
+                videoService
+            )
+        )
     }
 
     @Bean
@@ -293,6 +296,11 @@ class ApplicationContext(
     @Bean
     fun createSubject(): CreateSubject {
         return CreateSubject(subjectRepository)
+    }
+
+    @Bean
+    fun updateSubject(): UpdateSubject {
+        return UpdateSubject(subjectRepository)
     }
 
     @Bean

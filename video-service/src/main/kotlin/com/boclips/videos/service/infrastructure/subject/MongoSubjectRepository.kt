@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.video.VideoDocument
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.bson.types.ObjectId
@@ -11,6 +12,7 @@ import org.litote.kmongo.`in`
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.set
 
 class MongoSubjectRepository(
     private val mongoClient: MongoClient
@@ -65,6 +67,13 @@ class MongoSubjectRepository(
 
     override fun delete(id: SubjectId) {
         getSubjectCollection().deleteOne(SubjectDocument::id eq ObjectId(id.value))
+    }
+
+    override fun updateName(subjectId: SubjectId, name: String) {
+        getSubjectCollection().updateOne(
+            VideoDocument::id eq ObjectId(subjectId.value),
+            set(SubjectDocument::name, name)
+        )
     }
 
     private fun toSubject(subjectDocument: SubjectDocument): Subject {
