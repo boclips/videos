@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDescription
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDistributionMethods
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
@@ -290,6 +291,7 @@ class MongoVideoRepository(
                 updateCommand.distributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
             )
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
+            is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
         }
     }
 

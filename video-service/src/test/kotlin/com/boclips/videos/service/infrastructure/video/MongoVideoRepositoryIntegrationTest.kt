@@ -273,6 +273,16 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `update description`() {
+        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo(description = "old description"))
+
+        val updatedAsset =
+            mongoVideoRepository.update(VideoUpdateCommand.ReplaceDescription(originalAsset.videoId, "new description"))
+
+        assertThat(updatedAsset.description).isEqualTo("new description")
+    }
+
+    @Test
     fun `update subjects`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideo(

@@ -17,6 +17,7 @@ import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
+import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -43,7 +44,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
 import java.time.Duration
 import java.time.LocalDate
 import javax.servlet.http.Cookie
@@ -513,18 +514,20 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `update video title`() {
-        val videoId = saveVideo().value
+    fun `update video metadata`() {
+        val videoId = saveVideo(title = "Old title", description = "Old description").value
 
-        val updateLink = getUpdateLink(videoId).build(mapOf("title" to "dance"))
+        val updateLink = getUpdateLink(videoId).expand(mapOf("title" to "New title", "description" to "New description"))
 
-        mockMvc.perform(patch(updateLink).asBoclipsEmployee())
+        mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.title", equalTo("dance")))
+            .andExpect(jsonPath("$.title", equalTo("New title")))
+            .andExpect(jsonPath("$.description", equalTo("New description")))
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.title", equalTo("dance")))
+            .andExpect(jsonPath("$.title", equalTo("New title")))
+            .andExpect(jsonPath("$.description", equalTo("New description")))
     }
 
     @Test
@@ -961,14 +964,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         return JsonPath.parse(videoResponse).read("$._links.rate.href")
     }
 
-    private fun getUpdateLink(videoId: String): UriComponentsBuilder {
+    private fun getUpdateLink(videoId: String): UriTemplate {
         val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andReturn().response.contentAsString
 
         val link = JsonPath.parse(videoResponse).read<String>("$._links.update.href")
 
-        return UriComponentsBuilder.fromHttpUrl(link)
+        return UriTemplate.fromTemplate(link)
     }
 
     private fun getTaggingLink(videoId: String): String {

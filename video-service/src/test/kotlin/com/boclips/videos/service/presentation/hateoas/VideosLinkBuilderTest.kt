@@ -279,7 +279,7 @@ class VideosLinkBuilderTest {
         val link = builder.updateLink(createVideo(videoId = validVideoId))
 
         assertThat(link).isNotNull
-        assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId?title={title}")
+        assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId{?title,description}")
         assertThat(link?.rel).isEqualTo("update")
     }
 }

@@ -9,7 +9,6 @@ import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
@@ -28,7 +27,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.json.MappingJacksonValue
-import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -190,9 +188,9 @@ class VideoController(
     fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
         rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id)).let { this.getVideo(id) }
 
-    @PatchMapping(path = ["/{id}"], params = ["title"])
-    fun patchVideo(@PathVariable id: String, @RequestParam title: String?) =
-        updateVideo(id, title).let { this.getVideo(id) }
+    @PatchMapping(path = ["/{id}"], params = ["!rating"])
+    fun patchVideo(@PathVariable id: String, @RequestParam(required = false) title: String?, @RequestParam(required = false) description: String?) =
+        updateVideo(id, title, description).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}/tags"])
     fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =

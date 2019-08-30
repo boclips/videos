@@ -85,7 +85,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     fun updateLink(video: Video) = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
         ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .patchVideo(id = video.videoId.value, title = null)
+                .patchVideo(id = video.videoId.value, title = null, description = null)
         ).withRel("update")
     }
 
