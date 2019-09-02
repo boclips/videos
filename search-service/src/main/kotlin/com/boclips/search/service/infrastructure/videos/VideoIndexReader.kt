@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.unstemmed
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
@@ -12,13 +13,16 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.QueryBuilders.boolQuery
+import org.elasticsearch.index.query.QueryBuilders.constantScoreQuery
+import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
+import org.elasticsearch.index.query.QueryBuilders.termQuery
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder
 
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
     companion object : KLogging();
-
 
     override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
         return search(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
@@ -42,29 +46,34 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
     private fun findBySearchTerm(videoQuery: VideoQuery): SearchSourceBuilder {
         val phrase = videoQuery.phrase
-        val query = QueryBuilders.boolQuery()
+        val query = boolQuery()
 
         if (phrase.isNotBlank()) {
             query
-                .should(QueryBuilders.matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
-                .should(QueryBuilders.matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
-                .should(
-                    QueryBuilders.multiMatchQuery(phrase,
-                        VideoDocument.TITLE,
-                        unstemmed(VideoDocument.TITLE),
-                        VideoDocument.DESCRIPTION,
-                        unstemmed(VideoDocument.DESCRIPTION),
-                        VideoDocument.TRANSCRIPT,
-                        unstemmed(VideoDocument.TRANSCRIPT),
-                        VideoDocument.KEYWORDS
-                    )
-                    .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                    .minimumShouldMatch("75%")
-                    .fuzziness(Fuzziness.ZERO)
+                .must(
+                    boolQuery()
+                        .should(matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
+                        .should(matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
+                        .should(
+                            QueryBuilders.multiMatchQuery(
+                                phrase,
+                                VideoDocument.TITLE,
+                                unstemmed(VideoDocument.TITLE),
+                                VideoDocument.DESCRIPTION,
+                                unstemmed(VideoDocument.DESCRIPTION),
+                                VideoDocument.TRANSCRIPT,
+                                unstemmed(VideoDocument.TRANSCRIPT),
+                                VideoDocument.KEYWORDS
+                            )
+                                .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+                                .minimumShouldMatch("75%")
+                                .fuzziness(Fuzziness.ZERO)
+                        )
+                        .should(termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
+                        .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
+                        .minimumShouldMatch(1)
                 )
-                .should(QueryBuilders.termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
-                .should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECT_NAMES,phrase).boost(1000F))
-                .minimumShouldMatch(1)
+                .should(constantScoreQuery(termQuery(VideoDocument.TYPE, VideoType.INSTRUCTIONAL.name)).boost(0.001F))
         }
 
         FilterDecorator(query).apply(videoQuery)
@@ -80,7 +89,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
     private fun lookUpById(ids: List<String>): SearchSourceBuilder {
         val bunchOfIds = QueryBuilders.idsQuery().addIds(*(ids.toTypedArray()))
-        val lookUpByIdQuery = QueryBuilders.boolQuery().should(bunchOfIds)
+        val lookUpByIdQuery = boolQuery().should(bunchOfIds)
         return SearchSourceBuilder().query(lookUpByIdQuery)
     }
 

@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
@@ -391,4 +392,45 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         assertThat(results).containsExactly("1")
     }
+
+    @Test
+    fun `instructional videos prioritised over news or stock`(){
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id= "1", title = "London Underground", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id= "2", title = "London Underground", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id= "3", title = "London Underground", type = VideoType.INSTRUCTIONAL),
+                SearchableVideoMetadataFactory.create(id= "4", title = "London Underground", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id= "5", title = "London Underground", type = VideoType.STOCK)
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("London Underground"))
+        )
+
+        assertThat(results).startsWith("3")
+        assertThat(results).hasSize(5)
+    }
+
+    @Test
+    fun `instructional videos only prioritized when level of matching is similar`(){
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id= "1", title = "London", type = VideoType.INSTRUCTIONAL),
+                SearchableVideoMetadataFactory.create(id= "2", title = "Underground", type = VideoType.INSTRUCTIONAL),
+                SearchableVideoMetadataFactory.create(id= "3", title = "London Underground", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id= "4", title = "Underground", type = VideoType.INSTRUCTIONAL),
+                SearchableVideoMetadataFactory.create(id= "5", title = "London", type = VideoType.INSTRUCTIONAL)
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("London Underground"))
+        )
+
+        assertThat(results).startsWith("3")
+        assertThat(results).hasSize(5)
+    }
+
 }
