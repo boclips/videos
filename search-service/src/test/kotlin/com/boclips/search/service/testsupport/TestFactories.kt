@@ -6,6 +6,8 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.infrastructure.videos.VideoDocument
 import java.time.Duration
 import java.time.LocalDate
 
@@ -23,6 +25,7 @@ object SearchableVideoMetadataFactory {
         transcript: String? = null,
         ageRangeMin: Int? = 3,
         ageRangeMax: Int? = 11,
+        type: VideoType = VideoType.INSTRUCTIONAL,
         subjects: Set<SubjectMetadata> = emptySet()
     ) = VideoMetadata(
         id = id,
@@ -37,6 +40,7 @@ object SearchableVideoMetadataFactory {
         transcript = transcript,
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
+        type = type,
         subjects = subjects
     )
 }
@@ -49,6 +53,26 @@ object TestFactories {
         id = id,
         name = name
     )
+
+    fun createVideoDocument(releaseDate: LocalDate): VideoDocument {
+        return VideoDocument(
+            id = "1",
+            title = "title",
+            description = "description",
+            contentProvider = "contentProvider",
+            keywords = listOf("keywords"),
+            tags = listOf("tags"),
+            releaseDate = releaseDate,
+            durationSeconds = 10,
+            source = "Boclips",
+            transcript = null,
+            ageRangeMin = 3,
+            ageRangeMax = 11,
+            subjectIds = setOf("boring-subject"),
+            subjectNames = setOf("boring-names"),
+            type = VideoType.INSTRUCTIONAL.name
+        )
+    }
 }
 
 object SearchableCollectionMetadataFactory {

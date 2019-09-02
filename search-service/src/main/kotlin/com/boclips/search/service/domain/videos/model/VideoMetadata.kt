@@ -15,5 +15,6 @@ data class VideoMetadata(
     val transcript: String?,
     val ageRangeMin: Int?,
     val ageRangeMax: Int?,
+    val type: VideoType,
     val subjects: Set<SubjectMetadata>
 )

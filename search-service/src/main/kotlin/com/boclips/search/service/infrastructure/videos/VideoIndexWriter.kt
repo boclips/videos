@@ -9,22 +9,7 @@ class VideoIndexWriter(client: RestHighLevelClient) : AbstractIndexWriter<VideoM
     client,
     VideosIndex
 ) {
-    override fun serializeToIndexDocument(entry: VideoMetadata) = VideoDocument(
-        id = entry.id,
-        title = entry.title,
-        description = entry.description,
-        contentProvider = entry.contentProvider,
-        releaseDate = entry.releaseDate,
-        keywords = entry.keywords,
-        tags = entry.tags,
-        durationSeconds = entry.durationSeconds,
-        source = entry.source.name,
-        transcript = entry.transcript,
-        ageRangeMax = entry.ageRangeMax,
-        ageRangeMin = entry.ageRangeMin,
-        subjectIds = entry.subjects.map { subject -> subject.id }.toSet(),
-        subjectNames = entry.subjects.map {subject -> subject.name}.toSet()
-    )
+    override fun serializeToIndexDocument(entry: VideoMetadata) = VideoDocumentConverter.fromVideo(entry)
 
     override fun getIdentifier(entry: VideoMetadata) = entry.id
 }

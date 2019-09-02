@@ -1,15 +1,19 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class VideoDocumentConverterTest {
-    private val elasticSearchResultConverter = VideoDocumentConverter()
 
     @Test
-    fun `convert search hit`() {
+    fun fromSearchHit() {
         val searchHit = SearchHit(14).sourceRef(
             BytesArray(
                 """
@@ -27,6 +31,7 @@ class VideoDocumentConverterTest {
                 "transcript": "A great transcript",
                 "ageRangeMin": "3",
                 "ageRangeMax": "11",
+                "type": "NEWS",
                 "subjectIds": ["boring-subject-id"],
                 "subjectNames": ["boring-subject-name"]
             }
@@ -34,7 +39,7 @@ class VideoDocumentConverterTest {
             )
         )
 
-        val video = elasticSearchResultConverter.convert(searchHit)
+        val video = VideoDocumentConverter.fromSearchHit(searchHit)
 
         assertThat(video).isEqualTo(
             VideoDocument(
@@ -50,6 +55,7 @@ class VideoDocumentConverterTest {
                 transcript = "A great transcript",
                 ageRangeMin = 3,
                 ageRangeMax = 11,
+                type = "NEWS",
                 subjectIds = setOf("boring-subject-id"),
                 subjectNames = setOf("boring-subject-name")
             )
@@ -57,7 +63,7 @@ class VideoDocumentConverterTest {
     }
 
     @Test
-    fun `convert search hit with no transcript`() {
+    fun `fromSearchHit when no transcript`() {
         val searchHit = SearchHit(14).sourceRef(
             BytesArray(
                 """
@@ -77,8 +83,49 @@ class VideoDocumentConverterTest {
             )
         )
 
-        val video = elasticSearchResultConverter.convert(searchHit)
+        val video = VideoDocumentConverter.fromSearchHit(searchHit)
 
         assertThat(video.transcript).isNull()
+    }
+
+    @Test
+    fun fromVideo() {
+        val video = VideoMetadata(
+            id = "id",
+            title = "title",
+            description = "description",
+            contentProvider = "contentProvider",
+            releaseDate = LocalDate.of(2019, 9, 12),
+            keywords = listOf("keyword"),
+            tags = listOf("tag"),
+            durationSeconds = 120,
+            source = SourceType.BOCLIPS,
+            transcript = "transcript",
+            ageRangeMin = 10,
+            ageRangeMax = 16,
+            type = VideoType.INSTRUCTIONAL,
+            subjects = setOf(SubjectMetadata(id = "subjectId", name = "subjectName"))
+        )
+
+        val document = VideoDocumentConverter.fromVideo(video)
+
+        assertThat(document).isEqualTo(VideoDocument(
+            id = "id",
+            title = "title",
+            description = "description",
+            contentProvider = "contentProvider",
+            releaseDate = LocalDate.of(2019, 9, 12),
+            keywords = listOf("keyword"),
+            tags = listOf("tag"),
+            durationSeconds = 120,
+            source = "BOCLIPS",
+            transcript = "transcript",
+            ageRangeMin = 10,
+            ageRangeMax = 16,
+            type = "INSTRUCTIONAL",
+            subjectIds = setOf("subjectId"),
+            subjectNames = setOf("subjectName")
+        ))
+
     }
 }

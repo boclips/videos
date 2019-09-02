@@ -19,11 +19,10 @@ import org.elasticsearch.search.sort.SortOrder
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
     companion object : KLogging();
 
-    private val elasticSearchResultConverter = VideoDocumentConverter()
 
     override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
         return search(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
-            .map(elasticSearchResultConverter::convert)
+            .map(VideoDocumentConverter::fromSearchHit)
             .map { it.id }
     }
 

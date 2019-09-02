@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure
 
-import com.boclips.search.service.infrastructure.videos.VideoDocument
+import com.boclips.search.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -10,24 +10,9 @@ class ESObjectMapperTest {
 
     @Test
     fun `writes dates as strings in ES default format`() {
-        val serialisedVideo = ESObjectMapper.get().writeValueAsString(
-            VideoDocument(
-                id = "1",
-                title = "title",
-                description = "description",
-                contentProvider = "contentProvider",
-                keywords = listOf("keywords"),
-                tags = listOf("tags"),
-                releaseDate = LocalDate.of(2015, Month.MAY, 21),
-                durationSeconds = 10,
-                source = "Boclips",
-                transcript = null,
-                ageRangeMin = 3,
-                ageRangeMax = 11,
-                subjectIds = setOf("boring-subject"),
-                subjectNames = setOf("boring-names")
-            )
-        )
+        val serialisedVideo = ESObjectMapper.get().writeValueAsString(TestFactories.createVideoDocument(
+            releaseDate = LocalDate.of(2015, Month.MAY, 21)
+        ))
 
         assertThat(serialisedVideo).contains("2015-05-21")
     }

@@ -3,9 +3,9 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.videos.service.domain.service.video.ContentEnrichers
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.service.video.ContentEnrichers
 
 object VideoMetadataConverter {
     fun convert(video: Video): VideoMetadata {
@@ -22,6 +22,7 @@ object VideoMetadataConverter {
             transcript = video.transcript,
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
+            type = VideoTypeConverter.convert(video.type),
             subjects = video.subjects.map {SubjectMetadata(id = it.id.value, name = it.name)}.toSet()
         )
     }
