@@ -14,8 +14,8 @@ import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
-import org.elasticsearch.index.query.QueryBuilders.constantScoreQuery
 import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
+import org.elasticsearch.index.query.QueryBuilders.multiMatchQuery
 import org.elasticsearch.index.query.QueryBuilders.termQuery
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
@@ -49,13 +49,13 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         val query = boolQuery()
 
         if (phrase.isNotBlank()) {
-            query
-                .must(
+            query.must(
+                QueryBuilders.boostingQuery(
                     boolQuery()
                         .should(matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
                         .should(matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
                         .should(
-                            QueryBuilders.multiMatchQuery(
+                            multiMatchQuery(
                                 phrase,
                                 VideoDocument.TITLE,
                                 unstemmed(VideoDocument.TITLE),
@@ -71,9 +71,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                         )
                         .should(termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
                         .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
-                        .minimumShouldMatch(1)
-                )
-                .should(constantScoreQuery(termQuery(VideoDocument.TYPE, VideoType.INSTRUCTIONAL.name)).boost(0.001F))
+                        .minimumShouldMatch(1),
+                    boolQuery().mustNot(termQuery(VideoDocument.TYPE, VideoType.INSTRUCTIONAL.name))
+                ).negativeBoost(0.8F)
+            )
         }
 
         FilterDecorator(query).apply(videoQuery)
