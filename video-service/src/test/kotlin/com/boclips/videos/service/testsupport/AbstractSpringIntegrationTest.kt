@@ -5,6 +5,7 @@ import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -119,6 +120,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var subjectClassificationService: SubjectClassificationService
+
+    @Autowired
+    lateinit var userServiceClient: UserServiceClient
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null

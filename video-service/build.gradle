@@ -154,6 +154,10 @@ dependencies {
     implementation("com.github.boclips:kaltura-client:0.78.0")
     implementation("com.github.boclips:event-bus:1.24.0")
 
+    implementation("com.github.boclips:user-service:0.114.0")
+    // Required by user-service client
+    implementation('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     implementation("io.github.microutils:kotlin-logging:1.4.9")
     implementation('org.simplejavamail:simple-java-mail:5.0.8')

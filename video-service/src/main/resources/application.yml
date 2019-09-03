@@ -39,3 +39,9 @@ pubsub:
   video-searchability-update:
     batch-size:
       1000
+
+user-service:
+  base-url:
+  token-url:
+  client-id:
+  client-secret:
