@@ -1,11 +1,11 @@
 package com.boclips.videos.service.domain.service
 
 import com.boclips.eventbus.domain.SubjectId
-import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.eventbus.domain.video.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.Video
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {
@@ -17,6 +17,7 @@ class EventConverter {
             .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
             .subjects(subjects)
             .ageRange(toAgeRangePayload(video.ageRange))
+            .durationSeconds(video.playback.duration.seconds.toInt())
             .build()
     }
 

@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.Duration
 
 class EventConverterTest {
     @Test
@@ -14,7 +15,7 @@ class EventConverterTest {
             videoId = id,
             title = "the title",
             contentPartnerName = "the content partner",
-            playback = TestFactories.createKalturaPlayback(),
+            playback = TestFactories.createKalturaPlayback(duration = Duration.ofMinutes(2)),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
             ageRange = AgeRange.bounded(5, 10)
         )
@@ -29,6 +30,7 @@ class EventConverterTest {
         assertThat(videoEvent.subjects.first().name).isEqualTo("physics")
         assertThat(videoEvent.ageRange.min).isEqualTo(5)
         assertThat(videoEvent.ageRange.max).isEqualTo(10)
+        assertThat(videoEvent.durationSeconds).isEqualTo(120)
     }
 
     @Test
