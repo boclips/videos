@@ -19,8 +19,4 @@ class EventsLinkBuilder {
         ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)
     ).withRel("createNoSearchResultsEvent")
 
-    fun createVideoVisitedEventLink() = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(EventController::class.java).logVideoVisitedEvent(null)
-    ).withRel("createVideoVisitedEvent")
-
 }

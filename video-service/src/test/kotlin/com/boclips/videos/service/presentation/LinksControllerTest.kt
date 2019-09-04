@@ -94,7 +94,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                     endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com")
                 )
             )
-            .andExpect(jsonPath("$._links.createVideoVisitedEvent.href", endsWith("/video-visited")))
             .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/playback")))
             .andExpect(jsonPath("$._links.createNoSearchResultsEvent.href", endsWith("/no-search-results")))
             .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())

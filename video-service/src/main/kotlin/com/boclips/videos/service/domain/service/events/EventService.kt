@@ -19,8 +19,6 @@ interface EventService {
 
     fun saveUnbookmarkCollectionEvent(collectionId: CollectionId)
 
-    fun saveVideoVisitedEvent(videoId: VideoId)
-
     fun savePlaybackEvent(
         videoId: VideoId,
         videoIndex: Int?,

@@ -13,7 +13,6 @@ import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
-import com.boclips.eventbus.events.video.VideoVisited
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.common.Do
@@ -174,10 +173,6 @@ class PubSubEventsService(
                     .payload(payload)
             )
         )
-    }
-
-    override fun saveVideoVisitedEvent(videoId: VideoId) {
-        eventBus.publish(msg(VideoVisited.builder().videoId(videoId.value)))
     }
 
     private fun msg(builder: UserEvent.UserEventBuilder<*, *>): UserEvent {

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.security.utils.UserExtractor.getIfAuthenticated
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
@@ -36,7 +35,6 @@ class LinksController(
                 videosLinkBuilder.videoLink(),
                 getIfHasRole(UserRoles.TEACHER) { eventsLinkBuilder.createPlaybackEventLink() },
                 getIfHasRole(UserRoles.TEACHER) { eventsLinkBuilder.createNoResultsEventLink() },
-                getIfAuthenticated { eventsLinkBuilder.createVideoVisitedEventLink() },
                 collectionsLinkBuilder.publicCollections(),
                 subjectsLinkBuilder.subjects(),
                 distributionMethodsLinkBuilder.distributionMethods(),
