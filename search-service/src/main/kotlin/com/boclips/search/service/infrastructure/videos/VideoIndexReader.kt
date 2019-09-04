@@ -73,7 +73,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                         .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
                         .minimumShouldMatch(1),
                     boolQuery().mustNot(termQuery(VideoDocument.TYPE, VideoType.INSTRUCTIONAL.name))
-                ).negativeBoost(0.8F)
+                ).negativeBoost(0.4F)
             )
         }
 

@@ -413,24 +413,4 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         assertThat(results).hasSize(5)
     }
 
-    @Test
-    fun `instructional videos only prioritized when level of matching is similar`(){
-        videoIndexWriter.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id= "1", title = "London", type = VideoType.INSTRUCTIONAL),
-                SearchableVideoMetadataFactory.create(id= "2", title = "Underground", type = VideoType.INSTRUCTIONAL),
-                SearchableVideoMetadataFactory.create(id= "3", title = "London Underground", type = VideoType.STOCK),
-                SearchableVideoMetadataFactory.create(id= "4", title = "Underground", type = VideoType.INSTRUCTIONAL),
-                SearchableVideoMetadataFactory.create(id= "5", title = "London", type = VideoType.INSTRUCTIONAL)
-            )
-        )
-
-        val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("London Underground"))
-        )
-
-        assertThat(results).startsWith("3")
-        assertThat(results).hasSize(5)
-    }
-
 }
