@@ -2,6 +2,7 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
@@ -9,6 +10,7 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
+import com.boclips.videos.service.application.collection.GetContractedCollections
 import com.boclips.videos.service.application.collection.GetViewerCollections
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
@@ -189,10 +191,12 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getPublicCollections(
+    fun getCollections(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
-        attachmentsLinkBuilder: AttachmentsLinkBuilder
+        attachmentsLinkBuilder: AttachmentsLinkBuilder,
+        getContractedCollections: GetContractedCollections,
+        userServiceClient: UserServiceClient
     ): GetCollections {
         return GetCollections(
             collectionService,
@@ -202,8 +206,15 @@ class ApplicationContext(
                 SubjectToResourceConverter(),
                 AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
-            )
+            ),
+            getContractedCollections,
+            userServiceClient
         )
+    }
+
+    @Bean
+    fun getContractedCollections(collectionRepository: CollectionRepository): GetContractedCollections {
+        return GetContractedCollections(collectionRepository)
     }
 
     @Bean

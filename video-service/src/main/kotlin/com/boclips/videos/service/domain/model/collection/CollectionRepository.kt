@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
+import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.common.UserId
@@ -14,6 +15,7 @@ interface CollectionRepository {
     fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit)
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
     fun getByViewer(viewer: UserId, pageRequest: PageRequest): Page<Collection>
+    fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
     fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun create(owner: UserId, title: String, createdByBoclips: Boolean, public: Boolean): Collection
     fun createWithViewers(owner: UserId, title: String, viewerIds: List<String>): Collection

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -39,13 +40,16 @@ class GetCollectionsTest {
     lateinit var videosLinkBuilder: VideosLinkBuilder
     lateinit var attachmentsLinkBuilder: AttachmentsLinkBuilder
 
+    val getContractedCollections: GetContractedCollections = mock()
+    val userServiceClient: UserServiceClient = mock()
+
     val video = TestFactories.createVideo()
 
     @BeforeEach
     fun setUp() {
         setSecurityContext("me@me.com")
         videoService = mock {
-            on { getPlayableVideo(com.nhaarman.mockito_kotlin.any<List<VideoId>>()) } doReturn listOf(
+            on { getPlayableVideo(any<List<VideoId>>()) } doReturn listOf(
                 TestFactories.createVideo()
             )
         }
@@ -87,7 +91,13 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(collectionService, collectionRepository, collectionResourceFactory).invoke(
+        val collections = GetCollections(
+            collectionService,
+            collectionRepository,
+            collectionResourceFactory,
+            getContractedCollections,
+            userServiceClient
+        ).invoke(
             CollectionFilter(
                 projection = Projection.list,
                 visibility = CollectionFilter.Visibility.BOOKMARKED,
@@ -125,7 +135,13 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(collectionService, collectionRepository, collectionResourceFactory).invoke(
+        val collections = GetCollections(
+            collectionService,
+            collectionRepository,
+            collectionResourceFactory,
+            getContractedCollections,
+            userServiceClient
+        ).invoke(
             CollectionFilter(
                 projection = Projection.list,
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -163,7 +179,13 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(collectionService, collectionRepository, collectionResourceFactory).invoke(
+        val collections = GetCollections(
+            collectionService,
+            collectionRepository,
+            collectionResourceFactory,
+            getContractedCollections,
+            userServiceClient
+        ).invoke(
             CollectionFilter(
                 projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -201,7 +223,13 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(collectionService, collectionRepository, collectionResourceFactory).invoke(
+        val collections = GetCollections(
+            collectionService,
+            collectionRepository,
+            collectionResourceFactory,
+            getContractedCollections,
+            userServiceClient
+        ).invoke(
             CollectionFilter(
                 projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -245,7 +273,13 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(collectionService, collectionRepository, collectionResourceFactory).invoke(
+        val collections = GetCollections(
+            collectionService,
+            collectionRepository,
+            collectionResourceFactory,
+            getContractedCollections,
+            userServiceClient
+        ).invoke(
             CollectionFilter(
                 projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -285,7 +319,13 @@ class GetCollectionsTest {
             )
         }
 
-        val collections = GetCollections(collectionService, collectionRepository, collectionResourceFactory).invoke(
+        val collections = GetCollections(
+            collectionService,
+            collectionRepository,
+            collectionResourceFactory,
+            getContractedCollections,
+            userServiceClient
+        ).invoke(
             CollectionFilter(
                 projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -324,7 +364,13 @@ class GetCollectionsTest {
                 )
         }
 
-        val collections = GetCollections(collectionService, collectionRepository, collectionResourceFactory).invoke(
+        val collections = GetCollections(
+            collectionService,
+            collectionRepository,
+            collectionResourceFactory,
+            getContractedCollections,
+            userServiceClient
+        ).invoke(
             CollectionFilter(
                 query = "title",
                 projection = Projection.list,

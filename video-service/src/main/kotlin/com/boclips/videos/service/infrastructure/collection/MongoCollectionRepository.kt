@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -36,7 +37,8 @@ import java.time.Instant
 
 class MongoCollectionRepository(
     private val mongoClient: MongoClient,
-    private val collectionUpdates: CollectionUpdates = CollectionUpdates()
+    private val collectionUpdates: CollectionUpdates = CollectionUpdates(),
+    private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter
 ) : CollectionRepository {
     companion object : KLogging() {
         const val collectionName = "collections"
@@ -119,6 +121,13 @@ class MongoCollectionRepository(
 
     override fun getByViewer(viewer: UserId, pageRequest: PageRequest): Page<Collection> {
         val criteria = CollectionDocument::viewerIds contains viewer.value
+        return getPagedCollections(pageRequest, criteria)
+    }
+
+    override fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection> {
+        val criteria = and(
+            contracts.map(mongoCollectionFilterContractAdapter::adapt)
+        )
         return getPagedCollections(pageRequest, criteria)
     }
 

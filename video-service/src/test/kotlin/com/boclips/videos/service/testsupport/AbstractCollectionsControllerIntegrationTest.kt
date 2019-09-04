@@ -1,8 +1,10 @@
 package com.boclips.videos.service.testsupport
 
+import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.jayway.jsonpath.JsonPath
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.UriTemplate
 import org.springframework.http.MediaType
@@ -22,6 +24,11 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     @Autowired
     lateinit var collectionRepository: CollectionRepository
+
+    @BeforeEach
+    fun cleanupContracts() {
+        (userServiceClient as FakeUserServiceClient).clearContracts()
+    }
 
     fun createCollection(title: String = "a collection name", public: Boolean = false) =
         mockMvc.perform(

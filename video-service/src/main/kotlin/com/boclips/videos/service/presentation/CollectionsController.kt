@@ -83,9 +83,9 @@ class CollectionsController(
             subjects = subject ?: emptyList()
         )
 
-        val collections = getCollections(collectionFilter)
+        val collectionsPage = getCollections(collectionFilter)
 
-        val collectionResources = collections.elements.map(::wrapCollection)
+        val collectionResources = collectionsPage.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
         return withProjection(
@@ -95,7 +95,7 @@ class CollectionsController(
                     collectionsLinkBuilder.projections().list(),
                     collectionsLinkBuilder.projections().details(),
                     collectionsLinkBuilder.self(),
-                    collectionsLinkBuilder.next(collections.pageInfo)
+                    collectionsLinkBuilder.next(collectionsPage.pageInfo)
                 )
             )
         )

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
 import java.util.Date
+import java.util.UUID
 
 class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
@@ -33,9 +35,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `findAll preserves order`() {
             val owner = UserId(value = "user1")
-            val id1 = collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
-            val id2 = collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
-            val id3 = collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+            val id1 =
+                collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+            val id2 =
+                collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+            val id3 =
+                collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
 
             val collections = collectionRepository.findAll(listOf(id2, id3, id1))
 
@@ -220,7 +225,10 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
 
-            collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeDescription("New collection description"))
+            collectionRepository.update(
+                collection.id,
+                CollectionUpdateCommand.ChangeDescription("New collection description")
+            )
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
@@ -537,5 +545,41 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         collectionRepository.streamAllPublic { collections = it.toList() }
 
         assertThat(collections).hasSize(2)
+    }
+
+    @Test
+    fun `returns collections which correspond to provided SelectedContent contract`() {
+        val ownerId = UserId(value = "test-user")
+        val firstCollection = collectionRepository.create(
+            owner = ownerId,
+            title = "Starting Title",
+            createdByBoclips = false,
+            public = false
+        )
+        val secondCollection = collectionRepository.create(
+            owner = ownerId,
+            title = "Starting Title",
+            createdByBoclips = false,
+            public = false
+        )
+        collectionRepository.create(
+            owner = ownerId,
+            title = "Starting Title",
+            createdByBoclips = false,
+            public = false
+        )
+
+        val contract = SelectedContentContract().apply {
+            id = UUID.randomUUID().toString()
+            name = "Selected content"
+            collectionIds = listOf(firstCollection.id.value, secondCollection.id.value)
+        }
+        val pageRequest = PageRequest(0, 10)
+
+        val collectionsByContract = collectionRepository.getByContracts(listOf(contract), pageRequest)
+
+        assertThat(collectionsByContract.elements).hasSize(2)
+        assertThat(collectionsByContract.elements).extracting("id")
+            .containsExactlyInAnyOrder(firstCollection.id, secondCollection.id)
     }
 }

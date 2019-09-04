@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.service.video.EventPublishingVideoRepos
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.contentPartner.MongoContentPartnerRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
@@ -30,7 +31,11 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Configuration
-class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
+class DomainContext(
+    val mongoClient: MongoClient,
+    val eventBus: EventBus,
+    val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter
+) {
 
     @Bean
     fun videoService(
@@ -59,7 +64,10 @@ class DomainContext(val mongoClient: MongoClient, val eventBus: EventBus) {
 
     @Bean
     fun collectionRepository(): CollectionRepository {
-        return MongoCollectionRepository(mongoClient)
+        return MongoCollectionRepository(
+            mongoClient = mongoClient,
+            mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter
+        )
     }
 
     @Bean
