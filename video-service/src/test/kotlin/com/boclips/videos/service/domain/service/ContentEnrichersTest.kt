@@ -1,38 +1,12 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.videos.service.domain.service.video.ContentEnrichers.Companion.isClassroom
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.service.video.ContentEnrichers.Companion.isClassroom
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class ContentEnrichersTest {
-
-    @Test
-    fun `blacklisted content partners of any type are not classroom`() {
-        val blackListedContentPartners = listOf(
-            "AP",
-            "numberock",
-            "Siren Films",
-            "StoryFul",
-            "Singapore Press Holdings",
-            "Mage Math",
-            "engVid",
-            "1 Minute in a Museum",
-            "British Movietone",
-            "360 Cities"
-        )
-
-        blackListedContentPartners.forEach {
-            assertThat(
-                isClassroom(
-                    createVideo(
-                        contentPartnerName = it
-                    )
-                )
-            ).withFailMessage("Expected $it to be excluded").isFalse()
-        }
-    }
 
     @Test
     fun `non stock content is matched as classroom for non-blacklisted content partners`() {

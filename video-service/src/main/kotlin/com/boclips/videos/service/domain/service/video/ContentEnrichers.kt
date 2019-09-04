@@ -11,12 +11,6 @@ class ContentEnrichers {
             val bagOfWords = wordChars.findAll(lowercaseText).mapTo(mutableSetOf(), MatchResult::value).toSet()
 
             return when {
-                contentPartnersExcluded.any {
-                    video.contentPartner.name.equals(
-                        other = it,
-                        ignoreCase = true
-                    )
-                } -> false
                 video.type != LegacyVideoType.STOCK -> true
                 classroomExcludedWords.any { bagOfWords.contains(it) } -> false
                 classroomExcludedPhrases.any { lowercaseText.contains(it) } -> false
@@ -64,17 +58,5 @@ class ContentEnrichers {
 
         private val wordChars = Regex("\\w+")
 
-        private val contentPartnersExcluded = listOf(
-            "AP",
-            "NUMBEROCK",
-            "Siren Films",
-            "StoryFul",
-            "Singapore Press Holdings",
-            "Mage Math",
-            "engVid",
-            "1 Minute in a Museum",
-            "British Movietone",
-            "360 Cities"
-        )
     }
 }
