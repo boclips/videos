@@ -12,7 +12,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.stereotype.Component
 
 @Component
-class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
+class VideosLinkBuilder {
 
     fun self(videoResource: VideoResource): Link = ControllerLinkBuilder.linkTo(
         ControllerLinkBuilder.methodOn(VideoController::class.java)
@@ -25,11 +25,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     ).withRel("video")
 
     fun searchVideosLink() = when {
-        currentUserHasRole(UserRoles.VIEW_ANY_VIDEO) -> Link(
-            getVideosRoot()
-                .toUriString() + "{?query,sort_by,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject}"
-        ).withRel("searchVideos")
-
         currentUserHasRole(UserRoles.VIEW_VIDEOS) -> ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .search(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
@@ -65,7 +60,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun rateLink(video: Video) = getIfHasRole(UserRoles.RATE_VIDEOS) {
-         ControllerLinkBuilder.linkTo(
+        ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .patchRating(null, video.videoId.value)
         ).withRel("rate")
@@ -88,8 +83,4 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                 .patchVideo(id = video.videoId.value, title = null, description = null)
         ).withRel("update")
     }
-
-    private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()
-        .replacePath("/v1/videos")
-        .replaceQueryParams(null)
 }

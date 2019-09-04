@@ -15,7 +15,6 @@ object UserRoles {
 
     const val REMOVE_VIDEOS = "REMOVE_VIDEOS"
     const val VIEW_VIDEOS = "VIEW_VIDEOS"
-    const val VIEW_ANY_VIDEO = "VIEW_ANY_VIDEO"
     const val DOWNLOAD_VIDEOS = "DOWNLOAD_VIDEOS"
     const val VIEW_DISABLED_VIDEOS = "VIEW_DISABLED_VIDEOS"
     const val INSERT_VIDEOS = "INSERT_VIDEOS"
