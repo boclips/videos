@@ -369,7 +369,7 @@ class ApplicationContext(
         : UpdateContentPartner {
         return UpdateContentPartner(
             contentPartnerRepository,
-            videoRepository
+            videoService
         )
     }
 

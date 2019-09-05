@@ -56,6 +56,7 @@ import java.util.Optional
 class MongoVideoRepository(
     private val mongoClient: MongoClient
 ) : VideoRepository {
+
     companion object : KLogging() {
         const val collectionName = "videos"
     }
@@ -105,7 +106,10 @@ class MongoVideoRepository(
 
     override fun streamAll(filter: VideoFilter, consumer: (Sequence<Video>) -> Unit) {
         val filterBson = when (filter) {
-            is VideoFilter.ContentPartnerIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name eq filter.contentPartnerName
+            is VideoFilter.ContentPartnerNameIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name eq filter.contentPartnerName
+            is VideoFilter.ContentPartnerIdIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
+                filter.contentPartnerId.value
+            )
             is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
@@ -169,23 +173,6 @@ class MongoVideoRepository(
         }
 
         return find(videoId) ?: throw VideoNotFoundException(videoId)
-    }
-
-    private fun addRating(addRating: AddRating) {
-        getVideoCollection().updateOne(
-            VideoDocument::id eq ObjectId(addRating.videoId.value),
-            pullByFilter(
-                VideoDocument::rating,
-                UserRatingDocument::userId eq addRating.rating.userId.value
-            )
-        )
-        getVideoCollection().updateOne(
-            VideoDocument::id eq ObjectId(addRating.videoId.value),
-            push(
-                VideoDocument::rating,
-                UserRatingDocumentConverter.toDocument(addRating.rating)
-            )
-        )
     }
 
     override fun bulkUpdate(commands: List<VideoUpdateCommand>): List<Video> {
@@ -293,6 +280,23 @@ class MongoVideoRepository(
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
         }
+    }
+
+    private fun addRating(addRating: AddRating) {
+        getVideoCollection().updateOne(
+            VideoDocument::id eq ObjectId(addRating.videoId.value),
+            pullByFilter(
+                VideoDocument::rating,
+                UserRatingDocument::userId eq addRating.rating.userId.value
+            )
+        )
+        getVideoCollection().updateOne(
+            VideoDocument::id eq ObjectId(addRating.videoId.value),
+            push(
+                VideoDocument::rating,
+                UserRatingDocumentConverter.toDocument(addRating.rating)
+            )
+        )
     }
 
     private fun getVideoCollection(): MongoCollection<VideoDocument> {

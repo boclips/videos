@@ -5,15 +5,21 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 
 class VideoServiceTest : AbstractSpringIntegrationTest() {
@@ -23,6 +29,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var contentPartnerRepository: ContentPartnerRepository
+
+    @Autowired
+    lateinit var videoRepository: VideoRepository
 
     @Nested
     inner class Retrieving {
@@ -169,6 +178,79 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                         contentPartnerId = contentPartner.contentPartnerId,
                         videoReference = "video-123"
                     )
+                )
+            }
+        }
+    }
+
+    @Nested
+    inner class UpdateContentPartnerInVideo {
+        @Test
+        fun `updates content partner of videos`() {
+            val contentPartner = TestFactories.createContentPartner(name = "hello")
+            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            videoService.create(video)
+
+            videoService.updateContentPartnerInVideos(
+                contentPartner = contentPartner.copy(name = "good bye")
+            )
+
+            assertThat(videoService.getPlayableVideo(video.videoId).contentPartner.name).isEqualTo("good bye")
+        }
+
+        @Test
+        fun `updates age range of videos by content partner`() {
+            val contentPartner = TestFactories.createContentPartner(ageRange = AgeRange.unbounded())
+            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            videoService.create(video)
+
+            videoService.updateContentPartnerInVideos(
+                contentPartner = contentPartner.copy(
+                    ageRange = AgeRange.bounded(1, 5)
+                )
+            )
+
+            assertThat(videoService.getPlayableVideo(video.videoId).ageRange).isEqualTo(AgeRange.bounded(1, 5))
+        }
+
+        @Test
+        fun `updates distribution methods of videos by content partner`() {
+            val contentPartner = TestFactories.createContentPartner(distributionMethods = DistributionMethod.ALL)
+            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            videoService.create(video)
+
+            videoService.updateContentPartnerInVideos(
+                contentPartner = contentPartner.copy(
+                    distributionMethods = setOf(DistributionMethod.STREAM)
+                )
+            )
+
+            assertThat(videoService.getPlayableVideo(video.videoId).distributionMethods).containsExactly(
+                DistributionMethod.STREAM
+            )
+        }
+
+        @Test
+        fun `updates multiple videos associated to a content partner`() {
+            val contentPartner = TestFactories.createContentPartner(distributionMethods = DistributionMethod.ALL)
+            val videos = listOf(
+                TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId),
+                TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId),
+                TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            )
+            videos.forEach {
+                videoService.create(it)
+            }
+
+            videoService.updateContentPartnerInVideos(
+                contentPartner = contentPartner.copy(
+                    distributionMethods = setOf(DistributionMethod.STREAM)
+                )
+            )
+
+            videos.forEach {
+                assertThat(videoService.getPlayableVideo(it.videoId).distributionMethods).containsExactly(
+                    DistributionMethod.STREAM
                 )
             }
         }

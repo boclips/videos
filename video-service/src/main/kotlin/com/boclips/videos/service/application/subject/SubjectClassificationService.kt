@@ -10,7 +10,6 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
@@ -50,7 +49,7 @@ class SubjectClassificationService(
     fun classifyVideosByContentPartner(contentPartner: String?): CompletableFuture<Unit> {
         logger.info { "Requesting subject classification for all instructional videos: $contentPartner" }
         val future = CompletableFuture<Unit>()
-        val filter = contentPartner?.let { VideoFilter.ContentPartnerIs(it) } ?: VideoFilter.LegacyTypeIs(
+        val filter = contentPartner?.let { VideoFilter.ContentPartnerNameIs(it) } ?: VideoFilter.LegacyTypeIs(
             LegacyVideoType.INSTRUCTIONAL_CLIPS
         )
         videoRepository.streamAll(filter) { videos ->

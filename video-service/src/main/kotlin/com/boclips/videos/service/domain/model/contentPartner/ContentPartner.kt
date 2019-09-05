@@ -17,4 +17,8 @@ data class ContentPartner(
     fun isDownloadable(): Boolean {
         return distributionMethods.contains(DistributionMethod.DOWNLOAD)
     }
+
+    override fun toString(): String {
+        return "ContentPartner(id = ${this.contentPartnerId.value}, name = ${this.name})"
+    }
 }

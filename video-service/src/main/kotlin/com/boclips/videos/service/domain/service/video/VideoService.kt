@@ -4,9 +4,11 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -18,7 +20,9 @@ class VideoService(
     private val videoRepository: VideoRepository,
     private val videoSearchService: VideoSearchService
 ) {
-    companion object : KLogging()
+    companion object : KLogging() {
+        private const val VIDEO_UPDATE_BATCH_SIZE = 1000
+    }
 
     fun search(query: VideoSearchQuery): List<Video> {
         val searchRequest = PaginatedSearchRequest(
@@ -83,6 +87,34 @@ class VideoService(
 
     fun getPlayableVideos(contentPartnerId: ContentPartnerId): List<Video> {
         return videoRepository.findByContentPartnerId(contentPartnerId)
+    }
+
+    fun updateContentPartnerInVideos(contentPartner: ContentPartner) {
+        logger.info { "Starting updating videos for content partner: $contentPartner" }
+
+        videoRepository.streamAll(VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartner.contentPartnerId)) { videosAffected: Sequence<Video> ->
+            val commands = videosAffected.flatMap { video ->
+                sequenceOf(
+                    VideoUpdateCommand.ReplaceContentPartner(
+                        videoId = video.videoId,
+                        contentPartner = contentPartner
+                    ),
+                    VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange),
+                    VideoUpdateCommand.ReplaceDistributionMethods(
+                        videoId = video.videoId,
+                        distributionMethods = contentPartner.distributionMethods
+                    )
+                )
+            }
+
+            commands.windowed(size = VIDEO_UPDATE_BATCH_SIZE, step = VIDEO_UPDATE_BATCH_SIZE, partialWindows = true)
+                .forEachIndexed { index, bulkUpdateCommands ->
+                    logger.info { "Starting bulk update batch $index" }
+                    videoRepository.bulkUpdate(bulkUpdateCommands)
+                }
+
+            logger.info { "Finished updating videos for content partner: $contentPartner" }
+        }
     }
 }
 

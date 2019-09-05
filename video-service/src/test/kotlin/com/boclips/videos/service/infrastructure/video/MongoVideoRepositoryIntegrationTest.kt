@@ -192,13 +192,28 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `stream all by content partner`() {
+    fun `stream all by content partner name`() {
         mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "TED"))
         mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "Bob"))
         mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "TED"))
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.ContentPartnerIs("TED")) { videos = it.toList() }
+        mongoVideoRepository.streamAll(VideoFilter.ContentPartnerNameIs("TED")) { videos = it.toList() }
+
+        assertThat(videos).hasSize(2)
+    }
+
+    @Test
+    fun `stream all by content partner id`() {
+        val contentPartnerIdToFind = ObjectId().toHexString()
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartnerIdToFind)))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartnerIdToFind)))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = ObjectId().toHexString())))
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.ContentPartnerIdIs(ContentPartnerId(value = contentPartnerIdToFind))) {
+            videos = it.toList()
+        }
 
         assertThat(videos).hasSize(2)
     }
