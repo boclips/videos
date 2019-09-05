@@ -18,7 +18,6 @@ class SavePlaybackEvent(
             videoIndex = event.videoIndex,
             segmentStartSeconds = event.segmentStartSeconds!!,
             segmentEndSeconds = event.segmentEndSeconds!!,
-            videoDurationSeconds = event.videoDurationSeconds!!,
             playbackDevice = playbackDevice
         )
     }

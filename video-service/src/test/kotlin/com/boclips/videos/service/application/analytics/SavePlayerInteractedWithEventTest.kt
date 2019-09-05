@@ -16,7 +16,6 @@ class SavePlayerInteractedWithEventTest : AbstractSpringIntegrationTest() {
     private val payload = CreatePlayerInteractedWithEvent(
         playerId = "player-id",
         videoId = TestFactories.aValidId(),
-        videoDurationSeconds = 60,
         currentTime = 54,
         subtype = "captions-on",
         payload = mapOf<String, Any>(
@@ -35,7 +34,6 @@ class SavePlayerInteractedWithEventTest : AbstractSpringIntegrationTest() {
 
         assertThat(firedEvent.playerId).isEqualTo("player-id")
         assertThat(firedEvent.subtype).isEqualTo("captions-on")
-        assertThat(firedEvent.videoDurationSeconds).isEqualTo(60)
         assertThat(firedEvent.currentTime).isEqualTo(54L)
         assertThat(firedEvent.payload).containsEntry("kind", "caption-kind")
         assertThat(firedEvent.payload).containsEntry("language", "caption-language")

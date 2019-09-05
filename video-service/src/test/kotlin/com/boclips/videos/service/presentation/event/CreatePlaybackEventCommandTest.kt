@@ -9,8 +9,7 @@ class CreatePlaybackEventCommandTest {
         videoId = "v678",
         videoIndex = 0,
         segmentStartSeconds = 10,
-        segmentEndSeconds = 20,
-        videoDurationSeconds = 60
+        segmentEndSeconds = 20
     )
 
     @Test
@@ -35,11 +34,5 @@ class CreatePlaybackEventCommandTest {
     fun `validates segmentEndSeconds`() {
         Assertions.assertThatThrownBy { playbackEvent.copy(segmentEndSeconds = null).isValidOrThrows() }
         Assertions.assertThatThrownBy { playbackEvent.copy(segmentEndSeconds = -1).isValidOrThrows() }
-    }
-
-    @Test
-    fun `validates videoDurationSeconds`() {
-        Assertions.assertThatThrownBy { playbackEvent.copy(videoDurationSeconds = null).isValidOrThrows() }
-        Assertions.assertThatThrownBy { playbackEvent.copy(videoDurationSeconds = -1).isValidOrThrows() }
     }
 }

@@ -257,7 +257,6 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
             playerId = "player-id",
             segmentStartSeconds = 123,
             segmentEndSeconds = 345,
-            videoDurationSeconds = 50,
             playbackDevice = "device-id"
         )
 
@@ -268,7 +267,6 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.playerId).isEqualTo("player-id")
         assertThat(event.segmentStartSeconds).isEqualTo(123)
         assertThat(event.segmentEndSeconds).isEqualTo(345)
-        assertThat(event.videoDurationSeconds).isEqualTo(50)
         assertThat(event.user.id).isEqualTo("user@example.com")
         assertThat(event.user.isBoclipsEmployee).isFalse()
         assertThat(event.playbackDevice).isEqualTo("device-id")
@@ -280,7 +278,6 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         eventService.savePlayerInteractedWithEvent(
             videoId = VideoId(videoId),
             playerId = "player-id",
-            videoDurationSeconds = 50,
             currentTime = 34,
             subtype = "captions-on",
             payload = mapOf<String, Any>(
@@ -297,7 +294,6 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.user.isBoclipsEmployee).isFalse()
         assertThat(event.playerId).isEqualTo("player-id")
         assertThat(event.videoId).isEqualTo(videoId)
-        assertThat(event.videoDurationSeconds).isEqualTo(50)
         assertThat(event.currentTime).isEqualTo(34L)
         assertThat(event.subtype).isEqualTo("captions-on")
         assertThat(event.payload.size).isGreaterThan(0)

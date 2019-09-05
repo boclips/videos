@@ -8,8 +8,7 @@ data class CreatePlaybackEventCommand(
     val videoId: String?,
     val videoIndex: Int?,
     val segmentStartSeconds: Long?,
-    val segmentEndSeconds: Long?,
-    val videoDurationSeconds: Long?
+    val segmentEndSeconds: Long?
 ) : EventCommand() {
     override fun isValidOrThrows() {
         if (this.playerId.isNullOrBlank()) throw InvalidEventException("playerId must be specified")
@@ -17,7 +16,6 @@ data class CreatePlaybackEventCommand(
 
         if (isNullOrNegative(this.segmentEndSeconds)) throw InvalidEventException("segmentEndSeconds must be specified")
         if (isNullOrNegative(this.segmentStartSeconds)) throw InvalidEventException("segmentStartSeconds must be specified")
-        if (isNullOrNegative(this.videoDurationSeconds)) throw InvalidEventException("videoDurationSeconds must be specified")
     }
 }
 

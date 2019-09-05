@@ -137,7 +137,6 @@ class PubSubEventsService(
         playerId: String,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
-        videoDurationSeconds: Long,
         playbackDevice: String?
     ) {
         eventBus.publish(
@@ -148,7 +147,6 @@ class PubSubEventsService(
                     .videoIndex(videoIndex)
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
-                    .videoDurationSeconds(videoDurationSeconds)
                     .playbackDevice(playbackDevice)
             )
         )
@@ -157,7 +155,6 @@ class PubSubEventsService(
     override fun savePlayerInteractedWithEvent(
         playerId: String,
         videoId: VideoId,
-        videoDurationSeconds: Long,
         currentTime: Long,
         subtype: String,
         payload: Map<String, Any>
@@ -167,7 +164,6 @@ class PubSubEventsService(
                 VideoPlayerInteractedWith.builder()
                     .playerId(playerId)
                     .videoId(videoId.value)
-                    .videoDurationSeconds(videoDurationSeconds)
                     .currentTime(currentTime)
                     .subtype(subtype)
                     .payload(payload)

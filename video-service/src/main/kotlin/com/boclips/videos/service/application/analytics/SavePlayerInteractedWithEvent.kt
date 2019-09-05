@@ -13,7 +13,6 @@ class SavePlayerInteractedWithEvent(val eventService: EventService) {
         eventService.savePlayerInteractedWithEvent(
             playerId = event.playerId!!,
             videoId = VideoId(event.videoId!!),
-            videoDurationSeconds = event.videoDurationSeconds!!,
             currentTime = event.currentTime!!,
             subtype = event.subtype!!,
             payload = event.payload!!

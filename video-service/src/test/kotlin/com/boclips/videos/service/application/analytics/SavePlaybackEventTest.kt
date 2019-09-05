@@ -18,8 +18,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         videoId = TestFactories.aValidId(),
         videoIndex = null,
         segmentStartSeconds = 10,
-        segmentEndSeconds = 20,
-        videoDurationSeconds = 60
+        segmentEndSeconds = 20
     )
 
     @Test
@@ -30,6 +29,5 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.segmentEndSeconds).isEqualTo(20L)
         assertThat(event.segmentStartSeconds).isEqualTo(10L)
-        assertThat(event.videoDurationSeconds).isEqualTo(60L)
     }
 }
