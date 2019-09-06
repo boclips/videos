@@ -33,11 +33,20 @@ class VideosLinkBuilderTest {
     }
 
     @Test
+    fun `interaction link`() {
+        val link = VideosLinkBuilder().createVideoInteractedWithEvent(VideoResourceFactory.sample(id = "video-id"))
+
+        assertThat(link.href).isEqualTo("/v1/videos/video-id/events?videoInteractedWith=true&type={type}")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.CREATE_VIDEO_INTERACTED_WITH_EVENT)
+        assertThat(link.isTemplated).isTrue()
+    }
+
+    @Test
     fun `video link`() {
         val link = VideosLinkBuilder().videoLink()
 
         assertThat(link.href).isEqualTo("/v1/videos/{id}")
-        assertThat(link.rel).isEqualTo("video")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.VIDEO)
         assertThat(link.isTemplated).isTrue()
     }
 
@@ -48,7 +57,7 @@ class VideosLinkBuilderTest {
         val link = VideosLinkBuilder().searchVideosLink()!!
 
         assertThat(link.href).isEqualTo("/v1/videos{?query,sort_by,include_tag,exclude_tag,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject}")
-        assertThat(link.rel).isEqualTo("searchVideos")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.SEARCH_VIDEOS)
         assertThat(link.isTemplated).isTrue()
     }
 
@@ -66,7 +75,7 @@ class VideosLinkBuilderTest {
         val link = VideosLinkBuilder().videosLink()!!
 
         assertThat(link.href).isEqualTo("/v1/videos")
-        assertThat(link.rel).isEqualTo("videos")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.VIDEOS)
         assertThat(link.isTemplated).isFalse()
 
         setSecurityContext("teacher@boclips.com", UserRoles.UPDATE_VIDEOS)
@@ -95,7 +104,7 @@ class VideosLinkBuilderTest {
         val link = VideosLinkBuilder().adminSearchLink()
 
         assertThat(link?.href).isEqualTo("/v1/videos/search")
-        assertThat(link?.rel).isEqualTo("adminSearch")
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.ADMIN_SEARCH)
         assertThat(link?.isTemplated).isFalse()
     }
 
@@ -115,7 +124,7 @@ class VideosLinkBuilderTest {
         assertThat(link).isNotNull
 
         assertThat(link!!.href).isEqualTo("/v1/videos/transcript-test/transcript")
-        assertThat(link.rel).isEqualTo("transcript")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.TRANSCRIPT)
         assertThat(link.isTemplated).isFalse()
     }
 
@@ -155,7 +164,7 @@ class VideosLinkBuilderTest {
         assertThat(link).isNotNull
 
         assertThat(link!!.href).isEqualTo("/v1/videos/$validVideoId?rating={rating}")
-        assertThat(link.rel).isEqualTo("rate")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.RATE)
         assertThat(link.isTemplated).isTrue()
     }
 
@@ -168,7 +177,7 @@ class VideosLinkBuilderTest {
         assertThat(link).isNotNull
 
         assertThat(link!!.href).isEqualTo("/v1/videos/$validVideoId?rating={rating}")
-        assertThat(link.rel).isEqualTo("rate")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.RATE)
         assertThat(link.isTemplated).isTrue()
     }
 
@@ -189,7 +198,7 @@ class VideosLinkBuilderTest {
             )
 
         assertThat(link!!.href).isNotNull()
-        assertThat(link.rel).isEqualTo("rate")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.RATE)
     }
 
     @Test
@@ -214,7 +223,7 @@ class VideosLinkBuilderTest {
         assertThat(link).isNotNull
 
         assertThat(link!!.href).isEqualTo("/v1/videos/$validVideoId/tags")
-        assertThat(link.rel).isEqualTo("tag")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.TAG)
         assertThat(link.isTemplated).isFalse()
     }
 
@@ -257,6 +266,6 @@ class VideosLinkBuilderTest {
 
         assertThat(link).isNotNull
         assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId{?title,description}")
-        assertThat(link?.rel).isEqualTo("update")
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.UPDATE)
     }
 }

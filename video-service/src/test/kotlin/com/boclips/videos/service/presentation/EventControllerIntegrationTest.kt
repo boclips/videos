@@ -1,15 +1,18 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import javax.servlet.http.Cookie
@@ -21,7 +24,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `posted playback events are being saved`() {
-        val videoId = TestFactories.aValidId()
+        val videoId = aValidId()
 
         val content = """{
             "videoId":"$videoId",
@@ -56,7 +59,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `posted player interaction events are being saved`() {
-        val videoId = TestFactories.aValidId()
+        val videoId = aValidId()
 
         val content = """{
             "playerId": "player-id-123",
@@ -93,8 +96,25 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `posted video interaction events are being saved`() {
+        val videoId = saveVideo()
+        val videoInteractedWithLink = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andReturnLink(VideosLinkBuilder.Rels.CREATE_VIDEO_INTERACTED_WITH_EVENT)
+            .expand(mapOf("type" to "COPY_SHARE_LINK"))
+
+        mockMvc.perform(post(videoInteractedWithLink).asTeacher(email = "john@teacher.com"))
+            .andExpect(status().isOk)
+
+        val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
+        assertThat(event.subtype).isEqualTo("COPY_SHARE_LINK")
+        assertThat(event.videoId).isEqualTo(videoId.value)
+        assertThat(event.user.id).isEqualTo("john@teacher.com")
+    }
+
+    @Test
     fun `playbacks by unauthorized users are saved`() {
-        val videoId = TestFactories.aValidId()
+        val videoId = aValidId()
         mockMvc.perform(
             post("/v1/events/playback")
                 .contentType(MediaType.APPLICATION_JSON)

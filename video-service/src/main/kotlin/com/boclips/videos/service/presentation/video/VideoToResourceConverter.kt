@@ -80,6 +80,7 @@ class VideoToResourceConverter(
         listOfNotNull(
             videosLinkBuilder.self(videoResource),
             videosLinkBuilder.transcriptLink(videoResource),
+            videosLinkBuilder.createVideoInteractedWithEvent(videoResource),
             video?.let { videosLinkBuilder.rateLink(it) },
             video?.let { videosLinkBuilder.updateLink(it) },
             video?.let { videosLinkBuilder.tagLink(it) }

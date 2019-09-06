@@ -387,7 +387,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
             .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
-
+            .andExpect(jsonPath("$._links.createVideoInteractedWithEvent.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
             .andExpect(jsonPath("$.type").doesNotExist())
             .andExpect(jsonPath("$.status").doesNotExist())

@@ -91,13 +91,13 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `dipatch video updated events`() {
+    fun `broadcast video events`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_videos").asOperator())
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
-    fun `dipatch video updated events returns 403 when user is not allowed`() {
+    fun `broadcast video events returns 403 when user is not allowed`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_videos").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
     }

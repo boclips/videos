@@ -11,6 +11,7 @@ import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
+import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
@@ -127,6 +128,14 @@ class PubSubEventsService(
         eventBus.publish(
             msg(
                 CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(false)
+            )
+        )
+    }
+
+    override fun publishVideoInteractedWithEvent(videoId: VideoId, subtype: String) {
+        eventBus.publish(
+            msg(
+                VideoInteractedWith.builder().videoId(videoId.value).subtype(subtype)
             )
         )
     }

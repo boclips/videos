@@ -40,6 +40,8 @@ import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethod
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
+import com.damnhandy.uri.template.UriTemplate
+import com.jayway.jsonpath.JsonPath
 import com.mongodb.MongoClient
 import com.nhaarman.mockito_kotlin.reset
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -53,6 +55,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
@@ -301,5 +305,14 @@ abstract class AbstractSpringIntegrationTest {
             .andExpect(jsonPath("$.error").exists())
             .andExpect(jsonPath("$.message").exists())
             .andExpect(jsonPath("$.path").exists())
+    }
+
+    fun ResultActions.andReturnLink(linkName: String): UriTemplate {
+        val hrefPath = "$._links.$linkName.href"
+        andExpect(jsonPath(hrefPath).exists())
+
+        val response = andReturn().response.contentAsString
+        val link = JsonPath.parse(response).read<String>(hrefPath)
+        return UriTemplate.fromTemplate(link)
     }
 }

@@ -35,5 +35,7 @@ interface EventService {
         subtype: String,
         payload: Map<String, Any>
     )
+
+    fun publishVideoInteractedWithEvent(videoId: VideoId, subtype: String)
 }
 
