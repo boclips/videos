@@ -26,8 +26,9 @@ class UpdateSubject(
     }
 
     @BoclipsEventListener
-    fun onUpdatedSubject(updatedSubject: SubjectChanged) {
-        val subjectId = SubjectId(updatedSubject.subject.id.value)
+    fun onUpdatedSubject(subjectChanged: SubjectChanged) {
+        val subjectId = SubjectId(subjectChanged.subject.id.value)
+        val updatedSubject = Subject(subjectId, subjectChanged.subject.name)
 
         videoRepository.streamAll(VideoFilter.HasSubjectId(subjectId)) { videos ->
             videos.windowed(
@@ -36,9 +37,11 @@ class UpdateSubject(
                 partialWindows = true
             ).forEach { windowedVideos ->
                 val commands = windowedVideos.map { video ->
-                    val newSubjects = video.subjects
-                        .filter { subject -> subject.id != subjectId }
-                        .plus(Subject(subjectId, updatedSubject.subject.name))
+                    val newSubjects = replaceSubject(
+                        subjects = video.subjects,
+                        idToReplace = subjectId,
+                        updatedSubject = updatedSubject
+                    )
 
                     VideoUpdateCommand.ReplaceSubjects(videoId = video.videoId, subjects = newSubjects)
                 }
@@ -48,14 +51,25 @@ class UpdateSubject(
         }
 
         collectionRepository.findAllBySubject(subjectId = subjectId).map { collection ->
-            val newSubjects = collection.subjects
-                .filter { subject -> subject.id != subjectId }
-                .plus(Subject(subjectId, updatedSubject.subject.name))
-                .toSet()
+            val newSubjects = replaceSubject(
+                subjects = collection.subjects,
+                idToReplace = subjectId,
+                updatedSubject = updatedSubject
+            ).toSet()
 
             val command = CollectionUpdateCommand.ReplaceSubjects(newSubjects)
             collectionRepository.update(collection.id, command)
         }
+    }
+
+    private fun replaceSubject(
+        subjects: Collection<Subject>,
+        idToReplace: SubjectId,
+        updatedSubject: Subject
+    ): List<Subject> {
+        return subjects
+            .filter { subject -> subject.id != idToReplace }
+            .plus(updatedSubject)
     }
 }
 
