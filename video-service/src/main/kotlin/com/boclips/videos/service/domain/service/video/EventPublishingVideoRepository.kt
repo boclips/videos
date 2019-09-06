@@ -5,6 +5,7 @@ import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.EventConverter
 
@@ -33,6 +34,13 @@ class EventPublishingVideoRepository(private val videoRepository: VideoRepositor
         publishVideoCreated(videoCreated)
 
         return videoCreated
+    }
+
+    override fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>) {
+        videoRepository.streamUpdate(filter) { videos ->
+            publishVideosUpdated(videos)
+            consumer(videos)
+        }
     }
 
     private fun publishVideoUpdated(video: Video) {

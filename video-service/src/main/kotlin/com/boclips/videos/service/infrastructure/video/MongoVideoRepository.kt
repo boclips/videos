@@ -213,8 +213,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 size = batchProcessingConfig.videoBatchSize,
                 step = batchProcessingConfig.videoBatchSize,
                 partialWindows = true
-            ).forEach { windowedVideos ->
-                bulkUpdate(commands = consumer(windowedVideos))
+            ).forEachIndexed { index, windowedVideos ->
+                logger.info { "Starting update batch: $index" }
+                val updatedVideos = bulkUpdate(commands = consumer(windowedVideos))
+                logger.info { "Updated ${updatedVideos.size} videos" }
             }
         }
     }

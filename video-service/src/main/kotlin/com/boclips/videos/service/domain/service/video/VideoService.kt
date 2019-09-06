@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
@@ -19,8 +18,7 @@ import mu.KLogging
 class VideoService(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val videoRepository: VideoRepository,
-    private val videoSearchService: VideoSearchService,
-    private val batchProcessingConfig: BatchProcessingConfig
+    private val videoSearchService: VideoSearchService
 ) {
     companion object : KLogging()
 
@@ -92,11 +90,11 @@ class VideoService(
     fun updateContentPartnerInVideos(contentPartner: ContentPartner) {
         logger.info { "Starting updating videos for content partner: $contentPartner" }
 
-        videoRepository.streamAll(
+        videoRepository.streamUpdate(
             VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartner.contentPartnerId)
-        ) { videosAffected: Sequence<Video> ->
-            val commands = videosAffected.flatMap { video ->
-                sequenceOf(
+        ) { videos ->
+            videos.flatMap { video ->
+                listOf(
                     VideoUpdateCommand.ReplaceContentPartner(
                         videoId = video.videoId,
                         contentPartner = contentPartner
@@ -108,19 +106,9 @@ class VideoService(
                     )
                 )
             }
-
-            commands.windowed(
-                size = batchProcessingConfig.videoBatchSize,
-                step = batchProcessingConfig.videoBatchSize,
-                partialWindows = true
-            )
-                .forEachIndexed { index, bulkUpdateCommands ->
-                    logger.info { "Starting bulk update batch $index" }
-                    videoRepository.bulkUpdate(bulkUpdateCommands)
-                }
-
-            logger.info { "Finished updating videos for content partner: $contentPartner" }
         }
+
+        logger.info { "Finished updating videos for content partner: $contentPartner" }
     }
 }
 

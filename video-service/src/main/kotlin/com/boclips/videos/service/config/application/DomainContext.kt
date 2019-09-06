@@ -47,7 +47,7 @@ class DomainContext(
         playbackRepository: PlaybackRepository,
         batchProcessingConfig: BatchProcessingConfig
     ): VideoService {
-        return VideoService(contentPartnerRepository, videoRepository, videoSearchService, batchProcessingConfig)
+        return VideoService(contentPartnerRepository, videoRepository, videoSearchService)
     }
 
     @Bean
