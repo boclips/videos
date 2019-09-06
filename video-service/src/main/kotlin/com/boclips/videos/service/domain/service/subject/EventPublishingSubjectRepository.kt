@@ -3,16 +3,13 @@ package com.boclips.videos.service.domain.service.subject
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.events.subject.SubjectChanged
-import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
 
 class EventPublishingSubjectRepository(val subjectRepository: SubjectRepository, val eventBus: EventBus) :
     SubjectRepository by subjectRepository {
 
-    override fun updateName(subjectId: SubjectId, name: String) {
-        subjectRepository.updateName(subjectId, name)
-
-        val subject =
-            subjectRepository.findById(subjectId) ?: throw IllegalStateException("Could not find updated subject")
+    override fun update(updateCommand: SubjectUpdateCommand): com.boclips.videos.service.domain.model.subject.Subject {
+        val subject = subjectRepository.update(updateCommand)
 
         eventBus.publish(
             SubjectChanged.builder().subject(
@@ -23,5 +20,7 @@ class EventPublishingSubjectRepository(val subjectRepository: SubjectRepository,
                 ).name(subject.name).build()
             ).build()
         )
+
+        return subject
     }
 }

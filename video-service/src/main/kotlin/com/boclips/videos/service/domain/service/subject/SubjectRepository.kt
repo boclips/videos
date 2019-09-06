@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.subject
 
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
 
 interface SubjectRepository {
     fun findAll(): List<Subject>
@@ -10,5 +11,5 @@ interface SubjectRepository {
     fun findByName(name: String): Subject?
     fun create(name: String): Subject
     fun delete(id: SubjectId)
-    fun updateName(subjectId: SubjectId, name: String)
+    fun update(updateCommand: SubjectUpdateCommand): Subject
 }

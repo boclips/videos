@@ -1,10 +1,14 @@
 package com.boclips.videos.service.infrastructure.subject
 
+import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
@@ -75,9 +79,22 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update a name of a subject`() {
         val subject = mongoSubjectRepository.create(name = "French")
 
-        mongoSubjectRepository.updateName(subject.id, "German")
+        val updatedSubject = mongoSubjectRepository.update(
+            SubjectUpdateCommand.ReplaceName(subjectId = subject.id, name = "German")
+        )
 
-        val updatedSubject = mongoSubjectRepository.findById(subject.id)
-        assertThat(updatedSubject!!.name).isEqualTo("German")
+        assertThat(updatedSubject.name).isEqualTo("German")
+    }
+
+    @Test
+    fun `throws when updating a invalid subject`() {
+        assertThrows<IllegalStateException> {
+            mongoSubjectRepository.update(
+                SubjectUpdateCommand.ReplaceName(
+                    subjectId = SubjectId(value = ObjectId().toHexString()),
+                    name = "German"
+                )
+            )
+        }
     }
 }

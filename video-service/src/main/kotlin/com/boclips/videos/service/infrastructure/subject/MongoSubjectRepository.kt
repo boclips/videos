@@ -2,9 +2,9 @@ package com.boclips.videos.service.infrastructure.subject
 
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.VideoDocument
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.bson.types.ObjectId
@@ -69,11 +69,18 @@ class MongoSubjectRepository(
         getSubjectCollection().deleteOne(SubjectDocument::id eq ObjectId(id.value))
     }
 
-    override fun updateName(subjectId: SubjectId, name: String) {
-        getSubjectCollection().updateOne(
-            VideoDocument::id eq ObjectId(subjectId.value),
-            set(SubjectDocument::name, name)
-        )
+    override fun update(updateCommand: SubjectUpdateCommand): Subject {
+        when (updateCommand) {
+            is SubjectUpdateCommand.ReplaceName -> {
+                getSubjectCollection().updateOne(
+                    SubjectDocument::id eq ObjectId(updateCommand.subjectId.value),
+                    set(SubjectDocument::name, updateCommand.name)
+                )
+            }
+        }
+
+        return findById(updateCommand.subjectId)
+            ?: throw IllegalStateException("Could not find updated subject ${updateCommand.subjectId.value}")
     }
 
     private fun toSubject(subjectDocument: SubjectDocument): Subject {
