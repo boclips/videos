@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.subject
 
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import com.mongodb.MongoClient

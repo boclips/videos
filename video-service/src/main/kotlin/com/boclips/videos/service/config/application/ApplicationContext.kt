@@ -58,7 +58,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService

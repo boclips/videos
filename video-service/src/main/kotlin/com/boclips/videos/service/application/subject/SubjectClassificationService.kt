@@ -4,7 +4,7 @@ import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.eventbus.events.video.VideoSubjectClassified
-import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter

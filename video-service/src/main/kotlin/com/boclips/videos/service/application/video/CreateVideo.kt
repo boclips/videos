@@ -13,7 +13,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException

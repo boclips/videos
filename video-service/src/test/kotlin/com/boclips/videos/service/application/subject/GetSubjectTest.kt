@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.subject
 
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.nhaarman.mockito_kotlin.mock

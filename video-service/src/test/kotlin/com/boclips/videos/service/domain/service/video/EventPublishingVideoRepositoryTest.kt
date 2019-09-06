@@ -4,7 +4,7 @@ import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat

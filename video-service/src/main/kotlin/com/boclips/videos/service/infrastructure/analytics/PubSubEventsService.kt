@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.analytics
 
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.domain.user.User
-import com.boclips.eventbus.events.base.UserEvent
+import com.boclips.eventbus.events.base.AbstractUserEvent
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
@@ -171,7 +171,7 @@ class PubSubEventsService(
         )
     }
 
-    private fun msg(builder: UserEvent.UserEventBuilder<*, *>): UserEvent {
+    private fun msg(builder: AbstractUserEvent.AbstractUserEventBuilder<*, *>): AbstractUserEvent {
         val user = getCurrentUser().let {
             User.builder()
                 .id(it.id)

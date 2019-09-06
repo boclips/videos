@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.disciplines
 
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
-import com.boclips.videos.service.domain.model.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.disciplines.DisciplineResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
