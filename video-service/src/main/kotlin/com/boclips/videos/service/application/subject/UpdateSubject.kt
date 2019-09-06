@@ -3,17 +3,20 @@ package com.boclips.videos.service.application.subject
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.subject.SubjectChanged
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 
 class UpdateSubject(
     private val subjectRepository: SubjectRepository,
     private val videoRepository: VideoRepository,
+    private val collectionRepository: CollectionRepository,
     private val batchProcessingConfig: BatchProcessingConfig
 ) {
     operator fun invoke(subjectId: SubjectId, name: String?) {
@@ -42,6 +45,16 @@ class UpdateSubject(
 
                 videoRepository.bulkUpdate(commands)
             }
+        }
+
+        collectionRepository.findAllBySubject(subjectId = subjectId).map { collection ->
+            val newSubjects = collection.subjects
+                .filter { subject -> subject.id != subjectId }
+                .plus(Subject(subjectId, updatedSubject.subject.name))
+                .toSet()
+
+            val command = CollectionUpdateCommand.ReplaceSubjects(newSubjects)
+            collectionRepository.update(collection.id, command)
         }
     }
 }

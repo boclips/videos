@@ -49,11 +49,28 @@ class UpdateSubjectIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo = videoRepository.find(savedVideo)!!
 
-        val newSubject = com.boclips.videos.service.domain.model.subject.Subject(
-            id = mathsSubject.id,
-            name = "MathIsFun"
+        assertThat(updatedVideo.subjects.map { it.name }).containsExactlyInAnyOrder("MathIsFun", "English")
+    }
+
+    @Test
+    fun `updates correct subject in collections`() {
+        val mathsSubject = saveSubject("Maths")
+        val englishSubject = saveSubject("English")
+        val savedCollection = saveCollection(subjects = setOf(mathsSubject, englishSubject))
+
+        fakeEventBus.publish(
+            SubjectChanged.builder()
+                .subject(
+                    Subject.builder()
+                        .name("MathIsFun")
+                        .id(SubjectId.builder().value(mathsSubject.id.value).build())
+                        .build()
+                )
+                .build()
         )
 
-        assertThat(updatedVideo.subjects).containsExactlyInAnyOrder(newSubject, englishSubject)
+        val updatedCollection = collectionRepository.find(savedCollection)!!
+
+        assertThat(updatedCollection.subjects.map { it.name }).containsExactlyInAnyOrder("MathIsFun", "English")
     }
 }

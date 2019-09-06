@@ -218,10 +218,7 @@ class MongoCollectionRepository(
     }
 
     private fun updateOne(id: CollectionId, update: Bson) {
-        val updatesWithTimestamp = combine(
-            update,
-            set(CollectionDocument::updatedAt, Instant.now())
-        )
+        val updatesWithTimestamp = combine(update, set(CollectionDocument::updatedAt, Instant.now()))
 
         dbCollection().updateOne(CollectionDocument::id eq ObjectId(id.value), updatesWithTimestamp)
         logger.info { "Updated collection $id" }

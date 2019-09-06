@@ -311,7 +311,7 @@ class ApplicationContext(
 
     @Bean
     fun updateSubject(batchProcessingConfig: BatchProcessingConfig): UpdateSubject {
-        return UpdateSubject(subjectRepository, videoRepository, batchProcessingConfig)
+        return UpdateSubject(subjectRepository, videoRepository, collectionRepository, batchProcessingConfig)
     }
 
     @Bean
