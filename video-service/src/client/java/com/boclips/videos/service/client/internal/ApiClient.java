@@ -19,10 +19,11 @@ import java.util.Objects;
 
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.concat;
 import static org.springframework.http.HttpStatus.*;
 
 public class ApiClient implements VideoServiceClient {
+
+    private static final String DETAILS_PROJECTION = "details";
 
     private final String baseUrl;
 
@@ -53,7 +54,7 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public Boolean existsByContentPartnerInfo(String contentPartnerId, String contentPartnerVideoId) {
         try {
-            restTemplate.postForEntity(baseUrl + "/v1/content-partners/{contentPartnerId}/videos/search", contentPartnerVideoId,String.class, contentPartnerId);
+            restTemplate.postForEntity(baseUrl + "/v1/content-partners/{contentPartnerId}/videos/search", contentPartnerVideoId, String.class, contentPartnerId);
             return true;
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == NOT_FOUND) {
@@ -122,7 +123,7 @@ public class ApiClient implements VideoServiceClient {
     @SneakyThrows
     public Collection getDetailed(CollectionId id) {
         return restTemplate.getForObject(
-                new URI(id.getUri().toString() + "?projection=details"),
+                new URI(id.getUri().toString() + "?projection=" + DETAILS_PROJECTION),
                 CollectionResource.class
         ).toCollection();
     }
@@ -151,21 +152,16 @@ public class ApiClient implements VideoServiceClient {
 
     @Override
     public List<Collection> getCollectionsDetailed(PageSpec pageSpec) {
-        // TODO Remove this hack and implement a proper way of retrieving viewable collections
         this.linkTemplate = getLinks();
-        Link collectionLink = linkTemplate.get_links().getCollection();
-        if (collectionLink == null) {
-            throw new UnsupportedOperationException("No 'collection' link. Check user roles.");
+        Link searchCollectionsLink = linkTemplate.get_links().getSearchCollections();
+        if (searchCollectionsLink == null) {
+            throw new UnsupportedOperationException("No 'searchCollections' link. Check user roles.");
         }
 
-        List<Collection> viewerCollections = getCollections(
-                uri(collectionLink.interpolate(singletonMap("id", "dont-do-this-at-home"))),
+        return getCollections(
+                uri(searchCollectionsLink.interpolate(singletonMap("projection", DETAILS_PROJECTION))),
                 pageSpec
         );
-
-        List<Collection> myCollections = getMyCollectionsDetailed(pageSpec);
-
-        return concat(viewerCollections.stream(), myCollections.stream()).collect(toList());
     }
 
     @Override
@@ -176,7 +172,7 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public List<Collection> getMyCollectionsDetailed(PageSpec pageSpec) {
         return getCollections(
-                uri(myCollectionsLink()).replaceQueryParam("projection", "details"),
+                uri(myCollectionsLink()).replaceQueryParam("projection", DETAILS_PROJECTION),
                 pageSpec
         );
     }

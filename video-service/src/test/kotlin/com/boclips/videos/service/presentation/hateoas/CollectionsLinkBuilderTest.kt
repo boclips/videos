@@ -46,12 +46,11 @@ class CollectionsLinkBuilderTest {
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.searchCollections(
-            projection = Projection.details,
             page = 0,
             size = 2
         )!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&public=true&page=0&size=2{&query,subject}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?public=true&page=0&size=2{&query,subject,projection}")
         assertThat(link.rel).isEqualTo("searchCollections")
         assertThat(link.isTemplated).isEqualTo(true)
     }

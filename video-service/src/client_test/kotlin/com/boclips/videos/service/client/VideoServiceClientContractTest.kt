@@ -1,6 +1,8 @@
 package com.boclips.videos.service.client
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.users.client.implementation.FakeUserServiceClient
+import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
 import com.boclips.videos.service.client.internal.FakeClient
@@ -345,20 +347,6 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     }
 
     @Test
-    // TODO Include viewable collections in this test once it's a first-class concept
-    fun `getCollectionsDetailed returns private collections I'm allowed to see (I own or have permission to see) with details`() {
-        val collections: List<Collection> = getClient().collectionsDetailed
-
-        assertThat(collections)
-            .hasSize(2)
-            .flatExtracting("videos")
-            .extracting("playback")
-            .extracting("thumbnailUrl").allSatisfy {
-                assertThat(it as String).isNotBlank()
-            }
-    }
-
-    @Test
     fun `specify page size when fetching collections`() {
         val collections: List<Collection> =
             getClient().getMyCollections(VideoServiceClient.PageSpec.builder().pageSize(1).build())
@@ -391,6 +379,11 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
+    @Test
+    fun `returns detailed collections`() {
+        assertThat(getClient().collectionsDetailed).hasSize(3)
+    }
+
     val fakeClient: FakeClient = VideoServiceClient.getFakeClient().apply {
         addIllegalPlaybackId("illegal-video")
 
@@ -470,6 +463,48 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
         createCollection(CreateCollectionRequest(title = "second collection", videos = listOf(videoId.value))).apply {
             updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf(frenchSubject.id.value)))
         }
+    }
+
+    @BeforeEach
+    fun cleanupContracts() {
+        (userServiceClient as FakeUserServiceClient).clearContracts()
+    }
+
+    @Test
+    fun `can retrieve collections I'm eligible to see with details`() {
+        val videoId = saveVideo()
+
+        val firstCollection = createCollection(
+            CreateCollectionRequest(
+                title = "First Contracted Collection",
+                videos = listOf(videoId.value)
+            )
+        )
+        val secondCollection = createCollection(
+            CreateCollectionRequest(
+                title = "Second Contracted Collection",
+                videos = listOf(videoId.value)
+            )
+        )
+
+        (userServiceClient as FakeUserServiceClient).addContract(SelectedContentContract().apply {
+            collectionIds = listOf(firstCollection.id.value, secondCollection.id.value)
+        })
+
+        val collections: List<Collection> = getClient().collectionsDetailed
+
+        assertThat(collections)
+            .hasSize(2)
+            .extracting("title")
+            .containsExactlyInAnyOrder("First Contracted Collection", "Second Contracted Collection")
+
+        assertThat(collections)
+            .hasSize(2)
+            .flatExtracting("videos")
+            .extracting("playback")
+            .extracting("thumbnailUrl").allSatisfy {
+                assertThat(it as String).isNotBlank()
+            }
     }
 
     override fun getClient() = VideoServiceClient.getUnauthorisedApiClient(videoServiceUrl)

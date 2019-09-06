@@ -12,7 +12,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -143,8 +145,7 @@ public class FakeClient implements VideoServiceClient {
 
     @Override
     public List<Collection> getCollectionsDetailed(PageSpec pageSpec) {
-        // TODO Include the viewer collections once it's a fist-class concept
-        return getMyCollectionsDetailed(pageSpec);
+        return detailedCollectionsByUser.values().stream().flatMap(java.util.Collection::stream).collect(toList());
     }
 
     @Override
