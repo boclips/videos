@@ -2,11 +2,13 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -173,7 +175,7 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `stream all by subject id`() {
         val mathsSubject = TestFactories.createSubject(name = "Maths")
-        val englishSubject = TestFactories.createSubject(name = "Englihs")
+        val englishSubject = TestFactories.createSubject(name = "English")
 
         val video1 =
             mongoVideoRepository.create(TestFactories.createVideo(subjects = setOf(mathsSubject, englishSubject)))
@@ -186,6 +188,41 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         }
 
         assertThat(videos).containsExactlyInAnyOrder(video1, video2)
+    }
+
+    @Test
+    fun `update all videos`() {
+        val video = mongoVideoRepository.create(TestFactories.createVideo(title = "Old Title"))
+
+        mongoVideoRepository.streamUpdate { videos: List<Video> ->
+            videos.map { video ->
+                VideoUpdateCommand.ReplaceTitle(videoId = video.videoId, title = "New Title")
+            }
+        }
+
+        val updatedAsset = mongoVideoRepository.find(video.videoId)!!
+        assertThat(updatedAsset.title).isEqualTo("New Title")
+    }
+
+    @Test
+    fun `update all videos filtered by given subject`() {
+        val mathsSubject = TestFactories.createSubject(name = "Maths")
+        val englishSubject = TestFactories.createSubject(name = "English")
+
+        val video1 =
+            mongoVideoRepository.create(TestFactories.createVideo(subjects = setOf(mathsSubject, englishSubject)))
+        val video2 = mongoVideoRepository.create(TestFactories.createVideo(subjects = setOf()))
+
+        mongoVideoRepository.streamUpdate(VideoFilter.HasSubjectId(mathsSubject.id)) { videos: List<Video> ->
+            videos.map { video ->
+                VideoUpdateCommand.ReplaceSubjects(video.videoId, listOf(Subject(mathsSubject.id, "MathsIsForLosers")))
+            }
+        }
+
+        assertThat(mongoVideoRepository.find(videoId = video1.videoId)!!.subjects.map { it.name })
+            .containsExactlyInAnyOrder("MathsIsForLosers")
+
+        assertThat(mongoVideoRepository.find(videoId = video2.videoId)!!.subjects).isEmpty()
     }
 
     private fun createVideoWithLegacyDistributionMethods(): Video {

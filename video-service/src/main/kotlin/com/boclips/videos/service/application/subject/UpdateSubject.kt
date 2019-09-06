@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
-import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
@@ -30,23 +29,15 @@ class UpdateSubject(
         val subjectId = SubjectId(subjectChanged.subject.id.value)
         val updatedSubject = Subject(subjectId, subjectChanged.subject.name)
 
-        videoRepository.streamAll(VideoFilter.HasSubjectId(subjectId)) { videos ->
-            videos.windowed(
-                size = batchProcessingConfig.videoBatchSize,
-                step = batchProcessingConfig.videoBatchSize,
-                partialWindows = true
-            ).forEach { windowedVideos ->
-                val commands = windowedVideos.map { video ->
-                    val newSubjects = replaceSubject(
-                        subjects = video.subjects,
-                        idToReplace = subjectId,
-                        updatedSubject = updatedSubject
-                    )
+        videoRepository.streamUpdate { videos ->
+            videos.map { video ->
+                val newSubjects = replaceSubject(
+                    subjects = video.subjects,
+                    idToReplace = subjectId,
+                    updatedSubject = updatedSubject
+                )
 
-                    VideoUpdateCommand.ReplaceSubjects(videoId = video.videoId, subjects = newSubjects)
-                }
-
-                videoRepository.bulkUpdate(commands)
+                VideoUpdateCommand.ReplaceSubjects(videoId = video.videoId, subjects = newSubjects)
             }
         }
 

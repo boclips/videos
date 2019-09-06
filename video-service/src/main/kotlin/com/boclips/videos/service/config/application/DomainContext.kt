@@ -67,10 +67,11 @@ class DomainContext(
     }
 
     @Bean
-    fun videoRepository(): VideoRepository {
+    fun videoRepository(batchProcessingConfig: BatchProcessingConfig): VideoRepository {
         return EventPublishingVideoRepository(
             MongoVideoRepository(
-                mongoClient
+                mongoClient,
+                batchProcessingConfig = batchProcessingConfig
             ), eventBus
         )
     }

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
@@ -55,9 +56,11 @@ import org.litote.kmongo.set
 import java.time.Instant
 import java.util.Optional
 
-class MongoVideoRepository(private val mongoClient: MongoClient) : VideoRepository {
+class MongoVideoRepository(private val mongoClient: MongoClient, val batchProcessingConfig: BatchProcessingConfig) :
+    VideoRepository {
 
     companion object : KLogging() {
+
         const val collectionName = "videos"
     }
 
@@ -190,6 +193,30 @@ class MongoVideoRepository(private val mongoClient: MongoClient) : VideoReposito
         logger.info("Bulk video update: $result")
 
         return findAll(commands.map { it.videoId })
+    }
+
+    override fun streamUpdate(consumer: (List<Video>) -> List<VideoUpdateCommand>) {
+        streamAll { videos ->
+            videos.windowed(
+                size = batchProcessingConfig.videoBatchSize,
+                step = batchProcessingConfig.videoBatchSize,
+                partialWindows = true
+            ).forEach { windowedVideos ->
+                bulkUpdate(commands = consumer(windowedVideos))
+            }
+        }
+    }
+
+    override fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>) {
+        streamAll(filter) { videos ->
+            videos.windowed(
+                size = batchProcessingConfig.videoBatchSize,
+                step = batchProcessingConfig.videoBatchSize,
+                partialWindows = true
+            ).forEach { windowedVideos ->
+                bulkUpdate(commands = consumer(windowedVideos))
+            }
+        }
     }
 
     override fun existsVideoFromContentPartnerName(contentPartnerName: String, partnerVideoId: String): Boolean {
