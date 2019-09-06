@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
@@ -17,7 +16,6 @@ class CollectionDocumentConverterTest {
         val originalAsset = CollectionDocument(
             id = ObjectId(),
             owner = "Hans",
-            viewerIds = listOf("Fritz"),
             title = "A truly amazing collection",
             videos = emptyList(),
             updatedAt = timeNow,
@@ -42,7 +40,6 @@ class CollectionDocumentConverterTest {
 
         assertThat(collection.id).isNotNull
         assertThat(collection.owner.value).isEqualTo("Hans")
-        assertThat(collection.viewerIds).containsExactly(UserId(value = "Fritz"))
         assertThat(collection.title).isEqualTo("A truly amazing collection")
         assertThat(collection.updatedAt).isEqualTo(timeNow)
         assertThat(collection.isPublic).isEqualTo(false)
@@ -52,7 +49,7 @@ class CollectionDocumentConverterTest {
         assertThat(collection.description).isEqualTo("Good description")
         assertThat(collection.subjects.first().name).isEqualTo("subject-1")
         assertThat(collection.subjects.first().id.value).isNotBlank()
-        assertThat(collection.attachments).hasSize(1);
+        assertThat(collection.attachments).hasSize(1)
         assertThat(collection.attachments.first().attachmentId).isNotNull
         assertThat(collection.attachments.first().description).isEqualTo("description")
         assertThat(collection.attachments.first().type).isEqualTo(AttachmentType.LESSON_PLAN)

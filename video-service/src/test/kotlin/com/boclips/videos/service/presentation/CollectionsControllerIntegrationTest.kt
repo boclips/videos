@@ -278,27 +278,6 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `fetching a collection as a viewer`() {
-        val collectionId = "5c55697860fef77aa4af323a"
-        val userId = "viewer-123@testing.com"
-        mongoClient
-            .getDatabase(DATABASE_NAME)
-            .getCollection(MongoCollectionRepository.collectionName)
-            .insertOne(
-                Document()
-                    .append("_id", ObjectId(collectionId))
-                    .append("title", "My Videos")
-                    .append("owner", "a4efeee2-0166-4371-ba72-0fa5a13c9aca")
-                    .append("viewerIds", listOf(userId))
-                    .append("updatedAt", Date())
-                    .append("videos", emptyList<VideoId>())
-            )
-
-        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(userId))
-            .andExpect(status().isOk)
-    }
-
-    @Test
     fun `fetching a collection as a user with a SelectedContent contract for it`() {
         val collectionId = createCollection(title = "Some Non Public Collection", public = false)
         createSelectedContentContract(collectionId)

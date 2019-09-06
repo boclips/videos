@@ -237,13 +237,11 @@ object TestFactories {
         createdByBoclips: Boolean = false,
         bookmarks: Set<UserId> = emptySet(),
         subjects: Set<Subject> = emptySet(),
-        viewerIds: List<UserId> = emptyList(),
         description: String = "collection description",
         attachments: Set<Attachment> = emptySet()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
-        viewerIds = viewerIds,
         title = title,
         videos = videos,
         updatedAt = updatedAt,

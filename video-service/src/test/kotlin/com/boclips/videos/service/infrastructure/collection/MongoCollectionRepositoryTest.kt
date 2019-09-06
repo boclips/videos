@@ -391,21 +391,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `can retrieve collections of viewer`() {
-            val viewerId = "viewer1"
-            val collection = collectionRepository.createWithViewers(
-                owner = UserId(value = "user1"),
-                title = "",
-                viewerIds = listOf(viewerId)
-            )
-
-            val viewerCollections = collectionRepository.getByViewer(UserId(viewerId), PageRequest(0, 10))
-
-            assertThat(viewerCollections.elements).hasSize(1)
-            assertThat(viewerCollections.elements.map { it.id }).contains(collection.id)
-        }
-
-        @Test
         fun `can retrieve bookmarked collections`() {
             val publicBookmarkedCollection = collectionRepository.create(
                 owner = UserId(value = "user1"),
@@ -471,30 +456,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val collection = collectionRepository.find(CollectionId(value = "5c55697860fef77aa4af323a"))!!
 
-            assertThat(collection.viewerIds).isEmpty()
             assertThat(collection.isPublic).isEqualTo(false)
-        }
-
-        @Test
-        fun `can map viewerIds`() {
-            val collectionId = "5c55697860fef77aa4af323a"
-            val viewerId = "viewer-123@testing.com"
-            mongoClient
-                .getDatabase(DATABASE_NAME)
-                .getCollection(MongoCollectionRepository.collectionName)
-                .insertOne(
-                    Document()
-                        .append("_id", ObjectId(collectionId))
-                        .append("title", "My Videos")
-                        .append("owner", "a4efeee2-0166-4371-ba72-0fa5a13c9aca")
-                        .append("viewerIds", listOf(viewerId))
-                        .append("updatedAt", Date())
-                        .append("videos", emptyList<VideoId>())
-                )
-
-            val collection = collectionRepository.find(CollectionId(value = collectionId))!!
-
-            assertThat(collection.viewerIds).containsExactlyInAnyOrder(UserId(value = viewerId))
         }
     }
 

@@ -1,8 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
-import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.endsWith
@@ -87,25 +85,6 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
-    }
-
-    @Test
-    fun `get collections by viewer with deep video information`() {
-        val viewer = "viewer@test.com"
-
-        val savedVideoId = saveVideo()
-        val collection = createCollectionForViewer(viewer)
-        addVideo(collection.id.value, savedVideoId.value)
-
-        mockMvc.perform(get("/v1/collections/dont-do-this-at-home").asApiUser(viewer))
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
-            .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
-            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0].playback.thumbnailUrl", not(isEmptyString())))
     }
 
     @Test
@@ -216,7 +195,4 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
     }
-
-    private fun createCollectionForViewer(viewerId: String) =
-        collectionRepository.createWithViewers(UserId("teacher@gmail.com"), "Viewer collection", listOf(viewerId))
 }

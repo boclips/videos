@@ -7,11 +7,9 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
-import com.boclips.videos.service.application.collection.GetViewerCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
@@ -51,8 +49,7 @@ class CollectionsController(
     private val bookmarkCollection: BookmarkCollection,
     private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
-    private val withProjection: WithProjection,
-    private val getViewerCollections: GetViewerCollections
+    private val withProjection: WithProjection
 ) {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
@@ -132,25 +129,6 @@ class CollectionsController(
     fun removeCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
         deleteCollection(id)
         return ResponseEntity(HttpStatus.NO_CONTENT)
-    }
-
-    // TODO Drop this ASAP
-    @GetMapping("/dont-do-this-at-home")
-    fun dontDoThisAtHome(): MappingJacksonValue {
-        val viewerCollections = getViewerCollections(getCurrentUserId())
-
-        val collectionResources = viewerCollections.elements.map(::wrapCollection)
-            .let(HateoasEmptyCollection::fixIfEmptyCollection)
-
-        return withProjection(
-            Resources(
-                collectionResources,
-                listOfNotNull(
-                    collectionsLinkBuilder.self(),
-                    collectionsLinkBuilder.next(viewerCollections.pageInfo)
-                )
-            )
-        )
     }
 
     @GetMapping("/{id}")

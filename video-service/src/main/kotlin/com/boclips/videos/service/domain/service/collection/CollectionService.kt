@@ -72,7 +72,6 @@ class CollectionService(
         return when {
             isForReading && collection.isPublic -> collection
             collection.owner == userId -> collection
-            collection.viewerIds.contains(userId) -> collection
             isContractedToView(collection, userContractService.getContracts(userId.value)) -> collection
             else -> throw CollectionAccessNotAuthorizedException(
                 userId,
