@@ -11,15 +11,11 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 
 class VideoServiceTest : AbstractSpringIntegrationTest() {

@@ -181,7 +181,8 @@ abstract class AbstractSpringIntegrationTest {
         distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
-        )
+        ),
+        subjectIds: Set<String> = setOf()
     ): VideoId {
         val retrievedContentPartnerId = try {
             createContentPartner(
@@ -227,7 +228,8 @@ abstract class AbstractSpringIntegrationTest {
                 playbackProvider = playbackId.type.name,
                 analyseVideo = false,
                 ageRangeMin = ageRange.min(),
-                ageRangeMax = ageRange.max()
+                ageRangeMax = ageRange.max(),
+                subjects = subjectIds
             )
         )
 
@@ -238,9 +240,8 @@ abstract class AbstractSpringIntegrationTest {
         return VideoId(id!!)
     }
 
-    fun saveSubject(name: String): SubjectId {
-        val subjectId = createSubject(CreateSubjectRequest(name)).id
-        return SubjectId(subjectId)
+    fun saveSubject(name: String): Subject {
+        return createSubject(CreateSubjectRequest(name))
     }
 
     fun setVideoSubjects(videoId: String, vararg subjectIds: SubjectId) {

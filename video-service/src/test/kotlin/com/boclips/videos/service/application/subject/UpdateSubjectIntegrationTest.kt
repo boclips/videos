@@ -12,9 +12,9 @@ class UpdateSubjectIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `publishes subject updated event`() {
-        val savedSubject = saveSubject("Maths")
+        val savedSubjectId = saveSubject("Maths").id
 
-        updateSubject.invoke(savedSubject, "Mathematicus")
+        updateSubject.invoke(savedSubjectId, "Mathematicus")
 
         assertThat(fakeEventBus.countEventsOfType(SubjectChanged::class.java)).isEqualTo(1)
         assertThat((fakeEventBus.receivedEvents[0] as SubjectChanged).subject.name).isEqualTo("Mathematicus")

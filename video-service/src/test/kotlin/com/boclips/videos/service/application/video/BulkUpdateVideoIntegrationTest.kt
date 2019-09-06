@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.application.video.exceptions.InvalidBulkUpdateRequestException
 import com.boclips.videos.service.domain.model.video.DistributionMethod

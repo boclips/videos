@@ -76,7 +76,8 @@ class SubjectController(
             )
         }
         val headers = HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, subjectsLinkBuilder.subject(subject).href)
+            val subjectResource = subject.let { SubjectResource(id = it.id.value, name = it.name) }
+            set(HttpHeaders.LOCATION, subjectsLinkBuilder.subject(subjectResource).href)
         }
         return ResponseEntity(headers, HttpStatus.CREATED)
     }

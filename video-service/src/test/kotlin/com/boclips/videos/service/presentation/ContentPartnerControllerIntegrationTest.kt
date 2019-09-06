@@ -41,7 +41,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     @Test
     fun `post video lookup by provider id returns 200 when video exists`() {
         val contentPartner = saveContentPartner(name = "ted")
-        saveVideo(contentProvider = "ted", contentProviderVideoId = "https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
+        saveVideo(
+            contentProvider = "ted",
+            contentProviderVideoId = "https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/"
+        )
 
         mockMvc.perform(
             post("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/search")

@@ -74,7 +74,7 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._embedded.subjects[0]._links.self.href",
-                    endsWith("/subjects/${createdSubject.value}")
+                    endsWith("/subjects/${createdSubject.id.value}")
                 )
             )
     }
@@ -83,7 +83,7 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `teachers cannot modify subjects`() {
         val createdSubject = saveSubject("Maths")
 
-        mockMvc.perform(post("/v1/subjects/${createdSubject.value}").asTeacher())
+        mockMvc.perform(post("/v1/subjects/${createdSubject.id.value}").asTeacher())
             .andExpect(status().isForbidden)
     }
 
@@ -92,14 +92,14 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val createdSubject = saveSubject("Maths")
 
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/v1/subjects/${createdSubject.value}").asBoclipsEmployee()
+            MockMvcRequestBuilders.put("/v1/subjects/${createdSubject.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(
                     """{ "name": "Mathematics" }""".trim()
                 )
         )
             .andExpect(status().isNoContent)
 
-        mockMvc.perform(get("/v1/subjects/${createdSubject.value}").asTeacher())
+        mockMvc.perform(get("/v1/subjects/${createdSubject.id.value}").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.name", equalTo("Mathematics")))
     }

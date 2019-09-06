@@ -425,7 +425,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["${frenchSubject.value}", "${germanSubject.value}"]}""").asTeacher()
+                .content("""{"subjects": ["${frenchSubject.id.value}", "${germanSubject.id.value}"]}""").asTeacher()
         )
             .andExpect(status().isNoContent)
 

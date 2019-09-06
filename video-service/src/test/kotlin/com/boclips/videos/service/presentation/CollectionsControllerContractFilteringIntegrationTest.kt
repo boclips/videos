@@ -4,8 +4,6 @@ import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
-import com.boclips.videos.service.testsupport.asTeacher
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.contentPartner
 
-import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter

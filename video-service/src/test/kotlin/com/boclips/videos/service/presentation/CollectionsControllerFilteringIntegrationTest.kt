@@ -175,11 +175,11 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
         mockMvc.perform(
             MockMvcRequestBuilders.patch(selfLink(frenchCollection)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["${frenchSubject.value}"]}""").asTeacher()
+                .content("""{"subjects": ["${frenchSubject.id.value}"]}""").asTeacher()
         )
         mockMvc.perform(
             MockMvcRequestBuilders.patch(selfLink(germanCollection)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["${germanSubject.value}"]}""").asTeacher()
+                .content("""{"subjects": ["${germanSubject.id.value}"]}""").asTeacher()
         )
 
         updateCollectionToBePublic(frenchCollection)
@@ -187,7 +187,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         updateCollectionToBePublic(collectionWithoutSubjects)
 
         mockMvc.perform(
-            get("/v1/collections?subject=${frenchSubject.value},${germanSubject.value}&public=true")
+            get("/v1/collections?subject=${frenchSubject.id.value},${germanSubject.id.value}&public=true")
                 .asTeacher("teacher@gmail.com")
         )
             .andExpect(status().isOk)
@@ -203,14 +203,14 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
         mockMvc.perform(
             MockMvcRequestBuilders.patch(selfLink(frenchCollection)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"subjects": ["${frenchSubject.value}"]}""").asTeacher()
+                .content("""{"subjects": ["${frenchSubject.id.value}"]}""").asTeacher()
         )
 
         updateCollectionToBePublic(frenchCollection)
         updateCollectionToBePublic(unclassifiedCollection)
 
         mockMvc.perform(
-            get("/v1/collections?subject=${frenchSubject.value}&projection=details&public=true")
+            get("/v1/collections?subject=${frenchSubject.id.value}&projection=details&public=true")
                 .asTeacher("teacher@gmail.com")
         )
             .andExpect(status().isOk)

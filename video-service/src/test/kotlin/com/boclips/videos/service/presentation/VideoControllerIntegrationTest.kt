@@ -96,7 +96,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `search videos as teacher`() {
-        setVideoSubjects(kalturaVideoId, saveSubject("Maths"))
+        setVideoSubjects(kalturaVideoId, saveSubject("Maths").id)
 
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
             .andExpect(status().isOk)
@@ -278,7 +278,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             legalRestrictions = "None"
         ).value
 
-        val subjectId = saveSubject("Maths")
+        val subjectId = saveSubject("Maths").id
         setVideoSubjects(videoId, subjectId)
 
         mockMvc.perform(get("/v1/videos?query=elephants&subject=${subjectId.value}").asTeacher())
@@ -299,7 +299,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             legalRestrictions = "None"
         ).value
 
-        val subjectId = saveSubject("Maths")
+        val subjectId = saveSubject("Maths").id
         setVideoSubjects(videoId, subjectId)
 
         mockMvc.perform(get("/v1/videos?subject=${subjectId.value}").asTeacher())
@@ -314,8 +314,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val mathsVideoId = saveVideo().value
         val englishVideoId = saveVideo().value
 
-        val mathsId = saveSubject("Maths")
-        val englishId = saveSubject("English")
+        val mathsId = saveSubject("Maths").id
+        val englishId = saveSubject("English").id
         setVideoSubjects(mathsVideoId, mathsId)
         setVideoSubjects(englishVideoId, englishId)
 
@@ -332,8 +332,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val mathsVideoId = saveVideo().value
         val englishVideoId = saveVideo().value
 
-        val mathsId = saveSubject("Maths")
-        val englishId = saveSubject("English")
+        val mathsId = saveSubject("Maths").id
+        val englishId = saveSubject("English").id
         setVideoSubjects(mathsVideoId, mathsId)
         setVideoSubjects(englishVideoId, englishId)
 
@@ -636,7 +636,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create new video with subjects`() {
-        val subjectId = saveSubject("Maths")
+        val subjectId = saveSubject("Maths").id
         val contentPartnerId = saveContentPartner().contentPartnerId.value
 
         fakeKalturaClient.addMediaEntry(

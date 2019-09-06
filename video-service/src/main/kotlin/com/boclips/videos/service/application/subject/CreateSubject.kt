@@ -2,20 +2,19 @@ package com.boclips.videos.service.application.subject
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
 import com.boclips.videos.service.application.exceptions.SubjectExistsException
+import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
-import com.boclips.videos.service.presentation.subject.SubjectResource
 
 class CreateSubject(
     private val subjectRepository: SubjectRepository
 ) {
-    operator fun invoke(request: CreateSubjectRequest): SubjectResource {
+    operator fun invoke(request: CreateSubjectRequest): Subject {
         val subjectName = getOrThrow(request.name, "name")
 
         if (subjectRepository.findByName(subjectName) != null) {
             throw SubjectExistsException(subjectName)
         }
         return subjectRepository.create(name = subjectName)
-            .let { SubjectResource(id = it.id.value, name = it.name) }
     }
 }
