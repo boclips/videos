@@ -53,17 +53,17 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.config.properties.PubSubVideoSearchabilityUpdateProperties
+import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
@@ -310,8 +310,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun updateSubject(): UpdateSubject {
-        return UpdateSubject(subjectRepository)
+    fun updateSubject(batchProcessingConfig: BatchProcessingConfig): UpdateSubject {
+        return UpdateSubject(subjectRepository, videoRepository, batchProcessingConfig)
     }
 
     @Bean
@@ -365,12 +365,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun updateContentPartner(pubSubVideoSearchabilityUpdateProperties: PubSubVideoSearchabilityUpdateProperties)
-        : UpdateContentPartner {
-        return UpdateContentPartner(
-            contentPartnerRepository,
-            videoService
-        )
+    fun updateContentPartner(): UpdateContentPartner {
+        return UpdateContentPartner(contentPartnerRepository, videoService)
     }
 
     @Bean

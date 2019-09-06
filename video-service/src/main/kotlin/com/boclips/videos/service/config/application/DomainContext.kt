@@ -2,6 +2,7 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
@@ -43,13 +44,10 @@ class DomainContext(
         contentPartnerRepository: ContentPartnerRepository,
         videoRepository: VideoRepository,
         videoSearchService: VideoSearchService,
-        playbackRepository: PlaybackRepository
+        playbackRepository: PlaybackRepository,
+        batchProcessingConfig: BatchProcessingConfig
     ): VideoService {
-        return VideoService(
-            contentPartnerRepository,
-            videoRepository,
-            videoSearchService
-        )
+        return VideoService(contentPartnerRepository, videoRepository, videoSearchService, batchProcessingConfig)
     }
 
     @Bean
@@ -57,10 +55,7 @@ class DomainContext(
         collectionRepository: CollectionRepository,
         collectionSearchService: CollectionSearchService
     ): CollectionService {
-        return CollectionService(
-            collectionRepository,
-            collectionSearchService
-        )
+        return CollectionService(collectionRepository, collectionSearchService)
     }
 
     @Bean

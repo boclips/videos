@@ -38,3 +38,6 @@ pubsub:
   video-searchability-update:
     batch-size:
       2
+
+batch-processing:
+  video-batch-size: 10

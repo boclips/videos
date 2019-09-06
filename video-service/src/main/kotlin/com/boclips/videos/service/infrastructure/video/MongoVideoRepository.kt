@@ -24,6 +24,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
@@ -44,6 +45,7 @@ import org.litote.kmongo.`in`
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
 import org.litote.kmongo.div
+import org.litote.kmongo.elemMatch
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
@@ -53,9 +55,7 @@ import org.litote.kmongo.set
 import java.time.Instant
 import java.util.Optional
 
-class MongoVideoRepository(
-    private val mongoClient: MongoClient
-) : VideoRepository {
+class MongoVideoRepository(private val mongoClient: MongoClient) : VideoRepository {
 
     companion object : KLogging() {
         const val collectionName = "videos"
@@ -125,6 +125,7 @@ class MongoVideoRepository(
                     DistributionMethodDocument.DELIVERY_METHOD_STREAM
                 )
             )
+            is VideoFilter.HasSubjectId -> VideoDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(filter.subjectId.value))
         }
 
         val sequence = Sequence {
