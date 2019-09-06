@@ -42,8 +42,8 @@ class EventController(
         return ResponseEntity(HttpStatus.CREATED)
     }
 
-    @PostMapping("/v1/videos/{videoId}/events", params = ["videoInteractedWith"])
-    fun logVideoInteractedWithEvent(@PathVariable videoId: String, @RequestParam videoInteractedWith: Boolean, @RequestParam type: String?): ResponseEntity<Void> {
+    @PostMapping("/v1/videos/{videoId}/events", params = ["logVideoInteraction"])
+    fun logVideoInteractedWithEvent(@PathVariable videoId: String, @RequestParam logVideoInteraction: Boolean, @RequestParam type: String?): ResponseEntity<Void> {
         saveVideoInteractedWithEvent.execute(videoId, type)
         return ResponseEntity(HttpStatus.OK)
     }

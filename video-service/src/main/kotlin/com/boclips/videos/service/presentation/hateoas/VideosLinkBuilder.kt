@@ -17,7 +17,7 @@ class VideosLinkBuilder {
 
     object Rels {
         const val VIDEO = "video"
-        const val CREATE_VIDEO_INTERACTED_WITH_EVENT = "createVideoInteractedWithEvent"
+        const val LOG_VIDEO_INTERACTION = "logInteraction"
         const val SEARCH_VIDEOS = "searchVideos"
         const val ADMIN_SEARCH = "adminSearch"
         const val VIDEOS = "videos"
@@ -39,8 +39,8 @@ class VideosLinkBuilder {
 
     fun createVideoInteractedWithEvent(videoResource: VideoResource): Link = ControllerLinkBuilder.linkTo(
         ControllerLinkBuilder.methodOn(EventController::class.java)
-            .logVideoInteractedWithEvent(videoId = videoResource.id!!, videoInteractedWith = true, type = null)
-    ).withRel(Rels.CREATE_VIDEO_INTERACTED_WITH_EVENT)
+            .logVideoInteractedWithEvent(videoId = videoResource.id!!, logVideoInteraction = true, type = null)
+    ).withRel(Rels.LOG_VIDEO_INTERACTION)
 
     fun searchVideosLink() = when {
         currentUserHasRole(UserRoles.VIEW_VIDEOS) -> ControllerLinkBuilder.linkTo(

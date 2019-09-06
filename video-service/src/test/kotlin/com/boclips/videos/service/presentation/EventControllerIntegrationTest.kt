@@ -100,7 +100,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val videoInteractedWithLink = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
-            .andReturnLink(VideosLinkBuilder.Rels.CREATE_VIDEO_INTERACTED_WITH_EVENT)
+            .andReturnLink(VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION)
             .expand(mapOf("type" to "COPY_SHARE_LINK"))
 
         mockMvc.perform(post(videoInteractedWithLink).asTeacher(email = "john@teacher.com"))

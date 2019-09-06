@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -387,7 +388,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
             .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
-            .andExpect(jsonPath("$._links.createVideoInteractedWithEvent.href", containsString("/videos/$kalturaVideoId")))
+            .andExpect(jsonPath("$._links.${VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION}.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
             .andExpect(jsonPath("$.type").doesNotExist())
             .andExpect(jsonPath("$.status").doesNotExist())

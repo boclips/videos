@@ -36,8 +36,8 @@ class VideosLinkBuilderTest {
     fun `interaction link`() {
         val link = VideosLinkBuilder().createVideoInteractedWithEvent(VideoResourceFactory.sample(id = "video-id"))
 
-        assertThat(link.href).isEqualTo("/v1/videos/video-id/events?videoInteractedWith=true&type={type}")
-        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.CREATE_VIDEO_INTERACTED_WITH_EVENT)
+        assertThat(link.href).isEqualTo("/v1/videos/video-id/events?logVideoInteraction=true&type={type}")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION)
         assertThat(link.isTemplated).isTrue()
     }
 
