@@ -57,7 +57,7 @@ class SubjectController(
     }
 
     @PutMapping("/{id}")
-    fun changeSubjects(@PathVariable id: String, @RequestBody createSubjectRequest: CreateSubjectRequest): ResponseEntity<Void> {
+    fun updateSubjects(@PathVariable id: String, @RequestBody createSubjectRequest: CreateSubjectRequest): ResponseEntity<Void> {
         updateSubject(SubjectId(value = id), createSubjectRequest.name)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }

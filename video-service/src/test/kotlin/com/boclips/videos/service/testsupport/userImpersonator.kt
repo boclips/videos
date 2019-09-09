@@ -62,7 +62,7 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.INSERT_COLLECTIONS,
                 UserRoles.CREATE_SUBJECT,
                 UserRoles.DELETE_SUBJECT,
-                UserRoles.CHANGE_SUBJECT,
+                UserRoles.UPDATE_SUBJECT,
                 UserRoles.VIEW_TAGS,
                 UserRoles.INSERT_TAGS,
                 UserRoles.DELETE_TAGS,
