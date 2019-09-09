@@ -53,7 +53,6 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
@@ -310,8 +309,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun updateSubject(batchProcessingConfig: BatchProcessingConfig): UpdateSubject {
-        return UpdateSubject(subjectRepository, videoRepository, collectionRepository, batchProcessingConfig)
+    fun updateSubject(): UpdateSubject {
+        return UpdateSubject(subjectRepository, videoRepository, collectionRepository)
     }
 
     @Bean

@@ -2,7 +2,6 @@ package com.boclips.videos.service.application.subject
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.subject.SubjectChanged
-import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -15,8 +14,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 class UpdateSubject(
     private val subjectRepository: SubjectRepository,
     private val videoRepository: VideoRepository,
-    private val collectionRepository: CollectionRepository,
-    private val batchProcessingConfig: BatchProcessingConfig
+    private val collectionRepository: CollectionRepository
 ) {
     operator fun invoke(subjectId: SubjectId, name: String?) {
         if (name == null) return
