@@ -41,11 +41,13 @@ pubsub:
     batch-size:
       1000
 
-user-service:
-  base-url:
-  token-url:
+oauth2:
   client-id:
   client-secret:
+  token-url:
+
+user-service:
+  base-url:
 
 batch-processing:
   video-batch-size: 1000

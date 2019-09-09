@@ -154,7 +154,7 @@ dependencies {
     implementation("com.github.boclips:kaltura-client:0.78.0")
     implementation("com.github.boclips:event-bus:1.32.0")
 
-    implementation("com.github.boclips:user-service:0.119.0")
+    implementation("com.github.boclips:user-service:0.145.0")
     // Required by user-service client
     implementation('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
 
