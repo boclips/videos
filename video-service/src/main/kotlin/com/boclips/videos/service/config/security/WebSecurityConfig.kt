@@ -39,9 +39,9 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(GET, "/v1/subjects").permitAll()
             .antMatchers(GET, "/v1/subjects/*").permitAll()
-            .antMatchers(DELETE, "/v1/subjects/*").hasRole(ROLE.DELETE_SUBJECT)
-            .antMatchers(PUT, "/v1/subjects/*").hasRole(ROLE.UPDATE_SUBJECT)
-            .antMatchers(POST, "/v1/subjects").hasRole(ROLE.CREATE_SUBJECT)
+            .antMatchers(DELETE, "/v1/subjects/*").hasRole(ROLE.DELETE_SUBJECTS)
+            .antMatchers(PUT, "/v1/subjects/*").hasRole(ROLE.UPDATE_SUBJECTS)
+            .antMatchers(POST, "/v1/subjects").hasRole(ROLE.CREATE_SUBJECTS)
 
             .antMatchers(GET, "/v1/disciplines").hasRole(ROLE.VIEW_DISCIPLINES)
             .antMatchers(GET, "/v1/disciplines/*").hasRole(ROLE.VIEW_DISCIPLINES)

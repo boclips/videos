@@ -6,9 +6,9 @@ object UserRoles {
     const val PUBLISHER = "PUBLISHER"
     const val BACKOFFICE = "BACKOFFICE"
 
-    const val CREATE_SUBJECT = "CREATE_SUBJECT"
-    const val DELETE_SUBJECT = "DELETE_SUBJECT"
-    const val UPDATE_SUBJECT = "UPDATE_SUBJECT"
+    const val CREATE_SUBJECTS = "CREATE_SUBJECTS"
+    const val DELETE_SUBJECTS = "DELETE_SUBJECTS"
+    const val UPDATE_SUBJECTS = "UPDATE_SUBJECTS"
 
     const val VIEW_EVENTS = "VIEW_EVENTS"
     const val INSERT_EVENTS = "INSERT_EVENTS"
