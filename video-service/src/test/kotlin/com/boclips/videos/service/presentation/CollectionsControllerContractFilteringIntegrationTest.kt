@@ -101,7 +101,6 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
 
     private fun createSelectedContentContract(vararg contractedCollectionIds: String) {
         (userServiceClient as FakeUserServiceClient).addContract(SelectedContentContract().apply {
-            id = UUID.randomUUID().toString()
             name = UUID.randomUUID().toString()
             collectionIds = contractedCollectionIds.toList()
         })

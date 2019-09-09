@@ -570,7 +570,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         )
 
         val contract = SelectedContentContract().apply {
-            id = UUID.randomUUID().toString()
             name = "Selected content"
             collectionIds = listOf(firstCollection.id.value, secondCollection.id.value)
         }
