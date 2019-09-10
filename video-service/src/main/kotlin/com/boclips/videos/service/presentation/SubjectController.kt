@@ -40,12 +40,20 @@ class SubjectController(
 
     @GetMapping("/{id}")
     fun subject(@PathVariable id: String): Resource<SubjectResource> =
-        getSubject(id).let { Resource(it, subjectsLinkBuilder.subject(it, "self")) }
+        getSubject(id).let { Resource(it, subjectsLinkBuilder.self(it)) }
 
     @GetMapping
     fun subjects(): Resources<Resource<*>> {
+        val subjectResources = getSubjects().map {
+            Resource(
+                it, listOfNotNull(
+                    subjectsLinkBuilder.self(it),
+                    subjectsLinkBuilder.updateSubject(it)
+                )
+            )
+        }
         return Resources(
-            getSubjects().map { Resource(it, subjectsLinkBuilder.subject(it, "self")) },
+            subjectResources,
             subjectsLinkBuilder.subjects("self")
         )
     }
@@ -57,8 +65,8 @@ class SubjectController(
     }
 
     @PutMapping("/{id}")
-    fun updateSubjects(@PathVariable id: String, @RequestBody createSubjectRequest: CreateSubjectRequest): ResponseEntity<Void> {
-        updateSubject(SubjectId(value = id), createSubjectRequest.name)
+    fun updateSubjects(@PathVariable id: String, @RequestBody createSubjectRequest: CreateSubjectRequest?): ResponseEntity<Void> {
+        updateSubject(SubjectId(value = id), createSubjectRequest!!.name)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
@@ -77,7 +85,7 @@ class SubjectController(
         }
         val headers = HttpHeaders().apply {
             val subjectResource = subject.let { SubjectResource(id = it.id.value, name = it.name) }
-            set(HttpHeaders.LOCATION, subjectsLinkBuilder.subject(subjectResource).href)
+            set(HttpHeaders.LOCATION, subjectsLinkBuilder.self(subjectResource).href)
         }
         return ResponseEntity(headers, HttpStatus.CREATED)
     }

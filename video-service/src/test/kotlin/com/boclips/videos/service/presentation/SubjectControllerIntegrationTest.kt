@@ -1,8 +1,10 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.asUserWithRoles
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
@@ -74,6 +76,22 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._embedded.subjects[0]._links.self.href",
+                    endsWith("/subjects/${createdSubject.id.value}")
+                )
+            )
+            .andExpect(jsonPath("$._embedded.subjects[0]._links.update").doesNotExist())
+    }
+
+    @Test
+    fun `returns a link for updating subjects as a backoffice user`() {
+        val createdSubject = saveSubject("Maths")
+
+        mockMvc.perform(get("/v1/subjects").asUserWithRoles(UserRoles.UPDATE_SUBJECTS))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(1)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.subjects[0]._links.update.href",
                     endsWith("/subjects/${createdSubject.id.value}")
                 )
             )

@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -32,7 +34,7 @@ class SubjectsLinkBuilderTest {
 
     @Test
     fun `subject link defaults to self`() {
-        assertThat(subjectsLinkBuilder.subject(SubjectResource("id"))).isEqualTo(
+        assertThat(subjectsLinkBuilder.self(SubjectResource("id"))).isEqualTo(
             Link(
                 "https://localhost/v1/subjects/id",
                 "self"
@@ -41,12 +43,28 @@ class SubjectsLinkBuilderTest {
     }
 
     @Test
-    fun `subject link with rel`() {
-        assertThat(
-            subjectsLinkBuilder.subject(
-                SubjectResource("id"),
-                "rel"
+    fun `update subject link present for users with UPDATE_SUBJECTS role`() {
+        setSecurityContext("employee@boclips.com", UserRoles.UPDATE_SUBJECTS)
+
+        assertThat(subjectsLinkBuilder.updateSubject(SubjectResource("id"))).isEqualTo(
+            Link(
+                "/v1/subjects/id",
+                "update"
             )
-        ).isEqualTo(Link("https://localhost/v1/subjects/id", "rel"))
+        )
+    }
+
+    @Test
+    fun `update subject link does not present for users without UPDATE_SUBJECTS role`() {
+        assertThat(subjectsLinkBuilder.updateSubject(SubjectResource("id"))).isNull()
+    }
+
+    @Test
+    fun `subject link with self`() {
+        assertThat(
+            subjectsLinkBuilder.self(
+                SubjectResource("id")
+            )
+        ).isEqualTo(Link("https://localhost/v1/subjects/id", "self"))
     }
 }

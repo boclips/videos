@@ -24,16 +24,6 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
             )
     )
 
-fun MockHttpServletRequestBuilder.asPublisher(email: String = "publisher@gmail.com") =
-    this.with(
-        SecurityMockMvcRequestPostProcessors
-            .user(email)
-            .roles(
-                UserRoles.VIEW_VIDEOS,
-                UserRoles.PUBLISHER
-            )
-    )
-
 fun MockHttpServletRequestBuilder.asApiUser(email: String = "api-user@gmail.com") =
     this.with(
         SecurityMockMvcRequestPostProcessors
@@ -112,16 +102,6 @@ fun MockHttpServletRequestBuilder.asSubjectClassifier() =
                 UserRoles.UPDATE_VIDEOS,
                 UserRoles.VIEW_COLLECTIONS,
                 UserRoles.VIEW_ANY_COLLECTION
-            )
-    )
-
-fun MockHttpServletRequestBuilder.asVideoAnalyser() =
-    this.with(
-        SecurityMockMvcRequestPostProcessors
-            .user("videoAnalyser")
-            .roles(
-                UserRoles.VIEW_VIDEOS,
-                UserRoles.DOWNLOAD_VIDEOS
             )
     )
 

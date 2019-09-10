@@ -215,7 +215,8 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 partialWindows = true
             ).forEachIndexed { index, windowedVideos ->
                 logger.info { "Starting update batch: $index" }
-                val updatedVideos = bulkUpdate(commands = consumer(windowedVideos))
+                val updateCommands = consumer(windowedVideos)
+                val updatedVideos = bulkUpdate(commands = updateCommands)
                 logger.info { "Updated ${updatedVideos.size} videos" }
             }
         }
