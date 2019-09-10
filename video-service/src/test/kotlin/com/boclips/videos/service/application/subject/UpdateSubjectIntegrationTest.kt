@@ -35,6 +35,7 @@ class UpdateSubjectIntegrationTest : AbstractSpringIntegrationTest() {
         val mathsSubject = saveSubject("Maths")
         val englishSubject = saveSubject("English")
         val savedVideo = saveVideo(subjectIds = setOf(mathsSubject.id.value, englishSubject.id.value))
+        val anotherSavedVideo = saveVideo(subjectIds = setOf(englishSubject.id.value))
 
         fakeEventBus.publish(
             SubjectChanged.builder()
@@ -47,9 +48,8 @@ class UpdateSubjectIntegrationTest : AbstractSpringIntegrationTest() {
                 .build()
         )
 
-        val updatedVideo = videoRepository.find(savedVideo)!!
-
-        assertThat(updatedVideo.subjects.map { it.name }).containsExactlyInAnyOrder("MathIsFun", "English")
+        assertThat(videoRepository.find(savedVideo)!!.subjects.map { it.name }).containsExactlyInAnyOrder("MathIsFun", "English")
+        assertThat(videoRepository.find(anotherSavedVideo)!!.subjects.map { it.name }).containsExactlyInAnyOrder("English")
     }
 
     @Test
@@ -57,6 +57,7 @@ class UpdateSubjectIntegrationTest : AbstractSpringIntegrationTest() {
         val mathsSubject = saveSubject("Maths")
         val englishSubject = saveSubject("English")
         val savedCollection = saveCollection(subjects = setOf(mathsSubject, englishSubject))
+        val anotherSavedCollection = saveCollection(subjects = setOf(englishSubject))
 
         fakeEventBus.publish(
             SubjectChanged.builder()
@@ -70,7 +71,9 @@ class UpdateSubjectIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val updatedCollection = collectionRepository.find(savedCollection)!!
+        val anotherCollection = collectionRepository.find(anotherSavedCollection)!!
 
         assertThat(updatedCollection.subjects.map { it.name }).containsExactlyInAnyOrder("MathIsFun", "English")
+        assertThat(anotherCollection.subjects.map { it.name }).containsExactlyInAnyOrder("English")
     }
 }
