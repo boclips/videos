@@ -1,7 +1,8 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -24,14 +25,14 @@ class CollectionUpdatesConverterTest {
 
     @Test
     fun `can handle null request`() {
-        val commands = collectionUpdatesConverter.convert(null)
+        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), null)
 
         assertThat(commands).hasSize(0)
     }
 
     @Test
     fun `turn title change to command`() {
-        val commands = collectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title"))
+        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(title = "some title"))
 
         assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.RenameCollection::class.java)
         assertThat(commands).hasSize(1)
@@ -39,7 +40,7 @@ class CollectionUpdatesConverterTest {
 
     @Test
     fun `change public visibility of collection to command`() {
-        val commands = collectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = true))
+        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = true))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(true)
@@ -48,7 +49,7 @@ class CollectionUpdatesConverterTest {
 
     @Test
     fun `change private visibility of collection to command`() {
-        val commands = collectionUpdatesConverter.convert(UpdateCollectionRequest(isPublic = false))
+        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = false))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(false)
@@ -58,7 +59,7 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `converts multiple changes to commands`() {
         val commands =
-            collectionUpdatesConverter.convert(UpdateCollectionRequest(title = "some title", isPublic = true))
+            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(title = "some title", isPublic = true))
 
         assertThat(commands).hasSize(2)
     }
@@ -66,7 +67,7 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `change age range of collection to command`() {
         val commands =
-            collectionUpdatesConverter.convert(UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)))
+            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeAgeRange
         assertThat(command.minAge).isEqualTo(3)
@@ -76,6 +77,7 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `change age range of collection command with unbounded upper bound`() {
         val commands = collectionUpdatesConverter.convert(
+            CollectionId("testId"),
             UpdateCollectionRequest(
                 ageRange = AgeRangeRequest(
                     min = 18,
@@ -92,6 +94,7 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `does not change age range where min and max are null`() {
         val commands = collectionUpdatesConverter.convert(
+            CollectionId("testId"),
             UpdateCollectionRequest(
                 ageRange = AgeRangeRequest(
                     min = null,
@@ -108,6 +111,7 @@ class CollectionUpdatesConverterTest {
         val subject = TestFactories.createSubject()
         whenever(subjectRepositoryMock.findById(any())).thenReturn(subject)
         val commands = collectionUpdatesConverter.convert(
+            CollectionId("testId"),
             UpdateCollectionRequest(subjects = setOf("SubjectOneId"))
         )
 
@@ -121,6 +125,7 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `Turn description into command`() {
         val commands = collectionUpdatesConverter.convert(
+            CollectionId("testId"),
             UpdateCollectionRequest(
                 description = "New description"
             )

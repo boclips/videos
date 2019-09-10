@@ -13,7 +13,7 @@ interface EventService {
         pageVideoIds: List<String>
     )
 
-    fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>)
+    fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>) // TODO() -> remove collectionId?
 
     fun saveBookmarkCollectionEvent(collectionId: CollectionId)
 

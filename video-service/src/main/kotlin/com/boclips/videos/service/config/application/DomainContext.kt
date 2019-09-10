@@ -59,10 +59,11 @@ class DomainContext(
     }
 
     @Bean
-    fun collectionRepository(): CollectionRepository {
+    fun collectionRepository(batchProcessingConfig: BatchProcessingConfig): CollectionRepository {
         return MongoCollectionRepository(
             mongoClient = mongoClient,
-            mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter
+            mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter,
+            batchProcessingConfig = batchProcessingConfig
         )
     }
 

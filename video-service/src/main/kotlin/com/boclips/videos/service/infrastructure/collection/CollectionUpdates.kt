@@ -18,20 +18,20 @@ import org.litote.kmongo.set
 class CollectionUpdates {
     companion object : KLogging()
 
-    fun toBson(id: CollectionId, anyUpdateCommand: CollectionUpdateCommand): Bson {
+    fun toBson(anyUpdateCommand: CollectionUpdateCommand): Bson {
         return when (anyUpdateCommand) {
-            is CollectionUpdateCommand.AddVideoToCollection -> addVideo(id, anyUpdateCommand.videoId)
-            is CollectionUpdateCommand.RemoveVideoFromCollection -> removeVideo(id, anyUpdateCommand.videoId)
-            is CollectionUpdateCommand.RenameCollection -> renameCollection(id, anyUpdateCommand.title)
-            is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(id, anyUpdateCommand.isPublic)
-            is CollectionUpdateCommand.ReplaceSubjects -> replaceSubjects(id, anyUpdateCommand.subjects)
+            is CollectionUpdateCommand.AddVideoToCollection -> addVideo(anyUpdateCommand.collectionId, anyUpdateCommand.videoId)
+            is CollectionUpdateCommand.RemoveVideoFromCollection -> removeVideo(anyUpdateCommand.collectionId, anyUpdateCommand.videoId)
+            is CollectionUpdateCommand.RenameCollection -> renameCollection(anyUpdateCommand.collectionId, anyUpdateCommand.title)
+            is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(anyUpdateCommand.collectionId, anyUpdateCommand.isPublic)
+            is CollectionUpdateCommand.ReplaceSubjects -> replaceSubjects(anyUpdateCommand.collectionId, anyUpdateCommand.subjects)
             is CollectionUpdateCommand.ChangeAgeRange -> replaceAgeRange(
-                id,
+                anyUpdateCommand.collectionId,
                 anyUpdateCommand.minAge,
                 anyUpdateCommand.maxAge
             )
-            is CollectionUpdateCommand.RemoveSubjectFromCollection -> removeSubject(id, anyUpdateCommand.subjectId)
-            is CollectionUpdateCommand.ChangeDescription -> changeDescription(id, anyUpdateCommand.description)
+            is CollectionUpdateCommand.RemoveSubjectFromCollection -> removeSubject(anyUpdateCommand.collectionId, anyUpdateCommand.subjectId)
+            is CollectionUpdateCommand.ChangeDescription -> changeDescription(anyUpdateCommand.collectionId, anyUpdateCommand.description)
         }
     }
 

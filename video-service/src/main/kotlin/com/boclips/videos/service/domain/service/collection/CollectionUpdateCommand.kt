@@ -1,16 +1,25 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 
-sealed class CollectionUpdateCommand {
-    data class AddVideoToCollection(val videoId: VideoId) : CollectionUpdateCommand()
-    data class RemoveVideoFromCollection(val videoId: VideoId) : CollectionUpdateCommand()
-    data class RenameCollection(val title: String) : CollectionUpdateCommand()
-    data class ChangeVisibility(val isPublic: Boolean) : CollectionUpdateCommand()
-    data class ReplaceSubjects(val subjects: Set<Subject>) : CollectionUpdateCommand()
-    data class ChangeAgeRange(val minAge: Int, val maxAge: Int?) : CollectionUpdateCommand()
-    data class RemoveSubjectFromCollection(val subjectId: SubjectId) : CollectionUpdateCommand()
-    data class ChangeDescription(val description: String) : CollectionUpdateCommand()
+sealed class CollectionUpdateCommand(val collectionId: CollectionId) {
+    class AddVideoToCollection(collectionId: CollectionId, val videoId: VideoId) : CollectionUpdateCommand(collectionId)
+    class RemoveVideoFromCollection(collectionId: CollectionId, val videoId: VideoId) :
+        CollectionUpdateCommand(collectionId)
+
+    class RenameCollection(collectionId: CollectionId, val title: String) : CollectionUpdateCommand(collectionId)
+    class ChangeVisibility(collectionId: CollectionId, val isPublic: Boolean) : CollectionUpdateCommand(collectionId)
+    class ReplaceSubjects(collectionId: CollectionId, val subjects: Set<Subject>) :
+        CollectionUpdateCommand(collectionId)
+
+    class ChangeAgeRange(collectionId: CollectionId, val minAge: Int, val maxAge: Int?) :
+        CollectionUpdateCommand(collectionId)
+
+    class RemoveSubjectFromCollection(collectionId: CollectionId, val subjectId: SubjectId) :
+        CollectionUpdateCommand(collectionId)
+
+    class ChangeDescription(collectionId: CollectionId, val description: String) : CollectionUpdateCommand(collectionId)
 }

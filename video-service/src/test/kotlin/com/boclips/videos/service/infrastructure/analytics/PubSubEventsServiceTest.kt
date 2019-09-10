@@ -70,7 +70,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.AddVideoToCollection(videoId = VideoId(videoId))
+                CollectionUpdateCommand.AddVideoToCollection(collectionId = CollectionId(collectionId), videoId = VideoId(videoId))
             )
         )
 
@@ -88,7 +88,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(aValidId()), updateCommands = listOf(
-                CollectionUpdateCommand.AddVideoToCollection(videoId = VideoId(aValidId()))
+                CollectionUpdateCommand.AddVideoToCollection(collectionId = CollectionId(aValidId()), videoId = VideoId(aValidId()))
             )
         )
 
@@ -103,7 +103,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.RemoveVideoFromCollection(videoId = VideoId(videoId))
+                CollectionUpdateCommand.RemoveVideoFromCollection(collectionId = CollectionId(collectionId), videoId = VideoId(videoId))
             )
         )
 
@@ -121,7 +121,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.RenameCollection(title = "the new title")
+                CollectionUpdateCommand.RenameCollection(collectionId = CollectionId(collectionId), title = "the new title")
             )
         )
 
@@ -139,7 +139,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeVisibility(isPublic = true)
+                CollectionUpdateCommand.ChangeVisibility(collectionId = CollectionId(collectionId), isPublic = true)
             )
         )
 
@@ -153,9 +153,11 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun collectionMadePrivate() {
+        val collectionId = aValidId()
+
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(aValidId()), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeVisibility(isPublic = false)
+                CollectionUpdateCommand.ChangeVisibility(collectionId = CollectionId(collectionId), isPublic = false)
             )
         )
 
@@ -172,6 +174,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
                 CollectionUpdateCommand.ReplaceSubjects(
+                    collectionId = CollectionId(collectionId),
                     subjects = setOf(
                         aSubject
                     )
@@ -193,7 +196,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeAgeRange(minAge = 5, maxAge = 9)
+                CollectionUpdateCommand.ChangeAgeRange(collectionId = CollectionId(collectionId), minAge = 5, maxAge = 9)
             )
         )
 
@@ -208,9 +211,11 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `collectionAgeRangeChanged when no max bound`() {
+        val collectionId = aValidId()
+
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(aValidId()), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeAgeRange(minAge = 5, maxAge = null)
+            collectionId = CollectionId(collectionId), updateCommands = listOf(
+                CollectionUpdateCommand.ChangeAgeRange(collectionId = CollectionId(collectionId), minAge = 5, maxAge = null)
             )
         )
 

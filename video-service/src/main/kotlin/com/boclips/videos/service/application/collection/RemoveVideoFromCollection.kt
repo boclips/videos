@@ -19,12 +19,12 @@ class RemoveVideoFromCollection(
 
         collectionRepository.update(
             CollectionId(collectionId),
-            CollectionUpdateCommand.RemoveVideoFromCollection(VideoId(videoId))
+            CollectionUpdateCommand.RemoveVideoFromCollection(collectionId = CollectionId(collectionId), videoId = VideoId(videoId))
         )
 
         eventService.saveUpdateCollectionEvent(
             CollectionId(collectionId),
-            listOf(CollectionUpdateCommand.RemoveVideoFromCollection(VideoId(videoId)))
+            listOf(CollectionUpdateCommand.RemoveVideoFromCollection(collectionId = CollectionId(collectionId), videoId = VideoId(videoId)))
         )
     }
 }

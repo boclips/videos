@@ -5,6 +5,7 @@ import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 
@@ -19,9 +20,10 @@ interface CollectionRepository {
     fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun create(owner: UserId, title: String, createdByBoclips: Boolean, public: Boolean): Collection
     fun createWithViewers(owner: UserId, title: String, viewerIds: List<String>): Collection
-    fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand)
+    fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand) // TODO() -> do we need collectionId here?
     fun updateAll(updateCommand: CollectionsUpdateCommand)
     fun delete(id: CollectionId)
     fun bookmark(id: CollectionId, user: UserId)
     fun unbookmark(id: CollectionId, user: UserId)
+    fun streamUpdate(filter: CollectionFilter, consumer: (List<Collection>) -> List<CollectionUpdateCommand>)
 }

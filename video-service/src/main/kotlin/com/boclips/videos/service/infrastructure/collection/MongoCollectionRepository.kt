@@ -4,18 +4,21 @@ import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
+import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.BsonDocument
 import org.bson.conversions.Bson
@@ -28,6 +31,7 @@ import org.litote.kmongo.combine
 import org.litote.kmongo.contains
 import org.litote.kmongo.descendingSort
 import org.litote.kmongo.div
+import org.litote.kmongo.elemMatch
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
@@ -38,8 +42,10 @@ import java.time.Instant
 class MongoCollectionRepository(
     private val mongoClient: MongoClient,
     private val collectionUpdates: CollectionUpdates = CollectionUpdates(),
-    private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter
+    private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter,
+    private val batchProcessingConfig: BatchProcessingConfig
 ) : CollectionRepository {
+
     companion object : KLogging() {
         const val collectionName = "collections"
     }
@@ -146,10 +152,32 @@ class MongoCollectionRepository(
         consumer(sequence)
     }
 
+    override fun streamUpdate(filter: CollectionFilter, consumer: (List<Collection>) -> List<CollectionUpdateCommand>) {
+        val filterCriteria = when (filter) {
+            is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(
+                filter.subjectId.value
+            ))
+        }
+
+        val sequence = Sequence { dbCollection().find(filterCriteria).noCursorTimeout(true).iterator() }
+            .mapNotNull(CollectionDocumentConverter::toCollection)
+
+        sequence.windowed(
+            size = batchProcessingConfig.collectionBatchSize,
+            step = batchProcessingConfig.collectionBatchSize,
+            partialWindows = true
+        ).forEachIndexed { index, windowedCollections ->
+            logger.info { "Starting update batch: $index" }
+            val updateCommands = consumer(windowedCollections)
+            val updatedCollections = bulkUpdate(updateCommands)
+            logger.info { "Updated ${updatedCollections.size} collections" }
+        }
+    }
+
     override fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand) {
         val updateBson = updateCommands
             .fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
-                combine(partialDocument, collectionUpdates.toBson(collectionId, updateCommand))
+                combine(partialDocument, collectionUpdates.toBson(updateCommand))
             }
 
         updateOne(collectionId, updateBson)
@@ -162,21 +190,23 @@ class MongoCollectionRepository(
                     .find(CollectionDocument::videos contains updateCommand.videoId.value)
 
                 allCollectionsContainingVideo.forEach { collectionDocument ->
+                    val collectionId = collectionDocument.id.toHexString()
                     val command = CollectionUpdateCommand.RemoveVideoFromCollection(
+                        collectionId = CollectionId(collectionId),
                         videoId = updateCommand.videoId
-
                     )
-                    update(CollectionId(value = collectionDocument.id.toHexString()), command)
+                    update(CollectionId(value = collectionId), command) //TODO() -> why do we update one by one? could this use bulkUpdate?
                 }
             }
             is CollectionsUpdateCommand.RemoveSubjectFromAllCollections -> {
                 val allCollectionsContainingSubject = findAllBySubject(updateCommand.subjectId)
 
-                allCollectionsContainingSubject.forEach { collectionDocument ->
+                allCollectionsContainingSubject.forEach { collection ->
                     val command = CollectionUpdateCommand.RemoveSubjectFromCollection(
+                        collection.id,
                         subjectId = updateCommand.subjectId
                     )
-                    update(collectionDocument.id, command)
+                    update(collection.id, command)
                 }
             }
         }
@@ -222,6 +252,22 @@ class MongoCollectionRepository(
 
         dbCollection().updateOne(CollectionDocument::id eq ObjectId(id.value), updatesWithTimestamp)
         logger.info { "Updated collection $id" }
+    }
+
+    private fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection> {
+        if (commands.isEmpty()) return emptyList()
+
+        val updateDocs = commands.map { updateCommand ->
+            UpdateOneModel<CollectionDocument>(
+                CollectionDocument::id eq ObjectId(updateCommand.collectionId.value),
+                collectionUpdates.toBson(updateCommand)
+            )
+        }
+
+        val result = dbCollection().bulkWrite(updateDocs)
+        logger.info("Bulk collection update: $result")
+
+        return findAll(commands.map { it.collectionId })
     }
 
     private fun dbCollection(): MongoCollection<CollectionDocument> {

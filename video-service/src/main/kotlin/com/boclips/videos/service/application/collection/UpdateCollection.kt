@@ -17,7 +17,7 @@ class UpdateCollection(
         collectionRepository.getOwnedCollectionOrThrow(collectionId)
         val id = CollectionId(collectionId)
 
-        val commands = collectionUpdatesConverter.convert(updateCollectionRequest)
+        val commands = collectionUpdatesConverter.convert(id, updateCollectionRequest)
 
         collectionRepository.update(id, *commands.toTypedArray())
 

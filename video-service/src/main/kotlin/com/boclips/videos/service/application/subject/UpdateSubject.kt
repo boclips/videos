@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -44,15 +45,16 @@ class UpdateSubject(
             }
         }
 
-        collectionRepository.findAllBySubject(subjectId = subjectId).map { collection ->
-            val newSubjects = replaceSubject(
-                subjects = collection.subjects,
-                idToReplace = subjectId,
-                updatedSubject = updatedSubject
-            ).toSet()
+        collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subjectId)) { collections ->
+            collections.map { collection ->
+                val newSubjects = replaceSubject(
+                    subjects = collection.subjects,
+                    idToReplace = subjectId,
+                    updatedSubject = updatedSubject
+                ).toSet()
 
-            val command = CollectionUpdateCommand.ReplaceSubjects(newSubjects)
-            collectionRepository.update(collection.id, command)
+                CollectionUpdateCommand.ReplaceSubjects(collectionId = collection.id, subjects = newSubjects)
+            }
         }
 
         logger.info { "Updated subject ${updatedSubject.id}" }
