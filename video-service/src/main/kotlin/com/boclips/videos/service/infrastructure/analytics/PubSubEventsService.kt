@@ -44,17 +44,17 @@ class PubSubEventsService(
         )
     }
 
-    override fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommands: List<CollectionUpdateCommand>) {
-        updateCommands.forEach { saveUpdateCollectionEvent(collectionId, it) }
+    override fun saveUpdateCollectionEvent(updateCommands: List<CollectionUpdateCommand>) {
+        updateCommands.forEach { saveUpdateCollectionEvent(it) }
     }
 
-    private fun saveUpdateCollectionEvent(collectionId: CollectionId, updateCommand: CollectionUpdateCommand) {
+    private fun saveUpdateCollectionEvent(updateCommand: CollectionUpdateCommand) {
         Do exhaustive when (updateCommand) {
             is CollectionUpdateCommand.AddVideoToCollection ->
                 eventBus.publish(
                     msg(
                         VideoAddedToCollection.builder()
-                            .collectionId(collectionId.value)
+                            .collectionId(updateCommand.collectionId.value)
                             .videoId(updateCommand.videoId.value)
                     )
                 )
@@ -62,7 +62,7 @@ class PubSubEventsService(
                 eventBus.publish(
                     msg(
                         VideoRemovedFromCollection.builder()
-                            .collectionId(collectionId.value)
+                            .collectionId(updateCommand.collectionId.value)
                             .videoId(updateCommand.videoId.value)
                     )
                 )
@@ -70,7 +70,7 @@ class PubSubEventsService(
                 eventBus.publish(
                     msg(
                         CollectionRenamed.builder()
-                            .collectionId(collectionId.value)
+                            .collectionId(updateCommand.collectionId.value)
                             .collectionTitle(updateCommand.title)
                     )
                 )
@@ -78,7 +78,7 @@ class PubSubEventsService(
                 eventBus.publish(
                     msg(
                         CollectionVisibilityChanged.builder()
-                            .collectionId(collectionId.value)
+                            .collectionId(updateCommand.collectionId.value)
                             .isPublic(updateCommand.isPublic)
                     )
                 )
@@ -86,7 +86,7 @@ class PubSubEventsService(
                 eventBus.publish(
                     msg(
                         CollectionSubjectsChanged.builder()
-                            .collectionId(collectionId.value)
+                            .collectionId(updateCommand.collectionId.value)
                             .subjects(updateCommand.subjects.map { it.id.value }.toMutableSet())
                     )
                 )
@@ -94,7 +94,7 @@ class PubSubEventsService(
                 eventBus.publish(
                     msg(
                         CollectionAgeRangeChanged.builder()
-                            .collectionId(collectionId.value)
+                            .collectionId(updateCommand.collectionId.value)
                             .rangeMin(updateCommand.minAge)
                             .rangeMax(updateCommand.maxAge)
                     )
@@ -102,14 +102,14 @@ class PubSubEventsService(
             is CollectionUpdateCommand.RemoveSubjectFromCollection -> eventBus.publish(
                 msg(
                     CollectionSubjectsChanged.builder()
-                        .collectionId(collectionId.value)
+                        .collectionId(updateCommand.collectionId.value)
                 )
             )
 
             is CollectionUpdateCommand.ChangeDescription -> eventBus.publish(
                 msg(
                     CollectionDescriptionChanged.builder()
-                        .collectionId(collectionId.value)
+                        .collectionId(updateCommand.collectionId.value)
                         .description(updateCommand.description)
                 )
             )

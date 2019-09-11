@@ -20,7 +20,6 @@ import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
-import org.bson.BsonDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.bson.types.ObjectId.isValid
@@ -157,6 +156,7 @@ class MongoCollectionRepository(
             is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(
                 filter.subjectId.value
             ))
+            is CollectionFilter.HasVideoId -> CollectionDocument::videos contains filter.videoId.value
         }
 
         val sequence = Sequence { dbCollection().find(filterCriteria).noCursorTimeout(true).iterator() }
@@ -174,39 +174,46 @@ class MongoCollectionRepository(
         }
     }
 
-    override fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand) {
-        val updateBson = updateCommands
-            .fold(BsonDocument()) { partialDocument: Bson, updateCommand: CollectionUpdateCommand ->
-                combine(partialDocument, collectionUpdates.toBson(updateCommand))
-            }
+    override fun update(command: CollectionUpdateCommand) {
+        updateOne(command.collectionId, collectionUpdates.toBson(command))
+    }
 
-        updateOne(collectionId, updateBson)
+    override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection> {
+        if (commands.isEmpty()) return emptyList()
+
+        val updateDocs = commands.map { updateCommand ->
+            UpdateOneModel<CollectionDocument>(
+                CollectionDocument::id eq ObjectId(updateCommand.collectionId.value),
+                combine(collectionUpdates.toBson(updateCommand), set(CollectionDocument::updatedAt, Instant.now()))
+            )
+        }
+
+        val result = dbCollection().bulkWrite(updateDocs)
+        logger.info("Bulk collection update: $result")
+
+        return findAll(commands.map { it.collectionId })
     }
 
     override fun updateAll(updateCommand: CollectionsUpdateCommand) {
         return when (updateCommand) {
             is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {
-                val allCollectionsContainingVideo = dbCollection()
-                    .find(CollectionDocument::videos contains updateCommand.videoId.value)
-
-                allCollectionsContainingVideo.forEach { collectionDocument ->
-                    val collectionId = collectionDocument.id.toHexString()
-                    val command = CollectionUpdateCommand.RemoveVideoFromCollection(
-                        collectionId = CollectionId(collectionId),
-                        videoId = updateCommand.videoId
-                    )
-                    update(CollectionId(value = collectionId), command) //TODO() -> why do we update one by one? could this use bulkUpdate?
+                streamUpdate(CollectionFilter.HasVideoId(updateCommand.videoId)) { collections ->
+                    collections.map {
+                        CollectionUpdateCommand.RemoveVideoFromCollection(
+                            collectionId = it.id,
+                            videoId = updateCommand.videoId
+                        )
+                    }
                 }
             }
             is CollectionsUpdateCommand.RemoveSubjectFromAllCollections -> {
-                val allCollectionsContainingSubject = findAllBySubject(updateCommand.subjectId)
-
-                allCollectionsContainingSubject.forEach { collection ->
-                    val command = CollectionUpdateCommand.RemoveSubjectFromCollection(
-                        collection.id,
-                        subjectId = updateCommand.subjectId
-                    )
-                    update(collection.id, command)
+                streamUpdate(CollectionFilter.HasSubjectId(updateCommand.subjectId)) { collections ->
+                    collections.map {
+                        CollectionUpdateCommand.RemoveSubjectFromCollection(
+                            collectionId = it.id,
+                            subjectId = updateCommand.subjectId
+                        )
+                    }
                 }
             }
         }
@@ -248,26 +255,10 @@ class MongoCollectionRepository(
     }
 
     private fun updateOne(id: CollectionId, update: Bson) {
-        val updatesWithTimestamp = combine(update, set(CollectionDocument::updatedAt, Instant.now()))
+        val updateWithTimestamp = combine(update, set(CollectionDocument::updatedAt, Instant.now()))
 
-        dbCollection().updateOne(CollectionDocument::id eq ObjectId(id.value), updatesWithTimestamp)
+        dbCollection().updateOne(CollectionDocument::id eq ObjectId(id.value), updateWithTimestamp)
         logger.info { "Updated collection $id" }
-    }
-
-    private fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection> {
-        if (commands.isEmpty()) return emptyList()
-
-        val updateDocs = commands.map { updateCommand ->
-            UpdateOneModel<CollectionDocument>(
-                CollectionDocument::id eq ObjectId(updateCommand.collectionId.value),
-                collectionUpdates.toBson(updateCommand)
-            )
-        }
-
-        val result = dbCollection().bulkWrite(updateDocs)
-        logger.info("Bulk collection update: $result")
-
-        return findAll(commands.map { it.collectionId })
     }
 
     private fun dbCollection(): MongoCollection<CollectionDocument> {

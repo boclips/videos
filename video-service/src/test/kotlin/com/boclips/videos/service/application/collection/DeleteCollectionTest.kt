@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
@@ -78,7 +77,7 @@ class DeleteCollectionTest {
                 collectionId = collectionId.value
             )
         }
-        verify(collectionRepository, never()).update(any(), any())
+        verify(collectionRepository, never()).update(any())
     }
 
     @Test
@@ -100,7 +99,7 @@ class DeleteCollectionTest {
                 collectionId = collectionId.value
             )
         }
-        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any())
     }
 
     @Test
@@ -121,6 +120,6 @@ class DeleteCollectionTest {
                 collectionId = collectionId.value
             )
         }
-        verify(collectionRepository, never()).update(any(), any<CollectionUpdateCommand>())
+        verify(collectionRepository, never()).update(any())
     }
 }

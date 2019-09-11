@@ -19,7 +19,7 @@ class UpdateCollection(
 
         val commands = collectionUpdatesConverter.convert(id, updateCollectionRequest)
 
-        collectionRepository.update(id, *commands.toTypedArray())
+        collectionRepository.bulkUpdate(commands)
 
         collectionRepository.find(id)?.let { collection ->
             if (collection.isPublic) {
@@ -29,6 +29,6 @@ class UpdateCollection(
             }
         }
 
-        eventService.saveUpdateCollectionEvent(id, commands)
+        eventService.saveUpdateCollectionEvent(commands)
     }
 }

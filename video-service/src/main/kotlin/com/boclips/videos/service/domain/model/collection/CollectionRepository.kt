@@ -20,10 +20,11 @@ interface CollectionRepository {
     fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun create(owner: UserId, title: String, createdByBoclips: Boolean, public: Boolean): Collection
     fun createWithViewers(owner: UserId, title: String, viewerIds: List<String>): Collection
-    fun update(collectionId: CollectionId, vararg updateCommands: CollectionUpdateCommand) // TODO() -> do we need collectionId here?
+    fun update(command: CollectionUpdateCommand)
+    fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection>
     fun updateAll(updateCommand: CollectionsUpdateCommand)
+    fun streamUpdate(filter: CollectionFilter, consumer: (List<Collection>) -> List<CollectionUpdateCommand>)
     fun delete(id: CollectionId)
     fun bookmark(id: CollectionId, user: UserId)
     fun unbookmark(id: CollectionId, user: UserId)
-    fun streamUpdate(filter: CollectionFilter, consumer: (List<Collection>) -> List<CollectionUpdateCommand>)
 }

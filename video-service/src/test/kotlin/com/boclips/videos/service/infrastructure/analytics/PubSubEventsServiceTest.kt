@@ -69,8 +69,11 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val videoId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.AddVideoToCollection(collectionId = CollectionId(collectionId), videoId = VideoId(videoId))
+            updateCommands = listOf(
+                CollectionUpdateCommand.AddVideoToCollection(
+                    collectionId = CollectionId(collectionId),
+                    videoId = VideoId(videoId)
+                )
             )
         )
 
@@ -87,8 +90,11 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         setSecurityContext(username = "david@boclips.com")
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(aValidId()), updateCommands = listOf(
-                CollectionUpdateCommand.AddVideoToCollection(collectionId = CollectionId(aValidId()), videoId = VideoId(aValidId()))
+            updateCommands = listOf(
+                CollectionUpdateCommand.AddVideoToCollection(
+                    collectionId = CollectionId(aValidId()),
+                    videoId = VideoId(aValidId())
+                )
             )
         )
 
@@ -102,8 +108,11 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val videoId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.RemoveVideoFromCollection(collectionId = CollectionId(collectionId), videoId = VideoId(videoId))
+            updateCommands = listOf(
+                CollectionUpdateCommand.RemoveVideoFromCollection(
+                    collectionId = CollectionId(collectionId),
+                    videoId = VideoId(videoId)
+                )
             )
         )
 
@@ -120,8 +129,11 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.RenameCollection(collectionId = CollectionId(collectionId), title = "the new title")
+            updateCommands = listOf(
+                CollectionUpdateCommand.RenameCollection(
+                    collectionId = CollectionId(collectionId),
+                    title = "the new title"
+                )
             )
         )
 
@@ -138,7 +150,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(collectionId), updateCommands = listOf(
+            updateCommands = listOf(
                 CollectionUpdateCommand.ChangeVisibility(collectionId = CollectionId(collectionId), isPublic = true)
             )
         )
@@ -156,7 +168,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(aValidId()), updateCommands = listOf(
+            updateCommands = listOf(
                 CollectionUpdateCommand.ChangeVisibility(collectionId = CollectionId(collectionId), isPublic = false)
             )
         )
@@ -172,7 +184,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val aSubject = TestFactories.createSubject()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(collectionId), updateCommands = listOf(
+            updateCommands = listOf(
                 CollectionUpdateCommand.ReplaceSubjects(
                     collectionId = CollectionId(collectionId),
                     subjects = setOf(
@@ -195,8 +207,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeAgeRange(collectionId = CollectionId(collectionId), minAge = 5, maxAge = 9)
+            updateCommands = listOf(
+                CollectionUpdateCommand.ChangeAgeRange(
+                    collectionId = CollectionId(collectionId),
+                    minAge = 5,
+                    maxAge = 9
+                )
             )
         )
 
@@ -214,8 +230,12 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
-            collectionId = CollectionId(collectionId), updateCommands = listOf(
-                CollectionUpdateCommand.ChangeAgeRange(collectionId = CollectionId(collectionId), minAge = 5, maxAge = null)
+            updateCommands = listOf(
+                CollectionUpdateCommand.ChangeAgeRange(
+                    collectionId = CollectionId(collectionId),
+                    minAge = 5,
+                    maxAge = null
+                )
             )
         )
 

@@ -70,7 +70,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val subject = TestFactories.createSubject()
 
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(subject))
             )
 
@@ -95,15 +94,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
 
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.AddVideoToCollection(collection.id, video1)
             )
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.AddVideoToCollection(collection.id, video2)
             )
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.RemoveVideoFromCollection(collection.id, video1)
             )
 
@@ -130,7 +126,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
 
-            collectionRepository.update(collection.id, CollectionUpdateCommand.RenameCollection(collection.id, "New Title"))
+            collectionRepository.update(CollectionUpdateCommand.RenameCollection(collection.id, "New Title"))
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
@@ -148,7 +144,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collection.isPublic).isEqualTo(false)
 
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.ChangeVisibility(collection.id, isPublic = true)
             )
 
@@ -169,14 +164,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val originalSubject = TestFactories.createSubject()
 
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(originalSubject))
             )
 
             val newSubject = TestFactories.createSubject()
 
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(newSubject))
             )
 
@@ -194,7 +187,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
 
-            collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeAgeRange(collection.id, 3, 5))
+            collectionRepository.update(CollectionUpdateCommand.ChangeAgeRange(collection.id, 3, 5))
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
@@ -210,7 +203,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
 
-            collectionRepository.update(collection.id, CollectionUpdateCommand.ChangeAgeRange(collection.id, 3, null))
+            collectionRepository.update(CollectionUpdateCommand.ChangeAgeRange(collection.id, 3, null))
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
@@ -227,7 +220,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
 
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.ChangeDescription(collection.id, "New collection description")
             )
 
@@ -253,7 +245,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             Thread.sleep(1)
 
             collectionRepository.update(
-                collectionV1.id,
                 CollectionUpdateCommand.AddVideoToCollection(collectionV1.id, video1)
             )
 
@@ -264,7 +255,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             Thread.sleep(1)
 
             collectionRepository.update(
-                collectionV2.id,
                 CollectionUpdateCommand.RemoveVideoFromCollection(collectionV2.id, video1)
             )
 
@@ -280,27 +270,15 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         fun `removes a video reference from all collections`() {
             val videoId = VideoId(value = ObjectId().toHexString())
 
-            val aGoodCollection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Great collection",
-                createdByBoclips = false,
-                public = false
-            )
+            val aGoodCollection = sampleCollection()
 
             collectionRepository.update(
-                aGoodCollection.id,
                 CollectionUpdateCommand.AddVideoToCollection(aGoodCollection.id, videoId)
             )
 
-            val anotherGoodCollection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Good collection",
-                createdByBoclips = true,
-                public = false
-            )
+            val anotherGoodCollection = sampleCollection()
 
             collectionRepository.update(
-                anotherGoodCollection.id,
                 CollectionUpdateCommand.AddVideoToCollection(anotherGoodCollection.id, videoId)
             )
 
@@ -312,18 +290,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `removes a subject from all collections`() {
-            val aGoodCollection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Great collection",
-                createdByBoclips = false,
-                public = false
-            )
+            val aGoodCollection = sampleCollection()
 
             val subject = TestFactories.createSubject()
             val anotherSubject = TestFactories.createSubject()
 
             collectionRepository.update(
-                aGoodCollection.id,
                 CollectionUpdateCommand.ReplaceSubjects(aGoodCollection.id, setOf(subject, anotherSubject))
             )
 
@@ -334,18 +306,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `stream update by filter`() {
-            val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Collection title",
-                createdByBoclips = false,
-                public = false
-            )
+            val collection = sampleCollection()
 
             val subject = SubjectFactory.sample(name = "French")
             val updatedSubject = SubjectFactory.sample(name = "Maths")
 
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(subject))
             )
 
@@ -356,6 +322,28 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             }
 
             assertThat(collectionRepository.find(collection.id)!!.subjects).containsExactly(updatedSubject)
+        }
+
+        @Test
+        fun `bulk update`() {
+            val collection = sampleCollection()
+            val collection2 = sampleCollection()
+            val collection3 = sampleCollection()
+
+            val videoId = VideoId(value = ObjectId().toHexString())
+
+            collectionRepository.bulkUpdate(listOf(
+                CollectionUpdateCommand.ChangeVisibility(collectionId = collection.id, isPublic = true),
+                CollectionUpdateCommand.RenameCollection(collectionId = collection2.id, title = "New Collection title"),
+                CollectionUpdateCommand.AddVideoToCollection(collectionId = collection3.id, videoId = videoId))
+            )
+
+            assertThat(collectionRepository.find(collection.id)!!.isPublic).isTrue()
+            assertThat(collectionRepository.find(collection.id)!!.updatedAt).isAfter(collection.updatedAt)
+            assertThat(collectionRepository.find(collection2.id)!!.title).isEqualTo("New Collection title")
+            assertThat(collectionRepository.find(collection2.id)!!.updatedAt).isAfter(collection2.updatedAt)
+            assertThat(collectionRepository.find(collection3.id)!!.videos[0]).isEqualTo(videoId)
+            assertThat(collectionRepository.find(collection3.id)!!.updatedAt).isAfter(collection3.updatedAt)
         }
     }
 
@@ -390,7 +378,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 public = false
             )
             collectionRepository.update(
-                collection.id,
                 CollectionUpdateCommand.AddVideoToCollection(collection.id, videoInCollection)
             )
 
@@ -442,7 +429,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
 
             collectionRepository.update(
-                publicBookmarkedCollection.id,
                 CollectionUpdateCommand.ChangeVisibility(publicBookmarkedCollection.id, true)
             )
             collectionRepository.bookmark(
@@ -450,7 +436,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 UserId("bookmarker")
             )
             collectionRepository.update(
-                publicCollection2.id,
                 CollectionUpdateCommand.ChangeVisibility(publicCollection2.id,true)
             )
             collectionRepository.bookmark(
@@ -568,8 +553,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             createdByBoclips = false,
             public = false
         )
-        collectionRepository.update(c1.id, CollectionUpdateCommand.ChangeVisibility(c1.id, true))
-        collectionRepository.update(c3.id, CollectionUpdateCommand.ChangeVisibility(c3.id, true))
+        collectionRepository.update(CollectionUpdateCommand.ChangeVisibility(c1.id, true))
+        collectionRepository.update(CollectionUpdateCommand.ChangeVisibility(c3.id, true))
 
         var collections: List<Collection> = emptyList()
         collectionRepository.streamAllPublic { collections = it.toList() }
@@ -610,5 +595,19 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         assertThat(collectionsByContract.elements).hasSize(2)
         assertThat(collectionsByContract.elements).extracting("id")
             .containsExactlyInAnyOrder(firstCollection.id, secondCollection.id)
+    }
+
+    private fun sampleCollection(
+        owner: UserId = UserId(value = "user1"),
+        title: String = "Collection title",
+        createdByBoclips: Boolean = false,
+        public: Boolean = false
+    ): Collection {
+        return collectionRepository.create(
+            owner = owner,
+            title = title,
+            createdByBoclips = createdByBoclips,
+            public = public
+        )
     }
 }
