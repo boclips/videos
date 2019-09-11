@@ -4,8 +4,9 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
@@ -18,8 +19,8 @@ import com.boclips.videos.service.presentation.video.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.doThrow
 import com.nhaarman.mockito_kotlin.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -29,9 +30,9 @@ import org.junit.jupiter.api.assertThrows
 class GetCollectionTest {
 
     lateinit var playbackToResourceConverter: PlaybackToResourceConverter
-    lateinit var collectionRepository: CollectionRepository
     lateinit var collectionResourceFactory: CollectionResourceFactory
     lateinit var videoService: VideoService
+    lateinit var collectionService: CollectionService
     lateinit var videosLinkBuilder: VideosLinkBuilder
     lateinit var attachmentsLinkBuilder: AttachmentsLinkBuilder
 
@@ -43,6 +44,7 @@ class GetCollectionTest {
                 TestFactories.createVideo()
             )
         }
+        collectionService = mock()
         videosLinkBuilder = mock()
         attachmentsLinkBuilder = mock()
         playbackToResourceConverter = PlaybackToResourceConverter(EventsLinkBuilder())
@@ -64,11 +66,11 @@ class GetCollectionTest {
             description = "My description"
         )
 
-        collectionRepository = mock {
-            on { find(collectionId) } doReturn onGetCollection
+        collectionService = mock {
+            on { getReadableCollectionOrThrow(collectionId.value) } doReturn onGetCollection
         }
 
-        val collection = GetCollection(collectionRepository, collectionResourceFactory).invoke(collectionId.value)
+        val collection = GetCollection(collectionResourceFactory, collectionService).invoke(collectionId.value)
 
         assertThat(collection.id).isEqualTo(onGetCollection.id.value)
         assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
@@ -90,11 +92,11 @@ class GetCollectionTest {
             title = "Freshly found"
         )
 
-        collectionRepository = mock {
-            on { find(collectionId) } doReturn onGetCollection
+        collectionService = mock {
+            on { getReadableCollectionOrThrow(collectionId.value) } doReturn onGetCollection
         }
 
-        val collection = GetCollection(collectionRepository, collectionResourceFactory).invoke(
+        val collection = GetCollection(collectionResourceFactory, collectionService).invoke(
             collectionId.value,
             Projection.details
         )
@@ -112,44 +114,31 @@ class GetCollectionTest {
     }
 
     @Test
-    fun `throws not found error when collection doesn't exist`() {
-        collectionRepository = mock {
-            on { find(any()) } doAnswer { null }
+    fun `propagates CollectionNotFound error thrown from downstream`() {
+        collectionService = mock {
+            on { getReadableCollectionOrThrow(any()) } doThrow (CollectionNotFoundException("123"))
         }
 
-        val getCollection = GetCollection(collectionRepository, collectionResourceFactory)
+        val getCollection = GetCollection(collectionResourceFactory, collectionService)
 
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = "123") }
     }
 
     @Test
-    fun `throws error when user doesn't own the private collection`() {
+    fun `propagates the CollectionAccessNotAuthorizedException error thrown from downstream`() {
         setSecurityContext("attacker@example.com")
 
-        val privateCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = false)
+        val collectionId = CollectionId("test-collection-id")
 
-        collectionRepository = mock {
-            on { find(privateCollection.id) } doReturn privateCollection
+        collectionService = mock {
+            on { getReadableCollectionOrThrow(collectionId.value) } doThrow (CollectionAccessNotAuthorizedException(
+                UserId("normal-user@test.com"),
+                collectionId.value
+            ))
         }
 
-        val getCollection = GetCollection(collectionRepository, collectionResourceFactory)
+        val getCollection = GetCollection(collectionResourceFactory, collectionService)
 
-        assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId = privateCollection.id.value) }
-    }
-
-    @Test
-    fun `allows any teacher to access public collection`() {
-        setSecurityContext("nosey@example.com")
-
-        val publicCollection = TestFactories.createCollection(owner = "owner@example.com", isPublic = true)
-
-        collectionRepository = mock {
-            on { find(publicCollection.id) } doReturn publicCollection
-        }
-
-        val collection =
-            GetCollection(collectionRepository, collectionResourceFactory).invoke(publicCollection.id.value)
-
-        assertThat(collection.id).isEqualTo(publicCollection.id.value)
+        assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId.value) }
     }
 }

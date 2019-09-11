@@ -1,14 +1,13 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.getReadableCollectionOrThrow
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 
 class GetCollection(
-    private val collectionRepository: CollectionRepository,
-    private val collectionResourceFactory: CollectionResourceFactory
+    private val collectionResourceFactory: CollectionResourceFactory,
+    private val collectionService: CollectionService
 ) {
     operator fun invoke(collectionId: String, projection: Projection? = Projection.list): CollectionResource {
         val resourceWrapper = when (projection) {
@@ -16,7 +15,7 @@ class GetCollection(
             else -> collectionResourceFactory::buildCollectionListResource
         }
 
-        return collectionRepository.getReadableCollectionOrThrow(collectionId)
+        return collectionService.getReadableCollectionOrThrow(collectionId)
             .let(resourceWrapper)
     }
 }

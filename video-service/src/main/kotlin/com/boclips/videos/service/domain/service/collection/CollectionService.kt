@@ -1,18 +1,25 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.videos.service.domain.service.IsContractedToView
+import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
-import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
+import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
 class CollectionService(
     private val collectionRepository: CollectionRepository,
-    private val collectionSearchService: CollectionSearchService
+    private val collectionSearchService: CollectionSearchService,
+    private val userContractService: UserContractService,
+    private val isContractedToView: IsContractedToView
 ) {
     companion object : KLogging()
 
@@ -33,6 +40,45 @@ class CollectionService(
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {
         logger.info { "Counted collections for query $collectionSearchQuery" }
         return collectionSearchService.count(collectionSearchQuery.toSearchQuery())
+    }
+
+    fun getOwnedCollectionOrThrow(collectionId: String) =
+        getCollectionOrThrow(
+            collectionId = collectionId,
+            collectionRepository = collectionRepository,
+            isForReading = false
+        )
+
+    fun getReadableCollectionOrThrow(collectionId: String) =
+        getCollectionOrThrow(
+            collectionId = collectionId,
+            collectionRepository = collectionRepository,
+            isForReading = true
+        )
+
+    private fun getCollectionOrThrow(
+        collectionId: String,
+        collectionRepository: CollectionRepository,
+        isForReading: Boolean
+    ): Collection {
+        val userId = getCurrentUserId()
+        val collection = collectionRepository.find(
+            CollectionId(
+                collectionId
+            )
+        )
+            ?: throw CollectionNotFoundException(collectionId)
+
+        return when {
+            isForReading && collection.isPublic -> collection
+            collection.owner == userId -> collection
+            collection.viewerIds.contains(userId) -> collection
+            isContractedToView(collection, userContractService.getContracts(userId.value)) -> collection
+            else -> throw CollectionAccessNotAuthorizedException(
+                userId,
+                collectionId
+            )
+        }
     }
 }
 

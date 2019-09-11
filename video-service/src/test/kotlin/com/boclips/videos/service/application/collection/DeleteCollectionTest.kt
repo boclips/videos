@@ -2,14 +2,16 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
-import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.doThrow
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
@@ -19,15 +21,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class DeleteCollectionTest {
-
     lateinit var collectionRepository: CollectionRepository
-    var collectionSearchService: CollectionSearchService = mock {
+    lateinit var collectionService: CollectionService
+    private var collectionSearchService: CollectionSearchService = mock {
         on { removeFromSearch(any()) }.then { }
     }
 
     @BeforeEach
     fun setUp() {
         setSecurityContext("me@me.com")
+        collectionService = mock()
     }
 
     @Test
@@ -36,7 +39,7 @@ class DeleteCollectionTest {
             on { find(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionService)
         val collectionId = TestFactories.aValidId()
 
         deleteCollection(collectionId)
@@ -50,7 +53,7 @@ class DeleteCollectionTest {
             on { find(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionService)
         val collectionId = TestFactories.aValidId()
 
         deleteCollection(collectionId)
@@ -59,67 +62,52 @@ class DeleteCollectionTest {
     }
 
     @Test
-    fun `throws error when user doesn't own the private collection`() {
+    fun `propagates errors when caller is allowed to access the collection`() {
         setSecurityContext("attacker@example.com")
 
         val collectionId = CollectionId("collection-123")
-        val onGetCollection =
+        val collection =
             TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = false)
 
         collectionRepository = mock {
-            on { find(collectionId) } doReturn onGetCollection
+            on { find(collectionId) } doReturn collection
+        }
+        collectionService = mock() {
+            on { getOwnedCollectionOrThrow(collectionId.value) } doThrow (CollectionAccessNotAuthorizedException(
+                UserId("attacker@example.com"),
+                collectionId.value
+            ))
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionService)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             deleteCollection(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionRepository, never()).update(any())
+
+        verify(collectionRepository, never()).delete(any())
     }
 
     @Test
-    fun `throws error when user doesn't own the public collection`() {
+    fun `propagates errors when collection doesn't exist`() {
         setSecurityContext("attacker@example.com")
 
         val collectionId = CollectionId("collection-123")
-        val onGetCollection =
-            TestFactories.createCollection(id = collectionId, owner = "innocent@example.com", isPublic = true)
 
-        collectionRepository = mock {
-            on { find(collectionId) } doReturn onGetCollection
+        collectionRepository = mock()
+        collectionService = mock() {
+            on { getOwnedCollectionOrThrow(collectionId.value) } doThrow (CollectionNotFoundException(collectionId.value))
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
-
-        assertThrows<CollectionAccessNotAuthorizedException> {
-            deleteCollection(
-                collectionId = collectionId.value
-            )
-        }
-        verify(collectionRepository, never()).update(any())
-    }
-
-    @Test
-    fun `throws when collection doesn't exist`() {
-        setSecurityContext("attacker@example.com")
-
-        val collectionId = CollectionId("collection-123")
-        val onGetCollection: Collection? = null
-
-        collectionRepository = mock {
-            on { find(collectionId) } doReturn onGetCollection
-        }
-
-        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService)
+        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionService)
 
         assertThrows<CollectionNotFoundException> {
             deleteCollection(
                 collectionId = collectionId.value
             )
         }
-        verify(collectionRepository, never()).update(any())
+        verify(collectionRepository, never()).delete(any())
     }
 }

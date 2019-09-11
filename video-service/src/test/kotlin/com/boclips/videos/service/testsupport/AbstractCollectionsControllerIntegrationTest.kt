@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
+import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.jayway.jsonpath.JsonPath
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
+import java.util.UUID
 
 abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -78,6 +80,13 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             createdByBoclips = false,
             public = false
         ).id.value
+    }
+
+    fun createSelectedContentContract(vararg contractedCollectionIds: String) {
+        (userServiceClient as FakeUserServiceClient).addContract(SelectedContentContract().apply {
+            name = UUID.randomUUID().toString()
+            collectionIds = contractedCollectionIds.toList()
+        })
     }
 
     fun MvcResult.extractLink(relName: String): URI {

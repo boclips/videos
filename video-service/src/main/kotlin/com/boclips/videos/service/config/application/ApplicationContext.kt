@@ -99,7 +99,6 @@ class ApplicationContext(
     val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     val userContractService: UserContractService
 ) {
-
     @Bean
     fun searchVideo(
         videosLinkBuilder: VideosLinkBuilder,
@@ -181,13 +180,13 @@ class ApplicationContext(
         attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetCollection {
         return GetCollection(
-            collectionRepository,
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
                 AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
-            )
+            ),
+            collectionService
         )
     }
 
@@ -237,32 +236,38 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionRepository, eventService)
+        return AddVideoToCollection(collectionRepository, eventService, collectionService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionRepository, eventService)
+        return RemoveVideoFromCollection(collectionRepository, eventService, collectionService)
     }
 
     @Bean
     fun updateCollection(collectionUpdatesConverter: CollectionUpdatesConverter): UpdateCollection {
-        return UpdateCollection(collectionSearchService, collectionRepository, eventService, collectionUpdatesConverter)
+        return UpdateCollection(
+            collectionSearchService,
+            collectionRepository,
+            eventService,
+            collectionUpdatesConverter,
+            collectionService
+        )
     }
 
     @Bean
     fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionRepository, eventService)
+        return BookmarkCollection(collectionRepository, eventService, collectionService)
     }
 
     @Bean
     fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionRepository, eventService)
+        return UnbookmarkCollection(collectionRepository, eventService, collectionService)
     }
 
     @Bean
     fun deleteCollection(): DeleteCollection {
-        return DeleteCollection(collectionRepository, collectionSearchService)
+        return DeleteCollection(collectionRepository, collectionSearchService, collectionService)
     }
 
     @Bean

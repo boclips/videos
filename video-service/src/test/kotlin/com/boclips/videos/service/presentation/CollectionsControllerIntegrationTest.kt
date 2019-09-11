@@ -7,6 +7,7 @@ import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.collection.CollectionVisibilityDocument
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
@@ -295,6 +296,17 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher(userId))
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `fetching a collection as a user with a SelectedContent contract for it`() {
+        val collectionId = createCollection(title = "Some Non Public Collection", public = false)
+        createSelectedContentContract(collectionId)
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asApiUser(email = "api-user@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
     }
 
     @Test

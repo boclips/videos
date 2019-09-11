@@ -1,7 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.users.client.implementation.FakeUserServiceClient
-import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -16,7 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.UUID
 
 class CollectionsControllerContractFilteringIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
@@ -97,12 +94,5 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(0)))
-    }
-
-    private fun createSelectedContentContract(vararg contractedCollectionIds: String) {
-        (userServiceClient as FakeUserServiceClient).addContract(SelectedContentContract().apply {
-            name = UUID.randomUUID().toString()
-            collectionIds = contractedCollectionIds.toList()
-        })
     }
 }
