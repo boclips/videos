@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -12,6 +11,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
@@ -41,7 +41,7 @@ class GetCollectionsTest {
     lateinit var attachmentsLinkBuilder: AttachmentsLinkBuilder
 
     val getContractedCollections: GetContractedCollections = mock()
-    val userServiceClient: UserServiceClient = mock()
+    val userContractService: UserContractService = mock()
 
     val video = TestFactories.createVideo()
 
@@ -96,7 +96,7 @@ class GetCollectionsTest {
             collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userServiceClient
+            userContractService
         ).invoke(
             CollectionFilter(
                 projection = Projection.list,
@@ -140,7 +140,7 @@ class GetCollectionsTest {
             collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userServiceClient
+            userContractService
         ).invoke(
             CollectionFilter(
                 projection = Projection.list,
@@ -184,7 +184,7 @@ class GetCollectionsTest {
             collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userServiceClient
+            userContractService
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -228,7 +228,7 @@ class GetCollectionsTest {
             collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userServiceClient
+            userContractService
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -278,7 +278,7 @@ class GetCollectionsTest {
             collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userServiceClient
+            userContractService
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -324,7 +324,7 @@ class GetCollectionsTest {
             collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userServiceClient
+            userContractService
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -369,7 +369,7 @@ class GetCollectionsTest {
             collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userServiceClient
+            userContractService
         ).invoke(
             CollectionFilter(
                 query = "title",

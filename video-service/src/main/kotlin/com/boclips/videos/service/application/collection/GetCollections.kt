@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
-import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.UnauthorizedException
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
@@ -12,6 +11,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
@@ -21,7 +21,7 @@ class GetCollections(
     private val collectionRepository: CollectionRepository,
     private val collectionResourceFactory: CollectionResourceFactory,
     private val getContractedCollections: GetContractedCollections,
-    private val userServiceClient: UserServiceClient
+    private val userContractService: UserContractService
 ) {
     operator fun invoke(collectionFilter: CollectionFilter): Page<CollectionResource> {
         return getCollections(collectionFilter).let {
@@ -34,7 +34,7 @@ class GetCollections(
     }
 
     private fun getCollections(collectionFilter: CollectionFilter): Page<Collection> {
-        val userContracts = userServiceClient.getContracts(getCurrentUserId().value)
+        val userContracts = userContractService.getContracts(getCurrentUserId().value)
         return when {
             userContracts.isNotEmpty() -> getContractedCollections(collectionFilter, userContracts)
             isPublicCollectionSearch(collectionFilter) -> collectionService.search(

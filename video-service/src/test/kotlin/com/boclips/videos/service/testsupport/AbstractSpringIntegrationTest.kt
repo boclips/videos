@@ -29,6 +29,7 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -55,8 +56,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
@@ -124,6 +123,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var subjectClassificationService: SubjectClassificationService
+
+    @Autowired
+    lateinit var userContractService: UserContractService
 
     @Autowired
     lateinit var userServiceClient: UserServiceClient

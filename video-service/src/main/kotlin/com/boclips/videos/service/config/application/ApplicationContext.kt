@@ -59,6 +59,7 @@ import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
@@ -95,7 +96,8 @@ class ApplicationContext(
     val tagRepository: TagRepository,
     val disciplineRepository: DisciplineRepository,
     val contentPartnerRepository: ContentPartnerRepository,
-    val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
+    val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    val userContractService: UserContractService
 ) {
 
     @Bean
@@ -207,7 +209,7 @@ class ApplicationContext(
                 videoService
             ),
             getContractedCollections,
-            userServiceClient
+            userContractService
         )
     }
 
