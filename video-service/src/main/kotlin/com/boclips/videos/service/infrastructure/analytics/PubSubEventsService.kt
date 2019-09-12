@@ -113,6 +113,8 @@ class PubSubEventsService(
                         .description(updateCommand.description)
                 )
             )
+
+            is CollectionUpdateCommand.AddAttachment -> null// no event as this cannot be done in the app just yet
         }
     }
 

@@ -1,20 +1,17 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
+import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.isEmptyString
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
@@ -171,6 +168,36 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+    }
+
+    @Test
+    fun `public collections filtered by subject only gets collections with lesson plan first`() {
+        val collectionWithLessonPlan1 = createCollectionWithTitle("With lesson plan 1")
+        val collectionWithoutLessonPlan = createCollectionWithTitle("No lesson plan")
+        val collectionWithLessonPlan2 = createCollectionWithTitle("With lesson plan 2")
+
+        val subject = saveSubject("subject")
+        listOf(collectionWithLessonPlan1, collectionWithLessonPlan2).forEach {
+            collectionRepository.update(CollectionUpdateCommand.AddAttachment(CollectionId(it), AttachmentFactory.sample()))
+        }
+
+        listOf(collectionWithLessonPlan1, collectionWithoutLessonPlan, collectionWithLessonPlan2).forEach {
+            updateCollectionToBePublic(it)
+            mockMvc.perform(
+                    MockMvcRequestBuilders.patch(selfLink(it)).contentType(MediaType.APPLICATION_JSON)
+                            .content("""{"subjects": ["${subject.id.value}"]}""").asTeacher()
+            )
+        }
+
+        mockMvc.perform(
+                get("/v1/collections?subject=${subject.id.value}&public=true")
+                        .asTeacher("teacher@gmail.com")
+        )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
+                .andExpect(jsonPath("$._embedded.collections[0].title", startsWith("With lesson plan")))
+                .andExpect(jsonPath("$._embedded.collections[1].title", startsWith("With lesson plan")))
+                .andExpect(jsonPath("$._embedded.collections[2].title", equalTo("No lesson plan")))
     }
 
     @Test

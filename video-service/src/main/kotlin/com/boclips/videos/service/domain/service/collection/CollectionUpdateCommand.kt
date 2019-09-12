@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -22,4 +23,5 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId) {
         CollectionUpdateCommand(collectionId)
 
     class ChangeDescription(collectionId: CollectionId, val description: String) : CollectionUpdateCommand(collectionId)
+    class AddAttachment(collectionId: CollectionId, val attachment: Attachment) : CollectionUpdateCommand(collectionId)
 }

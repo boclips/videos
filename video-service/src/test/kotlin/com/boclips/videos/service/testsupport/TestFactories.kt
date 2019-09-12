@@ -8,6 +8,8 @@ import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.attachment.Attachment
+import com.boclips.videos.service.domain.model.attachment.AttachmentId
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -27,12 +29,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -57,7 +54,7 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.Locale
+import java.util.*
 
 object TestFactories {
 
@@ -505,5 +502,19 @@ object DisciplineFactory {
         code = code,
         name = name,
         subjects = subjects
+    )
+}
+
+object AttachmentFactory {
+    fun sample(
+        id: String = ObjectId().toHexString(),
+        description: String = "description",
+        linkToResource:String = "https://example.com",
+        type: AttachmentType = AttachmentType.LESSON_PLAN
+    ) = Attachment(
+        attachmentId = AttachmentId(id),
+        description = description,
+        linkToResource = linkToResource,
+        type = type
     )
 }

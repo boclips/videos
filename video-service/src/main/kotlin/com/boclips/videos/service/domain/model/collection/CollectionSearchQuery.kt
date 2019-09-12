@@ -1,6 +1,9 @@
 package com.boclips.videos.service.domain.model.collection
 
+import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.model.SortOrder
 
 class CollectionSearchQuery(
     val text: String?,
@@ -8,7 +11,14 @@ class CollectionSearchQuery(
     val pageSize: Int,
     val pageIndex: Int
 ) {
-    fun toSearchQuery() = CollectionQuery(phrase = this.text ?: "", subjectIds = this.subjectIds)
+    fun toSearchQuery() = CollectionQuery(
+            phrase = this.text ?: "",
+            subjectIds = this.subjectIds,
+            sort = when {
+                this.subjectIds.isNotEmpty() && this.text.isNullOrBlank() -> Sort(CollectionMetadata::hasAttachments, SortOrder.DESC)
+                else -> null
+            }
+    )
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize
 

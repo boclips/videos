@@ -14,6 +14,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateComm
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.SubjectFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -155,27 +156,49 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can create a collection and replace subjects`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Alex's Amazing Collection",
-                createdByBoclips = false,
-                public = false
+                    owner = UserId(value = "user1"),
+                    title = "Alex's Amazing Collection",
+                    createdByBoclips = false,
+                    public = false
             )
 
             val originalSubject = TestFactories.createSubject()
 
             collectionRepository.update(
-                CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(originalSubject))
+                    CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(originalSubject))
             )
 
             val newSubject = TestFactories.createSubject()
 
             collectionRepository.update(
-                CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(newSubject))
+                    CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(newSubject))
             )
 
             val updatedCollection = collectionRepository.find(collection.id)
 
             assertThat(updatedCollection!!.subjects).containsExactly(newSubject)
+        }
+
+        @Test
+        fun `can create a collection and attach lesson plan`() {
+            val collection = collectionRepository.create(
+                    owner = UserId(value = "user1"),
+                    title = "Alex's Amazing Collection",
+                    createdByBoclips = false,
+                    public = false
+            )
+
+            val attachment = AttachmentFactory.sample()
+
+            collectionRepository.update(
+                    CollectionUpdateCommand.AddAttachment(collection.id, attachment)
+            )
+
+            val updatedCollection = collectionRepository.find(collection.id)
+
+            assertThat(updatedCollection!!.attachments.first().description).isEqualTo(attachment.description)
+            assertThat(updatedCollection!!.attachments.first().linkToResource).isEqualTo(attachment.linkToResource)
+            assertThat(updatedCollection!!.attachments.first().type).isEqualTo(attachment.type)
         }
 
         @Test

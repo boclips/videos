@@ -1,11 +1,14 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.attachment.Attachment
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.DocumentWithId
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import mu.KLogging
 import org.bson.conversions.Bson
@@ -32,7 +35,20 @@ class CollectionUpdates {
             )
             is CollectionUpdateCommand.RemoveSubjectFromCollection -> removeSubject(anyUpdateCommand.collectionId, anyUpdateCommand.subjectId)
             is CollectionUpdateCommand.ChangeDescription -> changeDescription(anyUpdateCommand.collectionId, anyUpdateCommand.description)
+            is CollectionUpdateCommand.AddAttachment -> replaceAttachment(anyUpdateCommand.collectionId, anyUpdateCommand.attachment)
         }
+    }
+
+    private fun replaceAttachment(collectionId: CollectionId, attachment: Attachment): Bson {
+        logger.info { "Prepare replacing attachment for collection $collectionId" }
+        return set(CollectionDocument::attachments, listOf(AttachmentDocument(
+                id = ObjectId(),
+                description = attachment.description,
+                linkToResource = attachment.linkToResource,
+                type = when (attachment.type) {
+                    AttachmentType.LESSON_PLAN -> "LESSON_PLAN"
+                }
+        )))
     }
 
     private fun replaceAgeRange(collectionId: CollectionId, min: Int, max: Int?): Bson {
