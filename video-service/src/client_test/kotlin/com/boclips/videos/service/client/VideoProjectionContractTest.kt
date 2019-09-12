@@ -1,5 +1,6 @@
 package com.boclips.videos.service.client
 
+import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.client.testsupport.AbstractVideoServiceClientSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -14,13 +15,7 @@ abstract class VideoProjectionContractTest : AbstractVideoServiceClientSpringInt
 
     @BeforeEach
     fun setUp() {
-        fakeKalturaClient.addMediaEntry(
-            com.boclips.videos.service.testsupport.TestFactories.createMediaEntry(
-                id = "entry-123",
-                referenceId = "ref-id-123",
-                duration = Duration.ofMinutes(1)
-            )
-        )
+        fakeKalturaClient.createMediaEntry("entry-123", "ref-id-123", Duration.ofMinutes(1), MediaEntryStatus.READY)
     }
 
     @Test
