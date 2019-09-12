@@ -339,11 +339,11 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(collectionRepository.find(collection.id)!!.isPublic).isTrue()
-            assertThat(collectionRepository.find(collection.id)!!.updatedAt).isAfter(collection.updatedAt)
+            assertThat(collectionRepository.find(collection.id)!!.updatedAt).isAfterOrEqualTo(collection.updatedAt)
             assertThat(collectionRepository.find(collection2.id)!!.title).isEqualTo("New Collection title")
-            assertThat(collectionRepository.find(collection2.id)!!.updatedAt).isAfter(collection2.updatedAt)
+            assertThat(collectionRepository.find(collection2.id)!!.updatedAt).isAfterOrEqualTo(collection2.updatedAt)
             assertThat(collectionRepository.find(collection3.id)!!.videos[0]).isEqualTo(videoId)
-            assertThat(collectionRepository.find(collection3.id)!!.updatedAt).isAfter(collection3.updatedAt)
+            assertThat(collectionRepository.find(collection3.id)!!.updatedAt).isAfterOrEqualTo(collection3.updatedAt)
         }
     }
 
