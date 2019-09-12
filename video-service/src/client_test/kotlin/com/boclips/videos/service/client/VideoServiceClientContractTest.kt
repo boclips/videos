@@ -1,5 +1,6 @@
 package com.boclips.videos.service.client
 
+import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedContentContract
@@ -11,7 +12,6 @@ import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
-import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.within
@@ -441,12 +441,11 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
 internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTest() {
     @BeforeEach
     fun setUp() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-123",
-                referenceId = "ref-id-123",
-                duration = Duration.ofMinutes(1)
-            )
+        fakeKalturaClient.createMediaEntry(
+                "entry-123",
+                "ref-id-123",
+                Duration.ofMinutes(1),
+                MediaEntryStatus.READY
         )
         fakeYoutubePlaybackProvider.addVideo("ref-id-123", "http://my-little-pony.com", Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("ref-id-123", "http://my-little-pony.com", "channelId")

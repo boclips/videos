@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.users.client.UserServiceClient
@@ -40,7 +41,6 @@ import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequ
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
-import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.MongoClient
@@ -164,6 +164,14 @@ abstract class AbstractSpringIntegrationTest {
         reset(legacyVideoSearchService)
     }
 
+    fun createMediaEntry(
+        id: String = "1",
+        referenceId: String = "ref-id-$id",
+        duration: Duration = Duration.ofMinutes(1),
+        status: MediaEntryStatus = MediaEntryStatus.READY
+    ) =
+        fakeKalturaClient.createMediaEntry(id, referenceId, duration, status)
+
     fun saveVideo(
         playbackId: PlaybackId = PlaybackId(
             type = KALTURA,
@@ -198,12 +206,10 @@ abstract class AbstractSpringIntegrationTest {
         }
 
         when (playbackId.type) {
-            KALTURA -> fakeKalturaClient.addMediaEntry(
-                createMediaEntry(
+            KALTURA -> createMediaEntry(
                     id = "entry-${playbackId.value}",
                     referenceId = playbackId.value,
                     duration = duration
-                )
             )
             YOUTUBE -> {
                 fakeYoutubePlaybackProvider.addVideo(

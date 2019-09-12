@@ -16,7 +16,6 @@ import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethod
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -38,12 +37,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `requesting creation of an existing kaltura video creates the video`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "1234",
+            duration = Duration.ofMinutes(1)
         )
 
         val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
@@ -105,12 +102,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws if content partner if it does not exist`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "1234",
+            duration = Duration.ofMinutes(1)
         )
 
         assertThrows<ContentPartnerNotFoundException> {
@@ -134,12 +129,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `created video video uses the duration specified by the playback provider`() {
         val playbackProviderDuration = Duration.ofMinutes(2)
 
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = playbackProviderDuration
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "1234",
+            duration = playbackProviderDuration
         )
 
         val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
@@ -167,12 +160,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             providerId = contentPartner.contentPartnerId.value
         )
 
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = createRequest.playbackId!!,
-                duration = Duration.ZERO
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = createRequest.playbackId!!,
+            duration = Duration.ZERO
         )
 
         assertThrows<NonNullableFieldCreateRequestException> { createVideo(createRequest) }
@@ -192,12 +183,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `it requests that the video is analysed`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "1234",
+            duration = Duration.ofMinutes(1)
         )
 
         val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
@@ -214,12 +203,12 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
         assertThat(event.videoId).isEqualTo(video.content.id)
-        assertThat(event.videoUrl).isEqualTo("https://download/video-entry-$123.mp4")
+        assertThat(event.videoUrl).isEqualTo("https://download.com/entryId/entry-\$123/format/download")
     }
 
     @Test
     fun `it dispatches a video created event`() {
-        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "1"))
+        createMediaEntry(referenceId = "1")
 
         val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
 
@@ -238,12 +227,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `it gets the distribution method from its content partner`() {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "1234",
+            duration = Duration.ofMinutes(1)
         )
 
         val contentPartner = saveContentPartner(
@@ -287,12 +274,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun createAVideo(title: String) {
-        fakeKalturaClient.addMediaEntry(
-            createMediaEntry(
-                id = "entry-$123",
-                referenceId = "1234",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "1234",
+            duration = Duration.ofMinutes(1)
         )
 
         val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())

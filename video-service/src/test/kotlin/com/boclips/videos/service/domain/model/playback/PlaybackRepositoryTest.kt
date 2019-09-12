@@ -1,11 +1,11 @@
 package com.boclips.videos.service.domain.model.playback
 
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
-import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,14 +14,14 @@ import java.time.Duration
 
 class PlaybackRepositoryTest {
     lateinit var playbackRepository: PlaybackRepository
-    lateinit var kalturaClient: TestKalturaClient
+    lateinit var fakeKalturaClient: TestKalturaClient
 
     @BeforeEach
     fun setUp() {
-        kalturaClient = TestKalturaClient()
-        kalturaClient.addMediaEntry(createMediaEntry(referenceId = "ref-id-1"))
+        fakeKalturaClient = TestKalturaClient()
+        fakeKalturaClient.createMediaEntry("1", "ref-id-1", Duration.ofMinutes(1), MediaEntryStatus.READY)
 
-        val kalturaPlaybackProvider = KalturaPlaybackProvider(kalturaClient)
+        val kalturaPlaybackProvider = KalturaPlaybackProvider(fakeKalturaClient)
         val youtubePlaybackProvider = TestYoutubePlaybackProvider()
         youtubePlaybackProvider.addVideo("yt-123", "thumbnailUrl", Duration.ZERO)
         youtubePlaybackProvider.addMetadata("yt-123", "aChannelName", "aChannelId")
@@ -78,7 +78,7 @@ class PlaybackRepositoryTest {
 
         playbackRepository.uploadCaptions(playbackId, createCaptions())
 
-        assertThat(kalturaClient.getCaptionFilesByReferenceId("ref-id-1")).isNotEmpty
+        assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("ref-id-1")).isNotEmpty
     }
 
     @Test

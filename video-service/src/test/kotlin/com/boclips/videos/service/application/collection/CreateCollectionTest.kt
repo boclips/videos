@@ -135,15 +135,11 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
     @BeforeEach
     fun setUp() {
-        fakeKalturaClient.addMediaEntry(
-            TestFactories.createMediaEntry(
-                referenceId = "123"
-            )
+        createMediaEntry(
+            referenceId = "123"
         )
-        fakeKalturaClient.addMediaEntry(
-            TestFactories.createMediaEntry(
-                referenceId = "hiphip"
-            )
+        createMediaEntry(
+            referenceId = "hiphip"
         )
     }
 }

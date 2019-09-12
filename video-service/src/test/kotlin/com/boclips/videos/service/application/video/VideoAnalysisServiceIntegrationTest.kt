@@ -42,7 +42,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
             assertThat(event.videoId).isEqualTo(videoId)
-            assertThat(event.videoUrl).isEqualTo("https://download/video-entry-kaltura-id.mp4")
+            assertThat(event.videoUrl).isEqualTo("https://download.com/entryId/entry-kaltura-id/format/download")
             assertThat(event.language).isEqualTo(Locale.GERMAN)
         }
 

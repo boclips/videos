@@ -31,11 +31,9 @@ class VideoPlaybackServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val event = VideoPlaybackSyncRequested.builder().videoId(videoId.value).build()
 
         fakeKalturaClient.clear()
-        fakeKalturaClient.addMediaEntry(
-            TestFactories.createMediaEntry(
-                referenceId = playbackId.value,
-                duration = Duration.ofSeconds(1000)
-            )
+        createMediaEntry(
+            referenceId = playbackId.value,
+            duration = Duration.ofSeconds(1000)
         )
 
         fakeEventBus.publish(event)

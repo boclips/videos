@@ -12,7 +12,6 @@ import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethod
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -114,14 +113,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._embedded.videos[0].playback.streamUrl",
-                    equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")
+                    equalTo("https://stream.com/entryId/entry-ref-id-123/format/applehttp")
                 )
             )
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
             .andExpect(
                 jsonPath(
                     "$._embedded.videos[0].playback.thumbnailUrl",
-                    equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")
+                    equalTo("https://thumbnail.com/entry_id/entry-ref-id-123/width/500")
                 )
             )
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$kalturaVideoId")))
@@ -359,8 +358,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback.id").exists())
             .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
             .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")))
-            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream.com/entryId/entry-ref-id-123/format/applehttp")))
+            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail.com/entry_id/entry-ref-id-123/width/500")))
             .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
             .andExpect(jsonPath("$.type.id", equalTo(3)))
             .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
@@ -382,8 +381,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback.id").exists())
             .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
             .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")))
-            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream.com/entryId/entry-ref-id-123/format/applehttp")))
+            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail.com/entry_id/entry-ref-id-123/width/500")))
             .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
@@ -407,8 +406,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback.id").exists())
             .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
             .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream/applehttp/video-entry-ref-id-123.mp4")))
-            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail/thumbnail-entry-ref-id-123.mp4")))
+            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream.com/entryId/entry-ref-id-123/format/applehttp")))
+            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail.com/entry_id/entry-ref-id-123/width/500")))
             .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
@@ -598,12 +597,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create new video`() {
-        fakeKalturaClient.addMediaEntry(
-            TestFactories.createMediaEntry(
-                id = "entry-$123",
-                referenceId = "abc1",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "abc1",
+            duration = Duration.ofMinutes(1)
         )
 
         val contentPartnerId = saveContentPartner().contentPartnerId.value
@@ -639,12 +636,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val subjectId = saveSubject("Maths").id
         val contentPartnerId = saveContentPartner().contentPartnerId.value
 
-        fakeKalturaClient.addMediaEntry(
-            TestFactories.createMediaEntry(
-                id = "entry-$123",
-                referenceId = "abc1",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "abc1",
+            duration = Duration.ofMinutes(1)
         )
 
         val content = """
@@ -693,12 +688,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns a CONFLICT and a helpful error message when video already exists`() {
-        fakeKalturaClient.addMediaEntry(
-            TestFactories.createMediaEntry(
-                id = "entry-$123",
-                referenceId = "abc1",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "abc1",
+            duration = Duration.ofMinutes(1)
         )
 
         val contentPartnerId = saveContentPartner(name = "AP").contentPartnerId.value

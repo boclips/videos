@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asIngestor
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
@@ -21,12 +20,10 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `video counter increases when we create a video`() {
-        fakeKalturaClient.addMediaEntry(
-            TestFactories.createMediaEntry(
-                id = "entry-$123",
-                referenceId = "abc1",
-                duration = Duration.ofMinutes(1)
-            )
+        createMediaEntry(
+            id = "entry-$123",
+            referenceId = "abc1",
+            duration = Duration.ofMinutes(1)
         )
 
         val contentPartnerId = saveContentPartner().contentPartnerId.value

@@ -111,7 +111,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
         assertThat(event.videoId).contains(videoId.value)
-        assertThat(event.videoUrl).contains("https://download/video-entry-123.mp4")
+        assertThat(event.videoUrl).contains("https://download.com/entryId/entry-123/format/download")
         assertThat(event.language.toLanguageTag()).isEqualTo("en-US")
     }
 

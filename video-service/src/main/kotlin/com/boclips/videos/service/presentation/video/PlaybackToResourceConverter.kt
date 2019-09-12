@@ -6,6 +6,7 @@ import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import org.springframework.hateoas.Resource
+import org.springframework.hateoas.UriTemplate
 import org.springframework.stereotype.Component
 
 @Component
@@ -30,7 +31,7 @@ class PlaybackToResourceConverter(
         return when (playback) {
             is VideoPlayback.StreamPlayback -> StreamPlaybackResource(
                 streamUrl = playback.appleHlsStreamUrl,
-                thumbnailUrl = playback.thumbnailUrl,
+                thumbnailUrl = UriTemplate(playback.thumbnailUrl).expand(mapOf(Pair("thumbnailWidth", 500))).toString(),
                 duration = playback.duration,
                 id = playback.id.value
             )

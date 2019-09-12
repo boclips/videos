@@ -7,9 +7,6 @@ import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
-import com.boclips.kalturaclient.media.MediaEntry
-import com.boclips.kalturaclient.media.MediaEntryStatus
-import com.boclips.kalturaclient.media.streams.StreamUrls
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -136,23 +133,6 @@ object TestFactories {
 
     fun createTagRequest(label: String? = null): CreateTagRequest =
         CreateTagRequest(label = label)
-
-    fun createMediaEntry(
-        id: String = "1",
-        referenceId: String = "ref-id-$id",
-        duration: Duration = Duration.ofMinutes(1),
-        status: MediaEntryStatus = MediaEntryStatus.READY
-    ): MediaEntry? {
-        return MediaEntry.builder()
-            .id(id)
-            .referenceId(referenceId)
-            .streams(StreamUrls("https://stream/[FORMAT]/video-$id.mp4"))
-            .thumbnailUrl("https://thumbnail/thumbnail-$id.mp4")
-            .downloadUrl("https://download/video-$id.mp4")
-            .duration(duration)
-            .status(status)
-            .build()
-    }
 
     fun createKalturaPlayback(
         duration: Duration = Duration.ofSeconds(11),

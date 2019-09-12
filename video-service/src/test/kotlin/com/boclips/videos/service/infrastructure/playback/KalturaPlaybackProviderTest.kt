@@ -1,9 +1,7 @@
 package com.boclips.videos.service.infrastructure.playback
 
-import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
-import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -11,21 +9,16 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlay
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaCaptionAsset
-import com.boclips.videos.service.testsupport.TestFactories.createMediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.util.Locale
 
 class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
-    @Autowired
-    lateinit var kalturaClient: TestKalturaClient
-
     @Test
     fun `returns streaming information for videos`() {
-        fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
+        createMediaEntry(id = "1")
 
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
@@ -34,17 +27,17 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(playbackById[playbackId]).isNotNull
 
         val videoPlayback = playbackById[playbackId] as StreamPlayback
-        assertThat(videoPlayback.appleHlsStreamUrl).isEqualTo("https://stream/applehttp/video-1.mp4")
-        assertThat(videoPlayback.mpegDashStreamUrl).isEqualTo("https://stream/mpegdash/video-1.mp4")
-        assertThat(videoPlayback.progressiveDownloadStreamUrl).isEqualTo("https://stream/url/video-1.mp4")
-        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail/thumbnail-1.mp4")
-        assertThat(videoPlayback.downloadUrl).isEqualTo("https://download/video-1.mp4")
+        assertThat(videoPlayback.appleHlsStreamUrl).isEqualTo("https://stream.com/entryId/1/format/applehttp")
+        assertThat(videoPlayback.mpegDashStreamUrl).isEqualTo("https://stream.com/entryId/1/format/mpegdash")
+        assertThat(videoPlayback.progressiveDownloadStreamUrl).isEqualTo("https://stream.com/entryId/1/format/url")
+        assertThat(videoPlayback.downloadUrl).isEqualTo("https://download.com/entryId/1/format/download")
+        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/1/width/{thumbnailWidth}")
         assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
     }
 
     @Test
     fun `returns only videos with streaming information, omits the others`() {
-        fakeKalturaClient.addMediaEntry(createMediaEntry("1"))
+        createMediaEntry(id = "1")
         val existingPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         val inexistantPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")
 
@@ -111,19 +104,14 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     private fun mediaEntryWithCaptions(label: String, language: KalturaLanguage = KalturaLanguage.ENGLISH): PlaybackId {
         val existingCaptions = createKalturaCaptionAsset(label = label, language = language)
-        fakeKalturaClient.addMediaEntry(createMediaEntry(referenceId = "ref-id"))
+        createMediaEntry(referenceId = "ref-id")
         fakeKalturaClient.createCaptionsFile("ref-id", existingCaptions, "old captions")
         return PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id")
     }
 
     @Test
     fun `removes the playback information`() {
-        kalturaClient.addMediaEntry(
-            MediaEntry.builder()
-                .id("something")
-                .referenceId("ref-123")
-                .build()
-        )
+        createMediaEntry(referenceId = "ref-123")
 
         val playbackToBeDeleted = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
         kalturaPlaybackProvider.removePlayback(playbackToBeDeleted)
@@ -133,8 +121,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `filters non ready kaltura videos`() {
-        fakeKalturaClient.addMediaEntry(createMediaEntry("1", status = MediaEntryStatus.NOT_READY))
-        fakeKalturaClient.addMediaEntry(createMediaEntry("2", status = MediaEntryStatus.READY))
+        createMediaEntry(id = "1", status = MediaEntryStatus.NOT_READY)
+        createMediaEntry(id = "2", status = MediaEntryStatus.READY)
 
         val playbackIdOfNonReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
         val playbackIdOfReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-2")
