@@ -5,6 +5,7 @@ import java.time.Instant
 data class PlaybackDocument(
     val type: String,
     val id: String,
+    val entryId: String?,
     val thumbnailUrl: List<String>?,
     val downloadUrl: String?,
     val hlsStreamUrl: String?,
@@ -20,6 +21,7 @@ data class PlaybackDocument(
     }
 
     fun isCompleteKalturaPlayback(): Boolean {
+        //TODO() After migrating, check if entryId exists and remove specific urls
         return type == PLAYBACK_TYPE_KALTURA &&
             id.isNotEmpty() &&
             !thumbnailUrl.isNullOrEmpty() &&

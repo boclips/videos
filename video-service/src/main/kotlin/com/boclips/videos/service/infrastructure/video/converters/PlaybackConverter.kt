@@ -15,6 +15,7 @@ object PlaybackConverter : KLogging() {
         return when (videoPlayback) {
             is VideoPlayback.StreamPlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
+                entryId = videoPlayback.entryId,
                 type = "KALTURA",
                 thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = videoPlayback.downloadUrl,
@@ -26,6 +27,7 @@ object PlaybackConverter : KLogging() {
             )
             is VideoPlayback.YoutubePlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
+                entryId = null,
                 type = "YOUTUBE",
                 thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = null,
@@ -56,6 +58,7 @@ object PlaybackConverter : KLogging() {
 
                 VideoPlayback.StreamPlayback(
                     id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id),
+                    entryId = playbackDocument.entryId,
                     thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     appleHlsStreamUrl = playbackDocument.hlsStreamUrl!!,

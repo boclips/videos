@@ -10,8 +10,9 @@ import java.time.Duration
 class PlaybackConverterTest {
 
     @Test
-    fun `convert valid Kaltura document`() {
+    fun `convert Kaltura playback to document, and back again`() {
         val originalPlayback = TestFactories.createKalturaPlayback(
+            entryId = "entry_id_1234",
             duration = Duration.ofSeconds(100),
             downloadUrl = "download",
             playbackId = "1234",
@@ -23,6 +24,7 @@ class PlaybackConverterTest {
 
         val playbackDocument = PlaybackConverter.toDocument(originalPlayback)
         assertThat(playbackDocument.id).isEqualTo("1234")
+        assertThat(playbackDocument.entryId).isEqualTo("entry_id_1234")
         assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail")
         assertThat(playbackDocument.downloadUrl).isEqualTo("download")
         assertThat(playbackDocument.hlsStreamUrl).isEqualTo("hls")
@@ -36,7 +38,7 @@ class PlaybackConverterTest {
     }
 
     @Test
-    fun `convert valid Youtube document`() {
+    fun `convert Youtube playback to document, and back again`() {
         val originalPlayback = TestFactories.createYoutubePlayback(
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "some-yt-id"),
             duration = Duration.ofSeconds(100),
@@ -46,6 +48,7 @@ class PlaybackConverterTest {
         val playbackDocument = PlaybackConverter.toDocument(originalPlayback)
         assertThat(playbackDocument.id).isEqualTo("some-yt-id")
         assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail-url")
+        assertThat(playbackDocument.entryId).isNull()
         assertThat(playbackDocument.downloadUrl).isNull()
         assertThat(playbackDocument.hlsStreamUrl).isNull()
         assertThat(playbackDocument.dashStreamUrl).isNull()

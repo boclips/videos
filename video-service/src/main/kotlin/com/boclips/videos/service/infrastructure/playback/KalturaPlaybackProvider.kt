@@ -36,6 +36,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                 val mediaEntry = optionalMediaEntry!!
                 val videoPlayback = StreamPlayback(
                     id = kalturaVideoId,
+                    entryId = mediaEntry.id,
                     duration = mediaEntry.duration,
                     appleHlsStreamUrl = mediaEntry.streams.withFormat(StreamFormat.APPLE_HDS),
                     mpegDashStreamUrl = mediaEntry.streams.withFormat(StreamFormat.MPEG_DASH),

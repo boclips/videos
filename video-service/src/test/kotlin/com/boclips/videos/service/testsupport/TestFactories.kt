@@ -29,7 +29,12 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -54,7 +59,7 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.*
+import java.util.Locale
 
 object TestFactories {
 
@@ -132,6 +137,7 @@ object TestFactories {
         CreateTagRequest(label = label)
 
     fun createKalturaPlayback(
+        entryId: String = "entry-id",
         duration: Duration = Duration.ofSeconds(11),
         downloadUrl: String = "kaltura-download",
         playbackId: String = "555",
@@ -142,6 +148,7 @@ object TestFactories {
     ): StreamPlayback {
         return StreamPlayback(
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackId),
+            entryId = entryId,
             appleHlsStreamUrl = hlsStreamUrl,
             mpegDashStreamUrl = dashStreamUrl,
             progressiveDownloadStreamUrl = progressiveStreamUrl,
@@ -348,6 +355,7 @@ object TestFactories {
 
     fun createKalturaPlaybackDocument(
         id: String = "valid-id",
+        entryId: String? = "entry-id",
         thumbnailUrl: List<String>? = listOf("thumbnail.com"),
         hlsStreamUrl: String? = null,
         dashStreamUrl: String? = null,
@@ -359,6 +367,7 @@ object TestFactories {
         return PlaybackDocument(
             type = "KALTURA",
             id = id,
+            entryId = entryId,
             thumbnailUrl = thumbnailUrl,
             downloadUrl = downloadUrl,
             hlsStreamUrl = hlsStreamUrl,
@@ -376,6 +385,7 @@ object TestFactories {
         return PlaybackDocument(
             type = "YOUTUBE",
             id = id,
+            entryId = null,
             thumbnailUrl = null,
             downloadUrl = null,
             hlsStreamUrl = null,
