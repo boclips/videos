@@ -45,9 +45,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
     private fun buildFuzzyRequest(query: CollectionQuery): SearchSourceBuilder {
         val esQuery = SearchSourceBuilder().query(fuzzyQuery(query))
 
-        if (!query.phrase.isBlank()) {
-            esQuery
-        } else if (query.sort != null) {
+        if (query.sort != null) {
             esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
         }
 

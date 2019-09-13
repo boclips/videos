@@ -197,8 +197,8 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val updatedCollection = collectionRepository.find(collection.id)
 
             assertThat(updatedCollection!!.attachments.first().description).isEqualTo(attachment.description)
-            assertThat(updatedCollection!!.attachments.first().linkToResource).isEqualTo(attachment.linkToResource)
-            assertThat(updatedCollection!!.attachments.first().type).isEqualTo(attachment.type)
+            assertThat(updatedCollection.attachments.first().linkToResource).isEqualTo(attachment.linkToResource)
+            assertThat(updatedCollection.attachments.first().type).isEqualTo(attachment.type)
         }
 
         @Test

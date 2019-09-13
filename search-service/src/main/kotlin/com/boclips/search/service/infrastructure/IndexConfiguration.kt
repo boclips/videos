@@ -37,8 +37,8 @@ interface IndexConfiguration {
 
         fun unstemmed(fieldName: String) = "$fieldName.$FIELD_DESCRIPTOR_UNSTEMMED"
     }
-    object Fields {
 
+    object Fields {
         val freeText = mapOf(
             "type" to "text",
             "analyzer" to Analyzers.ENGLISH,
@@ -55,8 +55,13 @@ interface IndexConfiguration {
             "type" to "text",
             "analyzer" to Analyzers.UNSTEMMED_SYNONYMS
         )
+
         val date = mapOf(
             "type" to "date"
+        )
+
+        val boolean = mapOf(
+            "type" to "boolean"
         )
     }
 

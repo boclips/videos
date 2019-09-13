@@ -11,6 +11,5 @@ object CollectionsIndex : Index {
     override fun getESType() = "collection"
     override fun getIndexAlias() = ES_COLLECTIONS_INDEX_ALIAS
     override fun getIndexWildcard() = ES_COLLECTIONS_INDEX_WILDCARD
-    override fun generateIndexName() =
-        Index.generateIndexName(ES_COLLECTIONS_INDEX_PREFIX)
+    override fun generateIndexName() = Index.generateIndexName(ES_COLLECTIONS_INDEX_PREFIX)
 }

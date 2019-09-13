@@ -30,7 +30,8 @@ class CollectionDocumentConverterTest {
             CollectionDocument(
                 id = "14",
                 title = "The title",
-                subjects = listOf("crispity", "crunchy")
+                subjects = listOf("crispity", "crunchy"),
+                hasAttachments = false
             )
         )
     }

@@ -12,7 +12,8 @@ class CollectionIndexWriter(client: RestHighLevelClient) : AbstractIndexWriter<C
     override fun serializeToIndexDocument(entry: CollectionMetadata) = CollectionDocument(
         id = entry.id,
         title = entry.title,
-        subjects = entry.subjectIds
+        subjects = entry.subjectIds,
+        hasAttachments = entry.hasAttachments
     )
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id
