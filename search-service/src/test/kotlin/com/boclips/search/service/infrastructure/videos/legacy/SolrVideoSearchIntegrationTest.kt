@@ -19,7 +19,7 @@ class KGenericContainer(imageName: String) : GenericContainer<KGenericContainer>
 
 class SolrSearchServiceIntegrationTest {
     companion object {
-        val containerPort = 8983
+        private const val containerPort = 8983
 
         var solrServer = KGenericContainer("boclipsconcourse/solr:0.33.0")
             .withExposedPorts(containerPort)
