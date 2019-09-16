@@ -27,7 +27,7 @@ class ApiUserContractService(
 
     @Recover
     fun getContractsRecoveryMethod(e: Exception): List<Contract> {
-        logger.error { "Unable to retrieve user contracts, defaulting to an empty list. Cause: $e" }
+        logger.warn { "Unable to retrieve user contracts, defaulting to an empty list. Cause: $e" }
         return emptyList()
     }
 }
