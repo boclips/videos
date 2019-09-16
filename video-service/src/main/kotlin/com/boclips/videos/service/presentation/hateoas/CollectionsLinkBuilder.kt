@@ -67,16 +67,14 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             .toUriString(), "publicCollections"
     )
 
-    fun searchCollections(
+    fun searchPublicCollections(
         page: Int = 0,
         size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
     ) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
         Link(
             getCollectionsRoot()
                 .queryParam("public", true)
-                .queryParam("page", page)
-                .queryParam("size", size)
-                .toUriString() + "{&query,subject,projection}", "searchCollections"
+                .toUriString() + "{&query,subject,projection,page,size}", "searchPublicCollections"
         )
     }
 

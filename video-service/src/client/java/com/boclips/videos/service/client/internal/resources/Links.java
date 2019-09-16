@@ -7,7 +7,7 @@ public class Links {
     private Link video;
     private Link subjects;
     private Link collection;
-    private Link searchCollections;
+    private Link searchPublicCollections;
     private Link myCollections;
     private Link collectionsByOwner;
     private Link contentPartners;

@@ -153,13 +153,13 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public List<Collection> getCollectionsDetailed(PageSpec pageSpec) {
         this.linkTemplate = getLinks();
-        Link searchCollectionsLink = linkTemplate.get_links().getSearchCollections();
-        if (searchCollectionsLink == null) {
-            throw new UnsupportedOperationException("No 'searchCollections' link. Check user roles.");
+        Link searchPublicCollectionsLink = linkTemplate.get_links().getSearchPublicCollections();
+        if (searchPublicCollectionsLink == null) {
+            throw new UnsupportedOperationException("No 'searchPublicCollections' link. Check user roles.");
         }
 
         return getCollections(
-                uri(searchCollectionsLink.interpolate(singletonMap("projection", DETAILS_PROJECTION))),
+                uri(searchPublicCollectionsLink.interpolate(singletonMap("projection", DETAILS_PROJECTION))),
                 pageSpec
         );
     }
