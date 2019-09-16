@@ -20,7 +20,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `returns streaming information for videos`() {
         createMediaEntry(id = "1")
 
-        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
         val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
 
         assertThat(playbackById).hasSize(1)
@@ -36,10 +36,55 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns streaming information for videos based on reference id`() {
+        createMediaEntry(id = "1", referenceId = "ref-id-1")
+
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-1")
+        val playbacksById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
+
+        assertThat(playbacksById).hasSize(1)
+        assertThat(playbacksById[playbackId]).isNotNull
+
+        val videoPlayback = playbacksById[playbackId] as StreamPlayback
+        assertThat(videoPlayback.id).isEqualTo(PlaybackId(type = PlaybackProviderType.KALTURA, value = "1"))
+        assertThat(videoPlayback.appleHlsStreamUrl).isEqualTo("https://stream.com/entryId/1/format/applehttp")
+        assertThat(videoPlayback.mpegDashStreamUrl).isEqualTo("https://stream.com/entryId/1/format/mpegdash")
+        assertThat(videoPlayback.progressiveDownloadStreamUrl).isEqualTo("https://stream.com/entryId/1/format/url")
+        assertThat(videoPlayback.downloadUrl).isEqualTo("https://download.com/entryId/1/format/download")
+        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/1/width/{thumbnailWidth}")
+        assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
+    }
+
+    @Test
+    fun `returns several playbacks for videos based on reference and entry ids`() {
+        createMediaEntry(id = "1", referenceId = "ref-id-1")
+        createMediaEntry(id = "2", referenceId = "ref-id-2")
+        createMediaEntry(id = "3", referenceId = "ref-id-3")
+        createMediaEntry(id = "4", referenceId = "ref-id-4")
+
+        val playbackIdOne = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-1")
+        val playbackIdTwo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "2")
+        val playbackIdThree = PlaybackId(type = PlaybackProviderType.KALTURA, value = "3")
+        val playbackIdFour = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-4")
+
+        val playbacksById = kalturaPlaybackProvider.retrievePlayback(
+            listOf(
+                playbackIdOne, playbackIdTwo, playbackIdThree, playbackIdFour
+            )
+        )
+
+        assertThat(playbacksById).hasSize(4)
+        assertThat(playbacksById[playbackIdOne]).isNotNull
+        assertThat(playbacksById[playbackIdTwo]).isNotNull
+        assertThat(playbacksById[playbackIdThree]).isNotNull
+        assertThat(playbacksById[playbackIdFour]).isNotNull
+    }
+
+    @Test
     fun `returns only videos with streaming information, omits the others`() {
         createMediaEntry(id = "1")
-        val existingPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
-        val inexistantPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-100")
+        val existingPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        val inexistantPlaybackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "100")
 
         val videosWithPlayback = kalturaPlaybackProvider.retrievePlayback(
             listOf(existingPlaybackId, inexistantPlaybackId)
@@ -106,14 +151,14 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         val existingCaptions = createKalturaCaptionAsset(label = label, language = language)
         createMediaEntry(referenceId = "ref-id")
         fakeKalturaClient.createCaptionsFile("ref-id", existingCaptions, "old captions")
-        return PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id")
+        return PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id")
     }
 
     @Test
     fun `removes the playback information`() {
-        createMediaEntry(referenceId = "ref-123")
+        createMediaEntry(id = "123")
 
-        val playbackToBeDeleted = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-123")
+        val playbackToBeDeleted = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123")
         kalturaPlaybackProvider.removePlayback(playbackToBeDeleted)
 
         assertThat(kalturaPlaybackProvider.retrievePlayback(listOf(playbackToBeDeleted))).isEmpty()
@@ -124,8 +169,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         createMediaEntry(id = "1", status = MediaEntryStatus.NOT_READY)
         createMediaEntry(id = "2", status = MediaEntryStatus.READY)
 
-        val playbackIdOfNonReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
-        val playbackIdOfReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-2")
+        val playbackIdOfNonReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        val playbackIdOfReady = PlaybackId(type = PlaybackProviderType.KALTURA, value = "2")
 
         val videosWithPlayback = kalturaPlaybackProvider.retrievePlayback(
             listOf(playbackIdOfNonReady, playbackIdOfReady)

@@ -42,7 +42,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
             assertThat(event.videoId).isEqualTo(videoId)
-            assertThat(event.videoUrl).isEqualTo("https://download.com/entryId/entry-kaltura-id/format/download")
+            assertThat(event.videoUrl).isEqualTo("https://download.com/entryId/kaltura-id/format/download")
             assertThat(event.language).isEqualTo(Locale.GERMAN)
         }
 
@@ -125,14 +125,35 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
         @Test
         fun `deletes existing auto-generated captions when transcript has no words`() {
+            val videoId =
+                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-id"))
+
             val existingCaptions = createKalturaCaptionAsset(
                 language = KalturaLanguage.ENGLISH,
                 label = "English (auto-generated)"
             )
+
+            fakeKalturaClient.createCaptionsFileWithEntryId("entry-id", existingCaptions, "bla bla bla")
+
+            val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "\n")
+
+            fakeEventBus.publish(videoAnalysed)
+
+            assertThat(fakeKalturaClient.getCaptionFilesByEntryId("entry-id")).isEmpty()
+        }
+
+        @Test
+        fun `deletes existing auto-generated captions when transcript has no words by reference`() {
+            val videoId =
+                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "reference-id"))
+
+            val existingCaptions = createKalturaCaptionAsset(
+                language = KalturaLanguage.ENGLISH,
+                label = "English (auto-generated)"
+            )
+
             fakeKalturaClient.createCaptionsFile("reference-id", existingCaptions, "bla bla bla")
 
-            val videoId =
-                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "reference-id"))
             val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "\n")
 
             fakeEventBus.publish(videoAnalysed)

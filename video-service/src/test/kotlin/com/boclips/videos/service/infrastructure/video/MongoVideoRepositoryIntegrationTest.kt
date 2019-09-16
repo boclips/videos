@@ -91,7 +91,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update playback`() {
         val originalAsset = mongoVideoRepository.create(
             TestFactories.createVideo(
-                playback = TestFactories.createKalturaPlayback(playbackId = "ref-id-1")
+                playback = TestFactories.createKalturaPlayback(entryId = "original-entry")
             )
         )
 
@@ -101,9 +101,9 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                     originalAsset.videoId,
                     TestFactories.createKalturaPlayback(
                         duration = Duration.ZERO,
-                        playbackId = "ref-123",
+                        entryId = "new-entry",
                         downloadUrl = "download-url-updated",
-                        thumbnailUrl = "thumnbnail-url-updated",
+                        thumbnailUrl = "thumbnail-url-updated",
                         hlsStreamUrl = "stream-url-updated",
                         dashStreamUrl = "dash-url-updated"
                     )
@@ -114,8 +114,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val updatedAsset = mongoVideoRepository.find(originalAsset.videoId)
 
         assertThat(updatedAsset!!.playback).isNotNull
-        assertThat(updatedAsset.playback.id.value).isEqualTo("ref-123")
-        assertThat(updatedAsset.playback.thumbnailUrl).isEqualTo("thumnbnail-url-updated")
+        assertThat(updatedAsset.playback.id.value).isEqualTo("new-entry")
+        assertThat(updatedAsset.playback.thumbnailUrl).isEqualTo("thumbnail-url-updated")
         assertThat(updatedAsset.playback.duration).isEqualTo(Duration.ZERO)
         assertThat((updatedAsset.playback as StreamPlayback).downloadUrl).isEqualTo("download-url-updated")
         assertThat((updatedAsset.playback as StreamPlayback).appleHlsStreamUrl).isEqualTo("stream-url-updated")
@@ -553,6 +553,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                                 .append("hlsStreamUrl", "x")
                                 .append("progressiveStreamUrl", "x")
                                 .append("duration", 10)
+                                .append("entryId", "some-entry-id")
                         )
                         .append("legacy", Document().append("type", LegacyVideoType.NEWS.name))
                         .append("keywords", emptyList<String>())
@@ -570,7 +571,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(video.isPlayable()).isTrue()
             assertThat(video.title).isEqualTo("Mah Video")
             assertThat(video.description).isEqualTo("Ain't no video like this one")
-            assertThat(video.playback.id.value).isEqualTo("some-id")
+            assertThat(video.playback.id.value).isEqualTo("some-entry-id")
             assertThat(video.playback.id.type.name).isEqualTo("KALTURA")
         }
     }

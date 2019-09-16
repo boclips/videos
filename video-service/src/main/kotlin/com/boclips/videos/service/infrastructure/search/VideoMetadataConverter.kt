@@ -4,6 +4,9 @@ import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA_REFERENCE
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
 
@@ -36,7 +39,8 @@ object VideoMetadataConverter {
 
     private fun convertPlaybackTypeToSourceType(playbackType: PlaybackProviderType): SourceType =
         when (playbackType) {
-            PlaybackProviderType.YOUTUBE -> SourceType.YOUTUBE
-            PlaybackProviderType.KALTURA -> SourceType.BOCLIPS
+            KALTURA -> SourceType.BOCLIPS
+            KALTURA_REFERENCE -> SourceType.BOCLIPS
+            YOUTUBE -> SourceType.YOUTUBE
         }
 }

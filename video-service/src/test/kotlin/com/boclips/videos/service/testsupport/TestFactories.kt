@@ -140,15 +140,15 @@ object TestFactories {
         entryId: String = "entry-id",
         duration: Duration = Duration.ofSeconds(11),
         downloadUrl: String = "kaltura-download",
-        playbackId: String = "555",
+        referenceId: String = "555",
         thumbnailUrl: String = "kaltura-thumbnailUrl",
         hlsStreamUrl: String = "hls-stream",
         dashStreamUrl: String = "dash-stream",
         progressiveStreamUrl: String = "progressive-stream"
     ): StreamPlayback {
         return StreamPlayback(
-            id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackId),
-            entryId = entryId,
+            id = PlaybackId(type = PlaybackProviderType.KALTURA, value = entryId),
+            referenceId = referenceId,
             appleHlsStreamUrl = hlsStreamUrl,
             mpegDashStreamUrl = dashStreamUrl,
             progressiveDownloadStreamUrl = progressiveStreamUrl,
@@ -184,6 +184,8 @@ object TestFactories {
         videoType: String? = "NEWS",
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
+        kalturaReferenceId: String? = null,
+        kalturaEntryId: String? = null,
         analyseVideo: Boolean = false,
         subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
@@ -197,6 +199,8 @@ object TestFactories {
         videoType = videoType,
         playbackId = playbackId,
         playbackProvider = playbackProvider,
+        kalturaReferenceId = kalturaReferenceId,
+        kalturaEntryId = kalturaEntryId,
         analyseVideo = analyseVideo,
         subjects = subjects
     )

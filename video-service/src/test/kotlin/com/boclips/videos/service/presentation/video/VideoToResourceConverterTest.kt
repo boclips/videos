@@ -98,7 +98,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.playback!!.content.type).isEqualTo("STREAM")
         assertThat(videoResource.playback!!.content.thumbnailUrl).isEqualTo("kaltura-thumbnailUrl")
         assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(11))
-        assertThat(videoResource.playback!!.content.id).isEqualTo("555")
+        assertThat(videoResource.playback!!.content.id).isEqualTo("entry-id")
         assertThat((videoResource.playback!!.content as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
         assertThat(videoResource.ageRange!!.min).isEqualTo(5)
         assertThat(videoResource.ageRange!!.max).isEqualTo(11)

@@ -32,7 +32,7 @@ class VideoPlaybackServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         fakeKalturaClient.clear()
         createMediaEntry(
-            referenceId = playbackId.value,
+            id = playbackId.value,
             duration = Duration.ofSeconds(1000)
         )
 

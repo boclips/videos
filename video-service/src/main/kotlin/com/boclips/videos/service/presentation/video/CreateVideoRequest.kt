@@ -14,6 +14,8 @@ data class CreateVideoRequest(
     val videoType: String? = null,
     val playbackId: String? = null,
     val playbackProvider: String? = null,
+    val kalturaReferenceId: String? = null,
+    val kalturaEntryId: String? = null,
     val analyseVideo: Boolean = true,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,

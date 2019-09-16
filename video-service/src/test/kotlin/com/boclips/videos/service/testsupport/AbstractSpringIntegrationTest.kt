@@ -25,6 +25,7 @@ import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA_REFERENCE
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -175,7 +176,7 @@ abstract class AbstractSpringIntegrationTest {
     fun saveVideo(
         playbackId: PlaybackId = PlaybackId(
             type = KALTURA,
-            value = "ref-id-${UUID.randomUUID()}"
+            value = "id-${UUID.randomUUID()}"
         ),
         title: String = "Some title!",
         description: String = "Some description!",
@@ -206,10 +207,15 @@ abstract class AbstractSpringIntegrationTest {
         }
 
         when (playbackId.type) {
+            KALTURA_REFERENCE -> createMediaEntry(
+                id = "entry-${playbackId.value}",
+                referenceId = playbackId.value,
+                duration = duration
+            )
             KALTURA -> createMediaEntry(
-                    id = "entry-${playbackId.value}",
-                    referenceId = playbackId.value,
-                    duration = duration
+                id = playbackId.value,
+                referenceId = "ref-${playbackId.value}",
+                duration = duration
             )
             YOUTUBE -> {
                 fakeYoutubePlaybackProvider.addVideo(
@@ -222,10 +228,15 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
+        val kalturaEntryId = if (KALTURA == playbackId.type) { playbackId.value } else { "entry-${playbackId.value}" }
+        val kalturaReferenceId = if (KALTURA_REFERENCE == playbackId.type) { playbackId.value } else { "ref-${playbackId.value}" }
+
         val video = createVideo(
             CreateVideoRequest(
                 providerId = contentProviderId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
+                kalturaEntryId =  kalturaEntryId,
+                kalturaReferenceId = kalturaReferenceId,
                 title = title,
                 description = description,
                 releasedOn = LocalDate.parse(date),

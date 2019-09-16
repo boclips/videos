@@ -4,6 +4,8 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import mu.KLogging
 import java.time.Duration
@@ -13,9 +15,9 @@ object PlaybackConverter : KLogging() {
 
     fun toDocument(videoPlayback: VideoPlayback): PlaybackDocument {
         return when (videoPlayback) {
-            is VideoPlayback.StreamPlayback -> PlaybackDocument(
-                id = videoPlayback.id.value,
-                entryId = videoPlayback.entryId,
+            is StreamPlayback -> PlaybackDocument(
+                id = videoPlayback.referenceId,
+                entryId = videoPlayback.id.value,
                 type = "KALTURA",
                 thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = videoPlayback.downloadUrl,
@@ -25,7 +27,7 @@ object PlaybackConverter : KLogging() {
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt()
             )
-            is VideoPlayback.YoutubePlayback -> PlaybackDocument(
+            is YoutubePlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
                 entryId = null,
                 type = "YOUTUBE",
@@ -56,9 +58,9 @@ object PlaybackConverter : KLogging() {
                     )
                 }
 
-                VideoPlayback.StreamPlayback(
-                    id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.id),
-                    entryId = playbackDocument.entryId,
+                StreamPlayback(
+                    id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.entryId!!),
+                    referenceId = playbackDocument.id,
                     thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     appleHlsStreamUrl = playbackDocument.hlsStreamUrl!!,
@@ -76,7 +78,7 @@ object PlaybackConverter : KLogging() {
                     )
                 }
 
-                VideoPlayback.YoutubePlayback(
+                YoutubePlayback(
                     id = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = playbackDocument.id),
                     thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong())

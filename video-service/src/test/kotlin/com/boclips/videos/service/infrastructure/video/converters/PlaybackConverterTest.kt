@@ -2,6 +2,8 @@ package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -10,19 +12,19 @@ import java.time.Duration
 class PlaybackConverterTest {
 
     @Test
-    fun `convert Kaltura playback to document, and back again`() {
-        val originalPlayback = TestFactories.createKalturaPlayback(
+    fun `converting from a Kaltura playback to a document`() {
+        val originalPlayback: VideoPlayback.StreamPlayback = TestFactories.createKalturaPlayback(
             entryId = "entry_id_1234",
+            referenceId = "1234",
             duration = Duration.ofSeconds(100),
             downloadUrl = "download",
-            playbackId = "1234",
             thumbnailUrl = "thumbnail",
             dashStreamUrl = "dash",
             hlsStreamUrl = "hls",
             progressiveStreamUrl = "progressive"
         )
 
-        val playbackDocument = PlaybackConverter.toDocument(originalPlayback)
+        val playbackDocument: PlaybackDocument = PlaybackConverter.toDocument(originalPlayback)
         assertThat(playbackDocument.id).isEqualTo("1234")
         assertThat(playbackDocument.entryId).isEqualTo("entry_id_1234")
         assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail")
@@ -32,9 +34,30 @@ class PlaybackConverterTest {
         assertThat(playbackDocument.progressiveStreamUrl).isEqualTo("progressive")
         assertThat(playbackDocument.duration).isEqualTo(100)
         assertThat(playbackDocument.lastVerified).isNotNull()
+    }
 
-        val convertedPlayback = PlaybackConverter.toPlayback(playbackDocument)
-        assertThat(convertedPlayback).isEqualTo(originalPlayback)
+    @Test
+    fun `converting from a Kaltura document to a playback`() {
+        val document = TestFactories.createKalturaPlaybackDocument(
+            id = "1234",
+            entryId = "entry_id_1234",
+            duration = 100,
+            downloadUrl = "download",
+            thumbnailUrl = listOf("thumbnail"),
+            dashStreamUrl = "dash",
+            hlsStreamUrl = "hls",
+            progressiveStreamUrl = "progressive"
+        )
+
+        val playback = PlaybackConverter.toPlayback(document) as VideoPlayback.StreamPlayback
+        assertThat(playback.id.value).isEqualTo("entry_id_1234")
+        assertThat(playback.referenceId).isEqualTo("1234")
+        assertThat(playback.thumbnailUrl).isEqualTo("thumbnail")
+        assertThat(playback.downloadUrl).isEqualTo("download")
+        assertThat(playback.appleHlsStreamUrl).isEqualTo("hls")
+        assertThat(playback.mpegDashStreamUrl).isEqualTo("dash")
+        assertThat(playback.progressiveDownloadStreamUrl).isEqualTo("progressive")
+        assertThat(playback.duration).isEqualTo(Duration.ofSeconds(100))
     }
 
     @Test

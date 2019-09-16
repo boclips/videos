@@ -59,7 +59,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(video.description).isEqualTo("the description")
         assertThat(video.releasedOn).isCloseTo(LocalDate.now(), within(1, ChronoUnit.DAYS))
         assertThat(video.createdBy).isEqualTo("test-content-partner")
-        assertThat(video.playback?.playbackId).isEqualTo(playbackId)
+        assertThat(video.playback?.playbackId).isEqualTo("entry-123")
         assertThat(video.playback?.thumbnailUrl).isNotBlank()
         assertThat(video.playback?.duration).isNotNull()
 

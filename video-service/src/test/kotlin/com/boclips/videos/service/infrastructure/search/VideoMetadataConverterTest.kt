@@ -131,7 +131,7 @@ class VideoMetadataConverterTest {
     fun `converts kaltura playback to boclips source type`() {
         val video = TestFactories.createVideo(
             playback = TestFactories.createKalturaPlayback(
-                playbackId = "123"
+                referenceId = "123"
             )
         )
 

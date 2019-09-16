@@ -13,9 +13,9 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -47,7 +47,7 @@ class CreateVideo(
         val contentPartner = findContentPartner(createRequest)
             ?: throw ContentPartnerNotFoundException("Could not find content partner with id: ${createRequest.providerId}")
 
-        val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
+        val playbackId = PlaybackId.fromCreateVideoRequest(createRequest)
         val videoPlayback = findVideoPlayback(playbackId)
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 

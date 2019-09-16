@@ -104,7 +104,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `analyse video publishes events`() {
-        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "123"))
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-123"))
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US").asOperator())
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 

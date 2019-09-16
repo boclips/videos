@@ -102,7 +102,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val video = videoService.getPlayableVideo(videoId)
 
             assertThat(video).isNotNull
-            assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/entry-abc/width/{thumbnailWidth}")
+            assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/abc/width/{thumbnailWidth}")
         }
 
         @Test

@@ -20,6 +20,7 @@ class PlaybackRepositoryTest {
     fun setUp() {
         fakeKalturaClient = TestKalturaClient()
         fakeKalturaClient.createMediaEntry("1", "ref-id-1", Duration.ofMinutes(1), MediaEntryStatus.READY)
+        fakeKalturaClient.createMediaEntry("2", "ref-id-2", Duration.ofMinutes(2), MediaEntryStatus.READY)
 
         val kalturaPlaybackProvider = KalturaPlaybackProvider(fakeKalturaClient)
         val youtubePlaybackProvider = TestYoutubePlaybackProvider()
@@ -31,7 +32,7 @@ class PlaybackRepositoryTest {
 
     @Test
     fun `finds streams for multiple videos`() {
-        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
 
         val videoWithPlayback = playbackRepository.find(listOf(playbackId))
 
@@ -54,15 +55,24 @@ class PlaybackRepositoryTest {
 
     @Test
     fun `finds streams for Kaltura and Youtube`() {
-        val kalturaVideo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+        val kalturaVideo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
         val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
 
         assertThat(playbackRepository.find(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
     }
 
     @Test
+    fun `finds streams for Kaltura, Kaltura by Reference, and Youtube`() {
+        val kalturaVideo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        val kalturaReferenceVideo = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-2")
+        val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
+
+        assertThat(playbackRepository.find(listOf(kalturaVideo, kalturaReferenceVideo, youtubeVideo))).hasSize(3)
+    }
+
+    @Test
     fun `removes a video for Kaltura, does nothing for youtube`() {
-        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
         val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
 
         playbackRepository.remove(playbackId)
