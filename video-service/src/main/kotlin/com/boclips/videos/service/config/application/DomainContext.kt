@@ -7,6 +7,7 @@ import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -24,6 +25,7 @@ import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilte
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.contentPartner.MongoContentPartnerRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
+import com.boclips.videos.service.infrastructure.legal.restrictions.MongoLegalRestrictionsRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
@@ -116,6 +118,11 @@ class DomainContext(
     @Bean
     fun contentPartnerRepository(): ContentPartnerRepository {
         return MongoContentPartnerRepository(mongoClient)
+    }
+
+    @Bean
+    fun legalRestrictionsRepository(): LegalRestrictionsRepository {
+        return MongoLegalRestrictionsRepository(mongoClient)
     }
 
     @Bean
