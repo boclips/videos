@@ -12,6 +12,7 @@ class CollectionIndexWriter(client: RestHighLevelClient) : AbstractIndexWriter<C
     override fun serializeToIndexDocument(entry: CollectionMetadata) = CollectionDocument(
         id = entry.id,
         title = entry.title,
+        visibility = VisibilityMapper.map(entry.visibility),
         subjects = entry.subjectIds,
         hasAttachments = entry.hasAttachments
     )

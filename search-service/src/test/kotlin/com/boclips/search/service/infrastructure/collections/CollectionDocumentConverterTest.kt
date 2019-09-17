@@ -18,6 +18,7 @@ class CollectionDocumentConverterTest {
             {
                 "id": "14",
                 "title": "The title",
+                "visibility": "public",
                 "subjects": ["crispity", "crunchy"]
             }
         """.trimIndent()
@@ -30,6 +31,7 @@ class CollectionDocumentConverterTest {
             CollectionDocument(
                 id = "14",
                 title = "The title",
+                visibility = "public",
                 subjects = listOf("crispity", "crunchy"),
                 hasAttachments = false
             )

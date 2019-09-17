@@ -4,7 +4,6 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,7 +24,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
             sequenceOf(SearchableCollectionMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
         )
 
-        Assertions.assertThat(indexReader.count(CollectionQuery("Boy"))).isEqualTo(1)
+        assertThat(indexReader.count(CollectionQuery("Boy"))).isEqualTo(1)
     }
 
     @Test

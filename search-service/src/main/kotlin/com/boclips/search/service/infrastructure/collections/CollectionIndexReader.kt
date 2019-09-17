@@ -8,8 +8,7 @@ import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.common.unit.Fuzziness
-import org.elasticsearch.index.query.MultiMatchQueryBuilder
+import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
@@ -72,14 +71,28 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 }
             }
             .apply {
-                if (query.subjectIds.isNotEmpty()) {
+                if (query.visibility != null) {
                     must(
-                        QueryBuilders.termsQuery(
-                            CollectionDocument.SUBJECTS,
-                            query.subjectIds
-                        )
+                        QueryBuilders
+                            .termQuery(
+                                CollectionDocument.VISIBILITY,
+                                VisibilityMapper.map(query.visibility)
+                            )
                     )
                 }
             }
+            .apply {
+                if (query.subjectIds.isNotEmpty()) {
+                    must(matchSubjects(query.subjectIds))
+                }
+            }
+    }
+
+    private fun matchSubjects(subjects: List<String>): BoolQueryBuilder {
+        val queries = QueryBuilders.boolQuery()
+        for (s: String in subjects) {
+            queries.should(QueryBuilders.matchPhraseQuery(CollectionDocument.SUBJECTS, s))
+        }
+        return queries
     }
 }

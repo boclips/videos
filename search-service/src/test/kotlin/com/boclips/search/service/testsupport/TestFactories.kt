@@ -79,13 +79,14 @@ object SearchableCollectionMetadataFactory {
     fun create(
         id: String,
         title: String = "",
+        visibility: CollectionVisibility = CollectionVisibility.PUBLIC,
         subjects: List<String> = emptyList(),
         hasAttachments: Boolean = false
     ) = CollectionMetadata(
         id = id,
         title = title,
         subjectIds = subjects,
-        visibility = CollectionVisibility.PRIVATE,
+        visibility = visibility,
         owner = "some-user-id",
         bookmarkedByUsers = setOf("some-user-id"),
         hasAttachments = hasAttachments
