@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(TITLE) val title: String,
-    @param:JsonProperty(VISIBILITY) val visibility: String,
+    @param:JsonProperty(VISIBILITY) val visibility: String?,
     @param:JsonProperty(SUBJECTS) val subjects: List<String> = emptyList(),
     @param:JsonProperty(HAS_ATTACHMENTS) val hasAttachments: Boolean
 ) {
