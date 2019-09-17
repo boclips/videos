@@ -12,9 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -42,8 +40,13 @@ public class FakeClient implements VideoServiceClient {
 
         val videoId = rawIdToVideoId(nextId());
 
+        String playbackId = request.getPlaybackId();
+        if (request.getPlaybackProvider() == PlaybackProvider.KALTURA && request.getKalturaEntryId() != null) {
+            playbackId = request.getKalturaEntryId();
+        }
+
         Playback playback = Playback.builder()
-                .playbackId(request.getPlaybackId())
+                .playbackId(playbackId)
                 .duration(Duration.ofMinutes(7))
                 .thumbnailUrl("https://thumbnailz.org/img/" + nextId())
                 .build();

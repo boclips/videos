@@ -22,4 +22,7 @@ public class CreateVideoRequest {
     private final @NonNull String playbackId;
     private final @NonNull PlaybackProvider playbackProvider;
     private final @NonNull Set<String> subjects;
+
+    private final String kalturaReferenceId;
+    private final String kalturaEntryId;
 }

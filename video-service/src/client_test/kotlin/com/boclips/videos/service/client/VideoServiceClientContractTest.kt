@@ -34,7 +34,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     lateinit var subjectRepository: SubjectRepository
 
     @Test
-    fun `get a video`() {
+    fun `get a video by entry id`() {
         val client = getClient()
 
         val subject = client.subjects.first { it.name == "Maths" }
@@ -42,12 +42,15 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val contentPartnerId =
             client.createContentPartner(TestFactories.createContentPartnerRequest(name = "test-content-partner"))
 
-        val playbackId = "ref-id-123"
+        val playbackId = "entry-123"
         val id = client.createVideo(
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
                 playbackId = playbackId,
+                playbackProvider = PlaybackProvider.KALTURA,
+                kalturaReferenceId = "ref-id-123",
+                kalturaEntryId = "entry-123",
                 contentProviderId = contentPartnerId.value,
                 subjects = setOf(subject.id.value)
             )
