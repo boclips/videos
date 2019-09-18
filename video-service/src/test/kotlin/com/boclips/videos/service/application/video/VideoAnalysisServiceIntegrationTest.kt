@@ -100,7 +100,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         @Test
         fun `uploads captions to Kaltura`() {
             val videoId =
-                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "reference-id"))
+                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "reference-id"))
             val videoAnalysed = createVideoAnalysed(videoId = videoId.value)
 
             fakeEventBus.publish(videoAnalysed)

@@ -69,7 +69,13 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
         }
 
         logger.info { "Uploading ${captionAsset.language} captions for ref id ${playbackId.value}" }
-        val uploadedAsset = kalturaClient.createCaptionsFile(playbackId.value, captionAsset, captions.content)
+
+        val uploadedAsset = if (KALTURA == playbackId.type) {
+            kalturaClient.createCaptionsFileWithEntryId(playbackId.value, captionAsset, captions.content)
+        } else {
+            kalturaClient.createCaptionsFile(playbackId.value, captionAsset, captions.content)
+        }
+
         logger.info { "Uploaded ${captionAsset.language} captions for ref id ${playbackId.value}: ${uploadedAsset.id}" }
     }
 

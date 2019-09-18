@@ -84,7 +84,7 @@ class PlaybackRepositoryTest {
 
     @Test
     fun `uploads captions to Kaltura`() {
-        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-1")
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-1")
 
         playbackRepository.uploadCaptions(playbackId, createCaptions())
 

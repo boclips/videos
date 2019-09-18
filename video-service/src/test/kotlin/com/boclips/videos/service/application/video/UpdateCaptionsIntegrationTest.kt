@@ -21,7 +21,7 @@ class UpdateCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
 
         fakeEventBus.publish(captionsCreated)
 
-        val allVideoCaptions = fakeKalturaClient.getCaptionFilesByReferenceId("entry-id")
+        val allVideoCaptions = fakeKalturaClient.getCaptionFilesByEntryId("entry-id")
         assertThat(allVideoCaptions).isNotEmpty
 
         val uploadedCaptions = fakeKalturaClient.getCaptionContentByAssetId(allVideoCaptions[0].id)
