@@ -25,7 +25,6 @@ import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA_REFERENCE
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -167,11 +166,10 @@ abstract class AbstractSpringIntegrationTest {
 
     fun createMediaEntry(
         id: String = "1",
-        referenceId: String = "ref-id-$id",
         duration: Duration = Duration.ofMinutes(1),
         status: MediaEntryStatus = MediaEntryStatus.READY
     ) =
-        fakeKalturaClient.createMediaEntry(id, referenceId, duration, status)
+        fakeKalturaClient.createMediaEntry(id, "ref-$id", duration, status)
 
     fun saveVideo(
         playbackId: PlaybackId = PlaybackId(
@@ -207,14 +205,8 @@ abstract class AbstractSpringIntegrationTest {
         }
 
         when (playbackId.type) {
-            KALTURA_REFERENCE -> createMediaEntry(
-                id = "entry-${playbackId.value}",
-                referenceId = playbackId.value,
-                duration = duration
-            )
             KALTURA -> createMediaEntry(
                 id = playbackId.value,
-                referenceId = "ref-${playbackId.value}",
                 duration = duration
             )
             YOUTUBE -> {
@@ -228,15 +220,10 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
-        val kalturaEntryId = if (KALTURA == playbackId.type) { playbackId.value } else { "entry-${playbackId.value}" }
-        val kalturaReferenceId = if (KALTURA_REFERENCE == playbackId.type) { playbackId.value } else { "ref-${playbackId.value}" }
-
         val video = createVideo(
             CreateVideoRequest(
                 providerId = contentProviderId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
-                kalturaEntryId =  kalturaEntryId,
-                kalturaReferenceId = kalturaReferenceId,
                 title = title,
                 description = description,
                 releasedOn = LocalDate.parse(date),

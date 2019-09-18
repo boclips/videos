@@ -11,4 +11,5 @@ public class Playback {
     private final String playbackId;
     private final String thumbnailUrl;
     private final Duration duration;
+    private final String referenceId;
 }

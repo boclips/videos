@@ -28,7 +28,7 @@ abstract class VideoProjectionContractTest : AbstractVideoServiceClientSpringInt
                 TestFactories.createContentPartnerRequest(name = "test-content-partner")
             )
 
-        val playbackId = "ref-id-123"
+        val playbackId = "entry-123"
 
         val id = clientWithInternalProjection.createVideo(
             TestFactories.createCreateVideoRequest(
@@ -52,7 +52,7 @@ abstract class VideoProjectionContractTest : AbstractVideoServiceClientSpringInt
                 TestFactories.createContentPartnerRequest(name = "test-content-partner")
             )
 
-        val playbackId = "ref-id-123"
+        val playbackId = "entry-123"
         val id = clientWithPublicProjection.createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = playbackId,

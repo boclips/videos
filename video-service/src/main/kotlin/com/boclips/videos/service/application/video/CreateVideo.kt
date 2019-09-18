@@ -47,7 +47,7 @@ class CreateVideo(
         val contentPartner = findContentPartner(createRequest)
             ?: throw ContentPartnerNotFoundException("Could not find content partner with id: ${createRequest.providerId}")
 
-        val playbackId = PlaybackId.fromCreateVideoRequest(createRequest)
+        val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
         val videoPlayback = findVideoPlayback(playbackId)
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 

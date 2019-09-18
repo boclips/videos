@@ -146,10 +146,10 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     @BeforeEach
     fun setUp() {
         createMediaEntry(
-            referenceId = "123"
+            id = "123"
         )
         createMediaEntry(
-            referenceId = "hiphip"
+            id = "hiphip"
         )
     }
 }

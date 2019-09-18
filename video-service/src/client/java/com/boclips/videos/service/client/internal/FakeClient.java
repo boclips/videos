@@ -40,14 +40,10 @@ public class FakeClient implements VideoServiceClient {
 
         val videoId = rawIdToVideoId(nextId());
 
-        String playbackId = request.getPlaybackId();
-        if (request.getPlaybackProvider() == PlaybackProvider.KALTURA && request.getKalturaEntryId() != null) {
-            playbackId = request.getKalturaEntryId();
-        }
-
         Playback playback = Playback.builder()
-                .playbackId(playbackId)
+                .playbackId(request.getPlaybackId())
                 .duration(Duration.ofMinutes(7))
+                .referenceId("ref-" + request.getPlaybackId())
                 .thumbnailUrl("https://thumbnailz.org/img/" + nextId())
                 .build();
 

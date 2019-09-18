@@ -2,7 +2,6 @@ package com.boclips.videos.service.domain.model.playback
 
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA_REFERENCE
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import java.util.Locale
@@ -14,7 +13,7 @@ class PlaybackRepository(
 
     fun find(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoPlayback> {
         val kalturaPlaybackById =
-            kalturaPlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == KALTURA || playbackId.type == KALTURA_REFERENCE })
+            kalturaPlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == KALTURA })
         val youtubePlaybackById =
             youtubePlaybackProvider.retrievePlayback(playbackIds.filter { playbackId -> playbackId.type == YOUTUBE })
 
@@ -22,7 +21,6 @@ class PlaybackRepository(
             val playback = when (playbackId.type) {
                 KALTURA -> kalturaPlaybackById[playbackId]
                 YOUTUBE -> youtubePlaybackById[playbackId]
-                KALTURA_REFERENCE -> kalturaPlaybackById[playbackId]
             } ?: return@mapNotNull null
             (playbackId to playback)
         }.toMap()
@@ -54,14 +52,13 @@ class PlaybackRepository(
 
     private fun getProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoProviderMetadata> {
         val kalturaProviderMetadataById =
-            kalturaPlaybackProvider.retrieveProviderMetadata(playbackIds.filter { playbackId -> playbackId.type == KALTURA || playbackId.type == KALTURA_REFERENCE })
+            kalturaPlaybackProvider.retrieveProviderMetadata(playbackIds.filter { playbackId -> playbackId.type == KALTURA })
         val youtubeProviderMetadataById =
             youtubePlaybackProvider.retrieveProviderMetadata(playbackIds.filter { playbackId -> playbackId.type == YOUTUBE })
 
         return playbackIds.mapNotNull { playbackId ->
             val providerMetadata = when (playbackId.type) {
                 KALTURA -> kalturaProviderMetadataById[playbackId]
-                KALTURA_REFERENCE -> kalturaProviderMetadataById[playbackId]
                 YOUTUBE -> youtubeProviderMetadataById[playbackId]
             } ?: return@mapNotNull null
             (playbackId to providerMetadata)
@@ -71,7 +68,6 @@ class PlaybackRepository(
     private fun getProvider(playbackId: PlaybackId): PlaybackProvider {
         return when (playbackId.type) {
             KALTURA -> kalturaPlaybackProvider
-            KALTURA_REFERENCE -> kalturaPlaybackProvider
             YOUTUBE -> youtubePlaybackProvider
         }
     }

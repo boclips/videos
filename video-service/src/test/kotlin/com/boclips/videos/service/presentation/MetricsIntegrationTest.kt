@@ -22,7 +22,6 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
     fun `video counter increases when we create a video`() {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "abc1",
             duration = Duration.ofMinutes(1)
         )
 
@@ -40,7 +39,7 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
-                "playbackId": "abc1",
+                "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }
         """.trimIndent()

@@ -39,7 +39,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `requesting creation of an existing kaltura video creates the video`() {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "1234",
             duration = Duration.ofMinutes(1)
         )
 
@@ -47,7 +46,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val resource = createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
+                playbackId = "entry-\$123",
                 providerId = contentPartner.contentPartnerId.value
             )
         )
@@ -104,14 +103,13 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `throws if content partner if it does not exist`() {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "1234",
             duration = Duration.ofMinutes(1)
         )
 
         assertThrows<ContentPartnerNotFoundException> {
             createVideo(
                 TestFactories.createCreateVideoRequest(
-                    playbackId = "1234",
+                    playbackId = "entry-$123",
                     providerId = "4321"
                 )
             )
@@ -131,7 +129,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "1234",
             duration = playbackProviderDuration
         )
 
@@ -139,7 +136,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val resource = createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "1234",
+                playbackId = "entry-\$123",
                 providerId = contentPartner.contentPartnerId.value
             )
         )
@@ -154,16 +151,16 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `throws when create request is incomplete`() {
         val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
 
+        createMediaEntry(
+            id = "entry-$123",
+            duration = Duration.ZERO
+        )
+
         val createRequest = TestFactories.createCreateVideoRequest(
             description = null,
             playbackProvider = "KALTURA",
-            providerId = contentPartner.contentPartnerId.value
-        )
-
-        createMediaEntry(
-            id = "entry-$123",
-            referenceId = createRequest.playbackId!!,
-            duration = Duration.ZERO
+            providerId = contentPartner.contentPartnerId.value,
+            playbackId = "entry-$123"
         )
 
         assertThrows<NonNullableFieldCreateRequestException> { createVideo(createRequest) }
@@ -185,7 +182,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `it requests that the video is analysed`() {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "1234",
             duration = Duration.ofMinutes(1)
         )
 
@@ -194,7 +190,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val video: Resource<VideoResource> = createVideo(
             TestFactories.createCreateVideoRequest(
                 videoType = "INSTRUCTIONAL_CLIPS",
-                playbackId = "1234",
+                playbackId = "entry-\$123",
                 analyseVideo = true,
                 providerId = contentPartner.contentPartnerId.value
             )
@@ -208,7 +204,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `it dispatches a video created event`() {
-        createMediaEntry(referenceId = "1")
+        createMediaEntry(id = "1")
 
         val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
 
@@ -229,7 +225,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `it gets the distribution method from its content partner`() {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "1234",
             duration = Duration.ofMinutes(1)
         )
 
@@ -243,7 +238,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val createRequest =
             TestFactories.createCreateVideoRequest(
                 title = "the latest and greatest Bloomberg video",
-                playbackId = "1234",
+                playbackId = "entry-\$123",
                 providerId = contentPartner.contentPartnerId.value
             )
 
@@ -276,7 +271,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     private fun createAVideo(title: String) {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "1234",
             duration = Duration.ofMinutes(1)
         )
 
@@ -285,7 +279,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val createRequest =
             TestFactories.createCreateVideoRequest(
                 title = title,
-                playbackId = "1234",
+                playbackId = "entry-\$123",
                 videoType = LegacyVideoType.INSTRUCTIONAL_CLIPS.toString(),
                 providerId = contentPartner.contentPartnerId.value
             )

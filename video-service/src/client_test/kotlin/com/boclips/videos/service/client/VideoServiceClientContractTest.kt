@@ -49,8 +49,6 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
                 description = "the description",
                 playbackId = playbackId,
                 playbackProvider = PlaybackProvider.KALTURA,
-                kalturaReferenceId = "ref-id-123",
-                kalturaEntryId = "entry-123",
                 contentProviderId = contentPartnerId.value,
                 subjects = setOf(subject.id.value)
             )
@@ -63,6 +61,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(video.releasedOn).isCloseTo(LocalDate.now(), within(1, ChronoUnit.DAYS))
         assertThat(video.createdBy).isEqualTo("test-content-partner")
         assertThat(video.playback?.playbackId).isEqualTo("entry-123")
+        assertThat(video.playback?.referenceId).isEqualTo("ref-entry-123")
         assertThat(video.playback?.thumbnailUrl).isNotBlank()
         assertThat(video.playback?.duration).isNotNull()
 
@@ -80,7 +79,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             TestFactories.createCreateVideoRequest(
                 title = "the title",
                 description = "the description",
-                playbackId = "ref-id-123",
+                playbackId = "entry-123",
                 contentProviderId = contentPartnerId.value
             )
         ).uri.toString()
@@ -100,7 +99,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val rawId =
             getClient().createVideo(
                 TestFactories.createCreateVideoRequest(
-                    playbackId = "ref-id-123",
+                    playbackId = "entry-123",
                     contentProviderId = contentPartnerId.value
                 )
             ).uri.toString()
@@ -227,7 +226,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
         val id1 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "ref-id-123",
+                playbackId = "entry-123",
                 contentProviderId = contentPartnerId1
             )
         )
@@ -237,7 +236,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 
         val id2 = getClient().createVideo(
             TestFactories.createCreateVideoRequest(
-                playbackId = "ref-id-123",
+                playbackId = "entry-123",
                 contentProviderId = contentPartnerId2
             )
         )
@@ -253,7 +252,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
                 .value
 
         val aVideo =
-            TestFactories.createCreateVideoRequest(playbackId = "ref-id-123", contentProviderId = contentPartnerId)
+            TestFactories.createCreateVideoRequest(playbackId = "entry-123", contentProviderId = contentPartnerId)
         getClient().createVideo(aVideo)
 
         assertThrows<VideoExistsException> {
@@ -296,7 +295,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val request = TestFactories.createCreateVideoRequest(
             contentProviderId = contentPartnerId,
             contentProviderVideoId = "123",
-            playbackId = "ref-id-123"
+            playbackId = "entry-123"
         )
 
         getClient().createVideo(request)
@@ -314,7 +313,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         val request = TestFactories.createCreateVideoRequest(
             contentProviderId = contentPartnerId,
             contentProviderVideoId = "?#&SP-123",
-            playbackId = "ref-id-123"
+            playbackId = "entry-123"
         )
 
         getClient().createVideo(request)
@@ -446,7 +445,7 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
     fun setUp() {
         fakeKalturaClient.createMediaEntry(
                 "entry-123",
-                "ref-id-123",
+                "ref-entry-123",
                 Duration.ofMinutes(1),
                 MediaEntryStatus.READY
         )

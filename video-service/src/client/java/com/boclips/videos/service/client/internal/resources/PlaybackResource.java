@@ -16,12 +16,14 @@ public class PlaybackResource {
     private String id;
     private String thumbnailUrl;
     private Duration duration;
+    private String referenceId;
 
     public Playback toPlayback() {
         return Playback.builder()
                 .playbackId(id)
                 .duration(duration)
                 .thumbnailUrl(thumbnailUrl)
+                .referenceId(referenceId)
                 .build();
     }
 }

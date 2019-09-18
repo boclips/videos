@@ -54,24 +54,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     lateinit var disabledVideoId: String
-    lateinit var kalturaVideoIdByReference: String
-    lateinit var kalturaVideoIdByEntryId: String
+    lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String
 
     @BeforeEach
     fun setUp() {
-        kalturaVideoIdByReference = saveVideo(
-            playbackId = PlaybackId(value = "ref-id-123", type = PlaybackProviderType.KALTURA_REFERENCE),
-            title = "a lame video about llamas",
-            description = "test description 3",
-            date = "2018-02-11",
-            duration = Duration.ofSeconds(23),
-            contentProvider = "cp23",
-            legalRestrictions = "None",
-            ageRange = BoundedAgeRange(min = 5, max = 7)
-        ).value
-
-        kalturaVideoIdByEntryId = saveVideo(
+        kalturaVideoId = saveVideo(
             playbackId = PlaybackId(value = "entry-id-123", type = PlaybackProviderType.KALTURA),
             title = "powerful video about elephants",
             description = "test description 3",
@@ -93,7 +81,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ).value
 
         disabledVideoId = saveVideo(
-            playbackId = PlaybackId(value = "ref-id-125", type = PlaybackProviderType.KALTURA_REFERENCE),
+            playbackId = PlaybackId(value = "entry-id-125", type = PlaybackProviderType.KALTURA),
             title = "elephants eat a lot",
             description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
             date = "2018-05-10",
@@ -107,12 +95,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `search videos as teacher`() {
-        setVideoSubjects(kalturaVideoIdByEntryId, saveSubject("Maths").id)
+        setVideoSubjects(kalturaVideoId, saveSubject("Maths").id)
 
         mockMvc.perform(get("/v1/videos?query=powerful").asTeacher())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
@@ -136,49 +124,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
                 )
             )
-            .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$kalturaVideoIdByEntryId")))
-            .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("ad-free"))))
-
-            .andExpect(jsonPath("$.page.size", equalTo(100)))
-            .andExpect(jsonPath("$.page.totalElements", equalTo(1)))
-            .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
-            .andExpect(jsonPath("$.page.number", equalTo(0)))
-            .andExpect(jsonPath("$._links.prev").doesNotExist())
-            .andExpect(jsonPath("$._links.next").doesNotExist())
-    }
-
-    @Test
-    fun `search videos as teacher by reference id `() {
-        setVideoSubjects(kalturaVideoIdByReference, saveSubject("Maths").id)
-
-        mockMvc.perform(get("/v1/videos?query=lame").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoIdByReference)))
-            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("a lame video about llamas")))
-            .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
-            .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp23")))
-            .andExpect(jsonPath("$._embedded.videos[0].legalRestrictions", equalTo("None")))
-            .andExpect(jsonPath("$._embedded.videos[0].subjects[0].id").exists())
-            .andExpect(jsonPath("$._embedded.videos[0].subjects[0].name", equalTo("Maths")))
-            .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
-            .andExpect(jsonPath("$._embedded.videos[0].playback.referenceId", equalTo("ref-id-123")))
-            .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
-            .andExpect(
-                jsonPath(
-                    "$._embedded.videos[0].playback.streamUrl",
-                    equalTo("https://stream.com/entryId/entry-ref-id-123/format/applehttp")
-                )
-            )
-            .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
-            .andExpect(
-                jsonPath(
-                    "$._embedded.videos[0].playback.thumbnailUrl",
-                    equalTo("https://thumbnail.com/entry_id/entry-ref-id-123/width/500")
-                )
-            )
-            .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$kalturaVideoIdByReference")))
+            .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("ad-free"))))
 
             .andExpect(jsonPath("$.page.size", equalTo(100)))
@@ -252,10 +198,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns results when searching by id`() {
-        mockMvc.perform(get("/v1/videos?query=id:$kalturaVideoIdByReference,-1").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=id:$kalturaVideoId,-1").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoIdByReference)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
 
             .andExpect(jsonPath("$.page.size", equalTo(100)))
             .andExpect(jsonPath("$.page.totalElements", equalTo(1)))
@@ -268,7 +214,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=powerful&duration_min=PT20S&duration_max=PT24S").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
     }
 
     @Test
@@ -276,7 +222,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=elephants&source=boclips").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
     }
 
     @Test
@@ -284,7 +230,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=elephants&age_range_min=5&age_range_max=11").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
     }
 
     @Test
@@ -307,7 +253,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=2018-01-11&released_date_to=2018-03-11").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
     }
 
     @Test
@@ -400,10 +346,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 200 for valid video as boclips employee`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoIdByEntryId").asBoclipsEmployee())
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
             .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
             .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
@@ -418,17 +364,17 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
             .andExpect(jsonPath("$.type.id", equalTo(3)))
             .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
-            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoIdByEntryId")))
+            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
     }
 
     @Test
     fun `returns 200 for valid video as anonymous user`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoIdByEntryId"))
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
             .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
             .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
@@ -441,8 +387,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
-            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoIdByEntryId")))
-            .andExpect(jsonPath("$._links.${VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION}.href", containsString("/videos/$kalturaVideoIdByEntryId")))
+            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+            .andExpect(jsonPath("$._links.${VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION}.href", containsString("/videos/$kalturaVideoId")))
             .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
             .andExpect(jsonPath("$.type").doesNotExist())
             .andExpect(jsonPath("$.status").doesNotExist())
@@ -450,10 +396,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 200 for valid video as API user`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoIdByEntryId").asApiUser())
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asApiUser())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(kalturaVideoIdByEntryId)))
+            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
             .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$.description", equalTo("test description 3")))
             .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
@@ -466,7 +412,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
-            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoIdByEntryId")))
+            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
 
             .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
             .andExpect(jsonPath("$.type").doesNotExist())
@@ -475,7 +421,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `sets playback consumer cookie when not already present`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoIdByEntryId"))
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
             .andExpect(status().isOk)
             .andExpect(cookie().exists(Cookies.PLAYBACK_DEVICE))
             .andExpect(cookie().httpOnly(Cookies.PLAYBACK_DEVICE, true))
@@ -486,7 +432,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `does not set a playback consumer cookie if already present`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoIdByEntryId").cookie(Cookie(Cookies.PLAYBACK_DEVICE, "a-consumer-id")))
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").cookie(Cookie(Cookies.PLAYBACK_DEVICE, "a-consumer-id")))
             .andExpect(status().isOk)
             .andExpect(cookie().doesNotExist(Cookies.PLAYBACK_DEVICE))
     }
@@ -654,7 +600,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `create new video`() {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "abc1",
             duration = Duration.ofMinutes(1)
         )
 
@@ -671,7 +616,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
-                "playbackId": "abc1",
+                "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }
         """.trimIndent()
@@ -684,6 +629,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get(createdResourceUrl!!).asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.title", equalTo("AP title")))
+            .andExpect(jsonPath("$.playback.id", equalTo("entry-\$123")))
+            .andExpect(jsonPath("$.playback.referenceId", equalTo("ref-entry-\$123")))
     }
 
     @Test
@@ -693,7 +640,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "abc1",
             duration = Duration.ofMinutes(1)
         )
 
@@ -708,7 +654,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
-                "playbackId": "abc1",
+                "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA",
                 "subjects": ["${subjectId.value}"]
             }
@@ -745,7 +691,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns a CONFLICT and a helpful error message when video already exists`() {
         createMediaEntry(
             id = "entry-$123",
-            referenceId = "abc1",
             duration = Duration.ofMinutes(1)
         )
 
@@ -762,7 +707,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
-                "playbackId": "abc1",
+                "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }
         """.trimIndent()
@@ -793,7 +738,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
                 "videoType": "INSTRUCTIONAL_CLIPS",
-                "playbackId": "abc1",
+                "playbackId": "this-playback-does-not-exist",
                 "playbackProvider": "KALTURA"
             }
         """.trimIndent()
@@ -830,7 +775,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             post("/v1/videos/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"ids": ["$disabledVideoId", "$kalturaVideoIdByEntryId", "$youtubeVideoId"]}""").asBoclipsEmployee()
+                .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""").asBoclipsEmployee()
         )
             .andExpect(status().isCreated)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))

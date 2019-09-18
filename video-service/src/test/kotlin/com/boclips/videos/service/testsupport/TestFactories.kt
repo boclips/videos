@@ -187,8 +187,6 @@ object TestFactories {
         videoType: String? = "NEWS",
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
-        kalturaReferenceId: String? = null,
-        kalturaEntryId: String? = null,
         analyseVideo: Boolean = false,
         subjects: Set<String> = setOf()
     ) = CreateVideoRequest(
@@ -202,8 +200,6 @@ object TestFactories {
         videoType = videoType,
         playbackId = playbackId,
         playbackProvider = playbackProvider,
-        kalturaReferenceId = kalturaReferenceId,
-        kalturaEntryId = kalturaEntryId,
         analyseVideo = analyseVideo,
         subjects = subjects
     )

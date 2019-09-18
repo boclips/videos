@@ -42,8 +42,6 @@ object TestFactories {
         keywords: List<String> = listOf("k1", "k2"),
         contentType: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
         playbackId: String = "kaltura-id-789",
-        kalturaEntryId: String? = null,
-        kalturaReferenceId: String? = null,
         playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA,
         subjects: Set<String> = emptySet()
     ): CreateVideoRequest {
@@ -58,8 +56,6 @@ object TestFactories {
             .videoType(contentType)
             .playbackId(playbackId)
             .playbackProvider(playbackProvider)
-            .kalturaEntryId(kalturaEntryId)
-            .kalturaReferenceId(kalturaReferenceId)
             .subjects(subjects)
             .build()
     }

@@ -100,12 +100,12 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         @Test
         fun `uploads captions to Kaltura`() {
             val videoId =
-                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "reference-id"))
+                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-id"))
             val videoAnalysed = createVideoAnalysed(videoId = videoId.value)
 
             fakeEventBus.publish(videoAnalysed)
 
-            assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isNotEmpty
+            assertThat(fakeKalturaClient.getCaptionFilesByEntryId("entry-id")).isNotEmpty
             assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
 
             val videoUpdated = fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos
@@ -115,12 +115,12 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         @Test
         fun `does NOT upload captions to Kaltura when transcript has no words`() {
             val videoId =
-                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "reference-id"))
+                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-id"))
             val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "\n")
 
             fakeEventBus.publish(videoAnalysed)
 
-            assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isEmpty()
+            assertThat(fakeKalturaClient.getCaptionFilesByEntryId("entry-id")).isEmpty()
         }
 
         @Test
@@ -140,25 +140,6 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             fakeEventBus.publish(videoAnalysed)
 
             assertThat(fakeKalturaClient.getCaptionFilesByEntryId("entry-id")).isEmpty()
-        }
-
-        @Test
-        fun `deletes existing auto-generated captions when transcript has no words by reference`() {
-            val videoId =
-                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "reference-id"))
-
-            val existingCaptions = createKalturaCaptionAsset(
-                language = KalturaLanguage.ENGLISH,
-                label = "English (auto-generated)"
-            )
-
-            fakeKalturaClient.createCaptionsFile("reference-id", existingCaptions, "bla bla bla")
-
-            val videoAnalysed = createVideoAnalysed(videoId = videoId.value, transcript = "\n")
-
-            fakeEventBus.publish(videoAnalysed)
-
-            assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("reference-id")).isEmpty()
         }
 
         @Test

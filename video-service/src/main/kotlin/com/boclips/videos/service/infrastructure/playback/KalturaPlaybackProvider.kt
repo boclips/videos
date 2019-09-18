@@ -5,14 +5,10 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.http.KalturaClientApiException
-import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA_REFERENCE
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
@@ -25,7 +21,8 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
     companion object : KLogging()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, StreamPlayback> {
-        return retrieveMediaEntries(playbackIds)
+        return kalturaClient.getMediaEntriesByIds(playbackIds.map { it.value })
+            .map { PlaybackId(KALTURA, it.key) to it.value }.toMap()
             .asSequence()
             .filter { it.value.status == MediaEntryStatus.READY }
             .mapNotNull {
@@ -47,11 +44,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
 
     override fun removePlayback(playbackId: PlaybackId) {
         try {
-            if (KALTURA == playbackId.type) {
-                kalturaClient.deleteMediaEntryById(playbackId.value)
-            } else {
-                kalturaClient.deleteMediaEntriesByReferenceId(playbackId.value)
-            }
+            kalturaClient.deleteMediaEntryById(playbackId.value)
         } catch (ex: KalturaClientApiException) {
             logger.error { "Failed to execute video from Kaltura: $ex" }
         }
@@ -70,11 +63,8 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
 
         logger.info { "Uploading ${captionAsset.language} captions for ref id ${playbackId.value}" }
 
-        val uploadedAsset = if (KALTURA == playbackId.type) {
+        val uploadedAsset =
             kalturaClient.createCaptionsFileWithEntryId(playbackId.value, captionAsset, captions.content)
-        } else {
-            kalturaClient.createCaptionsFile(playbackId.value, captionAsset, captions.content)
-        }
 
         logger.info { "Uploaded ${captionAsset.language} captions for ref id ${playbackId.value}: ${uploadedAsset.id}" }
     }
@@ -105,34 +95,6 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
     }
 
     private fun retrieveCaptionFiles(playbackId: PlaybackId): List<CaptionAsset> {
-        return if (KALTURA == playbackId.type) {
-            kalturaClient.getCaptionFilesByEntryId(playbackId.value)
-        } else {
-            kalturaClient.getCaptionFilesByReferenceId(playbackId.value)
-        }
-    }
-    private fun retrieveMediaEntries(playbackIds: List<PlaybackId>): Map<PlaybackId, MediaEntry> {
-        val mediaEntriesById = retrieveMediaEntriesByType(playbackIds, KALTURA)
-        val mediaEntriesByReferenceId = retrieveMediaEntriesByType(playbackIds, KALTURA_REFERENCE)
-
-        return mediaEntriesById.plus(mediaEntriesByReferenceId)
-    }
-
-    private fun retrieveMediaEntriesByType(
-        playbackIds: List<PlaybackId>,
-        playbackProviderType: PlaybackProviderType
-    ): Map<PlaybackId, MediaEntry> {
-        val filteredIds = playbackIds.filter { playbackProviderType == it.type }.map { it.value }
-
-        val mediaEntries: Map<String, MediaEntry> = when (playbackProviderType) {
-            KALTURA -> kalturaClient.getMediaEntriesByIds(filteredIds)
-            KALTURA_REFERENCE -> kalturaClient.getMediaEntriesByReferenceIds(filteredIds)
-                .filter { it.value.isNotEmpty() }
-                .map { (it.key to it.value.first()) }.toMap()
-            YOUTUBE -> throw IllegalArgumentException("Playback Provider Type must be Kaltura")
-        }
-
-        return mediaEntries
-            .map { PlaybackId(playbackProviderType, it.key) to it.value }.toMap()
+        return kalturaClient.getCaptionFilesByEntryId(playbackId.value)
     }
 }

@@ -61,14 +61,6 @@ class PlaybackRepositoryTest {
         assertThat(playbackRepository.find(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
     }
 
-    @Test
-    fun `finds streams for Kaltura, Kaltura by Reference, and Youtube`() {
-        val kalturaVideo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
-        val kalturaReferenceVideo = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-2")
-        val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
-
-        assertThat(playbackRepository.find(listOf(kalturaVideo, kalturaReferenceVideo, youtubeVideo))).hasSize(3)
-    }
 
     @Test
     fun `removes a video for Kaltura, does nothing for youtube`() {
@@ -84,11 +76,11 @@ class PlaybackRepositoryTest {
 
     @Test
     fun `uploads captions to Kaltura`() {
-        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-1")
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
 
         playbackRepository.uploadCaptions(playbackId, createCaptions())
 
-        assertThat(fakeKalturaClient.getCaptionFilesByReferenceId("ref-id-1")).isNotEmpty
+        assertThat(fakeKalturaClient.getCaptionFilesByEntryId("1")).isNotEmpty
     }
 
     @Test

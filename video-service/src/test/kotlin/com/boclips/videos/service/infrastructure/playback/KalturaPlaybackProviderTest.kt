@@ -36,48 +36,25 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns streaming information for videos based on reference id`() {
-        createMediaEntry(id = "1", referenceId = "ref-id-1")
+    fun `returns several playbacks for videos based on entry ids`() {
+        createMediaEntry(id = "1")
+        createMediaEntry(id = "2")
+        createMediaEntry(id = "3")
 
-        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-1")
-        val playbacksById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
-
-        assertThat(playbacksById).hasSize(1)
-        assertThat(playbacksById[playbackId]).isNotNull
-
-        val videoPlayback = playbacksById[playbackId] as StreamPlayback
-        assertThat(videoPlayback.id).isEqualTo(PlaybackId(type = PlaybackProviderType.KALTURA, value = "1"))
-        assertThat(videoPlayback.appleHlsStreamUrl).isEqualTo("https://stream.com/entryId/1/format/applehttp")
-        assertThat(videoPlayback.mpegDashStreamUrl).isEqualTo("https://stream.com/entryId/1/format/mpegdash")
-        assertThat(videoPlayback.progressiveDownloadStreamUrl).isEqualTo("https://stream.com/entryId/1/format/url")
-        assertThat(videoPlayback.downloadUrl).isEqualTo("https://download.com/entryId/1/format/download")
-        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/1/width/{thumbnailWidth}")
-        assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
-    }
-
-    @Test
-    fun `returns several playbacks for videos based on reference and entry ids`() {
-        createMediaEntry(id = "1", referenceId = "ref-id-1")
-        createMediaEntry(id = "2", referenceId = "ref-id-2")
-        createMediaEntry(id = "3", referenceId = "ref-id-3")
-        createMediaEntry(id = "4", referenceId = "ref-id-4")
-
-        val playbackIdOne = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-1")
+        val playbackIdOne = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
         val playbackIdTwo = PlaybackId(type = PlaybackProviderType.KALTURA, value = "2")
         val playbackIdThree = PlaybackId(type = PlaybackProviderType.KALTURA, value = "3")
-        val playbackIdFour = PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id-4")
 
         val playbacksById = kalturaPlaybackProvider.retrievePlayback(
             listOf(
-                playbackIdOne, playbackIdTwo, playbackIdThree, playbackIdFour
+                playbackIdOne, playbackIdTwo, playbackIdThree
             )
         )
 
-        assertThat(playbacksById).hasSize(4)
+        assertThat(playbacksById).hasSize(3)
         assertThat(playbacksById[playbackIdOne]).isNotNull
         assertThat(playbacksById[playbackIdTwo]).isNotNull
         assertThat(playbacksById[playbackIdThree]).isNotNull
-        assertThat(playbacksById[playbackIdFour]).isNotNull
     }
 
     @Test
@@ -93,22 +70,6 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(videosWithPlayback).hasSize(1)
         assertThat(videosWithPlayback[existingPlaybackId]).isNotNull
         assertThat(videosWithPlayback[inexistantPlaybackId]).isNull()
-    }
-
-    @Test
-    fun `uploads captions if there are no captions in Kaltura already`() {
-        val playbackId = mediaEntryWithCaptions(label = "Arabic", language = KalturaLanguage.ARABIC)
-
-        val newEnglishCaptions = createCaptions(language = Locale.UK, content = "bla bla bla in english")
-        kalturaPlaybackProvider.uploadCaptions(playbackId, newEnglishCaptions)
-
-        val allCaptions = fakeKalturaClient.getCaptionFilesByReferenceId("ref-id")
-        assertThat(allCaptions).hasSize(2)
-        val englishCaptions = allCaptions.find { it.language != KalturaLanguage.ARABIC }!!
-        assertThat(englishCaptions.language).isEqualTo(KalturaLanguage.ENGLISH)
-        assertThat(englishCaptions.label).isEqualTo("English (auto-generated)")
-        assertThat(englishCaptions.fileType).isEqualTo(CaptionFormat.WEBVTT)
-        assertThat(fakeKalturaClient.getCaptionContentByAssetId(englishCaptions.id)).isEqualTo("bla bla bla in english")
     }
 
     @Test
@@ -128,18 +89,6 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `does not upload captions if there are manually-created captions in Kaltura already`() {
-        val playbackId = mediaEntryWithCaptions("English")
-
-        val newCaptions = createCaptions(language = Locale.UK)
-        kalturaPlaybackProvider.uploadCaptions(playbackId, newCaptions)
-
-        val allCaptions = fakeKalturaClient.getCaptionFilesByReferenceId("ref-id")
-        assertThat(allCaptions).hasSize(1)
-        assertThat(allCaptions.first().label).isEqualTo("English")
-    }
-
-    @Test
     fun `does not upload captions if there are manually-created captions in Kaltura already by entry id`() {
         val playbackId = mediaEntryWithCaptionsByEntryId("English")
 
@@ -149,20 +98,6 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         val allCaptions = fakeKalturaClient.getCaptionFilesByEntryId("entry-id")
         assertThat(allCaptions).hasSize(1)
         assertThat(allCaptions.first().label).isEqualTo("English")
-    }
-
-    @Test
-    fun `replaces captions if there are only automatically-created captions in Kaltura`() {
-        val playbackId = mediaEntryWithCaptions("English (auto-generated)")
-
-        kalturaPlaybackProvider.uploadCaptions(
-            playbackId,
-            createCaptions(language = Locale.UK, autoGenerated = true, content = "new captions")
-        )
-
-        val allCaptions = fakeKalturaClient.getCaptionFilesByReferenceId("ref-id")
-        assertThat(allCaptions).hasSize(1)
-        assertThat(fakeKalturaClient.getCaptionContentByAssetId(allCaptions.first().id)).isEqualTo("new captions")
     }
 
     @Test
@@ -181,19 +116,12 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `deletes auto-generated captions when null`() {
-        val playbackId = mediaEntryWithCaptions("English (auto-generated)")
+        val playbackId = mediaEntryWithCaptionsByEntryId("English (auto-generated)")
 
         kalturaPlaybackProvider.deleteAutoGeneratedCaptions(playbackId, Locale.ENGLISH)
 
         val allCaptions = fakeKalturaClient.getCaptionFilesByReferenceId("ref-id")
         assertThat(allCaptions).isEmpty()
-    }
-
-    private fun mediaEntryWithCaptions(label: String, language: KalturaLanguage = KalturaLanguage.ENGLISH): PlaybackId {
-        val existingCaptions = createKalturaCaptionAsset(label = label, language = language)
-        createMediaEntry(referenceId = "ref-id")
-        fakeKalturaClient.createCaptionsFile("ref-id", existingCaptions, "old captions")
-        return PlaybackId(type = PlaybackProviderType.KALTURA_REFERENCE, value = "ref-id")
     }
 
     private fun mediaEntryWithCaptionsByEntryId(label: String, language: KalturaLanguage = KalturaLanguage.ENGLISH): PlaybackId {
