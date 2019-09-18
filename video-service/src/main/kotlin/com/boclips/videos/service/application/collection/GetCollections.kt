@@ -39,10 +39,11 @@ class GetCollections(
             userContracts.isNotEmpty() -> getContractedCollections(collectionFilter, userContracts)
             isPublicCollectionSearch(collectionFilter) -> collectionService.search(
                 CollectionSearchQuery(
-                    collectionFilter.query,
-                    collectionFilter.subjects,
-                    collectionFilter.pageSize,
-                    collectionFilter.pageNumber
+                    text = collectionFilter.query,
+                    subjectIds = collectionFilter.subjects,
+                    publicOnly = true,
+                    pageSize = collectionFilter.pageSize,
+                    pageIndex = collectionFilter.pageNumber
                 )
             )
             else -> fetchByVisibility(collectionFilter)

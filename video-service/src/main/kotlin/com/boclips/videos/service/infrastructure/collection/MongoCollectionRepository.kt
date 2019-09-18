@@ -44,7 +44,6 @@ class MongoCollectionRepository(
     private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter,
     private val batchProcessingConfig: BatchProcessingConfig
 ) : CollectionRepository {
-
     companion object : KLogging() {
         const val collectionName = "collections"
     }
@@ -120,8 +119,8 @@ class MongoCollectionRepository(
         return getPagedCollections(pageRequest, criteria)
     }
 
-    override fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit) {
-        val sequence = Sequence { dbCollection().find(publicCollectionCriteria).iterator() }
+    override fun streamAll(consumer: (Sequence<Collection>) -> Unit) {
+        val sequence = Sequence { dbCollection().find().iterator() }
             .mapNotNull(CollectionDocumentConverter::toCollection)
 
         consumer(sequence)

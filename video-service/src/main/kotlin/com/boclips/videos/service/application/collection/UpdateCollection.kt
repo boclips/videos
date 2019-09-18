@@ -23,11 +23,7 @@ class UpdateCollection(
         collectionRepository.bulkUpdate(commands)
 
         collectionRepository.find(id)?.let { collection ->
-            if (collection.isPublic) {
-                collectionSearchService.upsert(sequenceOf(collection))
-            } else {
-                collectionSearchService.removeFromSearch(collection.id.value)
-            }
+            collectionSearchService.upsert(sequenceOf(collection))
         }
 
         eventService.saveUpdateCollectionEvent(commands)

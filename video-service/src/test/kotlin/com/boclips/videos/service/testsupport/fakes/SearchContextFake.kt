@@ -1,8 +1,8 @@
 package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.search.service.infrastructure.fakes.CollectionSearchServiceFake
-import com.boclips.search.service.infrastructure.fakes.VideoSearchServiceFake
+import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
+import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch

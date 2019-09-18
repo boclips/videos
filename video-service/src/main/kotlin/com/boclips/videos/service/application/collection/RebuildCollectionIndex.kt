@@ -19,7 +19,7 @@ open class RebuildCollectionIndex(
         val future = CompletableFuture<Unit>()
 
         try {
-            collectionRepository.streamAllPublic { collections ->
+            collectionRepository.streamAll { collections ->
                 collectionSearchService.safeRebuildIndex(collections, notifier)
             }
 

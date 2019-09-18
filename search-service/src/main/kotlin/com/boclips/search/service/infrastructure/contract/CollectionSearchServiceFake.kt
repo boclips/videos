@@ -1,4 +1,4 @@
-package com.boclips.search.service.infrastructure.fakes
+package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
@@ -20,13 +20,9 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
         val phrase = query.phrase
 
         return index
-            .filter { entry ->
-                when {
-                    phraseQuery(query) -> entry.value.title.contains(phrase, ignoreCase = true)
-                    subjectQuery(query) -> entry.value.subjectIds.any { query.subjectIds.contains(it) }
-                    else -> true
-                }
-            }
+            .filter { entry -> if (phraseQuery(query)) entry.value.title.contains(phrase, ignoreCase = true) else true }
+            .filter { entry -> if (subjectQuery(query)) entry.value.subjectIds.any { query.subjectIds.contains(it) } else true }
+            .filter { entry -> if (visibilityQuery(query)) entry.value.visibility == query.visibility else true }
             .map { collection -> collection.key }
     }
 
@@ -35,4 +31,7 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
 
     private fun phraseQuery(collectionQuery: CollectionQuery) =
         collectionQuery.phrase.isNotEmpty()
+
+    private fun visibilityQuery(collectionQuery: CollectionQuery) =
+        collectionQuery.visibility != null
 }

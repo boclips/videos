@@ -1,36 +1,16 @@
-package com.boclips.search.service.infrastructure.fakes
+package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.infrastructure.collections.CollectionIndexReader
-import com.boclips.search.service.infrastructure.collections.CollectionIndexWriter
+import com.boclips.search.service.testsupport.CollectionSearchProvider
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
-import java.util.stream.Stream
-
-class CollectionSearchProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        val inMemorySearchService = CollectionSearchServiceFake()
-
-        val esClient = EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient()
-        val readSearchService = CollectionIndexReader(esClient)
-        val writeSearchService = CollectionIndexWriter(esClient)
-
-        return Stream.of(
-            Arguments.of(inMemorySearchService, inMemorySearchService),
-            Arguments.of(readSearchService, writeSearchService)
-        )
-    }
-}
 
 class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest

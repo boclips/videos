@@ -1,4 +1,4 @@
-package com.boclips.search.service.infrastructure.fakes
+package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter

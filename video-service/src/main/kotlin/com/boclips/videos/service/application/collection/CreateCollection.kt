@@ -29,9 +29,7 @@ class CreateCollection(
             addVideoToCollection(collection.id.value, video.substringAfterLast("/videos/"))
         }
 
-        if (collection.isPublic) {
-            collectionSearchService.upsert(sequenceOf(collection))
-        }
+        collectionSearchService.upsert(sequenceOf(collection))
 
         return collectionRepository.find(collection.id)
             ?: throw CollectionCreationException("Cannot find created collection")

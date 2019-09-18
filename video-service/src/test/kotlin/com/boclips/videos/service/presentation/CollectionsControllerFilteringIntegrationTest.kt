@@ -100,6 +100,20 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
+    fun `searching for public collections returns public collections only`() {
+        updateCollectionToBePublic(createCollection("five ponies were eating grass"))
+        updateCollectionToBePublic(createCollection("while a car and a truck crashed"))
+        createCollection(title = "the car was owned by a private individual", public = false)
+        createCollection(title = "while the truck was company property", public = false)
+
+        mockMvc.perform(get("/v1/collections?public=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
+    }
+
+    @Test
     fun `filter all public collections and use pagination`() {
         updateCollectionToBePublic(createCollection("collection 1"))
         updateCollectionToBePublic(createCollection("collection 2"))

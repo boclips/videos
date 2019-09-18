@@ -55,8 +55,8 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
         return QueryBuilders
             .boolQuery()
             .apply {
-                if (!query.phrase.isEmpty()) {
-                    should(
+                if (query.phrase.isNotEmpty()) {
+                    must(
                         QueryBuilders
                             .boolQuery()
                             .must(
@@ -74,7 +74,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 if (query.visibility != null) {
                     must(
                         QueryBuilders
-                            .termQuery(
+                            .matchQuery(
                                 CollectionDocument.VISIBILITY,
                                 VisibilityMapper.map(query.visibility)
                             )

@@ -13,7 +13,7 @@ interface CollectionRepository {
     fun find(id: CollectionId): Collection?
     fun findAll(ids: List<CollectionId>): List<Collection>
     fun findAllBySubject(subjectId: SubjectId): List<Collection>
-    fun streamAllPublic(consumer: (Sequence<Collection>) -> Unit)
+    fun streamAll(consumer: (Sequence<Collection>) -> Unit)
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
     fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
     fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>

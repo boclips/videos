@@ -98,38 +98,40 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `makes searchable if public`() {
-        val collectionId = saveCollection(owner = "me@me.com", title = "title")
+    fun `collection is searchable if visibility changed to public`() {
+        val collectionId = saveCollection(owner = "me@me.com", title = "title", public = false)
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
 
         assertThat(
             collectionService.search(
                 CollectionSearchQuery(
-                    "title",
-                    emptyList(),
-                    1,
-                    0
+                    text = "title",
+                    subjectIds = emptyList(),
+                    publicOnly = true,
+                    pageSize = 1,
+                    pageIndex = 0
                 )
             ).elements.first().id
         ).isEqualTo(collectionId)
     }
 
     @Test
-    fun `removes from search if not public`() {
-        val collectionId = saveCollection(owner = "me@me.com", title = "title")
+    fun `collection is searchable if visibility changed to private`() {
+        val collectionId = saveCollection(owner = "me@me.com", title = "title", public = true)
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
         updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
 
-        assertThat(collectionService.search(
-            CollectionSearchQuery(
-                "title",
-                emptyList(),
-                1,
-                0
-            )
-        ).elements).isEmpty()
+        assertThat(
+            collectionService.search(
+                CollectionSearchQuery(
+                    text = "title",
+                    subjectIds = emptyList(),
+                    publicOnly = false,
+                    pageSize = 1,
+                    pageIndex = 0
+                )
+            ).elements.first().id
+        ).isEqualTo(collectionId)
     }
 }

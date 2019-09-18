@@ -1,9 +1,8 @@
-package com.boclips.collections.service.application.collection
+package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.infrastructure.fakes.CollectionSearchServiceFake
-import com.boclips.videos.service.application.collection.RebuildCollectionIndex
+import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -35,18 +34,18 @@ class RebuildCollectionIndexTest {
         val collectionId2 = CollectionId(TestFactories.aValidId())
         val collectionId3 = CollectionId(TestFactories.aValidId())
 
-        searchService.upsert(sequenceOf(TestFactories.createCollection(id = collectionId1)))
+        searchService.upsert(sequenceOf(TestFactories.createCollection(id = collectionId1, isPublic = true)))
 
         val collectionRepository = mock<CollectionRepository> {
             on {
-                streamAllPublic(any())
+                streamAll(any())
             } doAnswer { invocations ->
                 val consumer = invocations.getArgument(0) as (Sequence<Collection>) -> Unit
 
                 consumer(
                     sequenceOf(
-                        TestFactories.createCollection(id = collectionId2, title = "collection"),
-                        TestFactories.createCollection(id = collectionId3, title = "collection")
+                        TestFactories.createCollection(id = collectionId2, title = "collection", isPublic = true),
+                        TestFactories.createCollection(id = collectionId3, title = "collection", isPublic = false)
                     )
                 )
             }
@@ -72,7 +71,7 @@ class RebuildCollectionIndexTest {
     fun `the future surfaces any underlying exceptions`() {
         val collectionRepository = mock<CollectionRepository> {
             on {
-                streamAllPublic(any())
+                streamAll(any())
             } doThrow (MongoClientException("Boom"))
         }
 

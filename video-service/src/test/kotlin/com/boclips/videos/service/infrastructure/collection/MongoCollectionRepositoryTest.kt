@@ -519,7 +519,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `stream all public collections`() {
+    fun `stream all collections`() {
         val c1 = collectionRepository.create(
             owner = UserId(value = "user1"),
             title = "Starting Title",
@@ -542,9 +542,9 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         collectionRepository.update(CollectionUpdateCommand.ChangeVisibility(c3.id, true))
 
         var collections: List<Collection> = emptyList()
-        collectionRepository.streamAllPublic { collections = it.toList() }
+        collectionRepository.streamAll { collections = it.toList() }
 
-        assertThat(collections).hasSize(2)
+        assertThat(collections).hasSize(3)
     }
 
     @Test

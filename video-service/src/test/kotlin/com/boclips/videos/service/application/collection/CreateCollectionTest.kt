@@ -72,26 +72,37 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest)
 
-        assertThat(
-            collectionService.search(
-                CollectionSearchQuery(
-                    "title",
-                    emptyList(),
-                    1,
-                    0
-                )
-            ).elements
-        ).isNotEmpty
-        assertThat(
-            collectionService.search(
-                CollectionSearchQuery(
-                    "title",
-                    emptyList(),
-                    1,
-                    0
-                )
-            ).elements.first().id
-        ).isEqualTo(collection.id)
+        val collections = collectionService.search(CollectionSearchQuery(
+            text = "title",
+            subjectIds = emptyList(),
+            publicOnly = true,
+            pageSize = 1,
+            pageIndex = 0
+        )).elements
+
+        assertThat(collections).hasSize(1)
+        assertThat(collections.first().id).isEqualTo(collection.id)
+    }
+
+    @Test
+    fun `makes searchable if private`() {
+        val createRequest = TestFactories.createCollectionRequest(
+            title = "title",
+            public = false
+        )
+
+        val collection = createCollection(createRequest)
+
+        val collections = collectionService.search(CollectionSearchQuery(
+            text = "title",
+            subjectIds = emptyList(),
+            publicOnly = false,
+            pageSize = 1,
+            pageIndex = 0
+        )).elements
+
+        assertThat(collections).hasSize(1)
+        assertThat(collections.first().id).isEqualTo(collection.id)
     }
 
     @Test
@@ -102,16 +113,15 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         createCollection(createRequest)
 
-        assertThat(
-            collectionService.search(
-                CollectionSearchQuery(
-                    "title",
-                    emptyList(),
-                    1,
-                    0
-                )
-            ).elements
-        ).isEmpty()
+        val collections = collectionService.search(CollectionSearchQuery(
+            text = "title",
+            subjectIds = emptyList(),
+            publicOnly = false,
+            pageSize = 1,
+            pageIndex = 0
+        )).elements
+
+        assertThat(collections.first().isPublic).isFalse()
     }
 
     @Test

@@ -1,17 +1,17 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.domain.service.IsContractedToView
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.IsContractedToView
 import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -89,6 +89,6 @@ class CollectionServiceTest {
 
         val collection = collectionService.getReadableCollectionOrThrow(publicCollection.id.value)
 
-        Assertions.assertThat(collection.id).isEqualTo(publicCollection.id)
+        assertThat(collection.id).isEqualTo(publicCollection.id)
     }
 }
