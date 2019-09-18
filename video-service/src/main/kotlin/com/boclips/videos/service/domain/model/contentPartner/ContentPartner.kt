@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.contentPartner
 
 import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 
 data class ContentPartner(
@@ -8,6 +9,7 @@ data class ContentPartner(
     val name: String,
     val ageRange: AgeRange,
     val credit: Credit,
+    val legalRestrictions: LegalRestrictions?,
     val distributionMethods: Set<DistributionMethod>
 ) {
     fun isStreamable(): Boolean {

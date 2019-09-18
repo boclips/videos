@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.infrastructure.legal.restrictions.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import org.bson.types.ObjectId
@@ -20,6 +21,7 @@ object ContentPartnerDocumentConverter {
             name = contentPartner.name,
             ageRangeMax = contentPartner.ageRange.max(),
             ageRangeMin = contentPartner.ageRange.min(),
+            legalRestrictions = contentPartner.legalRestrictions?.let { LegalRestrictionsDocument.from(it) },
             distributionMethods = contentPartner.distributionMethods
                 .map(DistributionMethodDocumentConverter::toDocument)
                 .toSet()
@@ -35,6 +37,7 @@ object ContentPartnerDocumentConverter {
                 document.ageRangeMax
             ) else AgeRange.unbounded(),
             credit = document.youtubeChannelId?.let { Credit.YoutubeCredit(channelId = it) } ?: Credit.PartnerCredit,
+            legalRestrictions = document.legalRestrictions?.toRestrictions(),
             distributionMethods = reconstructDistributionMethods(document)
         )
     }

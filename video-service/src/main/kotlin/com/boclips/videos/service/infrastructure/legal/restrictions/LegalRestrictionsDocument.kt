@@ -13,4 +13,11 @@ data class LegalRestrictionsDocument(
     fun toRestrictions(): LegalRestrictions {
         return LegalRestrictions(id = LegalRestrictionsId(id.toHexString()), text = text)
     }
+
+    companion object {
+
+        fun from(legalRestrictions: LegalRestrictions): LegalRestrictionsDocument {
+            return LegalRestrictionsDocument(ObjectId(legalRestrictions.id.value), legalRestrictions.text)
+        }
+    }
 }

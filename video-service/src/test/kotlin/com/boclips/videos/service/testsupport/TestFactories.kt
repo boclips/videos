@@ -19,6 +19,8 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.Credit
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -88,6 +90,7 @@ object TestFactories {
             name = contentPartnerName,
             ageRange = ageRange,
             credit = Credit.PartnerCredit,
+            legalRestrictions = null,
             distributionMethods = distributionMethods
         ),
         videoReference: String = contentPartnerVideoId
@@ -405,6 +408,7 @@ object TestFactories {
         name: String = "TED",
         ageRange: AgeRange = AgeRange.bounded(5, 11),
         credit: Credit = Credit.PartnerCredit,
+        legalRestrictions: LegalRestrictions? = null,
         distributionMethods: Set<DistributionMethod> = emptySet()
     ): ContentPartner {
         return ContentPartner(
@@ -412,6 +416,7 @@ object TestFactories {
             name = name,
             ageRange = ageRange,
             credit = credit,
+            legalRestrictions = legalRestrictions,
             distributionMethods = distributionMethods
         )
     }
@@ -451,6 +456,13 @@ object TestFactories {
 
     fun createSubjectDocument(name: String): SubjectDocument {
         return SubjectDocument(id = ObjectId(), name = name)
+    }
+
+    fun createLegalRestrictions(): LegalRestrictions {
+        return LegalRestrictions(
+            id = LegalRestrictionsId(aValidId()),
+            text = "No restrictions."
+        )
     }
 }
 

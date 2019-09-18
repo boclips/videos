@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.contentPartner
 
+import com.boclips.videos.service.infrastructure.legal.restrictions.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -13,6 +14,7 @@ data class ContentPartnerDocument(
     val ageRangeMax: Int?,
     val lastModified: Instant? = null,
     val createdAt: Instant? = null,
+    val legalRestrictions: LegalRestrictionsDocument? = null,
     val distributionMethods: Set<DistributionMethodDocument>? = null
 ) {
 }

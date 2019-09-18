@@ -20,6 +20,7 @@ internal class ContentPartnerDocumentConverterTest {
             name = "The grandest content partner there ever lived",
             ageRange = AgeRange.bounded(5, 11),
             credit = Credit.PartnerCredit,
+            legalRestrictions = TestFactories.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD)
         )
 

@@ -34,6 +34,7 @@ class VideoDocumentConverterTest {
                 name = "Some name",
                 ageRange = AgeRange.bounded(10, 17),
                 credit = Credit.PartnerCredit,
+                legalRestrictions = TestFactories.createLegalRestrictions(),
                 distributionMethods = emptySet()
             ),
             videoReference = "video-123",

@@ -43,6 +43,7 @@ class CreateContentPartner(
                         Credit
                             .YoutubeCredit(it)
                     } ?: Credit.PartnerCredit,
+                    legalRestrictions = null,
                     distributionMethods = methods
                 )
             )

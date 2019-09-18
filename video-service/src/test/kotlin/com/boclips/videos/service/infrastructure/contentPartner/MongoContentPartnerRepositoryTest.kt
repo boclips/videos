@@ -5,6 +5,8 @@ import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilt
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -204,6 +206,20 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
         assertThat(updatedAsset.ageRange.min()).isEqualTo(10)
         assertThat(updatedAsset.ageRange.max()).isEqualTo(20)
+    }
+
+    @Test
+    fun `replace legal restrictions`() {
+        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val legalRestrictions = LegalRestrictions(
+            id = LegalRestrictionsId(TestFactories.aValidId()),
+            text = "New restrictions"
+        )
+
+        mongoContentPartnerRepository.update(listOf(ContentPartnerUpdateCommand.ReplaceLegalRestrictions(contentPartner.contentPartnerId, legalRestrictions)))
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.legalRestrictions).isEqualTo(legalRestrictions)
     }
 
     @Nested
