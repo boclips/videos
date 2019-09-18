@@ -5,7 +5,6 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.SourceDocument
@@ -14,6 +13,7 @@ import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
+
 
 object VideoDocumentConverter {
     fun toVideoDocument(video: Video): VideoDocument {

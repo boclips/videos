@@ -1,16 +1,15 @@
-package com.boclips.videos.service.infrastructure.contentPartner
+package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
+import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested

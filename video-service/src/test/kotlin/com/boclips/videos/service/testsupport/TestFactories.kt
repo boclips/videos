@@ -1,5 +1,7 @@
 package com.boclips.videos.service.testsupport
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -14,9 +16,6 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
@@ -31,23 +30,20 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
-import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.tag.CreateTagRequest
@@ -417,39 +413,6 @@ object TestFactories {
             ageRange = ageRange,
             credit = credit,
             legalRestrictions = legalRestrictions,
-            distributionMethods = distributionMethods
-        )
-    }
-
-    fun createContentPartnerDocument(
-        objectId: ObjectId = ObjectId.get(),
-        youtubeChannelId: String? = null,
-        name: String = "content partner",
-        ageRangeMax: Nothing? = null,
-        ageRangeMin: Nothing? = null,
-        distributionMethods: Set<DistributionMethodDocument>? = null
-    ) = ContentPartnerDocument(
-        id = objectId,
-        youtubeChannelId = youtubeChannelId,
-        name = name,
-        ageRangeMax = ageRangeMax,
-        ageRangeMin = ageRangeMin,
-        distributionMethods = distributionMethods
-    )
-
-    fun createContentPartnerRequest(
-        name: String? = "TED",
-        ageRange: AgeRangeRequest? = AgeRangeRequest(
-            min = 5,
-            max = 11
-        ),
-        accreditedToYtChannel: String? = null,
-        distributionMethods: Set<DistributionMethodResource>? = null
-    ): ContentPartnerRequest {
-        return ContentPartnerRequest(
-            name = name,
-            ageRange = ageRange,
-            accreditedToYtChannelId = accreditedToYtChannel,
             distributionMethods = distributionMethods
         )
     }

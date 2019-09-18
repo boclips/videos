@@ -1,9 +1,6 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
@@ -13,8 +10,9 @@ import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -27,9 +25,8 @@ import org.springframework.hateoas.Resource
 
 class CreateVideo(
     private val videoService: VideoService,
-    private val videoRepository: VideoRepository,
     private val subjectRepository: SubjectRepository,
-    private val contentPartnerRepository: ContentPartnerRepository,
+    private val contentPartnerService: ContentPartnerService,
     private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
@@ -78,7 +75,7 @@ class CreateVideo(
         createRequest: CreateVideoRequest
     ): ContentPartner? =
         createRequest.providerId?.let {
-            contentPartnerRepository.findById(ContentPartnerId(value = createRequest.providerId))
+            contentPartnerService.findById(createRequest.providerId)
         }
 
     private fun triggerVideoAnalysis(createdVideo: Video) {

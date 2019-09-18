@@ -1,13 +1,13 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
-import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -42,7 +42,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
         val resource = createVideo(
             TestFactories.createCreateVideoRequest(
@@ -58,7 +58,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
         val resource =
             createVideo(
@@ -74,7 +74,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `requesting creation of video without playback ignores video and throws`() {
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
 
         assertThrows<VideoPlaybackNotFound> {
@@ -132,7 +132,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = playbackProviderDuration
         )
 
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
         val resource = createVideo(
             TestFactories.createCreateVideoRequest(
@@ -149,7 +149,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when create request is incomplete`() {
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
         createMediaEntry(
             id = "entry-$123",
@@ -168,7 +168,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when playback provider ID or type are missing`() {
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
         val createRequest = TestFactories.createCreateVideoRequest(
             playbackId = null,
             playbackProvider = null,
@@ -185,7 +185,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
         val video: Resource<VideoResource> = createVideo(
             TestFactories.createCreateVideoRequest(
@@ -206,7 +206,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `it dispatches a video created event`() {
         createMediaEntry(id = "1")
 
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
         createVideo(
             TestFactories.createCreateVideoRequest(
@@ -274,7 +274,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = contentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = saveContentPartner()
 
         val createRequest =
             TestFactories.createCreateVideoRequest(

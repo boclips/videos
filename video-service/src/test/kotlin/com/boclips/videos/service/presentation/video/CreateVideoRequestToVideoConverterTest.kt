@@ -1,9 +1,9 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
-import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException

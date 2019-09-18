@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback

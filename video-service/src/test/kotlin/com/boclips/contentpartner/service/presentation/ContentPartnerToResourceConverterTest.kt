@@ -1,10 +1,9 @@
-package com.boclips.videos.service.presentation.contentPartner
+package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
+import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

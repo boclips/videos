@@ -5,7 +5,9 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.domain.service.video.VideoService
+import org.springframework.stereotype.Component
 
+@Component
 class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val videoService: VideoService

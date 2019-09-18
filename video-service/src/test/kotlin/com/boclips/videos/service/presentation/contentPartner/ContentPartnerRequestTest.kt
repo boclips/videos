@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.contentPartner
 
+import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

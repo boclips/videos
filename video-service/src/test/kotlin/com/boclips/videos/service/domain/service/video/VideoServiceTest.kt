@@ -1,14 +1,16 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
+import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
@@ -136,11 +138,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `create video with no age range`() {
-            val contentPartner = contentPartnerRepository.create(
-                contentPartner = TestFactories.createContentPartner(
-                    name = "Our content partner",
-                    ageRange = AgeRange.bounded(3, 7)
-                )
+            val contentPartner = saveContentPartner(
+                name = "Our content partner",
+                ageRange = AgeRangeRequest(3, 7)
             )
 
             val video = videoService.create(
@@ -157,9 +157,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `do not create video when duplicate`() {
-            val contentPartner = contentPartnerRepository.create(
-                contentPartner = TestFactories.createContentPartner(name = "Our content partner")
-            )
+            val contentPartner = saveContentPartner(name = "Our content partner")
 
             videoService.create(
                 TestFactories.createVideo(
@@ -183,7 +181,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     inner class UpdateContentPartnerInVideo {
         @Test
         fun `updates content partner of videos`() {
-            val contentPartner = TestFactories.createContentPartner(name = "hello")
+            val contentPartner = saveContentPartner(name = "hello")
             val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
             videoService.create(video)
 
@@ -196,7 +194,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates age range of videos by content partner`() {
-            val contentPartner = TestFactories.createContentPartner(ageRange = AgeRange.unbounded())
+            val contentPartner = saveContentPartner(ageRange = AgeRangeRequest(null, null))
             val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
             videoService.create(video)
 
@@ -211,7 +209,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates distribution methods of videos by content partner`() {
-            val contentPartner = TestFactories.createContentPartner(distributionMethods = DistributionMethod.ALL)
+            val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
             val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
             videoService.create(video)
 
@@ -228,7 +226,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates multiple videos associated to a content partner`() {
-            val contentPartner = TestFactories.createContentPartner(distributionMethods = DistributionMethod.ALL)
+            val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
             val videos = listOf(
                 TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId),
                 TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId),

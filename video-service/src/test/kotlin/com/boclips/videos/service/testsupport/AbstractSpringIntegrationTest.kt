@@ -1,5 +1,10 @@
 package com.boclips.videos.service.testsupport
 
+import com.boclips.contentpartner.service.application.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.CreateContentPartner
+import com.boclips.contentpartner.service.application.GetContentPartners
+import com.boclips.contentpartner.service.domain.model.ContentPartner
+import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
@@ -10,9 +15,6 @@ import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.contentpartner.service.application.ContentPartnerConflictException
-import com.boclips.contentpartner.service.application.CreateContentPartner
-import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
@@ -22,7 +24,6 @@ import com.boclips.videos.service.application.video.VideoSearchUpdater
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
-import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -37,7 +38,6 @@ import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvide
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
@@ -220,10 +220,23 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
+        val kalturaEntryId = if (KALTURA == playbackId.type) {
+            playbackId.value
+        } else {
+            "entry-${playbackId.value}"
+        }
+        val kalturaReferenceId = if (KALTURA_REFERENCE == playbackId.type) {
+            playbackId.value
+        } else {
+            "ref-${playbackId.value}"
+        }
+
         val video = createVideo(
             CreateVideoRequest(
                 providerId = contentProviderId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
+                kalturaEntryId = kalturaEntryId,
+                kalturaReferenceId = kalturaReferenceId,
                 title = title,
                 description = description,
                 releasedOn = LocalDate.parse(date),
@@ -293,7 +306,7 @@ abstract class AbstractSpringIntegrationTest {
         distributionMethods: Set<DistributionMethodResource>? = null
     ): ContentPartner {
         val createdContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
+            com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerRequest(
                 name = name,
                 ageRange = ageRange,
                 accreditedToYtChannel = accreditedToYtChannel,

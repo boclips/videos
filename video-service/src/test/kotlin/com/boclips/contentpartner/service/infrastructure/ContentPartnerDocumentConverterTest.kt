@@ -1,12 +1,11 @@
-package com.boclips.videos.service.infrastructure.contentPartner
+package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocumentConverter
+import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
@@ -21,7 +20,7 @@ internal class ContentPartnerDocumentConverterTest {
             name = "The grandest content partner there ever lived",
             ageRange = AgeRange.bounded(5, 11),
             credit = Credit.PartnerCredit,
-            legalRestrictions = TestFactories.createLegalRestrictions(),
+            legalRestrictions =  com.boclips.videos.service.testsupport.TestFactories.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD)
         )
 

@@ -18,10 +18,6 @@ import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.contentpartner.service.application.CreateContentPartner
-import com.boclips.contentpartner.service.application.GetContentPartner
-import com.boclips.contentpartner.service.application.GetContentPartners
-import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
@@ -41,6 +37,7 @@ import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.BulkUpdateVideo
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -59,7 +56,6 @@ import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
@@ -76,7 +72,6 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConver
 import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
-import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
@@ -101,8 +96,7 @@ class ApplicationContext(
     val subjectRepository: SubjectRepository,
     val tagRepository: TagRepository,
     val disciplineRepository: DisciplineRepository,
-    val contentPartnerRepository: ContentPartnerRepository,
-    val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    val contentPartnerService: ContentPartnerService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
     val userContractService: UserContractService
 ) {
@@ -128,9 +122,8 @@ class ApplicationContext(
     ): CreateVideo {
         return CreateVideo(
             videoService,
-            videoRepository,
             subjectRepository,
-            contentPartnerRepository,
+            contentPartnerService,
             searchVideo,
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
@@ -370,34 +363,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun createContentPartner(): CreateContentPartner {
-        return CreateContentPartner(contentPartnerRepository)
-    }
-
-    @Bean
-    fun updateContentPartner(): UpdateContentPartner {
-        return UpdateContentPartner(
-            contentPartnerRepository,
-            videoService
-        )
-    }
-
-    @Bean
     fun ageRangeToResourceConverter(): AgeRangeToResourceConverter {
         return AgeRangeToResourceConverter()
-    }
-
-    @Bean
-    fun getContentPartner(): GetContentPartner {
-        return GetContentPartner(contentPartnerRepository)
-    }
-
-    @Bean
-    fun getContentPartners(): GetContentPartners {
-        return GetContentPartners(
-            contentPartnerRepository,
-            contentPartnersLinkBuilder
-        )
     }
 
     @Bean
