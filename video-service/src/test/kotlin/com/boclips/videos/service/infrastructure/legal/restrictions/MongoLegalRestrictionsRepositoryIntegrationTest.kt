@@ -19,6 +19,17 @@ class MongoLegalRestrictionsRepositoryIntegrationTest : AbstractSpringIntegratio
     }
 
     @Test
+    fun findById() {
+        val id = repository.create("No restrictions").id
+
+        val restrictions = repository.findById(id)
+
+        assertThat(restrictions).isNotNull
+        assertThat(restrictions?.id?.value).isNotBlank()
+        assertThat(restrictions?.text).isEqualTo("No restrictions")
+    }
+
+    @Test
     fun findAll() {
         repository.create("Do not use in Spain")
 

@@ -23,6 +23,9 @@ import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
+import com.boclips.videos.service.application.legal.restrictions.CreateLegalRestrictions
+import com.boclips.videos.service.application.legal.restrictions.FindAllLegalRestrictions
+import com.boclips.videos.service.application.legal.restrictions.FindLegalRestrictions
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -55,6 +58,7 @@ import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -96,6 +100,7 @@ class ApplicationContext(
     val disciplineRepository: DisciplineRepository,
     val contentPartnerRepository: ContentPartnerRepository,
     val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    val legalRestrictionsRepository: LegalRestrictionsRepository,
     val userContractService: UserContractService
 ) {
     @Bean
@@ -390,6 +395,21 @@ class ApplicationContext(
     @Bean
     fun videoUpdateService(): VideoSearchUpdater {
         return VideoSearchUpdater(videoRepository, videoSearchService, legacyVideoSearchService)
+    }
+
+    @Bean
+    fun createLegalRestrictions(): CreateLegalRestrictions {
+        return CreateLegalRestrictions(legalRestrictionsRepository)
+    }
+
+    @Bean
+    fun findLegalRestrictions(): FindLegalRestrictions {
+        return FindLegalRestrictions(legalRestrictionsRepository)
+    }
+
+    @Bean
+    fun findAllLegalRestrictions(): FindAllLegalRestrictions {
+        return FindAllLegalRestrictions(legalRestrictionsRepository)
     }
 
     private fun getVideoById(videoToResourceConverter: VideoToResourceConverter): GetVideoById {

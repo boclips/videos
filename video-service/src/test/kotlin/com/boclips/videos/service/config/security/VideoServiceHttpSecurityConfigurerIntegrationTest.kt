@@ -322,6 +322,21 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
         mockMvc.perform(get("/v1/subjects/53fbf4615c3b9f41c381b6a3"))
             .andExpect(status().`is`(not401Or403()))
     }
+
+    @Test
+    fun `only users with dedicated role can create and fetch legal restrictions`() {
+        mockMvc.perform(post("/v1/legal-restrictions?text=text").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/legal-restrictions?text=text").asBoclipsEmployee())
+            .andExpect(status().isCreated)
+
+        mockMvc.perform(get("/v1/legal-restrictions").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/legal-restrictions").asBoclipsEmployee())
+            .andExpect(status().isOk)
+    }
 }
 
 private fun not401Or403(): Matcher<Int> {

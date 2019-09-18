@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.legal.restrictions
 
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
+import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -15,6 +16,7 @@ class MongoLegalRestrictionsRepository(private val mongoClient: MongoClient) : L
     companion object : KLogging() {
 
         const val COLLECTION_NAME = "legalRestrictions"
+
     }
     override fun create(text: String): LegalRestrictions {
         val document = LegalRestrictionsDocument(
@@ -27,9 +29,12 @@ class MongoLegalRestrictionsRepository(private val mongoClient: MongoClient) : L
         return find(document.id) ?: throw IllegalStateException("This should never happen")
     }
 
+    override fun findById(id: LegalRestrictionsId): LegalRestrictions? {
+        return find(ObjectId(id.value))
+    }
+
     private fun find(id: ObjectId): LegalRestrictions? {
-        return getCollection().findOne(LegalRestrictionsDocument::id eq id)
-            ?.let { it.toRestrictions() }
+        return getCollection().findOne(LegalRestrictionsDocument::id eq id)?.toRestrictions()
     }
 
     override fun findAll(): List<LegalRestrictions> {

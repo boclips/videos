@@ -95,6 +95,10 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(GET, "/v1/distribution-methods").hasRole(ROLE.VIEW_DISTRIBUTION_METHODS)
 
+            .antMatchers(GET, "/v1/legal-restrictions").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(GET, "/v1/legal-restrictions/*").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(POST, "/v1/legal-restrictions").hasRole(ROLE.UPDATE_VIDEOS)
+
             .anyRequest().denyAll()
     }
 }
