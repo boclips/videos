@@ -95,16 +95,19 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
         assertThat(videoResource.legalRestrictions).isEqualTo("None")
 
-        assertThat(videoResource.playback!!.content.type).isEqualTo("STREAM")
-        assertThat(videoResource.playback!!.content.thumbnailUrl).isEqualTo("kaltura-thumbnailUrl")
-        assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(11))
-        assertThat(videoResource.playback!!.content.id).isEqualTo("entry-id")
-        assertThat((videoResource.playback!!.content as StreamPlaybackResource).streamUrl).isEqualTo("hls-stream")
         assertThat(videoResource.ageRange!!.min).isEqualTo(5)
         assertThat(videoResource.ageRange!!.max).isEqualTo(11)
         assertThat(videoResource.rating).isEqualTo(3.0)
         assertThat(videoResource.yourRating).isEqualTo(3.0)
         assertThat(videoResource.bestFor).isEqualTo(TagResource("tag-label"))
+
+        val playbackResource = videoResource.playback!!.content as StreamPlaybackResource
+        assertThat(playbackResource.type).isEqualTo("STREAM")
+        assertThat(playbackResource.thumbnailUrl).isEqualTo("kaltura-thumbnailUrl")
+        assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
+        assertThat(playbackResource.id).isEqualTo("entry-id")
+        assertThat(playbackResource.streamUrl).isEqualTo("hls-stream")
+        assertThat(playbackResource.referenceId).isEqualTo("555")
     }
 
     @Test

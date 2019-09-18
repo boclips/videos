@@ -121,6 +121,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].name", equalTo("Maths")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
+            .andExpect(jsonPath("$._embedded.videos[0].playback.referenceId", equalTo("ref-entry-id-123")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
             .andExpect(
                 jsonPath(
@@ -162,6 +163,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].name", equalTo("Maths")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
+            .andExpect(jsonPath("$._embedded.videos[0].playback.referenceId", equalTo("ref-id-123")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
             .andExpect(
                 jsonPath(

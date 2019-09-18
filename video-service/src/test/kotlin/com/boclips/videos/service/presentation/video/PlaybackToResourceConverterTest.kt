@@ -33,6 +33,7 @@ internal class PlaybackToResourceConverterTest {
         assertThat(resource.duration).isEqualTo(kalturaPlayback.duration)
         assertThat(resource.thumbnailUrl).isEqualTo(kalturaPlayback.thumbnailUrl)
         assertThat(resource.id).isEqualTo(kalturaPlayback.id.value)
+        assertThat(resource.referenceId).isEqualTo(kalturaPlayback.referenceId)
     }
 
     @Test

@@ -468,7 +468,7 @@ object TestFactories {
 
 object PlaybackResourceFactory {
     fun sample(type: String = "STREAM") =
-        StreamPlaybackResource(type, "http://example.com", "thumbnail-url", Duration.ZERO, streamUrl = "stream-url")
+        StreamPlaybackResource(type, "http://example.com", "thumbnail-url", Duration.ZERO, streamUrl = "stream-url", referenceId = "reference-id")
 }
 
 object VideoTypeResourceFactory {

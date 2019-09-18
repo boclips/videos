@@ -33,7 +33,8 @@ class PlaybackToResourceConverter(
                 streamUrl = playback.appleHlsStreamUrl,
                 thumbnailUrl = UriTemplate(playback.thumbnailUrl).expand(mapOf(Pair("thumbnailWidth", 500))).toString(),
                 duration = playback.duration,
-                id = playback.id.value
+                id = playback.id.value,
+                referenceId = playback.referenceId
             )
             is VideoPlayback.YoutubePlayback -> YoutubePlaybackResource(
                 thumbnailUrl = playback.thumbnailUrl,
