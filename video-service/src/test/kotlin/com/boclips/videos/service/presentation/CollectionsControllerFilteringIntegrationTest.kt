@@ -1,17 +1,26 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
-import org.hamcrest.Matchers.*
+import com.boclips.videos.service.testsupport.asUserWithRoles
+import org.hamcrest.Matchers.endsWith
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.isEmptyString
+import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
@@ -147,11 +156,30 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         updateCollectionToBePublic(createCollection("while a car and a truck crashed"))
         createCollection(title = "the truck was blue and yellow", public = true)
 
-        mockMvc.perform(get("/v1/collections?query=truck").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?public=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
+    }
+
+    @Test
+    fun `query search all collections`() {
+        createCollection("five ponies were eating grass", public = true)
+        createCollection(title = "the truck was blue and yellow", public = false)
+        createCollection("while a car and a truck crashed", public = true)
+
+        mockMvc.perform(
+            get("/v1/collections?query=truck").asUserWithRoles(
+                UserRoles.VIEW_COLLECTIONS,
+                UserRoles.VIEW_ANY_COLLECTION
+            )
+        )
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("the truck was blue and yellow")))
+            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("while a car and a truck crashed")))
     }
 
     @Test
@@ -192,26 +220,31 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
         val subject = saveSubject("subject")
         listOf(collectionWithLessonPlan1, collectionWithLessonPlan2).forEach {
-            collectionRepository.update(CollectionUpdateCommand.AddAttachment(CollectionId(it), AttachmentFactory.sample()))
+            collectionRepository.update(
+                CollectionUpdateCommand.AddAttachment(
+                    CollectionId(it),
+                    AttachmentFactory.sample()
+                )
+            )
         }
 
         listOf(collectionWithLessonPlan1, collectionWithoutLessonPlan, collectionWithLessonPlan2).forEach {
             updateCollectionToBePublic(it)
             mockMvc.perform(
-                    MockMvcRequestBuilders.patch(selfLink(it)).contentType(MediaType.APPLICATION_JSON)
-                            .content("""{"subjects": ["${subject.id.value}"]}""").asTeacher()
+                MockMvcRequestBuilders.patch(selfLink(it)).contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"subjects": ["${subject.id.value}"]}""").asTeacher()
             )
         }
 
         mockMvc.perform(
-                get("/v1/collections?subject=${subject.id.value}&public=true")
-                        .asTeacher("teacher@gmail.com")
+            get("/v1/collections?subject=${subject.id.value}&public=true")
+                .asTeacher("teacher@gmail.com")
         )
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
-                .andExpect(jsonPath("$._embedded.collections[0].title", startsWith("With lesson plan")))
-                .andExpect(jsonPath("$._embedded.collections[1].title", startsWith("With lesson plan")))
-                .andExpect(jsonPath("$._embedded.collections[2].title", equalTo("No lesson plan")))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", startsWith("With lesson plan")))
+            .andExpect(jsonPath("$._embedded.collections[1].title", startsWith("With lesson plan")))
+            .andExpect(jsonPath("$._embedded.collections[2].title", equalTo("No lesson plan")))
     }
 
     @Test
@@ -235,5 +268,11 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+    }
+
+    @Test
+    fun `returns a 403 response when user without VIEW_ANY_COLLECTION wants to search all collections`() {
+        mockMvc.perform(get("/v1/collections").asTeacher("notTheOwner@gmail.com"))
+            .andExpect(status().isForbidden)
     }
 }

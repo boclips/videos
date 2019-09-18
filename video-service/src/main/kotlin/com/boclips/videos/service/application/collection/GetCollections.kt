@@ -1,16 +1,13 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
-import com.boclips.videos.service.application.UnauthorizedException
+import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
-import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -18,10 +15,11 @@ import com.boclips.videos.service.presentation.collections.CollectionResourceFac
 
 class GetCollections(
     private val collectionService: CollectionService,
-    private val collectionRepository: CollectionRepository,
     private val collectionResourceFactory: CollectionResourceFactory,
     private val getContractedCollections: GetContractedCollections,
-    private val userContractService: UserContractService
+    private val userContractService: UserContractService,
+    private val getUserPrivateCollections: GetUserPrivateCollections,
+    private val getBookmarkedCollections: GetBookmarkedCollections
 ) {
     operator fun invoke(collectionFilter: CollectionFilter): Page<CollectionResource> {
         return getCollections(collectionFilter).let {
@@ -37,21 +35,41 @@ class GetCollections(
         val userContracts = userContractService.getContracts(getCurrentUserId().value)
         return when {
             userContracts.isNotEmpty() -> getContractedCollections(collectionFilter, userContracts)
-            isPublicCollectionSearch(collectionFilter) -> collectionService.search(
-                CollectionSearchQuery(
-                    text = collectionFilter.query,
-                    subjectIds = collectionFilter.subjects,
-                    publicOnly = true,
-                    pageSize = collectionFilter.pageSize,
-                    pageIndex = collectionFilter.pageNumber
-                )
-            )
-            else -> fetchByVisibility(collectionFilter)
+            isPublicCollectionSearch(collectionFilter) -> searchCollections(collectionFilter, publicOnly = true)
+            isAllCollectionsSearch(collectionFilter) -> searchCollections(collectionFilter, publicOnly = false)
+            isUserPrivateCollectionsFetch(collectionFilter) -> getUserPrivateCollections(collectionFilter)
+            isBookmarkedCollectionsFetch(collectionFilter) -> getBookmarkedCollections(collectionFilter)
+            else -> throw IllegalStateException("Unknown collection lookup method")
         }
     }
 
     private fun isPublicCollectionSearch(collectionFilter: CollectionFilter) =
         collectionFilter.visibility == CollectionFilter.Visibility.PUBLIC
+
+    private fun isUserPrivateCollectionsFetch(collectionFilter: CollectionFilter) =
+        collectionFilter.visibility == CollectionFilter.Visibility.PRIVATE
+
+    private fun isBookmarkedCollectionsFetch(collectionFilter: CollectionFilter) =
+        collectionFilter.visibility == CollectionFilter.Visibility.BOOKMARKED
+
+    private fun isAllCollectionsSearch(collectionFilter: CollectionFilter) =
+        collectionFilter.visibility == CollectionFilter.Visibility.ALL
+
+    private fun searchCollections(collectionFilter: CollectionFilter, publicOnly: Boolean): Page<Collection> {
+        if (!(publicOnly || currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION))) {
+            throw OperationForbiddenException()
+        }
+
+        return collectionService.search(
+            CollectionSearchQuery(
+                text = collectionFilter.query,
+                subjectIds = collectionFilter.subjects,
+                publicOnly = publicOnly,
+                pageSize = collectionFilter.pageSize,
+                pageIndex = collectionFilter.pageNumber
+            )
+        )
+    }
 
     private fun assembleResourcesPage(
         collectionFilter: CollectionFilter,
@@ -61,34 +79,5 @@ class GetCollections(
         return Page(collections.map {
             collectionResourceFactory.buildCollectionResource(it, collectionFilter.projection)
         }, pageInfo)
-    }
-
-    private fun fetchByVisibility(
-        collectionFilter: CollectionFilter
-    ): Page<Collection> {
-        val pageRequest = PageRequest(page = collectionFilter.pageNumber, size = collectionFilter.pageSize)
-        return when (collectionFilter.visibility) {
-            CollectionFilter.Visibility.BOOKMARKED -> collectionRepository.getBookmarkedByUser(
-                pageRequest,
-                getCurrentUserId()
-            )
-            CollectionFilter.Visibility.PRIVATE -> {
-                val owner = validatePrivateCollectionsOwnerOrThrow(collectionFilter)
-                collectionRepository.getByOwner(owner, pageRequest)
-            }
-            else -> throw IllegalStateException()
-        }
-    }
-
-    private fun validatePrivateCollectionsOwnerOrThrow(collectionFilter: CollectionFilter): UserId {
-        val owner = collectionFilter.owner
-            ?: throw UnauthorizedException("owner must be specified for private collections access")
-        val authenticatedUserId = getCurrentUserId().value
-
-        if (owner == authenticatedUserId || currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION)) {
-            return UserId(owner)
-        }
-
-        throw UnauthorizedException("$authenticatedUserId is not authorized to access $owner")
     }
 }

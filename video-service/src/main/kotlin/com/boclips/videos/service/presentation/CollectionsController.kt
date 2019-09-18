@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.collection.AddVideoToCollection
+import com.boclips.videos.service.application.collection.AssembleCollectionFilter
 import com.boclips.videos.service.application.collection.BookmarkCollection
-import com.boclips.videos.service.application.collection.CollectionFilter
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
@@ -49,7 +49,8 @@ class CollectionsController(
     private val bookmarkCollection: BookmarkCollection,
     private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
-    private val withProjection: WithProjection
+    private val withProjection: WithProjection,
+    private val assembleCollectionFilter: AssembleCollectionFilter
 ) {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
@@ -66,18 +67,15 @@ class CollectionsController(
         @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) subject: List<String>?
     ): MappingJacksonValue {
-        val collectionFilter = CollectionFilter(
+        val collectionFilter = assembleCollectionFilter(
             query = query,
-            projection = projection ?: Projection.list,
-            visibility = when {
-                bookmarked -> CollectionFilter.Visibility.BOOKMARKED
-                public || query != null -> CollectionFilter.Visibility.PUBLIC
-                else -> CollectionFilter.Visibility.PRIVATE
-            },
+            subject = subject,
+            public = public,
+            bookmarked = bookmarked,
             owner = owner,
-            pageNumber = page?.let { it } ?: 0,
-            pageSize = size?.let { it } ?: COLLECTIONS_PAGE_SIZE,
-            subjects = subject ?: emptyList()
+            projection = projection,
+            page = page,
+            size = size
         )
 
         val collectionsPage = getCollections(collectionFilter)

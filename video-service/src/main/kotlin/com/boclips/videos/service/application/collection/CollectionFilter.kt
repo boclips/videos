@@ -12,6 +12,6 @@ data class CollectionFilter(
     val subjects: List<String> = emptyList()
 ) {
     enum class Visibility {
-        PUBLIC, PRIVATE, BOOKMARKED
+        PUBLIC, PRIVATE, BOOKMARKED, ALL
     }
 }

@@ -93,10 +93,11 @@ class GetCollectionsTest {
 
         val collections = GetCollections(
             collectionService,
-            collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userContractService
+            userContractService,
+            GetUserPrivateCollections(collectionRepository),
+            GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
                 projection = Projection.list,
@@ -137,10 +138,11 @@ class GetCollectionsTest {
 
         val collections = GetCollections(
             collectionService,
-            collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userContractService
+            userContractService,
+            GetUserPrivateCollections(collectionRepository),
+            GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
                 projection = Projection.list,
@@ -181,10 +183,11 @@ class GetCollectionsTest {
 
         val collections = GetCollections(
             collectionService,
-            collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userContractService
+            userContractService,
+            GetUserPrivateCollections(collectionRepository),
+            GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -225,10 +228,11 @@ class GetCollectionsTest {
 
         val collections = GetCollections(
             collectionService,
-            collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userContractService
+            userContractService,
+            GetUserPrivateCollections(collectionRepository),
+            GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -275,10 +279,11 @@ class GetCollectionsTest {
 
         val collections = GetCollections(
             collectionService,
-            collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userContractService
+            userContractService,
+            GetUserPrivateCollections(collectionRepository),
+            GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -321,10 +326,11 @@ class GetCollectionsTest {
 
         val collections = GetCollections(
             collectionService,
-            collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userContractService
+            userContractService,
+            GetUserPrivateCollections(collectionRepository),
+            GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
                 projection = Projection.details,
@@ -366,10 +372,11 @@ class GetCollectionsTest {
 
         val collections = GetCollections(
             collectionService,
-            collectionRepository,
             collectionResourceFactory,
             getContractedCollections,
-            userContractService
+            userContractService,
+            GetUserPrivateCollections(collectionRepository),
+            GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
                 query = "title",

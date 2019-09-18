@@ -4,13 +4,16 @@ import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.collection.AddVideoToCollection
+import com.boclips.videos.service.application.collection.AssembleCollectionFilter
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
+import com.boclips.videos.service.application.collection.GetBookmarkedCollections
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
 import com.boclips.videos.service.application.collection.GetContractedCollections
+import com.boclips.videos.service.application.collection.GetUserPrivateCollections
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
@@ -200,11 +203,12 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder,
         getContractedCollections: GetContractedCollections,
-        userServiceClient: UserServiceClient
+        userServiceClient: UserServiceClient,
+        getUserPrivateCollections: GetUserPrivateCollections,
+        getBookmarkedCollections: GetBookmarkedCollections
     ): GetCollections {
         return GetCollections(
             collectionService,
-            collectionRepository,
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
@@ -212,9 +216,22 @@ class ApplicationContext(
                 videoService
             ),
             getContractedCollections,
-            userContractService
+            userContractService,
+            getUserPrivateCollections,
+            getBookmarkedCollections
         )
     }
+
+    @Bean
+    fun assembleCollectionFilter() = AssembleCollectionFilter()
+
+    @Bean
+    fun getBookmarkedCollections(collectionRepository: CollectionRepository) =
+        GetBookmarkedCollections(collectionRepository)
+
+    @Bean
+    fun getUserPrivateCollections(collectionRepository: CollectionRepository) =
+        GetUserPrivateCollections(collectionRepository)
 
     @Bean
     fun getContractedCollections(collectionRepository: CollectionRepository): GetContractedCollections {
