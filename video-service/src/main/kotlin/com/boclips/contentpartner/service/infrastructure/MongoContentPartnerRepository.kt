@@ -1,11 +1,11 @@
-package com.boclips.videos.service.infrastructure.contentPartner
+package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
-import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.contentpartner.service.domain.model.ContentPartner
+import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.legal.restrictions.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
@@ -26,14 +26,18 @@ import org.litote.kmongo.ne
 import org.litote.kmongo.set
 import java.time.Instant
 
-class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartnerRepository {
+class MongoContentPartnerRepository(val mongoClient: MongoClient) :
+    ContentPartnerRepository {
 
     companion object : KLogging() {
         const val collectionName = "contentPartners"
     }
 
     override fun create(contentPartner: ContentPartner): ContentPartner {
-        val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
+        val contentPartnerDocument =
+            ContentPartnerDocumentConverter.toContentPartnerDocument(
+                contentPartner
+            )
 
         getContentPartnerCollection()
             .insertOne(contentPartnerDocument.copy(createdAt = Instant.now(), lastModified = Instant.now()))
@@ -132,7 +136,9 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
         val contentPartner =
             getContentPartnerCollection().findOne(mongoQuery)
                 ?.let { document: ContentPartnerDocument ->
-                    ContentPartnerDocumentConverter.toContentPartner(document)
+                    ContentPartnerDocumentConverter.toContentPartner(
+                        document
+                    )
                 }
 
         contentPartner?.let {
@@ -143,7 +149,9 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) : ContentPartn
     }
 
     private fun getContentPartnerCollection() =
-        mongoClient.getDatabase(DATABASE_NAME).getCollection<ContentPartnerDocument>(collectionName)
+        mongoClient.getDatabase(DATABASE_NAME).getCollection<ContentPartnerDocument>(
+            collectionName
+        )
 
     private fun toBsonIdFilter(contentPartnerId: ContentPartnerId): Bson {
         return ContentPartnerDocument::id eq ObjectId(contentPartnerId.value)

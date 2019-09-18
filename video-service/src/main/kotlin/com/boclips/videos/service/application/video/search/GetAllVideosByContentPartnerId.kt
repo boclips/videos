@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter

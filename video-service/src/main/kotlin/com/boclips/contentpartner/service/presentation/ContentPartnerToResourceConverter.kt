@@ -1,7 +1,7 @@
-package com.boclips.videos.service.presentation.contentPartner
+package com.boclips.contentpartner.service.presentation
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
-import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.contentpartner.service.domain.model.ContentPartner
+import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 

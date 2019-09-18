@@ -5,7 +5,7 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
@@ -23,7 +23,7 @@ import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
-import com.boclips.videos.service.infrastructure.contentPartner.MongoContentPartnerRepository
+import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.legal.restrictions.MongoLegalRestrictionsRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider

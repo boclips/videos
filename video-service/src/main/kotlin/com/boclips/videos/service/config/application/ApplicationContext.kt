@@ -18,10 +18,10 @@ import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.videos.service.application.contentPartner.CreateContentPartner
-import com.boclips.videos.service.application.contentPartner.GetContentPartner
-import com.boclips.videos.service.application.contentPartner.GetContentPartners
-import com.boclips.videos.service.application.contentPartner.UpdateContentPartner
+import com.boclips.contentpartner.service.application.CreateContentPartner
+import com.boclips.contentpartner.service.application.GetContentPartner
+import com.boclips.contentpartner.service.application.GetContentPartners
+import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
@@ -59,7 +59,7 @@ import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
@@ -76,7 +76,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConver
 import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.ContentPartnersLinkBuilder
+import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
@@ -376,7 +376,10 @@ class ApplicationContext(
 
     @Bean
     fun updateContentPartner(): UpdateContentPartner {
-        return UpdateContentPartner(contentPartnerRepository, videoService)
+        return UpdateContentPartner(
+            contentPartnerRepository,
+            videoService
+        )
     }
 
     @Bean
@@ -391,7 +394,10 @@ class ApplicationContext(
 
     @Bean
     fun getContentPartners(): GetContentPartners {
-        return GetContentPartners(contentPartnerRepository, contentPartnersLinkBuilder)
+        return GetContentPartners(
+            contentPartnerRepository,
+            contentPartnersLinkBuilder
+        )
     }
 
     @Bean

@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.ContentPartnersLinkBuilder
+import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder

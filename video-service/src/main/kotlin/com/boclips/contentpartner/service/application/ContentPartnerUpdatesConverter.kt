@@ -1,10 +1,10 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.contentpartner.service.application
 
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand.ReplaceDistributionMethods
-import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand.ReplaceDistributionMethods
+import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 
 class ContentPartnerUpdatesConverter {

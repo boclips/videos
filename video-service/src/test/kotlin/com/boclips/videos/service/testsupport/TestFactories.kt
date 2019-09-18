@@ -14,9 +14,9 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.contentpartner.service.domain.model.ContentPartner
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
@@ -37,7 +37,7 @@ import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
+import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -46,7 +46,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
-import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
@@ -70,7 +70,9 @@ object TestFactories {
         title: String = "title",
         description: String = "description",
         contentPartnerName: String = "Reuters",
-        contentPartnerId: ContentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+        contentPartnerId: ContentPartnerId = ContentPartnerId(
+            value = ObjectId().toHexString()
+        ),
         contentPartnerVideoId: String = "cp-id-$videoId",
         playback: VideoPlayback = createKalturaPlayback(),
         type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
@@ -400,7 +402,9 @@ object TestFactories {
     }
 
     fun createContentPartner(
-        id: ContentPartnerId = ContentPartnerId(ObjectId().toHexString()),
+        id: ContentPartnerId = ContentPartnerId(
+            ObjectId().toHexString()
+        ),
         name: String = "TED",
         ageRange: AgeRange = AgeRange.bounded(5, 11),
         credit: Credit = Credit.PartnerCredit,

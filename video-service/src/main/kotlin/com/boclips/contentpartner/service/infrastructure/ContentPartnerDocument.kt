@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.contentPartner
+package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.videos.service.infrastructure.legal.restrictions.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument

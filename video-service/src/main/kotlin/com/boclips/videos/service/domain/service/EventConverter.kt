@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.Video
 

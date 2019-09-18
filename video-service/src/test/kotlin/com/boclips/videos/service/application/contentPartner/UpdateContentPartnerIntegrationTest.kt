@@ -1,9 +1,10 @@
 package com.boclips.videos.service.application.contentPartner
 
+import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService

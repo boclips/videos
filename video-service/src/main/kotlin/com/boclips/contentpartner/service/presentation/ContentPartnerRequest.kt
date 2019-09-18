@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.contentPartner
+package com.boclips.contentpartner.service.presentation
 
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource

@@ -1,9 +1,8 @@
-package com.boclips.videos.service.presentation.hateoas
+package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
-import com.boclips.videos.service.presentation.ContentPartnerController
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.stereotype.Component

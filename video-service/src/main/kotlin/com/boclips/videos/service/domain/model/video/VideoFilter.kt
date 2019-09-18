@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 
 sealed class VideoFilter {

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.contentPartner
 
-import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.TestFactories

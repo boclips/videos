@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.contentPartner
+package com.boclips.contentpartner.service.domain.model
 
 interface ContentPartnerRepository {
     fun create(contentPartner: ContentPartner): ContentPartner

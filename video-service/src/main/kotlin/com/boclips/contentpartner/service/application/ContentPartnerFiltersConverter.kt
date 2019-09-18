@@ -1,7 +1,7 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.contentpartner.service.application
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
-import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
+import com.boclips.contentpartner.service.domain.model.Credit
 
 object ContentPartnerFiltersConverter {
     fun convert(
@@ -12,7 +12,9 @@ object ContentPartnerFiltersConverter {
         listOfNotNull(
             getNameFilter(name),
             getOfficialFilter(official),
-            getAccreditedToFilter(accreditedYTChannelId)
+            getAccreditedToFilter(
+                accreditedYTChannelId
+            )
         )
 
     private fun getNameFilter(name: String?) =

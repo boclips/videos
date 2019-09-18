@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.DistributionMethod

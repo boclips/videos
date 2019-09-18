@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -23,8 +23,8 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocument
-import com.boclips.videos.service.infrastructure.contentPartner.ContentPartnerDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
+import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter

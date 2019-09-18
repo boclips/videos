@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.DistributionMethod
@@ -136,12 +136,25 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `stream all by content partner id`() {
         val contentPartnerIdToFind = ObjectId().toHexString()
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartnerIdToFind)))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartnerIdToFind)))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = ObjectId().toHexString())))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(
+            value = contentPartnerIdToFind
+        )
+        ))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(
+            value = contentPartnerIdToFind
+        )
+        ))
+        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(
+            value = ObjectId().toHexString()
+        )
+        ))
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.ContentPartnerIdIs(ContentPartnerId(value = contentPartnerIdToFind))) {
+        mongoVideoRepository.streamAll(VideoFilter.ContentPartnerIdIs(
+            ContentPartnerId(
+                value = contentPartnerIdToFind
+            )
+        )) {
             videos = it.toList()
         }
 

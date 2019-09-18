@@ -1,11 +1,12 @@
 package com.boclips.videos.service.application.contentPartner
 
+import com.boclips.contentpartner.service.application.ContentPartnerUpdatesConverter
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.contentPartner.ContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -30,7 +31,10 @@ class ContentPartnerUpdatesConverterTest {
     fun `creates command for updating the name`() {
         val commands = ContentPartnerUpdatesConverter().convert(
             id = ContentPartnerId(value = "123"),
-            contentPartnerRequest = ContentPartnerRequest(name = "Hello", ageRange = null)
+            contentPartnerRequest = ContentPartnerRequest(
+                name = "Hello",
+                ageRange = null
+            )
         )
         val command =
             commands.find { it is ContentPartnerUpdateCommand.ReplaceName } as ContentPartnerUpdateCommand.ReplaceName

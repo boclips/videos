@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.contentPartner
+package com.boclips.contentpartner.service.domain.model
 
 sealed class ContentPartnerFilter {
     data class NameFilter(val name: String) : ContentPartnerFilter()

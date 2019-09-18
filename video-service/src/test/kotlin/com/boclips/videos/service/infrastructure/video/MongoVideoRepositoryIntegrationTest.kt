@@ -3,7 +3,7 @@ package com.boclips.videos.service.infrastructure.video
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
@@ -311,7 +311,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find by content partner id and content partner video id`() {
-        val contentPartnerId = ContentPartnerId(value = "5d319070871956b43f45eb82")
+        val contentPartnerId =
+            ContentPartnerId(value = "5d319070871956b43f45eb82")
 
         val video = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
@@ -449,7 +450,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val videos =
-            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(value = contentPartnerId))
+            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
+                value = contentPartnerId
+            )
+            )
 
         assertThat(videos).containsExactly(video1, video2)
     }
@@ -480,7 +484,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(id))
+        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
+            id
+        )
+        )
 
         assertThat(videos).containsExactly(video1, video2)
     }

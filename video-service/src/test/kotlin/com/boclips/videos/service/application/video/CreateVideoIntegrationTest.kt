@@ -3,11 +3,11 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
-import com.boclips.videos.service.application.contentPartner.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery

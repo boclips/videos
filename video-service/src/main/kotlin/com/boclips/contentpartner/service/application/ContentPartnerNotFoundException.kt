@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.contentpartner.service.application
 
 class ContentPartnerNotFoundException(message: String) : RuntimeException(message)
 

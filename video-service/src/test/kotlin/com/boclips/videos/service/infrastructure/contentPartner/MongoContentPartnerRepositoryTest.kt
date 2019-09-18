@@ -1,10 +1,11 @@
 package com.boclips.videos.service.infrastructure.contentPartner
 
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerFilter
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.contentPartner.ContentPartnerUpdateCommand
-import com.boclips.videos.service.domain.model.contentPartner.Credit
+import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
 import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.video.DistributionMethod
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.UUID
 
 class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -43,7 +43,11 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `findById does not throw for invalid object id`() {
-        val retrievedAsset = mongoContentPartnerRepository.findById(ContentPartnerId("invalid-hex-string"))
+        val retrievedAsset = mongoContentPartnerRepository.findById(
+            ContentPartnerId(
+                "invalid-hex-string"
+            )
+        )
 
         assertThat(retrievedAsset).isNull()
     }
