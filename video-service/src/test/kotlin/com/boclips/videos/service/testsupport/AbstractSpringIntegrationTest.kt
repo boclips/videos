@@ -220,23 +220,10 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
-        val kalturaEntryId = if (KALTURA == playbackId.type) {
-            playbackId.value
-        } else {
-            "entry-${playbackId.value}"
-        }
-        val kalturaReferenceId = if (KALTURA_REFERENCE == playbackId.type) {
-            playbackId.value
-        } else {
-            "ref-${playbackId.value}"
-        }
-
         val video = createVideo(
             CreateVideoRequest(
                 providerId = contentProviderId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
-                kalturaEntryId = kalturaEntryId,
-                kalturaReferenceId = kalturaReferenceId,
                 title = title,
                 description = description,
                 releasedOn = LocalDate.parse(date),
