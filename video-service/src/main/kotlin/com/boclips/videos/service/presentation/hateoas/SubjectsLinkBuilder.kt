@@ -5,32 +5,29 @@ import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.SubjectController
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.mvc.ControllerLinkBuilder
+import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
+import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.stereotype.Component
 
 @Component
-class SubjectsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
+class SubjectsLinkBuilder {
 
     fun subjects(rel: String = "subjects"): Link {
-        return Link(getSubjectRoot().toUriString(), rel)
+        return linkTo(methodOn(SubjectController::class.java).subjects()).withRel(rel)
     }
 
     fun self(subject: SubjectResource): Link {
-        return Link(getSubjectRoot().pathSegment(subject.id).toUriString(), "self")
+        return linkTo(methodOn(SubjectController::class.java).subject(subject.id)).withSelfRel()
     }
 
     fun updateSubject(subject: SubjectResource): Link? {
         return UserExtractor.getIfHasRole(UserRoles.UPDATE_SUBJECTS) {
-            ControllerLinkBuilder.linkTo(
-                ControllerLinkBuilder.methodOn(SubjectController::class.java).updateSubjects(
+            linkTo(
+                methodOn(SubjectController::class.java).updateSubjects(
                     id = subject.id,
                     createSubjectRequest = null
                 )
             ).withRel("update")
         }
     }
-
-    private fun getSubjectRoot() = uriComponentsBuilderFactory.getInstance()
-        .replacePath("/v1/subjects")
-        .replaceQueryParams(null)
 }

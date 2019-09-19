@@ -3,40 +3,32 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.subject.SubjectResource
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.Link
-import org.springframework.web.util.UriComponentsBuilder
 
-class SubjectsLinkBuilderTest {
-    private lateinit var subjectsLinkBuilder: SubjectsLinkBuilder
+class SubjectsLinkBuilderTest : AbstractSpringIntegrationTest(){
 
-    @BeforeEach
-    internal fun setUp() {
-        val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
-
-        subjectsLinkBuilder = SubjectsLinkBuilder(mock)
-    }
+    @Autowired
+    lateinit var subjectsLinkBuilder: SubjectsLinkBuilder
 
     @Test
     fun subjects() {
-        assertThat(subjectsLinkBuilder.subjects()).isEqualTo(Link("https://localhost/v1/subjects", "subjects"))
+        assertThat(subjectsLinkBuilder.subjects()).isEqualTo(Link("http://localhost/v1/subjects", "subjects"))
     }
 
     @Test
     fun `subjects link with rel`() {
-        assertThat(subjectsLinkBuilder.subjects("rel")).isEqualTo(Link("https://localhost/v1/subjects", "rel"))
+        assertThat(subjectsLinkBuilder.subjects("rel")).isEqualTo(Link("http://localhost/v1/subjects", "rel"))
     }
 
     @Test
     fun `subject link defaults to self`() {
         assertThat(subjectsLinkBuilder.self(SubjectResource("id"))).isEqualTo(
             Link(
-                "https://localhost/v1/subjects/id",
+                "http://localhost/v1/subjects/id",
                 "self"
             )
         )
@@ -48,7 +40,7 @@ class SubjectsLinkBuilderTest {
 
         assertThat(subjectsLinkBuilder.updateSubject(SubjectResource("id"))).isEqualTo(
             Link(
-                "/v1/subjects/id",
+                "http://localhost/v1/subjects/id",
                 "update"
             )
         )
@@ -65,6 +57,6 @@ class SubjectsLinkBuilderTest {
             subjectsLinkBuilder.self(
                 SubjectResource("id")
             )
-        ).isEqualTo(Link("https://localhost/v1/subjects/id", "self"))
+        ).isEqualTo(Link("http://localhost/v1/subjects/id", "self"))
     }
 }
