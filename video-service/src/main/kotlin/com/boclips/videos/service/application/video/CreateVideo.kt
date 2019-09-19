@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
@@ -11,6 +12,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentPartner
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
@@ -44,12 +46,14 @@ class CreateVideo(
         val contentPartner = findContentPartner(createRequest)
             ?: throw ContentPartnerNotFoundException("Could not find content partner with id: ${createRequest.providerId}")
 
+        val distributionMethods = findDistributionMethods(contentPartner.contentPartnerId)
+
         val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
         val videoPlayback = findVideoPlayback(playbackId)
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 
         val videoToBeCreated =
-            createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, subjects)
+            createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, distributionMethods, subjects)
 
         val createdVideo = try {
             videoService.create(videoToBeCreated)
@@ -77,6 +81,10 @@ class CreateVideo(
         createRequest.providerId?.let {
             contentPartnerService.findById(createRequest.providerId)
         }
+
+    private fun findDistributionMethods(contentPartnerId: ContentPartnerId): Set<DistributionMethod> {
+        return contentPartnerService.getDistributionMethods(contentPartnerId) ?: emptySet()
+    }
 
     private fun triggerVideoAnalysis(createdVideo: Video) {
         try {

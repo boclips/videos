@@ -1,10 +1,10 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating

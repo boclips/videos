@@ -1,7 +1,6 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -39,6 +38,7 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
+import com.boclips.videos.service.infrastructure.video.converters.ContentPartnerDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -87,9 +87,7 @@ object TestFactories {
             contentPartnerId = contentPartnerId,
             name = contentPartnerName,
             ageRange = ageRange,
-            credit = Credit.PartnerCredit,
-            legalRestrictions = null,
-            distributionMethods = distributionMethods
+            legalRestrictions = null
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -403,19 +401,27 @@ object TestFactories {
         ),
         name: String = "TED",
         ageRange: AgeRange = AgeRange.bounded(5, 11),
-        credit: Credit = Credit.PartnerCredit,
-        legalRestrictions: LegalRestrictions? = null,
-        distributionMethods: Set<DistributionMethod> = emptySet()
+        legalRestrictions: LegalRestrictions? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
             name = name,
             ageRange = ageRange,
-            credit = credit,
-            legalRestrictions = legalRestrictions,
-            distributionMethods = distributionMethods
+            legalRestrictions = legalRestrictions
         )
     }
+
+    fun createContentPartnerDocument(
+        objectId: ObjectId = ObjectId.get(),
+        name: String = "content partner",
+        ageRangeMax: Nothing? = null,
+        ageRangeMin: Nothing? = null
+    ) = ContentPartnerDocument(
+        id = objectId,
+        name = name,
+        ageRangeMax = ageRangeMax,
+        ageRangeMin = ageRangeMin
+    )
 
     fun createSubjectDocument(name: String): SubjectDocument {
         return SubjectDocument(id = ObjectId(), name = name)

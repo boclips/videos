@@ -33,9 +33,7 @@ class VideoDocumentConverterTest {
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                 name = "Some name",
                 ageRange = AgeRange.bounded(10, 17),
-                credit = Credit.PartnerCredit,
-                legalRestrictions = TestFactories.createLegalRestrictions(),
-                distributionMethods = emptySet()
+                legalRestrictions = TestFactories.createLegalRestrictions()
             ),
             videoReference = "video-123",
             type = LegacyVideoType.NEWS,
@@ -76,7 +74,7 @@ class VideoDocumentConverterTest {
             title = "",
             description = "",
             source = SourceDocument(
-                contentPartner = com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerDocument(),
+                contentPartner = TestFactories.createContentPartnerDocument(),
                 videoReference = ""
             ),
             playback = TestFactories.createKalturaPlaybackDocument(),

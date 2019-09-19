@@ -35,7 +35,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
         val playback = TestFactories.createKalturaPlayback(duration = expectedDuration)
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, emptySet(), subjects)
 
         assertThat(video.playback.duration).isEqualTo(expectedDuration)
     }
@@ -43,7 +43,7 @@ class CreateVideoRequestToVideoConverterTest {
     @Test
     fun `uses the playback`() {
         val playback = TestFactories.createKalturaPlayback()
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, emptySet(), subjects)
 
         assertThat(video.playback).isEqualTo(playback)
     }
@@ -56,6 +56,7 @@ class CreateVideoRequestToVideoConverterTest {
             TestFactories.createCreateVideoRequest(),
             playback,
             contentPartner,
+            emptySet(),
             subjects
         )
 
@@ -70,6 +71,7 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(title = null),
                 videoPlayback,
                 contentPartner,
+                emptySet(),
                 subjects
             )
         }
@@ -84,6 +86,7 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(description = null),
                 videoPlayback,
                 contentPartner,
+                emptySet(),
                 subjects
             )
         }
@@ -98,6 +101,7 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(keywords = null),
                 videoPlayback,
                 contentPartner,
+                emptySet(),
                 subjects
             )
         }
@@ -112,6 +116,7 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(releasedOn = null),
                 videoPlayback,
                 contentPartner,
+                emptySet(),
                 subjects
             )
         }
@@ -126,6 +131,7 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(providerVideoId = null),
                 videoPlayback,
                 contentPartner,
+                emptySet(),
                 subjects
             )
         }
@@ -140,6 +146,7 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(videoType = null),
                 videoPlayback,
                 contentPartner,
+                emptySet(),
                 subjects
             )
         }
@@ -154,6 +161,7 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(legalRestrictions = null),
                 videoPlayback,
                 contentPartner,
+                emptySet(),
                 subjects
             ).legalRestrictions
         ).isEmpty()
@@ -161,7 +169,7 @@ class CreateVideoRequestToVideoConverterTest {
 
     @Test
     fun `use content partner enabled delivery methods`() {
-        val contentPartner = TestFactories.createContentPartner(distributionMethods = DistributionMethod.ALL)
+        val contentPartner = TestFactories.createContentPartner()
 
         val video = converter.convert(
             TestFactories.createCreateVideoRequest(
@@ -169,6 +177,7 @@ class CreateVideoRequestToVideoConverterTest {
             ),
             TestFactories.createKalturaPlayback(),
             contentPartner,
+            DistributionMethod.ALL,
             subjects
         )
 

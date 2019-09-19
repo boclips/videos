@@ -1,12 +1,12 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -87,7 +87,8 @@ class VideoService(
         return videoRepository.findByContentPartnerId(contentPartnerId)
     }
 
-    fun updateContentPartnerInVideos(contentPartner: ContentPartner) {
+    //TODO use "correct" content partner
+    fun updateContentPartnerInVideos(contentPartner: com.boclips.contentpartner.service.domain.model.ContentPartner) {
         logger.info { "Starting updating videos for content partner: $contentPartner" }
 
         videoRepository.streamUpdate(
@@ -97,7 +98,12 @@ class VideoService(
                 listOf(
                     VideoUpdateCommand.ReplaceContentPartner(
                         videoId = video.videoId,
-                        contentPartner = contentPartner
+                        contentPartner = ContentPartner(
+                            contentPartnerId = contentPartner.contentPartnerId,
+                            name = contentPartner.name,
+                            ageRange = contentPartner.ageRange,
+                            legalRestrictions = contentPartner.legalRestrictions
+                        )
                     ),
                     VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange),
                     VideoUpdateCommand.ReplaceDistributionMethods(
