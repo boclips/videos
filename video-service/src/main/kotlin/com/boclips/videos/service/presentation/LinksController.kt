@@ -39,6 +39,7 @@ class LinksController(
                 subjectsLinkBuilder.subjects(),
                 distributionMethodsLinkBuilder.distributionMethods(),
                 videosLinkBuilder.adminSearchLink(),
+                videosLinkBuilder.adminVideoSearchLink(),
 
                 videosLinkBuilder.videosLink(),
                 videosLinkBuilder.searchVideosLink(),

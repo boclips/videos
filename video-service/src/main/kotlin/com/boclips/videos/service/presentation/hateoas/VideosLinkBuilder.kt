@@ -20,6 +20,7 @@ class VideosLinkBuilder {
         const val LOG_VIDEO_INTERACTION = "logInteraction"
         const val SEARCH_VIDEOS = "searchVideos"
         const val ADMIN_SEARCH = "adminSearch"
+        const val ADMIN_VIDEO_SEARCH = "adminVideoSearch"
         const val VIDEOS = "videos"
         const val TRANSCRIPT = "transcript"
         const val RATE = "rate"
@@ -64,6 +65,13 @@ class VideosLinkBuilder {
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .adminSearch(null)
         ).withRel(Rels.ADMIN_SEARCH)
+    }
+
+    fun adminVideoSearchLink() = getIfHasRole(UserRoles.VIEW_DISABLED_VIDEOS) {
+        ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .adminSearch(null)
+        ).withRel(Rels.ADMIN_VIDEO_SEARCH)
     }
 
     fun transcriptLink(videoResource: VideoResource) = when {
