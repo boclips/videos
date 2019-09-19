@@ -40,6 +40,7 @@ class LinksController(
                 distributionMethodsLinkBuilder.distributionMethods(),
                 videosLinkBuilder.adminSearchLink(),
                 videosLinkBuilder.adminVideoSearchLink(),
+                collectionsLinkBuilder.adminCollectionSearch(),
 
                 videosLinkBuilder.videosLink(),
                 videosLinkBuilder.searchVideosLink(),
