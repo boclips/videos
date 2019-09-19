@@ -37,8 +37,8 @@ import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
+import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
-import com.boclips.videos.service.infrastructure.video.converters.ContentPartnerDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -85,9 +85,7 @@ object TestFactories {
         tag: UserTag? = null,
         contentPartner: ContentPartner = ContentPartner(
             contentPartnerId = contentPartnerId,
-            name = contentPartnerName,
-            ageRange = ageRange,
-            legalRestrictions = null
+            name = contentPartnerName
         ),
         videoReference: String = contentPartnerVideoId
     ): Video {
@@ -399,28 +397,20 @@ object TestFactories {
         id: ContentPartnerId = ContentPartnerId(
             ObjectId().toHexString()
         ),
-        name: String = "TED",
-        ageRange: AgeRange = AgeRange.bounded(5, 11),
-        legalRestrictions: LegalRestrictions? = null
+        name: String = "TED"
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
-            name = name,
-            ageRange = ageRange,
-            legalRestrictions = legalRestrictions
+            name = name
         )
     }
 
     fun createContentPartnerDocument(
         objectId: ObjectId = ObjectId.get(),
-        name: String = "content partner",
-        ageRangeMax: Nothing? = null,
-        ageRangeMin: Nothing? = null
+        name: String = "content partner"
     ) = ContentPartnerDocument(
         id = objectId,
-        name = name,
-        ageRangeMax = ageRangeMax,
-        ageRangeMin = ageRangeMin
+        name = name
     )
 
     fun createSubjectDocument(name: String): SubjectDocument {

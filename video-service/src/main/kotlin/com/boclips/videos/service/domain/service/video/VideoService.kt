@@ -100,9 +100,7 @@ class VideoService(
                         videoId = video.videoId,
                         contentPartner = ContentPartner(
                             contentPartnerId = contentPartner.contentPartnerId,
-                            name = contentPartner.name,
-                            ageRange = contentPartner.ageRange,
-                            legalRestrictions = contentPartner.legalRestrictions
+                            name = contentPartner.name
                         )
                     ),
                     VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange),

@@ -25,7 +25,6 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.converters.ContentPartnerDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter

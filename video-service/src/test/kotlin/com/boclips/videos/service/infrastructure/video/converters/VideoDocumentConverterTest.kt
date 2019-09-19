@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.ContentPartner
@@ -31,9 +30,7 @@ class VideoDocumentConverterTest {
             contentPartnerVideoId = "the contentPartnerVideoId",
             contentPartner = ContentPartner(
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
-                name = "Some name",
-                ageRange = AgeRange.bounded(10, 17),
-                legalRestrictions = TestFactories.createLegalRestrictions()
+                name = "Some name"
             ),
             videoReference = "video-123",
             type = LegacyVideoType.NEWS,

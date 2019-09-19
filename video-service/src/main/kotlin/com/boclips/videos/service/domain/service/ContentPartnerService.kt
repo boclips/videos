@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.service
 import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import org.springframework.stereotype.Component
@@ -15,12 +14,7 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
         val contentPartner = find(ContentPartnerId(id)) ?: throw ContentPartnerNotFoundException(id)
         return ContentPartner(
             contentPartnerId = contentPartner.contentPartnerId,
-            name = contentPartner.name,
-            ageRange = AgeRange.bounded(
-                contentPartner.ageRange.min(),
-                contentPartner.ageRange.max()
-            ),
-            legalRestrictions = null
+            name = contentPartner.name
         )
     }
 
