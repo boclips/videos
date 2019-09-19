@@ -1,6 +1,5 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.application.ContentPartnerUpdatesConverter
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand

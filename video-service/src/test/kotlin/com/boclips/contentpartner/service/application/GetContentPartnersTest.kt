@@ -1,9 +1,8 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.contentpartner.service.application
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 
 class GetContentPartnersTest : AbstractSpringIntegrationTest() {
     @Test

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.web.exceptions.ResourceNotFoundApiException

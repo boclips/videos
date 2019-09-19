@@ -1,6 +1,5 @@
-package com.boclips.videos.service.application.contentPartner
+package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.application.ContentPartnerFiltersConverter
 import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
 import com.boclips.contentpartner.service.domain.model.Credit
 import org.assertj.core.api.Assertions.assertThat
