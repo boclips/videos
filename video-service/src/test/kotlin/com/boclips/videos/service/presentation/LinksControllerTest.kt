@@ -132,7 +132,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.adminCollectionSearch.href",
-                    containsString("/collections{&query,subject,projection,page,size}")
+                    containsString("/collections{?query,subject,projection,page,size}")
                 )
             )
     }
