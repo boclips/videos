@@ -1,7 +1,8 @@
-package com.boclips.videos.service.infrastructure.legal.restrictions
+package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.infrastructure.LegalRestrictionsDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -36,9 +37,11 @@ class LegalRestrictionsDocumentTest {
 
         val document = LegalRestrictionsDocument.from(restrictions)
         
-        assertThat(document).isEqualTo(LegalRestrictionsDocument(
-            id = ObjectId(id),
-            text = "No restrictions"
-        ))
+        assertThat(document).isEqualTo(
+            LegalRestrictionsDocument(
+                id = ObjectId(id),
+                text = "No restrictions"
+            )
+        )
     }
 }

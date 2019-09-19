@@ -1,9 +1,9 @@
-package com.boclips.videos.service.presentation
+package com.boclips.contentpartner.service.presentation
 
-import com.boclips.videos.service.application.legal.restrictions.CreateLegalRestrictions
-import com.boclips.videos.service.application.legal.restrictions.FindAllLegalRestrictions
-import com.boclips.videos.service.application.legal.restrictions.FindLegalRestrictions
-import com.boclips.videos.service.application.legal.restrictions.LegalRestrictionsResource
+import com.boclips.contentpartner.service.application.CreateLegalRestrictions
+import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
+import com.boclips.contentpartner.service.application.FindLegalRestrictions
+import com.boclips.contentpartner.service.application.LegalRestrictionsResource
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -47,7 +47,11 @@ class LegalRestrictionsController(
     companion object {
 
         fun LegalRestrictionsResource.hateoas(): Resource<LegalRestrictionsResource> {
-            return Resource(this, restrictionsLink(this.id))
+            return Resource(this,
+                restrictionsLink(
+                    this.id
+                )
+            )
         }
 
         private fun restrictionsLink(id: String): Link {

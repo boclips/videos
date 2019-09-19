@@ -17,8 +17,8 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback

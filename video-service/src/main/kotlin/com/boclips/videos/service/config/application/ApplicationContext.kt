@@ -22,9 +22,9 @@ import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
-import com.boclips.videos.service.application.legal.restrictions.CreateLegalRestrictions
-import com.boclips.videos.service.application.legal.restrictions.FindAllLegalRestrictions
-import com.boclips.videos.service.application.legal.restrictions.FindLegalRestrictions
+import com.boclips.contentpartner.service.application.CreateLegalRestrictions
+import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
+import com.boclips.contentpartner.service.application.FindLegalRestrictions
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -57,7 +57,7 @@ import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository

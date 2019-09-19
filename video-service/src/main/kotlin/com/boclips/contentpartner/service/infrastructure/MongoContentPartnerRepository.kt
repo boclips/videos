@@ -7,7 +7,6 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.legal.restrictions.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient

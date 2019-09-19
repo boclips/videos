@@ -6,8 +6,8 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat

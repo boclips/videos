@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.legal.restrictions
+package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat

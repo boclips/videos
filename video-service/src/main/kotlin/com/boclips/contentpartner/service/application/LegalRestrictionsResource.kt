@@ -1,6 +1,6 @@
-package com.boclips.videos.service.application.legal.restrictions
+package com.boclips.contentpartner.service.application
 
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import org.springframework.hateoas.core.Relation
 
 @Relation(collectionRelation = "legalRestrictions")
@@ -8,7 +8,10 @@ data class LegalRestrictionsResource(val id: String, val text: String) {
 
     companion object {
         fun from(legalRestrictions: LegalRestrictions): LegalRestrictionsResource {
-            return LegalRestrictionsResource(id = legalRestrictions.id.value, text = legalRestrictions.text)
+            return LegalRestrictionsResource(
+                id = legalRestrictions.id.value,
+                text = legalRestrictions.text
+            )
         }
     }
 }

@@ -1,6 +1,6 @@
-package com.boclips.videos.service.application.legal.restrictions
+package com.boclips.contentpartner.service.application
 
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 
 class FindAllLegalRestrictions(private val legalRestrictionsRepository: LegalRestrictionsRepository) {
 

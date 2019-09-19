@@ -5,7 +5,6 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.infrastructure.legal.restrictions.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import org.bson.types.ObjectId

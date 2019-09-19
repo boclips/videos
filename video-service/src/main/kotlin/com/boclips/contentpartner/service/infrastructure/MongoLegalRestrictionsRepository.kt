@@ -1,8 +1,8 @@
-package com.boclips.videos.service.infrastructure.legal.restrictions
+package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictions
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsId
-import com.boclips.videos.service.domain.model.legal.restrictions.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -12,7 +12,8 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
-class MongoLegalRestrictionsRepository(private val mongoClient: MongoClient) : LegalRestrictionsRepository {
+class MongoLegalRestrictionsRepository(private val mongoClient: MongoClient) :
+    LegalRestrictionsRepository {
     companion object : KLogging() {
 
         const val COLLECTION_NAME = "legalRestrictions"
@@ -42,6 +43,8 @@ class MongoLegalRestrictionsRepository(private val mongoClient: MongoClient) : L
     }
 
     private fun getCollection(): MongoCollection<LegalRestrictionsDocument> {
-        return mongoClient.getDatabase(DATABASE_NAME).getCollection<LegalRestrictionsDocument>(COLLECTION_NAME)
+        return mongoClient.getDatabase(DATABASE_NAME).getCollection<LegalRestrictionsDocument>(
+            COLLECTION_NAME
+        )
     }
 }

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.legal.restrictions
+package com.boclips.contentpartner.service.domain.model
 
 interface LegalRestrictionsRepository {
 
