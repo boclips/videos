@@ -15,7 +15,8 @@ class CollectionIndexWriter(client: RestHighLevelClient) : AbstractIndexWriter<C
         visibility = VisibilityMapper.map(entry.visibility),
         subjects = entry.subjectIds,
         hasAttachments = entry.hasAttachments,
-        owner = entry.owner
+        owner = entry.owner,
+        bookmarkedBy = entry.bookmarkedByUsers
     )
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id

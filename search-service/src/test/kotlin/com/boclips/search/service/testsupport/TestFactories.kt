@@ -82,14 +82,15 @@ object SearchableCollectionMetadataFactory {
         visibility: CollectionVisibility = CollectionVisibility.PUBLIC,
         subjects: List<String> = emptyList(),
         hasAttachments: Boolean = false,
-        owner: String = "some-user-id"
+        owner: String = "some-user-id",
+        bookmarkedBy: Set<String> = setOf(owner)
     ) = CollectionMetadata(
         id = id,
         title = title,
         subjectIds = subjects,
         visibility = visibility,
         owner = owner,
-        bookmarkedByUsers = setOf(owner),
+        bookmarkedByUsers = bookmarkedBy,
         hasAttachments = hasAttachments
     )
 }

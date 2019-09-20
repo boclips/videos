@@ -25,13 +25,13 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
-                    owner = "juan",
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "juan"
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "2",
-                    owner = "juan",
-                    visibility = CollectionVisibility.PRIVATE
+                    visibility = CollectionVisibility.PRIVATE,
+                    owner = "juan"
                 ),
                 SearchableCollectionMetadataFactory.create(id = "3", owner = "pablo")
             )
@@ -56,8 +56,8 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
-                    owner = "juan",
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "juan"
                 )
             )
         )

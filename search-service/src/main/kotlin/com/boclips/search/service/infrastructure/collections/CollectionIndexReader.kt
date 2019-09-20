@@ -91,6 +91,11 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                     must(QueryBuilders.termQuery(CollectionDocument.OWNER, query.owner))
                 }
             }
+            .apply {
+                if (query.bookmarkedBy != null) {
+                    must(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, query.bookmarkedBy))
+                }
+            }
     }
 
     private fun matchSubjects(subjects: List<String>): BoolQueryBuilder {

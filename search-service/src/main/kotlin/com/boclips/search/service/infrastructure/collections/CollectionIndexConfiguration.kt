@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.infrastructure.IndexConfiguration
+import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.BOOKMARKED_BY
 import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.HAS_ATTACHMENTS
 import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.OWNER
 import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.SUBJECTS
@@ -13,6 +14,7 @@ class CollectionIndexConfiguration : IndexConfiguration {
             "properties" to mapOf(
                 TITLE to IndexConfiguration.Fields.freeText,
                 OWNER to IndexConfiguration.Fields.simpleText,
+                BOOKMARKED_BY to IndexConfiguration.Fields.stringArray,
                 VISIBILITY to IndexConfiguration.Fields.simpleText,
                 SUBJECTS to IndexConfiguration.Fields.stringArray,
                 HAS_ATTACHMENTS to IndexConfiguration.Fields.boolean
