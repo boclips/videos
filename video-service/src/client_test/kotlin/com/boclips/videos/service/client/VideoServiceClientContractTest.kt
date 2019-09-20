@@ -508,5 +508,5 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
             }
     }
 
-    override fun getClient() = VideoServiceClient.getUnauthorisedApiClient(videoServiceUrl)
+    override fun getClient() = VideoServiceClient.getBoclipsUser(videoServiceUrl)
 }

@@ -23,10 +23,10 @@ class NoSecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.inMemoryAuthentication().withUser("user@boclips.com").password(passwordEncoder().encode("reallySecurePassword123"))
-            .roles(UserRoles.VIEW_COLLECTIONS, UserRoles.VIEW_ANY_COLLECTION, UserRoles.VIEW_CONTENT_PARTNERS)
+            .roles(UserRoles.VIEW_COLLECTIONS, UserRoles.VIEW_ANY_COLLECTION, UserRoles.VIEW_CONTENT_PARTNERS, UserRoles.BACKOFFICE)
 
-        auth.inMemoryAuthentication().withUser("internal@boclips.com").password(passwordEncoder().encode("reallySecurePassword123"))
-            .roles(UserRoles.BACKOFFICE)
+        auth.inMemoryAuthentication().withUser("public@boclips.com").password(passwordEncoder().encode("reallySecurePassword123"))
+            .roles(UserRoles.VIEW_COLLECTIONS, UserRoles.VIEW_ANY_COLLECTION, UserRoles.VIEW_CONTENT_PARTNERS)
     }
 
     @Bean

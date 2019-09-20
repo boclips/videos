@@ -80,11 +80,11 @@ class FakeClient : VideoProjectionContractTest() {
 
 class ApiClient : VideoProjectionContractTest() {
     override fun getClientWithPublicProjection(): VideoServiceClient {
-        return VideoServiceClient.getUnauthorisedApiClient(videoServiceUrl)
+        return VideoServiceClient.getNonBoclipsUser(videoServiceUrl)
     }
 
     override fun getClientWithInternalProjection(): VideoServiceClient {
-        return VideoServiceClient.getUnauthorisedApiClient(videoServiceUrl, "internal@boclips.com")
+        return VideoServiceClient.getBoclipsUser(videoServiceUrl)
     }
 }
 
