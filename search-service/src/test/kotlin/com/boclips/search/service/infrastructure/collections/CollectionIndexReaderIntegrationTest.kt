@@ -78,14 +78,31 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     @Test
     fun `returns collections with respecting sorting`() {
         collectionIndexWriter.safeRebuildIndex(
-                sequenceOf(
-                        SearchableCollectionMetadataFactory.create(id = "100", title = "Beautiful Boy Dancing", hasAttachments = false),
-                        SearchableCollectionMetadataFactory.create(id = "101", title = "Beautiful Dog Barking", hasAttachments = true)
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "100",
+                    title = "Beautiful Boy Dancing",
+                    hasAttachments = false
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "101",
+                    title = "Beautiful Dog Barking",
+                    hasAttachments = true
                 )
+            )
         )
 
         val results =
-                collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(sort = Sort(CollectionMetadata::hasAttachments, SortOrder.DESC))))
+            collectionIndexReader.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        sort = Sort(
+                            CollectionMetadata::hasAttachments,
+                            SortOrder.DESC
+                        )
+                    )
+                )
+            )
 
         Assertions.assertThat(results).containsExactly("101", "100")
     }

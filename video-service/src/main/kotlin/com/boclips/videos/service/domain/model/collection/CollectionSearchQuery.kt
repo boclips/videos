@@ -5,18 +5,19 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.videos.service.application.collection.CollectionFilter
 
 class CollectionSearchQuery(
     val text: String?,
     val subjectIds: List<String>,
-    val publicOnly: Boolean,
+    val visibility: List<CollectionVisibility>,
     val pageSize: Int,
     val pageIndex: Int
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
         subjectIds = this.subjectIds,
-        visibility = if (publicOnly) CollectionVisibility.PUBLIC else null,
+        visibility = visibility,
         sort = when {
             this.subjectIds.isNotEmpty() && this.text.isNullOrBlank() -> Sort(
                 CollectionMetadata::hasAttachments,

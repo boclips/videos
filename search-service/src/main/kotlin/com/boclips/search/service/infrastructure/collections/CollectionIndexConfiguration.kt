@@ -11,7 +11,7 @@ class CollectionIndexConfiguration : IndexConfiguration {
         return mapOf(
             "properties" to mapOf(
                 TITLE to IndexConfiguration.Fields.freeText,
-                VISIBILITY to IndexConfiguration.Fields.freeText,
+                VISIBILITY to IndexConfiguration.Fields.simpleText,
                 SUBJECTS to IndexConfiguration.Fields.stringArray,
                 HAS_ATTACHMENTS to IndexConfiguration.Fields.boolean
             )

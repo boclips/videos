@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.application.getCurrentUserId
@@ -35,10 +36,10 @@ class GetCollections(
         val userContracts = userContractService.getContracts(getCurrentUserId().value)
         return when {
             userContracts.isNotEmpty() -> getContractedCollections(collectionFilter, userContracts)
-            isPublicCollectionSearch(collectionFilter) -> searchCollections(collectionFilter, publicOnly = true)
-            isAllCollectionsSearch(collectionFilter) -> searchCollections(collectionFilter, publicOnly = false)
             isUserPrivateCollectionsFetch(collectionFilter) -> getUserPrivateCollections(collectionFilter)
             isBookmarkedCollectionsFetch(collectionFilter) -> getBookmarkedCollections(collectionFilter)
+            isPublicCollectionSearch(collectionFilter) -> searchCollections(collectionFilter)
+            isAllCollectionsSearch(collectionFilter) -> searchCollections(collectionFilter)
             else -> throw IllegalStateException("Unknown collection lookup method")
         }
     }
@@ -55,8 +56,8 @@ class GetCollections(
     private fun isAllCollectionsSearch(collectionFilter: CollectionFilter) =
         collectionFilter.visibility == CollectionFilter.Visibility.ALL
 
-    private fun searchCollections(collectionFilter: CollectionFilter, publicOnly: Boolean): Page<Collection> {
-        if (!(publicOnly || currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION))) {
+    private fun searchCollections(collectionFilter: CollectionFilter): Page<Collection> {
+        if (!(collectionFilter.visibility == CollectionFilter.Visibility.PUBLIC || currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION))) {
             throw OperationForbiddenException()
         }
 
@@ -64,7 +65,12 @@ class GetCollections(
             CollectionSearchQuery(
                 text = collectionFilter.query,
                 subjectIds = collectionFilter.subjects,
-                publicOnly = publicOnly,
+                visibility = when(collectionFilter.visibility){
+                    CollectionFilter.Visibility.PUBLIC -> listOf(CollectionVisibility.PUBLIC)
+                    CollectionFilter.Visibility.PRIVATE -> listOf(CollectionVisibility.PRIVATE)
+                    CollectionFilter.Visibility.BOOKMARKED -> TODO()
+                    CollectionFilter.Visibility.ALL -> listOf(CollectionVisibility.PRIVATE, CollectionVisibility.PUBLIC)
+                },
                 pageSize = collectionFilter.pageSize,
                 pageIndex = collectionFilter.pageNumber
             )

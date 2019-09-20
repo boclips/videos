@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -29,7 +30,7 @@ class RebuildCollectionIndexTest {
     }
 
     @Test
-    fun `execute rebuilds search index`() {
+    fun `rebuilds search index`() {
         val collectionId1 = CollectionId(TestFactories.aValidId())
         val collectionId2 = CollectionId(TestFactories.aValidId())
         val collectionId3 = CollectionId(TestFactories.aValidId())
@@ -55,12 +56,8 @@ class RebuildCollectionIndexTest {
 
         assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
 
-        val searchRequest = PaginatedSearchRequest(
-            CollectionQuery(
-                phrase = "collection"
-            )
+        val searchRequest = PaginatedSearchRequest(CollectionQuery(phrase = "collection", visibility = CollectionVisibility.ALL))
 
-        )
         assertThat(searchService.search(searchRequest)).containsExactlyInAnyOrder(
             collectionId2.value,
             collectionId3.value

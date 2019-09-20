@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -75,7 +76,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         val collections = collectionService.search(CollectionSearchQuery(
             text = "title",
             subjectIds = emptyList(),
-            publicOnly = true,
+            visibility = listOf(CollectionVisibility.PUBLIC),
             pageSize = 1,
             pageIndex = 0
         )).elements
@@ -96,7 +97,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         val collections = collectionService.search(CollectionSearchQuery(
             text = "title",
             subjectIds = emptyList(),
-            publicOnly = false,
+            visibility = listOf(CollectionVisibility.PRIVATE),
             pageSize = 1,
             pageIndex = 0
         )).elements
@@ -116,7 +117,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         val collections = collectionService.search(CollectionSearchQuery(
             text = "title",
             subjectIds = emptyList(),
-            publicOnly = false,
+            visibility = listOf(CollectionVisibility.PRIVATE),
             pageSize = 1,
             pageIndex = 0
         )).elements

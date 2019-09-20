@@ -14,7 +14,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            publicOnly = true,
+            visibility = listOf(CollectionVisibility.PUBLIC),
             pageIndex = 0,
             pageSize = 0
         )
@@ -27,7 +27,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = null,
             subjectIds = listOf("subject"),
-            publicOnly = true,
+            visibility = listOf(CollectionVisibility.PUBLIC),
             pageIndex = 0,
             pageSize = 0
         )
@@ -40,12 +40,12 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            publicOnly = true,
+            visibility = listOf(CollectionVisibility.PUBLIC),
             pageIndex = 0,
             pageSize = 0
         )
 
-        assertThat(query.toSearchQuery().visibility).isEqualTo(CollectionVisibility.PUBLIC)
+        assertThat(query.toSearchQuery().visibility).containsExactlyInAnyOrder(CollectionVisibility.PUBLIC)
     }
 
     @Test
@@ -53,11 +53,11 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            publicOnly = false,
+            visibility = listOf(),
             pageIndex = 0,
             pageSize = 0
         )
 
-        assertThat(query.toSearchQuery().visibility).isNull()
+        assertThat(query.toSearchQuery().visibility).isEmpty()
     }
 }

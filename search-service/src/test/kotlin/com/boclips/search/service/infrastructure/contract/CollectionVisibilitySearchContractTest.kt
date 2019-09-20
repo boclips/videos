@@ -35,7 +35,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(readService.count(CollectionQuery())).isEqualTo(2)
+        assertThat(readService.count(CollectionQuery(visibility = CollectionVisibility.ALL))).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -63,7 +63,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             readService.search(
                 PaginatedSearchRequest(
                     CollectionQuery(
-                        visibility = CollectionVisibility.PRIVATE
+                        visibility = listOf(CollectionVisibility.PRIVATE)
                     )
                 )
             )
@@ -85,7 +85,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = CollectionQuery(visibility = CollectionVisibility.PUBLIC))
+            PaginatedSearchRequest(query = CollectionQuery(visibility = listOf(CollectionVisibility.PUBLIC)))
         )
 
         assertThat(result).containsExactlyInAnyOrder("1", "2")
@@ -118,7 +118,12 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = CollectionQuery(phrase = "Bear", visibility = CollectionVisibility.PUBLIC))
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    phrase = "Bear",
+                    visibility = listOf(CollectionVisibility.PUBLIC)
+                )
+            )
         )
 
         assertThat(result).containsExactlyInAnyOrder("1", "2")
@@ -154,7 +159,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             PaginatedSearchRequest(
                 query = CollectionQuery(
                     subjectIds = listOf("Math"),
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = listOf(CollectionVisibility.PUBLIC)
                 )
             )
         )
@@ -196,7 +201,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
                 query = CollectionQuery(
                     phrase = "Bear",
                     subjectIds = listOf("Math"),
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = listOf(CollectionVisibility.PUBLIC)
                 )
             )
         )

@@ -71,12 +71,12 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 }
             }
             .apply {
-                if (query.visibility != null) {
+                if (query.visibility.isNotEmpty()) {
                     must(
                         QueryBuilders
-                            .matchQuery(
+                            .termsQuery(
                                 CollectionDocument.VISIBILITY,
-                                VisibilityMapper.map(query.visibility)
+                                query.visibility.map { VisibilityMapper.map(it) }
                             )
                     )
                 }

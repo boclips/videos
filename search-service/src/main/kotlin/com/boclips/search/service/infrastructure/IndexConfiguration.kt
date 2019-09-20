@@ -39,6 +39,10 @@ interface IndexConfiguration {
     }
 
     object Fields {
+        val simpleText = mapOf(
+            "type" to "text"
+        )
+
         val freeText = mapOf(
             "type" to "text",
             "analyzer" to Analyzers.ENGLISH,

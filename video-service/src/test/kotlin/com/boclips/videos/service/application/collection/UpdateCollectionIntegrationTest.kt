@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -108,7 +109,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
                 CollectionSearchQuery(
                     text = "title",
                     subjectIds = emptyList(),
-                    publicOnly = true,
+                    visibility = listOf(CollectionVisibility.PUBLIC),
                     pageSize = 1,
                     pageIndex = 0
                 )
@@ -127,7 +128,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
                 CollectionSearchQuery(
                     text = "title",
                     subjectIds = emptyList(),
-                    publicOnly = false,
+                    visibility = listOf(CollectionVisibility.PRIVATE),
                     pageSize = 1,
                     pageIndex = 0
                 )

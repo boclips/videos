@@ -1,9 +1,10 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -43,7 +44,7 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
                 CollectionSearchQuery(
                     subjectIds = listOf(subject.id.value),
                     text = null,
-                    publicOnly = false,
+                    visibility = listOf(CollectionVisibility.PRIVATE),
                     pageIndex = 0,
                     pageSize = 10
                 )

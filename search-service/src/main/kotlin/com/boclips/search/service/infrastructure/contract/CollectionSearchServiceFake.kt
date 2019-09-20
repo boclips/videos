@@ -22,7 +22,7 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
         return index
             .filter { entry -> if (phraseQuery(query)) entry.value.title.contains(phrase, ignoreCase = true) else true }
             .filter { entry -> if (subjectQuery(query)) entry.value.subjectIds.any { query.subjectIds.contains(it) } else true }
-            .filter { entry -> if (visibilityQuery(query)) entry.value.visibility == query.visibility else true }
+            .filter { entry -> if (visibilityQuery(query)) query.visibility.contains(entry.value.visibility) else false }
             .map { collection -> collection.key }
     }
 
@@ -33,5 +33,5 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
         collectionQuery.phrase.isNotEmpty()
 
     private fun visibilityQuery(collectionQuery: CollectionQuery) =
-        collectionQuery.visibility != null
+        collectionQuery.visibility.isNotEmpty()
 }
