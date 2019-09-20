@@ -8,7 +8,8 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(TITLE) val title: String,
     @param:JsonProperty(VISIBILITY) val visibility: String?,
     @param:JsonProperty(SUBJECTS) val subjects: List<String> = emptyList(),
-    @param:JsonProperty(HAS_ATTACHMENTS) val hasAttachments: Boolean
+    @param:JsonProperty(HAS_ATTACHMENTS) val hasAttachments: Boolean,
+    @param:JsonProperty(OWNER) val owner: String
 ) {
     companion object {
         const val ID = "id"
@@ -16,5 +17,6 @@ data class CollectionDocument @JsonCreator constructor(
         const val VISIBILITY = "visibility"
         const val SUBJECTS = "subjects"
         const val HAS_ATTACHMENTS = "hasAttachments"
+        const val OWNER = "owner"
     }
 }

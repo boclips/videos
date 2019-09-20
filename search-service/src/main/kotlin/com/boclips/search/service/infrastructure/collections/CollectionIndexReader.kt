@@ -86,6 +86,11 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                     must(matchSubjects(query.subjectIds))
                 }
             }
+            .apply {
+                if (query.owner != null) {
+                    must(QueryBuilders.termQuery(CollectionDocument.OWNER, query.owner))
+                }
+            }
     }
 
     private fun matchSubjects(subjects: List<String>): BoolQueryBuilder {

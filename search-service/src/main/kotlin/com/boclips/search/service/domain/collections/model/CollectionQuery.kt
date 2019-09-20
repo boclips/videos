@@ -7,5 +7,6 @@ class CollectionQuery(
     phrase: String = "",
     val visibility: List<CollectionVisibility> = listOf(CollectionVisibility.PUBLIC),
     sort: Sort<CollectionMetadata>? = null,
-    val subjectIds: List<String> = emptyList()
+    val subjectIds: List<String> = emptyList(),
+    val owner: String? = null
 ) : SearchQuery<CollectionMetadata>(phrase, sort)

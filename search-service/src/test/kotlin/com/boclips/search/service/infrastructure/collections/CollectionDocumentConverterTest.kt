@@ -19,7 +19,8 @@ class CollectionDocumentConverterTest {
                 "id": "14",
                 "title": "The title",
                 "visibility": "public",
-                "subjects": ["crispity", "crunchy"]
+                "subjects": ["crispity", "crunchy"],
+                "owner": "juan"
             }
         """.trimIndent()
             )
@@ -33,7 +34,8 @@ class CollectionDocumentConverterTest {
                 title = "The title",
                 visibility = "public",
                 subjects = listOf("crispity", "crunchy"),
-                hasAttachments = false
+                hasAttachments = false,
+                owner = "juan"
             )
         )
     }

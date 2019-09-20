@@ -139,18 +139,18 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
-                    subjects = listOf("Math"),
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = CollectionVisibility.PUBLIC,
+                    subjects = listOf("Math")
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "2",
-                    subjects = listOf("Math"),
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = CollectionVisibility.PUBLIC,
+                    subjects = listOf("Math")
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "3",
-                    subjects = listOf("Math"),
-                    visibility = CollectionVisibility.PRIVATE
+                    visibility = CollectionVisibility.PRIVATE,
+                    subjects = listOf("Math")
                 )
             )
         )
@@ -178,20 +178,20 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
                     title = "Deer",
-                    subjects = listOf("Math"),
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = CollectionVisibility.PUBLIC,
+                    subjects = listOf("Math")
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "2",
                     title = "Bear",
-                    subjects = listOf("Math"),
-                    visibility = CollectionVisibility.PUBLIC
+                    visibility = CollectionVisibility.PUBLIC,
+                    subjects = listOf("Math")
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "3",
                     title = "Bear",
-                    subjects = listOf("Math"),
-                    visibility = CollectionVisibility.PRIVATE
+                    visibility = CollectionVisibility.PRIVATE,
+                    subjects = listOf("Math")
                 )
             )
         )
