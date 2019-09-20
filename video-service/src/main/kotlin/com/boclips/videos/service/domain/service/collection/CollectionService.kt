@@ -34,7 +34,8 @@ class CollectionService(
 
         logger.info { "Returning ${collections.size} collections for query $query" }
 
-        return Page(collections, PageInfo(hasMoreElements = count(query) > query.pageIndexUpperBound()))
+        val count = count(query)
+        return Page(collections, PageInfo(hasMoreElements = count > query.pageIndexUpperBound(), totalElements = count))
     }
 
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {

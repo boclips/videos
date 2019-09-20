@@ -345,7 +345,7 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.next(PageInfo(true))
+        val link = collectionsLinkBuilder.next(PageInfo(true, 1001))
 
         val url = URL(link?.href)
         assertThat(url).hasProtocol("https")
@@ -367,7 +367,7 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.next(PageInfo(false))
+        val link = collectionsLinkBuilder.next(PageInfo(false, 1))
 
         assertThat(link).isNull()
     }
@@ -378,7 +378,7 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.next(PageInfo(true))
+        val link = collectionsLinkBuilder.next(PageInfo(true, 1001))
 
         val url = URL(link?.href)
         assertThat(url).hasProtocol("https")

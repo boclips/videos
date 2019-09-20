@@ -17,8 +17,8 @@ import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import mu.KLogging
+import org.springframework.hateoas.PagedResources
 import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -84,8 +84,14 @@ class CollectionsController(
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
 
         return withProjection(
-            Resources(
+            PagedResources(
                 collectionResources,
+                PagedResources.PageMetadata(
+                    collectionFilter.pageSize.toLong(),
+                    collectionFilter.pageNumber.toLong(),
+                    collectionsPage.pageInfo.totalElements,
+                    collectionsPage.pageInfo.totalElements / collectionFilter.pageSize.toLong()
+                ),
                 listOfNotNull(
                     collectionsLinkBuilder.projections().list(),
                     collectionsLinkBuilder.projections().details(),

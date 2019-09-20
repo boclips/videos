@@ -138,6 +138,11 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next.href").exists())
+            .andExpect(jsonPath("$.page.size", equalTo(1)))
+            .andExpect(jsonPath("$.page.totalElements", equalTo(2)))
+            .andExpect(jsonPath("$.page.totalPages", equalTo(2)))
+            .andExpect(jsonPath("$.page.number", equalTo(0)))
+
             .andExpect(jsonPath("$._embedded.collections[0]._links.bookmark.href").exists())
             .andExpect(jsonPath("$._embedded.collections[0]._links.unbookmark").doesNotExist())
 

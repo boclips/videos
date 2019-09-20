@@ -87,7 +87,7 @@ class GetCollectionsTest {
                         isPublic = true,
                         bookmarks = setOf(UserId("me@me.com"))
                     )
-                ), PageInfo(true)
+                ), PageInfo(true, 1001)
             )
         }
 
@@ -132,7 +132,7 @@ class GetCollectionsTest {
                         isPublic = true
                     ),
                     TestFactories.createCollection(isPublic = true)
-                ), PageInfo(true)
+                ), PageInfo(true, 1001)
             )
         }
 
@@ -177,7 +177,7 @@ class GetCollectionsTest {
                         isPublic = true
                     ),
                     TestFactories.createCollection(isPublic = true)
-                ), PageInfo(true)
+                ), PageInfo(true, 1001)
             )
         }
 
@@ -222,7 +222,7 @@ class GetCollectionsTest {
                         subjects = setOf(TestFactories.createSubject())
                     ),
                     TestFactories.createCollection(isPublic = true)
-                ), PageInfo(true)
+                ), PageInfo(true, 1001)
             )
         }
 
@@ -273,7 +273,7 @@ class GetCollectionsTest {
                             )
                         )
                     )
-                ), PageInfo(true)
+                ), PageInfo(true, 1001)
             )
         }
 
@@ -320,7 +320,7 @@ class GetCollectionsTest {
                         isPublic = true,
                         subjects = setOf(TestFactories.createSubject())
                     )
-                ), PageInfo(true)
+                ), PageInfo(true, 1001)
             )
         }
 
@@ -366,7 +366,7 @@ class GetCollectionsTest {
                             isPublic = true,
                             subjects = setOf(TestFactories.createSubject())
                         )
-                    ), PageInfo(false)
+                    ), PageInfo(false, 1)
                 )
         }
 

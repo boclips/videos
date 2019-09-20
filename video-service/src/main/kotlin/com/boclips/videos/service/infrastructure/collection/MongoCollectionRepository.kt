@@ -225,7 +225,7 @@ class MongoCollectionRepository(
 
         return Page(
             elements = collections,
-            pageInfo = PageInfo(hasMoreElements = hasMoreElements)
+            pageInfo = PageInfo(hasMoreElements = hasMoreElements, totalElements = totalDocuments)
         )
     }
 
