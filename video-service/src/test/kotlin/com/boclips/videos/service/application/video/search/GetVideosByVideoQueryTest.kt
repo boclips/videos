@@ -31,7 +31,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 1
         )
 
-        assertThat(result.totalVideos).isEqualTo(1)
+        assertThat(result.pageInfo.totalElements).isEqualTo(1)
     }
 
     @Test
@@ -100,10 +100,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 1
         )
 
-        assertThat(result.videos).hasSize(1)
-        assertThat(result.totalVideos).isEqualTo(3)
-        assertThat(result.pageNumber).isEqualTo(1)
-        assertThat(result.pageSize).isEqualTo(2)
+        assertThat(result.elements).hasSize(1)
+        assertThat(result.pageInfo.totalElements).isEqualTo(3)
     }
 
     @Test
@@ -119,8 +117,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 0
         )
 
-        assertThat(videos.videos).hasSize(1)
-        assertThat(videos.videos.first().content.id).isEqualTo(videoId.value)
+        assertThat(videos.elements).hasSize(1)
+        assertThat(videos.elements.first().content.id).isEqualTo(videoId.value)
     }
 
     @Test
@@ -136,8 +134,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 0
         )
 
-        assertThat(videos.videos).hasSize(1)
-        assertThat(videos.videos.first().content.id).isEqualTo(newsVideoId.value)
+        assertThat(videos.elements).hasSize(1)
+        assertThat(videos.elements.first().content.id).isEqualTo(newsVideoId.value)
     }
 
     @Test
@@ -154,7 +152,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 0
         )
 
-        assertThat(videos.videos.map { it.content.id }).containsExactly(newsAndClassroomVideoId.value)
+        assertThat(videos.elements.map { it.content.id }).containsExactly(newsAndClassroomVideoId.value)
     }
 
     @Test
@@ -191,10 +189,10 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 0
         )
 
-        assertThat(videos.totalVideos).isEqualTo(2)
-        assertThat(videos.videos.size).isEqualTo(2)
-        assertThat(videos.videos[0].content.title).isEqualTo("why are camels so tall 1")
-        assertThat(videos.videos[1].content.title).isEqualTo("why are camels so tall 2")
+        assertThat(videos.pageInfo.totalElements).isEqualTo(2)
+        assertThat(videos.elements.toList().size).isEqualTo(2)
+        assertThat(videos.elements.first().content.title).isEqualTo("why are camels so tall 1")
+        assertThat(videos.elements.elementAt(1).content.title).isEqualTo("why are camels so tall 2")
     }
 
     @Test
@@ -217,8 +215,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             source = "youtube"
         )
 
-        assertThat(results.totalVideos).isEqualTo(1)
-        assertThat(results.videos.size).isEqualTo(1)
-        assertThat(results.videos[0].content.title).isEqualTo("why are camels so tall 2")
+        assertThat(results.pageInfo.totalElements).isEqualTo(1)
+        assertThat(results.elements.toList().size).isEqualTo(1)
+        assertThat(results.elements.first().content.title).isEqualTo("why are camels so tall 2")
     }
 }

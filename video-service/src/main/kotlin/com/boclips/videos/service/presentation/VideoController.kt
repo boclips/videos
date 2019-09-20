@@ -77,6 +77,8 @@ class VideoController(
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "subject", required = false) subjects: Set<String>?
     ): ResponseEntity<PagedResources<*>> {
+        val pageSize = size ?: DEFAULT_PAGE_SIZE
+        val pageNumber = page ?: DEFAULT_PAGE_INDEX
         val videosResource = searchVideo.byQuery(
             query = query,
             sortBy = sortBy,
@@ -84,8 +86,8 @@ class VideoController(
             excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
             releasedDateFrom = releasedDateFrom,
             releasedDateTo = releasedDateTo,
-            pageSize = size ?: DEFAULT_PAGE_SIZE,
-            pageNumber = page ?: DEFAULT_PAGE_INDEX,
+            pageSize = pageSize,
+            pageNumber = pageNumber,
             minDuration = minDuration,
             maxDuration = maxDuration,
             source = source,
@@ -94,17 +96,15 @@ class VideoController(
             subjects = subjects ?: emptySet()
         )
 
-        val videoResources = videosResource
-            .videos
-            .let(HateoasEmptyCollection::fixIfEmptyCollection)
-
         return ResponseEntity(
             PagedResources(
-                videoResources,
+                videosResource
+                    .elements.toList()
+                    .let(HateoasEmptyCollection::fixIfEmptyCollection),
                 PagedResources.PageMetadata(
-                    videosResource.pageSize.toLong(),
-                    videosResource.pageNumber.toLong(),
-                    videosResource.totalVideos
+                    pageSize.toLong(),
+                    pageNumber.toLong(),
+                    videosResource.pageInfo.totalElements
                 )
             ), HttpStatus.OK
         )

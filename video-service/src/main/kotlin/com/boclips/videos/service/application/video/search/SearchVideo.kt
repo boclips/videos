@@ -2,12 +2,12 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
+import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.video.VideoResource
-import com.boclips.videos.service.presentation.video.VideosResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import org.springframework.hateoas.Resource
 
@@ -44,7 +44,7 @@ class SearchVideo(
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         subjects: Set<String> = emptySet()
-    ): VideosResource {
+    ): Page<Resource<VideoResource>> {
         return getVideosByQuery(
             query = query ?: "",
             sortBy = sortBy,

@@ -1,14 +1,17 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
+import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
-import com.boclips.videos.service.presentation.video.VideosResource
 import mu.KLogging
+import org.springframework.hateoas.Resource
 
 class GetVideosByQuery(
     private val videoService: VideoService,
@@ -33,7 +36,7 @@ class GetVideosByQuery(
         ageRangeMin: Int?,
         ageRangeMax: Int?,
         subjects: Set<String>
-    ): VideosResource {
+    ): Page<Resource<VideoResource>> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
@@ -70,11 +73,12 @@ class GetVideosByQuery(
             pageVideoIds = videos.map { it.videoId.value }
         )
 
-        return VideosResource(
-            videos = videoResources,
-            totalVideos = totalVideos,
-            pageNumber = pageNumber,
-            pageSize = pageSize
+        return Page(
+            elements = videoResources.asIterable(),
+            pageInfo = PageInfo(
+                hasMoreElements = (pageNumber + 1) * pageSize < totalVideos,
+                totalElements = totalVideos
+            )
         )
     }
 
