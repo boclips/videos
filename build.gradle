@@ -26,7 +26,5 @@ allprojects {
         }
 
         suppressionFile = './dependency-check-suppressions.xml'
-
-        outputDirectory = "security-report"
     }
 }

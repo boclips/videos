@@ -14,7 +14,6 @@ cd source
     search-service:clean \
     video-service:clean \
     video-service:build \
-    dependencyCheckAnalyze \
     --info \
     --no-daemon \
     --rerun-tasks

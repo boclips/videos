@@ -4,6 +4,6 @@ set -ex
 
 git pull -r
 
-./gradlew build dependencyCheckAnalyze --info
+./gradlew build --info
 
 git push

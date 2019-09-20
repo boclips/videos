@@ -8,18 +8,17 @@ image_resource:
     tag: 8-jdk-stretch
 
 inputs:
-  - name: source
-  - name: version
+- name: source
+- name: version
 
 outputs:
-  - name: dist
+- name: dist
 
 params:
   YOUTUBE_API_KEY:
 
 caches:
-  - path: .gradle/
-  - path: source/dependency-check-cache
+- path: .gradle/
 
 run:
   path: source/video-service/pipeline/scripts/build.sh
