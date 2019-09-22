@@ -513,3 +513,33 @@ object AttachmentFactory {
         type = type
     )
 }
+
+object CollectionFilterFactory {
+    fun sample(
+        query: String? = "",
+        subjects: List<String>? = emptyList(),
+        owner: String? = "hans",
+        page: Int? = 0,
+        size: Int? = 40,
+        visibility: CollectionFilter.Visibility
+    ): CollectionFilter {
+        return CollectionFilter(
+            query = query ?: "",
+            subjects = subjects ?: emptyList(),
+            visibility = visibility,
+            owner = owner,
+            pageNumber = page ?: 0,
+            pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE
+        )
+    }
+}
+
+object UserFactory {
+    fun sample(roles: Set<String> = emptySet()): User {
+        return User(
+            boclipsEmployee = true,
+            id = "some-id",
+            authorities = roles.map { "ROLE_$it" }.toSet()
+        )
+    }
+}

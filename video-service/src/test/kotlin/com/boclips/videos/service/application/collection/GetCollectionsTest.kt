@@ -97,7 +97,8 @@ class GetCollectionsTest {
             getContractedCollections,
             userContractService,
             GetUserPrivateCollections(collectionRepository),
-            GetBookmarkedCollections(collectionRepository)
+            GetBookmarkedCollections(collectionRepository),
+            CollectionQueryAssembler()
         ).invoke(
             CollectionFilter(
                 visibility = CollectionFilter.Visibility.BOOKMARKED,
@@ -142,7 +143,8 @@ class GetCollectionsTest {
             getContractedCollections,
             userContractService,
             GetUserPrivateCollections(collectionRepository),
-            GetBookmarkedCollections(collectionRepository)
+            GetBookmarkedCollections(collectionRepository),
+            CollectionQueryAssembler()
         ).invoke(
             CollectionFilter(
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -187,7 +189,8 @@ class GetCollectionsTest {
             getContractedCollections,
             userContractService,
             GetUserPrivateCollections(collectionRepository),
-            GetBookmarkedCollections(collectionRepository)
+            GetBookmarkedCollections(collectionRepository),
+            CollectionQueryAssembler()
         ).invoke(
             CollectionFilter(
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -232,7 +235,8 @@ class GetCollectionsTest {
             getContractedCollections,
             userContractService,
             GetUserPrivateCollections(collectionRepository),
-            GetBookmarkedCollections(collectionRepository)
+            GetBookmarkedCollections(collectionRepository),
+            CollectionQueryAssembler()
         ).invoke(
             CollectionFilter(
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -283,7 +287,8 @@ class GetCollectionsTest {
             getContractedCollections,
             userContractService,
             GetUserPrivateCollections(collectionRepository),
-            GetBookmarkedCollections(collectionRepository)
+            GetBookmarkedCollections(collectionRepository),
+            CollectionQueryAssembler()
         ).invoke(
             CollectionFilter(
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -330,7 +335,8 @@ class GetCollectionsTest {
             getContractedCollections,
             userContractService,
             GetUserPrivateCollections(collectionRepository),
-            GetBookmarkedCollections(collectionRepository)
+            GetBookmarkedCollections(collectionRepository),
+            CollectionQueryAssembler()
         ).invoke(
             CollectionFilter(
                 visibility = CollectionFilter.Visibility.PUBLIC,
@@ -376,7 +382,8 @@ class GetCollectionsTest {
             getContractedCollections,
             userContractService,
             GetUserPrivateCollections(collectionRepository),
-            GetBookmarkedCollections(collectionRepository)
+            GetBookmarkedCollections(collectionRepository),
+            CollectionQueryAssembler()
         ).invoke(
             CollectionFilter(
                 query = "title",

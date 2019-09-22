@@ -170,9 +170,9 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
     @Test
     fun `query search all collections`() {
-        createCollection("five ponies were eating grass", public = true)
+        createCollection(title = "five ponies were eating grass", public = true)
         createCollection(title = "the truck was blue and yellow", public = false)
-        createCollection("while a car and a truck crashed", public = true)
+        createCollection(title = "while a car and a truck crashed", public = true)
 
         mockMvc.perform(
             get("/v1/collections?query=truck").asUserWithRoles(

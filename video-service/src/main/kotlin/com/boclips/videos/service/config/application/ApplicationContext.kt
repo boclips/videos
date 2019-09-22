@@ -1,11 +1,16 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.contentpartner.service.application.CreateLegalRestrictions
+import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
+import com.boclips.contentpartner.service.application.FindLegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.AssembleCollectionFilter
 import com.boclips.videos.service.application.collection.BookmarkCollection
+import com.boclips.videos.service.application.collection.CollectionQueryAssembler
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
@@ -22,9 +27,6 @@ import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
-import com.boclips.contentpartner.service.application.CreateLegalRestrictions
-import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
-import com.boclips.contentpartner.service.application.FindLegalRestrictions
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -37,7 +39,6 @@ import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.BulkUpdateVideo
-import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -57,10 +58,10 @@ import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.UserContractService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -174,6 +175,11 @@ class ApplicationContext(
     }
 
     @Bean
+    fun collectionQueryAssembler(): CollectionQueryAssembler {
+        return CollectionQueryAssembler()
+    }
+
+    @Bean
     fun getCollection(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
@@ -198,7 +204,8 @@ class ApplicationContext(
         getContractedCollections: GetContractedCollections,
         userServiceClient: UserServiceClient,
         getUserPrivateCollections: GetUserPrivateCollections,
-        getBookmarkedCollections: GetBookmarkedCollections
+        getBookmarkedCollections: GetBookmarkedCollections,
+        collectionQueryAssembler: CollectionQueryAssembler
     ): GetCollections {
         return GetCollections(
             collectionService,
@@ -211,7 +218,8 @@ class ApplicationContext(
             getContractedCollections,
             userContractService,
             getUserPrivateCollections,
-            getBookmarkedCollections
+            getBookmarkedCollections,
+            collectionQueryAssembler
         )
     }
 
