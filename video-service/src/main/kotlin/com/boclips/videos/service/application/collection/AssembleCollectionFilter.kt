@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.presentation.CollectionsController
-import com.boclips.videos.service.presentation.Projection
 
 class AssembleCollectionFilter {
     operator fun invoke(
@@ -10,7 +9,6 @@ class AssembleCollectionFilter {
         public: Boolean? = null,
         bookmarked: Boolean? = null,
         owner: String? = null,
-        projection: Projection? = null,
         page: Int? = null,
         size: Int? = null
     ): CollectionFilter {
@@ -20,8 +18,7 @@ class AssembleCollectionFilter {
             visibility = determineVisibility(public, bookmarked, owner),
             owner = owner,
             pageNumber = page ?: 0,
-            pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE,
-            projection = projection ?: Projection.list
+            pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE
         )
     }
 

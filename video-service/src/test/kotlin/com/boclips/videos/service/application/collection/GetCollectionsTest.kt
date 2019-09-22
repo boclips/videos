@@ -100,12 +100,12 @@ class GetCollectionsTest {
             GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
-                projection = Projection.list,
                 visibility = CollectionFilter.Visibility.BOOKMARKED,
                 pageNumber = 0,
                 pageSize = 1,
                 subjects = emptyList()
-            )
+            ),
+            projection = Projection.list
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -145,12 +145,12 @@ class GetCollectionsTest {
             GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
-                projection = Projection.list,
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 pageNumber = 0,
                 pageSize = 1,
                 subjects = emptyList()
-            )
+            ),
+            projection = Projection.list
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -190,12 +190,12 @@ class GetCollectionsTest {
             GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
-                projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 pageNumber = 0,
                 pageSize = 1,
                 subjects = emptyList()
-            )
+            ),
+            projection = Projection.details
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -235,12 +235,12 @@ class GetCollectionsTest {
             GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
-                projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 pageNumber = 0,
                 pageSize = 1,
                 subjects = emptyList()
-            )
+            ),
+            projection = Projection.details
         )
 
         assertThat(collections.elements).hasSize(2)
@@ -286,12 +286,12 @@ class GetCollectionsTest {
             GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
-                projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 pageNumber = 0,
                 pageSize = 1,
                 subjects = emptyList()
-            )
+            ),
+            projection = Projection.details
         )
 
         assertThat(collections.elements).hasSize(1)
@@ -333,12 +333,12 @@ class GetCollectionsTest {
             GetBookmarkedCollections(collectionRepository)
         ).invoke(
             CollectionFilter(
-                projection = Projection.details,
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 pageNumber = 0,
                 pageSize = 1,
                 subjects = emptyList()
-            )
+            ),
+            projection = Projection.details
         )
 
         assertThat(collections.elements).hasSize(1)
@@ -380,11 +380,11 @@ class GetCollectionsTest {
         ).invoke(
             CollectionFilter(
                 query = "title",
-                projection = Projection.list,
                 visibility = CollectionFilter.Visibility.PUBLIC,
                 pageNumber = 0,
                 pageSize = 1
-            )
+            ),
+            projection = Projection.list
         )
 
         assertThat(collections.elements).hasSize(1)

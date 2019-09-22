@@ -73,12 +73,11 @@ class CollectionsController(
             public = public,
             bookmarked = bookmarked,
             owner = owner,
-            projection = projection,
             page = page,
             size = size
         )
 
-        val collectionsPage = getCollections(collectionFilter)
+        val collectionsPage = getCollections(collectionFilter, projection ?: Projection.list)
 
         val collectionResources = collectionsPage.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)

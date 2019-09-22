@@ -1,6 +1,8 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -8,6 +10,8 @@ import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
+import com.boclips.security.utils.User
+import com.boclips.videos.service.application.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -17,8 +21,6 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -39,6 +41,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
+import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -427,7 +430,14 @@ object TestFactories {
 
 object PlaybackResourceFactory {
     fun sample(type: String = "STREAM") =
-        StreamPlaybackResource(type, "http://example.com", "thumbnail-url", Duration.ZERO, streamUrl = "stream-url", referenceId = "reference-id")
+        StreamPlaybackResource(
+            type,
+            "http://example.com",
+            "thumbnail-url",
+            Duration.ZERO,
+            streamUrl = "stream-url",
+            referenceId = "reference-id"
+        )
 }
 
 object VideoTypeResourceFactory {
@@ -494,7 +504,7 @@ object AttachmentFactory {
     fun sample(
         id: String = ObjectId().toHexString(),
         description: String = "description",
-        linkToResource:String = "https://example.com",
+        linkToResource: String = "https://example.com",
         type: AttachmentType = AttachmentType.LESSON_PLAN
     ) = Attachment(
         attachmentId = AttachmentId(id),

@@ -1,10 +1,7 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.presentation.Projection
-
 data class CollectionFilter(
     val query: String? = null,
-    val projection: Projection,
     val visibility: Visibility,
     val owner: String? = null,
     val pageNumber: Int,

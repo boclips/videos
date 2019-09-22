@@ -134,13 +134,6 @@ class AssembleCollectionFilterTest {
 
         assertThat(filter.pageNumber).isEqualTo(0)
         assertThat(filter.pageSize).isEqualTo(CollectionsController.COLLECTIONS_PAGE_SIZE)
-        assertThat(filter.projection).isEqualTo(Projection.list)
-    }
-
-    @Test
-    fun `allows to override the projection`() {
-        val filter = assembleCollectionFilter(projection = Projection.details)
-        assertThat(filter.projection).isEqualTo(Projection.details)
     }
 
     @Test
