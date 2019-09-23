@@ -16,7 +16,6 @@ class GetCollections(
     private val collectionResourceFactory: CollectionResourceFactory,
     private val getContractedCollections: GetContractedCollections,
     private val userContractService: UserContractService,
-    private val getUserPrivateCollections: GetUserPrivateCollections,
     private val getBookmarkedCollections: GetBookmarkedCollections,
     private val collectionQueryAssembler: CollectionQueryAssembler
 ) {
@@ -38,31 +37,16 @@ class GetCollections(
 
         return when {
             userContracts.isNotEmpty() -> getContractedCollections(collectionFilter, userContracts)
-            isUserPrivateCollectionsFetch(collectionFilter) -> getUserPrivateCollections(collectionFilter)
             isBookmarkedCollectionsFetch(collectionFilter) -> getBookmarkedCollections(collectionFilter)
-            isPublicCollectionSearch(collectionFilter) -> {
+            else -> {
                 val query = collectionQueryAssembler.assemble(collectionFilter, UserExtractor.getCurrentUser())
                 collectionService.search(query)
             }
-            isAllCollectionsSearch(collectionFilter) -> {
-                val query = collectionQueryAssembler.assemble(collectionFilter, UserExtractor.getCurrentUser())
-                collectionService.search(query)
-            }
-            else -> throw IllegalStateException("Unknown collection lookup method")
         }
     }
 
-    private fun isPublicCollectionSearch(collectionFilter: CollectionFilter) =
-        collectionFilter.visibility == CollectionFilter.Visibility.PUBLIC
-
-    private fun isUserPrivateCollectionsFetch(collectionFilter: CollectionFilter) =
-        collectionFilter.visibility == CollectionFilter.Visibility.PRIVATE
-
     private fun isBookmarkedCollectionsFetch(collectionFilter: CollectionFilter) =
         collectionFilter.visibility == CollectionFilter.Visibility.BOOKMARKED
-
-    private fun isAllCollectionsSearch(collectionFilter: CollectionFilter) =
-        collectionFilter.visibility == CollectionFilter.Visibility.ALL
 
     private fun assembleResourcesPage(
         projection: Projection,

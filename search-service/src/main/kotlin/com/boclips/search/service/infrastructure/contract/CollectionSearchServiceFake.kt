@@ -20,9 +20,22 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
         val phrase = query.phrase
 
         return index
-            .filter { entry -> if (phraseQuery(query)) entry.value.title.contains(phrase, ignoreCase = true) else true }
-            .filter { entry -> if (subjectQuery(query)) entry.value.subjectIds.any { query.subjectIds.contains(it) } else true }
-            .filter { entry -> if (visibilityQuery(query)) query.visibility.contains(entry.value.visibility) else false }
+            .filter { entry ->
+                if (phraseQuery(query)) entry.value.title.contains(phrase, ignoreCase = true) else true
+            }
+            .filter { entry ->
+                if (subjectQuery(query)) entry.value.subjectIds.any { query.subjectIds.contains(it) } else true
+            }
+            .filter { entry ->
+                if (visibilityQuery(query)) query.visibility.contains(entry.value.visibility) else false
+            }
+            .filter { entry ->
+                if (query.owner == null)
+                    true
+                else
+                    entry.value.owner.let { query.owner == entry.value.owner}
+
+            }
             .map { collection -> collection.key }
     }
 

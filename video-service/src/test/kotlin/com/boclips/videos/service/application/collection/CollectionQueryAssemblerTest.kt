@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertThrows
 
 class CollectionQueryAssemblerTest {
     @Test
-    fun `users without special role cannot retrieve private collections`() {
+    fun `user without special role cannot retrieve private collections`() {
         assertThrows<OperationForbiddenException> {
             CollectionQueryAssembler().assemble(
                 filter = CollectionFilterFactory.sample(
@@ -22,7 +22,7 @@ class CollectionQueryAssemblerTest {
     }
 
     @Test
-    fun `users without special role cannot retrieve all collections`() {
+    fun `user without special role cannot retrieve all collections`() {
         assertThrows<OperationForbiddenException> {
             CollectionQueryAssembler().assemble(
                 filter = CollectionFilterFactory.sample(
@@ -34,13 +34,39 @@ class CollectionQueryAssemblerTest {
     }
 
     @Test
-    fun `users with special role can retrieve all collections`() {
+    fun `user with special role can retrieve all collections`() {
         assertDoesNotThrow {
             CollectionQueryAssembler().assemble(
                 filter = CollectionFilterFactory.sample(
                     visibility = CollectionFilter.Visibility.ALL
                 ),
                 user = UserFactory.sample(roles = setOf(UserRoles.VIEW_ANY_COLLECTION))
+            )
+        }
+    }
+
+    @Test
+    fun `user cannot get private collections belonging to others`() {
+        assertThrows<OperationForbiddenException> {
+            CollectionQueryAssembler().assemble(
+                filter = CollectionFilterFactory.sample(
+                    visibility = CollectionFilter.Visibility.PRIVATE,
+                    owner = "alex"
+                ),
+                user = UserFactory.sample(id = "antony")
+            )
+        }
+    }
+
+    @Test
+    fun `user can get private collections belonging to themselves`() {
+        assertDoesNotThrow {
+            CollectionQueryAssembler().assemble(
+                filter = CollectionFilterFactory.sample(
+                    visibility = CollectionFilter.Visibility.PRIVATE,
+                    owner = "alex"
+                ),
+                user = UserFactory.sample(id = "alex")
             )
         }
     }

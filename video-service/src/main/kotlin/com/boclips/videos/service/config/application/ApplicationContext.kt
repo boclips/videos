@@ -217,7 +217,6 @@ class ApplicationContext(
             ),
             getContractedCollections,
             userContractService,
-            getUserPrivateCollections,
             getBookmarkedCollections,
             collectionQueryAssembler
         )

@@ -51,7 +51,7 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
     }
 
     @Test
-    fun `returns no collections if it doesn not match the owner`() {
+    fun `returns no collections if it does not match the owner`() {
         collectionIndexWriter.safeRebuildIndex(
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(

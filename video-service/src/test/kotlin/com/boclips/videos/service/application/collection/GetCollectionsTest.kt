@@ -96,7 +96,6 @@ class GetCollectionsTest {
             collectionResourceFactory,
             getContractedCollections,
             userContractService,
-            GetUserPrivateCollections(collectionRepository),
             GetBookmarkedCollections(collectionRepository),
             CollectionQueryAssembler()
         ).invoke(
@@ -142,7 +141,6 @@ class GetCollectionsTest {
             collectionResourceFactory,
             getContractedCollections,
             userContractService,
-            GetUserPrivateCollections(collectionRepository),
             GetBookmarkedCollections(collectionRepository),
             CollectionQueryAssembler()
         ).invoke(
@@ -188,7 +186,6 @@ class GetCollectionsTest {
             collectionResourceFactory,
             getContractedCollections,
             userContractService,
-            GetUserPrivateCollections(collectionRepository),
             GetBookmarkedCollections(collectionRepository),
             CollectionQueryAssembler()
         ).invoke(
@@ -234,7 +231,6 @@ class GetCollectionsTest {
             collectionResourceFactory,
             getContractedCollections,
             userContractService,
-            GetUserPrivateCollections(collectionRepository),
             GetBookmarkedCollections(collectionRepository),
             CollectionQueryAssembler()
         ).invoke(
@@ -286,7 +282,6 @@ class GetCollectionsTest {
             collectionResourceFactory,
             getContractedCollections,
             userContractService,
-            GetUserPrivateCollections(collectionRepository),
             GetBookmarkedCollections(collectionRepository),
             CollectionQueryAssembler()
         ).invoke(
@@ -334,7 +329,6 @@ class GetCollectionsTest {
             collectionResourceFactory,
             getContractedCollections,
             userContractService,
-            GetUserPrivateCollections(collectionRepository),
             GetBookmarkedCollections(collectionRepository),
             CollectionQueryAssembler()
         ).invoke(
@@ -381,7 +375,6 @@ class GetCollectionsTest {
             collectionResourceFactory,
             getContractedCollections,
             userContractService,
-            GetUserPrivateCollections(collectionRepository),
             GetBookmarkedCollections(collectionRepository),
             CollectionQueryAssembler()
         ).invoke(

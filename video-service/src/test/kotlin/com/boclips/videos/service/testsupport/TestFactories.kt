@@ -527,10 +527,10 @@ object CollectionFilterFactory {
 }
 
 object UserFactory {
-    fun sample(roles: Set<String> = emptySet()): User {
+    fun sample(roles: Set<String> = emptySet(), id: String = "some-id"): User {
         return User(
             boclipsEmployee = true,
-            id = "some-id",
+            id = id,
             authorities = roles.map { "ROLE_$it" }.toSet()
         )
     }
