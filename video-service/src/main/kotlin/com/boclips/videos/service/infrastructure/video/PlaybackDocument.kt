@@ -21,9 +21,9 @@ data class PlaybackDocument(
     }
 
     fun isCompleteKalturaPlayback(): Boolean {
-        //TODO() After migrating, check if entryId exists and remove specific urls
         return type == PLAYBACK_TYPE_KALTURA &&
             id.isNotEmpty() &&
+            !entryId.isNullOrEmpty() &&
             !hlsStreamUrl.isNullOrEmpty() &&
             !dashStreamUrl.isNullOrEmpty() &&
             !progressiveStreamUrl.isNullOrEmpty() &&

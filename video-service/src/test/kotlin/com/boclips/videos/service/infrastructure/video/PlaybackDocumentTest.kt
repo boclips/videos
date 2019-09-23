@@ -22,6 +22,15 @@ class PlaybackDocumentTest {
         }
 
         @Test
+        fun `entryId needs to exist`() {
+            val playbackDocument = TestFactories.createKalturaPlaybackDocument(
+                entryId = ""
+            )
+
+            assertThat(playbackDocument.isCompleteKalturaPlayback()).isFalse()
+        }
+
+        @Test
         fun `hlsStreamUrl needs to be set`() {
             assertThat(
                 TestFactories.createKalturaPlaybackDocument(
