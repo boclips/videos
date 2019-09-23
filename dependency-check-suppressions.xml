@@ -91,7 +91,7 @@
         <gav regex="true">^org\.jetbrains\.kotlin:kotlin-reflect:1.3.10.*$</gav>
         <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
-    <suppress>
+    <suppress until="2019-10-10Z">
         <notes><![CDATA[
       File name: jackson-databind-2.9.9.2.jar
 
