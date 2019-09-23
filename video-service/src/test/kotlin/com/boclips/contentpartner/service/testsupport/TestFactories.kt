@@ -1,17 +1,15 @@
 package com.boclips.contentpartner.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.domain.model.*
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import org.bson.types.ObjectId
+import java.util.*
 
 object TestFactories {
 
@@ -27,7 +25,8 @@ object TestFactories {
         ageRange: AgeRange = AgeRange.bounded(5, 11),
         credit: Credit = Credit.PartnerCredit,
         legalRestrictions: LegalRestrictions? = null,
-        distributionMethods: Set<DistributionMethod> = emptySet()
+        distributionMethods: Set<DistributionMethod> = emptySet(),
+        remittance: Remittance? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -35,7 +34,8 @@ object TestFactories {
             ageRange = ageRange,
             credit = credit,
             legalRestrictions = legalRestrictions,
-            distributionMethods = distributionMethods
+            distributionMethods = distributionMethods,
+            remittance = remittance
         )
     }
 
@@ -62,13 +62,15 @@ object TestFactories {
             max = 11
         ),
         accreditedToYtChannel: String? = null,
-        distributionMethods: Set<DistributionMethodResource>? = null
+        distributionMethods: Set<DistributionMethodResource>? = null,
+        currency: String? = null
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
             name = name,
             ageRange = ageRange,
             accreditedToYtChannelId = accreditedToYtChannel,
-            distributionMethods = distributionMethods
+            distributionMethods = distributionMethods,
+            currency = currency
         )
     }
 }

@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.domain.model
 
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
+import java.util.*
 
 data class ContentPartner(
     val contentPartnerId: ContentPartnerId,
@@ -9,7 +10,8 @@ data class ContentPartner(
     val ageRange: AgeRange,
     val credit: Credit,
     val legalRestrictions: LegalRestrictions?,
-    val distributionMethods: Set<DistributionMethod>
+    val distributionMethods: Set<DistributionMethod>,
+    val remittance: Remittance?
 ) {
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)

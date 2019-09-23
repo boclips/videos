@@ -112,6 +112,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                     ContentPartnerDocument::legalRestrictions,
                     LegalRestrictionsDocument.from(updateCommand.legalRestrictions)
                 )
+            is ContentPartnerUpdateCommand.ReplaceCurrency -> set(ContentPartnerDocument::remittanceCurrency, updateCommand.currency.currencyCode)
         }
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))

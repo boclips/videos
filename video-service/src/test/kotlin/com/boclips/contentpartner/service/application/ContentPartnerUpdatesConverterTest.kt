@@ -57,4 +57,18 @@ class ContentPartnerUpdatesConverterTest {
 
         assertThat(command.ageRange).isEqualTo(AgeRange.bounded(1, 3))
     }
+
+    @Test
+    fun `creates command for updating the currency`() {
+        val commands = ContentPartnerUpdatesConverter().convert(
+            id = ContentPartnerId(value = "123"),
+            contentPartnerRequest = ContentPartnerRequest(
+                currency = "GBP"
+            )
+        )
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceCurrency } as ContentPartnerUpdateCommand.ReplaceCurrency
+
+        assertThat(command.currency.currencyCode).isEqualTo("GBP")
+    }
 }

@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -76,7 +77,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     {
                         "min": 11,
                         "max": 18
-                    }
+                    },
+                "currency": "USD"   
             }
         """
 
@@ -162,6 +164,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             {
                 "searchable": false,
                 "name": "TED-ED",
+                "currency": "USD",
                 "ageRange":
                     {
                         "min": 10,
@@ -173,6 +176,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             {
                 "searchable": false,
                 "name": "TED",
+                "currency": "GBP",
                 "ageRange":
                     {
                         "min": 11,
@@ -185,6 +189,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             post("/v1/content-partners").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(originalContent)
         )
+                .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isCreated)
             .andReturn().response.getHeaders("Location").first()
 
@@ -195,6 +200,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         mockMvc.perform(get(cpUrl).asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.name", equalTo("TED")))
+            .andExpect(jsonPath("$.currency", equalTo("GBP")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(11)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(18)))
     }
@@ -205,6 +211,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             {
                 "searchable": false,
                 "name": "TED-ED",
+                "currency": "USD",
                 "ageRange":
                     {
                         "min": 10,
@@ -221,6 +228,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED-ED")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].currency", equalTo("USD")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.min", equalTo(10)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.max", equalTo(19)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))

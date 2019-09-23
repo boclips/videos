@@ -17,7 +17,8 @@ object ContentPartnerToResourceConverter {
             },
             distributionMethods = DistributionMethodResourceConverter.toDeliveryMethodResources(
                 contentPartner.distributionMethods
-            )
+            ),
+            currency = contentPartner.remittance?.currency?.currencyCode
         )
     }
 }

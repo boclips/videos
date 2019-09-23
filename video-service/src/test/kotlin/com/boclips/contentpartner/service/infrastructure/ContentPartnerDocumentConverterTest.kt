@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
@@ -10,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.util.*
 
 internal class ContentPartnerDocumentConverterTest {
 
@@ -21,7 +23,8 @@ internal class ContentPartnerDocumentConverterTest {
             ageRange = AgeRange.bounded(5, 11),
             credit = Credit.PartnerCredit,
             legalRestrictions =  com.boclips.videos.service.testsupport.TestFactories.createLegalRestrictions(),
-            distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+            distributionMethods = setOf(DistributionMethod.DOWNLOAD),
+            remittance = Remittance(Currency.getInstance("GBP"))
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

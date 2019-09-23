@@ -14,6 +14,7 @@ data class ContentPartnerDocument(
     val lastModified: Instant? = null,
     val createdAt: Instant? = null,
     val legalRestrictions: LegalRestrictionsDocument? = null,
-    val distributionMethods: Set<DistributionMethodDocument>? = null
+    val distributionMethods: Set<DistributionMethodDocument>? = null,
+    val remittanceCurrency: String? = null
 ) {
 }

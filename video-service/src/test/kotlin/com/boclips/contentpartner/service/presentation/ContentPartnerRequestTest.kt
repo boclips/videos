@@ -33,6 +33,13 @@ class ContentPartnerRequestTest {
     }
 
     @Test
+    fun `invalid currency`() {
+        val validRequest = TestFactories.createContentPartnerRequest(currency = "not a valid currency")
+        val violations = validator.validate(validRequest)
+        assertThat(violations).hasSize(1)
+    }
+
+    @Test
     fun `blank name`() {
         val validRequest = TestFactories.createContentPartnerRequest(name = "")
         val violations = validator.validate(validRequest)

@@ -3,11 +3,13 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import org.bson.types.ObjectId
+import java.util.*
 
 object ContentPartnerDocumentConverter {
     fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {
@@ -23,7 +25,8 @@ object ContentPartnerDocumentConverter {
             legalRestrictions = contentPartner.legalRestrictions?.let { LegalRestrictionsDocument.from(it) },
             distributionMethods = contentPartner.distributionMethods
                 .map(DistributionMethodDocumentConverter::toDocument)
-                .toSet()
+                .toSet(),
+            remittanceCurrency = contentPartner.remittance?.currency?.currencyCode
         )
     }
 
@@ -43,7 +46,8 @@ object ContentPartnerDocumentConverter {
             legalRestrictions = document.legalRestrictions?.toRestrictions(),
             distributionMethods = reconstructDistributionMethods(
                 document
-            )
+            ),
+            remittance = document.remittanceCurrency?.let { Remittance(Currency.getInstance(it)) }
         )
     }
 
