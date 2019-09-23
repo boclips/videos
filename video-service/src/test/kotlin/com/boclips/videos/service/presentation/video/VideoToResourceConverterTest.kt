@@ -1,11 +1,13 @@
 package com.boclips.videos.service.presentation.video
 
+import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
@@ -53,7 +55,7 @@ internal class VideoToResourceConverterTest {
     fun setUp() {
         setSecurityContext("user-id")
         videosLinkBuilder = mock()
-        playbackToResourceConverter = PlaybackToResourceConverter(mock())
+        playbackToResourceConverter = PlaybackToResourceConverter(mock(), PlaybacksLinkBuilder(TestKalturaClient()))
         videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
     }
 
@@ -103,7 +105,7 @@ internal class VideoToResourceConverterTest {
 
         val playbackResource = videoResource.playback!!.content as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")
-        assertThat(playbackResource.thumbnailUrl).isEqualTo("kaltura-thumbnailUrl")
+        assertThat(playbackResource.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/entry-id/width/500")
         assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(playbackResource.id).isEqualTo("entry-id")
         assertThat(playbackResource.streamUrl).isEqualTo("hls-stream")

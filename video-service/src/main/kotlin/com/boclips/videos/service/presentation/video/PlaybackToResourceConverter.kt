@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
@@ -11,31 +12,33 @@ import org.springframework.stereotype.Component
 
 @Component
 class PlaybackToResourceConverter(
-    val eventsLinkBuilder: EventsLinkBuilder
+    val eventsLinkBuilder: EventsLinkBuilder,
+    val playbacksLinkBuilder: PlaybacksLinkBuilder
 ) {
-    fun wrapPlaybackInResource(playback: VideoPlayback): Resource<PlaybackResource> {
-        return wrapResourceWithHateoas(toResource(playback))
-    }
-
-    private fun wrapResourceWithHateoas(
-        resource: PlaybackResource
-    ) = Resource(
-        resource,
-        listOfNotNull(
-            this.eventsLinkBuilder.createPlaybackEventLink(),
-            this.eventsLinkBuilder.createPlayerInteractedWithEventLink()
-        )
-    )
-
-    private fun toResource(playback: VideoPlayback): PlaybackResource {
-        return when (playback) {
-            is VideoPlayback.StreamPlayback -> StreamPlaybackResource(
-                streamUrl = playback.appleHlsStreamUrl,
-                thumbnailUrl = UriTemplate(playback.thumbnailUrl).expand(mapOf(Pair("thumbnailWidth", 500))).toString(),
-                duration = playback.duration,
-                id = playback.id.value,
-                referenceId = playback.referenceId
+    fun wrapPlaybackInResource(playback: VideoPlayback): Resource<PlaybackResource> =
+        Resource(
+            toResource(playback),
+            listOfNotNull(
+                this.eventsLinkBuilder.createPlaybackEventLink(),
+                this.eventsLinkBuilder.createPlayerInteractedWithEventLink(),
+                this.playbacksLinkBuilder.createThumbnailUrl(playback),
+                this.playbacksLinkBuilder.createVideoPreviewUrl(playback)
             )
+        )
+
+    private fun toResource(playback: VideoPlayback): PlaybackResource =
+        when (playback) {
+            is VideoPlayback.StreamPlayback -> {
+                val thumbnailUrl = this.playbacksLinkBuilder.createThumbnailUrl(playback)!!.href
+
+                StreamPlaybackResource(
+                    streamUrl = playback.appleHlsStreamUrl,
+                    thumbnailUrl = UriTemplate(thumbnailUrl).expand(mapOf(Pair("thumbnailWidth", 500))).toString(),
+                    duration = playback.duration,
+                    id = playback.id.value,
+                    referenceId = playback.referenceId
+                )
+            }
             is VideoPlayback.YoutubePlayback -> YoutubePlaybackResource(
                 thumbnailUrl = playback.thumbnailUrl,
                 duration = playback.duration,
@@ -43,5 +46,4 @@ class PlaybackToResourceConverter(
             )
             else -> throw Exception()
         }
-    }
 }

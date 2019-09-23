@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -13,6 +14,7 @@ import com.boclips.videos.service.presentation.attachments.AttachmentToResourceC
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.video.PlaybackToResourceConverter
@@ -47,7 +49,8 @@ class GetCollectionTest {
         collectionService = mock()
         videosLinkBuilder = mock()
         attachmentsLinkBuilder = mock()
-        playbackToResourceConverter = PlaybackToResourceConverter(EventsLinkBuilder())
+        playbackToResourceConverter =
+            PlaybackToResourceConverter(EventsLinkBuilder(), PlaybacksLinkBuilder(TestKalturaClient()))
         collectionResourceFactory = CollectionResourceFactory(
             VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
             SubjectToResourceConverter(),

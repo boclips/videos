@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -52,7 +53,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             assertThat(videos).isNotEmpty
             assertThat(videos.first().title).isEqualTo("a kaltura video")
-            assertThat(videos.first().playback.thumbnailUrl).isNotBlank()
         }
 
         @Test
@@ -74,7 +74,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             assertThat(videos).isNotEmpty
             assertThat(videos.first().title).isEqualTo("a youtube video")
-            assertThat(videos.first().playback.thumbnailUrl).isNotBlank()
+            assertThat((videos.first().playback as VideoPlayback.YoutubePlayback).thumbnailUrl).isNotBlank()
         }
 
         @Test
@@ -104,7 +104,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val video = videoService.getPlayableVideo(videoId)
 
             assertThat(video).isNotNull
-            assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/abc/width/{thumbnailWidth}")
         }
 
         @Test

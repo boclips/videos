@@ -18,7 +18,6 @@ class PlaybackConverterTest {
             referenceId = "1234",
             duration = Duration.ofSeconds(100),
             downloadUrl = "download",
-            thumbnailUrl = "thumbnail",
             dashStreamUrl = "dash",
             hlsStreamUrl = "hls",
             progressiveStreamUrl = "progressive"
@@ -27,7 +26,7 @@ class PlaybackConverterTest {
         val playbackDocument: PlaybackDocument = PlaybackConverter.toDocument(originalPlayback)
         assertThat(playbackDocument.id).isEqualTo("1234")
         assertThat(playbackDocument.entryId).isEqualTo("entry_id_1234")
-        assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail")
+        assertThat(playbackDocument.thumbnailUrl).isNull()
         assertThat(playbackDocument.downloadUrl).isEqualTo("download")
         assertThat(playbackDocument.hlsStreamUrl).isEqualTo("hls")
         assertThat(playbackDocument.dashStreamUrl).isEqualTo("dash")
@@ -43,7 +42,6 @@ class PlaybackConverterTest {
             entryId = "entry_id_1234",
             duration = 100,
             downloadUrl = "download",
-            thumbnailUrl = listOf("thumbnail"),
             dashStreamUrl = "dash",
             hlsStreamUrl = "hls",
             progressiveStreamUrl = "progressive"
@@ -52,7 +50,6 @@ class PlaybackConverterTest {
         val playback = PlaybackConverter.toPlayback(document) as VideoPlayback.StreamPlayback
         assertThat(playback.id.value).isEqualTo("entry_id_1234")
         assertThat(playback.referenceId).isEqualTo("1234")
-        assertThat(playback.thumbnailUrl).isEqualTo("thumbnail")
         assertThat(playback.downloadUrl).isEqualTo("download")
         assertThat(playback.appleHlsStreamUrl).isEqualTo("hls")
         assertThat(playback.mpegDashStreamUrl).isEqualTo("dash")

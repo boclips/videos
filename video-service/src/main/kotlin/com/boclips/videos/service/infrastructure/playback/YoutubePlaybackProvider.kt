@@ -81,8 +81,8 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
 
         return (playbackId to YoutubePlayback(
             id = playbackId,
-            thumbnailUrl = item.snippet.thumbnails.high.url,
-            duration = Duration.parse(item.contentDetails.duration)
+            duration = Duration.parse(item.contentDetails.duration),
+            thumbnailUrl = item.snippet.thumbnails.high.url
         ))
     }
 

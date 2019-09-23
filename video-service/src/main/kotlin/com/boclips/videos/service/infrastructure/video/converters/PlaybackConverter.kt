@@ -19,8 +19,9 @@ object PlaybackConverter : KLogging() {
                 id = videoPlayback.referenceId,
                 entryId = videoPlayback.id.value,
                 type = "KALTURA",
-                thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = videoPlayback.downloadUrl,
+                // Thumbnail URLs are now built at presentation layer
+                thumbnailUrl = null,
                 hlsStreamUrl = videoPlayback.appleHlsStreamUrl,
                 dashStreamUrl = videoPlayback.mpegDashStreamUrl,
                 progressiveStreamUrl = videoPlayback.progressiveDownloadStreamUrl,
@@ -61,7 +62,6 @@ object PlaybackConverter : KLogging() {
                 StreamPlayback(
                     id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.entryId!!),
                     referenceId = playbackDocument.id,
-                    thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     appleHlsStreamUrl = playbackDocument.hlsStreamUrl!!,
                     mpegDashStreamUrl = playbackDocument.dashStreamUrl!!,
@@ -80,8 +80,8 @@ object PlaybackConverter : KLogging() {
 
                 YoutubePlayback(
                     id = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = playbackDocument.id),
-                    thumbnailUrl = playbackDocument.thumbnailUrl!!.first(),
-                    duration = Duration.ofSeconds(playbackDocument.duration!!.toLong())
+                    duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
+                    thumbnailUrl = playbackDocument.thumbnailUrl!!.first()
                 )
             }
             else -> throw java.lang.IllegalStateException("Could not find video provider ${playbackDocument.type}")

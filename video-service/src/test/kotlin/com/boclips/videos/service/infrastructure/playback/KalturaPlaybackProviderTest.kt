@@ -31,7 +31,6 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(videoPlayback.mpegDashStreamUrl).isEqualTo("https://stream.com/entryId/1/format/mpegdash")
         assertThat(videoPlayback.progressiveDownloadStreamUrl).isEqualTo("https://stream.com/entryId/1/format/url")
         assertThat(videoPlayback.downloadUrl).isEqualTo("https://download.com/entryId/1/format/download")
-        assertThat(videoPlayback.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/1/width/{thumbnailWidth}")
         assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
     }
 

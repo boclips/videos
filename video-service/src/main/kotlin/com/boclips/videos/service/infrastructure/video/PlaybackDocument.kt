@@ -24,7 +24,6 @@ data class PlaybackDocument(
         //TODO() After migrating, check if entryId exists and remove specific urls
         return type == PLAYBACK_TYPE_KALTURA &&
             id.isNotEmpty() &&
-            !thumbnailUrl.isNullOrEmpty() &&
             !hlsStreamUrl.isNullOrEmpty() &&
             !dashStreamUrl.isNullOrEmpty() &&
             !progressiveStreamUrl.isNullOrEmpty() &&
@@ -35,7 +34,7 @@ data class PlaybackDocument(
     fun isCompleteYoutubePlayback(): Boolean {
         return type == PLAYBACK_TYPE_YOUTUBE &&
             id.isNotEmpty() &&
-            !thumbnailUrl.isNullOrEmpty() &&
-            duration != null
+            duration != null &&
+            !thumbnailUrl.isNullOrEmpty()
     }
 }

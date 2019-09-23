@@ -33,7 +33,6 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                     appleHlsStreamUrl = it.value.streams.withFormat(StreamFormat.APPLE_HDS),
                     mpegDashStreamUrl = it.value.streams.withFormat(StreamFormat.MPEG_DASH),
                     progressiveDownloadStreamUrl = it.value.streams.withFormat(StreamFormat.PROGRESSIVE_DOWNLOAD),
-                    thumbnailUrl = it.value.thumbnailUrl,
                     downloadUrl = it.value.downloadUrl
                 )
 

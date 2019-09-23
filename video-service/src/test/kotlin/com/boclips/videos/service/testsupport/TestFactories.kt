@@ -141,7 +141,6 @@ object TestFactories {
         duration: Duration = Duration.ofSeconds(11),
         downloadUrl: String = "kaltura-download",
         referenceId: String = "555",
-        thumbnailUrl: String = "kaltura-thumbnailUrl",
         hlsStreamUrl: String = "hls-stream",
         dashStreamUrl: String = "dash-stream",
         progressiveStreamUrl: String = "progressive-stream"
@@ -152,7 +151,6 @@ object TestFactories {
             appleHlsStreamUrl = hlsStreamUrl,
             mpegDashStreamUrl = dashStreamUrl,
             progressiveDownloadStreamUrl = progressiveStreamUrl,
-            thumbnailUrl = thumbnailUrl,
             downloadUrl = downloadUrl,
             duration = duration
         )
@@ -168,8 +166,8 @@ object TestFactories {
     ): YoutubePlayback {
         return YoutubePlayback(
             id = playbackId,
-            thumbnailUrl = thumbnailUrl,
-            duration = duration
+            duration = duration,
+            thumbnailUrl = thumbnailUrl
         )
     }
 
@@ -356,7 +354,6 @@ object TestFactories {
     fun createKalturaPlaybackDocument(
         id: String = "valid-id",
         entryId: String? = "entry-id",
-        thumbnailUrl: List<String>? = listOf("thumbnail.com"),
         hlsStreamUrl: String? = null,
         dashStreamUrl: String? = null,
         progressiveStreamUrl: String? = null,
@@ -368,7 +365,7 @@ object TestFactories {
             type = "KALTURA",
             id = id,
             entryId = entryId,
-            thumbnailUrl = thumbnailUrl,
+            thumbnailUrl = null,
             downloadUrl = downloadUrl,
             hlsStreamUrl = hlsStreamUrl,
             dashStreamUrl = dashStreamUrl,

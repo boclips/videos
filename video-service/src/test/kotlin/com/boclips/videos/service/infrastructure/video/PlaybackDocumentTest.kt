@@ -22,22 +22,6 @@ class PlaybackDocumentTest {
         }
 
         @Test
-        fun `thumbnail cannot be null or empty`() {
-            val playbackDocumentWithNullThumbnail = TestFactories.createKalturaPlaybackDocument(
-                thumbnailUrl = null,
-                hlsStreamUrl = null
-            )
-
-            val playbackDocumentWithEmptyThumbnail = TestFactories.createKalturaPlaybackDocument(
-                thumbnailUrl = emptyList(),
-                hlsStreamUrl = null
-            )
-
-            assertThat(playbackDocumentWithNullThumbnail.isCompleteKalturaPlayback()).isFalse()
-            assertThat(playbackDocumentWithEmptyThumbnail.isCompleteKalturaPlayback()).isFalse()
-        }
-
-        @Test
         fun `hlsStreamUrl needs to be set`() {
             assertThat(
                 TestFactories.createKalturaPlaybackDocument(

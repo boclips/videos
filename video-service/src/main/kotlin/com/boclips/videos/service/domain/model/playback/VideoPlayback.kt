@@ -4,18 +4,16 @@ import java.time.Duration
 
 sealed class VideoPlayback {
     abstract val id: PlaybackId
-    abstract val thumbnailUrl: String
     abstract val duration: Duration
 
     data class YoutubePlayback(
         override val id: PlaybackId,
-        override val thumbnailUrl: String,
-        override val duration: Duration
+        override val duration: Duration,
+        val thumbnailUrl: String
     ) : VideoPlayback()
 
     data class StreamPlayback(
         override val id: PlaybackId,
-        override val thumbnailUrl: String,
         override val duration: Duration,
         val referenceId: String,
         val appleHlsStreamUrl: String,
@@ -26,7 +24,6 @@ sealed class VideoPlayback {
 
     data class FaultyPlayback(
         override val id: PlaybackId,
-        override val thumbnailUrl: String = "",
         override val duration: Duration = Duration.ZERO
     ) : VideoPlayback()
 }
