@@ -21,15 +21,15 @@ class PlaybackToResourceConverter(
             listOfNotNull(
                 this.eventsLinkBuilder.createPlaybackEventLink(),
                 this.eventsLinkBuilder.createPlayerInteractedWithEventLink(),
-                this.playbacksLinkBuilder.createThumbnailUrl(playback),
-                this.playbacksLinkBuilder.createVideoPreviewUrl(playback)
+                this.playbacksLinkBuilder.thumbnailLink(playback),
+                this.playbacksLinkBuilder.videoPreviewLink(playback)
             )
         )
 
     private fun toResource(playback: VideoPlayback): PlaybackResource =
         when (playback) {
             is VideoPlayback.StreamPlayback -> {
-                val thumbnailUrl = this.playbacksLinkBuilder.createThumbnailUrl(playback)!!.href
+                val thumbnailUrl = this.playbacksLinkBuilder.thumbnailLink(playback)!!.href
 
                 StreamPlaybackResource(
                     streamUrl = playback.appleHlsStreamUrl,

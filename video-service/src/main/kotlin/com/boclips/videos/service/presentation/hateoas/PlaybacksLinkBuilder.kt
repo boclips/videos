@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
 
-    fun createThumbnailUrl(playback: VideoPlayback): Link? {
+    fun thumbnailLink(playback: VideoPlayback): Link? {
         val href = when (playback) {
             is StreamPlayback -> kalturaClient.getThumbnailUrl(playback.id.value)
             is YoutubePlayback -> playback.thumbnailUrl
@@ -21,7 +21,7 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         return href?.let { Link(it, "thumbnail") }
     }
 
-    fun createVideoPreviewUrl(playback: VideoPlayback): Link? {
+    fun videoPreviewLink(playback: VideoPlayback): Link? {
         val href = when (playback) {
             is StreamPlayback -> kalturaClient.getVideoPreviewUrl(playback.id.value)
             is YoutubePlayback -> null

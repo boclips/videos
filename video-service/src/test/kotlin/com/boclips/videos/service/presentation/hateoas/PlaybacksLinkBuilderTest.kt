@@ -27,7 +27,7 @@ internal class PlaybacksLinkBuilderTest {
         fun `it returns the playback thumbnail when kaltura`() {
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
 
-            val link = linkBuilder.createThumbnailUrl(playback)
+            val link = linkBuilder.thumbnailLink(playback)
 
             assertThat(link).isNotNull
             assertThat(link!!.href).contains("thumbnail-entry-id")
@@ -39,7 +39,7 @@ internal class PlaybacksLinkBuilderTest {
         fun `it returns the playback thumbnail when youtube`() {
             val playback = TestFactories.createYoutubePlayback(thumbnailUrl = "expected-thumbnail-url")
 
-            val link = linkBuilder.createThumbnailUrl(playback)
+            val link = linkBuilder.thumbnailLink(playback)
 
             assertThat(link).isNotNull
             assertThat(link!!.href).isEqualTo("expected-thumbnail-url")
@@ -53,7 +53,7 @@ internal class PlaybacksLinkBuilderTest {
                 duration = Duration.ZERO
             )
 
-            val link = linkBuilder.createThumbnailUrl(playback)
+            val link = linkBuilder.thumbnailLink(playback)
 
             assertThat(link).isNull()
         }
@@ -65,7 +65,7 @@ internal class PlaybacksLinkBuilderTest {
         fun `it returns a video preview url for kaltura`() {
             val playback = TestFactories.createKalturaPlayback(entryId = "preview-entry-id")
 
-            val link = linkBuilder.createVideoPreviewUrl(playback)
+            val link = linkBuilder.videoPreviewLink(playback)
 
             assertThat(link).isNotNull
             assertThat(link!!.href).contains("preview-entry-id")
@@ -78,7 +78,7 @@ internal class PlaybacksLinkBuilderTest {
         fun `it returns null for youtube`() {
             val playback = TestFactories.createYoutubePlayback()
 
-            val link = linkBuilder.createVideoPreviewUrl(playback)
+            val link = linkBuilder.videoPreviewLink(playback)
 
             assertThat(link).isNull()
         }
@@ -90,7 +90,7 @@ internal class PlaybacksLinkBuilderTest {
                 duration = Duration.ZERO
             )
 
-            val link = linkBuilder.createVideoPreviewUrl(playback)
+            val link = linkBuilder.videoPreviewLink(playback)
 
             assertThat(link).isNull()
         }

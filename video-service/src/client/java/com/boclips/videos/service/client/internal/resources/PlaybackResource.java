@@ -13,6 +13,7 @@ import java.time.Duration;
 @NoArgsConstructor
 @Data
 public class PlaybackResource {
+    private PlaybackLinks _links;
     private String id;
     private String thumbnailUrl;
     private Duration duration;
