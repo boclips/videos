@@ -109,6 +109,13 @@ public class FakeClient implements VideoServiceClient {
     }
 
     @Override
+    public ContentPartner findContentPartner(ContentPartnerId id) {
+        return contentPartners.stream()
+                .filter(contentPartner -> id.equals(contentPartner.getContentPartnerId()))
+                .findFirst().orElse(null);
+    }
+
+    @Override
     public List<ContentPartner> findOfficialContentPartner(String name) {
         return contentPartners.stream()
                 .filter(contentPartner -> name.equals(contentPartner.getName()) && contentPartner.getOfficial())

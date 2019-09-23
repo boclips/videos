@@ -11,4 +11,5 @@ public class Links {
     private Link myCollections;
     private Link collectionsByOwner;
     private Link contentPartners;
+    private Link contentPartner;
 }

@@ -29,25 +29,3 @@ public class ContentPartnersResource {
 class EmbeddedContentPartnersResource {
     private List<ContentPartnerResource> contentPartners;
 }
-
-@Data
-class ContentPartnerResource {
-    private String id = null;
-    private String name = null;
-    private Boolean official = null;
-    private String currency = null;
-
-    ContentPartner toContentPartner() {
-        return ContentPartner.builder()
-                .name(this.name)
-                .contentPartnerId(
-                        ContentPartnerId
-                                .builder()
-                                .value(this.id)
-                                .build()
-                )
-                .official(this.official)
-                .currency(Currency.getInstance(this.currency))
-                .build();
-    }
-}

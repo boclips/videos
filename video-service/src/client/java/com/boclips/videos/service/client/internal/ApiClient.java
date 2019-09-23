@@ -86,6 +86,17 @@ public class ApiClient implements VideoServiceClient {
     }
 
     @Override
+    public ContentPartner findContentPartner(ContentPartnerId id) {
+        val params = new HashMap<String, Object>();
+        params.put("id", id.getValue());
+        URI uri = getLinks().get_links().getContentPartner().interpolate(params).toUri();
+
+        return Objects.requireNonNull(
+                restTemplate.getForObject(uri, ContentPartnerResource.class)
+        ).toContentPartner();
+    }
+
+    @Override
     public List<ContentPartner> findOfficialContentPartner(String name) {
         val params = new HashMap<String, Object>();
         params.put("name", name);

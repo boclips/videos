@@ -50,6 +50,8 @@ public interface VideoServiceClient {
 
     ContentPartnerId createContentPartner(CreateContentPartnerRequest request);
 
+    ContentPartner findContentPartner(ContentPartnerId id);
+
     List<ContentPartner> findOfficialContentPartner(String name);
 
     List<ContentPartner> findContentPartnerByYoutubeChannelId(String youtubeChannelId);
