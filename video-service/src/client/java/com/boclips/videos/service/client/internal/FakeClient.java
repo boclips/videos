@@ -269,4 +269,12 @@ public class FakeClient implements VideoServiceClient {
         subjects.put(subject.getId(), subject);
         return subject;
     }
+
+    public void createVideo(Video video) {
+        this.videos.put(video.getVideoId(), video);
+    }
+
+    public void createContentPartner(ContentPartner contentPartner) {
+        this.contentPartners.add(contentPartner);
+    }
 }
