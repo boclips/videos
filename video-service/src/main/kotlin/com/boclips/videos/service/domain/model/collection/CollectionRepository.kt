@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
+import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 
 interface CollectionRepository {
     fun find(id: CollectionId): Collection?
@@ -17,7 +18,7 @@ interface CollectionRepository {
     fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
     fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
     fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
-    fun create(owner: UserId, title: String, createdByBoclips: Boolean, public: Boolean): Collection
+    fun create(command: CreateCollectionCommand): Collection
     fun update(command: CollectionUpdateCommand)
     fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection>
     fun updateAll(updateCommand: CollectionsUpdateCommand)

@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
+import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -38,11 +39,32 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         fun `findAll preserves order`() {
             val owner = UserId(value = "user1")
             val id1 =
-                collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+                collectionRepository.create(
+                    CreateCollectionCommand(
+                        owner = owner,
+                        title = "",
+                        createdByBoclips = false,
+                        public = false
+                    )
+                ).id
             val id2 =
-                collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+                collectionRepository.create(
+                    CreateCollectionCommand(
+                        owner = owner,
+                        title = "",
+                        createdByBoclips = false,
+                        public = false
+                    )
+                ).id
             val id3 =
-                collectionRepository.create(owner = owner, title = "", createdByBoclips = false, public = false).id
+                collectionRepository.create(
+                    CreateCollectionCommand(
+                        owner = owner,
+                        title = "",
+                        createdByBoclips = false,
+                        public = false
+                    )
+                ).id
 
             val collections = collectionRepository.findAll(listOf(id2, id3, id1))
 
@@ -62,10 +84,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `find by subject`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Collection title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Collection title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             val subject = TestFactories.createSubject()
@@ -88,10 +112,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val video2 = saveVideo()
 
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Collection vs Playlist",
-                createdByBoclips = false,
-                public = true
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Collection vs Playlist",
+                    createdByBoclips = false,
+                    public = true
+                )
             )
 
             collectionRepository.update(
@@ -121,10 +147,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can create and then rename a collection`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             collectionRepository.update(CollectionUpdateCommand.RenameCollection(collection.id, "New Title"))
@@ -137,10 +165,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can create and mark a collection as public`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
             assertThat(collection.isPublic).isEqualTo(false)
 
@@ -156,22 +186,24 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can create a collection and replace subjects`() {
             val collection = collectionRepository.create(
+                CreateCollectionCommand(
                     owner = UserId(value = "user1"),
                     title = "Alex's Amazing Collection",
                     createdByBoclips = false,
                     public = false
+                )
             )
 
             val originalSubject = TestFactories.createSubject()
 
             collectionRepository.update(
-                    CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(originalSubject))
+                CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(originalSubject))
             )
 
             val newSubject = TestFactories.createSubject()
 
             collectionRepository.update(
-                    CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(newSubject))
+                CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(newSubject))
             )
 
             val updatedCollection = collectionRepository.find(collection.id)
@@ -182,16 +214,18 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can create a collection and attach lesson plan`() {
             val collection = collectionRepository.create(
+                CreateCollectionCommand(
                     owner = UserId(value = "user1"),
                     title = "Alex's Amazing Collection",
                     createdByBoclips = false,
                     public = false
+                )
             )
 
             val attachment = AttachmentFactory.sample()
 
             collectionRepository.update(
-                    CollectionUpdateCommand.AddAttachment(collection.id, attachment)
+                CollectionUpdateCommand.AddAttachment(collection.id, attachment)
             )
 
             val updatedCollection = collectionRepository.find(collection.id)
@@ -204,10 +238,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can create and then change age range`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             collectionRepository.update(CollectionUpdateCommand.ChangeAgeRange(collection.id, 3, 5))
@@ -220,10 +256,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `max age range can be null`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             collectionRepository.update(CollectionUpdateCommand.ChangeAgeRange(collection.id, 3, null))
@@ -236,10 +274,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can create a collection and then change its description`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             collectionRepository.update(
@@ -257,10 +297,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val moment = Instant.now()
             val collectionV1 = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "My Videos",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "My Videos",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             assertThat(collectionV1.updatedAt).isBetween(moment.minusSeconds(10), moment.plusSeconds(10))
@@ -355,10 +397,15 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val videoId = VideoId(value = ObjectId().toHexString())
 
-            collectionRepository.bulkUpdate(listOf(
-                CollectionUpdateCommand.ChangeVisibility(collectionId = collection.id, isPublic = true),
-                CollectionUpdateCommand.RenameCollection(collectionId = collection2.id, title = "New Collection title"),
-                CollectionUpdateCommand.AddVideoToCollection(collectionId = collection3.id, videoId = videoId))
+            collectionRepository.bulkUpdate(
+                listOf(
+                    CollectionUpdateCommand.ChangeVisibility(collectionId = collection.id, isPublic = true),
+                    CollectionUpdateCommand.RenameCollection(
+                        collectionId = collection2.id,
+                        title = "New Collection title"
+                    ),
+                    CollectionUpdateCommand.AddVideoToCollection(collectionId = collection3.id, videoId = videoId)
+                )
             )
 
             assertThat(collectionRepository.find(collection.id)!!.isPublic).isTrue()
@@ -375,10 +422,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can delete a collection`() {
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             collectionRepository.delete(collection.id)
@@ -395,10 +444,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         fun `can retrieve collection of user`() {
             val videoInCollection = saveVideo()
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
             collectionRepository.update(
                 CollectionUpdateCommand.AddVideoToCollection(collection.id, videoInCollection)
@@ -416,24 +467,30 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can retrieve bookmarked collections`() {
             val publicBookmarkedCollection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             val publicCollection2 = collectionRepository.create(
-                owner = UserId(value = "user2"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user2"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             val privateCollection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Starting Title",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             collectionRepository.update(
@@ -444,7 +501,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 UserId("bookmarker")
             )
             collectionRepository.update(
-                CollectionUpdateCommand.ChangeVisibility(publicCollection2.id,true)
+                CollectionUpdateCommand.ChangeVisibility(publicCollection2.id, true)
             )
             collectionRepository.bookmark(
                 privateCollection.id,
@@ -489,10 +546,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         fun `can bookmark and unbookmark collections`() {
             setSecurityContext("user2")
             val collection = collectionRepository.create(
-                owner = UserId(value = "user1"),
-                title = "Collection vs Playlist",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Collection vs Playlist",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
 
             collectionRepository.bookmark(
@@ -521,22 +580,28 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `stream all collections`() {
         val c1 = collectionRepository.create(
-            owner = UserId(value = "user1"),
-            title = "Starting Title",
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false,
+                public = false
+            )
         )
         collectionRepository.create(
-            owner = UserId(value = "user1"),
-            title = "Starting Title",
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false,
+                public = false
+            )
         )
         val c3 = collectionRepository.create(
-            owner = UserId(value = "user1"),
-            title = "Starting Title",
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = UserId(value = "user1"),
+                title = "Starting Title",
+                createdByBoclips = false,
+                public = false
+            )
         )
         collectionRepository.update(CollectionUpdateCommand.ChangeVisibility(c1.id, true))
         collectionRepository.update(CollectionUpdateCommand.ChangeVisibility(c3.id, true))
@@ -551,22 +616,28 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     fun `returns collections which correspond to provided SelectedContent contract`() {
         val ownerId = UserId(value = "test-user")
         val firstCollection = collectionRepository.create(
-            owner = ownerId,
-            title = "Starting Title",
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = ownerId,
+                title = "Starting Title",
+                createdByBoclips = false,
+                public = false
+            )
         )
         val secondCollection = collectionRepository.create(
-            owner = ownerId,
-            title = "Starting Title",
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = ownerId,
+                title = "Starting Title",
+                createdByBoclips = false,
+                public = false
+            )
         )
         collectionRepository.create(
-            owner = ownerId,
-            title = "Starting Title",
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = ownerId,
+                title = "Starting Title",
+                createdByBoclips = false,
+                public = false
+            )
         )
 
         val contract = SelectedContentContract().apply {
@@ -589,10 +660,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         public: Boolean = false
     ): Collection {
         return collectionRepository.create(
-            owner = owner,
-            title = title,
-            createdByBoclips = createdByBoclips,
-            public = public
+            CreateCollectionCommand(
+                owner = owner,
+                title = title,
+                createdByBoclips = createdByBoclips,
+                public = public
+            )
         )
     }
 }

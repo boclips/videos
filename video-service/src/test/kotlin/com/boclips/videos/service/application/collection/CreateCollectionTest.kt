@@ -73,13 +73,15 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest)
 
-        val collections = collectionService.search(CollectionSearchQuery(
-            text = "title",
-            subjectIds = emptyList(),
-            visibility = listOf(CollectionVisibility.PUBLIC),
-            pageSize = 1,
-            pageIndex = 0
-        )).elements
+        val collections = collectionService.search(
+            CollectionSearchQuery(
+                text = "title",
+                subjectIds = emptyList(),
+                visibility = listOf(CollectionVisibility.PUBLIC),
+                pageSize = 1,
+                pageIndex = 0
+            )
+        ).elements
 
         assertThat(collections).hasSize(1)
         assertThat(collections.first().id).isEqualTo(collection.id)
@@ -94,13 +96,15 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest)
 
-        val collections = collectionService.search(CollectionSearchQuery(
-            text = "title",
-            subjectIds = emptyList(),
-            visibility = listOf(CollectionVisibility.PRIVATE),
-            pageSize = 1,
-            pageIndex = 0
-        )).elements
+        val collections = collectionService.search(
+            CollectionSearchQuery(
+                text = "title",
+                subjectIds = emptyList(),
+                visibility = listOf(CollectionVisibility.PRIVATE),
+                pageSize = 1,
+                pageIndex = 0
+            )
+        ).elements
 
         assertThat(collections).hasSize(1)
         assertThat(collections.first().id).isEqualTo(collection.id)
@@ -114,13 +118,15 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         createCollection(createRequest)
 
-        val collections = collectionService.search(CollectionSearchQuery(
-            text = "title",
-            subjectIds = emptyList(),
-            visibility = listOf(CollectionVisibility.PRIVATE),
-            pageSize = 1,
-            pageIndex = 0
-        )).elements
+        val collections = collectionService.search(
+            CollectionSearchQuery(
+                text = "title",
+                subjectIds = emptyList(),
+                visibility = listOf(CollectionVisibility.PRIVATE),
+                pageSize = 1,
+                pageIndex = 0
+            )
+        ).elements
 
         assertThat(collections.first().isPublic).isFalse()
     }
@@ -142,6 +148,17 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         )
 
         assertThrows<NonNullableFieldCreateRequestException> { createCollection(createRequest) }
+    }
+
+    @Test
+    fun `allows to set a description`() {
+        val description = "test description"
+        val createRequest =
+            TestFactories.createCollectionRequest(title = "test title", description = description)
+
+        val collection = createCollection(createRequest)
+
+        assertThat(collection.description).isEqualTo(description)
     }
 
     @BeforeEach

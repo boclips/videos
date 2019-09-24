@@ -4,6 +4,7 @@ import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.jayway.jsonpath.JsonPath
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -75,10 +76,12 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun createCollectionWithTitle(title: String): String {
         val email = "teacher@gmail.com"
         return collectionRepository.create(
-            owner = UserId(email),
-            title = title,
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = UserId(email),
+                title = title,
+                createdByBoclips = false,
+                public = false
+            )
         ).id.value
     }
 

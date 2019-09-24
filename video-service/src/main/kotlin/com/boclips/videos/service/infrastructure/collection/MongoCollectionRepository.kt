@@ -14,6 +14,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
+import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.mongodb.MongoClient
@@ -50,22 +51,18 @@ class MongoCollectionRepository(
 
     private val publicCollectionCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
 
-    override fun create(
-        owner: UserId,
-        title: String,
-        createdByBoclips: Boolean,
-        public: Boolean
-    ): Collection {
+    override fun create(command: CreateCollectionCommand): Collection {
         val objectId = ObjectId()
         val collectionId = CollectionId(value = objectId.toHexString())
         val document = CollectionDocument(
             id = objectId,
-            owner = owner.value,
-            title = title,
+            owner = command.owner.value,
+            title = command.title,
+            description = command.description,
             videos = emptyList(),
             updatedAt = Instant.now(),
-            visibility = if (public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
-            createdByBoclips = createdByBoclips,
+            visibility = if (command.public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
+            createdByBoclips = command.createdByBoclips,
             subjects = emptySet()
         )
 

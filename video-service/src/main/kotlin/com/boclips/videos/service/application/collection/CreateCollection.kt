@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 
 class CreateCollection(
@@ -19,10 +20,13 @@ class CreateCollection(
         val title = getOrThrow(createCollectionRequest?.title, "title")
         val collection =
             collectionRepository.create(
-                owner = UserId(user.id),
-                title = title,
-                createdByBoclips = user.boclipsEmployee,
-                public = createCollectionRequest?.public ?: false
+                CreateCollectionCommand(
+                    owner = UserId(user.id),
+                    title = title,
+                    description = createCollectionRequest?.description,
+                    createdByBoclips = user.boclipsEmployee,
+                    public = createCollectionRequest?.public ?: false
+                )
             )
 
         createCollectionRequest?.videos?.forEach { video ->

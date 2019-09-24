@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.collection.CollectionVisibilityDocument
@@ -42,7 +43,14 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     fun `create a collection`() {
         val collectionUrl = mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
-                .content("""{"title": "a collection"}""")
+                .content(
+                    """
+                    {
+                        "title": "a collection",
+                        "description": "a description"
+                    }
+                    """.trimIndent()
+                )
                 .asTeacher()
         )
             .andExpect(status().isCreated)
@@ -56,6 +64,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
             .andExpect(jsonPath("$.title", equalTo("a collection")))
+            .andExpect(jsonPath("$.description", equalTo("a description")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
             .andExpect(jsonPath("$.ageRange").doesNotExist())
             .andExpect(jsonPath("$.subjects").isEmpty)
@@ -178,10 +187,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `collection includes an updatedAt timestamp`() {
         val collectionId = collectionRepository.create(
-            owner = UserId("teacher@gmail.com"),
-            title = "Collection",
-            createdByBoclips = false,
-            public = false
+            CreateCollectionCommand(
+                owner = UserId("teacher@gmail.com"),
+                title = "Collection",
+                createdByBoclips = false,
+                public = false
+            )
         ).id.value
 
         val moment = ZonedDateTime.now()
@@ -294,10 +305,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val videoId = saveVideo(title = "a video title").value
         val collectionId =
             collectionRepository.create(
-                owner = UserId(email),
-                title = "My Special Collection",
-                createdByBoclips = false,
-                public = false
+                CreateCollectionCommand(
+                    owner = UserId(email),
+                    title = "My Special Collection",
+                    createdByBoclips = false,
+                    public = false
+                )
             )
                 .id.value
 
