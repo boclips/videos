@@ -34,15 +34,15 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
     private fun searchElasticSearch(query: CollectionQuery, startIndex: Int, windowSize: Int): SearchHits {
         val request = SearchRequest(
             arrayOf(CollectionsIndex.getIndexAlias()),
-            buildFuzzyRequest(query)
+            buildSearchRequest(query)
                 .from(startIndex)
                 .size(windowSize)
         )
         return client.search(request, RequestOptions.DEFAULT).hits
     }
 
-    private fun buildFuzzyRequest(query: CollectionQuery): SearchSourceBuilder {
-        val esQuery = SearchSourceBuilder().query(fuzzyQuery(query))
+    private fun buildSearchRequest(query: CollectionQuery): SearchSourceBuilder {
+        val esQuery = SearchSourceBuilder().query(mainQuery(query))
 
         if (query.sort != null) {
             esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
@@ -51,7 +51,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
         return esQuery
     }
 
-    private fun fuzzyQuery(query: CollectionQuery): QueryBuilder {
+    private fun mainQuery(query: CollectionQuery): QueryBuilder {
         return QueryBuilders
             .boolQuery()
             .apply {
@@ -94,6 +94,11 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             .apply {
                 if (query.bookmarkedBy != null) {
                     must(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, query.bookmarkedBy))
+                }
+            }
+            .apply {
+                if (query.permittedIds != null) {
+                    must(QueryBuilders.termsQuery(CollectionDocument.ID, query.permittedIds))
                 }
             }
     }

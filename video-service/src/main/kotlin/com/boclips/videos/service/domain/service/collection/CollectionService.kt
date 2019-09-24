@@ -13,14 +13,14 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.service.UserContractService
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
 class CollectionService(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService,
-    private val userContractService: UserContractService,
+    private val accessRuleService: AccessRuleService,
     private val isContractedToView: IsContractedToView
 ) {
     companion object : KLogging()
@@ -76,7 +76,7 @@ class CollectionService(
             isForReading && collection.isPublic -> collection
             collection.owner == userId -> collection
             currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
-            isContractedToView(collection, userContractService.getContracts(userId.value)) -> collection
+            isContractedToView(collection, accessRuleService.getRules(userId.value)) -> collection
             else -> throw CollectionAccessNotAuthorizedException(
                 userId,
                 collectionId

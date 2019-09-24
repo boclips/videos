@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.application.getCurrentUserId
+import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.CollectionFilterFactory
@@ -31,8 +32,8 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
 
         userServiceClient.addContract(SelectedContentContract(listOf(collectionId.value)))
 
-        val userContracts = userContractService.getContracts(getCurrentUserId().value)
-        assertThat(userContracts).isNotEmpty
+        val accessRule = accessRuleService.getRules(getCurrentUserId().value)
+        assertThat((accessRule.collectionAccess as CollectionAccessRule.RestrictedTo).collectionIds).isNotEmpty
 
         val collectionPage = getCollections(
             CollectionFilterFactory.sample(visibility = CollectionFilter.Visibility.PUBLIC, owner = null),

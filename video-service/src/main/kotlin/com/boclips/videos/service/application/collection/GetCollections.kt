@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.service.UserContractService
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
@@ -14,8 +14,7 @@ import com.boclips.videos.service.presentation.collections.CollectionResourceFac
 class GetCollections(
     private val collectionService: CollectionService,
     private val collectionResourceFactory: CollectionResourceFactory,
-    private val getContractedCollections: GetContractedCollections,
-    private val userContractService: UserContractService,
+    private val accessRuleService: AccessRuleService,
     private val collectionQueryAssembler: CollectionQueryAssembler
 ) {
     operator fun invoke(
@@ -32,15 +31,13 @@ class GetCollections(
     }
 
     private fun getCollections(collectionFilter: CollectionFilter): Page<Collection> {
-        val userContracts = userContractService.getContracts(getCurrentUserId().value)
-
-        return when {
-            userContracts.isNotEmpty() -> getContractedCollections(collectionFilter, userContracts)
-            else -> {
-                val query = collectionQueryAssembler.assemble(collectionFilter, UserExtractor.getCurrentUser())
-                collectionService.search(query)
-            }
-        }
+        val accessRule = accessRuleService.getRules(getCurrentUserId().value)
+        val query = collectionQueryAssembler.assemble(
+            collectionFilter,
+            UserExtractor.getCurrentUser(),
+            accessRule.collectionAccess
+        )
+        return collectionService.search(query)
     }
 
     private fun assembleResourcesPage(

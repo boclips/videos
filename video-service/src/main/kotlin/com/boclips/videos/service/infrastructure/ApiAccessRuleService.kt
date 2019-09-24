@@ -2,7 +2,10 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.model.contract.Contract
-import com.boclips.videos.service.domain.service.UserContractService
+import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.service.AccessRule
+import com.boclips.videos.service.domain.service.AccessRuleService
 import mu.KLogging
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Recover
@@ -10,9 +13,9 @@ import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 
 @Service
-class ApiUserContractService(
+class ApiAccessRuleService(
     private val userServiceClient: UserServiceClient
-) : UserContractService {
+) : AccessRuleService {
     companion object : KLogging()
 
     @Retryable(
@@ -21,12 +24,15 @@ class ApiUserContractService(
             multiplier = 1.5
         )
     )
-    override fun getContracts(userId: String): List<Contract> {
-        return userServiceClient
-            .getContracts(userId)
-            .also {
-                logger.info { "Found ${it.size} contracts for user $userId" }
+    override fun getRules(userId: String): AccessRule {
+        val collectionIds: List<CollectionId> = userServiceClient.getContracts(userId)
+            .flatMap { contract ->
+                when (contract) {
+                    is SelectedContentContract -> contract.collectionIds.map { CollectionId(it) }
+                    else -> emptyList()
+                }
             }
+        return AccessRule.build(collectionIds)
     }
 
     @Recover

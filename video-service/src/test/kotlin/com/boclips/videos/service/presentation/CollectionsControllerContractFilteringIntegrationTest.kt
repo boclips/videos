@@ -88,7 +88,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
 
     @Test
     fun `returns empty result set when user has an empty SelectedContent contract`() {
-        createSelectedContentContract()
+        createSelectedContentContract("1")
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)

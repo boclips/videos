@@ -39,7 +39,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 subjectIds = emptyList(),
                 visibility = listOf(CollectionVisibility.PUBLIC),
                 pageSize = 1,
-                pageIndex = 0
+                pageIndex = 0,
+                permittedCollections = null
             )
         ).elements
 
@@ -62,7 +63,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 subjectIds = emptyList(),
                 visibility = listOf(CollectionVisibility.PRIVATE),
                 pageSize = 1,
-                pageIndex = 0
+                pageIndex = 0,
+                permittedCollections = null
             )
         ).elements
 
@@ -84,7 +86,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 subjectIds = emptyList(),
                 visibility = listOf(CollectionVisibility.PRIVATE),
                 pageSize = 1,
-                pageIndex = 0
+                pageIndex = 0,
+                permittedCollections = null
             )
         ).elements
 

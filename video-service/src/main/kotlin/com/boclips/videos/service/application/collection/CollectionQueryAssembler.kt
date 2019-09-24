@@ -5,9 +5,13 @@ import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
+import com.boclips.videos.service.domain.service.CollectionAccessRule
 
 class CollectionQueryAssembler {
-    fun assemble(filter: CollectionFilter, user: User?): CollectionSearchQuery {
+    fun assemble(
+        filter: CollectionFilter, user: User?,
+        collectionAccess: CollectionAccessRule = CollectionAccessRule.All
+    ): CollectionSearchQuery {
         val query = CollectionSearchQuery(
             text = filter.query,
             subjectIds = filter.subjects,
@@ -20,26 +24,33 @@ class CollectionQueryAssembler {
                 CollectionFilter.Visibility.ALL -> listOf(CollectionVisibility.PRIVATE, CollectionVisibility.PUBLIC)
             },
             pageSize = filter.pageSize,
-            pageIndex = filter.pageNumber
+            pageIndex = filter.pageNumber,
+            permittedCollections = when (collectionAccess) {
+                is CollectionAccessRule.RestrictedTo -> collectionAccess.collectionIds.toList()
+                is CollectionAccessRule.All -> null
+            }
         )
 
         val involvesPrivateCollections =
             filter.visibility == CollectionFilter.Visibility.PRIVATE ||
                 filter.visibility == CollectionFilter.Visibility.ALL
 
-        user?.let { existingUser ->
+        user?.let { authenticatedUser ->
             return when {
-                existingUser.hasRole(UserRoles.VIEW_ANY_COLLECTION) -> query
+                authenticatedUser.hasRole(UserRoles.VIEW_ANY_COLLECTION) -> query
                 involvesPrivateCollections -> {
-                    val owner = filter.owner
-                        ?: throw OperationForbiddenException("owner must be specified for private collections access")
-                    val authenticatedUserId = existingUser.id
-
-                    if (owner == authenticatedUserId) {
+                    if (query.permittedCollections != null) {
                         return query
                     }
 
-                    throw OperationForbiddenException("$authenticatedUserId is not authorized to access $owner")
+                    val owner = filter.owner
+                        ?: throw OperationForbiddenException("owner must be specified for private collections access")
+
+                    if (owner == authenticatedUser.id) {
+                        return query
+                    }
+
+                    throw OperationForbiddenException("${authenticatedUser.id} is not authorized to access $owner")
                 }
                 else -> query
             }

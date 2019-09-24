@@ -13,7 +13,6 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -34,7 +33,7 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.UserContractService
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -128,7 +127,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var subjectClassificationService: SubjectClassificationService
 
     @Autowired
-    lateinit var userContractService: UserContractService
+    lateinit var accessRuleService: AccessRuleService
 
     @Autowired
     lateinit var userServiceClient: FakeUserServiceClient

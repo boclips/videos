@@ -1,8 +1,7 @@
 package com.boclips.videos.service.config.application
 
 import com.boclips.users.client.UserServiceClient
-import com.boclips.videos.service.domain.service.UserContractService
-import com.boclips.videos.service.infrastructure.ApiUserContractService
+import com.boclips.videos.service.infrastructure.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
@@ -19,8 +18,8 @@ import java.util.concurrent.Executors
 @Configuration
 class InfrastructureContext(val mongoProperties: MongoProperties) {
     @Bean
-    fun userContractService(userServiceClient: UserServiceClient): UserContractService {
-        return ApiUserContractService(userServiceClient)
+    fun userContractService(userServiceClient: UserServiceClient): ApiAccessRuleService {
+        return ApiAccessRuleService(userServiceClient)
     }
 
     @Bean

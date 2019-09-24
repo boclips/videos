@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.collection.exceptions.CollectionAc
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.IsContractedToView
-import com.boclips.videos.service.domain.service.UserContractService
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
@@ -20,13 +20,13 @@ class CollectionServiceTest {
     lateinit var collectionService: CollectionService
     lateinit var collectionRepository: CollectionRepository
     lateinit var collectionSearchService: CollectionSearchService
-    lateinit var userContractService: UserContractService
+    lateinit var accessRuleService: AccessRuleService
     lateinit var isContractedToView: IsContractedToView
 
     @BeforeEach
     fun setup() {
         collectionSearchService = mock()
-        userContractService = mock()
+        accessRuleService = mock()
         isContractedToView = mock()
     }
 
@@ -37,7 +37,7 @@ class CollectionServiceTest {
         }
 
         collectionService =
-            CollectionService(collectionRepository, collectionSearchService, userContractService, isContractedToView)
+            CollectionService(collectionRepository, collectionSearchService, accessRuleService, isContractedToView)
 
         assertThrows<CollectionNotFoundException> { collectionService.getReadableCollectionOrThrow(collectionId = "123") }
     }
@@ -53,7 +53,7 @@ class CollectionServiceTest {
         }
 
         collectionService =
-            CollectionService(collectionRepository, collectionSearchService, userContractService, isContractedToView)
+            CollectionService(collectionRepository, collectionSearchService, accessRuleService, isContractedToView)
 
         assertThrows<CollectionAccessNotAuthorizedException> { collectionService.getOwnedCollectionOrThrow(collectionId = privateCollection.id.value) }
     }
@@ -69,7 +69,7 @@ class CollectionServiceTest {
         }
 
         collectionService =
-            CollectionService(collectionRepository, collectionSearchService, userContractService, isContractedToView)
+            CollectionService(collectionRepository, collectionSearchService, accessRuleService, isContractedToView)
 
         assertThrows<CollectionAccessNotAuthorizedException> { collectionService.getOwnedCollectionOrThrow(collectionId = publicCollection.id.value) }
     }
@@ -85,7 +85,7 @@ class CollectionServiceTest {
         }
 
         collectionService =
-            CollectionService(collectionRepository, collectionSearchService, userContractService, isContractedToView)
+            CollectionService(collectionRepository, collectionSearchService, accessRuleService, isContractedToView)
 
         val collection = collectionService.getReadableCollectionOrThrow(publicCollection.id.value)
 

@@ -60,7 +60,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
-import com.boclips.videos.service.domain.service.UserContractService
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
@@ -97,7 +97,7 @@ class ApplicationContext(
     val disciplineRepository: DisciplineRepository,
     val contentPartnerService: ContentPartnerService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
-    val userContractService: UserContractService
+    val accessRuleService: AccessRuleService
 ) {
     @Bean
     fun searchVideo(
@@ -211,8 +211,7 @@ class ApplicationContext(
                 AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
             ),
-            getContractedCollections,
-            userContractService,
+            accessRuleService,
             collectionQueryAssembler
         )
     }

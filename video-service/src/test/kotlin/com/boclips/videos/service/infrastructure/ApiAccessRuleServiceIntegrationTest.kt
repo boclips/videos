@@ -2,6 +2,8 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -11,13 +13,15 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 
-class ApiUserContractServiceIntegrationTest : AbstractSpringIntegrationTest() {
+class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `passes through client's response if all is well`() {
         whenever(userServiceClient.getContracts(anyString()))
             .thenReturn(listOf(testContract))
 
-        assertThat(userContractService.getContracts("test-user")).containsOnly(testContract)
+        assertThat(accessRuleService.getRules("test-user")).isEqualTo(
+            CollectionAccessRule.RestrictedTo(setOf(CollectionId("test-collection-id")))
+        )
     }
 
     @Test
@@ -27,7 +31,9 @@ class ApiUserContractServiceIntegrationTest : AbstractSpringIntegrationTest() {
             .thenThrow(RuntimeException("Something bad happened"))
             .thenReturn(listOf(testContract))
 
-        assertThat(userContractService.getContracts("test-user")).containsOnly(testContract)
+        assertThat(accessRuleService.getRules("test-user")).isEqualTo(
+            CollectionAccessRule.RestrictedTo(setOf(CollectionId("test-collection-id")))
+        )
     }
 
     val testContract = SelectedContentContract().apply {
@@ -42,7 +48,10 @@ class ApiUserContractServiceIntegrationTest : AbstractSpringIntegrationTest() {
             .thenThrow(RuntimeException("Something bad happened"))
             .thenThrow(RuntimeException("Something bad happened again!"))
 
-        assertThat(userContractService.getContracts("test-user")).isEmpty()
+        // TODO: when service is down, we give people access to everything
+        assertThat(accessRuleService.getRules("test-user")).isEqualTo(
+            CollectionAccessRule.All
+        )
     }
 
     @MockBean(name = "userServiceClient")

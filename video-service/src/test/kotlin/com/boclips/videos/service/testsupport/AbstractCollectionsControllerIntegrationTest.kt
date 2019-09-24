@@ -1,6 +1,5 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
@@ -30,7 +29,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     @BeforeEach
     fun cleanupContracts() {
-        (userServiceClient as FakeUserServiceClient).clearContracts()
+        userServiceClient.clearContracts()
     }
 
     fun createCollection(title: String = "a collection name", public: Boolean = false) =
@@ -86,7 +85,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     }
 
     fun createSelectedContentContract(vararg contractedCollectionIds: String) {
-        (userServiceClient as FakeUserServiceClient).addContract(SelectedContentContract().apply {
+        userServiceClient.addContract(SelectedContentContract().apply {
             name = UUID.randomUUID().toString()
             collectionIds = contractedCollectionIds.toList()
         })

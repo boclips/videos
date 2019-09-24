@@ -42,6 +42,12 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                 else
                     true
             }
+            .filter { entry ->
+                if (query.permittedIds != null)
+                    query.permittedIds.contains(entry.value.id)
+                else
+                    true
+            }
             .map { collection -> collection.key }
     }
 

@@ -111,7 +111,8 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
                     subjectIds = emptyList(),
                     visibility = listOf(CollectionVisibility.PUBLIC),
                     pageSize = 1,
-                    pageIndex = 0
+                    pageIndex = 0,
+                    permittedCollections = null
                 )
             ).elements.first().id
         ).isEqualTo(collectionId)
@@ -130,7 +131,8 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
                     subjectIds = emptyList(),
                     visibility = listOf(CollectionVisibility.PRIVATE),
                     pageSize = 1,
-                    pageIndex = 0
+                    pageIndex = 0,
+                    permittedCollections = null
                 )
             ).elements.first().id
         ).isEqualTo(collectionId)

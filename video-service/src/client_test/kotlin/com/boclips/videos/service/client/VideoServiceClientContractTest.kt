@@ -2,7 +2,6 @@ package com.boclips.videos.service.client
 
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
@@ -486,7 +485,7 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
 
     @BeforeEach
     fun cleanupContracts() {
-        (userServiceClient as FakeUserServiceClient).clearContracts()
+        userServiceClient.clearContracts()
     }
 
     @Test
@@ -506,7 +505,7 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
             )
         )
 
-        (userServiceClient as FakeUserServiceClient).addContract(SelectedContentContract().apply {
+        userServiceClient.addContract(SelectedContentContract().apply {
             collectionIds = listOf(firstCollection.id.value, secondCollection.id.value)
         })
 

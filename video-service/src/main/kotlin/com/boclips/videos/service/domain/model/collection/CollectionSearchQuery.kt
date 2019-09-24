@@ -13,7 +13,8 @@ class CollectionSearchQuery(
     val owner: String? = null,
     val bookmarkedBy: String? = null,
     val pageSize: Int,
-    val pageIndex: Int
+    val pageIndex: Int,
+    val permittedCollections: List<CollectionId>?
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
@@ -21,6 +22,7 @@ class CollectionSearchQuery(
         visibility = visibility,
         owner = owner,
         bookmarkedBy = this.bookmarkedBy,
+        permittedIds = this.permittedCollections?.map { it.value },
         sort = when {
             this.subjectIds.isNotEmpty() && this.text.isNullOrBlank() -> Sort(
                 CollectionMetadata::hasAttachments,

@@ -9,5 +9,6 @@ class CollectionQuery(
     sort: Sort<CollectionMetadata>? = null,
     val subjectIds: List<String> = emptyList(),
     val owner: String? = null,
+    val permittedIds: List<String>? = null,
     val bookmarkedBy: String? = null
 ) : SearchQuery<CollectionMetadata>(phrase, sort)

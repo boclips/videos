@@ -16,7 +16,8 @@ class CollectionSearchQueryTest {
             subjectIds = listOf("subject"),
             visibility = listOf(CollectionVisibility.PUBLIC),
             pageIndex = 0,
-            pageSize = 0
+            pageSize = 0,
+            permittedCollections = null
         )
 
         assertThat(query.toSearchQuery().sort).isNull()
@@ -29,7 +30,8 @@ class CollectionSearchQueryTest {
             subjectIds = listOf("subject"),
             visibility = listOf(CollectionVisibility.PUBLIC),
             pageIndex = 0,
-            pageSize = 0
+            pageSize = 0,
+            permittedCollections = null
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(Sort(CollectionMetadata::hasAttachments, SortOrder.DESC))
@@ -42,7 +44,8 @@ class CollectionSearchQueryTest {
             subjectIds = listOf("subject"),
             visibility = listOf(CollectionVisibility.PUBLIC),
             pageIndex = 0,
-            pageSize = 0
+            pageSize = 0,
+            permittedCollections = null
         )
 
         assertThat(query.toSearchQuery().visibility).containsExactlyInAnyOrder(CollectionVisibility.PUBLIC)
@@ -55,9 +58,24 @@ class CollectionSearchQueryTest {
             subjectIds = listOf("subject"),
             visibility = listOf(),
             pageIndex = 0,
-            pageSize = 0
+            pageSize = 0,
+            permittedCollections = null
         )
 
         assertThat(query.toSearchQuery().visibility).isEmpty()
+    }
+
+    @Test
+    fun `sets permitted ids`() {
+        val query = CollectionSearchQuery(
+            text = "sometin",
+            subjectIds = listOf("subject"),
+            visibility = listOf(),
+            pageIndex = 0,
+            pageSize = 0,
+            permittedCollections = listOf(CollectionId("some-collection-id"))
+        )
+
+        assertThat(query.toSearchQuery().permittedIds).containsExactly("some-collection-id")
     }
 }

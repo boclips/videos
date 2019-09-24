@@ -46,7 +46,8 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
                     text = null,
                     visibility = listOf(CollectionVisibility.PRIVATE),
                     pageIndex = 0,
-                    pageSize = 10
+                    pageSize = 10,
+                    permittedCollections = null
                 )
             )
         ).isEqualTo(0)
