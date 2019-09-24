@@ -461,10 +461,10 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
     @BeforeEach
     fun setUp() {
         fakeKalturaClient.createMediaEntry(
-                "entry-123",
-                "ref-entry-123",
-                Duration.ofMinutes(1),
-                MediaEntryStatus.READY
+            "entry-123",
+            "ref-entry-123",
+            Duration.ofMinutes(1),
+            MediaEntryStatus.READY
         )
         fakeYoutubePlaybackProvider.addVideo("ref-id-123", "http://my-little-pony.com", Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("ref-id-123", "http://my-little-pony.com", "channelId")

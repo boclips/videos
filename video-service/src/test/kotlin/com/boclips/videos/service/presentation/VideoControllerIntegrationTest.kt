@@ -29,6 +29,7 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -345,103 +346,159 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(englishVideoId)))
     }
 
-    @Test
-    fun `returns 200 for valid video as boclips employee`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
-            .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
-            .andExpect(jsonPath("$.description", equalTo("test description 3")))
-            .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$.createdBy", equalTo("cp")))
-            .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
-            .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-entry-id-123")))
-            .andExpect(jsonPath("$.playback.id").exists())
-            .andExpect(jsonPath("$.playback.referenceId").exists())
-            .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
-            .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")))
-            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")))
-            .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/vid_slices/{thumbnailCount}")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
-            .andExpect(jsonPath("$.type.id", equalTo(3)))
-            .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
-            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
-            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
-            .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
-    }
+    @Nested
+    inner class VideoResourceProjections {
+        @Test
+        fun `returns 200 for valid video as boclips employee`() {
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
+                .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
+                .andExpect(jsonPath("$.description", equalTo("test description 3")))
+                .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
+                .andExpect(jsonPath("$.createdBy", equalTo("cp")))
+                .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
+                .andExpect(jsonPath("$.contentPartnerId").exists())
+                .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-entry-id-123")))
+                .andExpect(jsonPath("$.playback.id").exists())
+                .andExpect(jsonPath("$.playback.referenceId").exists())
+                .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback.streamUrl",
+                        equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.playback.thumbnailUrl",
+                        equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.videoPreview.href",
+                        containsString("/vid_slices/{thumbnailCount}")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
+                .andExpect(jsonPath("$.type.id", equalTo(3)))
+                .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
+                .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+                .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
+                .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+        }
 
-    @Test
-    fun `returns 200 for valid video as anonymous user`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
-            .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
-            .andExpect(jsonPath("$.description", equalTo("test description 3")))
-            .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$.createdBy", equalTo("cp")))
-            .andExpect(jsonPath("$.playback.id").exists())
-            .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
-            .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
-            .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")))
-            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")))
-            .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/vid_slices/{thumbnailCount}")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
-            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
-            .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
-            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
-            .andExpect(jsonPath("$._links.${VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION}.href", containsString("/videos/$kalturaVideoId")))
-            .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
-            .andExpect(jsonPath("$.type").doesNotExist())
-            .andExpect(jsonPath("$.status").doesNotExist())
-    }
+        @Test
+        fun `returns 200 for valid video as anonymous user`() {
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
+                .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
+                .andExpect(jsonPath("$.description", equalTo("test description 3")))
+                .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
+                .andExpect(jsonPath("$.createdBy", equalTo("cp")))
+                .andExpect(jsonPath("$.playback.id").exists())
+                .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
+                .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback.streamUrl",
+                        equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.playback.thumbnailUrl",
+                        equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.videoPreview.href",
+                        containsString("/vid_slices/{thumbnailCount}")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
+                .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
+                .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+                .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+                .andExpect(
+                    jsonPath(
+                        "$._links.${VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION}.href",
+                        containsString("/videos/$kalturaVideoId")
+                    )
+                )
+                .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
+                .andExpect(jsonPath("$.contentPartnerId").doesNotExist())
+                .andExpect(jsonPath("$.type").doesNotExist())
+                .andExpect(jsonPath("$.status").doesNotExist())
+        }
 
-    @Test
-    fun `returns 200 for valid video as API user`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asApiUser())
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
-            .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
-            .andExpect(jsonPath("$.description", equalTo("test description 3")))
-            .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$.createdBy", equalTo("cp")))
-            .andExpect(jsonPath("$.playback.id").exists())
-            .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
-            .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
-            .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
-            .andExpect(jsonPath("$.playback.streamUrl", equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")))
-            .andExpect(jsonPath("$.playback.thumbnailUrl", equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")))
-            .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
-            .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/vid_slices/{thumbnailCount}")))
-            .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
-            .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
-            .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
-            .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
+        @Test
+        fun `returns 200 for valid video as API user`() {
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId").asApiUser())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
+                .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
+                .andExpect(jsonPath("$.description", equalTo("test description 3")))
+                .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
+                .andExpect(jsonPath("$.createdBy", equalTo("cp")))
+                .andExpect(jsonPath("$.playback.id").exists())
+                .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
+                .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback.streamUrl",
+                        equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.playback.thumbnailUrl",
+                        equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.videoPreview.href",
+                        containsString("/vid_slices/{thumbnailCount}")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
+                .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
+                .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+                .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
 
-            .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
-            .andExpect(jsonPath("$.type").doesNotExist())
-            .andExpect(jsonPath("$.status").doesNotExist())
+                .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
+                .andExpect(jsonPath("$.contentPartnerId").doesNotExist())
+                .andExpect(jsonPath("$.type").doesNotExist())
+                .andExpect(jsonPath("$.status").doesNotExist())
+        }
     }
 
     @Test

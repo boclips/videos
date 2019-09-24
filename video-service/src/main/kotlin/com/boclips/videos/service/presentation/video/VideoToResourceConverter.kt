@@ -38,6 +38,7 @@ class VideoToResourceConverter(
                 description = video.description,
                 createdBy = video.contentPartner.name,
                 contentPartner = video.contentPartner.name,
+                contentPartnerId = video.contentPartner.contentPartnerId.value,
                 contentPartnerVideoId = video.videoReference,
                 releasedOn = video.releasedOn,
                 playback = getPlayback(video),
