@@ -4,6 +4,8 @@ import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.FindLegalRestrictions
 import com.boclips.contentpartner.service.application.LegalRestrictionsResource
+import com.boclips.security.utils.UserExtractor.getIfHasRole
+import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -34,12 +36,12 @@ class LegalRestrictionsController(
     }
 
     @GetMapping
-    fun get(): Resources<LegalRestrictionsResource> {
-        return Resources(findAllLegalRestrictions())
+    fun getAll(): Resources<LegalRestrictionsResource> {
+        return Resources(findAllLegalRestrictions(), listOfNotNull(createLink()))
     }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable("id") id: String): ResponseEntity<Resource<LegalRestrictionsResource>> {
+    fun getOne(@PathVariable("id") id: String): ResponseEntity<Resource<LegalRestrictionsResource>> {
         val resource = findLegalRestrictions(id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
         return ResponseEntity(resource.hateoas(), HttpStatus.OK)
     }
@@ -48,14 +50,24 @@ class LegalRestrictionsController(
 
         fun LegalRestrictionsResource.hateoas(): Resource<LegalRestrictionsResource> {
             return Resource(this,
-                restrictionsLink(
-                    this.id
-                )
+                 getOneLink(this.id)
             )
         }
 
-        private fun restrictionsLink(id: String): Link {
-            return linkTo(methodOn(LegalRestrictionsController::class.java).getById(id)).withSelfRel()
+        fun createLink(): Link? {
+            return getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                linkTo(methodOn(LegalRestrictionsController::class.java).post(null)).withRel("create")
+            }
+        }
+
+        fun getAllLink(): Link? {
+            return getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                linkTo(methodOn(LegalRestrictionsController::class.java).getAll()).withRel("legalRestrictions")
+            }
+        }
+
+        fun getOneLink(id: String): Link {
+            return linkTo(methodOn(LegalRestrictionsController::class.java).getOne(id)).withSelfRel()
         }
     }
 }

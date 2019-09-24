@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.net.URI
 
 class LegalRestrictionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -20,7 +21,7 @@ class LegalRestrictionsControllerIntegrationTest : AbstractSpringIntegrationTest
 
     @Test
     fun `create restrictions`() {
-        val link = mockMvc.perform(post("/v1/legal-restrictions?text=my restrictions").asBoclipsEmployee())
+        val link = mockMvc.perform(post(createRestrictionsUrl(text = "my restrictions")).asBoclipsEmployee())
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.text", `is`("my restrictions")))
             .andExpect(jsonPath("$._links.self.href").exists())
@@ -32,7 +33,7 @@ class LegalRestrictionsControllerIntegrationTest : AbstractSpringIntegrationTest
 
     @Test
     fun `retrieve restrictions`() {
-        val link = mockMvc.perform(post("/v1/legal-restrictions?text=my restrictions").asBoclipsEmployee())
+        val link = mockMvc.perform(post(createRestrictionsUrl(text = "my restrictions")).asBoclipsEmployee())
             .andExpect(status().isCreated)
             .andReturnLink("self").expand()
 
@@ -51,12 +52,26 @@ class LegalRestrictionsControllerIntegrationTest : AbstractSpringIntegrationTest
 
     @Test
     fun `retrieve all restrictions`() {
-        mockMvc.perform(post("/v1/legal-restrictions?text=restrictions 1").asBoclipsEmployee()).andExpect(status().isCreated)
-        mockMvc.perform(post("/v1/legal-restrictions?text=restrictions 2").asBoclipsEmployee()).andExpect(status().isCreated)
+        mockMvc.perform(post(createRestrictionsUrl("restrictions 1")).asBoclipsEmployee()).andExpect(status().isCreated)
+        mockMvc.perform(post(createRestrictionsUrl("restrictions 2")).asBoclipsEmployee()).andExpect(status().isCreated)
 
-        mockMvc.perform(get("/v1/legal-restrictions").asBoclipsEmployee())
+        mockMvc.perform(get(allRestrictionsUrl()).asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.legalRestrictions", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.legalRestrictions[0].text", startsWith("restrictions ")))
+    }
+
+    private fun allRestrictionsUrl(): URI {
+        return mockMvc.perform(get("/v1").asBoclipsEmployee())
+            .andReturnLink("legalRestrictions")
+            .expand()
+            .let { URI(it) }
+    }
+
+    private fun createRestrictionsUrl(text: String): URI {
+        return mockMvc.perform(get(allRestrictionsUrl()).asBoclipsEmployee())
+            .andReturnLink("create")
+            .expand(mapOf("text" to text))
+            .let { URI(it) }
     }
 }

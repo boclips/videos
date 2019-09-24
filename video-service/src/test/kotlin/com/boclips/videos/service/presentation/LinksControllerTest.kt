@@ -53,6 +53,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.bookmarkedCollections").doesNotExist())
             .andExpect(jsonPath("$._links.collection").doesNotExist())
             .andExpect(jsonPath("$._links.collections").doesNotExist())
+            .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
             .andExpect(jsonPath("$._links.disciplines").doesNotExist())
             .andExpect(jsonPath("$._links.tags").doesNotExist())
     }
@@ -113,6 +114,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
+            .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
     }
 
     @Test

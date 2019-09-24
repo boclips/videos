@@ -4,6 +4,7 @@ import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsController
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
@@ -50,6 +51,7 @@ class LinksController(
                 collectionsLinkBuilder.collectionsByOwner(),
                 collectionsLinkBuilder.myCollections(),
                 collectionsLinkBuilder.createCollection(),
+                LegalRestrictionsController.getAllLink(),
                 contentPartnersLinkBuilder.contentPartnerLink(null),
                 contentPartnersLinkBuilder.contentPartnersLink(),
                 disciplinesLinkBuilder.disciplines(),
