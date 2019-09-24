@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.testsupport
 
+import com.boclips.contentpartner.service.application.LegalRestrictionsResource
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
@@ -8,6 +9,7 @@ import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -68,6 +70,7 @@ object TestFactories {
         ),
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
+        legalRestrictions: LegalRestrictionsRequest? = null,
         currency: String? = null
     ): ContentPartnerRequest {
         return ContentPartnerRequest(
@@ -75,6 +78,7 @@ object TestFactories {
             ageRange = ageRange,
             accreditedToYtChannelId = accreditedToYtChannel,
             distributionMethods = distributionMethods,
+            legalRestrictions = legalRestrictions,
             currency = currency
         )
     }

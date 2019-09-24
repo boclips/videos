@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
@@ -74,7 +75,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(
-                legalRestrictionsId = legalRestrictions.id.value
+                legalRestrictions = LegalRestrictionsRequest(id = legalRestrictions.id.value)
             )
         )
 

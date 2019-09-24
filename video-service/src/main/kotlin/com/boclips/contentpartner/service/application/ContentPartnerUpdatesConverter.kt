@@ -46,8 +46,8 @@ class ContentPartnerUpdateCommandCreator(val id: ContentPartnerId, val contentPa
         }
 
     fun updateLegalRestrictionsOrNot(legalRestrictionsRepository: LegalRestrictionsRepository): ContentPartnerUpdateCommand.ReplaceLegalRestrictions? =
-        contentPartnerRequest.legalRestrictionsId
-            ?.let { restrictionsId -> legalRestrictionsRepository.findById(LegalRestrictionsId(restrictionsId)) }
+        contentPartnerRequest.legalRestrictions
+            ?.let { restrictionsRequest -> legalRestrictionsRepository.findById(LegalRestrictionsId(restrictionsRequest.id!!)) }
             ?.let { restrictions -> ContentPartnerUpdateCommand.ReplaceLegalRestrictions(id, restrictions) }
 
     fun updateCurrencyOrNot(): ContentPartnerUpdateCommand.ReplaceCurrency? =

@@ -1,18 +1,21 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
+import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -29,80 +32,58 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoService: VideoService
 
-    @Test
-    fun `updating a content partner name`() {
-        val originalContentPartner = createContentPartner(
+    lateinit var originalContentPartner: ContentPartner
+
+    lateinit var videoId: VideoId
+
+    @BeforeEach
+    fun setUp() {
+        originalContentPartner = createContentPartner(
             TestFactories.createContentPartnerRequest(
                 name = "My content partner",
-                ageRange = AgeRangeRequest(min = 7, max = 11)
+                ageRange = AgeRangeRequest(min = 7, max = 11),
+                distributionMethods = emptySet(),
+                legalRestrictions = null
             )
         )
-
-        updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request =
-            TestFactories.createContentPartnerRequest(
-                name = "My better content partner",
-                ageRange = AgeRangeRequest(min = 9, max = 14)
-            )
-        )
-
-        val deletedContentPartner =
-            contentPartnerRepository.findAll(listOf(ContentPartnerFilter.NameFilter(name = "My content partner")))
-
-        assertThat(deletedContentPartner).isEmpty()
-
-        val updatedContentPartner = contentPartnerRepository.findAll(
-            listOf(
-                ContentPartnerFilter.NameFilter(
-                    name = "My better content partner"
-                )
-            )
-        ).first()
-
-
-        assertThat(updatedContentPartner.name).isEqualTo("My better content partner")
-    }
-
-    @Test
-    fun `updating age ranges of videos`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
-                name = "My content partner",
-                ageRange = AgeRangeRequest(min = 7, max = 11)
-            )
-        )
-
-        val videoId = saveVideo(
+        videoId = saveVideo(
             contentProvider = "My content partner",
             ageRange = UnboundedAgeRange
         )
-
-        updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(
-                name = "My better content partner",
-                ageRange = AgeRangeRequest(min = 9, max = 14)
-            )
-        )
-
-        val video = videoService.getPlayableVideo(videoId = videoId)
-
-        assertThat(video.ageRange.min()).isEqualTo(9)
-        assertThat(video.ageRange.max()).isEqualTo(14)
     }
 
     @Test
-    fun `disable download and streaming for content partner`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
-                distributionMethods = emptySet()
+    fun `content partner gets updated`() {
+        val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions")
+        updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            request = ContentPartnerRequest(
+                name = "My better content partner",
+                ageRange = AgeRangeRequest(min = 9, max = 14),
+                distributionMethods = setOf(
+                    DistributionMethodResource.STREAM,
+                    DistributionMethodResource.DOWNLOAD
+                ),
+                legalRestrictions = LegalRestrictionsRequest(id = legalRestrictionsId.value)
             )
         )
 
-        val updatedContentPartner = updateContentPartner(
+        val updatedContentPartner = contentPartnerRepository.findById(originalContentPartner.contentPartnerId)!!
+        assertThat(updatedContentPartner.name).isEqualTo("My better content partner")
+        assertThat(updatedContentPartner.ageRange.min()).isEqualTo(9)
+        assertThat(updatedContentPartner.ageRange.max()).isEqualTo(14)
+        assertThat(updatedContentPartner.legalRestrictions).isNotNull
+        assertThat(updatedContentPartner.legalRestrictions?.id).isEqualTo(legalRestrictionsId)
+        assertThat(updatedContentPartner.legalRestrictions?.text).isEqualTo("Legal restrictions")
+    }
+
+    @Test
+    fun `videos get updated`() {
+        updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(
+            request = ContentPartnerRequest(
+                name = "My better content partner",
+                ageRange = AgeRangeRequest(min = 9, max = 14),
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
@@ -110,54 +91,39 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.distributionMethods)
-            .isEqualTo(DistributionMethod.ALL)
+        val updatedVideo = videoService.getPlayableVideo(videoId = videoId)
+
+        assertThat(updatedVideo.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 
     @Test
-    fun `enable downloading and streaming for content partner`() {
-        val originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
-                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
-            )
-        )
-
-        val updatedContentPartner = updateContentPartner(
+    fun `event gets published`() {
+        updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = TestFactories.createContentPartnerRequest(
-                distributionMethods = emptySet()
+            request = ContentPartnerRequest(
+                distributionMethods = setOf(
+                    DistributionMethodResource.STREAM,
+                    DistributionMethodResource.DOWNLOAD
+                )
             )
         )
 
-        assertThat(contentPartnerRepository.findById(updatedContentPartner.contentPartnerId)!!.distributionMethods)
-            .isEmpty()
+        assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos).hasSize(1)
     }
 
-    @Nested
-    inner class ContentPartnerVideoRepercussions {
-        @Test
-        fun `changing distribution methods of content partner will change their videos too`() {
-            val originalContentPartner = createContentPartner(
-                TestFactories.createContentPartnerRequest(
-                    distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
-                )
+    @Test
+    fun `legal restrictions get created when id not set`() {
+        updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            request = ContentPartnerRequest(
+                legalRestrictions = LegalRestrictionsRequest(id = "", text = "New legal restrictions")
             )
+        )
 
-            val id = saveVideo(contentProviderId = originalContentPartner.contentPartnerId.value)
-
-            updateContentPartner(
-                contentPartnerId = originalContentPartner.contentPartnerId.value,
-                request = TestFactories.createContentPartnerRequest(
-                    distributionMethods = setOf(
-                        DistributionMethodResource.STREAM,
-                        DistributionMethodResource.DOWNLOAD
-                    )
-                )
-            )
-
-            assertThat(videoRepository.find(id)!!.distributionMethods).isEqualTo(DistributionMethod.ALL)
-            assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
-            assertThat(fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos).hasSize(1)
-        }
+        val updatedContentPartner = contentPartnerRepository.findById(originalContentPartner.contentPartnerId)!!
+        assertThat(updatedContentPartner.legalRestrictions).isNotNull
+        assertThat(updatedContentPartner.legalRestrictions?.id?.value).isNotBlank()
+        assertThat(updatedContentPartner.legalRestrictions?.text).isEqualTo("New legal restrictions")
     }
 }

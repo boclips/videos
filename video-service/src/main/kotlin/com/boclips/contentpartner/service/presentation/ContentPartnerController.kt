@@ -6,11 +6,8 @@ import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -76,8 +73,8 @@ class ContentPartnerController(
     }
 
     @GetMapping("/{id}")
-    fun getContentPartner(@PathVariable("id") contentPartnerId: String?): Resource<ContentPartnerResource> {
-        return fetchContentPartner(contentPartnerId).hateoas()
+    fun getContentPartner(@PathVariable("id") contentPartnerId: String?): ContentPartnerResource {
+        return fetchContentPartner(contentPartnerId)
     }
 
     @PostMapping
@@ -100,25 +97,5 @@ class ContentPartnerController(
         updateContentPartner(contentPartnerId = contentPartnerId, request = updateContentPartnerRequest)
 
         return ResponseEntity(HttpStatus.NO_CONTENT)
-    }
-
-    @PutMapping("/{id}/legal-restrictions")
-    fun putContentPartnerLegalRestrictions(
-        @PathVariable("id") contentPartnerId: String,
-        @RequestParam("legalRestrictionsId") legalRestrictionsId: String?
-    ): ResponseEntity<Void> {
-        updateContentPartner(contentPartnerId = contentPartnerId, request = ContentPartnerRequest(legalRestrictionsId = legalRestrictionsId))
-        return ResponseEntity(HttpStatus.NO_CONTENT)
-    }
-
-    companion object {
-
-        fun ContentPartnerResource.hateoas(): Resource<ContentPartnerResource> {
-            return Resource(this, setLegalRestrictionsLink(this))
-        }
-
-        private fun setLegalRestrictionsLink(contentPartnerResource: ContentPartnerResource): Link {
-            return linkTo(methodOn(ContentPartnerController::class.java).putContentPartnerLegalRestrictions(contentPartnerResource.id, null)).withRel("setLegalRestrictions")
-        }
     }
 }
