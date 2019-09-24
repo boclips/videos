@@ -1,19 +1,29 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 
-class ContentPartnerUpdatesConverterTest {
+class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
+
+    @Autowired
+    lateinit var contentPartnerUpdatesConverter: ContentPartnerUpdatesConverter
+
+    @Autowired
+    lateinit var legalRestrictionsRepository: LegalRestrictionsRepository
+
     @Test
     fun `creates command for updating distribution methods`() {
-        val commands = ContentPartnerUpdatesConverter().convert(
+        val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(
                 name = "Hello",
@@ -28,7 +38,7 @@ class ContentPartnerUpdatesConverterTest {
 
     @Test
     fun `creates command for updating the name`() {
-        val commands = ContentPartnerUpdatesConverter().convert(
+        val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(
                 name = "Hello",
@@ -44,7 +54,7 @@ class ContentPartnerUpdatesConverterTest {
 
     @Test
     fun `creates command for updating the age range`() {
-        val commands = ContentPartnerUpdatesConverter().convert(
+        val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(
                 ageRange = AgeRangeRequest(1, 3),
@@ -59,8 +69,25 @@ class ContentPartnerUpdatesConverterTest {
     }
 
     @Test
+    fun `creates command for updating legal restrictions`() {
+        val legalRestrictions = legalRestrictionsRepository.create("No restrictions")
+        val commands = contentPartnerUpdatesConverter.convert(
+            id = ContentPartnerId(value = "123"),
+            contentPartnerRequest = ContentPartnerRequest(
+                legalRestrictionsId = legalRestrictions.id.value
+            )
+        )
+
+        assertThat(commands).hasSize(1)
+        assertThat(commands[0]).isInstanceOfSatisfying(ContentPartnerUpdateCommand.ReplaceLegalRestrictions::class.java) { command ->
+            assertThat(command.contentPartnerId).isEqualTo(ContentPartnerId("123"))
+            assertThat(command.legalRestrictions).isEqualTo(legalRestrictions)
+        }
+    }
+
+    @Test
     fun `creates command for updating the currency`() {
-        val commands = ContentPartnerUpdatesConverter().convert(
+        val commands = ContentPartnerUpdatesConverter(legalRestrictionsRepository).convert(
             id = ContentPartnerId(value = "123"),
             contentPartnerRequest = ContentPartnerRequest(
                 currency = "GBP"

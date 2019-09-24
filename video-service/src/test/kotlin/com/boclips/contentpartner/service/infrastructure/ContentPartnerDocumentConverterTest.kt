@@ -22,7 +22,7 @@ internal class ContentPartnerDocumentConverterTest {
             name = "The grandest content partner there ever lived",
             ageRange = AgeRange.bounded(5, 11),
             credit = Credit.PartnerCredit,
-            legalRestrictions =  com.boclips.videos.service.testsupport.TestFactories.createLegalRestrictions(),
+            legalRestrictions =  TestFactories.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),
             remittance = Remittance(Currency.getInstance("GBP"))
         )

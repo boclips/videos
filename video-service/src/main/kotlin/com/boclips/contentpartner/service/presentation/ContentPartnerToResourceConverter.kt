@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.application.LegalRestrictionsResource
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
@@ -15,6 +16,7 @@ object ContentPartnerToResourceConverter {
                 is Credit.PartnerCredit -> true
                 is Credit.YoutubeCredit -> false
             },
+            legalRestrictions = contentPartner.legalRestrictions?.let { LegalRestrictionsResource.from(it) },
             distributionMethods = DistributionMethodResourceConverter.toDeliveryMethodResources(
                 contentPartner.distributionMethods
             ),

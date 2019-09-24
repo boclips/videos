@@ -14,6 +14,7 @@ class ContentPartnerToResourceConverterTest {
     fun `convert content partner to resource`() {
         val contentPartner = TestFactories.createContentPartner(
             credit = Credit.PartnerCredit,
+            legalRestrictions = TestFactories.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(Currency.getInstance("GBP"))
         )
@@ -24,6 +25,8 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.name).isNotEmpty()
         assertThat(contentPartnerResource.ageRange).isNotNull
         assertThat(contentPartnerResource.official).isTrue()
+        assertThat(contentPartnerResource.legalRestrictions).isNotNull
+        assertThat(contentPartnerResource.legalRestrictions?.text).isEqualTo("Forbidden in the EU")
         assertThat(contentPartnerResource.distributionMethods).isEqualTo(setOf(DistributionMethodResource.STREAM))
         assertThat(contentPartnerResource.currency).isEqualTo("GBP")
     }

@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component
 @Component
 class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
+    private val contentPartnerUpdatesConverter: ContentPartnerUpdatesConverter,
     private val videoService: VideoService
 ) {
     operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
 
-        val updateCommands = ContentPartnerUpdatesConverter()
-            .convert(id, request)
+        val updateCommands = contentPartnerUpdatesConverter.convert(id, request)
 
         contentPartnerRepository.update(updateCommands)
 

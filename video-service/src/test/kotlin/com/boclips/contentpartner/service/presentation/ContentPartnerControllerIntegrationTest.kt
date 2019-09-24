@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -261,5 +262,23 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         mockMvc.perform(get("/v1/content-partners/$id").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.distributionMethods", equalTo(listOf("STREAM"))))
+    }
+
+    @Test
+    fun `set content partner legal restrictions`() {
+        val id = saveContentPartner().contentPartnerId.value
+        val legalRestrictionsId = saveLegalRestrictions("No restrictions").value
+
+        val associateRestrictionsLink = mockMvc.perform(get("/v1/content-partners/$id").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andReturnLink("setLegalRestrictions")
+
+        mockMvc.perform(put(associateRestrictionsLink.expand(mapOf("legalRestrictionsId" to legalRestrictionsId))).asBoclipsEmployee())
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(get("/v1/content-partners/$id").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.legalRestrictions.id", `is`(legalRestrictionsId)))
+            .andExpect(jsonPath("$.legalRestrictions.text", `is`("No restrictions")))
     }
 }

@@ -1,27 +1,31 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand.ReplaceDistributionMethods
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 import java.util.*
 
-class ContentPartnerUpdatesConverter {
+class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: LegalRestrictionsRepository) {
     fun convert(id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest): List<ContentPartnerUpdateCommand> {
+        val commandCreator = ContentPartnerUpdateCommandCreator(id, contentPartnerRequest)
         return listOfNotNull(
-            updateNameOrNot(id = id, contentPartnerRequest = contentPartnerRequest),
-            updateAgeRangeOrNot(id = id, contentPartnerRequest = contentPartnerRequest),
-            updateHiddenDeliveryMethodsOrNot(id = id, contentPartnerRequest = contentPartnerRequest),
-            updateCurrencyOrNot(id = id, contentPartnerRequest = contentPartnerRequest)
+            commandCreator.updateNameOrNot(),
+            commandCreator.updateAgeRangeOrNot(),
+            commandCreator.updateLegalRestrictionsOrNot(legalRestrictionsRepository),
+            commandCreator.updateHiddenDeliveryMethodsOrNot(),
+            commandCreator.updateCurrencyOrNot()
         )
     }
+}
 
-    private fun updateHiddenDeliveryMethodsOrNot(
-        id: ContentPartnerId,
-        contentPartnerRequest: ContentPartnerRequest
-    ): ContentPartnerUpdateCommand? {
+class ContentPartnerUpdateCommandCreator(val id: ContentPartnerId, val contentPartnerRequest: ContentPartnerRequest) {
+
+    fun updateHiddenDeliveryMethodsOrNot(): ContentPartnerUpdateCommand? {
         return contentPartnerRequest.distributionMethods
             ?.let {
                 DistributionMethodResourceConverter.toDistributionMethods(it)
@@ -31,24 +35,22 @@ class ContentPartnerUpdatesConverter {
             }
     }
 
-    private fun updateNameOrNot(
-        id: ContentPartnerId,
-        contentPartnerRequest: ContentPartnerRequest
-    ): ContentPartnerUpdateCommand.ReplaceName? =
+    fun updateNameOrNot(): ContentPartnerUpdateCommand.ReplaceName? =
         contentPartnerRequest.name?.let {
             ContentPartnerUpdateCommand.ReplaceName(contentPartnerId = id, name = it)
         }
 
-    private fun updateAgeRangeOrNot(
-        id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest
-    ): ContentPartnerUpdateCommand.ReplaceAgeRange? =
+    fun updateAgeRangeOrNot(): ContentPartnerUpdateCommand.ReplaceAgeRange? =
         contentPartnerRequest.ageRange?.let {
             ContentPartnerUpdateCommand.ReplaceAgeRange(id, AgeRange.bounded(min = it.min, max = it.max))
         }
 
-    private fun updateCurrencyOrNot(
-        id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest
-    ): ContentPartnerUpdateCommand.ReplaceCurrency? =
+    fun updateLegalRestrictionsOrNot(legalRestrictionsRepository: LegalRestrictionsRepository): ContentPartnerUpdateCommand.ReplaceLegalRestrictions? =
+        contentPartnerRequest.legalRestrictionsId
+            ?.let { restrictionsId -> legalRestrictionsRepository.findById(LegalRestrictionsId(restrictionsId)) }
+            ?.let { restrictions -> ContentPartnerUpdateCommand.ReplaceLegalRestrictions(id, restrictions) }
+
+    fun updateCurrencyOrNot(): ContentPartnerUpdateCommand.ReplaceCurrency? =
         contentPartnerRequest.currency?.let {
             ContentPartnerUpdateCommand.ReplaceCurrency(id, Currency.getInstance(it))
         }

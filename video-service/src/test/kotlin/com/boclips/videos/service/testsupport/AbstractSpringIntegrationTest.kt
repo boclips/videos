@@ -2,9 +2,11 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.application.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.CreateContentPartner
+import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
@@ -129,6 +131,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var userServiceClient: UserServiceClient
+
+    @Autowired
+    lateinit var createLegalRestrictions: CreateLegalRestrictions
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null
@@ -304,6 +309,11 @@ abstract class AbstractSpringIntegrationTest {
         fakeEventBus.clearState()
 
         return createdContentPartner
+    }
+
+    fun saveLegalRestrictions(text: String = "No restrictions."): LegalRestrictionsId {
+        val createdResource = createLegalRestrictions(text = text)
+        return LegalRestrictionsId(createdResource.id)
     }
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {

@@ -418,13 +418,6 @@ object TestFactories {
     fun createSubjectDocument(name: String): SubjectDocument {
         return SubjectDocument(id = ObjectId(), name = name)
     }
-
-    fun createLegalRestrictions(): LegalRestrictions {
-        return LegalRestrictions(
-            id = LegalRestrictionsId(aValidId()),
-            text = "No restrictions."
-        )
-    }
 }
 
 object PlaybackResourceFactory {

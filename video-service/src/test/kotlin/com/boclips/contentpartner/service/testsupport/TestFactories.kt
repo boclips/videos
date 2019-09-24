@@ -1,6 +1,11 @@
 package com.boclips.contentpartner.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.*
+import com.boclips.contentpartner.service.domain.model.ContentPartner
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -8,8 +13,8 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
-import java.util.*
 
 object TestFactories {
 
@@ -71,6 +76,13 @@ object TestFactories {
             accreditedToYtChannelId = accreditedToYtChannel,
             distributionMethods = distributionMethods,
             currency = currency
+        )
+    }
+
+    fun createLegalRestrictions(text: String = "No restrictions."): LegalRestrictions {
+        return LegalRestrictions(
+            id = LegalRestrictionsId(TestFactories.aValidId()),
+            text = text
         )
     }
 }
