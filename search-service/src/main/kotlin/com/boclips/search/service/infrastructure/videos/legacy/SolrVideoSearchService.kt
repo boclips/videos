@@ -12,7 +12,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient
 
 class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService {
     companion object : KLogging() {
-        private const val UPSERT_BATCH_SIZE = 2000
+        private const val UPSERT_BATCH_SIZE = 4000
     }
 
     override fun safeRebuildIndex(items: Sequence<LegacyVideoMetadata>, notifier: ProgressNotifier?) {
