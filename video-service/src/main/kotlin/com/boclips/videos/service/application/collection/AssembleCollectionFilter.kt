@@ -15,7 +15,7 @@ class AssembleCollectionFilter {
         return CollectionFilter(
             query = query ?: "",
             subjects = subject ?: emptyList(),
-            visibility = determineVisibility(public, bookmarked, owner),
+            visibility = determineVisibility(public, bookmarked),
             owner = owner,
             pageNumber = page ?: 0,
             pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE
@@ -24,13 +24,11 @@ class AssembleCollectionFilter {
 
     private fun determineVisibility(
         public: Boolean?,
-        bookmarked: Boolean?,
-        owner: String?
-    ): CollectionFilter.Visibility {
+        bookmarked: Boolean?
+        ): CollectionFilter.Visibility {
         return when {
             bookmarked == true -> CollectionFilter.Visibility.BOOKMARKED
             public == true -> CollectionFilter.Visibility.PUBLIC
-            owner != null -> CollectionFilter.Visibility.PRIVATE
             else -> CollectionFilter.Visibility.ALL
         }
     }

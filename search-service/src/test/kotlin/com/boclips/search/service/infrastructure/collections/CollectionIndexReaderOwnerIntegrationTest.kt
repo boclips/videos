@@ -26,14 +26,14 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
                     visibility = CollectionVisibility.PUBLIC,
-                    owner = "juan"
+                    owner = "juan-123"
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "2",
                     visibility = CollectionVisibility.PRIVATE,
-                    owner = "juan"
+                    owner = "juan-123"
                 ),
-                SearchableCollectionMetadataFactory.create(id = "3", owner = "pablo")
+                SearchableCollectionMetadataFactory.create(id = "3", owner = "pablo-123")
             )
         )
 
@@ -41,7 +41,7 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             collectionIndexReader.search(
                 PaginatedSearchRequest(
                     query = CollectionQuery(
-                        owner = "juan",
+                        owner = "juan-123",
                         visibility = CollectionVisibility.ALL
                     )
                 )

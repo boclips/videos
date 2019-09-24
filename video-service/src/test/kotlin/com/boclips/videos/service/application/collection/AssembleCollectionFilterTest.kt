@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.presentation.CollectionsController
-import com.boclips.videos.service.presentation.Projection
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -36,7 +35,7 @@ class AssembleCollectionFilterTest {
         assertThat(filter.query).isEqualTo("minute physics")
         assertThat(filter.subjects).containsOnly("Physics")
         assertThat(filter.owner).isEqualTo("user@site.com")
-        assertThat(filter.visibility).isEqualTo(CollectionFilter.Visibility.PRIVATE)
+        assertThat(filter.visibility).isEqualTo(CollectionFilter.Visibility.ALL)
         assertThat(filter.pageNumber).isEqualTo(1)
         assertThat(filter.pageSize).isEqualTo(30)
     }

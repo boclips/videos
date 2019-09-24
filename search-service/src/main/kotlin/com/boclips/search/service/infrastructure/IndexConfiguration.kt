@@ -34,13 +34,12 @@ interface IndexConfiguration {
         private fun loadSynonyms(filename: String) = IndexConfiguration::class.java.getResource("/synonyms/$filename")
             .readText().trim().split("\n")
 
-
         fun unstemmed(fieldName: String) = "$fieldName.$FIELD_DESCRIPTOR_UNSTEMMED"
     }
 
     object Fields {
         val simpleText = mapOf(
-            "type" to "text"
+            "type" to "keyword"
         )
 
         val freeText = mapOf(
