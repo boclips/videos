@@ -111,12 +111,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `get all bookmarked collections paginates`() {
-        createCollection("collection 2").apply {
+    fun `get bookmarked collections correctly paginated`() {
+        createCollection("collection 1").apply {
             updateCollectionToBePublic(this)
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
-        createCollection("collection 1").apply {
+        createCollection("collection 2").apply {
             updateCollectionToBePublic(this)
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure
 
-import com.boclips.users.client.UserServiceClient
+import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.whenever
@@ -10,7 +10,6 @@ import org.mockito.ArgumentMatchers.anyString
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
-import java.lang.RuntimeException
 
 class ApiUserContractServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
@@ -47,5 +46,5 @@ class ApiUserContractServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @MockBean(name = "userServiceClient")
-    override lateinit var userServiceClient: UserServiceClient
+    override lateinit var userServiceClient: FakeUserServiceClient
 }

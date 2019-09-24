@@ -14,6 +14,7 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.users.client.UserServiceClient
+import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -130,7 +131,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var userContractService: UserContractService
 
     @Autowired
-    lateinit var userServiceClient: UserServiceClient
+    lateinit var userServiceClient: FakeUserServiceClient
 
     @Autowired
     lateinit var createLegalRestrictions: CreateLegalRestrictions

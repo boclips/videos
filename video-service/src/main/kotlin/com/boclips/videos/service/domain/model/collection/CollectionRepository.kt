@@ -24,6 +24,6 @@ interface CollectionRepository {
     fun updateAll(updateCommand: CollectionsUpdateCommand)
     fun streamUpdate(filter: CollectionFilter, consumer: (List<Collection>) -> List<CollectionUpdateCommand>)
     fun delete(id: CollectionId)
-    fun bookmark(id: CollectionId, user: UserId)
-    fun unbookmark(id: CollectionId, user: UserId)
+    fun bookmark(id: CollectionId, user: UserId): Collection
+    fun unbookmark(id: CollectionId, user: UserId): Collection
 }

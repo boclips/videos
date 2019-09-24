@@ -1,6 +1,9 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
+import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
@@ -29,6 +32,25 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
         val collection = collectionRepository.find(collectionId)
         assertThat(collection).isNotNull
         assertThat(collection!!.bookmarks).containsExactly(UserId("me@me.com"))
+    }
+
+    @Test
+    fun `collection bookmarks are updated for search`() {
+        val collectionId = saveCollection(owner = "owner@example.com", public = true)
+
+        setSecurityContext("me@me.com")
+        bookmarkCollection(collectionId.value)
+
+        val searchResults = collectionSearchService.search(
+            searchRequest = PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibility = listOf(CollectionVisibility.PUBLIC),
+                    bookmarkedBy = "me@me.com"
+                )
+            )
+        )
+
+        assertThat(searchResults).containsExactly(collectionId.value)
     }
 
     @Test

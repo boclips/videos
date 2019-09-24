@@ -1,6 +1,9 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
+import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -30,6 +33,27 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
         unbookmarkCollection(collectionId.value)
 
         assertThat(collectionRepository.find(collectionId)!!.bookmarks).isEmpty()
+    }
+
+    @Test
+    fun `the bookmark gets deleted from search`() {
+        val collectionId = saveCollection(owner = "owner@example.com", public = true, bookmarkedBy = "me@me.com")
+
+        assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
+
+        setSecurityContext("me@me.com")
+        unbookmarkCollection(collectionId.value)
+
+        assertThat(
+            collectionSearchService.search(
+                searchRequest = PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        visibility = listOf(CollectionVisibility.PUBLIC),
+                        bookmarkedBy = "me@me.com"
+                    )
+                )
+            )
+        ).isEmpty()
     }
 
     @Test

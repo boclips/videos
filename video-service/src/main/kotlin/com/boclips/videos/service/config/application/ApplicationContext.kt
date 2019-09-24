@@ -14,11 +14,9 @@ import com.boclips.videos.service.application.collection.CollectionQueryAssemble
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
-import com.boclips.videos.service.application.collection.GetBookmarkedCollections
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
 import com.boclips.videos.service.application.collection.GetContractedCollections
-import com.boclips.videos.service.application.collection.GetUserPrivateCollections
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
@@ -203,8 +201,6 @@ class ApplicationContext(
         attachmentsLinkBuilder: AttachmentsLinkBuilder,
         getContractedCollections: GetContractedCollections,
         userServiceClient: UserServiceClient,
-        getUserPrivateCollections: GetUserPrivateCollections,
-        getBookmarkedCollections: GetBookmarkedCollections,
         collectionQueryAssembler: CollectionQueryAssembler
     ): GetCollections {
         return GetCollections(
@@ -217,21 +213,12 @@ class ApplicationContext(
             ),
             getContractedCollections,
             userContractService,
-            getBookmarkedCollections,
             collectionQueryAssembler
         )
     }
 
     @Bean
     fun assembleCollectionFilter() = AssembleCollectionFilter()
-
-    @Bean
-    fun getBookmarkedCollections(collectionRepository: CollectionRepository) =
-        GetBookmarkedCollections(collectionRepository)
-
-    @Bean
-    fun getUserPrivateCollections(collectionRepository: CollectionRepository) =
-        GetUserPrivateCollections(collectionRepository)
 
     @Bean
     fun getContractedCollections(collectionRepository: CollectionRepository): GetContractedCollections {
@@ -261,12 +248,12 @@ class ApplicationContext(
 
     @Bean
     fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionRepository, eventService, collectionService)
+        return BookmarkCollection(collectionRepository, eventService, collectionService, collectionSearchService)
     }
 
     @Bean
     fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionRepository, eventService, collectionService)
+        return UnbookmarkCollection(collectionRepository, eventService, collectionService, collectionSearchService)
     }
 
     @Bean

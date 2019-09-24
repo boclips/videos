@@ -8,6 +8,7 @@ import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
+import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -196,12 +197,14 @@ class MongoCollectionRepository(
         logger.info { "Deleted collection $id" }
     }
 
-    override fun bookmark(id: CollectionId, user: UserId) {
+    override fun bookmark(id: CollectionId, user: UserId): Collection {
         updateOne(id, addToSet(CollectionDocument::bookmarks, user.value))
+        return find(id) ?: throw CollectionNotFoundException(id.value)
     }
 
-    override fun unbookmark(id: CollectionId, user: UserId) {
+    override fun unbookmark(id: CollectionId, user: UserId): Collection {
         updateOne(id, pull(CollectionDocument::bookmarks, user.value))
+        return find(id) ?: throw CollectionNotFoundException(id.value)
     }
 
     private fun getPagedCollections(

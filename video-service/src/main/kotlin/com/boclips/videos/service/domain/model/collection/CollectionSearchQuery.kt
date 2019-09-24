@@ -11,6 +11,7 @@ class CollectionSearchQuery(
     val subjectIds: List<String>,
     val visibility: List<CollectionVisibility>,
     val owner: String? = null,
+    val bookmarkedBy: String? = null,
     val pageSize: Int,
     val pageIndex: Int
 ) {
@@ -19,6 +20,7 @@ class CollectionSearchQuery(
         subjectIds = this.subjectIds,
         visibility = visibility,
         owner = owner,
+        bookmarkedBy = this.bookmarkedBy,
         sort = when {
             this.subjectIds.isNotEmpty() && this.text.isNullOrBlank() -> Sort(
                 CollectionMetadata::hasAttachments,

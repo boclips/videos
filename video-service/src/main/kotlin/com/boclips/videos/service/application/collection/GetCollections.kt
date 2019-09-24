@@ -16,7 +16,6 @@ class GetCollections(
     private val collectionResourceFactory: CollectionResourceFactory,
     private val getContractedCollections: GetContractedCollections,
     private val userContractService: UserContractService,
-    private val getBookmarkedCollections: GetBookmarkedCollections,
     private val collectionQueryAssembler: CollectionQueryAssembler
 ) {
     operator fun invoke(
@@ -37,16 +36,12 @@ class GetCollections(
 
         return when {
             userContracts.isNotEmpty() -> getContractedCollections(collectionFilter, userContracts)
-            isBookmarkedCollectionsFetch(collectionFilter) -> getBookmarkedCollections(collectionFilter)
             else -> {
                 val query = collectionQueryAssembler.assemble(collectionFilter, UserExtractor.getCurrentUser())
                 collectionService.search(query)
             }
         }
     }
-
-    private fun isBookmarkedCollectionsFetch(collectionFilter: CollectionFilter) =
-        collectionFilter.visibility == CollectionFilter.Visibility.BOOKMARKED
 
     private fun assembleResourcesPage(
         projection: Projection,

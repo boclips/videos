@@ -36,6 +36,12 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                     entry.value.owner.let { query.owner == entry.value.owner}
 
             }
+            .filter { entry ->
+                if (bookmarkQuery(query))
+                    entry.value.bookmarkedByUsers.contains(query.bookmarkedBy)
+                else
+                    true
+            }
             .map { collection -> collection.key }
     }
 
@@ -47,4 +53,7 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
 
     private fun visibilityQuery(collectionQuery: CollectionQuery) =
         collectionQuery.visibility.isNotEmpty()
+
+    private fun bookmarkQuery(collectionQuery: CollectionQuery) =
+        collectionQuery.bookmarkedBy != null
 }

@@ -13,6 +13,7 @@ class CollectionQueryAssembler {
             text = filter.query,
             subjectIds = filter.subjects,
             owner = filter.owner,
+            bookmarkedBy = if (filter.visibility == CollectionFilter.Visibility.BOOKMARKED) user?.id else null,
             visibility = when (filter.visibility) {
                 CollectionFilter.Visibility.PUBLIC -> listOf(CollectionVisibility.PUBLIC)
                 CollectionFilter.Visibility.PRIVATE -> listOf(CollectionVisibility.PRIVATE)
