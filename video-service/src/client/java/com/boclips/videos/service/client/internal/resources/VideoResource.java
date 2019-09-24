@@ -16,7 +16,7 @@ public class VideoResource {
     private LocalDate releasedOn = null;
     private Set<SubjectResource> subjects = Collections.emptySet();
     private String createdBy = null;
-    private String contentPartner = null;
+    private String contentPartnerId = null;
     private String contentPartnerVideoId = null;
     private PlaybackResource playback = null;
     private VideoTypeResource type = null;
@@ -28,7 +28,7 @@ public class VideoResource {
                 .description(description)
                 .releasedOn(releasedOn)
                 .createdBy(createdBy)
-                .contentPartnerId(contentPartner)
+                .contentPartnerId(contentPartnerId)
                 .contentPartnerVideoId(contentPartnerVideoId)
                 .playback(playback != null ? playback.toPlayback() : null)
                 .subjects(subjects.stream().map(subjectResource -> {
