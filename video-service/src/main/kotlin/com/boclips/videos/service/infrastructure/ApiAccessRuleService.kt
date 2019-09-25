@@ -30,7 +30,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
 
     @Recover
     fun getContractsRecoveryMethod(e: Exception): AccessRule {
-        logger.warn { "Unable to retrieve user contracts, defaulting to an empty list. Cause: $e" }
+        logger.warn { "Unable to retrieve access rules, defaulting to access to everything. Cause: $e" }
         return AccessRule.build(emptyList())
     }
 }

@@ -89,7 +89,7 @@ class CollectionQueryAssemblerTest {
     }
 
     @Nested
-    inner class Contracts {
+    inner class AccessRules {
         @Test
         fun `user is only permitted to access to some collections`() {
             val result = CollectionQueryAssembler().assemble(
