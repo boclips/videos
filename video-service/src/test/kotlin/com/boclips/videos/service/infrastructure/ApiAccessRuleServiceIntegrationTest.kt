@@ -41,14 +41,14 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         collectionIds = listOf("test-collection-id")
     }
 
+    // TODO: when service is down, we give people access to everything
     @Test
-    fun `returns an empty list if it's not possible to retrieve contracts`() {
+    fun `when rules cannot be obtained, gives access to evertyhing`() {
         whenever(userServiceClient.getContracts(anyString()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenThrow(RuntimeException("Something bad happened again!"))
 
-        // TODO: when service is down, we give people access to everything
         assertThat(accessRuleService.getRules("test-user").collectionAccess).isEqualTo(
             CollectionAccessRule.All
         )
