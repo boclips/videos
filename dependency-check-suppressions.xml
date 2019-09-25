@@ -91,13 +91,4 @@
         <gav regex="true">^org\.jetbrains\.kotlin:kotlin-reflect:1.3.10.*$</gav>
         <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
-    <suppress until="2019-10-10Z">
-        <notes><![CDATA[
-      File name: jackson-databind-2.9.9.2.jar
-
-      We need to wait for a fix, it's not released yet.
-      ]]></notes>
-        <cpe>cpe:/a:fasterxml:jackson-databind:2.9.9.2</cpe>
-        <cve>CVE-2019-16335</cve>
-    </suppress>
 </suppressions>
