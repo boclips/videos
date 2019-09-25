@@ -18,7 +18,7 @@ import java.util.concurrent.Executors
 @Configuration
 class InfrastructureContext(val mongoProperties: MongoProperties) {
     @Bean
-    fun userContractService(userServiceClient: UserServiceClient): ApiAccessRuleService {
+    fun apiAccessRuleService(userServiceClient: UserServiceClient): ApiAccessRuleService {
         return ApiAccessRuleService(userServiceClient)
     }
 

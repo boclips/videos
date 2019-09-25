@@ -12,10 +12,7 @@ import org.springframework.retry.annotation.Recover
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 
-@Service
-class ApiAccessRuleService(
-    private val userServiceClient: UserServiceClient
-) : AccessRuleService {
+open class ApiAccessRuleService(private val userServiceClient: UserServiceClient) : AccessRuleService {
     companion object : KLogging()
 
     @Retryable(

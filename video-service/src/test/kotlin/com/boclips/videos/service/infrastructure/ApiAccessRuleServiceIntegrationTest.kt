@@ -19,7 +19,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         whenever(userServiceClient.getContracts(anyString()))
             .thenReturn(listOf(testContract))
 
-        assertThat(accessRuleService.getRules("test-user")).isEqualTo(
+        assertThat(accessRuleService.getRules("test-user").collectionAccess).isEqualTo(
             CollectionAccessRule.RestrictedTo(setOf(CollectionId("test-collection-id")))
         )
     }
@@ -31,7 +31,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             .thenThrow(RuntimeException("Something bad happened"))
             .thenReturn(listOf(testContract))
 
-        assertThat(accessRuleService.getRules("test-user")).isEqualTo(
+        assertThat(accessRuleService.getRules("test-user").collectionAccess).isEqualTo(
             CollectionAccessRule.RestrictedTo(setOf(CollectionId("test-collection-id")))
         )
     }
@@ -49,7 +49,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             .thenThrow(RuntimeException("Something bad happened again!"))
 
         // TODO: when service is down, we give people access to everything
-        assertThat(accessRuleService.getRules("test-user")).isEqualTo(
+        assertThat(accessRuleService.getRules("test-user").collectionAccess).isEqualTo(
             CollectionAccessRule.All
         )
     }
