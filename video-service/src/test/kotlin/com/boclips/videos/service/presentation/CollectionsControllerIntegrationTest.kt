@@ -146,6 +146,22 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
+    fun `updates a collection as a user with VIEW_ANY_COLLECTION role`() {
+        val collectionId = createCollection("a collection to test on")
+
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "title": "brave, new title"
+                    }
+                    """.trimIndent())
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
     fun `bookmark collections returns updated collection`() {
         val collectionId = createCollection("collection 1").apply {
             updateCollectionToBePublic(this)
@@ -551,4 +567,3 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .extractLink("bookmark")
     }
 }
-

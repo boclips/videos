@@ -1,11 +1,13 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.videos.service.domain.service.IsContractedToView
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -73,6 +75,7 @@ class CollectionService(
         return when {
             isForReading && collection.isPublic -> collection
             collection.owner == userId -> collection
+            currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
             isContractedToView(collection, userContractService.getContracts(userId.value)) -> collection
             else -> throw CollectionAccessNotAuthorizedException(
                 userId,
