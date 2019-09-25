@@ -15,9 +15,7 @@ interface CollectionRepository {
     fun findAll(ids: List<CollectionId>): List<Collection>
     fun findAllBySubject(subjectId: SubjectId): List<Collection>
     fun streamAll(consumer: (Sequence<Collection>) -> Unit)
-    fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection>
     fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
-    fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection>
     fun create(command: CreateCollectionCommand): Collection
     fun update(command: CollectionUpdateCommand)
     fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection>

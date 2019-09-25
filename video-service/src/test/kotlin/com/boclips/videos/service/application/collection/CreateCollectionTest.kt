@@ -25,46 +25,6 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     lateinit var collectionService: CollectionService
 
     @Test
-    @WithMockUser("this-user")
-    fun `creates collection and associates videos`() {
-        val contentPartner = saveContentPartner()
-
-        val videoId1 = createVideo(
-            TestFactories.createCreateVideoRequest(
-                providerVideoId = "hurray",
-                title = "a-video",
-                playbackId = "hiphip",
-                providerId = contentPartner.contentPartnerId.value
-            )
-        ).content.id
-
-        val videoId2 = createVideo(
-            TestFactories.createCreateVideoRequest(
-                title = "another-video",
-                providerId = contentPartner.contentPartnerId.value
-            )
-        ).content.id
-
-        val createRequest = TestFactories.createCollectionRequest(
-            title = "title",
-            videos = listOf("http://localhost/v1/videos/$videoId1", "http://localhost/v1/videos/$videoId2")
-        )
-
-        val collection = createCollection(createRequest)
-        assertThat(collection.title).isEqualTo("title")
-        assertThat(collection.owner.value).isEqualTo("this-user")
-        assertThat(collection.videos).hasSize(2)
-        assertThat(collection.videos.first().value).isEqualTo(videoId1)
-        assertThat(collection.createdByBoclips).isFalse()
-
-        val allCollections = collectionRepository.getByOwner(
-            UserId("this-user"),
-            PageRequest(0, 10)
-        ).elements
-        assertThat(allCollections).contains(collection)
-    }
-
-    @Test
     fun `makes searchable if public`() {
         val createRequest = TestFactories.createCollectionRequest(
             title = "title",

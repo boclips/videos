@@ -50,8 +50,6 @@ class MongoCollectionRepository(
         const val collectionName = "collections"
     }
 
-    private val publicCollectionCriteria = CollectionDocument::visibility eq CollectionVisibilityDocument.PUBLIC
-
     override fun create(command: CreateCollectionCommand): Collection {
         val objectId = ObjectId()
         val collectionId = CollectionId(value = objectId.toHexString())
@@ -97,22 +95,9 @@ class MongoCollectionRepository(
             .mapNotNull(CollectionDocumentConverter::toCollection)
     }
 
-    override fun getByOwner(owner: UserId, pageRequest: PageRequest): Page<Collection> {
-        val criteria = CollectionDocument::owner eq owner.value
-        return getPagedCollections(pageRequest, criteria)
-    }
-
     override fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection> {
         val criteria = and(
             contracts.map(mongoCollectionFilterContractAdapter::adapt)
-        )
-        return getPagedCollections(pageRequest, criteria)
-    }
-
-    override fun getBookmarkedByUser(pageRequest: PageRequest, bookmarkedBy: UserId): Page<Collection> {
-        val criteria = and(
-            publicCollectionCriteria,
-            CollectionDocument::bookmarks contains bookmarkedBy.value
         )
         return getPagedCollections(pageRequest, criteria)
     }
