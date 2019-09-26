@@ -22,7 +22,11 @@ class ApiUserContractService(
         )
     )
     override fun getContracts(userId: String): List<Contract> {
-        return userServiceClient.getContracts(userId)
+        return userServiceClient
+            .getContracts(userId)
+            .also {
+                logger.info { "Found ${it.size} contracts for user $userId" }
+            }
     }
 
     @Recover
