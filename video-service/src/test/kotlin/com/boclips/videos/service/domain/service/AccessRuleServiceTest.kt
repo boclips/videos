@@ -11,7 +11,7 @@ class AccessRuleServiceTest {
         val collection = TestFactories.createCollection()
         val accessRule = AccessRule.build(listOf(collection.id))
 
-        assertThat(accessRule.allowsAccessTo(collection.id)).isTrue
+        assertThat(accessRule.allowsAccessTo(collection.id)).isTrue()
     }
 
     @Test
@@ -19,6 +19,6 @@ class AccessRuleServiceTest {
         val collection = TestFactories.createCollection()
         val accessRule = AccessRule.build(listOf(CollectionId("some--random-id")))
 
-        assertThat(accessRule.allowsAccessTo(collection.id)).isFalse
+        assertThat(accessRule.allowsAccessTo(collection.id)).isFalse()
     }
 }
