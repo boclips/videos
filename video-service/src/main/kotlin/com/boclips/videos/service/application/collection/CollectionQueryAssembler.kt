@@ -10,7 +10,7 @@ import com.boclips.videos.service.domain.service.CollectionAccessRule
 class CollectionQueryAssembler {
     fun assemble(
         filter: CollectionFilter, user: User?,
-        collectionAccess: CollectionAccessRule = CollectionAccessRule.All
+        collectionAccess: CollectionAccessRule = CollectionAccessRule.Unspecified
     ): CollectionSearchQuery {
         val query = CollectionSearchQuery(
             text = filter.query,
@@ -27,7 +27,7 @@ class CollectionQueryAssembler {
             pageIndex = filter.pageNumber,
             permittedCollections = when (collectionAccess) {
                 is CollectionAccessRule.RestrictedTo -> collectionAccess.collectionIds.toList()
-                is CollectionAccessRule.All -> null
+                is CollectionAccessRule.Unspecified -> null
             }
         )
 

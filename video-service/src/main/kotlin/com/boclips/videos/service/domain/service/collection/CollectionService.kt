@@ -2,7 +2,6 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
-import com.boclips.videos.service.domain.service.IsContractedToView
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
@@ -20,8 +19,7 @@ import mu.KLogging
 class CollectionService(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService,
-    private val accessRuleService: AccessRuleService,
-    private val isContractedToView: IsContractedToView
+    private val accessRuleService: AccessRuleService
 ) {
     companion object : KLogging()
 
@@ -71,12 +69,13 @@ class CollectionService(
             )
         )
             ?: throw CollectionNotFoundException(collectionId)
+        val accessRules = accessRuleService.getRules(userId.value)
 
         return when {
             isForReading && collection.isPublic -> collection
             collection.owner == userId -> collection
             currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
-            isContractedToView(collection, accessRuleService.getRules(userId.value)) -> collection
+            accessRules.allowsAccessTo(collection.id) -> collection
             else -> throw CollectionAccessNotAuthorizedException(
                 userId,
                 collectionId

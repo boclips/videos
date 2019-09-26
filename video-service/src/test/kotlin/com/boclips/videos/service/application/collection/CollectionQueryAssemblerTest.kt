@@ -110,7 +110,7 @@ class CollectionQueryAssemblerTest {
                     visibility = CollectionFilter.Visibility.BOOKMARKED
                 ),
                 user = UserFactory.sample(id = "alex-123"),
-                collectionAccess = CollectionAccessRule.All
+                collectionAccess = CollectionAccessRule.Unspecified
             )
             assertThat(result.permittedCollections).isNull()
         }

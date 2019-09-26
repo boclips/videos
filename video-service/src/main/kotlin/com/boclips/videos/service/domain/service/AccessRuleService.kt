@@ -11,16 +11,24 @@ data class AccessRule(val collectionAccess: CollectionAccessRule) {
         fun build(permittedIds: List<CollectionId>): AccessRule {
             return AccessRule(
                 if (permittedIds.isEmpty()) {
-                    CollectionAccessRule.All
+                    CollectionAccessRule.Unspecified
                 } else {
                     CollectionAccessRule.RestrictedTo(permittedIds.toSet())
                 }
             )
         }
     }
+
+    fun allowsAccessTo(collection: CollectionId): Boolean {
+        return when (collectionAccess) {
+            is CollectionAccessRule.RestrictedTo ->
+                collectionAccess.collectionIds.contains(collection)
+            is CollectionAccessRule.Unspecified -> false
+        }
+    }
 }
 
 sealed class CollectionAccessRule {
     data class RestrictedTo(val collectionIds: Set<CollectionId>) : CollectionAccessRule()
-    object All : CollectionAccessRule()
+    object Unspecified : CollectionAccessRule()
 }

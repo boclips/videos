@@ -5,13 +5,13 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class IsContractedToViewTest {
+class AccessRuleServiceTest {
     @Test
     fun `returns true when there is a SelectedContent contract for a given collection`() {
         val collection = TestFactories.createCollection()
         val accessRule = AccessRule.build(listOf(collection.id))
 
-        assertThat(isContractedToView(collection, accessRule)).isTrue()
+        assertThat(accessRule.allowsAccessTo(collection.id)).isTrue
     }
 
     @Test
@@ -19,8 +19,6 @@ class IsContractedToViewTest {
         val collection = TestFactories.createCollection()
         val accessRule = AccessRule.build(listOf(CollectionId("some--random-id")))
 
-        assertThat(isContractedToView(collection, accessRule)).isFalse()
+        assertThat(accessRule.allowsAccessTo(collection.id)).isFalse
     }
-
-    val isContractedToView = IsContractedToView()
 }
