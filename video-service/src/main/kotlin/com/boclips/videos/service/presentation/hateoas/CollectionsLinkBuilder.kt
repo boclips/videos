@@ -78,16 +78,22 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         )
     }
 
-    fun adminCollectionSearch(
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ) = getIfHasRole(UserRoles.VIEW_ANY_COLLECTION) {
+    fun adminCollectionSearch() = getIfHasRole(UserRoles.VIEW_ANY_COLLECTION) {
         Link(
             getCollectionsRoot()
                 .toUriString() + "{?query,subject,projection,page,size}",
             "adminCollectionSearch"
         )
     }
+
+    fun searchCollections() =
+        getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
+            Link(
+                getCollectionsRoot()
+                    .toUriString() + "{?query,subject,public,projection,page,size}",
+                "searchCollections"
+            )
+        }
 
     fun bookmarkedCollections(
         projection: Projection = Projection.list,

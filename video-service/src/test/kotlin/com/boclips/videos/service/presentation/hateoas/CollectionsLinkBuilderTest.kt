@@ -38,7 +38,7 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
-    fun `when searching collections`() {
+    fun `when searching public collections`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
 
         val mock = mock<UriComponentsBuilderFactory>()
@@ -49,6 +49,21 @@ class CollectionsLinkBuilderTest {
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?public=true{&query,subject,projection,page,size}")
         assertThat(link.rel).isEqualTo("searchPublicCollections")
+        assertThat(link.isTemplated).isEqualTo(true)
+    }
+
+    @Test
+    fun `when searching collections`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
+
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.searchCollections()!!
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,public,projection,page,size}")
+        assertThat(link.rel).isEqualTo("searchCollections")
         assertThat(link.isTemplated).isEqualTo(true)
     }
 
