@@ -27,7 +27,7 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                 if (subjectQuery(query)) entry.value.subjectIds.any { query.subjectIds.contains(it) } else true
             }
             .filter { entry ->
-                if (visibilityQuery(query)) query.visibility.contains(entry.value.visibility) else false
+                if (visibilityQuery(query)) query.visibility.contains(entry.value.visibility) else true
             }
             .filter { entry ->
                 if (query.owner == null)
@@ -59,6 +59,9 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
 
     private fun visibilityQuery(collectionQuery: CollectionQuery) =
         collectionQuery.visibility.isNotEmpty()
+            && collectionQuery.permittedIds == null
+            // if we are restricted to specific collection IDs,
+            // we don't care about the specified visibility
 
     private fun bookmarkQuery(collectionQuery: CollectionQuery) =
         collectionQuery.bookmarkedBy != null

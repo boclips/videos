@@ -498,6 +498,7 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
                 videos = listOf(videoId.value)
             )
         )
+
         val secondCollection = createCollection(
             CreateCollectionRequest(
                 title = "Second Contracted Collection",
