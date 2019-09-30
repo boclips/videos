@@ -132,7 +132,10 @@ class VideoController(
         }
 
         return ResponseEntity(
-            withProjection(videoToResourceConverter.fromVideo(searchVideo.byId(id))),
+            withProjection(
+                searchVideo.byId(id)
+                    .let(videoToResourceConverter::fromVideo)
+            ),
             headers,
             HttpStatus.OK
         )
@@ -157,9 +160,8 @@ class VideoController(
     @PostMapping
     fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
-            val video = createVideo(createVideoRequest)
-
-            videoToResourceConverter.fromVideo(video)
+            createVideo(createVideoRequest)
+                .let(videoToResourceConverter::fromVideo)
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(
                 ExceptionDetails(
@@ -202,7 +204,11 @@ class VideoController(
         rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id)).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}"], params = ["!rating"])
-    fun patchVideo(@PathVariable id: String, @RequestParam(required = false) title: String?, @RequestParam(required = false) description: String?) =
+    fun patchVideo(
+        @PathVariable id: String,
+        @RequestParam(required = false) title: String?,
+        @RequestParam(required = false) description: String?
+    ) =
         updateVideo(id, title, description).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}/tags"])

@@ -102,8 +102,7 @@ class ApplicationContext(
     @Bean
     fun searchVideo(
         videosLinkBuilder: VideosLinkBuilder,
-        searchQueryConverter: SearchQueryConverter,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        searchQueryConverter: SearchQueryConverter
     ) = SearchVideo(
         getVideoById(),
         getAllVideosById(),
