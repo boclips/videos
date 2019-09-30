@@ -12,7 +12,7 @@ internal class GetAllVideosByIdTest {
     @Test
     internal fun `dedup ids`() {
         val videoService = mock<VideoService>()
-        val getAllVideosById = GetAllVideosById(videoService, mock())
+        val getAllVideosById = GetAllVideosById(videoService)
 
         getAllVideosById(listOf(VideoId("5c542ab85438cdbcb56ddf02"), VideoId("5c542ab85438cdbcb56ddf02")))
 

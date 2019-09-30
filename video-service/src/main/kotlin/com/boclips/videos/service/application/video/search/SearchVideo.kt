@@ -26,7 +26,7 @@ class SearchVideo(
         return getVideoById(resolveToAssetId(id)!!)
     }
 
-    fun byIds(ids: List<String>): List<Resource<VideoResource>> {
+    fun byIds(ids: List<String>): List<Video> {
         return getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) })
     }
 

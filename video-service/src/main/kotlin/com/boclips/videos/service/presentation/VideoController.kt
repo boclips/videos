@@ -115,6 +115,7 @@ class VideoController(
     @PostMapping("/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> =
         searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
+            .map(videoToResourceConverter::fromVideo)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
 
@@ -122,11 +123,18 @@ class VideoController(
     @GetMapping(path = ["/{id}"])
     fun getVideo(@PathVariable("id") id: String?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null): ResponseEntity<MappingJacksonValue> {
         val headers = HttpHeaders()
-        if(playbackConsumer == null) {
-            headers.add("Set-Cookie", "${Cookies.PLAYBACK_DEVICE}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure")
+        if (playbackConsumer == null) {
+            headers.add(
+                "Set-Cookie",
+                "${Cookies.PLAYBACK_DEVICE}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure"
+            )
         }
 
-        return ResponseEntity(withProjection(videoToResourceConverter.fromVideo(searchVideo.byId(id))), headers, HttpStatus.OK)
+        return ResponseEntity(
+            withProjection(videoToResourceConverter.fromVideo(searchVideo.byId(id))),
+            headers,
+            HttpStatus.OK
+        )
     }
 
     @DeleteMapping("/{id}")
