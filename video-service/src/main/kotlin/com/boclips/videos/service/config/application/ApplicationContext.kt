@@ -106,7 +106,7 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter,
         videoToResourceConverter: VideoToResourceConverter
     ) = SearchVideo(
-        getVideoById(videoToResourceConverter),
+        getVideoById(),
         getAllVideosById(videoToResourceConverter),
         getVideosByQuery(searchQueryConverter, videoToResourceConverter),
         videoRepository
@@ -395,11 +395,8 @@ class ApplicationContext(
         return FindAllLegalRestrictions(legalRestrictionsRepository)
     }
 
-    private fun getVideoById(videoToResourceConverter: VideoToResourceConverter): GetVideoById {
-        return GetVideoById(
-            videoService,
-            videoToResourceConverter
-        )
+    private fun getVideoById(): GetVideoById {
+        return GetVideoById(videoService)
     }
 
     private fun getVideosByQuery(

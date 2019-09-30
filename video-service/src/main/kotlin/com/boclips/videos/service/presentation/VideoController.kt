@@ -17,6 +17,7 @@ import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.RateVideoRequest
 import com.boclips.videos.service.presentation.video.TagVideoRequest
+import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -52,7 +53,8 @@ class VideoController(
     private val videoTranscriptService: VideoTranscriptService,
     private val objectMapper: ObjectMapper,
     private val withProjection: WithProjection,
-    private val tagVideo: TagVideo
+    private val tagVideo: TagVideo,
+    private val videoToResourceConverter: VideoToResourceConverter
 ) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -124,7 +126,7 @@ class VideoController(
             headers.add("Set-Cookie", "${Cookies.PLAYBACK_DEVICE}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure")
         }
 
-        return ResponseEntity(withProjection(searchVideo.byId(id)), headers, HttpStatus.OK)
+        return ResponseEntity(withProjection(videoToResourceConverter.fromVideo(searchVideo.byId(id))), headers, HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
@@ -135,7 +137,7 @@ class VideoController(
     @GetMapping("/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
         val videoTranscript = videoTranscriptService.getTranscript(videoId)
-        val videoTitle = searchVideo.byId(videoId).content.title!!.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+        val videoTitle = searchVideo.byId(videoId).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
 
         val headers = HttpHeaders()
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$videoTitle.txt\"")
@@ -146,7 +148,9 @@ class VideoController(
     @PostMapping
     fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
-            createVideo(createVideoRequest)
+            val video = createVideo(createVideoRequest)
+
+            videoToResourceConverter.fromVideo(video)
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(
                 ExceptionDetails(

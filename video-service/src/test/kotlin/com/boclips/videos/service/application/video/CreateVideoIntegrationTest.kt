@@ -8,12 +8,12 @@ import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
-import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import io.micrometer.core.instrument.Counter
@@ -21,7 +21,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.hateoas.Resource
 import java.time.Duration
 
 class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
@@ -44,14 +43,14 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val contentPartner = saveContentPartner()
 
-        val resource = createVideo(
+        val video = createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = "entry-\$123",
                 providerId = contentPartner.contentPartnerId.value
             )
         )
 
-        assertThat(videoService.getPlayableVideo(VideoId(resource.content.id!!))).isNotNull
+        assertThat(videoService.getPlayableVideo(video.videoId)).isNotNull
     }
 
     @Test
@@ -60,7 +59,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")
         val contentPartner = saveContentPartner()
 
-        val resource =
+        val video =
             createVideo(
                 TestFactories.createCreateVideoRequest(
                     playbackId = "8889",
@@ -69,7 +68,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-        assertThat(videoService.getPlayableVideo(VideoId(resource.content.id!!))).isNotNull
+        assertThat(videoService.getPlayableVideo(video.videoId)).isNotNull
     }
 
     @Test
@@ -134,16 +133,15 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val contentPartner = saveContentPartner()
 
-        val resource = createVideo(
+        val createdVideo = createVideo(
             TestFactories.createCreateVideoRequest(
                 playbackId = "entry-\$123",
                 providerId = contentPartner.contentPartnerId.value
             )
         )
 
-        val video = videoService.getPlayableVideo(VideoId(resource.content.id!!))
+        val video = videoService.getPlayableVideo(createdVideo.videoId)
 
-        assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
         assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
     }
 
@@ -187,7 +185,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val contentPartner = saveContentPartner()
 
-        val video: Resource<VideoResource> = createVideo(
+        val video: Video = createVideo(
             TestFactories.createCreateVideoRequest(
                 videoType = "INSTRUCTIONAL_CLIPS",
                 playbackId = "entry-\$123",
@@ -198,7 +196,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
-        assertThat(event.videoId).isEqualTo(video.content.id)
+        assertThat(event.videoId).isEqualTo(video.videoId.value)
         assertThat(event.videoUrl).isEqualTo("https://download.com/entryId/entry-\$123/format/download")
     }
 
@@ -242,10 +240,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 providerId = contentPartner.contentPartnerId.value
             )
 
-        val videoResource = createVideo(createRequest)
-        assertThat(videoResource.content.distributionMethods).containsExactlyInAnyOrder(
-            DistributionMethodResource.DOWNLOAD,
-            DistributionMethodResource.STREAM
+        val video = createVideo(createRequest)
+        assertThat(video.distributionMethods).containsExactlyInAnyOrder(
+            DistributionMethod.DOWNLOAD,
+            DistributionMethod.STREAM
         )
     }
 

@@ -20,10 +20,8 @@ import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
-import com.boclips.videos.service.presentation.video.VideoResource
 import io.micrometer.core.instrument.Counter
 import mu.KLogging
-import org.springframework.hateoas.Resource
 
 class CreateVideo(
     private val videoService: VideoService,
@@ -38,7 +36,7 @@ class CreateVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(createRequest: CreateVideoRequest): Resource<VideoResource> {
+    operator fun invoke(createRequest: CreateVideoRequest): Video {
         if (createRequest.providerId == null) {
             throw InvalidCreateRequestException("providerId cannot be null")
         }

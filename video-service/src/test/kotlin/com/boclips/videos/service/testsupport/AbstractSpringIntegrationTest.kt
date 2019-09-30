@@ -244,11 +244,9 @@ abstract class AbstractSpringIntegrationTest {
             )
         )
 
-        val id = video.content.id
-
         fakeEventBus.clearState()
 
-        return VideoId(id!!)
+        return video.videoId
     }
 
     fun saveSubject(name: String): Subject {
