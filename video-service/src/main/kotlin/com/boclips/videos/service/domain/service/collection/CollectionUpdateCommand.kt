@@ -10,6 +10,8 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId) {
     class AddVideoToCollection(collectionId: CollectionId, val videoId: VideoId) : CollectionUpdateCommand(collectionId)
     class RemoveVideoFromCollection(collectionId: CollectionId, val videoId: VideoId) :
         CollectionUpdateCommand(collectionId)
+    class BulkUpdateCollectionVideos(collectionId: CollectionId, val videoIds: List<VideoId>) :
+        CollectionUpdateCommand(collectionId)
 
     class RenameCollection(collectionId: CollectionId, val title: String) : CollectionUpdateCommand(collectionId)
     class ChangeVisibility(collectionId: CollectionId, val isPublic: Boolean) : CollectionUpdateCommand(collectionId)

@@ -23,32 +23,64 @@ class CollectionUpdates {
 
     fun toBson(anyUpdateCommand: CollectionUpdateCommand): Bson {
         return when (anyUpdateCommand) {
-            is CollectionUpdateCommand.AddVideoToCollection -> addVideo(anyUpdateCommand.collectionId, anyUpdateCommand.videoId)
-            is CollectionUpdateCommand.RemoveVideoFromCollection -> removeVideo(anyUpdateCommand.collectionId, anyUpdateCommand.videoId)
-            is CollectionUpdateCommand.RenameCollection -> renameCollection(anyUpdateCommand.collectionId, anyUpdateCommand.title)
-            is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(anyUpdateCommand.collectionId, anyUpdateCommand.isPublic)
-            is CollectionUpdateCommand.ReplaceSubjects -> replaceSubjects(anyUpdateCommand.collectionId, anyUpdateCommand.subjects)
+            is CollectionUpdateCommand.AddVideoToCollection -> addVideo(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.videoId
+            )
+            is CollectionUpdateCommand.RemoveVideoFromCollection -> removeVideo(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.videoId
+            )
+            is CollectionUpdateCommand.RenameCollection -> renameCollection(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.title
+            )
+            is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.isPublic
+            )
+            is CollectionUpdateCommand.ReplaceSubjects -> replaceSubjects(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.subjects
+            )
             is CollectionUpdateCommand.ChangeAgeRange -> replaceAgeRange(
                 anyUpdateCommand.collectionId,
                 anyUpdateCommand.minAge,
                 anyUpdateCommand.maxAge
             )
-            is CollectionUpdateCommand.RemoveSubjectFromCollection -> removeSubject(anyUpdateCommand.collectionId, anyUpdateCommand.subjectId)
-            is CollectionUpdateCommand.ChangeDescription -> changeDescription(anyUpdateCommand.collectionId, anyUpdateCommand.description)
-            is CollectionUpdateCommand.AddAttachment -> replaceAttachment(anyUpdateCommand.collectionId, anyUpdateCommand.attachment)
+            is CollectionUpdateCommand.RemoveSubjectFromCollection -> removeSubject(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.subjectId
+            )
+            is CollectionUpdateCommand.ChangeDescription -> changeDescription(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.description
+            )
+            is CollectionUpdateCommand.AddAttachment -> replaceAttachment(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.attachment
+            )
+            is CollectionUpdateCommand.BulkUpdateCollectionVideos -> bulkUpdateVideos(
+                anyUpdateCommand.collectionId,
+                anyUpdateCommand.videoIds
+            )
         }
     }
 
     private fun replaceAttachment(collectionId: CollectionId, attachment: Attachment): Bson {
         logger.info { "Prepare replacing attachment for collection $collectionId" }
-        return set(CollectionDocument::attachments, listOf(AttachmentDocument(
-                id = ObjectId(),
-                description = attachment.description,
-                linkToResource = attachment.linkToResource,
-                type = when (attachment.type) {
-                    AttachmentType.LESSON_PLAN -> "LESSON_PLAN"
-                }
-        )))
+        return set(
+            CollectionDocument::attachments, listOf(
+                AttachmentDocument(
+                    id = ObjectId(),
+                    description = attachment.description,
+                    linkToResource = attachment.linkToResource,
+                    type = when (attachment.type) {
+                        AttachmentType.LESSON_PLAN -> "LESSON_PLAN"
+                    }
+                )
+            )
+        )
     }
 
     private fun replaceAgeRange(collectionId: CollectionId, min: Int, max: Int?): Bson {
@@ -80,6 +112,11 @@ class CollectionUpdates {
     private fun addVideo(collectionId: CollectionId, videoId: VideoId): Bson {
         logger.info { "Prepare video for addition to collection $collectionId" }
         return addToSet(CollectionDocument::videos, videoId.value)
+    }
+
+    private fun bulkUpdateVideos(collectionId: CollectionId, videoIds: List<VideoId>): Bson {
+        logger.info { "Collection $collectionId will have it's videos bulk updated" }
+        return set(CollectionDocument::videos, videoIds.map { it.value })
     }
 
     private fun renameCollection(collectionId: CollectionId, title: String): Bson {

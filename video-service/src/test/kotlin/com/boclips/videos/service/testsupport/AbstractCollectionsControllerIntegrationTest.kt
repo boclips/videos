@@ -32,10 +32,14 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         userServiceClient.clearContracts()
     }
 
-    fun createCollection(title: String = "a collection name", public: Boolean = false) =
+    fun createCollection(
+        title: String = "a collection name",
+        description: String = "a description",
+        public: Boolean = false
+    ) =
         mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content(
-                """{"title": "$title", "public": $public}"""
+                """{"title": "$title", "description": "$description", "public": $public}"""
             ).asTeacher()
         )
             .andExpect(status().isCreated)

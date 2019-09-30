@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
@@ -10,6 +11,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -32,7 +34,8 @@ class CollectionUpdatesConverterTest {
 
     @Test
     fun `turn title change to command`() {
-        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(title = "some title"))
+        val commands =
+            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(title = "some title"))
 
         assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.RenameCollection::class.java)
         assertThat(commands).hasSize(1)
@@ -40,7 +43,8 @@ class CollectionUpdatesConverterTest {
 
     @Test
     fun `change public visibility of collection to command`() {
-        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = true))
+        val commands =
+            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = true))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(true)
@@ -49,7 +53,8 @@ class CollectionUpdatesConverterTest {
 
     @Test
     fun `change private visibility of collection to command`() {
-        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = false))
+        val commands =
+            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = false))
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(false)
@@ -59,7 +64,10 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `converts multiple changes to commands`() {
         val commands =
-            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(title = "some title", isPublic = true))
+            collectionUpdatesConverter.convert(
+                CollectionId("testId"),
+                UpdateCollectionRequest(title = "some title", isPublic = true)
+            )
 
         assertThat(commands).hasSize(2)
     }
@@ -67,7 +75,10 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `change age range of collection to command`() {
         val commands =
-            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)))
+            collectionUpdatesConverter.convert(
+                CollectionId("testId"),
+                UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5))
+            )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeAgeRange
         assertThat(command.minAge).isEqualTo(3)
@@ -133,5 +144,29 @@ class CollectionUpdatesConverterTest {
 
         val command = commands.first() as CollectionUpdateCommand.ChangeDescription
         assertThat(command.description).isEqualTo("New description")
+    }
+
+    @Test
+    fun `turns list of videos into a command`() {
+        val collectionId = CollectionId("testId")
+
+        val firstId = ObjectId().toHexString()
+        val secondId = ObjectId().toHexString()
+        val thirdId = ObjectId().toHexString()
+
+        val commands = collectionUpdatesConverter.convert(
+            collectionId,
+            UpdateCollectionRequest(
+                videos = listOf(firstId, secondId, thirdId)
+            )
+        )
+
+        val command = commands.first() as CollectionUpdateCommand.BulkUpdateCollectionVideos
+        assertThat(command.collectionId).isEqualTo(collectionId)
+        assertThat(command.videoIds).containsExactlyInAnyOrder(
+            VideoId(firstId),
+            VideoId(secondId),
+            VideoId(thirdId)
+        )
     }
 }

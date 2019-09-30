@@ -8,6 +8,7 @@ class UpdateCollectionRequest(
     var isPublic: Boolean? = null,
     var subjects: Set<String>? = null,
     var description: String? = null,
+    var videos: List<String>? = null,
 
     @field:Valid
     var ageRange: AgeRangeRequest? = null

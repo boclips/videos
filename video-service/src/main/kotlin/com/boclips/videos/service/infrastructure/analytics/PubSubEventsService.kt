@@ -8,6 +8,7 @@ import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
+import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
@@ -115,6 +116,13 @@ class PubSubEventsService(
             )
 
             is CollectionUpdateCommand.AddAttachment -> null// no event as this cannot be done in the app just yet
+            is CollectionUpdateCommand.BulkUpdateCollectionVideos -> eventBus.publish(
+                msg(
+                    CollectionVideosBulkChanged.builder()
+                        .collectionId(updateCommand.collectionId.value)
+                        .videoIds(updateCommand.videoIds.map { it.value })
+                )
+            )
         }
     }
 

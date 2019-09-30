@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
+import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.security.testing.setSecurityContext
@@ -72,6 +73,25 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.user.id).isEqualTo("me@me.com")
         assertThat(event.description).isEqualTo("New Description")
+    }
+
+    @Test
+    fun `logs an event when bulk updating videos`() {
+        val firstVideoId = saveVideo(title = "first")
+        val secondVideoId = saveVideo(title = "second")
+
+        val collectionId = saveCollection(owner = "me@me.com")
+
+        updateCollection(
+            collectionId.value,
+            UpdateCollectionRequest(videos = listOf(firstVideoId.value, secondVideoId.value))
+        )
+
+        val event = fakeEventBus.getEventOfType(CollectionVideosBulkChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
+        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.videoIds).containsExactlyInAnyOrder(firstVideoId.value, secondVideoId.value)
     }
 
     @Test

@@ -15,6 +15,7 @@ import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.Document
 import org.bson.types.ObjectId
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -41,13 +42,17 @@ import java.util.Date
 class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
     fun `create a collection`() {
+        val firstVideoId = saveVideo(title = "first").value
+        val secondVideoId = saveVideo(title = "second").value
+
         val collectionUrl = mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                     {
                         "title": "a collection",
-                        "description": "a description"
+                        "description": "a description",
+                        "videos": ["$firstVideoId", "$secondVideoId"]
                     }
                     """.trimIndent()
                 )
@@ -65,10 +70,47 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
             .andExpect(jsonPath("$.title", equalTo("a collection")))
             .andExpect(jsonPath("$.description", equalTo("a description")))
-            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(2)))
             .andExpect(jsonPath("$.ageRange").doesNotExist())
             .andExpect(jsonPath("$.subjects").isEmpty)
-            .andReturn()
+    }
+
+    @Test
+    fun `updates a collection`() {
+        val firstVideoId = saveVideo(title = "first").value
+        val secondVideoId = saveVideo(title = "second").value
+        val thirdVideoId = saveVideo(title = "third").value
+
+        val collectionId = createCollection().also {
+            addVideo(it, firstVideoId)
+        }
+
+        val newTitle = "brave, new title"
+        val newDescription = "brave, new description"
+
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "title": "$newTitle",
+                        "description": "$newDescription",
+                        "videos": ["$secondVideoId", "$thirdVideoId"]
+                    }
+                    """.trimIndent())
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
+            .andExpect(jsonPath("$.title", equalTo(newTitle)))
+            .andExpect(jsonPath("$.description", equalTo(newDescription)))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(2)))
+            .andExpect(jsonPath("$.videos[*].id", containsInAnyOrder(secondVideoId, thirdVideoId)))
     }
 
     @Test
