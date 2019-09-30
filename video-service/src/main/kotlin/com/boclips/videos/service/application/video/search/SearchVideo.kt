@@ -8,9 +8,7 @@ import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.presentation.video.VideoResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
-import org.springframework.hateoas.Resource
 
 class SearchVideo(
     private val getVideoById: GetVideoById,
@@ -45,7 +43,7 @@ class SearchVideo(
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         subjects: Set<String> = emptySet()
-    ): Page<Resource<VideoResource>> {
+    ): Page<Video> {
         return getVideosByQuery(
             query = query ?: "",
             sortBy = sortBy,

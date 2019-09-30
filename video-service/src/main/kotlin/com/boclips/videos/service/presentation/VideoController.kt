@@ -81,7 +81,7 @@ class VideoController(
     ): ResponseEntity<PagedResources<*>> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
-        val videosResource = searchVideo.byQuery(
+        val videos = searchVideo.byQuery(
             query = query,
             sortBy = sortBy,
             includeTags = includeTags?.let { includeTags } ?: emptyList(),
@@ -100,13 +100,14 @@ class VideoController(
 
         return ResponseEntity(
             PagedResources(
-                videosResource
+                videos
                     .elements.toList()
+                    .map(videoToResourceConverter::fromVideo)
                     .let(HateoasEmptyCollection::fixIfEmptyCollection),
                 PagedResources.PageMetadata(
                     pageSize.toLong(),
                     pageNumber.toLong(),
-                    videosResource.pageInfo.totalElements
+                    videos.pageInfo.totalElements
                 )
             ), HttpStatus.OK
         )

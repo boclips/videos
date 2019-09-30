@@ -118,7 +118,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(videos.elements).hasSize(1)
-        assertThat(videos.elements.first().content.id).isEqualTo(videoId.value)
+        assertThat(videos.elements.first().videoId.value).isEqualTo(videoId.value)
     }
 
     @Test
@@ -135,7 +135,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(videos.elements).hasSize(1)
-        assertThat(videos.elements.first().content.id).isEqualTo(newsVideoId.value)
+        assertThat(videos.elements.first().videoId.value).isEqualTo(newsVideoId.value)
     }
 
     @Test
@@ -152,7 +152,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageNumber = 0
         )
 
-        assertThat(videos.elements.map { it.content.id }).containsExactly(newsAndClassroomVideoId.value)
+        assertThat(videos.elements.map { it.videoId.value }).containsExactly(newsAndClassroomVideoId.value)
     }
 
     @Test
@@ -191,8 +191,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         assertThat(videos.pageInfo.totalElements).isEqualTo(2)
         assertThat(videos.elements.toList().size).isEqualTo(2)
-        assertThat(videos.elements.first().content.title).isEqualTo("why are camels so tall 1")
-        assertThat(videos.elements.elementAt(1).content.title).isEqualTo("why are camels so tall 2")
+        assertThat(videos.elements.first().title).isEqualTo("why are camels so tall 1")
+        assertThat(videos.elements.elementAt(1).title).isEqualTo("why are camels so tall 2")
     }
 
     @Test
@@ -217,6 +217,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         assertThat(results.pageInfo.totalElements).isEqualTo(1)
         assertThat(results.elements.toList().size).isEqualTo(1)
-        assertThat(results.elements.first().content.title).isEqualTo("why are camels so tall 2")
+        assertThat(results.elements.first().title).isEqualTo("why are camels so tall 2")
     }
 }

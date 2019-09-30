@@ -103,12 +103,11 @@ class ApplicationContext(
     fun searchVideo(
         videosLinkBuilder: VideosLinkBuilder,
         searchQueryConverter: SearchQueryConverter,
-        playbackToResourceConverter: PlaybackToResourceConverter,
-        videoToResourceConverter: VideoToResourceConverter
+        playbackToResourceConverter: PlaybackToResourceConverter
     ) = SearchVideo(
         getVideoById(),
         getAllVideosById(),
-        getVideosByQuery(searchQueryConverter, videoToResourceConverter),
+        getVideosByQuery(searchQueryConverter),
         videoRepository
     )
 
@@ -399,13 +398,9 @@ class ApplicationContext(
         return GetVideoById(videoService)
     }
 
-    private fun getVideosByQuery(
-        searchQueryConverter: SearchQueryConverter,
-        videoToResourceConverter: VideoToResourceConverter
-    ): GetVideosByQuery {
+    private fun getVideosByQuery(searchQueryConverter: SearchQueryConverter): GetVideosByQuery {
         return GetVideosByQuery(
             videoService,
-            videoToResourceConverter,
             eventService,
             searchQueryConverter
         )
