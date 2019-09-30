@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
@@ -37,6 +38,34 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result).hasSize(0)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `returns collections we are contracted to see even without matching visibility`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    title = "Gentleman Dancing",
+                    visibility = CollectionVisibility.PRIVATE
+                )
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    phrase = "Gentleman",
+                    permittedIds = listOf("1")
+                )
+            )
+        )
+
+        assertThat(result).hasSize(1)
     }
 
     @ParameterizedTest

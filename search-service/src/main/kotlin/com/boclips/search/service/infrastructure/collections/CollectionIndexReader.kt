@@ -71,7 +71,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 }
             }
             .apply {
-                if (query.visibility.isNotEmpty()) {
+                if (query.visibility.isNotEmpty() && query.permittedIds == null) {
                     must(
                         QueryBuilders
                             .termsQuery(
