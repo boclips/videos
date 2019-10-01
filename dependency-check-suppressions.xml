@@ -91,4 +91,24 @@
         <gav regex="true">^org\.jetbrains\.kotlin:kotlin-reflect:1.3.10.*$</gav>
         <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar
+
+   The vulnerability is related to cookies and httpOnly flag. This dependency
+   is a transitive of pubsub.
+   ]]></notes>
+        <gav regex="true">^io\.grpc:grpc-netty-shaded:.*$</gav>
+        <cve>CVE-2015-2156</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: event-bus-1.32.2.jar (shaded: io.netty:netty-tcnative-boringssl-static:2.0.22.Final)
+
+   The vulnerability is related to cookies and httpOnly flag. This dependency
+   is a transitive of pubsub.
+   ]]></notes>
+        <gav regex="true">^io\.netty:netty-tcnative-boringssl-static:.*$</gav>
+        <cve>CVE-2015-2156</cve>
+    </suppress>
 </suppressions>
