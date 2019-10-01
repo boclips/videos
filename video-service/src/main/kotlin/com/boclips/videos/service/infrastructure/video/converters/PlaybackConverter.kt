@@ -20,11 +20,7 @@ object PlaybackConverter : KLogging() {
                 entryId = videoPlayback.id.value,
                 type = "KALTURA",
                 downloadUrl = videoPlayback.downloadUrl,
-                // Thumbnail URLs are now built at presentation layer
                 thumbnailUrl = null,
-                hlsStreamUrl = videoPlayback.appleHlsStreamUrl,
-                dashStreamUrl = videoPlayback.mpegDashStreamUrl,
-                progressiveStreamUrl = videoPlayback.progressiveDownloadStreamUrl,
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt()
             )
@@ -34,9 +30,6 @@ object PlaybackConverter : KLogging() {
                 type = "YOUTUBE",
                 thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = null,
-                hlsStreamUrl = null,
-                dashStreamUrl = null,
-                progressiveStreamUrl = null,
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt()
             )
@@ -63,9 +56,6 @@ object PlaybackConverter : KLogging() {
                     id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.entryId!!),
                     referenceId = playbackDocument.id,
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
-                    appleHlsStreamUrl = playbackDocument.hlsStreamUrl!!,
-                    mpegDashStreamUrl = playbackDocument.dashStreamUrl!!,
-                    progressiveDownloadStreamUrl = playbackDocument.progressiveStreamUrl!!,
                     downloadUrl = playbackDocument.downloadUrl!!
                 )
             }

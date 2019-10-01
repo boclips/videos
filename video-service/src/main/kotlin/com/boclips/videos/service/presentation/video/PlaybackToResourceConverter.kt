@@ -22,7 +22,8 @@ class PlaybackToResourceConverter(
                 this.eventsLinkBuilder.createPlaybackEventLink(),
                 this.eventsLinkBuilder.createPlayerInteractedWithEventLink(),
                 this.playbacksLinkBuilder.thumbnailLink(playback),
-                this.playbacksLinkBuilder.videoPreviewLink(playback)
+                this.playbacksLinkBuilder.videoPreviewLink(playback),
+                this.playbacksLinkBuilder.hlsStreamLink(playback)
             )
         )
 
@@ -30,9 +31,10 @@ class PlaybackToResourceConverter(
         when (playback) {
             is VideoPlayback.StreamPlayback -> {
                 val thumbnailUrl = this.playbacksLinkBuilder.thumbnailLink(playback)!!.href
+                val streamUrl = this.playbacksLinkBuilder.hlsStreamLink(playback)!!.href
 
                 StreamPlaybackResource(
-                    streamUrl = playback.appleHlsStreamUrl,
+                    streamUrl = streamUrl,
                     thumbnailUrl = UriTemplate(thumbnailUrl).expand(mapOf(Pair("thumbnailWidth", 500))).toString(),
                     duration = playback.duration,
                     id = playback.id.value,

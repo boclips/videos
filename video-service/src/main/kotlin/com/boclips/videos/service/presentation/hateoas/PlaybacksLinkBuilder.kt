@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.FaultyPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
@@ -13,7 +14,7 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
 
     fun thumbnailLink(playback: VideoPlayback): Link? {
         val href = when (playback) {
-            is StreamPlayback -> kalturaClient.getThumbnailUrl(playback.id.value)
+            is StreamPlayback -> kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value)
             is YoutubePlayback -> playback.thumbnailUrl
             is FaultyPlayback -> null
         }
@@ -23,7 +24,7 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
 
     fun videoPreviewLink(playback: VideoPlayback): Link? {
         val href = when (playback) {
-            is StreamPlayback -> kalturaClient.getVideoPreviewUrl(playback.id.value)
+            is StreamPlayback -> kalturaClient.linkBuilder.getVideoPreviewUrl(playback.id.value)
             is YoutubePlayback -> null
             is FaultyPlayback -> null
         }
@@ -31,4 +32,13 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         return href?.let { Link(it, "videoPreview") }
     }
 
+    fun hlsStreamLink(playback: VideoPlayback): Link? {
+        val href = when (playback) {
+            is StreamPlayback -> kalturaClient.linkBuilder.getStreamUrl(playback.id.value, StreamFormat.APPLE_HDS)
+            is YoutubePlayback -> null
+            is FaultyPlayback -> null
+        }
+
+        return href?.let { Link(it, "hlsStream") }
+    }
 }

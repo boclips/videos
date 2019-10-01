@@ -153,7 +153,7 @@ dependencies {
 
     implementation('com.github.boclips:boclips-spring-web:0.64.0')
     implementation('com.github.boclips:boclips-spring-security:0.190.0')
-    implementation("com.github.boclips:kaltura-client:0.92.0")
+    implementation("com.github.boclips:kaltura-client:0.97.0")
     implementation("com.github.boclips:event-bus:1.32.2")
 
     implementation("com.github.boclips:user-service:0.175.0")

@@ -14,6 +14,7 @@ class KalturaContext {
             .partnerId(kalturaProperties.partnerId)
             .userId(kalturaProperties.userId)
             .secret(kalturaProperties.secret)
+            .streamFlavorParamIds(kalturaProperties.streamFlavorParamIds)
             .build()
     )
 }

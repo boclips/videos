@@ -105,10 +105,10 @@ internal class VideoToResourceConverterTest {
 
         val playbackResource = videoResource.playback!!.content as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")
-        assertThat(playbackResource.thumbnailUrl).isEqualTo("https://thumbnail.com/entry_id/entry-id/width/500")
+        assertThat(playbackResource.thumbnailUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id/width/500/vid_slices/3/vid_slice/1")
         assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(playbackResource.id).isEqualTo("entry-id")
-        assertThat(playbackResource.streamUrl).isEqualTo("hls-stream")
+        assertThat(playbackResource.streamUrl).contains("applehttp")
         assertThat(playbackResource.referenceId).isEqualTo("555")
     }
 

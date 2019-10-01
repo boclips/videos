@@ -8,9 +8,6 @@ data class PlaybackDocument(
     val entryId: String?,
     val thumbnailUrl: List<String>?,
     val downloadUrl: String?,
-    val hlsStreamUrl: String?,
-    val dashStreamUrl: String?,
-    val progressiveStreamUrl: String?,
     val lastVerified: Instant?,
     val duration: Int?
 ) {
@@ -24,9 +21,6 @@ data class PlaybackDocument(
         return type == PLAYBACK_TYPE_KALTURA &&
             id.isNotEmpty() &&
             !entryId.isNullOrEmpty() &&
-            !hlsStreamUrl.isNullOrEmpty() &&
-            !dashStreamUrl.isNullOrEmpty() &&
-            !progressiveStreamUrl.isNullOrEmpty() &&
             !downloadUrl.isNullOrEmpty() &&
             duration != null
     }

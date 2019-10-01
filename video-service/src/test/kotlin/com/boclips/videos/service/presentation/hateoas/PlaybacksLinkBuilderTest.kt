@@ -95,4 +95,38 @@ internal class PlaybacksLinkBuilderTest {
             assertThat(link).isNull()
         }
     }
+
+    @Nested
+    inner class HlsStreamUrl {
+        @Test
+        fun `it returns a hls stream url for kaltura`() {
+            val playback = TestFactories.createKalturaPlayback(entryId = "preview-entry-id")
+
+            val link = linkBuilder.hlsStreamLink(playback)
+
+            assertThat(link).isNotNull
+            assertThat(link!!.href).contains("format/applehttp")
+        }
+
+        @Test
+        fun `it returns null for youtube`() {
+            val playback = TestFactories.createYoutubePlayback()
+
+            val link = linkBuilder.videoPreviewLink(playback)
+
+            assertThat(link).isNull()
+        }
+
+        @Test
+        fun `it returns null for a Faulty playback`() {
+            val playback = VideoPlayback.FaultyPlayback(
+                id = PlaybackId(type = PlaybackProviderType.KALTURA, value = "faulty"),
+                duration = Duration.ZERO
+            )
+
+            val link = linkBuilder.videoPreviewLink(playback)
+
+            assertThat(link).isNull()
+        }
+    }
 }

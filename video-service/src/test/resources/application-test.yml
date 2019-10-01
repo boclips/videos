@@ -7,6 +7,7 @@ klient:
   partnerId: no-partner-id
   userId: no-user-id
   secret: no-secret
+  streamFlavorParamIds: 111,222,333
 
 event:
   monitoring:

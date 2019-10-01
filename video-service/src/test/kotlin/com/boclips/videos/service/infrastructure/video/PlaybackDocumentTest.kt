@@ -14,8 +14,7 @@ class PlaybackDocumentTest {
         @Test
         fun `id needs to exist`() {
             val playbackDocument = TestFactories.createKalturaPlaybackDocument(
-                id = "",
-                hlsStreamUrl = null
+                id = ""
             )
 
             assertThat(playbackDocument.isCompleteKalturaPlayback()).isFalse()
@@ -31,37 +30,10 @@ class PlaybackDocumentTest {
         }
 
         @Test
-        fun `hlsStreamUrl needs to be set`() {
-            assertThat(
-                TestFactories.createKalturaPlaybackDocument(
-                    hlsStreamUrl = null
-                ).isCompleteKalturaPlayback()
-            ).isFalse()
-        }
-
-        @Test
-        fun `dashStreamUrl needs to be set`() {
-            assertThat(
-                TestFactories.createKalturaPlaybackDocument(
-                    dashStreamUrl = null
-                ).isCompleteKalturaPlayback()
-            ).isFalse()
-        }
-
-        @Test
         fun `downloadUrl needs to be set`() {
             assertThat(
                 TestFactories.createKalturaPlaybackDocument(
                     downloadUrl = null
-                ).isCompleteKalturaPlayback()
-            ).isFalse()
-        }
-
-        @Test
-        fun `progressive streamUrl needs to be set`() {
-            assertThat(
-                TestFactories.createKalturaPlaybackDocument(
-                    progressiveStreamUrl = null
                 ).isCompleteKalturaPlayback()
             ).isFalse()
         }

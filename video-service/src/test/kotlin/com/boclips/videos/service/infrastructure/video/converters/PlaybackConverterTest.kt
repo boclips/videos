@@ -17,10 +17,7 @@ class PlaybackConverterTest {
             entryId = "entry_id_1234",
             referenceId = "1234",
             duration = Duration.ofSeconds(100),
-            downloadUrl = "download",
-            dashStreamUrl = "dash",
-            hlsStreamUrl = "hls",
-            progressiveStreamUrl = "progressive"
+            downloadUrl = "download"
         )
 
         val playbackDocument: PlaybackDocument = PlaybackConverter.toDocument(originalPlayback)
@@ -28,9 +25,6 @@ class PlaybackConverterTest {
         assertThat(playbackDocument.entryId).isEqualTo("entry_id_1234")
         assertThat(playbackDocument.thumbnailUrl).isNull()
         assertThat(playbackDocument.downloadUrl).isEqualTo("download")
-        assertThat(playbackDocument.hlsStreamUrl).isEqualTo("hls")
-        assertThat(playbackDocument.dashStreamUrl).isEqualTo("dash")
-        assertThat(playbackDocument.progressiveStreamUrl).isEqualTo("progressive")
         assertThat(playbackDocument.duration).isEqualTo(100)
         assertThat(playbackDocument.lastVerified).isNotNull()
     }
@@ -41,19 +35,13 @@ class PlaybackConverterTest {
             id = "1234",
             entryId = "entry_id_1234",
             duration = 100,
-            downloadUrl = "download",
-            dashStreamUrl = "dash",
-            hlsStreamUrl = "hls",
-            progressiveStreamUrl = "progressive"
+            downloadUrl = "download"
         )
 
         val playback = PlaybackConverter.toPlayback(document) as VideoPlayback.StreamPlayback
         assertThat(playback.id.value).isEqualTo("entry_id_1234")
         assertThat(playback.referenceId).isEqualTo("1234")
         assertThat(playback.downloadUrl).isEqualTo("download")
-        assertThat(playback.appleHlsStreamUrl).isEqualTo("hls")
-        assertThat(playback.mpegDashStreamUrl).isEqualTo("dash")
-        assertThat(playback.progressiveDownloadStreamUrl).isEqualTo("progressive")
         assertThat(playback.duration).isEqualTo(Duration.ofSeconds(100))
     }
 
@@ -70,9 +58,6 @@ class PlaybackConverterTest {
         assertThat(playbackDocument.thumbnailUrl).containsExactly("thumbnail-url")
         assertThat(playbackDocument.entryId).isNull()
         assertThat(playbackDocument.downloadUrl).isNull()
-        assertThat(playbackDocument.hlsStreamUrl).isNull()
-        assertThat(playbackDocument.dashStreamUrl).isNull()
-        assertThat(playbackDocument.progressiveStreamUrl).isNull()
         assertThat(playbackDocument.duration).isEqualTo(100)
         assertThat(playbackDocument.lastVerified).isNotNull()
 

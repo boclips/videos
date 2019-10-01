@@ -115,14 +115,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._embedded.videos[0].playback.streamUrl",
-                    equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")
+                    equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/1%2C2%2C3%2C4/protocol/https/video.mp4")
                 )
             )
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
             .andExpect(
                 jsonPath(
                     "$._embedded.videos[0].playback.thumbnailUrl",
-                    equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
+                    equalTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id-123/width/500/vid_slices/3/vid_slice/1")
                 )
             )
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$kalturaVideoId")))
@@ -346,6 +346,21 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(englishVideoId)))
     }
 
+    @Test
+    fun `returns a hls stream link`() {
+        val videoId = saveVideo(playbackId = PlaybackId(PlaybackProviderType.KALTURA, "entry-id-123"))
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(videoId.value)))
+            .andExpect(
+                jsonPath(
+                    "$.playback._links.hlsStream.href",
+                    equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/1%2C2%2C3%2C4/protocol/https/video.mp4")
+                )
+            )
+    }
+
     @Nested
     inner class VideoResourceProjections {
         @Test
@@ -368,13 +383,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(
                     jsonPath(
                         "$.playback.streamUrl",
-                        equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/1%2C2%2C3%2C4/protocol/https/video.mp4")
                     )
                 )
                 .andExpect(
                     jsonPath(
                         "$.playback.thumbnailUrl",
-                        equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id-123/width/500/vid_slices/3/vid_slice/1")
                     )
                 )
                 .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
@@ -414,13 +429,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(
                     jsonPath(
                         "$.playback.streamUrl",
-                        equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/1%2C2%2C3%2C4/protocol/https/video.mp4")
                     )
                 )
                 .andExpect(
                     jsonPath(
                         "$.playback.thumbnailUrl",
-                        equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id-123/width/500/vid_slices/3/vid_slice/1")
                     )
                 )
                 .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
@@ -468,13 +483,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(
                     jsonPath(
                         "$.playback.streamUrl",
-                        equalTo("https://stream.com/entryId/entry-id-123/format/applehttp")
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/1%2C2%2C3%2C4/protocol/https/video.mp4")
                     )
                 )
                 .andExpect(
                     jsonPath(
                         "$.playback.thumbnailUrl",
-                        equalTo("https://thumbnail.com/entry_id/entry-id-123/width/500")
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id-123/width/500/vid_slices/3/vid_slice/1")
                     )
                 )
                 .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))

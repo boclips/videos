@@ -27,9 +27,6 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(playbackById[playbackId]).isNotNull
 
         val videoPlayback = playbackById[playbackId] as StreamPlayback
-        assertThat(videoPlayback.appleHlsStreamUrl).isEqualTo("https://stream.com/entryId/1/format/applehttp")
-        assertThat(videoPlayback.mpegDashStreamUrl).isEqualTo("https://stream.com/entryId/1/format/mpegdash")
-        assertThat(videoPlayback.progressiveDownloadStreamUrl).isEqualTo("https://stream.com/entryId/1/format/url")
         assertThat(videoPlayback.downloadUrl).isEqualTo("https://download.com/entryId/1/format/download")
         assertThat(videoPlayback.duration).isEqualTo(Duration.parse("PT1M"))
     }

@@ -16,9 +16,6 @@ sealed class VideoPlayback {
         override val id: PlaybackId,
         override val duration: Duration,
         val referenceId: String,
-        val appleHlsStreamUrl: String,
-        val mpegDashStreamUrl: String,
-        val progressiveDownloadStreamUrl: String,
         val downloadUrl: String
     ) : VideoPlayback()
 

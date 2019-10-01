@@ -102,9 +102,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                     TestFactories.createKalturaPlayback(
                         duration = Duration.ZERO,
                         entryId = "new-entry",
-                        downloadUrl = "download-url-updated",
-                        hlsStreamUrl = "stream-url-updated",
-                        dashStreamUrl = "dash-url-updated"
+                        downloadUrl = "download-url-updated"
                     )
                 )
             )
@@ -116,8 +114,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedAsset.playback.id.value).isEqualTo("new-entry")
         assertThat(updatedAsset.playback.duration).isEqualTo(Duration.ZERO)
         assertThat((updatedAsset.playback as StreamPlayback).downloadUrl).isEqualTo("download-url-updated")
-        assertThat((updatedAsset.playback as StreamPlayback).appleHlsStreamUrl).isEqualTo("stream-url-updated")
-        assertThat((updatedAsset.playback as StreamPlayback).mpegDashStreamUrl).isEqualTo("dash-url-updated")
     }
 
     @Test

@@ -8,5 +8,6 @@ import org.springframework.stereotype.Component
 data class KalturaProperties(
     var partnerId: String = "",
     var userId: String = "",
-    var secret: String = ""
+    var secret: String = "",
+    var streamFlavorParamIds: String = ""
 )
