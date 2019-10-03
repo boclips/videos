@@ -1,12 +1,11 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.security.utils.UserExtractor
-import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
@@ -14,30 +13,35 @@ import com.boclips.videos.service.presentation.collections.CollectionResourceFac
 class GetCollections(
     private val collectionService: CollectionService,
     private val collectionResourceFactory: CollectionResourceFactory,
-    private val accessRuleService: AccessRuleService,
-    private val collectionQueryAssembler: CollectionQueryAssembler
-) {
+    private val collectionFilterAssembler: CollectionSearchQueryAssembler
+    ) {
     operator fun invoke(
-        collectionFilter: CollectionFilter,
-        projection: Projection
+        collectionsRequest: CollectionsController.CollectionsRequest,
+        accessRule: AccessRule
     ): Page<CollectionResource> {
-        return getCollections(collectionFilter).let {
+        return getUnassembledCollections(collectionsRequest, accessRule).let {
             assembleResourcesPage(
-                projection = projection,
+                projection = collectionsRequest.projection,
                 pageInfo = it.pageInfo,
                 collections = it.elements
             )
         }
     }
 
-    private fun getCollections(collectionFilter: CollectionFilter): Page<Collection> {
-        val accessRule = accessRuleService.getRules(getCurrentUserId().value)
-        val query = collectionQueryAssembler.assemble(
-            collectionFilter,
-            UserExtractor.getCurrentUser(),
-            accessRule.collectionAccess
-        )
-        return collectionService.search(query)
+    fun getUnassembledCollections(
+        collectionsRequest: CollectionsController.CollectionsRequest,
+        accessRule: AccessRule
+    ): Page<Collection> {
+        return collectionService.search(collectionFilterAssembler(
+            query = collectionsRequest.query,
+            subjects = collectionsRequest.subjects,
+            public = collectionsRequest.public,
+            bookmarked = collectionsRequest.bookmarked ?: false,
+            owner = collectionsRequest.owner,
+            page = collectionsRequest.page,
+            size = collectionsRequest.size,
+            accessRule = accessRule
+        ))
     }
 
     private fun assembleResourcesPage(

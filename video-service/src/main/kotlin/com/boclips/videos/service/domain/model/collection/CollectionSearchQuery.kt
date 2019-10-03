@@ -2,15 +2,14 @@ package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 
 class CollectionSearchQuery(
     val text: String?,
     val subjectIds: List<String>,
-    val visibility: List<CollectionVisibility>,
-    val owner: String? = null,
+    val visibilityForOwners: Set<VisibilityForOwner>,
     val bookmarkedBy: String? = null,
     val pageSize: Int,
     val pageIndex: Int,
@@ -19,8 +18,7 @@ class CollectionSearchQuery(
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
         subjectIds = this.subjectIds,
-        visibility = visibility,
-        owner = owner,
+        visibilityForOwners = this.visibilityForOwners,
         bookmarkedBy = this.bookmarkedBy,
         permittedIds = this.permittedCollections?.map { it.value },
         sort = when {

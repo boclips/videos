@@ -4,6 +4,7 @@ import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 
 class GetContractedCollections(private val collectionRepository: CollectionRepository) {

@@ -3,15 +3,17 @@ package com.boclips.videos.service.domain.service.collection
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
-import com.boclips.videos.service.application.getCurrentUserId
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
+import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
@@ -35,7 +37,14 @@ class CollectionService(
         logger.info { "Returning ${collections.size} collections for query $query" }
 
         val count = count(query)
-        return Page(collections, PageInfo(hasMoreElements = count > query.pageIndexUpperBound(), totalElements = count))
+        return Page(collections, PageInfo(
+            hasMoreElements = count > query.pageIndexUpperBound(),
+            totalElements = count,
+            pageRequest = PageRequest(
+                page = query.pageIndex,
+                size = query.pageSize
+            )
+        ))
     }
 
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {
@@ -62,22 +71,22 @@ class CollectionService(
         collectionRepository: CollectionRepository,
         isForReading: Boolean
     ): Collection {
-        val userId = getCurrentUserId()
+        val user = getCurrentUser()
         val collection = collectionRepository.find(
             CollectionId(
                 collectionId
             )
         )
             ?: throw CollectionNotFoundException(collectionId)
-        val accessRules = accessRuleService.getRules(userId.value)
+        val accessRules = accessRuleService.getRules(user)
 
         return when {
             isForReading && collection.isPublic -> collection
-            collection.owner == userId -> collection
+            collection.owner == UserId(user.id) -> collection
             currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
-            accessRules.allowsAccessTo(collection.id) -> collection
+            accessRules.allowsAccessTo(collection) -> collection
             else -> throw CollectionAccessNotAuthorizedException(
-                userId,
+                UserId(user.id),
                 collectionId
             )
         }

@@ -2,7 +2,8 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
+import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
@@ -44,7 +45,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
         val searchResults = collectionSearchService.search(
             searchRequest = PaginatedSearchRequest(
                 query = CollectionQuery(
-                    visibility = listOf(CollectionVisibility.PUBLIC),
+                    visibilityForOwners = setOf(VisibilityForOwner(null, CollectionVisibilityQuery.publicOnly())),
                     bookmarkedBy = "me@me.com"
                 )
             )

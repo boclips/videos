@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionNotFoundExce
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
@@ -43,7 +44,7 @@ class CollectionServiceTest {
     @Test
     fun `throws error when user doesn't own the private collection`() {
         accessRuleService = mock {
-            on { getRules(any()) } doReturn AccessRule.build(listOf())
+            on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.specificIds(listOf()))
         }
 
         setSecurityContext("attacker@example.com")
@@ -63,7 +64,7 @@ class CollectionServiceTest {
     @Test
     fun `throws error when user doesn't own the public collection`() {
         accessRuleService = mock {
-            on { getRules(any()) } doReturn AccessRule.build(listOf())
+            on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.specificIds(listOf()))
         }
 
         setSecurityContext("attacker@example.com")

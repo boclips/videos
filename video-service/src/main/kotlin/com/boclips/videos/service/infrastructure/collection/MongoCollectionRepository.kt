@@ -210,7 +210,11 @@ class MongoCollectionRepository(
 
         return Page(
             elements = collections,
-            pageInfo = PageInfo(hasMoreElements = hasMoreElements, totalElements = totalDocuments)
+            pageInfo = PageInfo(
+                hasMoreElements = hasMoreElements,
+                totalElements = totalDocuments,
+                pageRequest = pageRequest
+            )
         )
     }
 

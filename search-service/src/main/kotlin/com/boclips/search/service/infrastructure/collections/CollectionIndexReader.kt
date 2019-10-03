@@ -2,6 +2,8 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import mu.KLogging
@@ -56,6 +58,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             .boolQuery()
             .apply {
                 if (query.phrase.isNotEmpty()) {
+
                     must(
                         QueryBuilders
                             .boolQuery()
@@ -71,34 +74,48 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 }
             }
             .apply {
-                if (query.visibility.isNotEmpty() && query.permittedIds == null) {
-                    must(
-                        QueryBuilders
-                            .termsQuery(
-                                CollectionDocument.VISIBILITY,
-                                query.visibility.map { VisibilityMapper.map(it) }
-                            )
+                if (query.visibilityForOwners.isNotEmpty()) {
+                    filter(
+                        QueryBuilders.boolQuery().apply {
+                            query.visibilityForOwners.forEach { visibilityForOwner ->
+                                should(
+                                    QueryBuilders
+                                        .boolQuery().apply {
+                                            visibilityForOwner.owner?.let {
+                                                must(QueryBuilders.termQuery(CollectionDocument.OWNER, it))
+                                            }
+                                            must(
+                                                QueryBuilders.termsQuery(
+                                                    CollectionDocument.VISIBILITY,
+                                                    when (visibilityForOwner.visibility) {
+                                                        CollectionVisibilityQuery.All -> listOf("public", "private")
+                                                        is CollectionVisibilityQuery.One -> when (visibilityForOwner.visibility.collectionVisibility) {
+                                                            CollectionVisibility.PUBLIC -> listOf("public")
+                                                            CollectionVisibility.PRIVATE -> listOf("private")
+                                                        }
+                                                    }
+                                                )
+                                            )
+                                        }
+                                )
+                            }
+                        }
                     )
                 }
             }
             .apply {
                 if (query.subjectIds.isNotEmpty()) {
-                    must(matchSubjects(query.subjectIds))
-                }
-            }
-            .apply {
-                if (query.owner != null) {
-                    must(QueryBuilders.termQuery(CollectionDocument.OWNER, query.owner))
+                    filter(matchSubjects(query.subjectIds))
                 }
             }
             .apply {
                 if (query.bookmarkedBy != null) {
-                    must(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, query.bookmarkedBy))
+                    filter(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, query.bookmarkedBy))
                 }
             }
             .apply {
                 if (query.permittedIds != null) {
-                    must(QueryBuilders.termsQuery(CollectionDocument.ID, query.permittedIds))
+                    filter(QueryBuilders.termsQuery(CollectionDocument.ID, query.permittedIds))
                 }
             }
     }

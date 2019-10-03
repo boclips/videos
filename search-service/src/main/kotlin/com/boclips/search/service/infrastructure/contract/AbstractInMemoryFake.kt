@@ -18,8 +18,8 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         val idsMatching = idsMatching(index, searchRequest.query)
 
         return sort(idsMatching, searchRequest.query)
-            .drop(searchRequest.startIndex)
-            .take(searchRequest.windowSize)
+            .drop(searchRequest.startIndex.toInt())
+            .take(searchRequest.windowSize.toInt())
     }
 
     private fun sort(ids: List<String>, query: QUERY): List<String> {

@@ -164,7 +164,7 @@ public class ApiClient implements VideoServiceClient {
     @Override
     public List<Collection> getCollectionsDetailed(PageSpec pageSpec) {
         this.linkTemplate = getLinks();
-        Link searchPublicCollectionsLink = linkTemplate.get_links().getSearchPublicCollections();
+        Link searchPublicCollectionsLink = linkTemplate.get_links().getSearchCollections();
         if (searchPublicCollectionsLink == null) {
             throw new UnsupportedOperationException("No 'searchPublicCollections' link. Check user roles.");
         }

@@ -5,8 +5,8 @@ import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
@@ -259,6 +259,26 @@ abstract class AbstractSpringIntegrationTest {
                 .videoId(videoId)
                 .subjects(subjectIds.map { com.boclips.eventbus.domain.SubjectId(it.value) }.toSet())
                 .build()
+        )
+    }
+
+    data class SaveCollectionRequest(
+        val owner: String = "owner@me.com",
+        val title: String = "collection title",
+        val videos: List<String> = emptyList(),
+        val public: Boolean = false,
+        val bookmarkedBy: String? = null,
+        val subjects: Set<Subject> = emptySet()
+    )
+
+    fun saveCollection(request: SaveCollectionRequest): CollectionId {
+        return saveCollection(
+            owner = request.owner,
+            title = request.title,
+            videos = request.videos,
+            public = request.public,
+            bookmarkedBy = request.bookmarkedBy,
+            subjects = request.subjects
         )
     }
 

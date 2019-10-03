@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.application.collection.AddVideoToCollection
-import com.boclips.videos.service.application.collection.AssembleCollectionFilter
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
@@ -10,6 +10,8 @@ import com.boclips.videos.service.application.collection.GetCollections
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
@@ -50,34 +52,35 @@ class CollectionsController(
     private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val withProjection: WithProjection,
-    private val assembleCollectionFilter: AssembleCollectionFilter
+    private val accessRuleService: AccessRuleService
 ) {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
     }
 
+    data class CollectionsRequest(
+        val query: String? = null,
+        val public: Boolean? = null,
+        val bookmarked: Boolean? = null,
+        val owner: String? = null,
+        val page: Int? = null,
+        val size: Int? = null,
+        val projection: Projection = Projection.list,
+        private val subject: String? = null
+    ){
+        val subjects = subject?.split(",") ?: emptyList()
+    }
+
     @GetMapping
     fun getFilteredCollections(
-        @RequestParam(required = false) query: String?,
-        @RequestParam(required = false) projection: Projection?,
-        @RequestParam(required = false) public: Boolean = false,
-        @RequestParam(required = false) bookmarked: Boolean = false,
-        @RequestParam(required = false) owner: String?,
-        @RequestParam(required = false) page: Int?,
-        @RequestParam(required = false) size: Int?,
-        @RequestParam(required = false) subject: List<String>?
+        collectionsRequest: CollectionsRequest
     ): MappingJacksonValue {
-        val collectionFilter = assembleCollectionFilter(
-            query = query,
-            subject = subject,
-            public = public,
-            bookmarked = bookmarked,
-            owner = owner,
-            page = page,
-            size = size
-        )
+        val user = UserExtractor.getCurrentUser()
 
-        val collectionsPage = getCollections(collectionFilter, projection ?: Projection.list)
+        val accessRule = user?.let { accessRuleService.getRules(it) }
+            ?: throw OperationForbiddenException("User must be authenticated to access collections")
+
+        val collectionsPage = getCollections(collectionsRequest, accessRule)
 
         val collectionResources = collectionsPage.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
@@ -86,10 +89,10 @@ class CollectionsController(
             PagedResources(
                 collectionResources,
                 PagedResources.PageMetadata(
-                    collectionFilter.pageSize.toLong(),
-                    collectionFilter.pageNumber.toLong(),
+                    collectionsPage.pageInfo.pageRequest.size.toLong(),
+                    collectionsPage.pageInfo.pageRequest.page.toLong(),
                     collectionsPage.pageInfo.totalElements,
-                    collectionsPage.pageInfo.totalElements / collectionFilter.pageSize.toLong()
+                    collectionsPage.pageInfo.totalElements / collectionsPage.pageInfo.pageRequest.size.toLong()
                 ),
                 listOfNotNull(
                     collectionsLinkBuilder.projections().list(),

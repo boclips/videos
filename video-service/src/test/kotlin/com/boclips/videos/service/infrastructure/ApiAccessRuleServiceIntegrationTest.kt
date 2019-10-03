@@ -5,6 +5,7 @@ import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,8 +20,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         whenever(userServiceClient.getContracts(anyString()))
             .thenReturn(listOf(testContract))
 
-        assertThat(accessRuleService.getRules("test-user").collectionAccess).isEqualTo(
-            CollectionAccessRule.RestrictedTo(setOf(CollectionId("test-collection-id")))
+        assertThat(accessRuleService.getRules(UserFactory.sample(id = "test-user")).collectionAccess).isEqualTo(
+            CollectionAccessRule.SpecificIds(setOf(CollectionId("test-collection-id")))
         )
     }
 
@@ -31,8 +32,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             .thenThrow(RuntimeException("Something bad happened"))
             .thenReturn(listOf(testContract))
 
-        assertThat(accessRuleService.getRules("test-user").collectionAccess).isEqualTo(
-            CollectionAccessRule.RestrictedTo(setOf(CollectionId("test-collection-id")))
+        assertThat(accessRuleService.getRules(UserFactory.sample(id = "test-user")).collectionAccess).isEqualTo(
+            CollectionAccessRule.SpecificIds(setOf(CollectionId("test-collection-id")))
         )
     }
 
@@ -42,14 +43,14 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `when rules cannot be obtained, gives access to evertyhing`() {
+    fun `when rules cannot be obtained, revert to public access`() {
         whenever(userServiceClient.getContracts(anyString()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenThrow(RuntimeException("Something bad happened again!"))
 
-        assertThat(accessRuleService.getRules("test-user").collectionAccess).isEqualTo(
-            CollectionAccessRule.Unspecified
+        assertThat(accessRuleService.getRules(UserFactory.sample(id = "test-user")).collectionAccess).isEqualTo(
+            CollectionAccessRule.public()
         )
     }
 

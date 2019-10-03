@@ -2,6 +2,8 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
+import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
@@ -39,9 +41,8 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
         Assertions.assertThat(
             collectionIndexReader.count(
                 CollectionQuery(
-                    visibility = listOf(
-                        CollectionVisibility.PRIVATE,
-                        CollectionVisibility.PUBLIC
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.All)
                     )
                 )
             )
@@ -69,8 +70,8 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
             collectionIndexReader.search(
                 PaginatedSearchRequest(
                     query = CollectionQuery(
-                        visibility = listOf(
-                            CollectionVisibility.PUBLIC
+                        visibilityForOwners = setOf(
+                            VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())
                         )
                     )
                 )
@@ -99,7 +100,14 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
         val results =
             collectionIndexReader.search(
                 PaginatedSearchRequest(
-                    query = CollectionQuery(visibility = listOf(CollectionVisibility.PRIVATE))
+                    query = CollectionQuery(
+                        visibilityForOwners = setOf(
+                            VisibilityForOwner(
+                                owner = null,
+                                visibility = CollectionVisibilityQuery.privateOnly()
+                            )
+                        )
+                    )
                 )
             )
 
@@ -107,7 +115,7 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
     }
 
     @Test
-    fun `returns public collections by default`() {
+    fun `returns all collections by default`() {
         collectionIndexWriter.safeRebuildIndex(
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
@@ -123,8 +131,12 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
             )
         )
 
-        val results = collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery()))
+        val results = collectionIndexReader.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery()
+            )
+        )
 
-        Assertions.assertThat(results).containsExactly("100")
+        Assertions.assertThat(results).containsExactlyInAnyOrder("100", "101")
     }
 }

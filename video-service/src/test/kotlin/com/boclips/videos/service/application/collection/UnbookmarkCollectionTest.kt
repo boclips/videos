@@ -2,7 +2,6 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -48,7 +47,6 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
             collectionSearchService.search(
                 searchRequest = PaginatedSearchRequest(
                     query = CollectionQuery(
-                        visibility = listOf(CollectionVisibility.PUBLIC),
                         bookmarkedBy = "me@me.com"
                     )
                 )

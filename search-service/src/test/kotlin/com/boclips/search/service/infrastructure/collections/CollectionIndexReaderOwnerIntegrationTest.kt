@@ -2,6 +2,8 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
+import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
@@ -41,8 +43,12 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             collectionIndexReader.search(
                 PaginatedSearchRequest(
                     query = CollectionQuery(
-                        owner = "juan-123",
-                        visibility = CollectionVisibility.ALL
+                        visibilityForOwners = setOf(
+                            VisibilityForOwner(
+                                owner = "juan-123",
+                                visibility = CollectionVisibilityQuery.All
+                            )
+                        )
                     )
                 )
             )
@@ -64,7 +70,16 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
 
         assertThat(
             collectionIndexReader.search(
-                PaginatedSearchRequest(query = CollectionQuery(owner = "jose"))
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        visibilityForOwners = setOf(
+                            VisibilityForOwner(
+                                owner = "jose",
+                                visibility = CollectionVisibilityQuery.All
+                            )
+                        )
+                    )
+                )
             )
         ).isEmpty()
     }

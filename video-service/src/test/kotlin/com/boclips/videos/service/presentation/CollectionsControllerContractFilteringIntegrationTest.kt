@@ -92,7 +92,6 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(0)))
     }
 }

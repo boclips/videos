@@ -1,8 +1,6 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -10,12 +8,13 @@ import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.security.utils.User
-import com.boclips.videos.service.application.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
@@ -38,6 +37,8 @@ import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.AccessRule
+import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -493,22 +494,72 @@ object AttachmentFactory {
 
 object CollectionFilterFactory {
     fun sample(
-        query: String? = "",
-        subjects: List<String>? = emptyList(),
-        owner: String? = "hans",
-        page: Int? = 0,
-        size: Int? = 40,
-        visibility: CollectionFilter.Visibility
+        query: String? = null,
+        subjects: List<String> = emptyList(),
+        owner: String? = null,
+        page: Int = 0,
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE,
+        visibility: CollectionVisibilityQuery = CollectionVisibilityQuery.All,
+        onlyBookmarked: Boolean = false
     ): CollectionFilter {
         return CollectionFilter(
-            query = query ?: "",
-            subjects = subjects ?: emptyList(),
-            visibility = visibility,
-            owner = owner,
-            pageNumber = page ?: 0,
-            pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE
+            query = query,
+            subjects = subjects,
+            queriedVisibilities = visibility,
+            owner = owner?.let { UserId(it) },
+            pageNumber = page,
+            pageSize = size,
+            onlyBookmarked = onlyBookmarked
         )
     }
+
+    fun unfiltered() = sample()
+    fun publicOnly() = sample(visibility = CollectionVisibilityQuery.publicOnly())
+    fun privateOnly() = sample(visibility = CollectionVisibilityQuery.privateOnly())
+}
+
+object CollectionsRequestFactory {
+    fun sample(
+        query: String? = null,
+        subjects: List<String> = emptyList(),
+        owner: String? = null,
+        page: Int = 0,
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE,
+        public: Boolean? = null,
+        bookmarked: Boolean? = null
+    ): CollectionsController.CollectionsRequest {
+        return CollectionsController.CollectionsRequest(
+            query = query,
+            subject = if (subjects.isNotEmpty()) subjects.joinToString(",") else null,
+            public = public,
+            owner = owner,
+            page = page,
+            size = size,
+            bookmarked = bookmarked
+        )
+    }
+
+    fun unfiltered() = sample()
+}
+
+object AccessRuleFactory {
+    fun sample(collectionAccessRule: CollectionAccessRule = CollectionAccessRule.everything()): AccessRule {
+        return AccessRule(
+            collectionAccess = collectionAccessRule
+        )
+    }
+
+    fun publicOnly() =
+        sample(collectionAccessRule = CollectionAccessRule.public())
+
+    fun specificIds(vararg collectionIds: CollectionId) =
+        sample(collectionAccessRule = CollectionAccessRule.specificIds(collectionIds.toList()))
+
+    fun superuser(): AccessRule =
+        sample(collectionAccessRule = CollectionAccessRule.everything())
+
+    fun asOwner(ownerId: String): AccessRule =
+        sample(collectionAccessRule = CollectionAccessRule.asOwner(UserId(ownerId)))
 }
 
 object UserFactory {

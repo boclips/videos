@@ -1,11 +1,10 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
+import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
-import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -37,7 +36,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibility = listOf(CollectionVisibility.PUBLIC),
+                visibilityForOwners = setOf(VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())),
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
@@ -61,7 +60,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibility = listOf(CollectionVisibility.PRIVATE),
+                visibilityForOwners = setOf(VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.privateOnly())),
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
@@ -84,7 +83,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibility = listOf(CollectionVisibility.PRIVATE),
+                visibilityForOwners = setOf(VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.privateOnly())),
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null

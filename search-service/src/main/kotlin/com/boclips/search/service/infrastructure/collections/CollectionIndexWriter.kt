@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
+import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.infrastructure.AbstractIndexWriter
 import org.elasticsearch.client.RestHighLevelClient
 
@@ -12,7 +13,10 @@ class CollectionIndexWriter(client: RestHighLevelClient) : AbstractIndexWriter<C
     override fun serializeToIndexDocument(entry: CollectionMetadata) = CollectionDocument(
         id = entry.id,
         title = entry.title,
-        visibility = VisibilityMapper.map(entry.visibility),
+        visibility = when(entry.visibility) {
+            CollectionVisibility.PUBLIC -> "public"
+            CollectionVisibility.PRIVATE -> "private"
+        },
         subjects = entry.subjectIds,
         hasAttachments = entry.hasAttachments,
         owner = entry.owner,

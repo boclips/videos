@@ -1,7 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +13,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            visibility = listOf(CollectionVisibility.PUBLIC),
+            visibilityForOwners = emptySet(),
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null
@@ -28,7 +27,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = null,
             subjectIds = listOf("subject"),
-            visibility = listOf(CollectionVisibility.PUBLIC),
+            visibilityForOwners = emptySet(),
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null
@@ -38,39 +37,11 @@ class CollectionSearchQueryTest {
     }
 
     @Test
-    fun `sets visibility to PUBLIC when publicOnly search is made`() {
-        val query = CollectionSearchQuery(
-            text = "sometin",
-            subjectIds = listOf("subject"),
-            visibility = listOf(CollectionVisibility.PUBLIC),
-            pageIndex = 0,
-            pageSize = 0,
-            permittedCollections = null
-        )
-
-        assertThat(query.toSearchQuery().visibility).containsExactlyInAnyOrder(CollectionVisibility.PUBLIC)
-    }
-
-    @Test
-    fun `sets visibility to null when all collections search is made`() {
-        val query = CollectionSearchQuery(
-            text = "sometin",
-            subjectIds = listOf("subject"),
-            visibility = listOf(),
-            pageIndex = 0,
-            pageSize = 0,
-            permittedCollections = null
-        )
-
-        assertThat(query.toSearchQuery().visibility).isEmpty()
-    }
-
-    @Test
     fun `sets permitted ids`() {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            visibility = listOf(),
+            visibilityForOwners = emptySet(),
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = listOf(CollectionId("some-collection-id"))

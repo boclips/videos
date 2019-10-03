@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.common.PageInfo
+import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.testsupport.TestFactories
@@ -360,7 +361,7 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.next(PageInfo(true, 1001))
+        val link = collectionsLinkBuilder.next(PageInfo(true, 1001, PageRequest(page = 0, size = 1000)))
 
         val url = URL(link?.href)
         assertThat(url).hasProtocol("https")
@@ -382,7 +383,7 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.next(PageInfo(false, 1))
+        val link = collectionsLinkBuilder.next(PageInfo(false, 1, PageRequest(page = 0, size = 1000)))
 
         assertThat(link).isNull()
     }
@@ -393,7 +394,7 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.next(PageInfo(true, 1001))
+        val link = collectionsLinkBuilder.next(PageInfo(true, 1001, PageRequest(page = 0, size = 1000)))
 
         val url = URL(link?.href)
         assertThat(url).hasProtocol("https")

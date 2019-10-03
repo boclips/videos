@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -44,7 +43,7 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
                 CollectionSearchQuery(
                     subjectIds = listOf(subject.id.value),
                     text = null,
-                    visibility = listOf(CollectionVisibility.PRIVATE),
+                    visibilityForOwners = emptySet(),
                     pageIndex = 0,
                     pageSize = 10,
                     permittedCollections = null

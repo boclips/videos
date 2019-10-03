@@ -8,9 +8,8 @@ import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.collection.AddVideoToCollection
-import com.boclips.videos.service.application.collection.AssembleCollectionFilter
 import com.boclips.videos.service.application.collection.BookmarkCollection
-import com.boclips.videos.service.application.collection.CollectionQueryAssembler
+import com.boclips.videos.service.application.collection.CollectionSearchQueryAssembler
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
@@ -59,7 +58,6 @@ import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -96,8 +94,7 @@ class ApplicationContext(
     val tagRepository: TagRepository,
     val disciplineRepository: DisciplineRepository,
     val contentPartnerService: ContentPartnerService,
-    val legalRestrictionsRepository: LegalRestrictionsRepository,
-    val accessRuleService: AccessRuleService
+    val legalRestrictionsRepository: LegalRestrictionsRepository
 ) {
     @Bean
     fun searchVideo(
@@ -171,11 +168,6 @@ class ApplicationContext(
     }
 
     @Bean
-    fun collectionQueryAssembler(): CollectionQueryAssembler {
-        return CollectionQueryAssembler()
-    }
-
-    @Bean
     fun getCollection(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
@@ -199,7 +191,7 @@ class ApplicationContext(
         attachmentsLinkBuilder: AttachmentsLinkBuilder,
         getContractedCollections: GetContractedCollections,
         userServiceClient: UserServiceClient,
-        collectionQueryAssembler: CollectionQueryAssembler
+        collectionFilterAssembler: CollectionSearchQueryAssembler
     ): GetCollections {
         return GetCollections(
             collectionService,
@@ -209,13 +201,12 @@ class ApplicationContext(
                 AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
             ),
-            accessRuleService,
-            collectionQueryAssembler
+            collectionFilterAssembler
         )
     }
 
     @Bean
-    fun assembleCollectionFilter() = AssembleCollectionFilter()
+    fun assembleCollectionFilter() = CollectionSearchQueryAssembler()
 
     @Bean
     fun getContractedCollections(collectionRepository: CollectionRepository): GetContractedCollections {

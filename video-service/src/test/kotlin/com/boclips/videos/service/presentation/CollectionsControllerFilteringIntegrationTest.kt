@@ -101,10 +101,10 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `cannot fetch collection when owner does not match user`() {
+    fun `cannot fetch private collection when owner does not match user`() {
         createCollection("collection 1")
 
-        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher("notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com&public=false").asTeacher("notTheOwner@gmail.com"))
             .andExpect(status().isForbidden)
     }
 
@@ -273,11 +273,5 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-    }
-
-    @Test
-    fun `returns a 403 response when user without VIEW_ANY_COLLECTION wants to search all collections`() {
-        mockMvc.perform(get("/v1/collections").asTeacher("notTheOwner@gmail.com"))
-            .andExpect(status().isForbidden)
     }
 }

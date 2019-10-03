@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
+import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -71,7 +72,8 @@ class GetVideosByQuery(
             elements = videos.asIterable(),
             pageInfo = PageInfo(
                 hasMoreElements = (pageNumber + 1) * pageSize < totalVideos,
-                totalElements = totalVideos
+                totalElements = totalVideos,
+                pageRequest = PageRequest(page = pageNumber, size = pageSize)
             )
         )
     }

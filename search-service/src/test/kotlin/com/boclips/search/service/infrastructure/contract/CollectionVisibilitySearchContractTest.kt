@@ -3,6 +3,8 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
+import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
@@ -35,7 +37,18 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(readService.count(CollectionQuery(visibility = CollectionVisibility.ALL))).isEqualTo(2)
+        assertThat(
+            readService.count(
+                CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(
+                            owner = null,
+                            visibility = CollectionVisibilityQuery.All
+                        )
+                    )
+                )
+            )
+        ).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -63,7 +76,9 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             readService.search(
                 PaginatedSearchRequest(
                     CollectionQuery(
-                        visibility = listOf(CollectionVisibility.PRIVATE)
+                        visibilityForOwners = setOf(
+                            VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.privateOnly())
+                        )
                     )
                 )
             )
@@ -85,7 +100,196 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = CollectionQuery(visibility = listOf(CollectionVisibility.PUBLIC)))
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())
+                    )
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds collections matching several visibility-owner entries`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1", visibility = CollectionVisibility.PUBLIC),
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "seb"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "3",
+                    visibility = CollectionVisibility.PRIVATE,
+                    owner = "seb"
+                ),
+                SearchableCollectionMetadataFactory.create(id = "4", visibility = CollectionVisibility.PRIVATE)
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly()),
+                        VisibilityForOwner(owner = "seb", visibility = CollectionVisibilityQuery.privateOnly())
+                    )
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("1", "2", "3")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds collections matching several visibility-owner entries with different owners`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "jacek"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "seb"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "3",
+                    visibility = CollectionVisibility.PRIVATE,
+                    owner = "seb"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "4",
+                    visibility = CollectionVisibility.PRIVATE,
+                    owner = "jc"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "5",
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "jc"
+                )
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = "jc", visibility = CollectionVisibilityQuery.All),
+                        VisibilityForOwner(owner = "seb", visibility = CollectionVisibilityQuery.privateOnly())
+                    )
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("3", "4", "5")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds all collections if no visibility specified`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "jacek"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    visibility = CollectionVisibility.PRIVATE,
+                    owner = "seb"
+                )
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf()
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds all private collections for any owner`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    visibility = CollectionVisibility.PRIVATE,
+                    owner = "jacek"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    visibility = CollectionVisibility.PRIVATE,
+                    owner = "seb"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "3",
+                    visibility = CollectionVisibility.PUBLIC,
+                    owner = "seb"
+                )
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.privateOnly())
+                    )
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds all collections by specific IDs`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1"),
+                SearchableCollectionMetadataFactory.create(id = "2", visibility = CollectionVisibility.PRIVATE),
+                SearchableCollectionMetadataFactory.create(id = "3")
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    permittedIds = listOf("1", "2")
+                )
+            )
         )
 
         assertThat(result).containsExactlyInAnyOrder("1", "2")
@@ -121,7 +325,9 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             PaginatedSearchRequest(
                 query = CollectionQuery(
                     phrase = "Bear",
-                    visibility = listOf(CollectionVisibility.PUBLIC)
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())
+                    )
                 )
             )
         )
@@ -159,7 +365,9 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             PaginatedSearchRequest(
                 query = CollectionQuery(
                     subjectIds = listOf("Math"),
-                    visibility = listOf(CollectionVisibility.PUBLIC)
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())
+                    )
                 )
             )
         )
@@ -201,7 +409,9 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
                 query = CollectionQuery(
                     phrase = "Bear",
                     subjectIds = listOf("Math"),
-                    visibility = listOf(CollectionVisibility.PUBLIC)
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())
+                    )
                 )
             )
         )

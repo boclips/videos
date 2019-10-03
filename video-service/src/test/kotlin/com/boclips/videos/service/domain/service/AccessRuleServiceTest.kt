@@ -9,16 +9,16 @@ class AccessRuleServiceTest {
     @Test
     fun `returns true when there is a SelectedContent contract for a given collection`() {
         val collection = TestFactories.createCollection()
-        val accessRule = AccessRule.build(listOf(collection.id))
+        val accessRule = AccessRule(CollectionAccessRule.specificIds(listOf(collection.id)))
 
-        assertThat(accessRule.allowsAccessTo(collection.id)).isTrue()
+        assertThat(accessRule.allowsAccessTo(collection)).isTrue()
     }
 
     @Test
     fun `returns false when user has a SelectedContent contract but not for that collection`() {
         val collection = TestFactories.createCollection()
-        val accessRule = AccessRule.build(listOf(CollectionId("some--random-id")))
+        val accessRule = AccessRule(CollectionAccessRule.specificIds(listOf(CollectionId("some--random-id"))))
 
-        assertThat(accessRule.allowsAccessTo(collection.id)).isFalse()
+        assertThat(accessRule.allowsAccessTo(collection)).isFalse()
     }
 }

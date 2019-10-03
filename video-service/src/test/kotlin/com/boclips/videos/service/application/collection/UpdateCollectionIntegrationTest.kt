@@ -4,12 +4,10 @@ import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -116,45 +114,5 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
                 updateCollectionRequest = UpdateCollectionRequest(title = "new title")
             )
         }
-    }
-
-    @Test
-    fun `collection is searchable if visibility changed to public`() {
-        val collectionId = saveCollection(owner = "me@me.com", title = "title", public = false)
-
-        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
-
-        assertThat(
-            collectionService.search(
-                CollectionSearchQuery(
-                    text = "title",
-                    subjectIds = emptyList(),
-                    visibility = listOf(CollectionVisibility.PUBLIC),
-                    pageSize = 1,
-                    pageIndex = 0,
-                    permittedCollections = null
-                )
-            ).elements.first().id
-        ).isEqualTo(collectionId)
-    }
-
-    @Test
-    fun `collection is searchable if visibility changed to private`() {
-        val collectionId = saveCollection(owner = "me@me.com", title = "title", public = true)
-
-        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = false))
-
-        assertThat(
-            collectionService.search(
-                CollectionSearchQuery(
-                    text = "title",
-                    subjectIds = emptyList(),
-                    visibility = listOf(CollectionVisibility.PRIVATE),
-                    pageSize = 1,
-                    pageIndex = 0,
-                    permittedCollections = null
-                )
-            ).elements.first().id
-        ).isEqualTo(collectionId)
     }
 }
