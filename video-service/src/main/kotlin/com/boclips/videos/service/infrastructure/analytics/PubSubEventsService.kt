@@ -199,6 +199,7 @@ class PubSubEventsService(
         }
         return builder
             .user(user)
+            .userId(user.id)
             .url(RefererHeaderExtractor.getReferer())
             .build()
     }
