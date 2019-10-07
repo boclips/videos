@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLegalRestrictions
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
@@ -309,6 +310,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             )
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
+            is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.legalRestrictions.text)
         }
     }
 

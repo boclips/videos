@@ -1,6 +1,8 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -224,6 +226,21 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `updates legal restrictions of videos by content partner`() {
+            val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
+            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            videoService.create(video)
+
+            videoService.updateContentPartnerInVideos(
+                contentPartner = contentPartner.copy(
+                    legalRestrictions = LegalRestrictions(id = LegalRestrictionsId("id"), text = "Legal restrictions test")
+                )
+            )
+
+            assertThat(videoService.getPlayableVideo(video.videoId).legalRestrictions).isEqualTo("Legal restrictions test")
+        }
+
+        @Test
         fun `updates multiple videos associated to a content partner`() {
             val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
             val videos = listOf(
@@ -237,14 +254,18 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             videoService.updateContentPartnerInVideos(
                 contentPartner = contentPartner.copy(
-                    distributionMethods = setOf(DistributionMethod.STREAM)
+                    distributionMethods = setOf(DistributionMethod.STREAM),
+                    legalRestrictions = LegalRestrictions(id = LegalRestrictionsId("id"), text = "Multiple legal restrictions test"),
+                    ageRange = AgeRange.bounded(3, 9)
                 )
             )
 
             videos.forEach {
-                assertThat(videoService.getPlayableVideo(it.videoId).distributionMethods).containsExactly(
-                    DistributionMethod.STREAM
-                )
+                val video = videoService.getPlayableVideo(it.videoId)
+                assertThat(video.distributionMethods).containsExactly(DistributionMethod.STREAM)
+                assertThat(video.ageRange).isEqualTo(AgeRange.bounded(3, 9))
+                assertThat(video.legalRestrictions).isEqualTo("Multiple legal restrictions test")
+
             }
         }
     }

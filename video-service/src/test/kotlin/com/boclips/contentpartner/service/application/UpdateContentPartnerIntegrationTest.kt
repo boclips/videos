@@ -79,6 +79,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos get updated`() {
+        val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions test")
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             request = ContentPartnerRequest(
@@ -87,13 +88,15 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
-                )
+                ),
+                legalRestrictions = LegalRestrictionsRequest(id = legalRestrictionsId.value)
             )
         )
 
         val updatedVideo = videoService.getPlayableVideo(videoId = videoId)
 
         assertThat(updatedVideo.distributionMethods).isEqualTo(DistributionMethod.ALL)
+        assertThat(updatedVideo.legalRestrictions).isEqualTo("Legal restrictions test")
     }
 
     @Test

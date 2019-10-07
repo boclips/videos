@@ -95,7 +95,7 @@ class VideoService(
             VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartner.contentPartnerId)
         ) { videos ->
             videos.flatMap { video ->
-                listOf(
+                listOfNotNull(
                     VideoUpdateCommand.ReplaceContentPartner(
                         videoId = video.videoId,
                         contentPartner = ContentPartner(
@@ -107,7 +107,8 @@ class VideoService(
                     VideoUpdateCommand.ReplaceDistributionMethods(
                         videoId = video.videoId,
                         distributionMethods = contentPartner.distributionMethods
-                    )
+                    ),
+                    contentPartner.legalRestrictions?.let { VideoUpdateCommand.ReplaceLegalRestrictions(videoId = video.videoId, legalRestrictions = contentPartner.legalRestrictions)}
                 )
             }
         }
