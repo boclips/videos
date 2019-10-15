@@ -26,7 +26,7 @@ class GetContentPartners(
             .map {
                 Resource(
                     ContentPartnerToResourceConverter.convert(it),
-                    contentPartnersLinkBuilder.self(it)
+                    contentPartnersLinkBuilder.self(it.contentPartnerId.value)
                 )
             }
 

@@ -73,8 +73,10 @@ class ContentPartnerController(
     }
 
     @GetMapping("/{id}")
-    fun getContentPartner(@PathVariable("id") contentPartnerId: String?): ContentPartnerResource {
-        return fetchContentPartner(contentPartnerId)
+    fun getContentPartner(@PathVariable("id") contentPartnerId: String?): Resource<ContentPartnerResource> {
+        return fetchContentPartner(contentPartnerId).let {
+            Resource(it, contentPartnersLinkBuilder.self(it.id))
+        }
     }
 
     @PostMapping
@@ -84,7 +86,7 @@ class ContentPartnerController(
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",
-                contentPartnersLinkBuilder.self(contentPartner).href.toString()
+                contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value).href.toString()
             )
         }, HttpStatus.CREATED)
     }

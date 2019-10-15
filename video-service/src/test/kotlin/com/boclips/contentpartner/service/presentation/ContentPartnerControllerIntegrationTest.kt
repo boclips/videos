@@ -203,6 +203,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$.currency", equalTo("GBP")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(11)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(18)))
+            .andExpect(jsonPath("$._links.self.href", equalTo(cpUrl)))
     }
 
     @Test

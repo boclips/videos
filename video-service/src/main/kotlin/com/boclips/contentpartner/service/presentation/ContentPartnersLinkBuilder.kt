@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
@@ -10,10 +9,10 @@ import org.springframework.stereotype.Component
 @Component
 class ContentPartnersLinkBuilder {
 
-    fun self(contentPartner: ContentPartner): Link {
+    fun self(id: String): Link {
         return ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(ContentPartnerController::class.java).getContentPartner(
-                contentPartner.contentPartnerId.value
+                id
             )
         ).withSelfRel()
     }
