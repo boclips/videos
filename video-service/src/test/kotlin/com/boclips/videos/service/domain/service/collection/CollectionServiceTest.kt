@@ -8,10 +8,10 @@ import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

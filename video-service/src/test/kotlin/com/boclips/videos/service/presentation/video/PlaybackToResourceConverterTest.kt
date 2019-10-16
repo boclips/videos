@@ -6,10 +6,10 @@ import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.presentation.video.playback.YoutubePlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.spy
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

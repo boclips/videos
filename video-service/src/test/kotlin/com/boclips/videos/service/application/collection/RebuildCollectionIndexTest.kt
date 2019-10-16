@@ -10,10 +10,10 @@ import com.boclips.videos.service.domain.service.collection.CollectionSearchServ
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.doThrow
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.doThrow
+import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -4,7 +4,7 @@ import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.disciplines.DisciplineResource
 import com.boclips.videos.service.testsupport.DisciplineFactory
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

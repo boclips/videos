@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.email
 
-import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockitokotlin2.any
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

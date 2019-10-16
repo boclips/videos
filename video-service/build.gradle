@@ -181,7 +181,7 @@ dependencies {
     }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
-    testImplementation("com.nhaarman:mockito-kotlin:1.5.0")
+    testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation('org.mockito:mockito-junit-jupiter:2.23.0')
     testImplementation('org.yaml:snakeyaml:1.23')

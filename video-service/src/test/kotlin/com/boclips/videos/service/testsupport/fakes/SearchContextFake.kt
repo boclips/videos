@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionSearchServ
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

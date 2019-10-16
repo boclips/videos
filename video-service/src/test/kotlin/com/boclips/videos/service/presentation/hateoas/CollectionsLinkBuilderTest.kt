@@ -6,8 +6,8 @@ import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

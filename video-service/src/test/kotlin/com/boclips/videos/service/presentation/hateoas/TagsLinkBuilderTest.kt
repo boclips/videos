@@ -3,8 +3,8 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles.VIEW_TAGS
 import com.boclips.videos.service.presentation.tag.TagResource
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

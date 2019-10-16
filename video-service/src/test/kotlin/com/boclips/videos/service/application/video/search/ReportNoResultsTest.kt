@@ -2,8 +2,8 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito

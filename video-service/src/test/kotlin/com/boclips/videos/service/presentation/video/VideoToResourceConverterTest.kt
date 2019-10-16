@@ -13,7 +13,7 @@ import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach

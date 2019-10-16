@@ -2,9 +2,9 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.jupiter.api.Test
 
 internal class GetAllVideosByIdTest {

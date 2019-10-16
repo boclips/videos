@@ -46,7 +46,7 @@ import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.MongoClient
-import com.nhaarman.mockito_kotlin.reset
+import com.nhaarman.mockitokotlin2.reset
 import de.flapdoodle.embed.mongo.MongodProcess
 import mu.KLogging
 import org.junit.jupiter.api.BeforeAll

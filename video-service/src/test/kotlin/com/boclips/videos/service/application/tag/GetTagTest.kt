@@ -5,8 +5,8 @@ import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.presentation.tag.TagResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

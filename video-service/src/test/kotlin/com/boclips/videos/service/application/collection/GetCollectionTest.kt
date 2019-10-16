@@ -20,10 +20,10 @@ import com.boclips.videos.service.presentation.subject.SubjectToResourceConverte
 import com.boclips.videos.service.presentation.video.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.video.VideoToResourceConverter
 import com.boclips.videos.service.testsupport.TestFactories
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.doThrow
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.doThrow
+import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
