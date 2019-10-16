@@ -17,9 +17,12 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
+data class IndexParameters(val numberOfShards: Int)
+
 abstract class AbstractIndexWriter<T>(
     private val indexConfiguration: IndexConfiguration,
     val client: RestHighLevelClient,
+    private val indexParameters: IndexParameters,
     private val esIndex: Index
 ) : IndexWriter<T> {
     companion object : KLogging() {
@@ -33,7 +36,7 @@ abstract class AbstractIndexWriter<T>(
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         val newIndexName = esIndex.generateIndexName()
 
-        notifier?.send("Creating index...")
+        notifier?.send("Creating index using ${indexParameters.numberOfShards} shards...")
         createIndex(newIndexName)
 
         upsertToIndex(items, newIndexName, notifier)
@@ -110,7 +113,7 @@ abstract class AbstractIndexWriter<T>(
 
     private fun createIndex(indexName: String) {
         val createIndexRequest = CreateIndexRequest(indexName)
-            .settings(indexConfiguration.defaultEnglishSettings())
+            .settings(indexConfiguration.defaultEnglishSettings(indexParameters.numberOfShards))
             .mapping(esIndex.getESType(), indexConfiguration.generateMapping())
 
         logger.info("Creating index $indexName")

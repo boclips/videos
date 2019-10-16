@@ -27,7 +27,7 @@ class SearchServiceProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
         val inMemorySearchService = VideoSearchServiceFake()
         val elasticSearchService = VideoIndexReader(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
-        val elasticSearchServiceAdmin = VideoIndexWriter(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
+        val elasticSearchServiceAdmin = VideoIndexWriter.createTestInstance(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
 
         return Stream.of(
             Arguments.of(inMemorySearchService, inMemorySearchService),

@@ -19,7 +19,7 @@ class VideoIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     @BeforeEach
     fun setUp() {
         videoIndexReader = VideoIndexReader(esClient)
-        videoIndexWriter = VideoIndexWriter(esClient)
+        videoIndexWriter = VideoIndexWriter.createTestInstance(esClient)
     }
 
     @Test

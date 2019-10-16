@@ -18,7 +18,7 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
     @BeforeEach
     fun setUp() {
         collectionIndexReader = CollectionIndexReader(esClient)
-        collectionIndexWriter = CollectionIndexWriter(esClient)
+        collectionIndexWriter = CollectionIndexWriter.createTestInstance(esClient)
     }
 
     @Test

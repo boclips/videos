@@ -12,6 +12,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
+import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
@@ -38,10 +39,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         val query = if (isIdLookup(videoQuery)) lookUpById(videoQuery.ids) else findBySearchTerm(videoQuery)
         val request = SearchRequest(
             arrayOf(VideosIndex.getIndexAlias()),
-            query.from(startIndex).size(windowSize)
+            query.from(startIndex).size(windowSize).explain(true)
         )
-
-        return client.search(request, RequestOptions.DEFAULT).hits
+        val result = client.search(request, RequestOptions.DEFAULT)
+        return result.hits
     }
 
     private fun findBySearchTerm(videoQuery: VideoQuery): SearchSourceBuilder {
@@ -49,31 +50,29 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         val query = boolQuery()
 
         if (phrase.isNotBlank()) {
-            query.must(
-                QueryBuilders.boostingQuery(
-                    boolQuery()
-                        .should(matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
-                        .should(matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
-                        .should(
-                            multiMatchQuery(
-                                phrase,
-                                VideoDocument.TITLE,
-                                unstemmed(VideoDocument.TITLE),
-                                VideoDocument.DESCRIPTION,
-                                unstemmed(VideoDocument.DESCRIPTION),
-                                VideoDocument.TRANSCRIPT,
-                                unstemmed(VideoDocument.TRANSCRIPT),
-                                VideoDocument.KEYWORDS
-                            )
-                                .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                                .minimumShouldMatch("75%")
-                                .fuzziness(Fuzziness.ZERO)
-                        )
-                        .should(termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
-                        .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
-                        .minimumShouldMatch(1),
-                    boolQuery().mustNot(termQuery(VideoDocument.TYPE, VideoType.INSTRUCTIONAL.name))
-                ).negativeBoost(0.4F)
+            query.must(boolQuery()
+                .should(matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
+                .should(matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
+                .should(
+                    multiMatchQuery(
+                        phrase,
+                        VideoDocument.TITLE,
+                        unstemmed(VideoDocument.TITLE),
+                        VideoDocument.DESCRIPTION,
+                        unstemmed(VideoDocument.DESCRIPTION),
+                        VideoDocument.TRANSCRIPT,
+                        unstemmed(VideoDocument.TRANSCRIPT),
+                        VideoDocument.KEYWORDS
+                    )
+                        .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+                        .minimumShouldMatch("75%")
+                        .fuzziness(Fuzziness.ZERO)
+                )
+                .should(termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
+                .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
+                .minimumShouldMatch(1)
+                .let(boostInstructionalVideos())
+                .let(boostWhenSubjectsMatch(videoQuery.userSubjectIds))
             )
         }
 
@@ -86,6 +85,16 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         }
 
         return esQuery
+    }
+
+    private fun boostInstructionalVideos() = { innerQuery: QueryBuilder ->
+        QueryBuilders.boostingQuery(innerQuery, boolQuery().mustNot(termQuery(VideoDocument.TYPE, VideoType.INSTRUCTIONAL.name))).negativeBoost(0.4F)
+    }
+
+    private fun boostWhenSubjectsMatch(subjectIds: Set<String>) = { innerQuery: QueryBuilder ->
+        QueryBuilders.boostingQuery(innerQuery,
+            subjectIds.fold(boolQuery(), { q, subjectId -> q.mustNot(matchPhraseQuery(VideoDocument.SUBJECT_IDS, subjectId)) })
+        ).negativeBoost(0.8F)
     }
 
     private fun lookUpById(ids: List<String>): SearchSourceBuilder {

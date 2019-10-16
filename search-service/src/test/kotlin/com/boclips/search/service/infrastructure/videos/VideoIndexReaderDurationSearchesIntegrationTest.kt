@@ -16,7 +16,7 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
     @BeforeEach
     fun setUp() {
         videoIndexReader = VideoIndexReader(esClient)
-        videoIndexWriter = VideoIndexWriter(esClient)
+        videoIndexWriter = VideoIndexWriter.createTestInstance(esClient)
     }
 
     @Test

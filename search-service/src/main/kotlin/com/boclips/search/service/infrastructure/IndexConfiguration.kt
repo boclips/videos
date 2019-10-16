@@ -68,8 +68,12 @@ interface IndexConfiguration {
         )
     }
 
-    fun defaultEnglishSettings(): Map<String, Any> {
+    fun defaultEnglishSettings(numberOfShards: Int): Map<String, Any> {
         return mapOf(
+            "index" to mapOf(
+                "number_of_shards" to numberOfShards,
+                "number_of_replicas" to 1
+            ),
             "analysis" to mapOf(
                 "filter" to mapOf(
                     Filters.SHINGLES to mapOf(

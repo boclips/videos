@@ -2,6 +2,7 @@ package com.boclips.videos.service.config
 
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.ElasticSearchClient
+import com.boclips.search.service.infrastructure.IndexParameters
 import com.boclips.search.service.infrastructure.collections.CollectionIndexReader
 import com.boclips.search.service.infrastructure.collections.CollectionIndexWriter
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
@@ -32,7 +33,7 @@ class SearchContext {
     fun videoSearchService(elasticSearchClient: ElasticSearchClient): VideoSearchService {
         return DefaultVideoSearch(
             VideoIndexReader(elasticSearchClient.buildClient()),
-            VideoIndexWriter(elasticSearchClient.buildClient())
+            VideoIndexWriter.createInstance(elasticSearchClient.buildClient(), IndexParameters(numberOfShards = 5))
         )
     }
 
@@ -41,7 +42,7 @@ class SearchContext {
     fun collectionSearchService(elasticSearchClient: ElasticSearchClient): CollectionSearchService {
         return DefaultCollectionSearch(
             CollectionIndexReader(elasticSearchClient.buildClient()),
-            CollectionIndexWriter(elasticSearchClient.buildClient())
+            CollectionIndexWriter.createInstance(elasticSearchClient.buildClient(), IndexParameters(numberOfShards = 5))
         )
     }
 
