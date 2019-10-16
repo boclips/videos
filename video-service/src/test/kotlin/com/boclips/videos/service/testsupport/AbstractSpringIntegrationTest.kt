@@ -55,6 +55,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cache.CacheManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.ResultActions
@@ -135,6 +136,9 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var createLegalRestrictions: CreateLegalRestrictions
 
+    @Autowired
+    lateinit var cacheManager: CacheManager
+
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null
 
@@ -166,7 +170,14 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
+        userServiceClient.clearContracts()
+        userServiceClient.clearUser()
+
         reset(legacyVideoSearchService)
+
+        cacheManager.cacheNames.forEach { cacheName ->
+            cacheManager.getCache(cacheName)?.clear()
+        }
     }
 
     fun createMediaEntry(

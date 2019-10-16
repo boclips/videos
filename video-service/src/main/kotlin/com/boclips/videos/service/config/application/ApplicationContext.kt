@@ -63,6 +63,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionSearchServ
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
@@ -94,6 +95,7 @@ class ApplicationContext(
     val tagRepository: TagRepository,
     val disciplineRepository: DisciplineRepository,
     val contentPartnerService: ContentPartnerService,
+    val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository
 ) {
     @Bean
@@ -392,6 +394,7 @@ class ApplicationContext(
         return GetVideosByQuery(
             videoService,
             eventService,
+            userService,
             searchQueryConverter
         )
     }

@@ -1,13 +1,16 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
+import com.boclips.contentpartner.service.infrastructure.MongoLegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -16,19 +19,19 @@ import com.boclips.videos.service.domain.service.collection.CollectionSearchServ
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.subject.EventPublishingSubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.EventPublishingVideoRepository
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
-import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
-import com.boclips.contentpartner.service.infrastructure.MongoLegalRestrictionsRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
+import com.boclips.videos.service.infrastructure.user.ApiUserService
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.mongodb.MongoClient
 import org.springframework.context.annotation.Bean
@@ -40,6 +43,7 @@ class DomainContext(
     private val mongoClient: MongoClient,
     private val eventBus: EventBus,
     private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter,
+    private val userServiceClient: UserServiceClient,
     private val accessRuleService: AccessRuleService
 ) {
 
@@ -121,5 +125,10 @@ class DomainContext(
     @Bean
     fun legalRestrictionsRepository(): LegalRestrictionsRepository {
         return MongoLegalRestrictionsRepository(mongoClient)
+    }
+
+    @Bean
+    fun userService(): UserService {
+        return ApiUserService(userServiceClient)
     }
 }

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -7,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.events.EventService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import mu.KLogging
@@ -14,6 +16,7 @@ import mu.KLogging
 class GetVideosByQuery(
     private val videoService: VideoService,
     private val eventService: EventService,
+    private val userService: UserService,
     private val searchQueryConverter: SearchQueryConverter
 ) {
     companion object : KLogging()
@@ -37,6 +40,8 @@ class GetVideosByQuery(
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
+        val userSubjectIds = UserExtractor.getCurrentUser()?.let{user -> userService.getSubjectIds(user.id)} ?: emptySet()
+
         val videoSearchQuery = VideoSearchQuery(
             text = query,
             sortBy = sortBy,
@@ -51,6 +56,7 @@ class GetVideosByQuery(
             releaseDateTo = searchQueryConverter.convertDate(releasedDateTo),
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
+            userSubjectIds = userSubjectIds,
             subjects = subjects
         )
 
