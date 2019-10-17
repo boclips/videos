@@ -85,7 +85,6 @@ abstract class AbstractIndexWriter<T>(
     }
 
     override fun upsert(items: Sequence<T>, notifier: ProgressNotifier?) {
-        makeSureIndexIsThere()
         upsertToIndex(items, esIndex.getIndexAlias())
     }
 
