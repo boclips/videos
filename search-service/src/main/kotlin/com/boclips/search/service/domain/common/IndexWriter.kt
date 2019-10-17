@@ -5,4 +5,5 @@ interface IndexWriter<T> {
     fun upsert(items: Sequence<T>, notifier: ProgressNotifier? = null)
     fun removeFromSearch(itemId: String)
     fun bulkRemoveFromSearch(items: List<String>)
+    fun makeSureIndexIsThere()
 }

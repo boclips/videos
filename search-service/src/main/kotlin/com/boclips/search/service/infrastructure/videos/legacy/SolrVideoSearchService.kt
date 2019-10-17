@@ -2,7 +2,6 @@ package com.boclips.search.service.infrastructure.videos.legacy
 
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.legacy.LegacyDocumentNotFound
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -74,5 +73,8 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
 
                 logger.info { "[Batch $batchIndex] Successfully removed ${videoBatch.size} video(s) in Solr" }
             }
+    }
+
+    override fun makeSureIndexIsThere() {
     }
 }

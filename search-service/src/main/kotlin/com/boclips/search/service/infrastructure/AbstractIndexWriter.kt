@@ -89,7 +89,7 @@ abstract class AbstractIndexWriter<T>(
         upsertToIndex(items, esIndex.getIndexAlias())
     }
 
-    private fun makeSureIndexIsThere() {
+    override fun makeSureIndexIsThere() {
         if (!client.indices().exists(
                 GetIndexRequest().indices(esIndex.getIndexAlias()),
                 RequestOptions.DEFAULT

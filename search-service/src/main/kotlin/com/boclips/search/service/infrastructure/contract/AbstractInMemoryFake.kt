@@ -66,6 +66,9 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         items.forEach(this::removeFromSearch)
     }
 
+    override fun makeSureIndexIsThere() {
+    }
+
     abstract fun idsMatching(index: MutableMap<String, METADATA>, query: QUERY): List<String>
     abstract fun upsertMetadata(index: MutableMap<String, METADATA>, item: METADATA)
 }

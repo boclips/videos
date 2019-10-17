@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application
 
-import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import mu.KLogging
 import org.springframework.boot.actuate.health.Health
@@ -13,7 +12,7 @@ class SearchHealthCheck(val videoSearchService: VideoSearchService) : HealthIndi
 
     override fun health(): Health {
         try {
-            videoSearchService.count(VideoQuery())
+            videoSearchService.makeSureIndexIsThere()
         } catch (ex: Exception) {
             logger.info(ex) { "Cannot connect to Search" }
             return Health.down().build()

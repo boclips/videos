@@ -37,5 +37,9 @@ abstract class CollectionSearchAdapter<T>(
         indexWriter.bulkRemoveFromSearch(items)
     }
 
+    override fun makeSureIndexIsThere() {
+        indexWriter.makeSureIndexIsThere()
+    }
+
     abstract fun convert(document: T): CollectionMetadata
 }
