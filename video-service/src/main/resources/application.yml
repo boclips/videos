@@ -27,6 +27,8 @@ management:
       enabled: false
     elasticsearch:
       enabled: false
+    mongo:
+      enabled: false
 
 legacy:
   solr:

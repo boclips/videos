@@ -29,10 +29,6 @@ abstract class AbstractIndexWriter<T>(
         private const val UPSERT_BATCH_SIZE = 1000
     }
 
-    init {
-        makeSureIndexIsThere()
-    }
-
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         val newIndexName = esIndex.generateIndexName()
 
@@ -89,6 +85,7 @@ abstract class AbstractIndexWriter<T>(
     }
 
     override fun upsert(items: Sequence<T>, notifier: ProgressNotifier?) {
+        makeSureIndexIsThere()
         upsertToIndex(items, esIndex.getIndexAlias())
     }
 
