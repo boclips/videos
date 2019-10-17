@@ -39,7 +39,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         val query = if (isIdLookup(videoQuery)) lookUpById(videoQuery.ids) else findBySearchTerm(videoQuery)
         val request = SearchRequest(
             arrayOf(VideosIndex.getIndexAlias()),
-            query.from(startIndex).size(windowSize).explain(true)
+            query.from(startIndex).size(windowSize).explain(false)
         )
         val result = client.search(request, RequestOptions.DEFAULT)
         return result.hits
@@ -94,7 +94,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     private fun boostWhenSubjectsMatch(subjectIds: Set<String>) = { innerQuery: QueryBuilder ->
         QueryBuilders.boostingQuery(innerQuery,
             subjectIds.fold(boolQuery(), { q, subjectId -> q.mustNot(matchPhraseQuery(VideoDocument.SUBJECT_IDS, subjectId)) })
-        ).negativeBoost(0.8F)
+        ).negativeBoost(0.5F)
     }
 
     private fun lookUpById(ids: List<String>): SearchSourceBuilder {
