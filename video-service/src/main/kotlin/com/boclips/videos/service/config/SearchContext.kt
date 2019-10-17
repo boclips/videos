@@ -8,12 +8,10 @@ import com.boclips.search.service.infrastructure.collections.CollectionIndexWrit
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchService
-import com.boclips.videos.service.application.video.search.ReportNoResults
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
-import com.boclips.videos.service.infrastructure.email.EmailClient
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import org.springframework.context.annotation.Bean
@@ -56,10 +54,5 @@ class SearchContext {
             username = elasticSearchProperties.username,
             password = elasticSearchProperties.password
         )
-    }
-
-    @Bean
-    fun reportNoResults(emailClient: EmailClient): ReportNoResults {
-        return ReportNoResults(emailClient)
     }
 }

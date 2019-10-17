@@ -133,22 +133,4 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isCreated)
     }
-
-    @Test
-    fun `post no search results`() {
-        mockMvc.perform(
-            post("/v1/events/no-search-results")
-                .asTeacher()
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{
-                        "name": "Hans Muster",
-                        "query" : "animal",
-                        "email" : "hans@muster.com",
-                        "description" : "description"
-                        }""".trimMargin()
-                )
-        )
-            .andExpect(status().isCreated)
-    }
 }

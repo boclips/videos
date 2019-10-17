@@ -35,7 +35,6 @@ class LinksController(
             "", listOfNotNull(
                 videosLinkBuilder.videoLink(),
                 getIfHasRole(UserRoles.TEACHER) { eventsLinkBuilder.createPlaybackEventLink() },
-                getIfHasRole(UserRoles.TEACHER) { eventsLinkBuilder.createNoResultsEventLink() },
                 collectionsLinkBuilder.publicCollections(),
                 subjectsLinkBuilder.subjects(),
                 distributionMethodsLinkBuilder.distributionMethods(),

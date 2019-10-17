@@ -3,8 +3,6 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
-import com.boclips.videos.service.application.video.search.ReportNoResults
-import com.boclips.videos.service.presentation.event.CreateNoSearchResultsEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
 import org.springframework.http.HttpStatus
@@ -20,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class EventController(
     private val savePlaybackEvent: SavePlaybackEvent,
     private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
-    private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
-    private val reportNoResults: ReportNoResults
+    private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent
 ) {
 
     @PostMapping("/v1/events/playback")
@@ -33,12 +30,6 @@ class EventController(
     @PostMapping("/v1/events/player-interaction")
     fun logPlayerInteractedWithEvent(@RequestBody playbackEvent: CreatePlayerInteractedWithEvent?): ResponseEntity<Void> {
         savePlayerInteractedWithEvent.execute(playbackEvent)
-        return ResponseEntity(HttpStatus.CREATED)
-    }
-
-    @PostMapping("/v1/events/no-search-results")
-    fun logNoSearchResultsEvent(@RequestBody noSearchResultsEvent: CreateNoSearchResultsEventCommand?): ResponseEntity<Void> {
-        reportNoResults.execute(noSearchResultsEvent)
         return ResponseEntity(HttpStatus.CREATED)
     }
 

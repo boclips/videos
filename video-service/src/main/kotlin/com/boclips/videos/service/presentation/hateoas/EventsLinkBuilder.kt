@@ -14,9 +14,4 @@ class EventsLinkBuilder {
     fun createPlayerInteractedWithEventLink() = ControllerLinkBuilder.linkTo(
         ControllerLinkBuilder.methodOn(EventController::class.java).logPlayerInteractedWithEvent(null)
     ).withRel("createPlayerInteractedWithEvent")
-
-    fun createNoResultsEventLink() = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(EventController::class.java).logNoSearchResultsEvent(null)
-    ).withRel("createNoSearchResultsEvent")
-
 }
