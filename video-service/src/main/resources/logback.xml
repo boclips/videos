@@ -11,6 +11,8 @@
         </filter>
     </appender>
 
+    <logger name="io.jaegertracing" level="ERROR" />
+
     <root level="INFO">
         <appender-ref ref="Console" />
         <appender-ref ref="Sentry" />
