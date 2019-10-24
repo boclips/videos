@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.security.utils.User
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -13,26 +14,28 @@ import com.boclips.videos.service.presentation.collections.CollectionResourceFac
 class GetCollections(
     private val collectionService: CollectionService,
     private val collectionResourceFactory: CollectionResourceFactory,
-    private val collectionFilterAssembler: CollectionSearchQueryAssembler
-    ) {
+    private val collectionSearchQueryAssembler: CollectionSearchQueryAssembler
+) {
     operator fun invoke(
         collectionsRequest: CollectionsController.CollectionsRequest,
-        accessRule: AccessRule
+        accessRule: AccessRule,
+        user: User
     ): Page<CollectionResource> {
-        return getUnassembledCollections(collectionsRequest, accessRule).let {
-            assembleResourcesPage(
-                projection = collectionsRequest.projection,
-                pageInfo = it.pageInfo,
-                collections = it.elements
-            )
-        }
+        val collections = getUnassembledCollections(collectionsRequest, accessRule, user)
+
+        return assembleResourcesPage(
+            projection = collectionsRequest.projection,
+            pageInfo = collections.pageInfo,
+            collections = collections.elements
+        )
     }
 
     fun getUnassembledCollections(
         collectionsRequest: CollectionsController.CollectionsRequest,
-        accessRule: AccessRule
+        accessRule: AccessRule,
+        user: User? = null
     ): Page<Collection> {
-        return collectionService.search(collectionFilterAssembler(
+        val assembledQuery = collectionSearchQueryAssembler(
             query = collectionsRequest.query,
             subjects = collectionsRequest.subjects,
             public = collectionsRequest.public,
@@ -40,8 +43,11 @@ class GetCollections(
             owner = collectionsRequest.owner,
             page = collectionsRequest.page,
             size = collectionsRequest.size,
-            accessRule = accessRule
-        ))
+            accessRule = accessRule,
+            user = user
+        )
+
+        return collectionService.search(assembledQuery)
     }
 
     private fun assembleResourcesPage(

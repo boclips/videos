@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -9,6 +10,7 @@ import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRuleFactory
 import com.boclips.videos.service.testsupport.CollectionsRequestFactory
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.AbstractAssert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -29,7 +31,8 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
         val availableCollections: List<SaveCollectionRequest>,
         val chooseExpectedCollections: (List<CollectionId>) -> List<CollectionId>,
         val buildAccessRule: (List<CollectionId>) -> AccessRule,
-        val filter: CollectionsController.CollectionsRequest
+        val filter: CollectionsController.CollectionsRequest,
+        val user: User? = null
     )
 
     companion object {
@@ -66,7 +69,17 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                     { listOf(it.last()) },
                     { access },
                     CollectionsRequestFactory.sample(public = false)
-
+                ),
+                TestCase(
+                    "for super-user, get all collections which are bookmarked by self",
+                    listOf(
+                        SaveCollectionRequest(public = true, bookmarkedBy = "super-user", owner = "other-user"),
+                        SaveCollectionRequest(public = true, bookmarkedBy = "another-user", owner = "different-user")
+                    ),
+                    { listOf(it.first()) },
+                    { access },
+                    CollectionsRequestFactory.sample(bookmarked = true),
+                    user = UserFactory.sample(id = "super-user")
                 )
             )
         }
@@ -202,7 +215,8 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
 
         val collectionPage = getCollections.getUnassembledCollections(
             testCase.filter,
-            testCase.buildAccessRule(availableIds)
+            testCase.buildAccessRule(availableIds),
+            testCase.user
         )
 
         CollectionsAssert.assertThat(availableIds, collectionPage)
@@ -211,7 +225,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `trying to get private collections when public only access`() {
-        assertThrows<OperationForbiddenException>{
+        assertThrows<OperationForbiddenException> {
             getCollections.getUnassembledCollections(
                 CollectionsRequestFactory.sample(public = false),
                 AccessRuleFactory.publicOnly()
@@ -231,7 +245,8 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                     |${expectedIds.map { availableIds.indexOf(it) }}
                     |However, we received collections with these indices instead: 
                     |${actual.elements.map { availableIds.indexOf(it.id) }}
-                    |Please note, the index refers to the collection's position in the list passed to the test.""".trimMargin()
+                    |Please note, the index refers to the collection's position in the list passed to the test."""
+                        .trimMargin()
                 )
             }
             return this

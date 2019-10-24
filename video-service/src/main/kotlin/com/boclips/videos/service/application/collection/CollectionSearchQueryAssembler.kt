@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
+import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.common.UserId
@@ -18,17 +19,23 @@ class CollectionSearchQueryAssembler {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
-        accessRule: AccessRule = AccessRule(CollectionAccessRule.public())
+        accessRule: AccessRule = AccessRule(CollectionAccessRule.public()),
+        user: User? = null
     ): CollectionSearchQuery {
-        val bookmarker = when (accessRule.collectionAccess) {
-            is CollectionAccessRule.SpecificOwner -> accessRule.collectionAccess.owner
-            else -> null
-        }
+        val bookmarker =
+            if (bookmarked == true)
+                when (accessRule.collectionAccess) {
+                    is CollectionAccessRule.SpecificOwner -> accessRule.collectionAccess.owner
+                    is CollectionAccessRule.Everything -> user?.let { UserId(it.id) }
+                    else -> throw OperationForbiddenException(
+                        "This user cannot have bookmarked collections"
+                    )
+                } else null
 
         return CollectionSearchQuery(
             text = query ?: "",
             subjectIds = subjects ?: emptyList(),
-            bookmarkedBy = if (bookmarked == true) bookmarker?.value else null,
+            bookmarkedBy = bookmarker?.value,
             visibilityForOwners = accessRule.getVisibility(public = public, owner = owner),
             permittedCollections = when (accessRule.collectionAccess) {
                 is CollectionAccessRule.SpecificIds -> accessRule.collectionAccess.collectionIds.toList()

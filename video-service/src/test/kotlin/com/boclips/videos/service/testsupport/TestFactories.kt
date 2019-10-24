@@ -8,13 +8,11 @@ import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
@@ -490,32 +488,6 @@ object AttachmentFactory {
         linkToResource = linkToResource,
         type = type
     )
-}
-
-object CollectionFilterFactory {
-    fun sample(
-        query: String? = null,
-        subjects: List<String> = emptyList(),
-        owner: String? = null,
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE,
-        visibility: CollectionVisibilityQuery = CollectionVisibilityQuery.All,
-        onlyBookmarked: Boolean = false
-    ): CollectionFilter {
-        return CollectionFilter(
-            query = query,
-            subjects = subjects,
-            queriedVisibilities = visibility,
-            owner = owner?.let { UserId(it) },
-            pageNumber = page,
-            pageSize = size,
-            onlyBookmarked = onlyBookmarked
-        )
-    }
-
-    fun unfiltered() = sample()
-    fun publicOnly() = sample(visibility = CollectionVisibilityQuery.publicOnly())
-    fun privateOnly() = sample(visibility = CollectionVisibilityQuery.privateOnly())
 }
 
 object CollectionsRequestFactory {

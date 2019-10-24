@@ -80,7 +80,7 @@ class CollectionsController(
         val accessRule = user?.let { accessRuleService.getRules(it) }
             ?: throw OperationForbiddenException("User must be authenticated to access collections")
 
-        val collectionsPage = getCollections(collectionsRequest, accessRule)
+        val collectionsPage = getCollections(collectionsRequest, accessRule, user)
 
         val collectionResources = collectionsPage.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)

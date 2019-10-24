@@ -4,11 +4,13 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery.Companion.privateOnly
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery.Companion.publicOnly
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
+import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.testsupport.AccessRuleFactory
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -103,7 +105,7 @@ class CollectionSearchQueryAssemblerTest {
     }
 
     @Nested
-    inner class `visibility for public only access` {
+    inner class `visibility for public-only access` {
         @Test
         fun `can access other owner's public collections`() {
             val query = collectionSearchQueryAssembler(
@@ -155,7 +157,7 @@ class CollectionSearchQueryAssemblerTest {
     }
 
     @Nested
-    inner class `visibility for super-users` {
+    inner class `visibility for superusers` {
         @Test
         fun `can access other owner's public collections`() {
             val query = collectionSearchQueryAssembler(
@@ -292,7 +294,7 @@ class CollectionSearchQueryAssemblerTest {
         }
 
         @Test
-        fun `with super-user access, default to no visibility constraints`() {
+        fun `with superuser access, default to no visibility constraints`() {
             val query = collectionSearchQueryAssembler(
                 accessRule = AccessRuleFactory.superuser()
             )
@@ -332,6 +334,48 @@ class CollectionSearchQueryAssemblerTest {
                 VisibilityForOwner(owner = null, visibility = publicOnly())
             )
         }
+
+        @Test
+        fun `with owner access, take bookmarkedBy from access rule`() {
+            val query = collectionSearchQueryAssembler(
+                accessRule = AccessRuleFactory.asOwner(ownerId = "access"),
+                user = UserFactory.sample(id = "authenticated"),
+                bookmarked = true
+            )
+
+            assertThat(query.bookmarkedBy).isEqualTo("access")
+        }
+
+        @Test
+        fun `with superuser access, take bookmarkedBy from passed-in user`() {
+            val query = collectionSearchQueryAssembler(
+                accessRule = AccessRuleFactory.superuser(),
+                user = UserFactory.sample(id = "authenticated"),
+                bookmarked = true
+            )
+
+            assertThat(query.bookmarkedBy).isEqualTo("authenticated")
+        }
+
+        @Test
+        fun `with specific ID access, throw error when requesting bookmarked collections`() {
+            assertThrows<OperationForbiddenException> {
+                collectionSearchQueryAssembler(
+                    accessRule = AccessRuleFactory.specificIds(),
+                    bookmarked = true
+                )
+            }
+        }
+
+        @Test
+        fun `with public access, throw error when requesting bookmarked collections`() {
+            assertThrows<OperationForbiddenException> {
+                collectionSearchQueryAssembler(
+                    accessRule = AccessRuleFactory.publicOnly(),
+                    bookmarked = true
+                )
+            }
+        }
     }
 
 
@@ -343,7 +387,8 @@ class CollectionSearchQueryAssemblerTest {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
-        accessRule: AccessRule = AccessRuleFactory.publicOnly()
+        accessRule: AccessRule = AccessRuleFactory.publicOnly(),
+        user: User? = null
     ) = CollectionSearchQueryAssembler()(
         query,
         subjects,
@@ -352,6 +397,7 @@ class CollectionSearchQueryAssemblerTest {
         owner,
         page,
         size,
-        accessRule
+        accessRule,
+        user
     )
 }
