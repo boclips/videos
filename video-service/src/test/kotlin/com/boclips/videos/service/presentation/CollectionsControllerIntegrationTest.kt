@@ -90,13 +90,15 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""
+                .content(
+                    """
                     {
                         "title": "$newTitle",
                         "description": "$newDescription",
                         "videos": ["$secondVideoId", "$thirdVideoId"]
                     }
-                    """.trimIndent())
+                    """.trimIndent()
+                )
                 .asBoclipsEmployee()
         )
             .andExpect(status().isNoContent)
@@ -193,11 +195,13 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""
+                .content(
+                    """
                     {
                         "title": "brave, new title"
                     }
-                    """.trimIndent())
+                    """.trimIndent()
+                )
                 .asBoclipsEmployee()
         )
             .andExpect(status().isNoContent)
@@ -528,6 +532,27 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.attachments[0].description", equalTo("description")))
             .andExpect(jsonPath("$.attachments[0].type", equalTo("LESSON_PLAN")))
             .andExpect(jsonPath("$.attachments[0]._links.download.href", equalTo("https://example.com/download")))
+    }
+
+    @Test
+    fun `will return a superuser's bookmarked collections`() {
+        createCollection("collection 1").apply {
+            updateCollectionToBePublic(this)
+            bookmarkCollection(this, "me@gmail.com")
+        }
+        createCollection("collection 2").apply {
+            updateCollectionToBePublic(this)
+            bookmarkCollection(this, "notMe@gmail.com")
+        }
+
+        mockMvc.perform(
+            get("/v1/collections?projection=list&public=true&bookmarked=true&page=0&size=30")
+                .asBoclipsEmployee(email = "me@gmail.com")
+        )
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
     }
 
     private fun createCollectionWithAttachment(

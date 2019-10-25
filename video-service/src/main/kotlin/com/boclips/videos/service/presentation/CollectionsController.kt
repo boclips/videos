@@ -76,6 +76,8 @@ class CollectionsController(
         collectionsRequest: CollectionsRequest
     ): MappingJacksonValue {
         val user = UserExtractor.getCurrentUser()
+        val userLabel = user?.let {"User with ID '${it.id}'"} ?: "Anonymous user"
+        logger.info { "$userLabel is requesting filtered collections. Request is \n$collectionsRequest" }
 
         val accessRule = user?.let { accessRuleService.getRules(it) }
             ?: throw OperationForbiddenException("User must be authenticated to access collections")

@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.presentation.CollectionsController
+import mu.KLogging
 
 class CollectionSearchQueryAssembler {
     operator fun invoke(
@@ -32,6 +33,8 @@ class CollectionSearchQueryAssembler {
                     )
                 } else null
 
+        bookmarker?.let { logger.info("Looking for collections bookmarked by $it")}
+
         return CollectionSearchQuery(
             text = query ?: "",
             subjectIds = subjects ?: emptyList(),
@@ -45,6 +48,8 @@ class CollectionSearchQueryAssembler {
             pageIndex = page ?: 0
         )
     }
+
+    companion object : KLogging()
 }
 
 private fun AccessRule.getVisibility(public: Boolean?, owner: String?): Set<VisibilityForOwner> =
