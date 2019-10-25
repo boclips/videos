@@ -58,8 +58,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.pageIndex).isEqualTo(4)
         assertThat(event.pageSize).isEqualTo(2)
         assertThat(event.totalResults).isEqualTo(20)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.pageVideoIds).containsExactly("v123")
     }
 
@@ -81,25 +80,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
-    }
-
-    @Test
-    fun `isBoclipsEmployee when user is an employee`() {
-        setSecurityContext(username = "david@boclips.com")
-
-        eventService.saveUpdateCollectionEvent(
-            updateCommands = listOf(
-                CollectionUpdateCommand.AddVideoToCollection(
-                    collectionId = CollectionId(aValidId()),
-                    videoId = VideoId(aValidId())
-                )
-            )
-        )
-
-        val event = fakeEventBus.getEventOfType(VideoAddedToCollection::class.java)
-        assertThat(event.user.isBoclipsEmployee).isTrue()
+        assertThat(event.userId).isEqualTo("user@example.com")
     }
 
     @Test
@@ -120,8 +101,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
     }
 
     @Test
@@ -140,8 +120,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionRenamed::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.collectionTitle).isEqualTo("the new title")
     }
 
@@ -158,8 +137,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.isPublic).isTrue()
     }
 
@@ -197,8 +175,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionSubjectsChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.subjects).containsExactly(aSubject.id.value)
     }
 
@@ -219,8 +196,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionAgeRangeChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.rangeMin).isEqualTo(5)
         assertThat(event.rangeMax).isEqualTo(9)
     }
@@ -254,8 +230,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.isBookmarked).isTrue()
     }
 
@@ -269,8 +244,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.isBookmarked).isFalse()
     }
 
@@ -293,8 +267,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.playerId).isEqualTo("player-id")
         assertThat(event.segmentStartSeconds).isEqualTo(123)
         assertThat(event.segmentEndSeconds).isEqualTo(345)
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.playbackDevice).isEqualTo("device-id")
     }
 
@@ -316,8 +289,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         val event = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
 
-        assertThat(event.user.id).isEqualTo("user@example.com")
-        assertThat(event.user.isBoclipsEmployee).isFalse()
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.playerId).isEqualTo("player-id")
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.currentTime).isEqualTo(34L)
@@ -338,7 +310,7 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.subtype).isEqualTo("share-to-google-classroom")
-        assertThat(event.user.id).isEqualTo("user@example.com")
+        assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.payload).isEmpty()
     }
 
