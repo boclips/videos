@@ -8,7 +8,7 @@ class VideoIndexConfiguration : IndexConfiguration {
             "type" to "keyword",
             "normalizer" to IndexConfiguration.Companion.Normalizers.LOWERCASE
         )
-        val englishKeywordField = mapOf(
+        val englishTextField = mapOf(
             "type" to "text",
             "analyzer" to IndexConfiguration.Companion.Analyzers.ENGLISH,
             "position_increment_gap" to 100
@@ -17,13 +17,13 @@ class VideoIndexConfiguration : IndexConfiguration {
             "properties" to mapOf(
                 VideoDocument.TITLE to IndexConfiguration.Fields.freeText,
                 VideoDocument.DESCRIPTION to IndexConfiguration.Fields.freeText,
-                VideoDocument.SUBJECT_IDS to IndexConfiguration.Fields.stringArray,
+                VideoDocument.SUBJECT_IDS to IndexConfiguration.Fields.simpleTextArray,
                 VideoDocument.SUBJECT_NAMES to IndexConfiguration.Fields.stringArray,
                 VideoDocument.CONTENT_PROVIDER to keywordField,
                 VideoDocument.RELEASE_DATE to IndexConfiguration.Fields.date,
                 VideoDocument.TRANSCRIPT to IndexConfiguration.Fields.freeText,
                 VideoDocument.TYPE to keywordField,
-                VideoDocument.KEYWORDS to englishKeywordField
+                VideoDocument.KEYWORDS to englishTextField
             )
         )
     }

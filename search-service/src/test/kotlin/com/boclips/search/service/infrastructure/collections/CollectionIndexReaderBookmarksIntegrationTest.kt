@@ -28,13 +28,13 @@ class CollectionIndexReaderBookmarksIntegrationTest : EmbeddedElasticSearchInteg
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "2",
-                    bookmarkedBy = setOf("juan", "alexia")
+                    bookmarkedBy = setOf("juan", "123-4345-12312")
                 )
             )
         )
 
         assertThat(
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(bookmarkedBy = "alexia")))
+            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(bookmarkedBy = "123-4345-12312")))
         )
             .containsExactlyInAnyOrder("2")
     }
