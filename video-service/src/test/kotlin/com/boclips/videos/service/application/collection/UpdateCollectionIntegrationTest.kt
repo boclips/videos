@@ -43,7 +43,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionRenamed::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId.value)
-        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.userId).isEqualTo("me@me.com")
         assertThat(event.collectionTitle).isEqualTo("new title")
     }
 
@@ -56,7 +56,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId.value)
-        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.userId).isEqualTo("me@me.com")
         assertThat(event.isPublic).isTrue()
     }
 
@@ -69,7 +69,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionDescriptionChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId.value)
-        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.userId).isEqualTo("me@me.com")
         assertThat(event.description).isEqualTo("New Description")
     }
 
@@ -88,7 +88,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionVideosBulkChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId.value)
-        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.userId).isEqualTo("me@me.com")
         assertThat(event.videoIds).containsExactlyInAnyOrder(firstVideoId.value, secondVideoId.value)
     }
 

@@ -53,6 +53,6 @@ class AddVideoToCollectionTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.videoId).isEqualTo(videoId.value)
-        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.userId).isEqualTo("me@me.com")
     }
 }

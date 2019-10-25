@@ -74,7 +74,7 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId.value)
-        assertThat(event.user.id).isEqualTo("me@me.com")
+        assertThat(event.userId).isEqualTo("me@me.com")
         assertThat(event.isBookmarked).isFalse()
     }
 }

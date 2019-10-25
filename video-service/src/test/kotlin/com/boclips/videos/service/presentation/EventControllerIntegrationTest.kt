@@ -48,7 +48,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
         assertThat(event.videoId).isEqualTo(videoId)
-        assertThat(event.user.id).isEqualTo("teacher@gmail.com")
+        assertThat(event.userId).isEqualTo("teacher@gmail.com")
         assertThat(event.videoIndex).isEqualTo(135)
         assertThat(event.playerId).isEqualTo("f249f486-fc04-48f7-7361-4413c13a4183")
         assertThat(event.segmentStartSeconds).isEqualTo(1469L)
@@ -85,7 +85,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
 
         assertThat(event.videoId).isEqualTo(videoId)
-        assertThat(event.user.id).isEqualTo("teacher@gmail.com")
+        assertThat(event.userId).isEqualTo("teacher@gmail.com")
         assertThat(event.playerId).isEqualTo("player-id-123")
         assertThat(event.currentTime).isEqualTo(23L)
         assertThat(event.subtype).isEqualTo("captions-on")
@@ -109,7 +109,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
         assertThat(event.subtype).isEqualTo("COPY_SHARE_LINK")
         assertThat(event.videoId).isEqualTo(videoId.value)
-        assertThat(event.user.id).isEqualTo("john@teacher.com")
+        assertThat(event.userId).isEqualTo("john@teacher.com")
     }
 
     @Test

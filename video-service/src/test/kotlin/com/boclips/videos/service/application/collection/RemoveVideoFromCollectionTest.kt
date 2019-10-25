@@ -41,7 +41,7 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(videoId.value)
         assertThat(event.collectionId).isEqualTo(collectionId.value)
-        assertThat(event.user.id).isEqualTo("owner@collection.com")
+        assertThat(event.userId).isEqualTo("owner@collection.com")
     }
 
     @Test

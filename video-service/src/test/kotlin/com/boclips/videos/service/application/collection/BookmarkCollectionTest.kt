@@ -98,7 +98,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
         val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
         assertThat(event.collectionId).isEqualTo(collectionId.value)
-        assertThat(event.user.id).isEqualTo("someone@else.com")
+        assertThat(event.userId).isEqualTo("someone@else.com")
         assertThat(event.isBookmarked).isTrue()
     }
 }
