@@ -54,6 +54,10 @@ interface IndexConfiguration {
             )
         )
 
+        val simpleTextArray = mapOf(
+            "type" to "keyword"
+        )
+
         val stringArray = mapOf(
             "type" to "text",
             "analyzer" to Analyzers.UNSTEMMED_SYNONYMS

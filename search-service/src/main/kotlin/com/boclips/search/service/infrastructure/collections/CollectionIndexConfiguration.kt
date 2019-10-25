@@ -14,7 +14,7 @@ class CollectionIndexConfiguration : IndexConfiguration {
             "properties" to mapOf(
                 TITLE to IndexConfiguration.Fields.freeText,
                 OWNER to IndexConfiguration.Fields.simpleText,
-                BOOKMARKED_BY to IndexConfiguration.Fields.stringArray,
+                BOOKMARKED_BY to IndexConfiguration.Fields.simpleTextArray,
                 VISIBILITY to IndexConfiguration.Fields.simpleText,
                 SUBJECTS to IndexConfiguration.Fields.stringArray,
                 HAS_ATTACHMENTS to IndexConfiguration.Fields.boolean
