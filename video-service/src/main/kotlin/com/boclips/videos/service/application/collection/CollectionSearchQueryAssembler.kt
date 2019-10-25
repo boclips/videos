@@ -34,6 +34,7 @@ class CollectionSearchQueryAssembler {
                 } else null
 
         bookmarker?.let { logger.info("Looking for collections bookmarked by $it")}
+        logger.info { "User has collection access: ${accessRule.collectionAccess}" }
 
         return CollectionSearchQuery(
             text = query ?: "",

@@ -110,6 +110,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             }
             .apply {
                 if (query.bookmarkedBy != null) {
+                    logger.info { "Search query checking if bookmarked by: ${query.bookmarkedBy}" }
                     filter(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, query.bookmarkedBy))
                 }
             }
