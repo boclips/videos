@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.subject.Subject
@@ -58,7 +57,9 @@ class CollectionUpdates {
             )
             is CollectionUpdateCommand.AddAttachment -> replaceAttachment(
                 anyUpdateCommand.collectionId,
-                anyUpdateCommand.attachment
+                anyUpdateCommand.description,
+                anyUpdateCommand.linkToResource,
+                anyUpdateCommand.type
             )
             is CollectionUpdateCommand.BulkUpdateCollectionVideos -> bulkUpdateVideos(
                 anyUpdateCommand.collectionId,
@@ -67,15 +68,15 @@ class CollectionUpdates {
         }
     }
 
-    private fun replaceAttachment(collectionId: CollectionId, attachment: Attachment): Bson {
+    private fun replaceAttachment(collectionId: CollectionId, description: String?, linkToResource: String?, type: AttachmentType): Bson {
         logger.info { "Prepare replacing attachment for collection $collectionId" }
         return set(
             CollectionDocument::attachments, listOf(
                 AttachmentDocument(
                     id = ObjectId(),
-                    description = attachment.description,
-                    linkToResource = attachment.linkToResource,
-                    type = when (attachment.type) {
+                    description = description,
+                    linkToResource = linkToResource,
+                    type = when (type) {
                         AttachmentType.LESSON_PLAN -> "LESSON_PLAN"
                     }
                 )

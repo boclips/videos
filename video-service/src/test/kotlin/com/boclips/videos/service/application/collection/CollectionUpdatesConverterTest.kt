@@ -1,10 +1,13 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.application.collection.exceptions.InvalidAttachmentTypeException
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.videos.service.presentation.collections.AttachmentRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockitokotlin2.any
@@ -14,6 +17,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class CollectionUpdatesConverterTest {
     private lateinit var collectionUpdatesConverter: CollectionUpdatesConverter
@@ -168,5 +172,40 @@ class CollectionUpdatesConverterTest {
             VideoId(secondId),
             VideoId(thirdId)
         )
+    }
+
+    @Test
+    fun `Turn attachments update into command`() {
+        val commands = collectionUpdatesConverter.convert(
+            CollectionId("testId"),
+            UpdateCollectionRequest(
+                attachment = AttachmentRequest(
+                    linkToResource = "www.lesson-plan.com",
+                    description = "new description",
+                    type = "LESSON_PLAN"
+                )
+            )
+        )
+
+        val command = commands.first() as CollectionUpdateCommand.AddAttachment
+        assertThat(command.collectionId.value).isEqualTo("testId")
+        assertThat(command.linkToResource).isEqualTo("www.lesson-plan.com")
+        assertThat(command.description).isEqualTo("new description")
+        assertThat(command.type).isEqualTo(AttachmentType.LESSON_PLAN)
+    }
+
+    @Test
+    fun `invalid attachment type throws an exception`() {
+        assertThrows<InvalidAttachmentTypeException> {
+            collectionUpdatesConverter.convert(
+            CollectionId("testId"),
+            UpdateCollectionRequest(
+                attachment = AttachmentRequest(
+                    linkToResource = "www.lesson-plan.com",
+                    description = "new description",
+                    type = null
+                )
+            )
+        )}
     }
 }

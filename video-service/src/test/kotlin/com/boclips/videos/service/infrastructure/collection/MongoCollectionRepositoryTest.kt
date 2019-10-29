@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.collection
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -225,7 +226,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val attachment = AttachmentFactory.sample()
 
             collectionRepository.update(
-                CollectionUpdateCommand.AddAttachment(collection.id, attachment)
+                CollectionUpdateCommand.AddAttachment(
+                    collectionId = collection.id,
+                    description = attachment.description,
+                    linkToResource = attachment.linkToResource,
+                    type = AttachmentType.LESSON_PLAN
+                )
             )
 
             val updatedCollection = collectionRepository.find(collection.id)

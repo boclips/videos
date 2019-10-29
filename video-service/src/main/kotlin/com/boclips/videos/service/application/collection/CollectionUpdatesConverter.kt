@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.application.collection.exceptions.InvalidAttachmentTypeException
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -52,6 +54,18 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                 CollectionUpdateCommand.BulkUpdateCollectionVideos(
                     collectionId = collectionId,
                     videoIds = videos.map { VideoId(it) })
+            },
+
+            updateCollectionRequest.attachment?.let { attachment ->
+                CollectionUpdateCommand.AddAttachment(
+                    collectionId = collectionId,
+                    type = when(attachment.type) {
+                        "LESSON_PLAN" -> AttachmentType.LESSON_PLAN
+                        else -> throw InvalidAttachmentTypeException(attachment.type)
+                    },
+                    description = attachment.description?.let { it },
+                    linkToResource = attachment.linkToResource?.let { it }
+                    )
             }
         )
     }

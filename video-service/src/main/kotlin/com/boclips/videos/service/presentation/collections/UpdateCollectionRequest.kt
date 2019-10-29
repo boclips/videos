@@ -9,7 +9,15 @@ class UpdateCollectionRequest(
     var subjects: Set<String>? = null,
     var description: String? = null,
     var videos: List<String>? = null,
+    var attachment: AttachmentRequest? = null,
 
     @field:Valid
     var ageRange: AgeRangeRequest? = null
 )
+
+class AttachmentRequest(
+    var linkToResource: String? = null,
+    var description: String?,
+    var type: String?
+)
+

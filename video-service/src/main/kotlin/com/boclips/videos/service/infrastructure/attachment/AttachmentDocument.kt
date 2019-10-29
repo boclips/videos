@@ -6,7 +6,7 @@ import org.bson.types.ObjectId
 data class AttachmentDocument(
     @BsonId
     val id: ObjectId,
-    val description: String,
+    val description: String? = "",
     val type: String,
-    val linkToResource: String
+    val linkToResource: String? = ""
 )

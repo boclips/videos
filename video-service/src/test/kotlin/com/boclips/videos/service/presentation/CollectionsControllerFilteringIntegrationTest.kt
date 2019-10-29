@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
@@ -224,11 +225,15 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         val collectionWithLessonPlan2 = createCollectionWithTitle("With lesson plan 2")
 
         val subject = saveSubject("subject")
+        val attachment = AttachmentFactory.sample()
+
         listOf(collectionWithLessonPlan1, collectionWithLessonPlan2).forEach {
             collectionRepository.update(
                 CollectionUpdateCommand.AddAttachment(
                     CollectionId(it),
-                    AttachmentFactory.sample()
+                    attachment.description,
+                    attachment.linkToResource,
+                    AttachmentType.LESSON_PLAN
                 )
             )
         }
