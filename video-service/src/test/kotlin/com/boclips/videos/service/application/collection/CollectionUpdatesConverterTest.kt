@@ -203,7 +203,7 @@ class CollectionUpdatesConverterTest {
                 attachment = AttachmentRequest(
                     linkToResource = "www.lesson-plan.com",
                     description = "new description",
-                    type = null
+                    type = "INVALID"
                 )
             )
         )}

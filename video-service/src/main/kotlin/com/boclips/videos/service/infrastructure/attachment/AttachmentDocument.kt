@@ -8,5 +8,5 @@ data class AttachmentDocument(
     val id: ObjectId,
     val description: String? = "",
     val type: String,
-    val linkToResource: String? = ""
+    val linkToResource: String
 )

@@ -64,7 +64,7 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                         else -> throw InvalidAttachmentTypeException(attachment.type)
                     },
                     description = attachment.description?.let { it },
-                    linkToResource = attachment.linkToResource?.let { it }
+                    linkToResource = attachment.linkToResource
                     )
             }
         )

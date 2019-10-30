@@ -29,7 +29,7 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId) {
     class AddAttachment(
         collectionId: CollectionId,
         val description: String?,
-        val linkToResource: String?,
+        val linkToResource: String,
         val type: AttachmentType
     ) : CollectionUpdateCommand(collectionId)
 }

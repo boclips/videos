@@ -4,5 +4,5 @@ data class Attachment(
     val attachmentId: AttachmentId,
     val type: AttachmentType,
     val description: String?,
-    val linkToResource: String?
+    val linkToResource: String
 )

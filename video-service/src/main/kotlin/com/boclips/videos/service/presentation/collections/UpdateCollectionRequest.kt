@@ -16,8 +16,8 @@ class UpdateCollectionRequest(
 )
 
 class AttachmentRequest(
-    var linkToResource: String? = null,
-    var description: String?,
-    var type: String?
+    var linkToResource: String,
+    var description: String? = null,
+    var type: String
 )
 

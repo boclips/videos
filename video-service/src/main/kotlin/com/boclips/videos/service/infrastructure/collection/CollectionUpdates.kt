@@ -68,7 +68,7 @@ class CollectionUpdates {
         }
     }
 
-    private fun replaceAttachment(collectionId: CollectionId, description: String?, linkToResource: String?, type: AttachmentType): Bson {
+    private fun replaceAttachment(collectionId: CollectionId, description: String?, linkToResource: String, type: AttachmentType): Bson {
         logger.info { "Prepare replacing attachment for collection $collectionId" }
         return set(
             CollectionDocument::attachments, listOf(
