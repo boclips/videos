@@ -368,4 +368,36 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
         assertThat(results).containsExactly("2")
     }
+
+    @Test
+    fun `promoted, subject`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    subjects = setOf(createSubjectMetadata("subject-two")),
+                    promoted = true
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    subjects = setOf(createSubjectMetadata("subject-one")),
+                    promoted = true
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-one"))
+                )
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    subjectIds = setOf("subject-two"),
+                    promoted = true
+                )
+            )
+        )
+        assertThat(results).containsExactly("1")
+    }
 }

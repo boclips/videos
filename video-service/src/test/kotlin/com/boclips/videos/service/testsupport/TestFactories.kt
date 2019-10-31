@@ -89,7 +89,8 @@ object TestFactories {
             contentPartnerId = contentPartnerId,
             name = contentPartnerName
         ),
-        videoReference: String = contentPartnerVideoId
+        videoReference: String = contentPartnerVideoId,
+        promoted: Boolean? = null
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -109,7 +110,8 @@ object TestFactories {
             contentPartner = contentPartner,
             videoReference = videoReference,
             ratings = ratings,
-            tag = tag
+            tag = tag,
+            promoted = promoted
         )
     }
 

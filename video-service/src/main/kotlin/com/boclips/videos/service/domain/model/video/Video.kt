@@ -26,7 +26,8 @@ data class Video(
     val ageRange: AgeRange,
     val ratings: List<UserRating>,
     val tag: UserTag?,
-    val distributionMethods: Set<DistributionMethod>
+    val distributionMethods: Set<DistributionMethod>,
+    val promoted: Boolean?
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

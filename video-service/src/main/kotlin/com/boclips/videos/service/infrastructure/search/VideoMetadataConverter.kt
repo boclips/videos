@@ -25,7 +25,8 @@ object VideoMetadataConverter {
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
             type = VideoTypeConverter.convert(video.type),
-            subjects = video.subjects.map {SubjectMetadata(id = it.id.value, name = it.name)}.toSet()
+            subjects = video.subjects.map {SubjectMetadata(id = it.id.value, name = it.name)}.toSet(),
+            promoted = video.promoted
         )
     }
 

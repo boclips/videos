@@ -23,5 +23,6 @@ data class VideoDocument(
     val ageRangeMax: Int? = null,
     val rating: List<UserRatingDocument> = emptyList(),
     val distributionMethods: Set<DistributionMethodDocument>?,
-    val tags: List<UserTagDocument> = emptyList()
+    val tags: List<UserTagDocument> = emptyList(),
+    val promoted: Boolean? = null
 )

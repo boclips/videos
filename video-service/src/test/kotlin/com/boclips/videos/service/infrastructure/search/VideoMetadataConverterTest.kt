@@ -40,7 +40,8 @@ class VideoMetadataConverterTest {
                     id = SubjectId(value = "subject-id"),
                     name = "subject name"
                 )
-            )
+            ),
+            promoted = true
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -62,7 +63,8 @@ class VideoMetadataConverterTest {
                 type = VideoType.INSTRUCTIONAL,
                 subjects = setOf(
                     SubjectMetadata(id = "subject-id", name = "subject name")
-                )
+                ),
+                promoted = true
             )
         )
     }

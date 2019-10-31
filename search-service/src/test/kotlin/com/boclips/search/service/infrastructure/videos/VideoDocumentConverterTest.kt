@@ -57,7 +57,8 @@ class VideoDocumentConverterTest {
                 ageRangeMax = 11,
                 type = "NEWS",
                 subjectIds = setOf("boring-subject-id"),
-                subjectNames = setOf("boring-subject-name")
+                subjectNames = setOf("boring-subject-name"),
+                promoted = null
             )
         )
     }
@@ -104,7 +105,8 @@ class VideoDocumentConverterTest {
             ageRangeMin = 10,
             ageRangeMax = 16,
             type = VideoType.INSTRUCTIONAL,
-            subjects = setOf(SubjectMetadata(id = "subjectId", name = "subjectName"))
+            subjects = setOf(SubjectMetadata(id = "subjectId", name = "subjectName")),
+            promoted = null
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -124,7 +126,8 @@ class VideoDocumentConverterTest {
             ageRangeMax = 16,
             type = "INSTRUCTIONAL",
             subjectIds = setOf("subjectId"),
-            subjectNames = setOf("subjectName")
+            subjectNames = setOf("subjectName"),
+            promoted = null
         ))
 
     }

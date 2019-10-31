@@ -42,7 +42,8 @@ class CreateVideoRequestToVideoConverter {
             transcript = null,
             distributionMethods = distributionMethods,
             ratings = emptyList(),
-            tag = null
+            tag = null,
+            promoted = null
         )
     }
 }

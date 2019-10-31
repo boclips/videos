@@ -23,7 +23,10 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.RELEASE_DATE to IndexConfiguration.Fields.date,
                 VideoDocument.TRANSCRIPT to IndexConfiguration.Fields.freeText,
                 VideoDocument.TYPE to keywordField,
-                VideoDocument.KEYWORDS to englishTextField
+                VideoDocument.KEYWORDS to englishTextField,
+                VideoDocument.PROMOTED to mapOf(
+                    "type" to "boolean"
+                )
             )
         )
     }

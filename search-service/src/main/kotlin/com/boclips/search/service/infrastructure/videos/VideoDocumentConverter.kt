@@ -26,7 +26,8 @@ object VideoDocumentConverter {
             ageRangeMin = video.ageRangeMin,
             type = video.type.name,
             subjectIds = video.subjects.map { subject -> subject.id }.toSet(),
-            subjectNames = video.subjects.map {subject -> subject.name}.toSet()
+            subjectNames = video.subjects.map {subject -> subject.name}.toSet(),
+            promoted = video.promoted
         )
     }
 

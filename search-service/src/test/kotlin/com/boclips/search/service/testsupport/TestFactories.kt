@@ -26,7 +26,8 @@ object SearchableVideoMetadataFactory {
         ageRangeMin: Int? = 3,
         ageRangeMax: Int? = 11,
         type: VideoType = VideoType.INSTRUCTIONAL,
-        subjects: Set<SubjectMetadata> = emptySet()
+        subjects: Set<SubjectMetadata> = emptySet(),
+        promoted: Boolean? = null
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -41,7 +42,8 @@ object SearchableVideoMetadataFactory {
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
         type = type,
-        subjects = subjects
+        subjects = subjects,
+        promoted = promoted
     )
 }
 
@@ -70,7 +72,8 @@ object TestFactories {
             ageRangeMax = 11,
             subjectIds = setOf("boring-subject"),
             subjectNames = setOf("boring-names"),
-            type = VideoType.INSTRUCTIONAL.name
+            type = VideoType.INSTRUCTIONAL.name,
+            promoted = null
         )
     }
 }

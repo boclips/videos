@@ -84,7 +84,8 @@ object VideoDocumentConverter {
                 UserTagDocumentConverter.toTag(
                     it
                 )
-            }
+            },
+            promoted = document.promoted
         )
     }
 }

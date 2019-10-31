@@ -11,7 +11,7 @@ import java.time.LocalDate
 class FilterDecoratorTest {
 
     @Test
-    fun `attaches various important filters`() {
+    fun `attaches all filters`() {
         val boolQuery = QueryBuilders.boolQuery()
         val videoQuery = VideoQuery(
             phrase = "some phrase",
@@ -24,7 +24,8 @@ class FilterDecoratorTest {
             includeTags = listOf("include-tag"),
             excludeTags = listOf("exclude-tag"),
             releaseDateFrom = LocalDate.of(2014, 1, 30),
-            releaseDateTo = LocalDate.of(2015, 1, 30)
+            releaseDateTo = LocalDate.of(2015, 1, 30),
+            promoted = true
         )
 
         FilterDecorator(boolQuery).apply(videoQuery)
@@ -140,6 +141,14 @@ class FilterDecoratorTest {
           ],
           "adjust_pure_negative" : true,
           "boost" : 1.0
+        }
+      },
+      {
+        "term" : {
+          "promoted" : {
+            "value" : true,
+            "boost" : 1.0
+          }
         }
       }
     ],
