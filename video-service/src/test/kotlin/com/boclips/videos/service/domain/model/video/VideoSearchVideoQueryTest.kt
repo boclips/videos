@@ -144,4 +144,18 @@ class VideoSearchVideoQueryTest {
         assertThat(searchQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
         assertThat(searchQuery.releaseDateFrom).isEqualTo(LocalDate.of(2000, 1, 1))
     }
+
+    @Test
+    fun `allows filtering by promoted`() {
+        val searchQuery = VideoSearchQuery(
+            text = "",
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageIndex = 0,
+            promoted = true
+        ).toSearchQuery()
+
+        assertThat(searchQuery.promoted).isEqualTo(true)
+    }
 }

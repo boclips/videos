@@ -28,7 +28,8 @@ class VideoSearchQuery(
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
     val userSubjectIds: Set<String> = emptySet(),
-    val subjects: Set<String> = emptySet()
+    val subjects: Set<String> = emptySet(),
+    val promoted: Boolean? = null
 ) {
     fun toSearchQuery(): VideoQuery {
         val sort = sortBy?.let {
@@ -54,7 +55,8 @@ class VideoSearchQuery(
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
                 userSubjectIds = userSubjectIds,
-                subjectIds = subjects
+                subjectIds = subjects,
+                promoted = promoted
             )
         }
     }

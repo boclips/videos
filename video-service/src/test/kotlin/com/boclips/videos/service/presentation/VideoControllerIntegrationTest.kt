@@ -169,6 +169,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can find videos by promoted flag`() {
+        val promotedVideoId = saveVideo(title = "ben poos elephants")
+
+        val unpromotedVideoId =
+            saveVideo(title = "Video about elephants")
+
+        setPromoted(promotedVideoId.value, true)
+        setPromoted(unpromotedVideoId.value, false)
+
+        mockMvc.perform(get("/v1/videos?promoted=true").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(promotedVideoId.value)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(unpromotedVideoId.value))))
+    }
+
+    @Test
     fun `returns Youtube videos when query matches`() {
         mockMvc.perform(get("/v1/videos?query=jobs").asTeacher())
             .andExpect(status().isOk)
@@ -1120,6 +1137,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         )
+    }
+
+    private fun setPromoted(videoId: String, promoted: Boolean): ResultActions {
+        val updateLink = getUpdateLink(videoId).expand(mapOf("promoted" to promoted))
+
+        return mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
     }
 
     private fun saveVideoWithTranscript(transcriptContent: String = "Some content in the video"): String {

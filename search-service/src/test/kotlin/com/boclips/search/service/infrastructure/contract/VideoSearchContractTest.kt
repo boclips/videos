@@ -997,6 +997,39 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by promoted`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    title = "TED",
+                    promoted = false
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED",
+                    promoted = true
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "",
+                    promoted = true
+                )
+            )
+        )
+
+        assertThat(results).containsExactly("1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by subject on videos with multiple subjects`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>

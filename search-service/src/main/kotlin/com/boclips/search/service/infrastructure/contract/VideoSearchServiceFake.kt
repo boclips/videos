@@ -73,6 +73,8 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                             }
                         }
                     }
+                }.filter { entry ->
+                    query.promoted?.let { entry.value.promoted == it } ?: true
                 }
                 .map { video -> video.key }
         }

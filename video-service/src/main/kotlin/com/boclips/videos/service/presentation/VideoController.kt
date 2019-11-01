@@ -77,7 +77,8 @@ class VideoController(
         @RequestParam(name = "age_range_max", required = false) ageRangeMax: Int?,
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?,
-        @RequestParam(name = "subject", required = false) subjects: Set<String>?
+        @RequestParam(name = "subject", required = false) subjects: Set<String>?,
+        @RequestParam(name = "promoted", required = false) promoted: Boolean?
     ): ResponseEntity<PagedResources<*>> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
@@ -95,7 +96,8 @@ class VideoController(
             source = source,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
-            subjects = subjects ?: emptySet()
+            subjects = subjects ?: emptySet(),
+            promoted = promoted
         )
 
         return ResponseEntity(
