@@ -148,8 +148,15 @@ class VideoController(
 
     @GetMapping("/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
-        val videoTranscript = videoTranscriptService.getTranscript(videoId)
         val videoTitle = searchVideo.byId(videoId).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+
+        val videoTranscript: String = videoTranscriptService.getTranscript(videoId).let {
+            if (it.contains(Regex("\\n\\n"))) {
+                it
+            } else {
+                it.replace(Regex("\\. "), ".\n\n")
+            }
+        }
 
         val headers = HttpHeaders()
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$videoTitle.txt\"")

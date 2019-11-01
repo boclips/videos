@@ -180,7 +180,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("YOUTUBE")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT56S")))
-            .andExpect(jsonPath("$._embedded.videos[0].playback._links.thumbnail.href", equalTo("https://youtube.com/thumb/yt-id-124.png")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.videos[0].playback._links.thumbnail.href",
+                    equalTo("https://youtube.com/thumb/yt-id-124.png")
+                )
+            )
             .andExpect(
                 jsonPath(
                     "$._embedded.videos[0].playback.thumbnailUrl",
@@ -615,7 +620,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update video metadata`() {
         val videoId = saveVideo(title = "Old title", description = "Old description").value
 
-        val updateLink = getUpdateLink(videoId).expand(mapOf("title" to "New title", "description" to "New description"))
+        val updateLink =
+            getUpdateLink(videoId).expand(mapOf("title" to "New title", "description" to "New description"))
 
         mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -1000,13 +1006,40 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `going to the transcripts endpoint for a video with transcripts returns the transcripts`() {
-        val videoId = saveVideoWithTranscript()
+    fun `transcripts endpoint causes the file to download, without applying formatting`() {
+        val videoId = saveVideoWithTranscript("Some content in the video.\n\nThis is another sentence that was said")
 
         mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(content().string(equalTo("Some content in the video")))
+            .andExpect(
+                content().string(
+                    equalTo(
+                        "Some content in the video.\n" +
+                            "\n" +
+                            "This is another sentence that was said"
+                    )
+                )
+            )
+            .andExpect(header().string("Content-Disposition", equalTo("attachment; filename=\"Today_Video_.txt\"")))
+    }
+
+    @Test
+    fun `transcripts endpoint causes the file to download, applying formatting`() {
+        val videoId = saveVideoWithTranscript("Some content in the video. This is another sentence that was said")
+
+        mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+            .andExpect(
+                content().string(
+                    equalTo(
+                        "Some content in the video.\n" +
+                            "\n" +
+                            "This is another sentence that was said"
+                    )
+                )
+            )
             .andExpect(header().string("Content-Disposition", equalTo("attachment; filename=\"Today_Video_.txt\"")))
     }
 
@@ -1089,7 +1122,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
     }
 
-    private fun saveVideoWithTranscript(): String {
+    private fun saveVideoWithTranscript(transcriptContent: String = "Some content in the video"): String {
         val videoId = saveVideo(
             title = "Today Video?",
             date = LocalDate.now().toString(),
@@ -1099,7 +1132,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertNotNull(
             mongoVideosCollection().findOneAndUpdate(
                 eq("title", "Today Video?"),
-                set("transcript", "Some content in the video")
+                set("transcript", transcriptContent)
             )
         )
         return videoId
