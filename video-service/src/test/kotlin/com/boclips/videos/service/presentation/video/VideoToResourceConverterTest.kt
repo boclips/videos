@@ -35,8 +35,8 @@ internal class VideoToResourceConverterTest {
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
         ratings = listOf(UserRating(rating = 3, userId = UserId("user-id"))),
-        tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id")
-
+        tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id"),
+        promoted = true
     )
 
     val youtubeVideo = createVideo(
@@ -102,6 +102,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.rating).isEqualTo(3.0)
         assertThat(videoResource.yourRating).isEqualTo(3.0)
         assertThat(videoResource.bestFor).isEqualTo(TagResource("tag-label"))
+        assertThat(videoResource.promoted).isEqualTo(true)
 
         val playbackResource = videoResource.playback!!.content as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")

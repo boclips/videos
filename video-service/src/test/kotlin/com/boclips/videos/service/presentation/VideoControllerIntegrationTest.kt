@@ -350,7 +350,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(mathsVideoId)))
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(englishVideoId)))
     }
-
     @Test
     fun `returns a hls stream link`() {
         val videoId = saveVideo(playbackId = PlaybackId(PlaybackProviderType.KALTURA, "entry-id-123"))
@@ -620,18 +619,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update video metadata`() {
         val videoId = saveVideo(title = "Old title", description = "Old description").value
 
-        val updateLink =
-            getUpdateLink(videoId).expand(mapOf("title" to "New title", "description" to "New description"))
+        val updateLink = getUpdateLink(videoId).expand(mapOf("title" to "New title", "description" to "New description", "promoted" to "true"))
 
         mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.title", equalTo("New title")))
             .andExpect(jsonPath("$.description", equalTo("New description")))
+            .andExpect(jsonPath("$.promoted", equalTo(true)))
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.title", equalTo("New title")))
             .andExpect(jsonPath("$.description", equalTo("New description")))
+            .andExpect(jsonPath("$.promoted", equalTo(true)))
     }
 
     @Test

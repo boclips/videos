@@ -222,6 +222,19 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `update promoted`() {
+        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo())
+        val updatedAsset = mongoVideoRepository.update(
+            VideoUpdateCommand.ReplacePromoted(
+                originalAsset.videoId, true
+
+            )
+        )
+
+        assertThat(updatedAsset.promoted).isEqualTo(true)
+    }
+
+    @Test
     fun `update throws when video not found`() {
         assertThrows<VideoNotFoundException> {
             mongoVideoRepository.update(
@@ -271,6 +284,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             VideoUpdateCommand.ReplaceDuration(
                 videoId = originalVideo2.videoId,
                 duration = Duration.ofMinutes(11)
+            ),
+            VideoUpdateCommand.ReplacePromoted(
+                videoId = originalVideo2.videoId,
+                promoted = true
             )
         )
 
@@ -283,9 +300,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo1.playback.duration).isEqualTo(Duration.ofMinutes(10))
         assertThat(updatedVideo1.subjects).isEmpty()
 
-        assertThat(updatedVideo2).isEqualToIgnoringGivenFields(originalVideo2, "subjects", "duration", "playback")
+        assertThat(updatedVideo2).isEqualToIgnoringGivenFields(originalVideo2, "subjects", "duration", "playback", "promoted")
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
         assertThat(updatedVideo2.subjects).isEqualTo(setOf(biology))
+        assertThat(updatedVideo2.promoted).isTrue()
     }
 
     @Test

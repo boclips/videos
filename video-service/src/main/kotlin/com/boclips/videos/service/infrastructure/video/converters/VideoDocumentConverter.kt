@@ -48,7 +48,8 @@ object VideoDocumentConverter {
             ) } ?: emptyList(),
             distributionMethods = video.distributionMethods.map(
                 DistributionMethodDocumentConverter::toDocument
-            ).toSet()
+            ).toSet(),
+            promoted = video.promoted
         )
     }
 

@@ -23,6 +23,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTitle
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePromoted
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
@@ -311,6 +312,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
             is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.legalRestrictions.text)
+            is ReplacePromoted -> set(VideoDocument::promoted, updateCommand.promoted)
         }
     }
 

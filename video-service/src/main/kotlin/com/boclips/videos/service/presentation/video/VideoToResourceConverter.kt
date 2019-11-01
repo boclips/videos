@@ -53,7 +53,8 @@ class VideoToResourceConverter(
                 distributionMethods = video.distributionMethods.map(
                     DistributionMethodResourceConverter::toResource
                 ).toSet(),
-                bestFor = video.tag?.let { TagResource(it.tag.label) }
+                bestFor = video.tag?.let { TagResource(it.tag.label) },
+                promoted = video.promoted
             ), video
         )
     }

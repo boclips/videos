@@ -25,12 +25,14 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         updateVideo(
             id = videoId.value,
             title = null,
-            description = "new description"
+            description = "new description",
+            promoted = true
         )
 
         val updatedVideo = videoRepository.find(videoId)!!
 
         assertThat(updatedVideo.title).isEqualTo("title")
         assertThat(updatedVideo.description).isEqualTo("new description")
+        assertThat(updatedVideo.promoted).isEqualTo(true)
     }
 }
