@@ -1023,6 +1023,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `it allows sorting randomly`() {
+        mockMvc.perform(
+            get("/v1/videos?q=video&sort_by=RANDOM")
+                .contentType(MediaType.APPLICATION_JSON).asBoclipsEmployee()
+        ).andExpect(status().isOk)
+    }
+
+    @Test
     fun `transcripts endpoint causes the file to download, without applying formatting`() {
         val videoId = saveVideoWithTranscript("Some content in the video.\n\nThis is another sentence that was said")
 

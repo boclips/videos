@@ -96,7 +96,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
             collectionIndexReader.search(
                 PaginatedSearchRequest(
                     query = CollectionQuery(
-                        sort = Sort(
+                        sort = Sort.ByField(
                             CollectionMetadata::hasAttachments,
                             SortOrder.DESC
                         )

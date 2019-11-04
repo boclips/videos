@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.SearchQuery
+import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 
 abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
@@ -25,21 +26,26 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     private fun sort(ids: List<String>, query: QUERY): List<String> {
         query.sort ?: return ids
 
-        val sortedIds = ids.sortedBy {
-            val value: Comparable<*> = query.sort.fieldName.get(index[it]!!)
-            /**
-             * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
-             * littering the entire code base with the Sort generic type.
-             *
-             * We cannot define sort.fieldName as a Comparable<Any> as it won't then allow us to reference Comparables
-             */
-            @Suppress("UNCHECKED_CAST")
-            value as Comparable<Any>
-        }
+        return when (query.sort) {
+            is Sort.ByField -> {
+                val sortedIds = ids.sortedBy {
+                    val value: Comparable<*> = query.sort.fieldName.get(index[it]!!)
+                    /**
+                     * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
+                     * littering the entire code base with the Sort generic type.
+                     *
+                     * We cannot define sort.fieldName as a Comparable<Any> as it won't then allow us to reference Comparables
+                     */
+                    @Suppress("UNCHECKED_CAST")
+                    value as Comparable<Any>
+                }
 
-        return when (query.sort.order) {
-            SortOrder.ASC -> sortedIds
-            SortOrder.DESC -> sortedIds.reversed()
+                when (query.sort.order) {
+                    SortOrder.ASC -> sortedIds
+                    SortOrder.DESC -> sortedIds.reversed()
+                }
+            }
+            is Sort.ByRandom -> ids.shuffled()
         }
     }
 

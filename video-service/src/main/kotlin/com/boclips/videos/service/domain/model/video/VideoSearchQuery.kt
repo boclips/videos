@@ -5,12 +5,14 @@ import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.videos.service.domain.model.video.SortKey.RANDOM
 import com.boclips.videos.service.domain.model.video.SortKey.RELEASE_DATE
 import java.time.Duration
 import java.time.LocalDate
 
 enum class SortKey {
-    RELEASE_DATE
+    RELEASE_DATE,
+    RANDOM
 }
 
 class VideoSearchQuery(
@@ -34,10 +36,11 @@ class VideoSearchQuery(
     fun toSearchQuery(): VideoQuery {
         val sort = sortBy?.let {
             when (it) {
-                RELEASE_DATE -> Sort(
+                RELEASE_DATE -> Sort.ByField(
                     order = SortOrder.DESC,
                     fieldName = VideoMetadata::releaseDate
                 )
+                RANDOM -> Sort.ByRandom<VideoMetadata>()
             }
         }
         return parseIdsOrPhrase(this.text).let {

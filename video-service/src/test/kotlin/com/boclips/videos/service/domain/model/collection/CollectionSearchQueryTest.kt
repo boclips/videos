@@ -33,7 +33,7 @@ class CollectionSearchQueryTest {
             permittedCollections = null
         )
 
-        assertThat(query.toSearchQuery().sort).isEqualTo(Sort(CollectionMetadata::hasAttachments, SortOrder.DESC))
+        assertThat(query.toSearchQuery().sort).isEqualTo(Sort.ByField(CollectionMetadata::hasAttachments, SortOrder.DESC))
     }
 
     @Test

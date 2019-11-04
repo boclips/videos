@@ -103,6 +103,35 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `sorting randomly doesn't impact query matching`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "Mixed-race couple playing piano with a dog",
+                    description = "Watch and get educated."
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "gentleman",
+                    sort = Sort.ByRandom()
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `finds news videos`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>
@@ -401,7 +430,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val query =
             VideoQuery(
                 phrase = "dancing",
-                sort = Sort(
+                sort = Sort.ByField(
                     fieldName = VideoMetadata::releaseDate,
                     order = SortOrder.ASC
                 )
@@ -447,7 +476,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val query =
             VideoQuery(
                 phrase = "dancing",
-                sort = Sort(
+                sort = Sort.ByField(
                     fieldName = VideoMetadata::releaseDate,
                     order = SortOrder.DESC
                 )
@@ -462,6 +491,49 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
         assertThat(searchResults).containsExactly("tomorrow", "today", "yesterday")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns a randomly sorted list`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "today",
+                    title = "Beautiful Boy Dancing",
+                    releaseDate = LocalDate.now()
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "yesterday",
+                    title = "Beautiful Girl Dancing",
+                    releaseDate = LocalDate.now().minusDays(1)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "tomorrow",
+                    title = "Beautiful Dog Dancing",
+                    releaseDate = LocalDate.now().plusDays(1)
+                )
+            )
+        )
+
+        val query =
+            VideoQuery(
+                sort = Sort.ByRandom()
+            )
+        assertThat(queryService.count(query)).isEqualTo(3)
+
+        val searchResults = queryService.search(
+            PaginatedSearchRequest(
+                query = query,
+                startIndex = 0,
+                windowSize = 3
+            )
+        )
+
+        assertThat(searchResults).containsExactlyInAnyOrder("tomorrow", "today", "yesterday")
     }
 
     @ParameterizedTest

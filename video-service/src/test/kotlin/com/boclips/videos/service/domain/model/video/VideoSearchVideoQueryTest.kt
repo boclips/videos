@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
+import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
@@ -93,8 +94,25 @@ class VideoSearchVideoQueryTest {
         )
             .toSearchQuery()
 
-        assertThat(searchQuery.sort!!.order).isEqualTo(SortOrder.DESC)
-        assertThat(searchQuery.sort!!.fieldName).isEqualTo(VideoMetadata::releaseDate)
+        val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
+
+        assertThat(sort.order).isEqualTo(SortOrder.DESC)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::releaseDate)
+    }
+
+    @Test
+    fun `allows ordering of results by random`() {
+        val searchQuery = VideoSearchQuery(
+            text = "testing",
+            includeTags = emptyList(),
+            excludeTags = listOf("classroom"),
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.RANDOM
+        )
+            .toSearchQuery()
+
+        assertThat(searchQuery.sort is Sort.ByRandom<VideoMetadata>)
     }
 
     @Test

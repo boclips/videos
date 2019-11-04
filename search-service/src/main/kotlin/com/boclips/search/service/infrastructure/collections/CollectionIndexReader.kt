@@ -1,11 +1,13 @@
 package com.boclips.search.service.infrastructure.collections
 
+import com.boclips.search.service.common.Do
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.Sort
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -47,7 +49,10 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
         val esQuery = SearchSourceBuilder().query(mainQuery(query))
 
         if (query.sort != null) {
-            esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
+            Do exhaustive  when(query.sort) {
+                is Sort.ByField ->  esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
+                is Sort.ByRandom -> TODO()
+            }
         }
 
         return esQuery
