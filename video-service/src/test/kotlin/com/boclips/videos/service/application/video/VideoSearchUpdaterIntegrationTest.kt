@@ -2,6 +2,8 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -10,6 +12,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.argWhere
 import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
@@ -18,6 +21,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
 
 class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -157,6 +161,35 @@ class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(videoSearchService.count(VideoQuery(ids = listOf(savedVideo.videoId.value)))).isEqualTo(1)
             assertThat(videoSearchService.count(VideoQuery(ids = listOf(missingVideo.videoId.value)))).isEqualTo(0)
+        }
+
+        @Test
+        fun `never adds youtube videos to legacy search`() {
+            val savedVideo = videoRepository.create(
+                TestFactories.createVideo(
+                    distributionMethods = setOf(DistributionMethod.DOWNLOAD),
+                    playback = VideoPlayback.YoutubePlayback(
+                        id = PlaybackId.from("hi", "YOUTUBE"),
+                        duration = Duration.ofSeconds(1),
+                        thumbnailUrl = "a-url"
+                    )
+                )
+            )
+
+            fakeEventBus.publish(
+                com.boclips.eventbus.events.video.VideosUpdated.builder()
+                    .videos(
+                        listOf(
+                            EventConverter().toVideoPayload(savedVideo)
+                        )
+                    )
+                    .build()
+            )
+
+            verify(legacyVideoSearchService, times(1)).upsert(
+                argWhere { it.toList().isEmpty() },
+                anyOrNull()
+            )
         }
     }
 

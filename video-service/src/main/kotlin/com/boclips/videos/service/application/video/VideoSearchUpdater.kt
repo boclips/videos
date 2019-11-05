@@ -39,7 +39,7 @@ class VideoSearchUpdater(
     @BoclipsEventListener
     fun videosUpdated(videosUpdatedEvent: com.boclips.eventbus.events.video.VideosUpdated) {
         val videos = videosUpdatedEvent.videos.mapNotNull {
-            videoRepository.find(VideoId(it.id.value)) ?: logger.info {"Video ${it.id.value} not found" }.let { null }
+            videoRepository.find(VideoId(it.id.value)) ?: logger.info { "Video ${it.id.value} not found" }.let { null }
         }
 
         bulkUpdateStreamIndex(videos)
@@ -51,18 +51,21 @@ class VideoSearchUpdater(
         val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.STREAM) }
 
         videoSearchService.upsert(videosToUpsert.asSequence())
-        logger.info {"Indexed ${videosToUpsert.size} videos for ${DistributionMethod.STREAM}"}
+        logger.info { "Indexed ${videosToUpsert.size} videos for ${DistributionMethod.STREAM}" }
 
         videoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
         logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.STREAM}" }
     }
 
     private fun bulkUpdateDownloadIndex(updatedVideos: List<Video>) {
-        val videosToUpsert = updatedVideos.filter { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
+        val videosToUpsert = updatedVideos
+            .filter { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
+            .filter { it.isBoclipsHosted() }
+
         val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
 
         legacyVideoSearchService.upsert(videosToUpsert.map(VideoToLegacyVideoMetadataConverter::convert).asSequence())
-        logger.info {"Indexed ${videosToUpsert.size} videos for ${DistributionMethod.DOWNLOAD}"}
+        logger.info { "Indexed ${videosToUpsert.size} videos for ${DistributionMethod.DOWNLOAD}" }
 
         legacyVideoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
         logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.DOWNLOAD}" }
