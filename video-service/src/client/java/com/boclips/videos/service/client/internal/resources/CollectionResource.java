@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.internal.resources;
 
 import com.boclips.videos.service.client.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -11,8 +12,12 @@ import java.util.stream.Collectors;
 public class CollectionResource {
     private CollectionLinks _links;
     private String title;
+    private String description;
     private Set<SubjectResource> subjects;
     private List<VideoResource> videos;
+
+    @JsonProperty("public")
+    private Boolean isPublic;
 
     public Collection toCollection() {
         Set<Subject> subjects = this.subjects.stream()
@@ -29,7 +34,9 @@ public class CollectionResource {
         return Collection.builder()
                 .collectionId(new CollectionId(_links.getSelf().toUri()))
                 .title(title)
+                .description(description)
                 .videos(videos)
+                .isPublic(isPublic)
                 .subjects(subjects)
                 .build();
     }

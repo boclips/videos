@@ -3,6 +3,7 @@ package com.boclips.videos.service.client.internal;
 import com.boclips.videos.service.client.Collection;
 import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
+import com.boclips.videos.service.client.exceptions.InvalidCollectionRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -14,6 +15,8 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -167,6 +170,25 @@ public class FakeClient implements VideoServiceClient {
     @Override
     public List<Collection> getCollectionsByOwner(String owner, PageSpec pageSpec) {
         return trimToPageSize(getCollections(owner), pageSpec);
+    }
+
+    @Override
+    public CollectionId createCollection(CreateCollectionRequest request) {
+        if (request.getTitle() == null || request.getTitle().isEmpty()) {
+            throw new InvalidCollectionRequestException("Title is required");
+        }
+
+        val collection = Collection.builder()
+                .collectionId(rawIdToCollectionId(UUID.randomUUID().toString()))
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .videos(request.getVideos().stream().map(videoId -> get(rawIdToVideoId(videoId))).collect(toList()))
+                .isPublic(request.isPublic())
+                .subjects(emptySet())
+                .build();
+        this.collectionsByUser.put("", singletonList(collection));
+
+        return collection.getCollectionId();
     }
 
     private List<Collection> trimToPageSize(List<Collection> collections, PageSpec pageSpec) {

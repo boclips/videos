@@ -107,7 +107,7 @@ class CollectionsController(
     }
 
     @PostMapping
-    fun postCollection(@RequestBody createCollectionRequest: CreateCollectionRequest?): ResponseEntity<Void> {
+    fun postCollection(@Valid @RequestBody createCollectionRequest: CreateCollectionRequest?): ResponseEntity<Void> {
         val collection = createCollection(createCollectionRequest)
         val headers = HttpHeaders().apply {
             set(HttpHeaders.LOCATION, collectionsLinkBuilder.collection(collection.id.value)?.href)

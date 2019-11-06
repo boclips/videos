@@ -195,6 +195,7 @@ dependencies {
 
     clientCompileOnly('org.projectlombok:lombok:1.18.4')
     clientApt('org.projectlombok:lombok:1.18.4')
+    clientImplementation("com.fasterxml.jackson.core:jackson-databind:2.9.10")
     clientCompileOnly('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
     clientCompileOnly("org.springframework.boot:spring-boot-starter-test")
     client_testImplementation('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')

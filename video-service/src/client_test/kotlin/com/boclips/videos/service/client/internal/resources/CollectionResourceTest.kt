@@ -18,6 +18,8 @@ class CollectionResourceTest {
         val resource = CollectionResource().apply {
             _links = CollectionLinks(Link(collectionUri))
             title = "the title"
+            description = "the desc"
+            isPublic = true
             subjects = setOf(SubjectResource().apply {
                 this.id = "maths-123"
                 this.name = "Maths"
@@ -42,8 +44,10 @@ class CollectionResourceTest {
         val collection = resource.toCollection()
         assertThat(collection.collectionId.uri.toString()).isEqualTo(collectionUri)
         assertThat(collection.title).isEqualTo("the title")
+        assertThat(collection.description).isEqualTo("the desc")
         assertThat(collection.subjects.map { it.name }).containsExactly("Maths")
         assertThat(collection.videos).isNotEmpty
+        assertThat(collection.isPublic).isTrue()
 
         val video = collection.videos.component1()
         assertThat(video.videoId).isEqualTo(VideoId(URI("https://video-service.com/v1/videos/$videoId")))

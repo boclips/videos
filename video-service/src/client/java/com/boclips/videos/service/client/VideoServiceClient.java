@@ -37,6 +37,10 @@ public interface VideoServiceClient {
         return getApiClient(baseUrl, "public@boclips.com");
     }
 
+    static VideoServiceClient getNoRolesUser(String baseUrl) {
+        return getApiClient(baseUrl, "no-roles@boclips.com");
+    }
+
     static VideoServiceClient getApiClient(String baseUrl, String user) {
         final RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(
@@ -93,6 +97,8 @@ public interface VideoServiceClient {
     class PageSpec {
         private Integer pageSize;
     }
+
+    CollectionId createCollection(CreateCollectionRequest request);
 
     Collection get(CollectionId id);
 

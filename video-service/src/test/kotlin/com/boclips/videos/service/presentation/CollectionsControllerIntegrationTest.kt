@@ -440,6 +440,21 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
+    fun `validates create collection request`() {
+        mockMvc.perform(
+            post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                .content("""{"title": ""}""").asTeacher()
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(
+                jsonPath(
+                    "$.message",
+                    containsString("Title is required")
+                )
+            )
+    }
+
+    @Test
     fun `adds age range to the existing collection`() {
         val collectionId = createCollectionWithTitle("My Collection for ages")
 

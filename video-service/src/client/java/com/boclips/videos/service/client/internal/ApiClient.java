@@ -1,10 +1,7 @@
 package com.boclips.videos.service.client.internal;
 
 import com.boclips.videos.service.client.*;
-import com.boclips.videos.service.client.exceptions.ContentPartnerExistsException;
-import com.boclips.videos.service.client.exceptions.IllegalContentPartnerRequestException;
-import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
-import com.boclips.videos.service.client.exceptions.VideoExistsException;
+import com.boclips.videos.service.client.exceptions.*;
 import com.boclips.videos.service.client.internal.resources.*;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -205,6 +202,22 @@ public class ApiClient implements VideoServiceClient {
             throw new UnsupportedOperationException("No 'collections by owner' link. Check user roles.");
         }
         return getCollections(uri(collectionsLink).queryParam("owner", owner), pageSpec);
+    }
+
+    @Override
+    public CollectionId createCollection(CreateCollectionRequest request) {
+        val createCollectionLink = this.getLinks().get_links().getCreateCollection();
+
+        if (createCollectionLink == null) {
+            throw new UnauthorisedException("Create collection link is missing");
+        }
+
+        try {
+            val uri = restTemplate.postForLocation(createCollectionLink.toUri(), request);
+            return new CollectionId(uri);
+        } catch (HttpClientErrorException.BadRequest exception) {
+            throw new InvalidCollectionRequestException(exception);
+        }
     }
 
     private List<Collection> getCollections(UriComponentsBuilder uri, PageSpec pageSpec) {

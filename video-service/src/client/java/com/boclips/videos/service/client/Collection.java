@@ -14,10 +14,12 @@ public class Collection {
     private final CollectionId collectionId;
     @NonNull
     private final String title;
+    private final String description;
     @NonNull
     private final List<Video> videos;
     @NonNull
     private final Set<Subject> subjects;
+    private final Boolean isPublic;
 }
 
 

@@ -4,6 +4,8 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
+import com.boclips.videos.service.client.exceptions.InvalidCollectionRequestException
+import com.boclips.videos.service.client.exceptions.UnauthorisedException
 import com.boclips.videos.service.client.exceptions.VideoExistsException
 import com.boclips.videos.service.client.internal.FakeClient
 import com.boclips.videos.service.client.testsupport.AbstractVideoServiceClientSpringIntegrationTest
@@ -24,6 +26,7 @@ import java.net.URI
 import java.time.Duration
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import com.boclips.videos.service.client.CreateCollectionRequest as ClientCreateCollectionRequest
 
 internal abstract class VideoServiceClientContractTest : AbstractVideoServiceClientSpringIntegrationTest() {
 
@@ -161,6 +164,48 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(contentPartners[0].name).isEqualTo("ted")
         assertThat(contentPartners[0].contentPartnerId).isEqualTo(id)
         assertThat(contentPartners[0].official).isFalse()
+    }
+
+    @Test
+    fun `creates a collection and returns its id`() {
+        val createdContentPartnerId =
+            getClient().createContentPartner(TestFactories.createContentPartnerRequest(name = "Collection Content Partner"))
+
+        val videoId = getClient().createVideo(
+            TestFactories.createCreateVideoRequest(
+                playbackId = "entry-123",
+                contentProviderId = createdContentPartnerId.value
+            )
+        )
+
+        val createCollectionRequest = ClientCreateCollectionRequest.builder()
+            .title("test title")
+            .description("test desc")
+            .isPublic(true)
+            .videos(listOf(videoId.value))
+            .build()
+
+        val collectionId = getClient().createCollection(createCollectionRequest)
+
+        val retrievedCollection = getClient().get(collectionId)
+
+        assertThat(retrievedCollection.title).isEqualTo("test title")
+        assertThat(retrievedCollection.description).isEqualTo("test desc")
+        assertThat(retrievedCollection.videos.component1().videoId).isEqualTo(videoId)
+        assertThat(retrievedCollection.isPublic).isTrue()
+        assertThat(retrievedCollection.subjects).isEmpty()
+    }
+
+    @Test
+    fun `throws a bad request when create collection request is invalid`() {
+        val createCollectionRequest = ClientCreateCollectionRequest.builder()
+            .title("")
+            .description("test desc")
+            .isPublic(true)
+            .videos(emptyList())
+            .build()
+
+        assertThrows<InvalidCollectionRequestException> { getClient().createCollection(createCollectionRequest) }
     }
 
     @Test
@@ -524,6 +569,20 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
             .extracting("thumbnailUrl").allSatisfy {
                 assertThat(it as String).isNotBlank()
             }
+    }
+
+    @Test
+    fun `throws unauthorised exception when createCollection link is missing`() {
+        val createCollectionRequest = ClientCreateCollectionRequest.builder()
+            .title("test title")
+            .description("test desc")
+            .isPublic(true)
+            .videos(emptyList())
+            .build()
+
+        assertThrows<UnauthorisedException> {
+            VideoServiceClient.getNoRolesUser(videoServiceUrl).createCollection(createCollectionRequest)
+        }
     }
 
     override fun getClient() = VideoServiceClient.getBoclipsUser(videoServiceUrl)

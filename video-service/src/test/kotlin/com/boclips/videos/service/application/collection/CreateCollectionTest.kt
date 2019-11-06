@@ -103,7 +103,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `throws when missing title`() {
+    fun `throws when title is null`() {
         val createRequest = TestFactories.createCollectionRequest(
             title = null,
             videos = listOf("http://localhost/v1/videos/a-video")
