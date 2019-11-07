@@ -32,7 +32,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
     }
 
     override fun count(query: CollectionQuery): Long {
-        return searchElasticSearch(query = query, startIndex = 0, windowSize = 1).totalHits
+        return searchElasticSearch(query = query, startIndex = 0, windowSize = 1).totalHits?.value ?: 0L
     }
 
     private fun searchElasticSearch(query: CollectionQuery, startIndex: Int, windowSize: Int): SearchHits {

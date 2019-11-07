@@ -25,7 +25,6 @@ import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import org.elasticsearch.search.rescore.RescorerBuilder
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
@@ -38,7 +37,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     }
 
     override fun count(query: VideoQuery): Long {
-        return search(videoQuery = query, startIndex = 0, windowSize = 1).totalHits
+        return search(videoQuery = query, startIndex = 0, windowSize = 1).totalHits?.value ?: 0L
     }
 
     private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchHits {
