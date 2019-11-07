@@ -133,7 +133,7 @@ task sourcesJarClient(type: Jar, dependsOn: classes) {
 test.finalizedBy(testYoutubeContract)
 test.finalizedBy(testClient)
 
-ext["junit-jupiter.version"]  = "5.5.0"
+ext["junit-jupiter.version"] = junitVersion
 
 dependencies {
     implementation project(':search-service')
@@ -171,9 +171,9 @@ dependencies {
     implementation("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.2")
 
     // repeated versions used in search service
-    implementation('org.apache.solr:solr-solrj:7.7.1')
-    implementation("org.elasticsearch:elasticsearch:7.4.2")
-    implementation("org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.2")
+    implementation("org.apache.solr:solr-solrj:$solrVersion")
+    implementation("org.elasticsearch:elasticsearch:$elasticSearchVersion")
+    implementation("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticSearchVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'

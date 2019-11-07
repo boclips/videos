@@ -21,18 +21,15 @@ task testWithoutSolr(type: Test) {
     exclude '**/SolrSearchServiceIntegrationTest.class'
 }
 
-def elasticSearchVersion = "7.4.2"
-def junitVersion = "5.3.1"
-
 dependencies {
     compile("com.fasterxml.jackson.core:jackson-databind:2.9.10")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
-    compile("org.elasticsearch:elasticsearch:${elasticSearchVersion}")
-    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticSearchVersion}")
+    compile("org.elasticsearch:elasticsearch:$elasticSearchVersion")
+    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticSearchVersion")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("io.github.microutils:kotlin-logging:1.4.9")
-    compile('org.apache.solr:solr-solrj:7.7.1')
+    compile("org.apache.solr:solr-solrj:$solrVersion")
     implementation("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.2")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
