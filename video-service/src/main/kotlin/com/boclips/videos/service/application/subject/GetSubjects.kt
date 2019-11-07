@@ -8,6 +8,6 @@ class GetSubjects(
 ) {
     operator fun invoke(): List<SubjectResource> {
         return subjectRepository.findAll()
-            .map { subject -> SubjectResource(id = subject.id.value, name = subject.name) }
+            .map { subject -> SubjectResource(id = subject.id.value, name = subject.name, lessonPlan = subject.lessonPlan) }
     }
 }

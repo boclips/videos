@@ -6,12 +6,14 @@ import org.springframework.hateoas.core.Relation
 @Relation(collectionRelation = "subjects")
 data class SubjectResource(
     val id: String,
-    val name: String? = null
+    val name: String? = null,
+    val lessonPlan: Boolean? = false
 ) {
     companion object {
         fun from(subject: Subject) = SubjectResource(
             id = subject.id.value,
-            name = subject.name
+            name = subject.name,
+            lessonPlan = subject.lessonPlan
         )
     }
 }

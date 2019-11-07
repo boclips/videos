@@ -5,5 +5,6 @@ import org.bson.types.ObjectId
 
 data class SubjectDocument(
     @BsonId val id: ObjectId,
-    val name: String
+    val name: String,
+    val lessonPlan: Boolean? = false
 )

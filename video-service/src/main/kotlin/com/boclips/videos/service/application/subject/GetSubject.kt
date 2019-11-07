@@ -11,7 +11,8 @@ class GetSubject(
         return subjectRepository.findByIds(listOf(subjectId)).firstOrNull()?.let {
             SubjectResource(
                 id = it.id.value,
-                name = it.name
+                name = it.name,
+                lessonPlan = it.lessonPlan
             )
         } ?: throw ResourceNotFoundApiException("Not found", "Subject with id $subjectId cannot be found")
     }
