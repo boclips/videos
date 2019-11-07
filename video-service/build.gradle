@@ -172,8 +172,8 @@ dependencies {
 
     // repeated versions used in search service
     implementation('org.apache.solr:solr-solrj:7.7.1')
-    implementation("org.elasticsearch:elasticsearch:6.5.4")
-    implementation("org.elasticsearch.client:elasticsearch-rest-high-level-client:6.5.4")
+    implementation("org.elasticsearch:elasticsearch:7.4.2")
+    implementation("org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
