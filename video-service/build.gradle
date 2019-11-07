@@ -134,6 +134,8 @@ test.finalizedBy(testYoutubeContract)
 test.finalizedBy(testClient)
 
 ext["junit-jupiter.version"] = junitVersion
+ext["elasticsearch.version"] = elasticSearchVersion
+ext["solr.version"] = solrVersion
 
 dependencies {
     implementation project(':search-service')
@@ -169,11 +171,6 @@ dependencies {
     implementation('io.sentry:sentry-logback:1.7.21')
     implementation("com.fasterxml.jackson.core:jackson-databind:2.9.10")
     implementation("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.2")
-
-    // repeated versions used in search service
-    implementation("org.apache.solr:solr-solrj:$solrVersion")
-    implementation("org.elasticsearch:elasticsearch:$elasticSearchVersion")
-    implementation("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticSearchVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
