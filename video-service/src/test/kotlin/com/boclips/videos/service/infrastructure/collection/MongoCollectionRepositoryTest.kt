@@ -108,6 +108,24 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class CreateAndUpdateOne {
         @Test
+        fun `can create with subjects`() {
+            val math = saveSubject("Math")
+            val physics = saveSubject("Physics")
+
+            val collection = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Collection vs Playlist",
+                    createdByBoclips = false,
+                    public = true,
+                    subjects = setOf(math.id, physics.id)
+                )
+            )
+
+            assertThat(collection.subjects).containsExactlyInAnyOrder(math, physics)
+        }
+
+        @Test
         fun `can create and add videos to a collection`() {
             val video1 = saveVideo()
             val video2 = saveVideo()

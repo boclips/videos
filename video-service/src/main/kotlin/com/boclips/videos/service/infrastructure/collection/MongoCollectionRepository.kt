@@ -44,7 +44,8 @@ class MongoCollectionRepository(
     private val mongoClient: MongoClient,
     private val collectionUpdates: CollectionUpdates = CollectionUpdates(),
     private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter,
-    private val batchProcessingConfig: BatchProcessingConfig
+    private val batchProcessingConfig: BatchProcessingConfig,
+    private val collectionSubjects: CollectionSubjects
 ) : CollectionRepository {
     companion object : KLogging() {
         const val collectionName = "collections"
@@ -62,7 +63,7 @@ class MongoCollectionRepository(
             updatedAt = Instant.now(),
             visibility = if (command.public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
             createdByBoclips = command.createdByBoclips,
-            subjects = emptySet()
+            subjects = collectionSubjects.getByIds(*command.subjects.toTypedArray())
         )
 
         dbCollection().insertOne(document)

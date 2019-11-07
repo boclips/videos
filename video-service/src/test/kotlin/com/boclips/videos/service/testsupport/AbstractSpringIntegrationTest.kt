@@ -36,6 +36,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
@@ -135,6 +136,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createLegalRestrictions: CreateLegalRestrictions
+
+    @Autowired
+    lateinit var collectionSubjects: CollectionSubjects
 
     @Autowired
     lateinit var cacheManager: CacheManager

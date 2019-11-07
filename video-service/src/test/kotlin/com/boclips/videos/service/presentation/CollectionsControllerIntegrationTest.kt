@@ -45,6 +45,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val firstVideoId = saveVideo(title = "first").value
         val secondVideoId = saveVideo(title = "second").value
 
+        val math = saveSubject("Math")
+        val physics = saveSubject("Physics")
+
         val collectionUrl = mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -52,7 +55,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     {
                         "title": "a collection",
                         "description": "a description",
-                        "videos": ["$firstVideoId", "$secondVideoId"]
+                        "videos": ["$firstVideoId", "$secondVideoId"],
+                        "public": true,
+                        "subjects": ["${math.id.value}", "${physics.id.value}"]
                     }
                     """.trimIndent()
                 )
@@ -72,7 +77,34 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.description", equalTo("a description")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(2)))
             .andExpect(jsonPath("$.ageRange").doesNotExist())
-            .andExpect(jsonPath("$.subjects").isEmpty)
+            .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
+            .andExpect(jsonPath("$.subjects[*].id", containsInAnyOrder(math.id.value, physics.id.value)))
+            .andExpect(jsonPath("$.public", equalTo(true)))
+    }
+
+    @Test
+    fun `returns a not found response when trying to create with a subject that does not exist`() {
+        val phantomSubjectId = ObjectId().toHexString()
+
+        mockMvc.perform(
+            post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                        "title": "a collection",
+                        "subjects": ["$phantomSubjectId"]
+                    }
+                    """.trimIndent()
+                )
+                .asTeacher()
+        )
+            .andExpect(status().isNotFound)
+            .andExpect(
+                jsonPath(
+                    "$.message",
+                    containsString(phantomSubjectId)
+                )
+            )
     }
 
     @Test
