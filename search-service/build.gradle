@@ -21,7 +21,7 @@ task testWithoutSolr(type: Test) {
     exclude '**/SolrSearchServiceIntegrationTest.class'
 }
 
-def elasticSearchVersion = "6.5.4"
+def elasticSearchVersion = "6.8.4"
 def junitVersion = "5.3.1"
 
 dependencies {
