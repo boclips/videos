@@ -12,6 +12,7 @@ data class VideoDocument(
     val source: SourceDocument,
     val playback: PlaybackDocument?,
     val legacy: LegacyDocument,
+    val contentType: String? = null,
     val keywords: List<String>,
     val subjects: List<SubjectDocument>,
     val releaseDate: Date,
@@ -26,3 +27,4 @@ data class VideoDocument(
     val tags: List<UserTagDocument> = emptyList(),
     val promoted: Boolean? = null
 )
+
