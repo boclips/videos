@@ -6,8 +6,8 @@ import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTe
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest
 import org.elasticsearch.client.RequestOptions
+import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.rest.RestStatus
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -74,7 +74,7 @@ class VideoIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     }
 
     private fun getCurrentIndices() =
-        esClient.indices().get(GetIndexRequest().indices("video*"), RequestOptions.DEFAULT).indices
+        esClient.indices().get(GetIndexRequest("video*"), RequestOptions.DEFAULT).indices
 
     private fun getAliases() =
         esClient.indices().getAlias(GetAliasesRequest(VideosIndex.getIndexAlias()), RequestOptions.DEFAULT)

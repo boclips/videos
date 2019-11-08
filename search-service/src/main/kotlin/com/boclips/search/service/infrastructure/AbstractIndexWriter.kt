@@ -4,9 +4,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import mu.KLogging
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest
 import org.elasticsearch.action.bulk.BulkRequest
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.index.IndexRequest
@@ -14,6 +12,8 @@ import org.elasticsearch.action.support.IndicesOptions
 import org.elasticsearch.action.support.WriteRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
+import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.common.xcontent.XContentType
 
@@ -48,25 +48,23 @@ abstract class AbstractIndexWriter<T>(
     }
 
     override fun removeFromSearch(itemId: String) {
-        val request = DeleteRequest(
-            esIndex.getIndexAlias(),
-            esIndex.getESType(), itemId
-        )
+        val request = DeleteRequest(esIndex.getIndexAlias())
+            .id(itemId)
         request.refreshPolicy = WriteRequest.RefreshPolicy.WAIT_UNTIL
         client.delete(request, RequestOptions.DEFAULT)
     }
 
-    override fun bulkRemoveFromSearch(items: List<String>) {
-        items.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        itemIds.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
             .forEachIndexed { batchIndex, list ->
-                logger.info { "[Batch $batchIndex] removing ${items.size} item(s)" }
+                logger.info { "[Batch $batchIndex] removing ${itemIds.size} item(s)" }
 
                 val request = list
-                    .map {
+                    .map { id ->
                         DeleteRequest(
-                            esIndex.getIndexAlias(),
-                            esIndex.getESType(), it
+                            esIndex.getIndexAlias()
                         )
+                            .id(id)
                     }
                     .fold(BulkRequest()) { bulkRequest, indexRequest ->
                         bulkRequest.add(indexRequest)
@@ -91,7 +89,7 @@ abstract class AbstractIndexWriter<T>(
 
     override fun makeSureIndexIsThere() {
         if (!client.indices().exists(
-                GetIndexRequest().indices(esIndex.getIndexAlias()),
+                GetIndexRequest(esIndex.getIndexAlias()),
                 RequestOptions.DEFAULT
             )
         ) {
@@ -111,7 +109,7 @@ abstract class AbstractIndexWriter<T>(
     private fun createIndex(indexName: String) {
         val createIndexRequest = CreateIndexRequest(indexName)
             .settings(indexConfiguration.defaultEnglishSettings(indexParameters.numberOfShards))
-            .mapping(esIndex.getESType(), indexConfiguration.generateMapping())
+            .mapping(indexConfiguration.generateMapping())
 
         logger.info("Creating index $indexName")
         client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
@@ -169,9 +167,8 @@ abstract class AbstractIndexWriter<T>(
         )
 
         return IndexRequest(
-            indexName,
-            esIndex.getESType(), getIdentifier(item)
-        )
+            indexName)
+            .id(getIdentifier(item))
             .source(document, XContentType.JSON)
     }
 
@@ -179,5 +176,5 @@ abstract class AbstractIndexWriter<T>(
     abstract fun getIdentifier(entry: T): String
 
     private fun indexExists(index: String) =
-        client.indices().exists(GetIndexRequest().indices(index), RequestOptions.DEFAULT)
+        client.indices().exists(GetIndexRequest(index), RequestOptions.DEFAULT)
 }

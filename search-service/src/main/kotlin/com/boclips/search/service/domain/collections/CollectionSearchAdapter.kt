@@ -33,8 +33,8 @@ abstract class CollectionSearchAdapter<T>(
         indexWriter.removeFromSearch(itemId)
     }
 
-    override fun bulkRemoveFromSearch(items: List<String>) {
-        indexWriter.bulkRemoveFromSearch(items)
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        indexWriter.bulkRemoveFromSearch(itemIds)
     }
 
     override fun makeSureIndexIsThere() {
