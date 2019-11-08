@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -184,7 +183,11 @@ public class FakeClient implements VideoServiceClient {
                 .description(request.getDescription())
                 .videos(request.getVideos().stream().map(videoId -> get(rawIdToVideoId(videoId))).collect(toList()))
                 .isPublic(request.isPublic())
-                .subjects(emptySet())
+                .subjects(
+                        request.getSubjects().stream()
+                                .map(subjectId -> subjects.get(new SubjectId(subjectId)))
+                                .collect(toSet())
+                )
                 .build();
         this.collectionsByUser.put("", singletonList(collection));
 

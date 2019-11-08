@@ -13,6 +13,7 @@ import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.within
@@ -31,6 +32,8 @@ import com.boclips.videos.service.client.CreateCollectionRequest as ClientCreate
 internal abstract class VideoServiceClientContractTest : AbstractVideoServiceClientSpringIntegrationTest() {
 
     abstract fun getClient(): VideoServiceClient
+
+    abstract fun createSubjectFixture(): Subject
 
     @Autowired
     lateinit var subjectRepository: SubjectRepository
@@ -178,11 +181,14 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
             )
         )
 
+        val subject = createSubjectFixture()
+
         val createCollectionRequest = ClientCreateCollectionRequest.builder()
             .title("test title")
             .description("test desc")
             .isPublic(true)
             .videos(listOf(videoId.value))
+            .subjects(setOf(subject.id.value))
             .build()
 
         val collectionId = getClient().createCollection(createCollectionRequest)
@@ -193,7 +199,10 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(retrievedCollection.description).isEqualTo("test desc")
         assertThat(retrievedCollection.videos.component1().videoId).isEqualTo(videoId)
         assertThat(retrievedCollection.isPublic).isTrue()
-        assertThat(retrievedCollection.subjects).isEmpty()
+        assertThat(retrievedCollection.subjects)
+            .hasSize(1)
+            .extracting("id")
+            .containsOnly(subject.id)
     }
 
     @Test
@@ -443,6 +452,10 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
 }
 
 internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTest() {
+    override fun createSubjectFixture(): Subject {
+        return getClient().addSubject("Math")
+    }
+
     @Test
     fun `returns detailed collections`() {
         assertThat(getClient().collectionsDetailed).hasSize(3)
@@ -503,6 +516,11 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
 }
 
 internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTest() {
+    override fun createSubjectFixture(): Subject {
+        val createdSubject = createSubject(CreateSubjectRequest("Math"))
+        return Subject(SubjectId(createdSubject.id.value), createdSubject.name)
+    }
+
     @BeforeEach
     fun setUp() {
         fakeKalturaClient.createMediaEntry(
