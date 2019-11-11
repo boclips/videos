@@ -31,7 +31,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KAL
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
@@ -203,7 +203,7 @@ abstract class AbstractSpringIntegrationTest {
         contentProvider: String = "Reuters",
         contentProviderId: String? = null,
         contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
-        legacyType: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+        contentType: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
         ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
@@ -249,7 +249,7 @@ abstract class AbstractSpringIntegrationTest {
                 releasedOn = LocalDate.parse(date),
                 legalRestrictions = legalRestrictions,
                 keywords = keywords,
-                videoType = legacyType.name,
+                videoType = contentType.name,
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
                 analyseVideo = false,

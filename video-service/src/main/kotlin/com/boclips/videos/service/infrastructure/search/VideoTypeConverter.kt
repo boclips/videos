@@ -1,15 +1,15 @@
 package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 
 object VideoTypeConverter {
 
-    fun convert(legacyType: LegacyVideoType): VideoType {
+    fun convert(legacyType: ContentType): VideoType {
         return when(legacyType) {
-            LegacyVideoType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
-            LegacyVideoType.NEWS -> VideoType.NEWS
-            LegacyVideoType.STOCK -> VideoType.STOCK
+            ContentType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
+            ContentType.NEWS -> VideoType.NEWS
+            ContentType.STOCK -> VideoType.STOCK
         }
     }
 }

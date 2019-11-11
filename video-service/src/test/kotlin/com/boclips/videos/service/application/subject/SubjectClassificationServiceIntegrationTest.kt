@@ -4,7 +4,7 @@ import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +14,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
 
     @Test
     fun `publishes events for instructional videos`() {
-        val video = TestFactories.createVideo(title = "the video title", type = LegacyVideoType.INSTRUCTIONAL_CLIPS)
+        val video = TestFactories.createVideo(title = "the video title", type = ContentType.INSTRUCTIONAL_CLIPS)
 
         subjectClassificationService.classifyVideo(video)
 
@@ -25,7 +25,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
 
     @Test
     fun `ignores stock videos`() {
-        val video = TestFactories.createVideo(type = LegacyVideoType.STOCK)
+        val video = TestFactories.createVideo(type = ContentType.STOCK)
 
         subjectClassificationService.classifyVideo(video)
 
@@ -34,7 +34,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
 
     @Test
     fun `ignores news videos`() {
-        val video = TestFactories.createVideo(type = LegacyVideoType.NEWS)
+        val video = TestFactories.createVideo(type = ContentType.NEWS)
 
         subjectClassificationService.classifyVideo(video)
 

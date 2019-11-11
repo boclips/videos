@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -97,24 +97,24 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                type = LegacyVideoType.STOCK
+                type = ContentType.STOCK
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                type = LegacyVideoType.INSTRUCTIONAL_CLIPS
+                type = ContentType.INSTRUCTIONAL_CLIPS
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                type = LegacyVideoType.NEWS
+                type = ContentType.NEWS
             )
         )
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.LegacyTypeIs(LegacyVideoType.INSTRUCTIONAL_CLIPS)) {
+        mongoVideoRepository.streamAll(VideoFilter.ContentTypeIs(ContentType.INSTRUCTIONAL_CLIPS)) {
             videos = it.toList()
         }
 

@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
@@ -60,7 +60,7 @@ object VideoDocumentConverter {
             contentPartner = ContentPartnerDocumentConverter.toContentPartner(document.source.contentPartner),
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
-            type = LegacyVideoType.valueOf(document.contentType!!),
+            type = ContentType.valueOf(document.contentType!!),
             keywords = document.keywords,
             subjects = document.subjects.map(SubjectDocumentConverter::toSubject).toSet(),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),

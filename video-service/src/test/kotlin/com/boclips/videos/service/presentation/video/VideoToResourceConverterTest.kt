@@ -4,7 +4,7 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
@@ -30,7 +30,7 @@ internal class VideoToResourceConverterTest {
         description = "Best bottle slogan",
         contentPartnerName = "WeWork",
         contentPartnerVideoId = "111",
-        type = LegacyVideoType.NEWS,
+        type = ContentType.NEWS,
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
@@ -45,7 +45,7 @@ internal class VideoToResourceConverterTest {
         contentPartnerName = "JacekWork",
         contentPartnerVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
-        type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+        type = ContentType.INSTRUCTIONAL_CLIPS,
         subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
         legalRestrictions = "Many",
         tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id")

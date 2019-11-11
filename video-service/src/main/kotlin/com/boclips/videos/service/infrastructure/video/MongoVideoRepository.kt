@@ -114,7 +114,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoFilter.ContentPartnerIdIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
                 filter.contentPartnerId.value
             )
-            is VideoFilter.LegacyTypeIs -> VideoDocument::contentType eq filter.type.name
+            is VideoFilter.ContentTypeIs -> VideoDocument::contentType eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
             VideoFilter.IsDownloadable -> or(

@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId
@@ -29,7 +29,7 @@ class CreateVideoRequestToVideoConverter {
             releasedOn = getOrThrow(createVideoRequest.releasedOn, "releasedOn"),
             contentPartner = contentPartner,
             videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
-            type = LegacyVideoType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
+            type = ContentType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             ageRange = if (createVideoRequest.ageRangeMin !== null) {
                 AgeRange.bounded(createVideoRequest.ageRangeMin, createVideoRequest.ageRangeMax)

@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -527,7 +527,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                                 .append("videoReference", "ref")
                         )
                         .append("playback", Document().append("id", "some-id").append("type", "KALTURA"))
-                        .append("contentType", LegacyVideoType.NEWS.name)
+                        .append("contentType", ContentType.NEWS.name)
                         .append("keywords", emptyList<String>())
                         .append("subjects", emptyList<String>())
                         .append("releaseDate", Date())
@@ -574,7 +574,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                                 .append("duration", 10)
                                 .append("entryId", "some-entry-id")
                         )
-                        .append("contentType", LegacyVideoType.NEWS.name)
+                        .append("contentType", ContentType.NEWS.name)
                         .append("keywords", emptyList<String>())
                         .append("subjects", emptyList<String>())
                         .append("releaseDate", Date())

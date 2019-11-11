@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 
 class ContentEnrichers {
@@ -11,7 +11,7 @@ class ContentEnrichers {
             val bagOfWords = wordChars.findAll(lowercaseText).mapTo(mutableSetOf(), MatchResult::value).toSet()
 
             return when {
-                video.type != LegacyVideoType.STOCK -> true
+                video.type != ContentType.STOCK -> true
                 classroomExcludedWords.any { bagOfWords.contains(it) } -> false
                 classroomExcludedPhrases.any { lowercaseText.contains(it) } -> false
                 classroomPermittedPhrases.any { lowercaseText.contains(it) } -> true
@@ -21,7 +21,7 @@ class ContentEnrichers {
         }
 
         fun isNews(video: Video): Boolean {
-            return video.type == LegacyVideoType.NEWS
+            return video.type == ContentType.NEWS
         }
 
         private val classroomExcludedWords = listOf(

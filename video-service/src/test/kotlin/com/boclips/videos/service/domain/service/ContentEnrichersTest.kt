@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.service.video.ContentEnrichers.Companion.isClassroom
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +14,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     contentPartnerName = "Reuters",
-                    type = LegacyVideoType.INSTRUCTIONAL_CLIPS
+                    type = ContentType.INSTRUCTIONAL_CLIPS
                 )
             )
         ).isTrue()
@@ -26,7 +26,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     title = "jfk state of union speech",
-                    type = LegacyVideoType.STOCK
+                    type = ContentType.STOCK
                 )
             )
         ).isTrue()
@@ -34,7 +34,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     description = "jfk state of union Speech",
-                    type = LegacyVideoType.STOCK
+                    type = ContentType.STOCK
                 )
             )
         ).isTrue()
@@ -46,7 +46,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     title = "Family left speechless by bride's wedding dress",
-                    type = LegacyVideoType.STOCK
+                    type = ContentType.STOCK
                 )
             )
         ).isFalse()
@@ -58,7 +58,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     title = "Archive public information film: Woman throwing grain (to chickens)",
-                    type = LegacyVideoType.STOCK
+                    type = ContentType.STOCK
                 )
             )
         ).isTrue()
@@ -70,7 +70,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     title = "Animation explaining all about biology",
-                    type = LegacyVideoType.STOCK
+                    type = ContentType.STOCK
                 )
             )
         ).isTrue()
@@ -82,7 +82,7 @@ class ContentEnrichersTest {
             isClassroom(
                 createVideo(
                     title = "Animation explaining all about space",
-                    type = LegacyVideoType.STOCK
+                    type = ContentType.STOCK
                 )
             )
         ).isTrue()
@@ -113,7 +113,7 @@ class ContentEnrichersTest {
                 isClassroom(
                     createVideo(
                         title = title,
-                        type = LegacyVideoType.STOCK
+                        type = ContentType.STOCK
                     )
                 )
             ).withFailMessage("Expected '$title' to be excluded").isFalse()
@@ -134,7 +134,7 @@ class ContentEnrichersTest {
                 isClassroom(
                     createVideo(
                         title = it,
-                        type = LegacyVideoType.STOCK
+                        type = ContentType.STOCK
                     )
                 )
             ).withFailMessage("Expected '$it' to be excluded").isFalse()
@@ -154,7 +154,7 @@ class ContentEnrichersTest {
                 isClassroom(
                     createVideo(
                         title = title,
-                        type = LegacyVideoType.STOCK
+                        type = ContentType.STOCK
                     )
                 )
             ).withFailMessage("Expected '$title' to be excluded").isFalse()

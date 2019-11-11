@@ -30,7 +30,7 @@ import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
@@ -73,7 +73,7 @@ object TestFactories {
         ),
         contentPartnerVideoId: String = "cp-id-$videoId",
         playback: VideoPlayback = createKalturaPlayback(),
-        type: LegacyVideoType = LegacyVideoType.INSTRUCTIONAL_CLIPS,
+        type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = listOf("keyword"),
         subjects: Set<Subject> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),

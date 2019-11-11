@@ -5,7 +5,7 @@ import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -30,7 +30,7 @@ class SubjectClassificationService(
             return
         }
 
-        if (video.type == LegacyVideoType.STOCK || video.type == LegacyVideoType.NEWS) {
+        if (video.type == ContentType.STOCK || video.type == ContentType.NEWS) {
             logger.info { "Ignoring subject classification request of video ${video.videoId.value} because it has type ${video.type}" }
             return
         }
@@ -49,8 +49,8 @@ class SubjectClassificationService(
     fun classifyVideosByContentPartner(contentPartner: String?): CompletableFuture<Unit> {
         logger.info { "Requesting subject classification for all instructional videos: $contentPartner" }
         val future = CompletableFuture<Unit>()
-        val filter = contentPartner?.let { VideoFilter.ContentPartnerNameIs(it) } ?: VideoFilter.LegacyTypeIs(
-            LegacyVideoType.INSTRUCTIONAL_CLIPS
+        val filter = contentPartner?.let { VideoFilter.ContentPartnerNameIs(it) } ?: VideoFilter.ContentTypeIs(
+            ContentType.INSTRUCTIONAL_CLIPS
         )
         videoRepository.streamAll(filter) { videos ->
             videos

@@ -9,7 +9,7 @@ import com.boclips.videos.service.application.exceptions.InvalidCreateRequestExc
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.domain.model.video.LegacyVideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -278,7 +278,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createCreateVideoRequest(
                 title = title,
                 playbackId = "entry-\$123",
-                videoType = LegacyVideoType.INSTRUCTIONAL_CLIPS.toString(),
+                videoType = ContentType.INSTRUCTIONAL_CLIPS.toString(),
                 providerId = contentPartner.contentPartnerId.value
             )
 
