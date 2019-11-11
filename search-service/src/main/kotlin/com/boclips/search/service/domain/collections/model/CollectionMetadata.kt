@@ -7,5 +7,6 @@ data class CollectionMetadata(
     val visibility: CollectionVisibility,
     val owner: String,
     val bookmarkedByUsers: Set<String>,
-    val hasAttachments: Boolean
+    val hasAttachments: Boolean,
+    val description: String?
 )

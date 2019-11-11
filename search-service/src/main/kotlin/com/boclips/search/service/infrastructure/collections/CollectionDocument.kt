@@ -10,7 +10,8 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(SUBJECTS) val subjects: List<String> = emptyList(),
     @param:JsonProperty(BOOKMARKED_BY) val bookmarkedBy: Set<String> = emptySet(),
     @param:JsonProperty(HAS_ATTACHMENTS) val hasAttachments: Boolean?,
-    @param:JsonProperty(OWNER) val owner: String?
+    @param:JsonProperty(OWNER) val owner: String?,
+    @param:JsonProperty(DESCRIPTION) val description: String?
 ) {
     companion object {
         const val ID = "id"
@@ -20,5 +21,6 @@ data class CollectionDocument @JsonCreator constructor(
         const val HAS_ATTACHMENTS = "hasAttachments"
         const val OWNER = "owner"
         const val BOOKMARKED_BY = "bookmarkedBy"
+        const val DESCRIPTION = "description"
     }
 }

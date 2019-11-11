@@ -86,7 +86,8 @@ object SearchableCollectionMetadataFactory {
         subjects: List<String> = emptyList(),
         hasAttachments: Boolean = false,
         owner: String = "some-user-id",
-        bookmarkedBy: Set<String> = setOf(owner)
+        bookmarkedBy: Set<String> = setOf(owner),
+        description: String = ""
     ) = CollectionMetadata(
         id = id,
         title = title,
@@ -94,7 +95,8 @@ object SearchableCollectionMetadataFactory {
         visibility = visibility,
         owner = owner,
         bookmarkedByUsers = bookmarkedBy,
-        hasAttachments = hasAttachments
+        hasAttachments = hasAttachments,
+        description = description
     )
 }
 

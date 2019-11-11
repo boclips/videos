@@ -12,7 +12,8 @@ object CollectionMetadataConverter {
             owner = collection.owner.value,
             visibility = if (collection.isPublic) CollectionVisibility.PUBLIC else CollectionVisibility.PRIVATE,
             bookmarkedByUsers = collection.bookmarks.map { it.value }.toSet(),
-            hasAttachments = collection.attachments.isNotEmpty()
+            hasAttachments = collection.attachments.isNotEmpty(),
+            description = collection.description
         )
     }
 }
