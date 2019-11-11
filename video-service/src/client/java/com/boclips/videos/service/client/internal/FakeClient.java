@@ -183,6 +183,7 @@ public class FakeClient implements VideoServiceClient {
                 .description(request.getDescription())
                 .videos(request.getVideos().stream().map(videoId -> get(rawIdToVideoId(videoId))).collect(toList()))
                 .isPublic(request.isPublic())
+                .mine(true)
                 .subjects(
                         request.getSubjects().stream()
                                 .map(subjectId -> subjects.get(new SubjectId(subjectId)))
@@ -201,15 +202,16 @@ public class FakeClient implements VideoServiceClient {
     }
 
     public void addCollection(Collection collection) {
-        addCollection(collection, "user@boclips.com");
+        addCollection(collection, "user@boclips.com", true);
     }
 
-    public void addCollection(Collection collection, String owner) {
+    public void addCollection(Collection collection, String owner, boolean mine) {
         getCollections(owner).add(collection);
         getDetailedCollections(owner).add(Collection.builder()
                 .collectionId(collection.getCollectionId())
                 .subjects(collection.getSubjects())
                 .title(collection.getTitle())
+                .mine(mine)
                 .videos(collection.getVideos().stream()
                         .map(video -> videos.get(video.getVideoId()))
                         .collect(toList())

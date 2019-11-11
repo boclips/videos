@@ -15,9 +15,9 @@ public class CollectionResource {
     private String description;
     private Set<SubjectResource> subjects;
     private List<VideoResource> videos;
-
     @JsonProperty("public")
     private Boolean isPublic;
+    private Boolean mine;
 
     public Collection toCollection() {
         Set<Subject> subjects = this.subjects.stream()
@@ -37,6 +37,7 @@ public class CollectionResource {
                 .description(description)
                 .videos(videos)
                 .isPublic(isPublic)
+                .mine(mine)
                 .subjects(subjects)
                 .build();
     }

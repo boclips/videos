@@ -199,6 +199,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(retrievedCollection.description).isEqualTo("test desc")
         assertThat(retrievedCollection.videos.component1().videoId).isEqualTo(videoId)
         assertThat(retrievedCollection.isPublic).isTrue()
+        assertThat(retrievedCollection.mine).isTrue()
         assertThat(retrievedCollection.subjects)
             .hasSize(1)
             .extracting("id")
@@ -508,7 +509,8 @@ internal class FakeVideoServiceClientContractTest : VideoServiceClientContractTe
                 .subjects(setOf(maths))
                 .videos(videos)
                 .build(),
-            "anotheruser@boclips.com"
+            "anotheruser@boclips.com",
+            false
         )
     }
 

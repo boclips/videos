@@ -20,6 +20,7 @@ public class Collection {
     @NonNull
     private final Set<Subject> subjects;
     private final Boolean isPublic;
+    private final Boolean mine;
 }
 
 
