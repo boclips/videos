@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
@@ -26,7 +25,6 @@ object VideoDocumentConverter {
                 videoReference = video.videoReference
             ),
             playback = PlaybackConverter.toDocument(video.playback),
-            legacy = LegacyDocument(type = video.type.name),
             contentType = video.type.name,
             keywords = video.keywords,
             subjects = video.subjects.map(SubjectDocumentConverter::toSubjectDocument),
@@ -62,7 +60,7 @@ object VideoDocumentConverter {
             contentPartner = ContentPartnerDocumentConverter.toContentPartner(document.source.contentPartner),
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
-            type = LegacyVideoType.valueOf(document.legacy.type),
+            type = LegacyVideoType.valueOf(document.contentType!!),
             keywords = document.keywords,
             subjects = document.subjects.map(SubjectDocumentConverter::toSubject).toSet(),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),

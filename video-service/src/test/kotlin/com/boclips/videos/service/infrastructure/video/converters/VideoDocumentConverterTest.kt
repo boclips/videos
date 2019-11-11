@@ -8,7 +8,6 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.LegacyVideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.infrastructure.video.LegacyDocument
 import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import com.boclips.videos.service.testsupport.TestFactories
@@ -76,7 +75,7 @@ class VideoDocumentConverterTest {
                 videoReference = ""
             ),
             playback = TestFactories.createKalturaPlaybackDocument(),
-            legacy = LegacyDocument(LegacyVideoType.NEWS.toString()),
+            contentType = LegacyVideoType.NEWS.toString(),
             keywords = emptyList(),
             subjects = emptyList(),
             releaseDate = Date(),

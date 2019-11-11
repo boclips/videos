@@ -19,7 +19,7 @@ class VideoToLegacyDocumentVideoMetadataConverterTest {
             contentPartnerName = "Reuters",
             contentPartnerVideoId = "r001",
             playback = TestFactories.createKalturaPlayback(duration = Duration.ofSeconds(10)),
-            type = LegacyVideoType.TED_TALKS,
+            type = LegacyVideoType.NEWS,
             keywords = listOf("keyword"),
             releasedOn = LocalDate.parse("2019-01-17")
         )
@@ -34,6 +34,6 @@ class VideoToLegacyDocumentVideoMetadataConverterTest {
         assertThat(legacyMetadata.contentPartnerName).isEqualTo("Reuters")
         assertThat(legacyMetadata.contentPartnerVideoId).isEqualTo("r001")
         assertThat(legacyMetadata.releaseDate).isEqualTo(LocalDate.parse("2019-01-17"))
-        assertThat(legacyMetadata.videoTypeTitle).isEqualTo(LegacyVideoType.TED_TALKS.title)
+        assertThat(legacyMetadata.videoTypeTitle).isEqualTo(LegacyVideoType.NEWS.title)
     }
 }

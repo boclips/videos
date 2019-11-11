@@ -30,7 +30,7 @@ internal class VideoToResourceConverterTest {
         description = "Best bottle slogan",
         contentPartnerName = "WeWork",
         contentPartnerVideoId = "111",
-        type = LegacyVideoType.TED_TALKS,
+        type = LegacyVideoType.NEWS,
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
@@ -45,7 +45,7 @@ internal class VideoToResourceConverterTest {
         contentPartnerName = "JacekWork",
         contentPartnerVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
-        type = LegacyVideoType.OTHER,
+        type = LegacyVideoType.INSTRUCTIONAL_CLIPS,
         subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
         legalRestrictions = "Many",
         tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id")
@@ -92,8 +92,8 @@ internal class VideoToResourceConverterTest {
                 name = "Maths"
             )
         )
-        assertThat(videoResource.type!!.id).isEqualTo(10)
-        assertThat(videoResource.type!!.name).isEqualTo("TED Talks")
+        assertThat(videoResource.type!!.id).isEqualTo(1)
+        assertThat(videoResource.type!!.name).isEqualTo("News")
         assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
         assertThat(videoResource.legalRestrictions).isEqualTo("None")
 
@@ -128,8 +128,8 @@ internal class VideoToResourceConverterTest {
                 name = "Biology"
             )
         )
-        assertThat(videoResource.type!!.id).isEqualTo(0)
-        assertThat(videoResource.type!!.name).isEqualTo("Other")
+        assertThat(videoResource.type!!.id).isEqualTo(3)
+        assertThat(videoResource.type!!.name).isEqualTo("Instructional Clips")
         assertThat(videoResource.playback!!.content.type).isEqualTo("YOUTUBE")
         assertThat(videoResource.playback!!.content.thumbnailUrl).isEqualTo("youtube-thumbnail")
         assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(21))

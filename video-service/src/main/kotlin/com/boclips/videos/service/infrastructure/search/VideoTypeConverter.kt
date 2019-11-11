@@ -8,19 +8,8 @@ object VideoTypeConverter {
     fun convert(legacyType: LegacyVideoType): VideoType {
         return when(legacyType) {
             LegacyVideoType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
-            LegacyVideoType.TED_TALKS -> VideoType.INSTRUCTIONAL
-            LegacyVideoType.TED_ED -> VideoType.INSTRUCTIONAL
-            LegacyVideoType.SHORT_PROGRAMME -> VideoType.INSTRUCTIONAL
-
             LegacyVideoType.NEWS -> VideoType.NEWS
-            LegacyVideoType.UGC_NEWS -> VideoType.NEWS
-            LegacyVideoType.NEWS_PACKAGE -> VideoType.NEWS
-
             LegacyVideoType.STOCK -> VideoType.STOCK
-            LegacyVideoType.VR_360_STOCK -> VideoType.STOCK
-            LegacyVideoType.VR_360_IMMERSIVE -> VideoType.STOCK
-            LegacyVideoType.OTHER -> VideoType.STOCK
-            LegacyVideoType.TV_CLIPS -> VideoType.STOCK
         }
     }
 }

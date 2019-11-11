@@ -18,12 +18,12 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLegalRestrictions
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePromoted
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTitle
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePromoted
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
@@ -114,7 +114,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoFilter.ContentPartnerIdIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
                 filter.contentPartnerId.value
             )
-            is VideoFilter.LegacyTypeIs -> VideoDocument::legacy / LegacyDocument::type eq filter.type.name
+            is VideoFilter.LegacyTypeIs -> VideoDocument::contentType eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
             VideoFilter.IsDownloadable -> or(
