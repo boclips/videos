@@ -34,6 +34,46 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     }
 
     @Test
+    fun `can retrieve collections by word matching on description`() {
+        collectionIndexWriter.safeRebuildIndex(
+            sequenceOf(SearchableCollectionMetadataFactory.create(
+                id = "1",
+                title = "Beautiful Boy Dancing",
+                description = "Plot twist, the boy is a dog. They taught a dog to dance!"
+            ))
+        )
+
+        val results =
+            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "taught a dog")))
+
+        Assertions.assertThat(results).containsExactly("1")
+    }
+
+    @Test
+    fun `boosts title matches over description matches`() {
+        collectionIndexWriter.safeRebuildIndex(
+            sequenceOf(SearchableCollectionMetadataFactory.create(
+                id = "1",
+                title = "You won't believe what this dog can do.",
+                description = "Beautiful Boy Dancing"
+            ), SearchableCollectionMetadataFactory.create(
+                id = "2",
+                title = "Control",
+                description = "Control element"
+            ), SearchableCollectionMetadataFactory.create(
+                id = "3",
+                title = "Beautiful Boy Dancing",
+                description = "Plot twist, the boy is a dog. They taught a dog to dance!"
+            ))
+        )
+
+        val results =
+            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Beautiful Boy Dancing")))
+
+        Assertions.assertThat(results).containsExactly("3", "1")
+    }
+
+    @Test
     fun `can retrieve collections word matching`() {
         collectionIndexWriter.safeRebuildIndex(
             sequenceOf(

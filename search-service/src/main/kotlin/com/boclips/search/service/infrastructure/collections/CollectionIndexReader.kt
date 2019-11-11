@@ -63,8 +63,8 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             .boolQuery()
             .apply {
                 if (query.phrase.isNotEmpty()) {
-
-                    must(
+                    minimumShouldMatch(1)
+                    should(
                         QueryBuilders
                             .boolQuery()
                             .must(
@@ -75,6 +75,19 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                                     )
                             )
                             .should(QueryBuilders.matchPhraseQuery(CollectionDocument.TITLE, query.phrase))
+                            .boost(1.2F)
+                    )
+                    should(
+                        QueryBuilders
+                            .boolQuery()
+                            .must(
+                                QueryBuilders
+                                    .matchQuery(
+                                        CollectionDocument.DESCRIPTION,
+                                        query.phrase
+                                    )
+                            )
+                            .should(QueryBuilders.matchPhraseQuery(CollectionDocument.DESCRIPTION, query.phrase))
                     )
                 }
             }
