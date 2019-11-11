@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import com.boclips.videos.service.domain.model.video.ContentType as VideoServiceVideoType
 
@@ -22,9 +23,7 @@ class LegacyDocumentVideoTypeTest {
     }
 
     @Test
-    fun `returns other for a bad id`() {
-        val id = -5
-
-        assertThat(VideoType.fromId(id)).isEqualTo(VideoType.OTHER)
+    fun `throws for a bad id`() {
+        assertThatThrownBy { VideoType.fromId(-5) }.isInstanceOf(IllegalArgumentException::class.java)
     }
 }

@@ -1,24 +1,21 @@
 package com.boclips.videos.service.client;
 
+import java.util.Arrays;
+
 public enum VideoType {
-    OTHER,
-    NEWS,
-    STOCK,
-    INSTRUCTIONAL_CLIPS,
-    TV_CLIPS,
-    NEWS_PACKAGE,
-    UGC_NEWS,
-    VR_360_STOCK,
-    VR_360_IMMERSIVE,
-    SHORT_PROGRAMME,
-    TED_TALKS,
-    TED_ED;
+    NEWS(1),
+    STOCK(2),
+    INSTRUCTIONAL_CLIPS(3);
+
+    private final Integer id;
+
+    VideoType(Integer id) {
+        this.id = id;
+    }
 
     public static VideoType fromId(Integer id) {
-        try {
-            return VideoType.values()[id];
-        } catch (Exception e) {
-            return VideoType.OTHER;
-        }
+        return Arrays.stream(VideoType.values()).filter(videoType -> videoType.id.equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Video type id not recognised: " + id));
     }
 }

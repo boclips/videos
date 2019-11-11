@@ -34,12 +34,12 @@ abstract class VideoProjectionContractTest : AbstractVideoServiceClientSpringInt
             TestFactories.createCreateVideoRequest(
                 playbackId = playbackId,
                 contentProviderId = contentPartnerId.value,
-                contentType = VideoType.TED_ED
+                contentType = VideoType.INSTRUCTIONAL_CLIPS
             )
         )
 
         val video = clientWithInternalProjection.get(id)
-        assertThat(video.type).isEqualTo(VideoType.TED_ED)
+        assertThat(video.type).isEqualTo(VideoType.INSTRUCTIONAL_CLIPS)
     }
 
     @Test
@@ -57,7 +57,7 @@ abstract class VideoProjectionContractTest : AbstractVideoServiceClientSpringInt
             TestFactories.createCreateVideoRequest(
                 playbackId = playbackId,
                 contentProviderId = contentPartnerId.value,
-                contentType = VideoType.TED_ED
+                contentType = VideoType.INSTRUCTIONAL_CLIPS
             )
         )
 
