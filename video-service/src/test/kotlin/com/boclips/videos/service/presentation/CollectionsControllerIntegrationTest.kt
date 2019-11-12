@@ -187,11 +187,17 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `get bookmarked collections correctly paginated`() {
-        createCollection("collection 1").apply {
+    fun `get bookmarked collections correctly paginated, prioritising collections with attachments`() {
+        val collectionId = createCollection("collection 1").apply {
             updateCollectionToBePublic(this)
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
+        updateCollectionAttachment(
+            collectionId = collectionId,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "my description",
+            attachmentURL = "http://www.google.com"
+        )
         createCollection("collection 2").apply {
             updateCollectionToBePublic(this)
             bookmarkCollection(this, "notTheOwner@gmail.com")

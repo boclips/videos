@@ -25,11 +25,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
-    fun `gets all user collections with full details`() {
+    fun `gets all user collections with full details, prioritising collections with attachments`() {
         val collectionId = createCollection("collection 1")
         createCollection("collection 2")
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
-
+        updateCollectionAttachment(
+            collectionId = collectionId,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "My description",
+            attachmentURL = "http://www.google.com"
+        )
         mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
@@ -52,11 +57,17 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `gets all user collections with basic video details`() {
+    fun `gets all user collections with basic video details, prioritising collections with attachments`() {
         val collectionId = createCollection("collection 1")
         createCollection("collection 2")
         val savedVideoId = saveVideo(title = "a video title")
         addVideo(collectionId, savedVideoId.value)
+        updateCollectionAttachment(
+            collectionId = collectionId,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "My description",
+            attachmentURL = "http://www.google.com"
+        )
 
         mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
@@ -125,8 +136,15 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
     @Test
     fun `filter all public collections and use pagination`() {
-        updateCollectionToBePublic(createCollection("collection 1"))
+        val collectionId = createCollection("collection 1")
+        updateCollectionToBePublic(collectionId)
         updateCollectionToBePublic(createCollection("collection 2"))
+        updateCollectionAttachment(
+            collectionId = collectionId,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "My description",
+            attachmentURL = "http://www.google.com"
+        )
 
         mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&public=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)

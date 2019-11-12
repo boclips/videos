@@ -70,6 +70,18 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .andExpect(status().isNoContent)
     }
 
+    fun updateCollectionAttachment(collectionId: String, attachmentType: String, attachmentDescription: String, attachmentURL: String) {
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
+                """{"attachment": {
+                    |"description" : "$attachmentDescription",
+                    |"linkToResource" : "$attachmentURL",
+                    |"type": "$attachmentType"}}""".trimMargin()
+            ).asTeacher()
+        )
+            .andExpect(status().isNoContent)
+    }
+
     fun selfLink(collectionId: String): URI {
         return getCollection(collectionId)
             .andReturn()

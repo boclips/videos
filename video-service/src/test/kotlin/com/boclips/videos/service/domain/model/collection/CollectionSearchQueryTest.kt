@@ -37,6 +37,20 @@ class CollectionSearchQueryTest {
     }
 
     @Test
+    fun `when not filtering sorts by attachments`() {
+        val query = CollectionSearchQuery(
+            text = null,
+            subjectIds = emptyList(),
+            visibilityForOwners = emptySet(),
+            pageIndex = 0,
+            pageSize = 0,
+            permittedCollections = null
+        )
+
+        assertThat(query.toSearchQuery().sort).isEqualTo(Sort.ByField(CollectionMetadata::hasAttachments, SortOrder.DESC))
+    }
+
+    @Test
     fun `sets permitted ids`() {
         val query = CollectionSearchQuery(
             text = "sometin",

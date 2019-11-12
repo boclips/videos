@@ -22,7 +22,7 @@ class CollectionSearchQuery(
         bookmarkedBy = this.bookmarkedBy,
         permittedIds = this.permittedCollections?.map { it.value },
         sort = when {
-            this.subjectIds.isNotEmpty() && this.text.isNullOrBlank() -> Sort.ByField(
+            this.text.isNullOrBlank() -> Sort.ByField(
                 CollectionMetadata::hasAttachments,
                 SortOrder.DESC
             )
