@@ -5,8 +5,10 @@ import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.videos.service.config.properties.KalturaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 @Configuration
+@Profile("!fakes-kaltura")
 class KalturaContext {
     @Bean
     fun kalturaClient(kalturaProperties: KalturaProperties): KalturaClient = KalturaClient.create(
@@ -14,7 +16,6 @@ class KalturaContext {
             .partnerId(kalturaProperties.partnerId)
             .userId(kalturaProperties.userId)
             .secret(kalturaProperties.secret)
-            .streamFlavorParamIds(kalturaProperties.streamFlavorParamIds)
             .build()
     )
 }

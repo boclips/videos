@@ -41,7 +41,7 @@ internal class PlaybackToResourceConverterTest {
         val resource = this.playbackToResourceConverter.wrapPlaybackInResource(kalturaPlayback)
         val content = resource.content as StreamPlaybackResource
 
-        assertThat(content.streamUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id/format/applehttp/flavorParamIds/1%2C2%2C3%2C4/protocol/https/video.mp4")
+        assertThat(content.streamUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id/format/applehttp/flavorParamIds/487041%2C487071%2C487081%2C487091/protocol/https/video.mp4")
         assertThat(content.duration).isEqualTo(kalturaPlayback.duration)
         assertThat(content.thumbnailUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id/width/500/vid_slices/3/vid_slice/1")
         assertThat(content.id).isEqualTo(kalturaPlayback.id.value)

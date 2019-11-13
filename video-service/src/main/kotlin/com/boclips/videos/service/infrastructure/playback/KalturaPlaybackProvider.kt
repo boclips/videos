@@ -21,7 +21,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
     companion object : KLogging()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, StreamPlayback> {
-        return kalturaClient.getMediaEntriesByIds(playbackIds.map { it.value })
+        return kalturaClient.getEntriesByIds(playbackIds.map { it.value })
             .map { PlaybackId(KALTURA, it.key) to it.value }.toMap()
             .asSequence()
             .filter { it.value.status == MediaEntryStatus.READY }
@@ -40,7 +40,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
 
     override fun removePlayback(playbackId: PlaybackId) {
         try {
-            kalturaClient.deleteMediaEntryById(playbackId.value)
+            kalturaClient.deleteEntryById(playbackId.value)
         } catch (ex: KalturaClientApiException) {
             logger.error { "Failed to execute video from Kaltura: $ex" }
         }
