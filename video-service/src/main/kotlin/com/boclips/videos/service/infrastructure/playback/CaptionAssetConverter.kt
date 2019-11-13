@@ -29,6 +29,10 @@ object CaptionAssetConverter {
     private fun getCaptionFileType(format: CaptionsFormat): CaptionFormat {
         return when (format) {
             CaptionsFormat.VTT -> CaptionFormat.WEBVTT
+            CaptionsFormat.WEBVTT -> CaptionFormat.WEBVTT
+            CaptionsFormat.SRT -> CaptionFormat.SRT
+            CaptionsFormat.DFXP -> CaptionFormat.DFXP
+            CaptionsFormat.CAP -> CaptionFormat.CAP
         }
     }
 }

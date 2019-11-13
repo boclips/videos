@@ -155,8 +155,9 @@ dependencies {
 
     implementation('com.github.boclips:boclips-spring-web:0.64.0')
     implementation('com.github.boclips:boclips-spring-security:0.190.0')
+
     implementation("com.github.boclips:kaltura-client:0.111.0")
-    implementation("com.github.boclips:event-bus:1.37.5")
+    implementation("com.github.boclips:event-bus:1.37.13")
 
     implementation("com.github.boclips:user-service:0.216.0")
     // Required by user-service client
