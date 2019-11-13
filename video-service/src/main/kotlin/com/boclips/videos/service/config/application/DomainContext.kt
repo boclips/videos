@@ -17,6 +17,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.EventPublishingCollectionRepository
 import com.boclips.videos.service.domain.service.subject.EventPublishingSubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
@@ -72,12 +73,12 @@ class DomainContext(
         batchProcessingConfig: BatchProcessingConfig,
         collectionSubjects: CollectionSubjects
     ): CollectionRepository {
-        return MongoCollectionRepository(
+        return EventPublishingCollectionRepository(MongoCollectionRepository(
             mongoClient = mongoClient,
             mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter,
             batchProcessingConfig = batchProcessingConfig,
             collectionSubjects = collectionSubjects
-        )
+        ), eventBus)
     }
 
     @Bean

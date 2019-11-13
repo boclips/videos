@@ -17,10 +17,17 @@ interface CollectionRepository {
     fun streamAll(consumer: (Sequence<Collection>) -> Unit)
     fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
     fun create(command: CreateCollectionCommand): Collection
-    fun update(command: CollectionUpdateCommand)
+    fun update(command: CollectionUpdateCommand): Collection
     fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection>
-    fun updateAll(updateCommand: CollectionsUpdateCommand)
-    fun streamUpdate(filter: CollectionFilter, consumer: (List<Collection>) -> List<CollectionUpdateCommand>)
+    fun updateAll(
+        updateCommand: CollectionsUpdateCommand,
+        updatedCollectionsConsumer: (List<Collection>) -> Unit = {}
+    )
+    fun streamUpdate(
+        filter: CollectionFilter,
+        updateCommandFactory: (List<Collection>) -> List<CollectionUpdateCommand>,
+        updatedCollectionsConsumer: (List<Collection>) -> Unit = {}
+    )
     fun delete(id: CollectionId)
     fun bookmark(id: CollectionId, user: UserId): Collection
     fun unbookmark(id: CollectionId, user: UserId): Collection

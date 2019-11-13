@@ -110,7 +110,11 @@ class MongoCollectionRepository(
         consumer(sequence)
     }
 
-    override fun streamUpdate(filter: CollectionFilter, consumer: (List<Collection>) -> List<CollectionUpdateCommand>) {
+    override fun streamUpdate(
+        filter: CollectionFilter,
+        updateCommandFactory: (List<Collection>) -> List<CollectionUpdateCommand>,
+        updatedCollectionsConsumer: (List<Collection>) -> Unit
+    ) {
         val filterCriteria = when (filter) {
             is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(
                 filter.subjectId.value
@@ -127,14 +131,16 @@ class MongoCollectionRepository(
             partialWindows = true
         ).forEachIndexed { index, windowedCollections ->
             logger.info { "Starting update batch: $index" }
-            val updateCommands = consumer(windowedCollections)
+            val updateCommands = updateCommandFactory(windowedCollections)
             val updatedCollections = bulkUpdate(updateCommands)
             logger.info { "Updated ${updatedCollections.size} collections" }
+            updatedCollectionsConsumer(updatedCollections)
         }
     }
 
-    override fun update(command: CollectionUpdateCommand) {
+    override fun update(command: CollectionUpdateCommand): Collection {
         updateOne(command.collectionId, collectionUpdates.toBson(command))
+        return find(command.collectionId) ?: throw CollectionNotFoundException(command.collectionId.value)
     }
 
     override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection> {
@@ -153,27 +159,30 @@ class MongoCollectionRepository(
         return findAll(commands.map { it.collectionId })
     }
 
-    override fun updateAll(updateCommand: CollectionsUpdateCommand) {
+    override fun updateAll(
+        updateCommand: CollectionsUpdateCommand,
+        updatedCollectionsConsumer: (List<Collection>) -> Unit
+    ) {
         return when (updateCommand) {
             is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {
-                streamUpdate(CollectionFilter.HasVideoId(updateCommand.videoId)) { collections ->
+                streamUpdate(CollectionFilter.HasVideoId(updateCommand.videoId), { collections ->
                     collections.map {
                         CollectionUpdateCommand.RemoveVideoFromCollection(
                             collectionId = it.id,
                             videoId = updateCommand.videoId
                         )
                     }
-                }
+                }, updatedCollectionsConsumer)
             }
             is CollectionsUpdateCommand.RemoveSubjectFromAllCollections -> {
-                streamUpdate(CollectionFilter.HasSubjectId(updateCommand.subjectId)) { collections ->
+                streamUpdate(CollectionFilter.HasSubjectId(updateCommand.subjectId), { collections ->
                     collections.map {
                         CollectionUpdateCommand.RemoveSubjectFromCollection(
                             collectionId = it.id,
                             subjectId = updateCommand.subjectId
                         )
                     }
-                }
+                }, updatedCollectionsConsumer)
             }
         }
     }

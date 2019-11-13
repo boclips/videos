@@ -1,0 +1,81 @@
+package com.boclips.videos.service.domain.service.collection
+
+import com.boclips.eventbus.events.collection.CollectionUpdated
+import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+
+class EventPublishingCollectionRepositoryTest : AbstractSpringIntegrationTest() {
+
+    @Autowired
+    lateinit var repository: EventPublishingCollectionRepository
+
+    @Test
+    fun `publishes collection updated event when collection is created`() {
+        repository.create(
+            CreateCollectionCommand(
+            owner = UserId(TestFactories.aValidId()),
+                title = "My new collection",
+                createdByBoclips = false,
+                public = false
+        ))
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.title).isEqualTo("My new collection")
+    }
+
+    @Test
+    fun `publishes collection updated event when collection is updated`() {
+        val video = saveVideo()
+        val collection = saveCollection()
+
+        repository.update(CollectionUpdateCommand.AddVideoToCollection(collection, video))
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds).hasSize(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds.first().value).isEqualTo(video.value)
+    }
+
+    @Test
+    fun `publishes collection updated event when collection is updated in bulk`() {
+        val video = saveVideo()
+        val collection = saveCollection()
+
+        repository.bulkUpdate(listOf(CollectionUpdateCommand.AddVideoToCollection(collection, video)))
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds).hasSize(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds.first().value).isEqualTo(video.value)
+    }
+
+    @Test
+    fun `publishes collection updated events when all collections are updated`() {
+        val video = saveVideo()
+        saveCollection(videos = listOf(video.value))
+        saveCollection(videos = listOf(video.value))
+        saveCollection(videos = listOf())
+
+        repository.updateAll(CollectionsUpdateCommand.RemoveVideoFromAllCollections(video))
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)
+        assertThat(fakeEventBus.getEventsOfType(CollectionUpdated::class.java).first().collection.videosIds).isEmpty()
+    }
+
+    @Test
+    fun `publishes collection updated events when collections are updated in a streaming fashion`() {
+        val video = saveVideo()
+        saveCollection(videos = listOf(video.value))
+        saveCollection(videos = listOf(video.value))
+        saveCollection(videos = listOf())
+
+        repository.streamUpdate(CollectionFilter.HasVideoId(video), { collectionsToUpdate ->
+            collectionsToUpdate.map { CollectionUpdateCommand.RenameCollection(it.id, "The new title") }
+        })
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)
+        assertThat(fakeEventBus.getEventsOfType(CollectionUpdated::class.java).first().collection.title).isEqualTo("The new title")
+    }
+}

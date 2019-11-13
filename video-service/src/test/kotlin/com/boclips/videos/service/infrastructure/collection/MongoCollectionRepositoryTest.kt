@@ -387,6 +387,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             collectionRepository.update(
                 CollectionUpdateCommand.ReplaceSubjects(aGoodCollection.id, setOf(subject, anotherSubject))
             )
+            assertThat(collectionRepository.find(aGoodCollection.id)!!.subjects).containsExactly(subject, anotherSubject)
 
             collectionRepository.updateAll(CollectionsUpdateCommand.RemoveSubjectFromAllCollections(subject.id))
 
@@ -404,11 +405,11 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(subject))
             )
 
-            collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subject.id)) { collections ->
+            collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subject.id), { collections ->
                 collections.map { collection ->
                     CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(updatedSubject))
                 }
-            }
+            })
 
             assertThat(collectionRepository.find(collection.id)!!.subjects).containsExactly(updatedSubject)
         }

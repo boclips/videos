@@ -29,8 +29,8 @@ import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.ContentPartner
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
@@ -216,6 +216,8 @@ object TestFactories {
         createdByBoclips: Boolean = false,
         bookmarks: Set<UserId> = emptySet(),
         subjects: Set<Subject> = emptySet(),
+        ageRangeMin: Int = 0,
+        ageRangeMax: Int = 10,
         description: String = "collection description",
         attachments: Set<Attachment> = emptySet()
     ) = Collection(
@@ -228,7 +230,7 @@ object TestFactories {
         createdByBoclips = createdByBoclips,
         bookmarks = bookmarks,
         subjects = subjects,
-        ageRange = AgeRange.unbounded(),
+        ageRange = AgeRange.bounded(ageRangeMin,ageRangeMax),
         description = description,
         attachments = attachments
     )

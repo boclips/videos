@@ -190,8 +190,7 @@ class PubSubEventsService(
     }
 
     private fun msg(builder: AbstractEventWithUserId.AbstractEventWithUserIdBuilder<*, *>): AbstractEventWithUserId {
-        val user = getCurrentUser();
-
+        val user = getCurrentUser()
         return builder
             .userId(user.id)
             .url(RefererHeaderExtractor.getReferer())

@@ -45,7 +45,7 @@ class UpdateSubject(
             }
         }
 
-        collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subjectId)) { collections ->
+        collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subjectId), { collections ->
             collections.map { collection ->
                 val newSubjects = replaceSubject(
                     subjects = collection.subjects,
@@ -55,7 +55,7 @@ class UpdateSubject(
 
                 CollectionUpdateCommand.ReplaceSubjects(collectionId = collection.id, subjects = newSubjects)
             }
-        }
+        })
 
         logger.info { "Updated subject ${updatedSubject.id}" }
     }
