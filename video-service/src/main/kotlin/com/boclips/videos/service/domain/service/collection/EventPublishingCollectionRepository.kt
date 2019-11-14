@@ -2,13 +2,17 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.collection.CollectionCreated
+import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.EventConverter
+import com.boclips.videos.service.domain.service.events.EventService
 
 class EventPublishingCollectionRepository(
     private val collectionRepository: CollectionRepository,
+    private val eventService: EventService,
     private val eventBus: EventBus
 )
     : CollectionRepository by collectionRepository {
@@ -49,6 +53,11 @@ class EventPublishingCollectionRepository(
         }
     }
 
+    override fun delete(id: CollectionId) {
+        collectionRepository.delete(id)
+        eventService.saveCollectionDeletedEvent(id)
+    }
+
     private fun publishCollectionsUpdated(collections: List<Collection>) {
         collections.forEach(this::publishCollectionUpdated)
     }
@@ -66,5 +75,6 @@ class EventPublishingCollectionRepository(
         )
         eventBus.publish(event)
     }
+
 
 }

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.events.collection.CollectionCreated
+import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -78,5 +79,15 @@ class EventPublishingCollectionRepositoryTest : AbstractSpringIntegrationTest() 
 
         assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)
         assertThat(fakeEventBus.getEventsOfType(CollectionUpdated::class.java).first().collection.title).isEqualTo("The new title")
+    }
+
+    @Test
+    fun `publishes collection deleted events when collections are deleted`() {
+        val collection = saveCollection()
+
+        repository.delete(collection)
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionDeleted::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionDeleted::class.java).collectionId).isEqualTo(collection.value)
     }
 }

@@ -18,6 +18,7 @@ import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.EventPublishingCollectionRepository
+import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.EventPublishingSubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
@@ -44,6 +45,7 @@ import org.springframework.context.annotation.Profile
 class DomainContext(
     private val mongoClient: MongoClient,
     private val eventBus: EventBus,
+    private val eventService: EventService,
     private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter,
     private val userServiceClient: UserServiceClient,
     private val accessRuleService: AccessRuleService
@@ -78,7 +80,7 @@ class DomainContext(
             mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter,
             batchProcessingConfig = batchProcessingConfig,
             collectionSubjects = collectionSubjects
-        ), eventBus)
+        ), eventService, eventBus)
     }
 
     @Bean

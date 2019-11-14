@@ -4,6 +4,7 @@ import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.base.AbstractEventWithUserId
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
+import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
@@ -46,6 +47,15 @@ class PubSubEventsService(
 
     override fun saveUpdateCollectionEvent(updateCommands: List<CollectionUpdateCommand>) {
         updateCommands.forEach { saveUpdateCollectionEvent(it) }
+    }
+
+    override fun saveCollectionDeletedEvent(collectionId: CollectionId) {
+        eventBus.publish(
+            msg(
+                CollectionDeleted.builder()
+                    .collectionId(collectionId.value)
+            )
+        )
     }
 
     private fun saveUpdateCollectionEvent(updateCommand: CollectionUpdateCommand) {
