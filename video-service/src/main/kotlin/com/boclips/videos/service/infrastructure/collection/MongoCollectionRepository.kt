@@ -8,10 +8,8 @@ import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -26,7 +24,6 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.bson.types.ObjectId.isValid
 import org.litote.kmongo.`in`
-import org.litote.kmongo.addToSet
 import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
@@ -36,7 +33,6 @@ import org.litote.kmongo.elemMatch
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
-import org.litote.kmongo.pull
 import org.litote.kmongo.set
 import java.time.Instant
 
@@ -143,10 +139,10 @@ class MongoCollectionRepository(
 
         val commandsByCollectionId = commands.groupBy { it.collectionId }
 
-        val updateDocs = commands.map { updateCommand ->
+        val updateDocs = commandsByCollectionId.entries.map { (collectionId, collectionCommands) ->
             UpdateOneModel<CollectionDocument>(
-                CollectionDocument::id eq ObjectId(updateCommand.collectionId.value),
-                combine(collectionUpdates.toBson(updateCommand), set(CollectionDocument::updatedAt, Instant.now()))
+                CollectionDocument::id eq ObjectId(collectionId.value),
+                combine(collectionCommands.map(collectionUpdates::toBson) + bsonMetadataUpdate(collectionCommands))
             )
         }
 
@@ -154,7 +150,22 @@ class MongoCollectionRepository(
         logger.info("Bulk collection update: $result")
 
         return findAll(commands.map { it.collectionId }.toSet().toList())
-            .map { CollectionUpdateResult(it, commandsByCollectionId.get(it.id).orEmpty()) }
+            .map { CollectionUpdateResult(it, commandsByCollectionId[it.id].orEmpty()) }
+    }
+
+    private fun bsonMetadataUpdate(commands: List<CollectionUpdateCommand>): List<Bson> {
+        return if(commands.any { shouldSetUpdatedTime(it) })
+            listOf(set(CollectionDocument::updatedAt, Instant.now()))
+        else
+            emptyList()
+    }
+
+    private fun shouldSetUpdatedTime(command: CollectionUpdateCommand): Boolean {
+        return when(command) {
+            is CollectionUpdateCommand.Bookmark -> false
+            is CollectionUpdateCommand.Unbookmark -> false
+            else -> true
+        }
     }
 
     override fun delete(id: CollectionId) {

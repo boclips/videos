@@ -301,6 +301,27 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `bookmarking doesnt change updated time`() {
+            setSecurityContext("user2")
+            val collection = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Collection vs Playlist",
+                    createdByBoclips = false,
+                    public = false
+                )
+            )
+
+            val updatedAt = collection.updatedAt
+
+            Thread.sleep(1)
+
+            collectionRepository.update(CollectionUpdateCommand.Bookmark(collection.id, UserId("user2")))
+
+            assertThat(collectionRepository.find(collection.id)?.updatedAt).isEqualTo(updatedAt)
+        }
+
+        @Test
         fun `max age range can be null`() {
             val collection = collectionRepository.create(
                 CreateCollectionCommand(
