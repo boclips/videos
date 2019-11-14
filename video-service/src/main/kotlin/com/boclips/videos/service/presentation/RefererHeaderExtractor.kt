@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.analytics
+package com.boclips.videos.service.presentation
 
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes

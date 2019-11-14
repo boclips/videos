@@ -10,9 +10,7 @@ import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
@@ -27,11 +25,9 @@ import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
-import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
-import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.user.ApiUserService
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.mongodb.MongoClient
@@ -44,7 +40,6 @@ import org.springframework.context.annotation.Profile
 class DomainContext(
     private val mongoClient: MongoClient,
     private val eventBus: EventBus,
-    private val eventService: EventService,
     private val mongoCollectionRepository: MongoCollectionRepository,
     private val mongoSubjectRepository: MongoSubjectRepository,
     private val userServiceClient: UserServiceClient,
@@ -73,7 +68,7 @@ class DomainContext(
     @Primary
     @Bean
     fun collectionRepository(): CollectionRepository {
-        return EventPublishingCollectionRepository(mongoCollectionRepository, eventService)
+        return EventPublishingCollectionRepository(mongoCollectionRepository, eventService())
     }
 
     @Bean
@@ -123,4 +118,7 @@ class DomainContext(
     fun userService(): UserService {
         return ApiUserService(userServiceClient)
     }
+
+    @Bean
+    fun eventService(): EventService = EventService(eventBus)
 }

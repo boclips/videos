@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.analytics
+package com.boclips.videos.service.domain.service.events
 
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
@@ -16,7 +16,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
@@ -31,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
+class EventServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var eventService: EventService
