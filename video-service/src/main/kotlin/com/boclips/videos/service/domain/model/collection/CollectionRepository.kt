@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 
 data class CollectionUpdateResult(val collection: Collection, val commands: List<CollectionUpdateCommand>)
@@ -21,10 +20,6 @@ interface CollectionRepository {
     fun create(command: CreateCollectionCommand): Collection
     fun update(command: CollectionUpdateCommand): CollectionUpdateResult
     fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult>
-    fun updateAll(
-        updateCommand: CollectionsUpdateCommand,
-        updateResultConsumer: (CollectionUpdateResult) -> Unit = {}
-    )
     fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,

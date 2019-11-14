@@ -43,16 +43,6 @@ class EventPublishingCollectionRepository(
         }
     }
 
-    override fun updateAll(
-        updateCommand: CollectionsUpdateCommand,
-        updateResultConsumer: (CollectionUpdateResult) -> Unit
-    ) {
-        collectionRepository.updateAll(updateCommand) { updatedCollection ->
-            publishCollectionUpdated(updatedCollection)
-            updateResultConsumer(updatedCollection)
-        }
-    }
-
     override fun delete(id: CollectionId) {
         collectionRepository.delete(id)
         eventService.saveCollectionDeletedEvent(id)

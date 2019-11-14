@@ -2,8 +2,9 @@ package com.boclips.videos.service.application.subject
 
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 
 class DeleteSubject(
@@ -14,12 +15,13 @@ class DeleteSubject(
     operator fun invoke(subjectId: SubjectId) {
         subjectRepository.delete(subjectId)
 
-        val idsOfCollectionsContainingSubject = collectionRepository
-            .findAllBySubject(subjectId = subjectId)
-            .map { it.id }
-
-        collectionRepository.updateAll(CollectionsUpdateCommand.RemoveSubjectFromAllCollections(subjectId = subjectId))
-
-        collectionSearchService.upsert(collectionRepository.findAll(idsOfCollectionsContainingSubject).asSequence())
+        collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subjectId), { collection ->
+            CollectionUpdateCommand.RemoveSubjectFromCollection(
+                collectionId = collection.id,
+                subjectId = subjectId
+            )
+        }, { updateResult ->
+            collectionSearchService.upsert(sequenceOf(updateResult.collection))
+        })
     }
 }

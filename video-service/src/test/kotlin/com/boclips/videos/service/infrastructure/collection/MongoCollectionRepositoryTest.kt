@@ -11,7 +11,6 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -369,45 +368,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             assertThat(result).hasSize(2)
             assertThat(result.flatMap { it.commands }.size).isEqualTo(3)
-        }
-
-        @Test
-        fun `removes a video reference from all collections`() {
-            val videoId = VideoId(value = ObjectId().toHexString())
-
-            val aGoodCollection = sampleCollection()
-
-            collectionRepository.update(
-                CollectionUpdateCommand.AddVideoToCollection(aGoodCollection.id, videoId)
-            )
-
-            val anotherGoodCollection = sampleCollection()
-
-            collectionRepository.update(
-                CollectionUpdateCommand.AddVideoToCollection(anotherGoodCollection.id, videoId)
-            )
-
-            collectionRepository.updateAll(CollectionsUpdateCommand.RemoveVideoFromAllCollections(videoId))
-
-            assertThat(collectionRepository.find(aGoodCollection.id)!!.videos).isEmpty()
-            assertThat(collectionRepository.find(anotherGoodCollection.id)!!.videos).isEmpty()
-        }
-
-        @Test
-        fun `removes a subject from all collections`() {
-            val aGoodCollection = sampleCollection()
-
-            val subject = TestFactories.createSubject()
-            val anotherSubject = TestFactories.createSubject()
-
-            collectionRepository.update(
-                CollectionUpdateCommand.ReplaceSubjects(aGoodCollection.id, setOf(subject, anotherSubject))
-            )
-            assertThat(collectionRepository.find(aGoodCollection.id)!!.subjects).containsExactly(subject, anotherSubject)
-
-            collectionRepository.updateAll(CollectionsUpdateCommand.RemoveSubjectFromAllCollections(subject.id))
-
-            assertThat(collectionRepository.find(aGoodCollection.id)!!.subjects).containsExactly(anotherSubject)
         }
 
         @Test

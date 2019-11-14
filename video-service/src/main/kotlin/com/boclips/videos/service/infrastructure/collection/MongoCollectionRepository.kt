@@ -15,7 +15,6 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
@@ -162,30 +161,6 @@ class MongoCollectionRepository(
 
         return findAll(commands.map { it.collectionId }.toSet().toList())
             .map { CollectionUpdateResult(it, commandsByCollectionId.get(it.id).orEmpty()) }
-    }
-
-    override fun updateAll(
-        updateCommand: CollectionsUpdateCommand,
-        updateResultConsumer: (CollectionUpdateResult) -> Unit
-    ) {
-        return when (updateCommand) {
-            is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {
-                streamUpdate(CollectionFilter.HasVideoId(updateCommand.videoId), { collection ->
-                    CollectionUpdateCommand.RemoveVideoFromCollection(
-                        collectionId = collection.id,
-                        videoId = updateCommand.videoId
-                    )
-                }, updateResultConsumer)
-            }
-            is CollectionsUpdateCommand.RemoveSubjectFromAllCollections -> {
-                streamUpdate(CollectionFilter.HasSubjectId(updateCommand.subjectId), { collection ->
-                    CollectionUpdateCommand.RemoveSubjectFromCollection(
-                        collectionId = collection.id,
-                        subjectId = updateCommand.subjectId
-                    )
-                }, updateResultConsumer)
-            }
-        }
     }
 
     override fun delete(id: CollectionId) {

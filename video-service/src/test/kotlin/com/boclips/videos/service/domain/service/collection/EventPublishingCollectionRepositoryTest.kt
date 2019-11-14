@@ -54,19 +54,6 @@ class EventPublishingCollectionRepositoryTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `publishes collection updated events when all collections are updated`() {
-        val video = saveVideo()
-        saveCollection(videos = listOf(video.value))
-        saveCollection(videos = listOf(video.value))
-        saveCollection(videos = listOf())
-
-        repository.updateAll(CollectionsUpdateCommand.RemoveVideoFromAllCollections(video))
-
-        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)
-        assertThat(fakeEventBus.getEventsOfType(CollectionUpdated::class.java).first().collection.videosIds).isEmpty()
-    }
-
-    @Test
     fun `publishes collection updated events when collections are updated in a streaming fashion`() {
         val video = saveVideo()
         saveCollection(videos = listOf(video.value))
