@@ -34,7 +34,7 @@ class EventPublishingCollectionRepository(
 
     override fun streamUpdate(
         filter: CollectionFilter,
-        updateCommandFactory: (List<Collection>) -> List<CollectionUpdateCommand>,
+        updateCommandFactory: (Collection) -> CollectionUpdateCommand,
         updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
     ) {
         return collectionRepository.streamUpdate(filter, updateCommandFactory) { updates ->

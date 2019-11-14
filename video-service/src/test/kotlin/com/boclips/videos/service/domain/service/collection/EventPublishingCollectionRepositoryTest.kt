@@ -73,8 +73,8 @@ class EventPublishingCollectionRepositoryTest : AbstractSpringIntegrationTest() 
         saveCollection(videos = listOf(video.value))
         saveCollection(videos = listOf())
 
-        repository.streamUpdate(CollectionFilter.HasVideoId(video), { collectionsToUpdate ->
-            collectionsToUpdate.map { CollectionUpdateCommand.RenameCollection(it.id, "The new title") }
+        repository.streamUpdate(CollectionFilter.HasVideoId(video), { collectionToUpdate ->
+            CollectionUpdateCommand.RenameCollection(collectionToUpdate.id, "The new title")
         })
 
         assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)

@@ -113,7 +113,7 @@ class MongoCollectionRepository(
 
     override fun streamUpdate(
         filter: CollectionFilter,
-        updateCommandFactory: (List<Collection>) -> List<CollectionUpdateCommand>,
+        updateCommandFactory: (Collection) -> CollectionUpdateCommand,
         updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
     ) {
         val filterCriteria = when (filter) {
@@ -132,7 +132,7 @@ class MongoCollectionRepository(
             partialWindows = true
         ).forEachIndexed { index, windowedCollections ->
             logger.info { "Starting update batch: $index" }
-            val updateCommands = updateCommandFactory(windowedCollections)
+            val updateCommands = windowedCollections.map(updateCommandFactory)
             val updatedCollections = bulkUpdate(updateCommands)
             logger.info { "Updated ${updatedCollections.size} collections" }
             updatedCollectionsConsumer(updatedCollections)
@@ -170,23 +170,19 @@ class MongoCollectionRepository(
     ) {
         return when (updateCommand) {
             is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {
-                streamUpdate(CollectionFilter.HasVideoId(updateCommand.videoId), { collections ->
-                    collections.map {
-                        CollectionUpdateCommand.RemoveVideoFromCollection(
-                            collectionId = it.id,
-                            videoId = updateCommand.videoId
-                        )
-                    }
+                streamUpdate(CollectionFilter.HasVideoId(updateCommand.videoId), { collection ->
+                    CollectionUpdateCommand.RemoveVideoFromCollection(
+                        collectionId = collection.id,
+                        videoId = updateCommand.videoId
+                    )
                 }, updatedCollectionsConsumer)
             }
             is CollectionsUpdateCommand.RemoveSubjectFromAllCollections -> {
-                streamUpdate(CollectionFilter.HasSubjectId(updateCommand.subjectId), { collections ->
-                    collections.map {
-                        CollectionUpdateCommand.RemoveSubjectFromCollection(
-                            collectionId = it.id,
-                            subjectId = updateCommand.subjectId
-                        )
-                    }
+                streamUpdate(CollectionFilter.HasSubjectId(updateCommand.subjectId), { collection ->
+                    CollectionUpdateCommand.RemoveSubjectFromCollection(
+                        collectionId = collection.id,
+                        subjectId = updateCommand.subjectId
+                    )
                 }, updatedCollectionsConsumer)
             }
         }
