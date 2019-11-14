@@ -51,12 +51,13 @@ class EventService(
     }
 
     fun saveUpdateCollectionEvent(updateResult: CollectionUpdateResult) {
+        val collection = updateResult.collection
         eventBus.publish(
             CollectionUpdated(
-                EventConverter().toCollectionPayload(updateResult.collection)
+                EventConverter().toCollectionPayload(collection)
             )
         )
-        updateResult.commands.forEach { saveUpdateCollectionEvent(it) }
+        updateResult.commands.forEach { saveUpdateCollectionEvent(it, collection) }
     }
 
     fun saveCollectionCreatedEvent(collection: Collection) {
@@ -76,7 +77,7 @@ class EventService(
         )
     }
 
-    private fun saveUpdateCollectionEvent(updateCommand: CollectionUpdateCommand) {
+    private fun saveUpdateCollectionEvent(updateCommand: CollectionUpdateCommand, collection: Collection) {
         Do exhaustive when (updateCommand) {
             is CollectionUpdateCommand.AddVideoToCollection ->
                 eventBus.publish(
@@ -110,12 +111,12 @@ class EventService(
                             .isPublic(updateCommand.isPublic)
                     )
                 )
-            is CollectionUpdateCommand.ReplaceSubjects ->
+            is CollectionUpdateCommand.ReplaceSubjects, is CollectionUpdateCommand.RemoveSubjectFromCollection ->
                 eventBus.publish(
                     msg(
                         CollectionSubjectsChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .subjects(updateCommand.subjects.map { it.id.value }.toMutableSet())
+                            .subjects(collection.subjects.map { it.id.value }.toMutableSet())
                     )
                 )
             is CollectionUpdateCommand.ChangeAgeRange ->
@@ -127,13 +128,6 @@ class EventService(
                             .rangeMax(updateCommand.maxAge)
                     )
                 )
-            is CollectionUpdateCommand.RemoveSubjectFromCollection -> eventBus.publish(
-                msg(
-                    CollectionSubjectsChanged.builder()
-                        .collectionId(updateCommand.collectionId.value)
-                        .subjects(emptySet())
-                )
-            )
 
             is CollectionUpdateCommand.ChangeDescription -> eventBus.publish(
                 msg(

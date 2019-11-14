@@ -158,17 +158,18 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun collectionSubjectsChanged() {
+    fun collectionSubjectsReplaced() {
         val collectionId = aValidId()
-        val aSubject = TestFactories.createSubject()
+        val subject = TestFactories.createSubject()
 
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
+                collection = TestFactories.createCollection(
+                  subjects = setOf(subject)
+                ),
                 command = CollectionUpdateCommand.ReplaceSubjects(
                     collectionId = CollectionId(collectionId),
-                    subjects = setOf(
-                        aSubject
-                    )
+                    subjects = setOf(subject)
                 )
             )
         )
@@ -177,7 +178,30 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.collectionId).isEqualTo(collectionId)
         assertThat(event.userId).isEqualTo("user@example.com")
-        assertThat(event.subjects).containsExactly(aSubject.id.value)
+        assertThat(event.subjects).containsExactly(subject.id.value)
+    }
+
+    @Test
+    fun collectionSubjectRemoved() {
+        val collectionId = aValidId()
+        val removedSubject = TestFactories.createSubject(name = "physics")
+        val anotherSubject = TestFactories.createSubject(name = "maths")
+
+        eventService.saveUpdateCollectionEvent(
+            createCollectionUpdateResult(
+                collection = TestFactories.createCollection(subjects = setOf(anotherSubject)),
+                command = CollectionUpdateCommand.RemoveSubjectFromCollection(
+                    collectionId = CollectionId(collectionId),
+                    subjectId = removedSubject.id
+                )
+            )
+        )
+
+        val event = fakeEventBus.getEventOfType(CollectionSubjectsChanged::class.java)
+
+        assertThat(event.collectionId).isEqualTo(collectionId)
+        assertThat(event.userId).isEqualTo("user@example.com")
+        assertThat(event.subjects).containsExactly(anotherSubject.id.value)
     }
 
     @Test
