@@ -18,7 +18,7 @@ class UpdateCollection(
 
         val commands = collectionUpdatesConverter.convert(id, updateCollectionRequest)
 
-        collectionRepository.bulkUpdate(commands)
+        collectionRepository.update(*commands)
 
         collectionRepository.find(id)?.let { collection ->
             collectionSearchService.upsert(sequenceOf(collection))

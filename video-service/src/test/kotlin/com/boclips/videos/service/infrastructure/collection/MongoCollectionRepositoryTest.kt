@@ -104,7 +104,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
-    inner class CreateAndUpdateOne {
+    inner class CreateAndUpdate {
         @Test
         fun `can create with subjects`() {
             val math = saveSubject("Math")
@@ -349,26 +349,52 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             assertThat(collectionV3.updatedAt).isAfter(collectionV2.updatedAt)
         }
-    }
 
-    @Nested
-    inner class UpdateMany {
 
         @Test
-        fun `bulkUpdate returns updated collections`() {
+        fun `update returns updated collections`() {
             val collection1 = sampleCollection(title = "Old title 1")
             val collection2 = sampleCollection(title = "Old title 2")
-            val commands = listOf(
+
+            val result = collectionRepository.update(
                 CollectionUpdateCommand.RenameCollection(collection1.id, "New title 1"),
                 CollectionUpdateCommand.RenameCollection(collection2.id, "New title 2"),
                 CollectionUpdateCommand.ChangeVisibility(collection2.id, true)
             )
 
-            val result = collectionRepository.bulkUpdate(commands)
-
             assertThat(result).hasSize(2)
             assertThat(result.flatMap { it.commands }.size).isEqualTo(3)
         }
+
+        @Test
+        fun `update many`() {
+            val collection = sampleCollection()
+            val collection2 = sampleCollection()
+            val collection3 = sampleCollection()
+
+            val videoId = VideoId(value = ObjectId().toHexString())
+
+            collectionRepository.update(
+                CollectionUpdateCommand.ChangeVisibility(collectionId = collection.id, isPublic = true),
+                CollectionUpdateCommand.RenameCollection(
+                    collectionId = collection2.id,
+                    title = "New Collection title"
+                ),
+                CollectionUpdateCommand.AddVideoToCollection(collectionId = collection3.id, videoId = videoId)
+            )
+
+            assertThat(collectionRepository.find(collection.id)!!.isPublic).isTrue()
+            assertThat(collectionRepository.find(collection.id)!!.updatedAt).isAfterOrEqualTo(collection.updatedAt)
+            assertThat(collectionRepository.find(collection2.id)!!.title).isEqualTo("New Collection title")
+            assertThat(collectionRepository.find(collection2.id)!!.updatedAt).isAfterOrEqualTo(collection2.updatedAt)
+            assertThat(collectionRepository.find(collection3.id)!!.videos[0]).isEqualTo(videoId)
+            assertThat(collectionRepository.find(collection3.id)!!.updatedAt).isAfterOrEqualTo(collection3.updatedAt)
+        }
+
+    }
+
+    @Nested
+    inner class StreamingUpdate {
 
         @Test
         fun `stream update by filter`() {
@@ -388,32 +414,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collectionRepository.find(collection.id)!!.subjects).containsExactly(updatedSubject)
         }
 
-        @Test
-        fun `bulk update`() {
-            val collection = sampleCollection()
-            val collection2 = sampleCollection()
-            val collection3 = sampleCollection()
 
-            val videoId = VideoId(value = ObjectId().toHexString())
-
-            collectionRepository.bulkUpdate(
-                listOf(
-                    CollectionUpdateCommand.ChangeVisibility(collectionId = collection.id, isPublic = true),
-                    CollectionUpdateCommand.RenameCollection(
-                        collectionId = collection2.id,
-                        title = "New Collection title"
-                    ),
-                    CollectionUpdateCommand.AddVideoToCollection(collectionId = collection3.id, videoId = videoId)
-                )
-            )
-
-            assertThat(collectionRepository.find(collection.id)!!.isPublic).isTrue()
-            assertThat(collectionRepository.find(collection.id)!!.updatedAt).isAfterOrEqualTo(collection.updatedAt)
-            assertThat(collectionRepository.find(collection2.id)!!.title).isEqualTo("New Collection title")
-            assertThat(collectionRepository.find(collection2.id)!!.updatedAt).isAfterOrEqualTo(collection2.updatedAt)
-            assertThat(collectionRepository.find(collection3.id)!!.videos[0]).isEqualTo(videoId)
-            assertThat(collectionRepository.find(collection3.id)!!.updatedAt).isAfterOrEqualTo(collection3.updatedAt)
-        }
     }
 
     @Nested

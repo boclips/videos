@@ -13,8 +13,8 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
     fun convert(
         collectionId: CollectionId,
         updateCollectionRequest: UpdateCollectionRequest?
-    ): List<CollectionUpdateCommand> {
-        updateCollectionRequest ?: return emptyList()
+    ): Array<CollectionUpdateCommand> {
+        updateCollectionRequest ?: return emptyArray()
 
 
         return listOfNotNull(
@@ -67,6 +67,6 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                     linkToResource = attachment.linkToResource
                     )
             }
-        )
+        ).toTypedArray()
     }
 }

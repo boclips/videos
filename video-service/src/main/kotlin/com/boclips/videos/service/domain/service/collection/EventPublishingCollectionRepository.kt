@@ -22,13 +22,8 @@ class EventPublishingCollectionRepository(
             .also(this::publishCollectionCreated)
     }
 
-    override fun update(command: CollectionUpdateCommand): CollectionUpdateResult {
-        return collectionRepository.update(command)
-            .also { result -> this.publishCollectionUpdated(result) }
-    }
-
-    override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult> {
-        return collectionRepository.bulkUpdate(commands)
+    override fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult> {
+        return collectionRepository.update(*commands)
             .also { results -> this.publishCollectionsUpdated(results) }
     }
 

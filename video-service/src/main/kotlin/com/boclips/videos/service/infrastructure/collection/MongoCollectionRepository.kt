@@ -113,7 +113,7 @@ class MongoCollectionRepository(
     override fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,
-        updatedResultConsumer: (CollectionUpdateResult) -> Unit
+        updateResultConsumer: (CollectionUpdateResult) -> Unit
     ) {
         val filterCriteria = when (filter) {
             is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(
@@ -131,20 +131,14 @@ class MongoCollectionRepository(
             partialWindows = true
         ).forEachIndexed { index, windowedCollections ->
             logger.info { "Starting update batch: $index" }
-            val updateCommands = windowedCollections.map(updateCommandFactory)
-            val updateResults = bulkUpdate(updateCommands)
+            val updateCommands = windowedCollections.map(updateCommandFactory).toTypedArray()
+            val updateResults = update(*updateCommands)
             logger.info { "Updated ${updateResults.size} collections" }
-            updateResults.forEach(updatedResultConsumer)
+            updateResults.forEach(updateResultConsumer)
         }
     }
 
-    override fun update(command: CollectionUpdateCommand): CollectionUpdateResult {
-        updateOne(command.collectionId, collectionUpdates.toBson(command))
-        val collection = find(command.collectionId) ?: throw CollectionNotFoundException(command.collectionId.value)
-        return CollectionUpdateResult(collection, listOf(command))
-    }
-
-    override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult> {
+    override fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult> {
         if (commands.isEmpty()) return emptyList()
 
         val commandsByCollectionId = commands.groupBy { it.collectionId }

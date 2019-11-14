@@ -18,8 +18,7 @@ interface CollectionRepository {
     fun streamAll(consumer: (Sequence<Collection>) -> Unit)
     fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
     fun create(command: CreateCollectionCommand): Collection
-    fun update(command: CollectionUpdateCommand): CollectionUpdateResult
-    fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult>
+    fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult>
     fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,
