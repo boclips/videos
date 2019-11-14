@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.eventbus.events.collection.CollectionCreated
 import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -14,7 +15,7 @@ class EventPublishingCollectionRepositoryTest : AbstractSpringIntegrationTest() 
     lateinit var repository: EventPublishingCollectionRepository
 
     @Test
-    fun `publishes collection updated event when collection is created`() {
+    fun `publishes collection created event when collection is created`() {
         repository.create(
             CreateCollectionCommand(
             owner = UserId(TestFactories.aValidId()),
@@ -23,8 +24,8 @@ class EventPublishingCollectionRepositoryTest : AbstractSpringIntegrationTest() 
                 public = false
         ))
 
-        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(1)
-        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.title).isEqualTo("My new collection")
+        assertThat(fakeEventBus.countEventsOfType(CollectionCreated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionCreated::class.java).collection.title).isEqualTo("My new collection")
     }
 
     @Test

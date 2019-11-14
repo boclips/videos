@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.collection.CollectionCreated
 import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -14,7 +15,7 @@ class EventPublishingCollectionRepository(
 
     override fun create(command: CreateCollectionCommand): Collection {
         return collectionRepository.create(command)
-            .also(this::publishCollectionUpdated)
+            .also(this::publishCollectionCreated)
     }
 
     override fun update(command: CollectionUpdateCommand): Collection {
@@ -57,7 +58,13 @@ class EventPublishingCollectionRepository(
             EventConverter().toCollectionPayload(collection)
         )
         eventBus.publish(event)
+    }
 
+    private fun publishCollectionCreated(collection: Collection) {
+        val event = CollectionCreated(
+            EventConverter().toCollectionPayload(collection)
+        )
+        eventBus.publish(event)
     }
 
 }

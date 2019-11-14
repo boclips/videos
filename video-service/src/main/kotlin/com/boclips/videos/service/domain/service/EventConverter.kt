@@ -59,7 +59,7 @@ class EventConverter {
             .subjects(toSubjectPayload(collection.subjects))
             .videosIds(collection.videos.map { VideoId(it.value) })
             .ownerId(UserId(collection.owner.value))
-            .visible(collection.isPublic)
+            .isPublic(collection.isPublic)
             .ageRange(com.boclips.eventbus.domain.AgeRange(collection.ageRange.min(), collection.ageRange.max()))
             .bookmarks(collection.bookmarks.map{ UserId(it.value)})
             .build()
