@@ -20,51 +20,53 @@ import org.litote.kmongo.set
 class CollectionUpdates {
     companion object : KLogging()
 
-    fun toBson(anyUpdateCommand: CollectionUpdateCommand): Bson {
-        return when (anyUpdateCommand) {
+    fun toBson(command: CollectionUpdateCommand): Bson {
+        return when (command) {
             is CollectionUpdateCommand.AddVideoToCollection -> addVideo(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.videoId
+                command.collectionId,
+                command.videoId
             )
             is CollectionUpdateCommand.RemoveVideoFromCollection -> removeVideo(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.videoId
+                command.collectionId,
+                command.videoId
             )
             is CollectionUpdateCommand.RenameCollection -> renameCollection(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.title
+                command.collectionId,
+                command.title
             )
             is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.isPublic
+                command.collectionId,
+                command.isPublic
             )
             is CollectionUpdateCommand.ReplaceSubjects -> replaceSubjects(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.subjects
+                command.collectionId,
+                command.subjects
             )
             is CollectionUpdateCommand.ChangeAgeRange -> replaceAgeRange(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.minAge,
-                anyUpdateCommand.maxAge
+                command.collectionId,
+                command.minAge,
+                command.maxAge
             )
             is CollectionUpdateCommand.RemoveSubjectFromCollection -> removeSubject(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.subjectId
+                command.collectionId,
+                command.subjectId
             )
             is CollectionUpdateCommand.ChangeDescription -> changeDescription(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.description
+                command.collectionId,
+                command.description
             )
             is CollectionUpdateCommand.AddAttachment -> replaceAttachment(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.description,
-                anyUpdateCommand.linkToResource,
-                anyUpdateCommand.type
+                command.collectionId,
+                command.description,
+                command.linkToResource,
+                command.type
             )
             is CollectionUpdateCommand.BulkUpdateCollectionVideos -> bulkUpdateVideos(
-                anyUpdateCommand.collectionId,
-                anyUpdateCommand.videoIds
+                command.collectionId,
+                command.videoIds
             )
+            is CollectionUpdateCommand.Bookmark -> addToSet(CollectionDocument::bookmarks, command.userId.value)
+            is CollectionUpdateCommand.Unbookmark -> pull(CollectionDocument::bookmarks, command.userId.value)
         }
     }
 

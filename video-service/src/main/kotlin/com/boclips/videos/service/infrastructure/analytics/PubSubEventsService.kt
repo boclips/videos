@@ -133,23 +133,17 @@ class PubSubEventsService(
                         .videoIds(updateCommand.videoIds.map { it.value })
                 )
             )
+            is CollectionUpdateCommand.Bookmark -> eventBus.publish(
+                msg(
+                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(true)
+                )
+            )
+            is CollectionUpdateCommand.Unbookmark -> eventBus.publish(
+                msg(
+                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(false)
+                )
+            )
         }
-    }
-
-    override fun saveBookmarkCollectionEvent(collectionId: CollectionId) {
-        eventBus.publish(
-            msg(
-                CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(true)
-            )
-        )
-    }
-
-    override fun saveUnbookmarkCollectionEvent(collectionId: CollectionId) {
-        eventBus.publish(
-            msg(
-                CollectionBookmarkChanged.builder().collectionId(collectionId.value).isBookmarked(false)
-            )
-        )
     }
 
     override fun publishVideoInteractedWithEvent(videoId: VideoId, subtype: String) {

@@ -237,12 +237,12 @@ class ApplicationContext(
 
     @Bean
     fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionRepository, eventService, collectionService, collectionSearchService)
+        return BookmarkCollection(collectionRepository, collectionService, collectionSearchService)
     }
 
     @Bean
     fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionRepository, eventService, collectionService, collectionSearchService)
+        return UnbookmarkCollection(collectionRepository, collectionService, collectionSearchService)
     }
 
     @Bean

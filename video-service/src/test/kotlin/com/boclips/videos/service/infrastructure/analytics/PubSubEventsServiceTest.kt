@@ -13,6 +13,7 @@ import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.events.EventService
@@ -223,8 +224,9 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveBookmarkCollectionEvent() {
         val collectionId = aValidId()
-        eventService.saveBookmarkCollectionEvent(
-            collectionId = CollectionId(collectionId)
+        val userId = aValidId()
+        eventService.saveUpdateCollectionEvent(
+            listOf(CollectionUpdateCommand.Bookmark(CollectionId(collectionId), UserId(userId)))
         )
 
         val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
@@ -237,8 +239,8 @@ class PubSubEventsServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveUnbookmarkCollectionEvent() {
         val collectionId = aValidId()
-        eventService.saveUnbookmarkCollectionEvent(
-            collectionId = CollectionId(collectionId)
+        eventService.saveUpdateCollectionEvent(
+            listOf(CollectionUpdateCommand.Unbookmark(CollectionId(collectionId), UserId("user@example.com")))
         )
 
         val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)

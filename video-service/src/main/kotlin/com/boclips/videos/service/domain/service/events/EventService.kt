@@ -15,10 +15,6 @@ interface EventService {
 
     fun saveUpdateCollectionEvent(updateCommands: List<CollectionUpdateCommand>)
 
-    fun saveBookmarkCollectionEvent(collectionId: CollectionId)
-
-    fun saveUnbookmarkCollectionEvent(collectionId: CollectionId)
-
     fun saveCollectionDeletedEvent(collectionId: CollectionId)
 
     fun savePlaybackEvent(

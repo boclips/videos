@@ -162,16 +162,6 @@ class MongoCollectionRepository(
         logger.info { "Deleted collection $id" }
     }
 
-    override fun bookmark(id: CollectionId, user: UserId): Collection {
-        updateOne(id, addToSet(CollectionDocument::bookmarks, user.value))
-        return find(id) ?: throw CollectionNotFoundException(id.value)
-    }
-
-    override fun unbookmark(id: CollectionId, user: UserId): Collection {
-        updateOne(id, pull(CollectionDocument::bookmarks, user.value))
-        return find(id) ?: throw CollectionNotFoundException(id.value)
-    }
-
     private fun getPagedCollections(
         pageRequest: PageRequest,
         criteria: Bson
@@ -196,13 +186,6 @@ class MongoCollectionRepository(
                 pageRequest = pageRequest
             )
         )
-    }
-
-    private fun updateOne(id: CollectionId, update: Bson) {
-        val updateWithTimestamp = combine(update, set(CollectionDocument::updatedAt, Instant.now()))
-
-        dbCollection().updateOne(CollectionDocument::id eq ObjectId(id.value), updateWithTimestamp)
-        logger.info { "Updated collection $id" }
     }
 
     private fun dbCollection(): MongoCollection<CollectionDocument> {

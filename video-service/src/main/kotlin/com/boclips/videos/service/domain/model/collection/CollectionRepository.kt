@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.model.collection
 import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -25,6 +24,4 @@ interface CollectionRepository {
         updateResultConsumer: (CollectionUpdateResult) -> Unit = {}
     )
     fun delete(id: CollectionId)
-    fun bookmark(id: CollectionId, user: UserId): Collection
-    fun unbookmark(id: CollectionId, user: UserId): Collection
 }

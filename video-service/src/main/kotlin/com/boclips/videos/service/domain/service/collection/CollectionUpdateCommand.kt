@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -31,5 +32,15 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId) {
         val description: String?,
         val linkToResource: String,
         val type: AttachmentType
+    ) : CollectionUpdateCommand(collectionId)
+
+    class Bookmark(
+        collectionId: CollectionId,
+        val userId: UserId
+    ) : CollectionUpdateCommand(collectionId)
+
+    class Unbookmark(
+        collectionId: CollectionId,
+        val userId: UserId
     ) : CollectionUpdateCommand(collectionId)
 }

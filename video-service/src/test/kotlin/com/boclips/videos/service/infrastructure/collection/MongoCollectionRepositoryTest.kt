@@ -276,6 +276,31 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `can bookmark and unbookmark collections`() {
+            setSecurityContext("user2")
+            val collection = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = UserId(value = "user1"),
+                    title = "Collection vs Playlist",
+                    createdByBoclips = false,
+                    public = false
+                )
+            )
+
+            collectionRepository.update(CollectionUpdateCommand.Bookmark(collection.id, UserId("user2")))
+            collectionRepository.update(CollectionUpdateCommand.Bookmark(collection.id, UserId("user3")))
+
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
+
+            collectionRepository.update(CollectionUpdateCommand.Unbookmark(collection.id, UserId("user2")))
+
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(false)
+
+            setSecurityContext("user3")
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
+        }
+
+        @Test
         fun `max age range can be null`() {
             val collection = collectionRepository.create(
                 CreateCollectionCommand(
@@ -457,43 +482,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection = collectionRepository.find(CollectionId(value = "5c55697860fef77aa4af323a"))!!
 
             assertThat(collection.isPublic).isEqualTo(false)
-        }
-    }
-
-    @Nested
-    inner class BookmarkingTests {
-        @Test
-        fun `can bookmark and unbookmark collections`() {
-            setSecurityContext("user2")
-            val collection = collectionRepository.create(
-                CreateCollectionCommand(
-                    owner = UserId(value = "user1"),
-                    title = "Collection vs Playlist",
-                    createdByBoclips = false,
-                    public = false
-                )
-            )
-
-            collectionRepository.bookmark(
-                collection.id,
-                UserId("user2")
-            )
-            collectionRepository.bookmark(
-                collection.id,
-                UserId("user3")
-            )
-
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
-
-            collectionRepository.unbookmark(
-                collection.id,
-                UserId("user2")
-            )
-
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(false)
-
-            setSecurityContext("user3")
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
         }
     }
 
