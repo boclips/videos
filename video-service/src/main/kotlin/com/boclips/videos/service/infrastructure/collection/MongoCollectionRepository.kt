@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
@@ -113,7 +114,7 @@ class MongoCollectionRepository(
     override fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (List<Collection>) -> List<CollectionUpdateCommand>,
-        updatedCollectionsConsumer: (List<Collection>) -> Unit
+        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
     ) {
         val filterCriteria = when (filter) {
             is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(
@@ -138,13 +139,16 @@ class MongoCollectionRepository(
         }
     }
 
-    override fun update(command: CollectionUpdateCommand): Collection {
+    override fun update(command: CollectionUpdateCommand): CollectionUpdateResult {
         updateOne(command.collectionId, collectionUpdates.toBson(command))
-        return find(command.collectionId) ?: throw CollectionNotFoundException(command.collectionId.value)
+        val collection = find(command.collectionId) ?: throw CollectionNotFoundException(command.collectionId.value)
+        return CollectionUpdateResult(collection, listOf(command))
     }
 
-    override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection> {
+    override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult> {
         if (commands.isEmpty()) return emptyList()
+
+        val commandsByCollectionId = commands.groupBy { it.collectionId }
 
         val updateDocs = commands.map { updateCommand ->
             UpdateOneModel<CollectionDocument>(
@@ -156,12 +160,13 @@ class MongoCollectionRepository(
         val result = dbCollection().bulkWrite(updateDocs)
         logger.info("Bulk collection update: $result")
 
-        return findAll(commands.map { it.collectionId })
+        return findAll(commands.map { it.collectionId }.toSet().toList())
+            .map { CollectionUpdateResult(it, commandsByCollectionId.get(it.id).orEmpty()) }
     }
 
     override fun updateAll(
         updateCommand: CollectionsUpdateCommand,
-        updatedCollectionsConsumer: (List<Collection>) -> Unit
+        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
     ) {
         return when (updateCommand) {
             is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {

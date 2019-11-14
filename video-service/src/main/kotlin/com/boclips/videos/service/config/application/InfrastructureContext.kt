@@ -1,10 +1,16 @@
 package com.boclips.videos.service.config.application
 
 import com.boclips.users.client.UserServiceClient
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
+import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.infrastructure.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
+import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
+import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
+import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import org.litote.kmongo.KMongo
@@ -18,7 +24,9 @@ import java.util.concurrent.Executors
 
 @EnableRetry
 @Configuration
-class InfrastructureContext(val mongoProperties: MongoProperties) {
+class InfrastructureContext(
+    val mongoProperties: MongoProperties
+) {
     @Bean
     fun apiAccessRuleService(userServiceClient: UserServiceClient): ApiAccessRuleService {
         return ApiAccessRuleService(userServiceClient)
@@ -38,7 +46,34 @@ class InfrastructureContext(val mongoProperties: MongoProperties) {
     fun mongoCollectionFilterContractAdapter() = MongoCollectionFilterContractAdapter()
 
     @Bean
-    fun collectionSubjects(subjectRepository: SubjectRepository): CollectionSubjects {
-        return CollectionSubjects(subjectRepository)
+    fun collectionSubjects(): CollectionSubjects {
+        return CollectionSubjects(mongoSubjectRepository())
+    }
+
+    @Bean
+    fun mongoCollectionRepository(
+        batchProcessingConfig: BatchProcessingConfig
+    ): MongoCollectionRepository {
+        return MongoCollectionRepository(
+            mongoClient = mongoClient(),
+            mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter(),
+            batchProcessingConfig = batchProcessingConfig,
+            collectionSubjects = collectionSubjects()
+        )
+    }
+
+    @Bean
+    fun mongoSubjectRepository(): MongoSubjectRepository {
+        return MongoSubjectRepository(mongoClient())
+    }
+
+    @Bean
+    fun mongoTagRepository(): TagRepository {
+        return MongoTagRepository(mongoClient())
+    }
+
+    @Bean
+    fun mongoDisciplineRepository(): DisciplineRepository {
+        return MongoDisciplineRepository(mongoClient(), mongoSubjectRepository())
     }
 }

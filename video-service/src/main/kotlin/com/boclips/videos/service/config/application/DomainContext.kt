@@ -26,8 +26,6 @@ import com.boclips.videos.service.domain.service.video.EventPublishingVideoRepos
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
-import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -39,6 +37,7 @@ import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.mongodb.MongoClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 
 @Configuration
@@ -46,7 +45,8 @@ class DomainContext(
     private val mongoClient: MongoClient,
     private val eventBus: EventBus,
     private val eventService: EventService,
-    private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter,
+    private val mongoCollectionRepository: MongoCollectionRepository,
+    private val mongoSubjectRepository: MongoSubjectRepository,
     private val userServiceClient: UserServiceClient,
     private val accessRuleService: AccessRuleService
 ) {
@@ -70,17 +70,10 @@ class DomainContext(
         return CollectionService(collectionRepository, collectionSearchService, accessRuleService)
     }
 
+    @Primary
     @Bean
-    fun collectionRepository(
-        batchProcessingConfig: BatchProcessingConfig,
-        collectionSubjects: CollectionSubjects
-    ): CollectionRepository {
-        return EventPublishingCollectionRepository(MongoCollectionRepository(
-            mongoClient = mongoClient,
-            mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter,
-            batchProcessingConfig = batchProcessingConfig,
-            collectionSubjects = collectionSubjects
-        ), eventService, eventBus)
+    fun collectionRepository(): CollectionRepository {
+        return EventPublishingCollectionRepository(mongoCollectionRepository, eventService, eventBus)
     }
 
     @Bean
@@ -93,19 +86,10 @@ class DomainContext(
         )
     }
 
+    @Primary
     @Bean
     fun subjectRepository(): SubjectRepository {
-        return EventPublishingSubjectRepository(MongoSubjectRepository(mongoClient), eventBus)
-    }
-
-    @Bean
-    fun tagRepository(): TagRepository {
-        return MongoTagRepository(mongoClient)
-    }
-
-    @Bean
-    fun disciplineRepository(): DisciplineRepository {
-        return MongoDisciplineRepository(mongoClient, subjectRepository())
+        return EventPublishingSubjectRepository(mongoSubjectRepository, eventBus)
     }
 
     @Bean

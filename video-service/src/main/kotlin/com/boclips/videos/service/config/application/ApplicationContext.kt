@@ -217,12 +217,12 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionRepository, eventService, collectionService)
+        return AddVideoToCollection(collectionRepository, collectionService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionRepository, eventService, collectionService)
+        return RemoveVideoFromCollection(collectionRepository, collectionService)
     }
 
     @Bean
@@ -230,7 +230,6 @@ class ApplicationContext(
         return UpdateCollection(
             collectionSearchService,
             collectionRepository,
-            eventService,
             collectionUpdatesConverter,
             collectionService
         )

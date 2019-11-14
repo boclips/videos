@@ -2,11 +2,11 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.collection.CollectionCreated
-import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.events.EventService
 
@@ -22,30 +22,30 @@ class EventPublishingCollectionRepository(
             .also(this::publishCollectionCreated)
     }
 
-    override fun update(command: CollectionUpdateCommand): Collection {
+    override fun update(command: CollectionUpdateCommand): CollectionUpdateResult {
         return collectionRepository.update(command)
-            .also(this::publishCollectionUpdated)
+            .also { result -> this.publishCollectionUpdated(result) }
     }
 
-    override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection> {
+    override fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult> {
         return collectionRepository.bulkUpdate(commands)
-            .also(this::publishCollectionsUpdated)
+            .also { results -> this.publishCollectionsUpdated(results) }
     }
 
     override fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (List<Collection>) -> List<CollectionUpdateCommand>,
-        updatedCollectionsConsumer: (List<Collection>) -> Unit
+        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
     ) {
-        return collectionRepository.streamUpdate(filter, updateCommandFactory) { updatedCollections ->
-            publishCollectionsUpdated(updatedCollections)
-            updatedCollectionsConsumer(updatedCollections)
+        return collectionRepository.streamUpdate(filter, updateCommandFactory) { updates ->
+            publishCollectionsUpdated(updates)
+            updatedCollectionsConsumer(updates)
         }
     }
 
     override fun updateAll(
         updateCommand: CollectionsUpdateCommand,
-        updatedCollectionsConsumer: (List<Collection>) -> Unit
+        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
     ) {
         collectionRepository.updateAll(updateCommand) { updatedCollections ->
             publishCollectionsUpdated(updatedCollections)
@@ -58,15 +58,18 @@ class EventPublishingCollectionRepository(
         eventService.saveCollectionDeletedEvent(id)
     }
 
-    private fun publishCollectionsUpdated(collections: List<Collection>) {
-        collections.forEach(this::publishCollectionUpdated)
+    private fun publishCollectionsUpdated(updates: List<CollectionUpdateResult>) {
+        updates.forEach { update ->
+            publishCollectionUpdated(update)
+        }
     }
 
-    private fun publishCollectionUpdated(collection: Collection) {
+    private fun publishCollectionUpdated(update: CollectionUpdateResult) {
         val event = CollectionUpdated(
-            EventConverter().toCollectionPayload(collection)
+            EventConverter().toCollectionPayload(update.collection)
         )
         eventBus.publish(event)
+        eventService.saveUpdateCollectionEvent(update.commands)
     }
 
     private fun publishCollectionCreated(collection: Collection) {

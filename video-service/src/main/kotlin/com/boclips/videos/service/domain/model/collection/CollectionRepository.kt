@@ -10,6 +10,8 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateComm
 import com.boclips.videos.service.domain.service.collection.CollectionsUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 
+data class CollectionUpdateResult(val collection: Collection, val commands: List<CollectionUpdateCommand>)
+
 interface CollectionRepository {
     fun find(id: CollectionId): Collection?
     fun findAll(ids: List<CollectionId>): List<Collection>
@@ -17,16 +19,16 @@ interface CollectionRepository {
     fun streamAll(consumer: (Sequence<Collection>) -> Unit)
     fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
     fun create(command: CreateCollectionCommand): Collection
-    fun update(command: CollectionUpdateCommand): Collection
-    fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<Collection>
+    fun update(command: CollectionUpdateCommand): CollectionUpdateResult
+    fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult>
     fun updateAll(
         updateCommand: CollectionsUpdateCommand,
-        updatedCollectionsConsumer: (List<Collection>) -> Unit = {}
+        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit = {}
     )
     fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (List<Collection>) -> List<CollectionUpdateCommand>,
-        updatedCollectionsConsumer: (List<Collection>) -> Unit = {}
+        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit = {}
     )
     fun delete(id: CollectionId)
     fun bookmark(id: CollectionId, user: UserId): Collection

@@ -113,6 +113,7 @@ class PubSubEventsService(
                 msg(
                     CollectionSubjectsChanged.builder()
                         .collectionId(updateCommand.collectionId.value)
+                        .subjects(emptySet())
                 )
             )
 

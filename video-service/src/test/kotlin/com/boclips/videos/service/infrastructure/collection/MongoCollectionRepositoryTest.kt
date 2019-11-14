@@ -6,7 +6,6 @@ import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -31,7 +30,7 @@ import java.util.Date
 class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var collectionRepository: CollectionRepository
+    lateinit var collectionRepository: MongoCollectionRepository
 
     @Nested
     inner class Find {
@@ -355,6 +354,23 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class UpdateMany {
+
+        @Test
+        fun `bulkUpdate returns updated collections`() {
+            val collection1 = sampleCollection(title = "Old title 1")
+            val collection2 = sampleCollection(title = "Old title 2")
+            val commands = listOf(
+                CollectionUpdateCommand.RenameCollection(collection1.id, "New title 1"),
+                CollectionUpdateCommand.RenameCollection(collection2.id, "New title 2"),
+                CollectionUpdateCommand.ChangeVisibility(collection2.id, true)
+            )
+
+            val result = collectionRepository.bulkUpdate(commands)
+
+            assertThat(result).hasSize(2)
+            assertThat(result.flatMap { it.commands }.size).isEqualTo(3)
+        }
+
         @Test
         fun `removes a video reference from all collections`() {
             val videoId = VideoId(value = ObjectId().toHexString())
