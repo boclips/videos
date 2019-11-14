@@ -1,8 +1,9 @@
 package com.boclips.videos.service.domain.service.events
 
+import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
 interface EventService {
     fun saveSearchEvent(
@@ -13,7 +14,9 @@ interface EventService {
         pageVideoIds: List<String>
     )
 
-    fun saveUpdateCollectionEvent(updateCommands: List<CollectionUpdateCommand>)
+    fun saveCollectionCreatedEvent(collection: Collection)
+
+    fun saveUpdateCollectionEvent(updateResult: CollectionUpdateResult)
 
     fun saveCollectionDeletedEvent(collectionId: CollectionId)
 

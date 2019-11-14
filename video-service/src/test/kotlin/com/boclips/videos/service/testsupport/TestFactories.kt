@@ -14,6 +14,7 @@ import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.discipline.Discipline
@@ -37,6 +38,7 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.CollectionAccessRule
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -234,6 +236,17 @@ object TestFactories {
         description = description,
         attachments = attachments
     )
+
+    fun createCollectionUpdateResult(
+        collectionId: CollectionId = CollectionId(aValidId()),
+        collection: Collection = createCollection(id = collectionId),
+        command: CollectionUpdateCommand = CollectionUpdateCommand.RenameCollection(collectionId, "collection title")
+    ): CollectionUpdateResult {
+        return CollectionUpdateResult(
+            collection = collection,
+            commands = listOf(command)
+        )
+    }
 
     fun createCollectionResource(
         id: String = "collection-id",

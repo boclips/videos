@@ -1,8 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.collection.CollectionCreated
-import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -12,14 +10,13 @@ import com.boclips.videos.service.domain.service.events.EventService
 
 class EventPublishingCollectionRepository(
     private val collectionRepository: CollectionRepository,
-    private val eventService: EventService,
-    private val eventBus: EventBus
+    private val eventService: EventService
 )
     : CollectionRepository by collectionRepository {
 
     override fun create(command: CreateCollectionCommand): Collection {
         return collectionRepository.create(command)
-            .also(this::publishCollectionCreated)
+            .also { collection -> eventService.saveCollectionCreatedEvent(collection) }
     }
 
     override fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult> {
@@ -44,25 +41,10 @@ class EventPublishingCollectionRepository(
     }
 
     private fun publishCollectionsUpdated(updates: List<CollectionUpdateResult>) {
-        updates.forEach { update ->
-            publishCollectionUpdated(update)
-        }
+        updates.forEach(this::publishCollectionUpdated)
     }
 
     private fun publishCollectionUpdated(update: CollectionUpdateResult) {
-        val event = CollectionUpdated(
-            EventConverter().toCollectionPayload(update.collection)
-        )
-        eventBus.publish(event)
-        eventService.saveUpdateCollectionEvent(update.commands)
+        eventService.saveUpdateCollectionEvent(update)
     }
-
-    private fun publishCollectionCreated(collection: Collection) {
-        val event = CollectionCreated(
-            EventConverter().toCollectionPayload(collection)
-        )
-        eventBus.publish(event)
-    }
-
-
 }

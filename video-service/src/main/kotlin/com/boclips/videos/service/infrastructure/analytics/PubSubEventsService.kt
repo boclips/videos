@@ -4,10 +4,12 @@ import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.base.AbstractEventWithUserId
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
+import com.boclips.eventbus.events.collection.CollectionCreated
 import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
+import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
@@ -18,8 +20,11 @@ import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.common.Do
+import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.events.EventService
 
@@ -45,8 +50,21 @@ class PubSubEventsService(
         )
     }
 
-    override fun saveUpdateCollectionEvent(updateCommands: List<CollectionUpdateCommand>) {
-        updateCommands.forEach { saveUpdateCollectionEvent(it) }
+    override fun saveUpdateCollectionEvent(updateResult: CollectionUpdateResult) {
+        eventBus.publish(
+            CollectionUpdated(
+                EventConverter().toCollectionPayload(updateResult.collection)
+            )
+        )
+        updateResult.commands.forEach { saveUpdateCollectionEvent(it) }
+    }
+
+    override fun saveCollectionCreatedEvent(collection: Collection) {
+        eventBus.publish(
+            CollectionCreated(
+                EventConverter().toCollectionPayload(collection)
+            )
+        )
     }
 
     override fun saveCollectionDeletedEvent(collectionId: CollectionId) {

@@ -73,7 +73,7 @@ class DomainContext(
     @Primary
     @Bean
     fun collectionRepository(): CollectionRepository {
-        return EventPublishingCollectionRepository(mongoCollectionRepository, eventService, eventBus)
+        return EventPublishingCollectionRepository(mongoCollectionRepository, eventService)
     }
 
     @Bean

@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.testsupport
 
-import com.boclips.contentpartner.service.application.LegalRestrictionsResource
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
