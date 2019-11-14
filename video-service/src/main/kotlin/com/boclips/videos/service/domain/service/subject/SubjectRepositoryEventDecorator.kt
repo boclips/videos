@@ -5,7 +5,7 @@ import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.events.subject.SubjectChanged
 import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
 
-class EventPublishingSubjectRepository(val subjectRepository: SubjectRepository, val eventBus: EventBus) :
+class SubjectRepositoryEventDecorator(val subjectRepository: SubjectRepository, val eventBus: EventBus) :
     SubjectRepository by subjectRepository {
 
     override fun update(updateCommand: SubjectUpdateCommand): com.boclips.videos.service.domain.model.subject.Subject {

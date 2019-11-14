@@ -1,14 +1,12 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.eventbus.events.collection.CollectionCreated
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
-import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.events.EventService
 
-class EventPublishingCollectionRepository(
+class CollectionRepositoryEventsDecorator(
     private val collectionRepository: CollectionRepository,
     private val eventService: EventService
 )

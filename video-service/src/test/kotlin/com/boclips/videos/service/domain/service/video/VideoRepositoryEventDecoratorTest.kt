@@ -11,10 +11,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class EventPublishingVideoRepositoryTest : AbstractSpringIntegrationTest() {
+class VideoRepositoryEventDecoratorTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var eventPublishingVideoRepository: EventPublishingVideoRepository
+    lateinit var videoRepository: VideoRepositoryEventDecorator
 
     @Autowired
     lateinit var subjectRepository: SubjectRepository
@@ -24,7 +24,7 @@ class EventPublishingVideoRepositoryTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val subjects = listOf(subjectRepository.create("Maths"))
 
-        eventPublishingVideoRepository.update(VideoUpdateCommand.ReplaceSubjects(videoId, subjects))
+        videoRepository.update(VideoUpdateCommand.ReplaceSubjects(videoId, subjects))
 
         val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
 
@@ -43,14 +43,14 @@ class EventPublishingVideoRepositoryTest : AbstractSpringIntegrationTest() {
             VideoUpdateCommand.ReplaceSubjects(video2, subjects)
         )
 
-        eventPublishingVideoRepository.bulkUpdate(updateCommands)
+        videoRepository.bulkUpdate(updateCommands)
 
         assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
     }
 
     @Test
     fun `publishes a VideoCreated event when video is created`() {
-        eventPublishingVideoRepository.create(TestFactories.createVideo())
+        videoRepository.create(TestFactories.createVideo())
 
         assertThat(fakeEventBus.countEventsOfType(VideoCreated::class.java)).isEqualTo(1)
     }

@@ -10,10 +10,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class EventPublishingCollectionRepositoryTest : AbstractSpringIntegrationTest() {
+class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var repository: EventPublishingCollectionRepository
+    lateinit var repository: CollectionRepositoryEventsDecorator
 
     @Test
     fun `publishes collection created event when collection is created`() {
