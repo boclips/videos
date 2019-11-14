@@ -114,7 +114,7 @@ class MongoCollectionRepository(
     override fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,
-        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
+        updatedResultConsumer: (CollectionUpdateResult) -> Unit
     ) {
         val filterCriteria = when (filter) {
             is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(
@@ -133,9 +133,9 @@ class MongoCollectionRepository(
         ).forEachIndexed { index, windowedCollections ->
             logger.info { "Starting update batch: $index" }
             val updateCommands = windowedCollections.map(updateCommandFactory)
-            val updatedCollections = bulkUpdate(updateCommands)
-            logger.info { "Updated ${updatedCollections.size} collections" }
-            updatedCollectionsConsumer(updatedCollections)
+            val updateResults = bulkUpdate(updateCommands)
+            logger.info { "Updated ${updateResults.size} collections" }
+            updateResults.forEach(updatedResultConsumer)
         }
     }
 
@@ -166,7 +166,7 @@ class MongoCollectionRepository(
 
     override fun updateAll(
         updateCommand: CollectionsUpdateCommand,
-        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
+        updateResultConsumer: (CollectionUpdateResult) -> Unit
     ) {
         return when (updateCommand) {
             is CollectionsUpdateCommand.RemoveVideoFromAllCollections -> {
@@ -175,7 +175,7 @@ class MongoCollectionRepository(
                         collectionId = collection.id,
                         videoId = updateCommand.videoId
                     )
-                }, updatedCollectionsConsumer)
+                }, updateResultConsumer)
             }
             is CollectionsUpdateCommand.RemoveSubjectFromAllCollections -> {
                 streamUpdate(CollectionFilter.HasSubjectId(updateCommand.subjectId), { collection ->
@@ -183,7 +183,7 @@ class MongoCollectionRepository(
                         collectionId = collection.id,
                         subjectId = updateCommand.subjectId
                     )
-                }, updatedCollectionsConsumer)
+                }, updateResultConsumer)
             }
         }
     }

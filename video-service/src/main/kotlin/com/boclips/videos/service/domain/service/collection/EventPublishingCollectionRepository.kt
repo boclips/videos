@@ -35,21 +35,21 @@ class EventPublishingCollectionRepository(
     override fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,
-        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
+        updateResultConsumer: (CollectionUpdateResult) -> Unit
     ) {
-        return collectionRepository.streamUpdate(filter, updateCommandFactory) { updates ->
-            publishCollectionsUpdated(updates)
-            updatedCollectionsConsumer(updates)
+        return collectionRepository.streamUpdate(filter, updateCommandFactory) { update ->
+            publishCollectionUpdated(update)
+            updateResultConsumer(update)
         }
     }
 
     override fun updateAll(
         updateCommand: CollectionsUpdateCommand,
-        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit
+        updateResultConsumer: (CollectionUpdateResult) -> Unit
     ) {
-        collectionRepository.updateAll(updateCommand) { updatedCollections ->
-            publishCollectionsUpdated(updatedCollections)
-            updatedCollectionsConsumer(updatedCollections)
+        collectionRepository.updateAll(updateCommand) { updatedCollection ->
+            publishCollectionUpdated(updatedCollection)
+            updateResultConsumer(updatedCollection)
         }
     }
 

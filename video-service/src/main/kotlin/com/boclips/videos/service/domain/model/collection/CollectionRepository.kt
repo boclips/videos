@@ -23,12 +23,12 @@ interface CollectionRepository {
     fun bulkUpdate(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult>
     fun updateAll(
         updateCommand: CollectionsUpdateCommand,
-        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit = {}
+        updateResultConsumer: (CollectionUpdateResult) -> Unit = {}
     )
     fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,
-        updatedCollectionsConsumer: (List<CollectionUpdateResult>) -> Unit = {}
+        updateResultConsumer: (CollectionUpdateResult) -> Unit = {}
     )
     fun delete(id: CollectionId)
     fun bookmark(id: CollectionId, user: UserId): Collection
