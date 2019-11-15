@@ -56,6 +56,7 @@ class MongoCollectionRepository(
             title = command.title,
             description = command.description,
             videos = emptyList(),
+            createdAt = Instant.now(),
             updatedAt = Instant.now(),
             visibility = if (command.public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
             createdByBoclips = command.createdByBoclips,

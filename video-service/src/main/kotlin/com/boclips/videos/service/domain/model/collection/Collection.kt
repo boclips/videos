@@ -7,13 +7,15 @@ import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.Instant
+import java.time.ZonedDateTime
 
 data class Collection(
     val id: CollectionId,
     val owner: UserId,
     val title: String,
     val videos: List<VideoId>,
-    val updatedAt: Instant,
+    val createdAt: ZonedDateTime,
+    val updatedAt: ZonedDateTime,
     val isPublic: Boolean,
     val createdByBoclips: Boolean,
     val bookmarks: Set<UserId>,

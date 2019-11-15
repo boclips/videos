@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.core.Relation
 import java.time.Instant
+import java.time.ZonedDateTime
 
 @Relation(collectionRelation = "collections")
 data class CollectionResource(
@@ -15,7 +16,7 @@ data class CollectionResource(
     val owner: String,
     val title: String,
     val videos: List<Resource<VideoResource>>,
-    val updatedAt: Instant,
+    val updatedAt: ZonedDateTime,
     val public: Boolean,
     @get:JsonIgnore
     val bookmarked: Boolean,

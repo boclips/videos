@@ -10,15 +10,13 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.Video
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 import java.util.Date
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {
         val subjects = toSubjectPayload(video.subjects)
         return com.boclips.eventbus.domain.video.Video.builder()
-            .id(com.boclips.eventbus.domain.video.VideoId(video.videoId.value))
+            .id(VideoId(video.videoId.value))
             .title(video.title)
             .contentPartner(toContentPartnerPayload(video.contentPartner))
             .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
@@ -53,7 +51,8 @@ class EventConverter {
     fun toCollectionPayload(collection: Collection): com.boclips.eventbus.domain.collection.Collection {
         return com.boclips.eventbus.domain.collection.Collection.builder()
             .id(CollectionId(collection.id.value))
-            .updatedTime(Date.from(collection.updatedAt))
+            .createdTime(Date.from(collection.createdAt.toInstant()))
+            .updatedTime(Date.from(collection.updatedAt.toInstant()))
             .title(collection.title)
             .description(collection.description ?: "")
             .subjects(toSubjectPayload(collection.subjects))

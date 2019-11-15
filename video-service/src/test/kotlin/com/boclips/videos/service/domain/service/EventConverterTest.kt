@@ -65,7 +65,8 @@ class EventConverterTest {
             ageRangeMin = 0,
             ageRangeMax = 23,
             bookmarks = setOf(UserId("bookmarked-user-id")),
-            updatedAt = ZonedDateTime.of(2018, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC).toInstant()
+            createdAt = ZonedDateTime.of(2017, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC),
+            updatedAt = ZonedDateTime.of(2018, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC)
         )
         val privateCollection = TestFactories.createCollection(isPublic = false)
 
@@ -82,6 +83,7 @@ class EventConverterTest {
         assertThat(publicCollectionEvent.ownerId.value).isEqualTo("user-id")
         assertThat(publicCollectionEvent.ageRange).isEqualTo(com.boclips.eventbus.domain.AgeRange(0, 23))
         assertThat(publicCollectionEvent.bookmarks).containsExactly(com.boclips.eventbus.domain.user.UserId("bookmarked-user-id"))
+        assertThat(publicCollectionEvent.createdTime).isEqualTo("2017-11-10T01:02:03Z")
         assertThat(publicCollectionEvent.updatedTime).isEqualTo("2018-11-10T01:02:03Z")
     }
 }

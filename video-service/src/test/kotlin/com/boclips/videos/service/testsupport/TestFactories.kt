@@ -61,6 +61,7 @@ import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Locale
 
 object TestFactories {
@@ -213,7 +214,8 @@ object TestFactories {
         owner: String = "collection owner",
         title: String = "collection title",
         videos: List<VideoId> = listOf(createVideo().videoId),
-        updatedAt: Instant = Instant.now(),
+        createdAt: ZonedDateTime = ZonedDateTime.now(),
+        updatedAt: ZonedDateTime = ZonedDateTime.now(),
         isPublic: Boolean = false,
         createdByBoclips: Boolean = false,
         bookmarks: Set<UserId> = emptySet(),
@@ -227,6 +229,7 @@ object TestFactories {
         owner = UserId(value = owner),
         title = title,
         videos = videos,
+        createdAt = createdAt,
         updatedAt = updatedAt,
         isPublic = isPublic,
         createdByBoclips = createdByBoclips,
@@ -253,7 +256,7 @@ object TestFactories {
         owner: String = "collection owner",
         title: String = "collection title",
         videos: List<Resource<VideoResource>> = emptyList(),
-        updatedAt: Instant = Instant.now(),
+        updatedAt: ZonedDateTime = ZonedDateTime.now(),
         isPublic: Boolean = false,
         isBookmarked: Boolean = false,
         isMine: Boolean = false,

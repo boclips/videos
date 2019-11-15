@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.Date
 
 class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
@@ -363,7 +364,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         fun `updatedAt timestamp on modifying changes`() {
             val video1 = saveVideo()
 
-            val moment = Instant.now()
+            val moment = ZonedDateTime.now()
             val collectionV1 = collectionRepository.create(
                 CreateCollectionCommand(
                     owner = UserId(value = "user1"),
