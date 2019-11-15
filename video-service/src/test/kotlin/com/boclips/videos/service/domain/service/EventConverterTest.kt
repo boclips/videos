@@ -11,6 +11,8 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 class EventConverterTest {
     @Test
@@ -62,8 +64,8 @@ class EventConverterTest {
             owner = "user-id",
             ageRangeMin = 0,
             ageRangeMax = 23,
-            bookmarks = setOf(UserId("bookmarked-user-id"))
-
+            bookmarks = setOf(UserId("bookmarked-user-id")),
+            updatedAt = ZonedDateTime.of(2018, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC).toInstant()
         )
         val privateCollection = TestFactories.createCollection(isPublic = false)
 
@@ -80,5 +82,6 @@ class EventConverterTest {
         assertThat(publicCollectionEvent.ownerId.value).isEqualTo("user-id")
         assertThat(publicCollectionEvent.ageRange).isEqualTo(com.boclips.eventbus.domain.AgeRange(0, 23))
         assertThat(publicCollectionEvent.bookmarks).containsExactly(com.boclips.eventbus.domain.user.UserId("bookmarked-user-id"))
+        assertThat(publicCollectionEvent.updatedTime).isEqualTo("2018-11-10T01:02:03Z")
     }
 }

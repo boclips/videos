@@ -53,7 +53,7 @@ class EventConverter {
     fun toCollectionPayload(collection: Collection): com.boclips.eventbus.domain.collection.Collection {
         return com.boclips.eventbus.domain.collection.Collection.builder()
             .id(CollectionId(collection.id.value))
-            .updatedTime(Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant()))
+            .updatedTime(Date.from(collection.updatedAt))
             .title(collection.title)
             .description(collection.description ?: "")
             .subjects(toSubjectPayload(collection.subjects))

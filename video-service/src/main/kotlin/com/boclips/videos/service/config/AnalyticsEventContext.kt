@@ -1,7 +1,5 @@
 package com.boclips.videos.service.config
 
-import com.boclips.eventbus.EventBus
-
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
