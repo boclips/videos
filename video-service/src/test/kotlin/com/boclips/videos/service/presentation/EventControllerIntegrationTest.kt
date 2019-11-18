@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.page.PageRendered
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -132,5 +133,27 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
         )
             .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `page rendered events by user navigation are being saved`() {
+        val path = "/v1/events/page-render"
+        val content = """{
+                    "url" : "http://teachers.boclips.com/discover-collections?subject=5cb499c9fd5beb4281894553"
+                    }""".trimMargin()
+
+        mockMvc.perform(
+            post(path)
+                .asTeacher(email = "teacher@gmail.com")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        ).andExpect(status().isCreated)
+
+
+
+        val event = fakeEventBus.getEventOfType(PageRendered::class.java)
+
+        assertThat(event.userId).isEqualTo("teacher@gmail.com")
+        assertThat(event.url).isEqualTo("http://teachers.boclips.com/discover-collections?subject=5cb499c9fd5beb4281894553")
     }
 }

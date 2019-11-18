@@ -7,6 +7,7 @@ import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
+import com.boclips.eventbus.events.page.PageRendered
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -342,6 +343,14 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.subtype).isEqualTo("share-to-google-classroom")
         assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.payload).isEmpty()
+    }
+
+    @Test
+    fun savePageRenderedWithEvent() {
+        eventService.savePageRenderedWithEvent(url = "https://teachers.boclips.com/collections")
+
+        val event = fakeEventBus.getEventOfType(PageRendered::class.java)
+        assertThat(event.url).isEqualTo("https://teachers.boclips.com/collections")
     }
 
     @Test

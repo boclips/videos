@@ -14,6 +14,7 @@ import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
+import com.boclips.eventbus.events.page.PageRendered
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -204,6 +205,15 @@ class EventService(
                     .payload(payload)
             )
         )
+    }
+
+    fun savePageRenderedWithEvent(url: String) {
+        val user = getCurrentUser()
+
+        eventBus.publish(PageRendered.builder()
+            .userId(user.id)
+            .url(url)
+            .build())
     }
 
     private fun msg(builder: AbstractEventWithUserId.AbstractEventWithUserIdBuilder<*, *>): AbstractEventWithUserId {
