@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
@@ -132,8 +133,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.page.totalElements", equalTo(1)))
             .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
             .andExpect(jsonPath("$.page.number", equalTo(0)))
-            .andExpect(jsonPath("$._links.prev").doesNotExist())
-            .andExpect(jsonPath("$._links.next").doesNotExist())
     }
 
     @Test
@@ -367,6 +366,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(mathsVideoId)))
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(englishVideoId)))
     }
+
     @Test
     fun `returns a hls stream link`() {
         val videoId = saveVideo(playbackId = PlaybackId(PlaybackProviderType.KALTURA, "entry-id-123"))
@@ -636,7 +636,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update video metadata`() {
         val videoId = saveVideo(title = "Old title", description = "Old description").value
 
-        val updateLink = getUpdateLink(videoId).expand(mapOf("title" to "New title", "description" to "New description", "promoted" to "true"))
+        val updateLink = getUpdateLink(videoId).expand(
+            mapOf(
+                "title" to "New title",
+                "description" to "New description",
+                "promoted" to "true"
+            )
+        )
 
         mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -789,6 +795,45 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.subjects[0].name", equalTo("Maths")))
             .andExpect(jsonPath("$.subjects[0].id").exists())
+    }
+
+    @Test
+    fun `search videos and sort by rating`() {
+        val firstTitle = "low-rated"
+        val secondTitle = "high-rated"
+        val thirdTitle = "mid-rated"
+
+        val firstVideoId = saveVideo(
+            playbackId = PlaybackId(value = "entry-1", type = PlaybackProviderType.KALTURA),
+            title = firstTitle
+        )
+
+        val secondVideoId = saveVideo(
+            playbackId = PlaybackId(value = "entry-2", type = PlaybackProviderType.YOUTUBE),
+            title = secondTitle
+        )
+
+        val thirdVideoId = saveVideo(
+            playbackId = PlaybackId(value = "entry-3", type = PlaybackProviderType.KALTURA),
+            title = thirdTitle
+        )
+
+        setRating(firstVideoId, 0)
+        setRating(secondVideoId, 5)
+        setRating(thirdVideoId, 3)
+
+        // first page
+        mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=0").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo(secondTitle)))
+            .andExpect(jsonPath("$._embedded.videos[1].title", equalTo(thirdTitle)))
+
+        // second page
+        mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=1").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo(firstTitle)))
     }
 
     @Test
@@ -1179,5 +1224,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)
+
+    private fun setRating(videoId: VideoId, rating: Int) {
+        val rateUrl = getRatingLink(videoId.value)
+
+        mockMvc.perform(patch(rateUrl, rating).asTeacher()).andExpect(status().isOk)
+    }
 }
 

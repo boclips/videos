@@ -11,8 +11,8 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
+import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -27,7 +27,8 @@ class SearchServiceProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
         val inMemorySearchService = VideoSearchServiceFake()
         val elasticSearchService = VideoIndexReader(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
-        val elasticSearchServiceAdmin = VideoIndexWriter.createTestInstance(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
+        val elasticSearchServiceAdmin =
+            VideoIndexWriter.createTestInstance(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
 
         return Stream.of(
             Arguments.of(inMemorySearchService, inMemorySearchService),
@@ -491,6 +492,58 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
         assertThat(searchResults).containsExactly("tomorrow", "today", "yesterday")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns a list sorted by meanRating`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "lowRating",
+                    title = "Beautiful Person Dancing",
+                    meanRating = 2.1
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "highRating",
+                    title = "Beautiful Other Person Dancing",
+                    meanRating = 4.2
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "middleRating",
+                    title = "Beautiful Dog Dancing",
+                    meanRating = 3.8
+                ), SearchableVideoMetadataFactory.create(
+                    id = "noRating",
+                    title = "Beautiful Cat Dancing",
+                    meanRating = null
+                )
+            )
+        )
+
+        val query =
+            VideoQuery(
+                phrase = "dancing",
+                sort = Sort.ByField(
+                    fieldName = VideoMetadata::meanRating,
+                    order = SortOrder.DESC
+                )
+            )
+
+        assertThat(queryService.count(query)).isEqualTo(4)
+
+        val searchResults = queryService.search(
+            PaginatedSearchRequest(
+                query = query,
+                startIndex = 0,
+                windowSize = 20
+            )
+        )
+
+        assertThat(searchResults).isEqualTo(listOf("highRating", "middleRating", "lowRating", "noRating"))
     }
 
     @ParameterizedTest
@@ -1111,7 +1164,10 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "0",
                     title = "TED",
-                    subjects = setOf(createSubjectMetadata(id="subject-one"), createSubjectMetadata(id = "subject-two"))
+                    subjects = setOf(
+                        createSubjectMetadata(id = "subject-one"),
+                        createSubjectMetadata(id = "subject-two")
+                    )
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "1",

@@ -29,7 +29,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         return when (query.sort) {
             is Sort.ByField -> {
                 val sortedIds = ids.sortedBy {
-                    val value: Comparable<*> = query.sort.fieldName.get(index[it]!!)
+                    val value: Comparable<*>? = query.sort.fieldName.get(index[it]!!)
                     /**
                      * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
                      * littering the entire code base with the Sort generic type.
@@ -37,7 +37,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
                      * We cannot define sort.fieldName as a Comparable<Any> as it won't then allow us to reference Comparables
                      */
                     @Suppress("UNCHECKED_CAST")
-                    value as Comparable<Any>
+                    value as? Comparable<Any>
                 }
 
                 when (query.sort.order) {
