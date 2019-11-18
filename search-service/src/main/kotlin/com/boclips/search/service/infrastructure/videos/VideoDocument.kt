@@ -40,6 +40,6 @@ data class VideoDocument @JsonCreator constructor(
         const val SUBJECT_NAMES = "subjectNames"
         const val TYPE = "type"
         const val PROMOTED = "promoted"
-        const val MEAN_RATING = "mean_rating"
+        const val MEAN_RATING = "meanRating"
     }
 }
