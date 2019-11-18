@@ -27,7 +27,8 @@ object VideoDocumentConverter {
             type = video.type.name,
             subjectIds = video.subjects.map { subject -> subject.id }.toSet(),
             subjectNames = video.subjects.map {subject -> subject.name}.toSet(),
-            promoted = video.promoted
+            promoted = video.promoted,
+            meanRating = video.meanRating
         )
     }
 

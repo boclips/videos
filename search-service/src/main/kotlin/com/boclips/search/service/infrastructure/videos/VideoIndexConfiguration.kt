@@ -26,7 +26,8 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.KEYWORDS to englishTextField,
                 VideoDocument.PROMOTED to mapOf(
                     "type" to "boolean"
-                )
+                ),
+                VideoDocument.MEAN_RATING to IndexConfiguration.Fields.double
             )
         )
     }

@@ -11,7 +11,9 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserRatingFactory
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -41,7 +43,8 @@ class VideoMetadataConverterTest {
                     name = "subject name"
                 )
             ),
-            promoted = true
+            promoted = true,
+            ratings = emptyList()
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)
@@ -64,7 +67,8 @@ class VideoMetadataConverterTest {
                 subjects = setOf(
                     SubjectMetadata(id = "subject-id", name = "subject name")
                 ),
-                promoted = true
+                promoted = true,
+                meanRating = null
             )
         )
     }
@@ -140,5 +144,21 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video)
 
         assertThat(videoMetadata.source).isEqualTo(SourceType.BOCLIPS)
+    }
+
+    @Test
+    fun `aggregates ratings for video when converting`() {
+        val ratings = listOf(3, 5, 4, 2, 4)
+
+        val video = TestFactories.createVideo(
+            ratings = ratings.map { UserRatingFactory.sample(rating = it) }
+        )
+
+        val videoMetadata = VideoMetadataConverter.convert(video)
+
+        assertThat(videoMetadata.meanRating).isCloseTo(
+            ratings.sum() / ratings.size.toDouble(),
+            Offset.offset(0.00001)
+        )
     }
 }

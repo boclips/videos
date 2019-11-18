@@ -17,5 +17,6 @@ data class VideoMetadata(
     val ageRangeMax: Int?,
     val type: VideoType,
     val subjects: Set<SubjectMetadata>,
-    val promoted: Boolean?
+    val promoted: Boolean?,
+    val meanRating: Double?
 )

@@ -70,6 +70,10 @@ interface IndexConfiguration {
         val boolean = mapOf(
             "type" to "boolean"
         )
+
+        val double = mapOf(
+            "type" to "double"
+        )
     }
 
     fun defaultEnglishSettings(numberOfShards: Int): Map<String, Any> {

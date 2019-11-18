@@ -58,7 +58,8 @@ class VideoDocumentConverterTest {
                 type = "NEWS",
                 subjectIds = setOf("boring-subject-id"),
                 subjectNames = setOf("boring-subject-name"),
-                promoted = null
+                promoted = null,
+                meanRating = null
             )
         )
     }
@@ -106,29 +107,32 @@ class VideoDocumentConverterTest {
             ageRangeMax = 16,
             type = VideoType.INSTRUCTIONAL,
             subjects = setOf(SubjectMetadata(id = "subjectId", name = "subjectName")),
-            promoted = null
+            promoted = null,
+            meanRating = 3.8
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
 
-        assertThat(document).isEqualTo(VideoDocument(
-            id = "id",
-            title = "title",
-            description = "description",
-            contentProvider = "contentProvider",
-            releaseDate = LocalDate.of(2019, 9, 12),
-            keywords = listOf("keyword"),
-            tags = listOf("tag"),
-            durationSeconds = 120,
-            source = "BOCLIPS",
-            transcript = "transcript",
-            ageRangeMin = 10,
-            ageRangeMax = 16,
-            type = "INSTRUCTIONAL",
-            subjectIds = setOf("subjectId"),
-            subjectNames = setOf("subjectName"),
-            promoted = null
-        ))
-
+        assertThat(document).isEqualTo(
+            VideoDocument(
+                id = "id",
+                title = "title",
+                description = "description",
+                contentProvider = "contentProvider",
+                releaseDate = LocalDate.of(2019, 9, 12),
+                keywords = listOf("keyword"),
+                tags = listOf("tag"),
+                durationSeconds = 120,
+                source = "BOCLIPS",
+                transcript = "transcript",
+                ageRangeMin = 10,
+                ageRangeMax = 16,
+                type = "INSTRUCTIONAL",
+                subjectIds = setOf("subjectId"),
+                subjectNames = setOf("subjectName"),
+                promoted = null,
+                meanRating = 3.8
+            )
+        )
     }
 }

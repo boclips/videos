@@ -424,6 +424,11 @@ object TestFactories {
     }
 }
 
+object UserRatingFactory {
+    fun sample(rating: Int = 3, userId: UserId = UserId("me")): UserRating =
+        UserRating(rating, userId)
+}
+
 object PlaybackResourceFactory {
     fun sample(type: String = "STREAM") =
         StreamPlaybackResource(
