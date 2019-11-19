@@ -1,12 +1,10 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.analytics.SavePageRenderedWithEvent
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
-import com.boclips.videos.service.presentation.event.PageRenderedWithEvent
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CookieValue
@@ -20,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class EventController(
     private val savePlaybackEvent: SavePlaybackEvent,
     private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
-    private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
-    private val savePageRenderedWithEvent: SavePageRenderedWithEvent
+    private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent
 ) {
 
     @PostMapping("/v1/events/playback")
@@ -40,11 +37,5 @@ class EventController(
     fun logVideoInteractedWithEvent(@PathVariable videoId: String, @RequestParam logVideoInteraction: Boolean, @RequestParam type: String?): ResponseEntity<Void> {
         saveVideoInteractedWithEvent.execute(videoId, type)
         return ResponseEntity(HttpStatus.OK)
-    }
-
-    @PostMapping("v1/events/page-render")
-    fun logPageRenderedWithEvent(@RequestBody pageRenderedEvent: PageRenderedWithEvent): ResponseEntity<Void> {
-        savePageRenderedWithEvent.execute(pageRenderedEvent)
-        return ResponseEntity(HttpStatus.CREATED)
     }
 }
