@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -69,12 +70,14 @@ class ContentPartnerController(
         @RequestParam("official", required = false) official: Boolean?,
         @RequestParam("accreditedToYtChannelId", required = false) accreditedToYtChannelId: String?
     ): Resources<Resource<ContentPartnerResource>> {
-        return fetchContentPartners(name = name, official = official, accreditedToYtChannelId = accreditedToYtChannelId)
+        val user = getCurrentUser()
+        return fetchContentPartners(user = user, name = name, official = official, accreditedToYtChannelId = accreditedToYtChannelId)
     }
 
     @GetMapping("/{id}")
     fun getContentPartner(@PathVariable("id") contentPartnerId: String?): Resource<ContentPartnerResource> {
-        return fetchContentPartner(contentPartnerId).let {
+        val user = getCurrentUser()
+        return fetchContentPartner(contentPartnerId, user).let {
             Resource(it, contentPartnersLinkBuilder.self(it.id))
         }
     }

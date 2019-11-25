@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerResource
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
+import com.boclips.security.utils.User
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 
@@ -12,6 +13,7 @@ class GetContentPartners(
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
 ) {
     operator fun invoke(
+        user: User,
         name: String? = null,
         official: Boolean? = null,
         accreditedToYtChannelId: String? = null
@@ -25,7 +27,7 @@ class GetContentPartners(
         val contentPartners = contentPartnerRepository.findAll(filters)
             .map {
                 Resource(
-                    ContentPartnerToResourceConverter.convert(it),
+                    ContentPartnerToResourceConverter.convert(it, user),
                     contentPartnersLinkBuilder.self(it.contentPartnerId.value)
                 )
             }

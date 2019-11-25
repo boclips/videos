@@ -17,6 +17,7 @@ import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
@@ -213,6 +214,7 @@ abstract class AbstractSpringIntegrationTest {
         ),
         subjectIds: Set<String> = setOf()
     ): VideoId {
+        val user = getCurrentUser()
         val retrievedContentPartnerId = try {
             createContentPartner(
                 ContentPartnerRequest(
@@ -221,7 +223,7 @@ abstract class AbstractSpringIntegrationTest {
                 )
             ).contentPartnerId.value
         } catch (e: ContentPartnerConflictException) {
-            getContentPartners.invoke(name = contentProvider).firstOrNull()?.content?.id
+            getContentPartners.invoke(user = user, name = contentProvider).firstOrNull()?.content?.id
         }
 
         when (playbackId.type) {
@@ -328,14 +330,16 @@ abstract class AbstractSpringIntegrationTest {
         name: String = "TeD",
         ageRange: AgeRangeRequest = AgeRangeRequest(3, 10),
         accreditedToYtChannel: String? = null,
-        distributionMethods: Set<DistributionMethodResource>? = null
+        distributionMethods: Set<DistributionMethodResource>? = null,
+        currency: String? = null
     ): ContentPartner {
         val createdContentPartner = createContentPartner(
             com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerRequest(
                 name = name,
                 ageRange = ageRange,
                 accreditedToYtChannel = accreditedToYtChannel,
-                distributionMethods = distributionMethods
+                distributionMethods = distributionMethods,
+                currency = currency
             )
         )
 

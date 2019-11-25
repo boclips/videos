@@ -1,11 +1,13 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -97,7 +99,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter content partners by name`() {
-        saveContentPartner(name = "hello")
+        saveContentPartner(name = "hello", currency = "CAD")
         saveContentPartner(name = "goodbye")
 
         mockMvc.perform(
@@ -106,6 +108,20 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].currency", equalTo("CAD")))
+    }
+
+    @Test
+    fun `can find content partner, but cannot see currency as just an API user`() {
+        saveContentPartner(name = "hello", currency = "USD")
+
+        mockMvc.perform(
+            get("/v1/content-partners?name=hello").asApiUser()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
+            .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].currency", nullValue()))
     }
 
     @Test

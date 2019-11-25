@@ -87,8 +87,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(HEAD, "/v1/content-partners/*/videos/*").hasRole(ROLE.INSERT_VIDEOS)
             .antMatchers(POST, "/v1/content-partners/*/videos/search").hasRole(ROLE.INSERT_VIDEOS)
-            .antMatchers(POST, "/v1/content-partners").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
-            .antMatchers(GET, "/v1/content-partners").hasRole(ROLE.INSERT_CONTENT_PARTNERS)
+            .antMatchers(POST, "/v1/content-partners").hasRole(ROLE.INSERT_CONTENT_PARTNERS)
+            .antMatchers(GET, "/v1/content-partners").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
             .antMatchers(PATCH, "/v1/content-partners/*").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
             .antMatchers(PUT, "/v1/content-partners/*").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
             .antMatchers(GET, "/v1/content-partners/*").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
