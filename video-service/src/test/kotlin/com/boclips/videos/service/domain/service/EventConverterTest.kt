@@ -3,11 +3,14 @@ package com.boclips.videos.service.domain.service
 import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
+import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -15,19 +18,22 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class EventConverterTest {
+    private val converter = EventConverter()
+
     @Test
     fun `creates a video event object`() {
         val id = TestFactories.aValidId()
-        val video = TestFactories.createVideo(
+        val video = createVideo(
             videoId = id,
             title = "the title",
             contentPartnerName = "the content partner",
             playback = TestFactories.createKalturaPlayback(duration = Duration.ofMinutes(2)),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
+            type = ContentType.INSTRUCTIONAL_CLIPS,
             ageRange = AgeRange.bounded(5, 10)
         )
 
-        val videoEvent = EventConverter().toVideoPayload(video)
+        val videoEvent = converter.toVideoPayload(video)
 
         assertThat(videoEvent.id.value).isEqualTo(id)
         assertThat(videoEvent.title).isEqualTo("the title")
@@ -38,15 +44,27 @@ class EventConverterTest {
         assertThat(videoEvent.ageRange.min).isEqualTo(5)
         assertThat(videoEvent.ageRange.max).isEqualTo(10)
         assertThat(videoEvent.durationSeconds).isEqualTo(120)
+        assertThat(videoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
+    }
+
+    @Test
+    fun `sets correct video type`() {
+        val newsVideoEvent = converter.toVideoPayload(createVideo(type = ContentType.NEWS))
+        val stockVideoEvent = converter.toVideoPayload(createVideo(type = ContentType.STOCK))
+        val instructionalVideoEvent = converter.toVideoPayload(createVideo(type = ContentType.INSTRUCTIONAL_CLIPS))
+
+        assertThat(newsVideoEvent.type).isEqualTo(VideoType.NEWS)
+        assertThat(stockVideoEvent.type).isEqualTo(VideoType.STOCK)
+        assertThat(instructionalVideoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
     }
 
     @Test
     fun `sets correct playback provider type when YouTube`() {
-        val video = TestFactories.createVideo(
+        val video = createVideo(
                 playback = TestFactories.createYoutubePlayback()
         )
 
-        val videoEvent = EventConverter().toVideoPayload(video)
+        val videoEvent = converter.toVideoPayload(video)
 
         assertThat(videoEvent.playbackProviderType).isEqualTo(PlaybackProviderType.YOUTUBE)
     }
@@ -70,8 +88,8 @@ class EventConverterTest {
         )
         val privateCollection = TestFactories.createCollection(isPublic = false)
 
-        val publicCollectionEvent = EventConverter().toCollectionPayload(publicCollection)
-        val privateCollectionEvent = EventConverter().toCollectionPayload(privateCollection)
+        val publicCollectionEvent = converter.toCollectionPayload(publicCollection)
+        val privateCollectionEvent = converter.toCollectionPayload(privateCollection)
 
         assertThat(publicCollectionEvent.id.value).isEqualTo(id)
         assertThat(publicCollectionEvent.title).isEqualTo("collection title")

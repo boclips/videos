@@ -5,10 +5,12 @@ import com.boclips.eventbus.domain.collection.CollectionId
 import com.boclips.eventbus.domain.user.UserId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
+import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import java.util.Date
 
@@ -23,7 +25,16 @@ class EventConverter {
             .subjects(subjects)
             .ageRange(toAgeRangePayload(video.ageRange))
             .durationSeconds(video.playback.duration.seconds.toInt())
+            .type(toVideoType(video.type))
             .build()
+    }
+
+    private fun toVideoType(contentType: ContentType): VideoType {
+        return when(contentType) {
+            ContentType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
+            ContentType.NEWS -> VideoType.NEWS
+            ContentType.STOCK -> VideoType.STOCK
+        }
     }
 
     private fun toAgeRangePayload(ageRange: AgeRange): com.boclips.eventbus.domain.AgeRange {
