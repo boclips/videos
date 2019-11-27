@@ -132,6 +132,11 @@ public class FakeClient implements VideoServiceClient {
     }
 
     @Override
+    public List<ContentPartner> getContentPartners() {
+        return contentPartners;
+    }
+
+    @Override
     public Video get(VideoId id) {
         if (videos.containsKey(id)) {
             return videos.get(id);

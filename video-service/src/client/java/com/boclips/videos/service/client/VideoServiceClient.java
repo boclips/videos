@@ -60,6 +60,8 @@ public interface VideoServiceClient {
 
     List<ContentPartner> findContentPartnerByYoutubeChannelId(String youtubeChannelId);
 
+    List<ContentPartner> getContentPartners();
+
     Video get(VideoId id);
 
     VideoId rawIdToVideoId(String rawId);

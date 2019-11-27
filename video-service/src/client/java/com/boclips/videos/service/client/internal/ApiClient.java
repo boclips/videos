@@ -99,7 +99,7 @@ public class ApiClient implements VideoServiceClient {
         params.put("name", name);
         params.put("official", true);
 
-        return getContentPartners(params);
+        return fetchContentPartners(params);
     }
 
     @Override
@@ -107,7 +107,12 @@ public class ApiClient implements VideoServiceClient {
         val params = new HashMap<String, Object>();
         params.put("accreditedToYtChannelId", youtubeChannelId);
 
-        return getContentPartners(params);
+        return fetchContentPartners(params);
+    }
+
+    @Override
+    public List<ContentPartner> getContentPartners() {
+        return fetchContentPartners(new HashMap<>());
     }
 
     @Override
@@ -243,7 +248,7 @@ public class ApiClient implements VideoServiceClient {
         return linkTemplate;
     }
 
-    private List<ContentPartner> getContentPartners(HashMap<String, Object> params) {
+    private List<ContentPartner> fetchContentPartners(HashMap<String, Object> params) {
         URI uri = getLinks().get_links().getContentPartners().interpolate(params).toUri();
 
         return Objects.requireNonNull(
