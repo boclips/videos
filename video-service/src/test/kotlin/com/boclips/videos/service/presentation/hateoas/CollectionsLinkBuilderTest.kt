@@ -317,7 +317,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.interactedWith(TestFactories.createCollectionResource(id = "c123"))
 
-        assertThat(link.href).isEqualTo("/v1/collections/c123/events")
+        assertThat(link.href).contains("/v1/collections/c123/events")
         assertThat(link.isTemplated).isEqualTo(false)
         assertThat(link.rel).isEqualTo("interactedWith")
     }
