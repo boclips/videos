@@ -4,13 +4,18 @@ import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.CollectionsController
+import com.boclips.videos.service.presentation.EventController
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import org.springframework.hateoas.Link
+import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.stereotype.Component
 
 @Component
 class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
+    object Rels {
+        const val LOG_COLLECTION_INTERACTION = "interactedWith"
+    }
 
     fun collection(id: String?) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { collectionResourceLink(id, "collection") }
 
@@ -181,6 +186,11 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                 .toUriString()
             Link(href, "unbookmark")
         }
+
+    fun interactedWith(collectionResource: CollectionResource)= ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(EventController::class.java)
+                .logCollectionInteractedWithEvent(collectionId = collectionResource.id, data = null)
+        ).withRel(Rels.LOG_COLLECTION_INTERACTION)
 
     fun projections() =
         ProjectionsCollectionsLinkBuilder(

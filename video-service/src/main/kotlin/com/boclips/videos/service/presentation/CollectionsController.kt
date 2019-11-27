@@ -168,7 +168,8 @@ class CollectionsController(
                 collectionsLinkBuilder.addVideoToCollection(collection),
                 collectionsLinkBuilder.removeVideoFromCollection(collection),
                 collectionsLinkBuilder.bookmark(collection),
-                collectionsLinkBuilder.unbookmark(collection)
+                collectionsLinkBuilder.unbookmark(collection),
+                collectionsLinkBuilder.interactedWith(collection)
             )
         )
 }

@@ -1,8 +1,10 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.collection.CollectionInteractedWith
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
@@ -109,6 +111,30 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
         assertThat(event.subtype).isEqualTo("COPY_SHARE_LINK")
         assertThat(event.videoId).isEqualTo(videoId.value)
+        assertThat(event.userId).isEqualTo("john@teacher.com")
+    }
+
+    @Test
+    fun `posted collection interaction events are being saved`() {
+        val collectionId = saveCollection(public = true)
+
+        val collectionInteractedWithLink = mockMvc.perform(get("/v1/collections/${collectionId.value}").asTeacher())
+            .andExpect(status().isOk)
+            .andReturnLink(CollectionsLinkBuilder.Rels.LOG_COLLECTION_INTERACTION)
+            .expand()
+
+        mockMvc.perform(post(collectionInteractedWithLink)
+            .asTeacher(email = "john@teacher.com")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""{
+                    "subtype": "NAVIGATE_TO_COLLECTION_DETAILS"
+                    }""".trimMargin())
+        )
+            .andExpect(status().isOk)
+
+        val event = fakeEventBus.getEventOfType(CollectionInteractedWith::class.java)
+        assertThat(event.subtype).isEqualTo("NAVIGATE_TO_COLLECTION_DETAILS")
+        assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.userId).isEqualTo("john@teacher.com")
     }
 

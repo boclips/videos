@@ -1,8 +1,10 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.application.analytics.SaveCollectionInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
+import com.boclips.videos.service.presentation.event.CreateCollectionInteractedWithEvent
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
 import org.springframework.http.HttpStatus
@@ -18,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 class EventController(
     private val savePlaybackEvent: SavePlaybackEvent,
     private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
-    private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent
+    private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
+    private val saveCollectionInteractedWithEvent: SaveCollectionInteractedWithEvent
 ) {
 
     @PostMapping("/v1/events/playback")
@@ -31,6 +34,12 @@ class EventController(
     fun logPlayerInteractedWithEvent(@RequestBody playbackEvent: CreatePlayerInteractedWithEvent?): ResponseEntity<Void> {
         savePlayerInteractedWithEvent.execute(playbackEvent)
         return ResponseEntity(HttpStatus.CREATED)
+    }
+
+    @PostMapping("v1/collections/{collectionId}/events")
+    fun logCollectionInteractedWithEvent(@PathVariable collectionId: String, @RequestBody data: CreateCollectionInteractedWithEvent?): ResponseEntity<Void> {
+        saveCollectionInteractedWithEvent.execute(collectionId, data)
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @PostMapping("/v1/videos/{videoId}/events", params = ["logVideoInteraction"])

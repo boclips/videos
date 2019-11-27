@@ -1,5 +1,6 @@
 package com.boclips.videos.service.config
 
+import com.boclips.videos.service.application.analytics.SaveCollectionInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
@@ -23,6 +24,11 @@ class AnalyticsEventContext(private val eventService: EventService) {
     @Bean
     fun saveVideoInteractedWithEvent(): SaveVideoInteractedWithEvent {
         return SaveVideoInteractedWithEvent(eventService)
+    }
+
+    @Bean
+    fun saveCollectionInteractedWithEvent(): SaveCollectionInteractedWithEvent {
+        return SaveCollectionInteractedWithEvent(eventService)
     }
 
 }

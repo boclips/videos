@@ -312,6 +312,17 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
+    fun `when interaction link`() {
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock())
+
+        val link = collectionsLinkBuilder.interactedWith(TestFactories.createCollectionResource(id = "c123"))
+
+        assertThat(link.href).isEqualTo("/v1/collections/c123/events")
+        assertThat(link.isTemplated).isEqualTo(false)
+        assertThat(link.rel).isEqualTo("interactedWith")
+    }
+
+    @Test
     fun `when details`() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
