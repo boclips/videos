@@ -8,6 +8,7 @@ import com.boclips.eventbus.events.collection.CollectionCreated
 import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionInteractedWith
+import com.boclips.eventbus.events.collection.CollectionInteractionType
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
 import com.boclips.eventbus.events.collection.CollectionUpdated
@@ -207,7 +208,7 @@ class EventService(
         )
     }
 
-    fun saveCollectionInteractedWithEvent(collectionId: String, subtype: String) {
+    fun saveCollectionInteractedWithEvent(collectionId: String, subtype: CollectionInteractionType) {
         eventBus.publish(msg(CollectionInteractedWith.builder()
             .collectionId(collectionId)
             .subtype(subtype)))

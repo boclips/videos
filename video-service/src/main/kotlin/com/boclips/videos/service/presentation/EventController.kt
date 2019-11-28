@@ -4,7 +4,7 @@ import com.boclips.videos.service.application.analytics.SaveCollectionInteracted
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
-import com.boclips.videos.service.presentation.event.CreateCollectionInteractedWithEvent
+import com.boclips.videos.service.presentation.event.CollectionInteractedWithEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
 import org.springframework.http.HttpStatus
@@ -37,7 +37,7 @@ class EventController(
     }
 
     @PostMapping("v1/collections/{collectionId}/events")
-    fun logCollectionInteractedWithEvent(@PathVariable collectionId: String, @RequestBody data: CreateCollectionInteractedWithEvent?): ResponseEntity<Void> {
+    fun logCollectionInteractedWithEvent(@PathVariable collectionId: String, @RequestBody data: CollectionInteractedWithEventCommand?): ResponseEntity<Void> {
         saveCollectionInteractedWithEvent.execute(collectionId, data)
         return ResponseEntity(HttpStatus.OK)
     }

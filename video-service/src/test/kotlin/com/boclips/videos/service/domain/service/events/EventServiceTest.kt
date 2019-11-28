@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.service.events
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.eventbus.events.collection.CollectionInteractedWith
+import com.boclips.eventbus.events.collection.CollectionInteractionType
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
@@ -282,14 +283,14 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveCollectionInteractedWithEvent() {
         val collectionId = aValidId()
-        eventService.saveCollectionInteractedWithEvent(collectionId, "NAVIGATE_TO_COLLECTION_DETAILS"
+        eventService.saveCollectionInteractedWithEvent(collectionId, CollectionInteractionType.NAVIGATE_TO_COLLECTION_DETAILS
         )
 
         val event = fakeEventBus.getEventOfType(CollectionInteractedWith::class.java)
 
         assertThat(event.collectionId).isEqualTo(collectionId)
         assertThat(event.userId).isEqualTo("user@example.com")
-        assertThat(event.subtype).isEqualTo("NAVIGATE_TO_COLLECTION_DETAILS")
+        assertThat(event.subtype).isEqualTo(CollectionInteractionType.NAVIGATE_TO_COLLECTION_DETAILS)
     }
 
     @Test

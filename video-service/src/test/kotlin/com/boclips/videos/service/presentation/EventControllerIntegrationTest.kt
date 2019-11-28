@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.collection.CollectionInteractedWith
+import com.boclips.eventbus.events.collection.CollectionInteractionType
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -133,7 +134,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
 
         val event = fakeEventBus.getEventOfType(CollectionInteractedWith::class.java)
-        assertThat(event.subtype).isEqualTo("NAVIGATE_TO_COLLECTION_DETAILS")
+        assertThat(event.subtype).isEqualTo(CollectionInteractionType.NAVIGATE_TO_COLLECTION_DETAILS)
         assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.userId).isEqualTo("john@teacher.com")
     }
