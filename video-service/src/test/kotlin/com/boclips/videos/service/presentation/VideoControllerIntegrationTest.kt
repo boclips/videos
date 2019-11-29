@@ -257,6 +257,33 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns video with specific content partner`() {
+        mockMvc.perform(get("/v1/videos?content_partner=cp2").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
+    }
+
+    @Test
+    fun `returns videos with specific list of content partners`() {
+        val newVideoId = saveVideo(
+            playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
+            title = "powerful video about elephants",
+            description = "test description 3",
+            date = "2018-02-11",
+            duration = Duration.ofSeconds(23),
+            contentProvider = "cp3",
+            legalRestrictions = "None"
+        ).value
+
+        mockMvc.perform(get("/v1/videos?content_partner=cp2&content_partner=cp3").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(newVideoId)))
+    }
+
+    @Test
     fun `returns 400 with invalid source`() {
         mockMvc.perform(get("/v1/videos?query=elephants&source=invalidoops").asTeacher())
             .andDo(MockMvcResultHandlers.print())

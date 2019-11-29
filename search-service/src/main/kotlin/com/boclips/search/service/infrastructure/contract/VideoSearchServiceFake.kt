@@ -75,6 +75,10 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                     }
                 }.filter { entry ->
                     query.promoted?.let { entry.value.promoted == it } ?: true
+                }.filter { entry ->
+                    if (query.contentPartnerNames.isNotEmpty())
+                        query.contentPartnerNames.contains(entry.value.contentProvider)
+                    else true
                 }
                 .map { video -> video.key }
         }

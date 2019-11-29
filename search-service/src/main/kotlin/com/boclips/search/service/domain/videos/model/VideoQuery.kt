@@ -20,5 +20,6 @@ class VideoQuery(
     val ageRangeMax: Int? = null,
     val userSubjectIds: Set<String> = emptySet(),
     val subjectIds: Set<String> = emptySet(),
-    val promoted: Boolean? = null
+    val promoted: Boolean? = null,
+    val contentPartnerNames: Set<String> = emptySet()
 ) : SearchQuery<VideoMetadata>(phrase, sort)

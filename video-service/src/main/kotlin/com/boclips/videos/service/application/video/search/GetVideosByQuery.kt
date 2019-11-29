@@ -36,7 +36,8 @@ class GetVideosByQuery(
         ageRangeMin: Int?,
         ageRangeMax: Int?,
         subjects: Set<String>,
-        promoted: Boolean?
+        promoted: Boolean?,
+        contentPartnerNames: Set<String>
     ): Page<Video> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -59,7 +60,9 @@ class GetVideosByQuery(
             ageRangeMax = ageRangeMax,
             userSubjectIds = userSubjectIds,
             subjects = subjects,
-            promoted = promoted
+            promoted = promoted,
+            contentPartnerNames = contentPartnerNames
+
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)

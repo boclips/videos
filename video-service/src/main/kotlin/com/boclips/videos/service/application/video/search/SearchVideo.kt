@@ -43,7 +43,8 @@ class SearchVideo(
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         subjects: Set<String> = emptySet(),
-        promoted: Boolean? = null
+        promoted: Boolean? = null,
+        contentPartnerNames: Set<String> = emptySet()
     ): Page<Video> {
         return getVideosByQuery(
             query = query ?: "",
@@ -60,7 +61,8 @@ class SearchVideo(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             subjects = subjects,
-            promoted = promoted
+            promoted = promoted,
+            contentPartnerNames = contentPartnerNames
         )
     }
 

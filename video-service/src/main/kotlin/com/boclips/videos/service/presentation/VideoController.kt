@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
+import kotlin.system.exitProcess
 
 @RestController
 @RequestMapping("/v1/videos")
@@ -78,7 +79,8 @@ class VideoController(
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "subject", required = false) subjects: Set<String>?,
-        @RequestParam(name = "promoted", required = false) promoted: Boolean?
+        @RequestParam(name = "promoted", required = false) promoted: Boolean?,
+        @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?
     ): ResponseEntity<PagedResources<*>> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
@@ -97,7 +99,8 @@ class VideoController(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             subjects = subjects ?: emptySet(),
-            promoted = promoted
+            promoted = promoted,
+            contentPartnerNames = contentPartners ?: emptySet()
         )
 
         return ResponseEntity(

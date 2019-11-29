@@ -17,10 +17,7 @@ import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.index.query.QueryBuilders.boolQuery
-import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
-import org.elasticsearch.index.query.QueryBuilders.multiMatchQuery
-import org.elasticsearch.index.query.QueryBuilders.termQuery
+import org.elasticsearch.index.query.QueryBuilders.*
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.SearchHits
@@ -54,33 +51,49 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         val phrase = videoQuery.phrase
         val query = boolQuery()
 
-        if (phrase.isNotBlank()) {
-            query.must(
-                boolQuery()
-                    .should(matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
-                    .should(matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
-                    .should(
-                        multiMatchQuery(
-                            phrase,
-                            VideoDocument.TITLE,
-                            unstemmed(VideoDocument.TITLE),
-                            VideoDocument.DESCRIPTION,
-                            unstemmed(VideoDocument.DESCRIPTION),
-                            VideoDocument.TRANSCRIPT,
-                            unstemmed(VideoDocument.TRANSCRIPT),
-                            VideoDocument.KEYWORDS
+        query
+            .apply {
+                if (videoQuery.contentPartnerNames.isNotEmpty()) {
+                    filter(
+                        boolQuery().must(
+                            termsQuery(
+                                VideoDocument.CONTENT_PROVIDER,
+                                videoQuery.contentPartnerNames
+                            )
                         )
-                            .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                            .minimumShouldMatch("75%")
-                            .fuzziness(Fuzziness.ZERO)
                     )
-                    .should(termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
-                    .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
-                    .minimumShouldMatch(1)
-                    .let(boostInstructionalVideos())
-                    .let(boostWhenSubjectsMatch(videoQuery.userSubjectIds))
-            )
-        }
+                }
+            }
+            .apply {
+                if (phrase.isNotBlank()) {
+                    must(
+                        boolQuery()
+                            .should(matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
+                            .should(matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
+                            .should(
+                                multiMatchQuery(
+                                    phrase,
+                                    VideoDocument.TITLE,
+                                    unstemmed(VideoDocument.TITLE),
+                                    VideoDocument.DESCRIPTION,
+                                    unstemmed(VideoDocument.DESCRIPTION),
+                                    VideoDocument.TRANSCRIPT,
+                                    unstemmed(VideoDocument.TRANSCRIPT),
+                                    VideoDocument.KEYWORDS
+                                )
+                                    .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+                                    .minimumShouldMatch("75%")
+                                    .fuzziness(Fuzziness.ZERO)
+                            )
+                            .should(termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
+                            .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
+                            .minimumShouldMatch(1)
+                            .let(boostInstructionalVideos())
+                            .let(boostWhenSubjectsMatch(videoQuery.userSubjectIds))
+                    )
+                }
+            }
+
 
         FilterDecorator(query).apply(videoQuery)
 
