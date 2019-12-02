@@ -19,7 +19,7 @@ class SearchQueryConverter {
 
     fun convertSource(source: String?): SourceType? {
         return source?.let {
-            when (source) {
+            when (source.toLowerCase()) {
                 "youtube" -> SourceType.YOUTUBE
                 "boclips" -> SourceType.BOCLIPS
                 else -> throw InvalidSourceException(source, listOf("youtube", "boclips"))
