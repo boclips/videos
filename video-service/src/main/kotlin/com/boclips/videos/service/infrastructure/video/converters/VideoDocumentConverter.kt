@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
@@ -29,6 +29,7 @@ object VideoDocumentConverter {
             keywords = video.keywords,
             subjects = video.subjects.map(SubjectDocumentConverter::toSubjectDocument),
             releaseDate = Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
+            ingestDate = Date.from(video.ingestedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             legalRestrictions = video.legalRestrictions,
             language = video.language?.toLanguageTag(),
             transcript = video.transcript,
@@ -64,6 +65,7 @@ object VideoDocumentConverter {
             keywords = document.keywords,
             subjects = document.subjects.map(SubjectDocumentConverter::toSubject).toSet(),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
+            ingestedOn = (document.ingestDate ?: document.id.date).toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             legalRestrictions = document.legalRestrictions,
             language = document.language?.let(Locale::forLanguageTag),
             transcript = document.transcript,

@@ -4,18 +4,16 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.ContentPartner
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.infrastructure.video.SourceDocument
-import com.boclips.videos.service.infrastructure.video.VideoDocument
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.VideoFactory.createVideoDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.Date
 import java.util.Locale
 
 class VideoDocumentConverterTest {
@@ -36,6 +34,7 @@ class VideoDocumentConverterTest {
             keywords = listOf("keyword1", "keyword2"),
             subjects = setOf(TestFactories.createSubject(), TestFactories.createSubject()),
             releasedOn = LocalDate.ofYearDay(2018, 10),
+            ingestedOn = LocalDate.ofYearDay(2019, 29),
             legalRestrictions = "legal restrictions",
             language = Locale.GERMANY,
             transcript = "hello",
@@ -65,32 +64,20 @@ class VideoDocumentConverterTest {
     }
 
     @Test
-    internal fun `converts null distributionMethods into ALL distribution methods`() {
-        val videoDocument = VideoDocument(
-            id = ObjectId(),
-            title = "",
-            description = "",
-            source = SourceDocument(
-                contentPartner = TestFactories.createContentPartnerDocument(),
-                videoReference = ""
-            ),
-            playback = TestFactories.createKalturaPlaybackDocument(),
-            contentType = ContentType.NEWS.toString(),
-            keywords = emptyList(),
-            subjects = emptyList(),
-            releaseDate = Date(),
-            legalRestrictions = "",
-            language = "",
-            transcript = "",
-            topics = emptyList(),
-            ageRangeMin = 0,
-            ageRangeMax = 20,
-            rating = emptyList(),
-            distributionMethods = null
-        )
+    fun `converts null distributionMethods into ALL distribution methods`() {
+        val videoDocument = createVideoDocument(distributionMethods = null)
 
         val video = VideoDocumentConverter.toVideo(videoDocument)
 
         assertThat(video.distributionMethods).isEqualTo(DistributionMethod.ALL)
+    }
+
+    @Test
+    fun `infers ingest date from the id when it is not known`() {
+        val videoDocument = createVideoDocument(ingestDate = null, id = ObjectId("5de302800000000000000000"))
+
+        val video = VideoDocumentConverter.toVideo(videoDocument)
+
+        assertThat(video.ingestedOn).isEqualTo("2019-12-01")
     }
 }

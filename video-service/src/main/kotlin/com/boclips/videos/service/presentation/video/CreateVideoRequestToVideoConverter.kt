@@ -5,11 +5,12 @@ import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId
+import java.time.LocalDate
 
 // TODO refactor to use javax validation in the first place
 class CreateVideoRequestToVideoConverter {
@@ -27,6 +28,7 @@ class CreateVideoRequestToVideoConverter {
             description = getOrThrow(createVideoRequest.description, "description"),
             keywords = getOrThrow(createVideoRequest.keywords, "keywords"),
             releasedOn = getOrThrow(createVideoRequest.releasedOn, "releasedOn"),
+            ingestedOn = LocalDate.now(),
             contentPartner = contentPartner,
             videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
             type = ContentType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
