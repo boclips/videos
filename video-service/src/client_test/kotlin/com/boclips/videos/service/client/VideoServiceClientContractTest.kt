@@ -70,6 +70,7 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
         assertThat(video.playback?.referenceId).isEqualTo("ref-entry-123")
         assertThat(video.playback?.thumbnailUrl).isNotBlank()
         assertThat(video.playback?.duration).isNotNull()
+        assertThat(video.playback?.links?.createPlaybackEvent?.href).endsWith("/events/playback")
 
         assertThat(video.subjects).hasSize(1)
         assertThat(video.subjects.first().id.value).isEqualTo(subject.id.value)

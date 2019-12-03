@@ -34,6 +34,9 @@ class CollectionResourceTest {
                     .id("test-playback-id")
                     .duration(Duration.ofMinutes(7))
                     .thumbnailUrl("https://thumbz.org/123/456")
+                    ._links(
+                        PlaybackLinksResource.builder().createPlaybackEvent(Link("/events/playback")).build()
+                    )
                     .build()
                 contentPartnerVideoId = "content-partner-video-id"
                 contentPartnerId = "Best partner id 1"
@@ -57,6 +60,7 @@ class CollectionResourceTest {
         assertThat(video.playback.playbackId).isEqualTo("test-playback-id")
         assertThat(video.playback.duration).isEqualTo(Duration.ofMinutes(7))
         assertThat(video.playback.thumbnailUrl).isEqualTo("https://thumbz.org/123/456")
+        assertThat(video.playback.links.createPlaybackEvent.href).endsWith("/events/playback")
         assertThat(video.contentPartnerVideoId).isEqualTo("content-partner-video-id")
         assertThat(video.createdBy).isEqualTo("Best partner")
         assertThat(video.contentPartnerId).isEqualTo("Best partner id 1")

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.client.internal.resources;
 
 import com.boclips.videos.service.client.Playback;
+import com.boclips.videos.service.client.PlaybackLinks;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.time.Duration;
 @NoArgsConstructor
 @Data
 public class PlaybackResource {
-    private PlaybackLinks _links;
+    private PlaybackLinksResource _links;
     private String id;
     private String thumbnailUrl;
     private Duration duration;
@@ -25,6 +26,9 @@ public class PlaybackResource {
                 .duration(duration)
                 .thumbnailUrl(thumbnailUrl)
                 .referenceId(referenceId)
+                .links(new PlaybackLinks(
+                        _links.getCreatePlaybackEvent()
+                ))
                 .build();
     }
 }

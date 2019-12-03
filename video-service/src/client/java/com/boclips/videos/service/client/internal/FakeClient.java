@@ -5,6 +5,7 @@ import com.boclips.videos.service.client.*;
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException;
 import com.boclips.videos.service.client.exceptions.InvalidCollectionRequestException;
 import com.boclips.videos.service.client.exceptions.VideoExistsException;
+import com.boclips.videos.service.client.internal.resources.Link;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,9 @@ public class FakeClient implements VideoServiceClient {
                 .duration(Duration.ofMinutes(7))
                 .referenceId("ref-" + request.getPlaybackId())
                 .thumbnailUrl("https://thumbnailz.org/img/" + nextId())
+                .links(new PlaybackLinks(
+                        new Link("/events/playback")
+                ))
                 .build();
 
         Set<Subject> videoSubjects = request.getSubjects().stream()
