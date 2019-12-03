@@ -1,13 +1,10 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.security.utils.UserExtractor.getIfHasRole
-import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsController
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -23,7 +20,6 @@ class LinksController(
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val videosLinkBuilder: VideosLinkBuilder,
     private val subjectsLinkBuilder: SubjectsLinkBuilder,
-    private val eventsLinkBuilder: EventsLinkBuilder,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
@@ -34,7 +30,6 @@ class LinksController(
         return Resource(
             "", listOfNotNull(
                 videosLinkBuilder.videoLink(),
-                getIfHasRole(UserRoles.TEACHER) { eventsLinkBuilder.createPlaybackEventLink() },
                 collectionsLinkBuilder.publicCollections(),
                 subjectsLinkBuilder.subjects(),
                 distributionMethodsLinkBuilder.distributionMethods(),

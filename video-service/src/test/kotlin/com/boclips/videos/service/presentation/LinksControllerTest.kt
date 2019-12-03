@@ -37,9 +37,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
-
-            .andExpect(jsonPath("$._links.createPlaybackEvent.href").doesNotExist())
-            .andExpect(jsonPath("$._links.createVideoVisitedEvent.href").doesNotExist())
+            .andExpect(jsonPath("$._links.createPlaybackEvent").doesNotExist())
+            .andExpect(jsonPath("$._links.createVideoVisitedEvent").doesNotExist())
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
             .andExpect(jsonPath("$._links.adminVideoSearch").doesNotExist())
             .andExpect(jsonPath("$._links.adminCollectionSearch").doesNotExist())
@@ -102,7 +101,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                     endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com")
                 )
             )
-            .andExpect(jsonPath("$._links.createPlaybackEvent.href", endsWith("/playback")))
+            .andExpect(jsonPath("$._links.createPlaybackEvent").doesNotExist())
             .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())
             .andExpect(jsonPath("$._links.collection.href", endsWith("collections/{id}")))
             .andExpect(jsonPath("$._links.collection.templated", equalTo(true)))
@@ -119,13 +118,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
-    }
-
-    @Test
-    fun `as a teacher I see deprecated links`() {
-        mockMvc.perform(get("/v1").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.createPlaybackEvent.href").exists())
     }
 
     @Test
