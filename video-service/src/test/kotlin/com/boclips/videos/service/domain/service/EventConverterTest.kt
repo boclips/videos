@@ -14,6 +14,7 @@ import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -30,6 +31,7 @@ class EventConverterTest {
             playback = TestFactories.createKalturaPlayback(duration = Duration.ofMinutes(2)),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
             type = ContentType.INSTRUCTIONAL_CLIPS,
+            ingestedOn = LocalDate.ofYearDay(2020, 20),
             ageRange = AgeRange.bounded(5, 10)
         )
 
@@ -45,6 +47,7 @@ class EventConverterTest {
         assertThat(videoEvent.ageRange.max).isEqualTo(10)
         assertThat(videoEvent.durationSeconds).isEqualTo(120)
         assertThat(videoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
+        assertThat(videoEvent.ingestedOn).isEqualTo("2020-01-20")
     }
 
     @Test
@@ -101,7 +104,7 @@ class EventConverterTest {
         assertThat(publicCollectionEvent.ownerId.value).isEqualTo("user-id")
         assertThat(publicCollectionEvent.ageRange).isEqualTo(com.boclips.eventbus.domain.AgeRange(0, 23))
         assertThat(publicCollectionEvent.bookmarks).containsExactly(com.boclips.eventbus.domain.user.UserId("bookmarked-user-id"))
-        assertThat(publicCollectionEvent.createdTime).isEqualTo("2017-11-10T01:02:03Z")
-        assertThat(publicCollectionEvent.updatedTime).isEqualTo("2018-11-10T01:02:03Z")
+        assertThat(publicCollectionEvent.createdAt).isEqualTo("2017-11-10T01:02:03Z")
+        assertThat(publicCollectionEvent.updatedAt).isEqualTo("2018-11-10T01:02:03Z")
     }
 }

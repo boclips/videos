@@ -12,7 +12,6 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
-import java.util.Date
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {
@@ -26,6 +25,7 @@ class EventConverter {
             .ageRange(toAgeRangePayload(video.ageRange))
             .durationSeconds(video.playback.duration.seconds.toInt())
             .type(toVideoType(video.type))
+            .ingestedOn(video.ingestedOn)
             .build()
     }
 
@@ -62,8 +62,8 @@ class EventConverter {
     fun toCollectionPayload(collection: Collection): com.boclips.eventbus.domain.collection.Collection {
         return com.boclips.eventbus.domain.collection.Collection.builder()
             .id(CollectionId(collection.id.value))
-            .createdTime(Date.from(collection.createdAt.toInstant()))
-            .updatedTime(Date.from(collection.updatedAt.toInstant()))
+            .createdAt(collection.createdAt)
+            .updatedAt(collection.updatedAt)
             .title(collection.title)
             .description(collection.description ?: "")
             .subjects(toSubjectPayload(collection.subjects))
