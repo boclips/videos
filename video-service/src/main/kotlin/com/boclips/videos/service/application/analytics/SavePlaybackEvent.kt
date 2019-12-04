@@ -13,7 +13,6 @@ class SavePlaybackEvent(
         event.isValidOrThrows()
 
         eventService.savePlaybackEvent(
-            playerId = event.playerId!!,
             videoId = VideoId(event.videoId!!),
             videoIndex = event.videoIndex,
             segmentStartSeconds = event.segmentStartSeconds!!,

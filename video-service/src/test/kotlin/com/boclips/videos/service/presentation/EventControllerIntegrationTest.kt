@@ -33,7 +33,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             "videoId":"$videoId",
             "videoIndex":135,
             "captureTime":"2019-02-21T15:34:37.186Z",
-            "playerId":"f249f486-fc04-48f7-7361-4413c13a4183",
             "segmentStartSeconds":1469.128248,
             "segmentEndSeconds":1470.728248
         }""".trimIndent()
@@ -53,7 +52,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.userId).isEqualTo("teacher@gmail.com")
         assertThat(event.videoIndex).isEqualTo(135)
-        assertThat(event.playerId).isEqualTo("f249f486-fc04-48f7-7361-4413c13a4183")
         assertThat(event.segmentStartSeconds).isEqualTo(1469L)
         assertThat(event.segmentEndSeconds).isEqualTo(1470L)
         assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
@@ -65,7 +63,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = aValidId()
 
         val content = """{
-            "playerId": "player-id-123",
             "videoId": "$videoId",
             "currentTime": 23,
             "subtype": "captions-on",
@@ -89,7 +86,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.userId).isEqualTo("teacher@gmail.com")
-        assertThat(event.playerId).isEqualTo("player-id-123")
         assertThat(event.currentTime).isEqualTo(23L)
         assertThat(event.subtype).isEqualTo("captions-on")
         assertThat(event.payload).containsEntry("kind", "caption-kind")
@@ -147,7 +143,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """{
-                    "playerId": "123",
                     "videoId" : "$videoId",
                     "videoIndex" : 3,
                     "segmentStartSeconds" : 0,

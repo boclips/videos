@@ -171,7 +171,6 @@ class EventService(
     fun savePlaybackEvent(
         videoId: VideoId,
         videoIndex: Int?,
-        playerId: String,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
         playbackDevice: String?
@@ -180,7 +179,6 @@ class EventService(
             msg(
                 VideoSegmentPlayed.builder()
                     .videoId(videoId.value)
-                    .playerId(playerId)
                     .videoIndex(videoIndex)
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
@@ -190,7 +188,6 @@ class EventService(
     }
 
     fun savePlayerInteractedWithEvent(
-        playerId: String,
         videoId: VideoId,
         currentTime: Long,
         subtype: String,
@@ -199,7 +196,6 @@ class EventService(
         eventBus.publish(
             msg(
                 VideoPlayerInteractedWith.builder()
-                    .playerId(playerId)
                     .videoId(videoId.value)
                     .currentTime(currentTime)
                     .subtype(subtype)

@@ -14,7 +14,6 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     lateinit var savePlaybackEvent: SavePlaybackEvent
 
     private val payload = CreatePlaybackEventCommand(
-        playerId = "player-id",
         videoId = TestFactories.aValidId(),
         videoIndex = null,
         segmentStartSeconds = 10,

@@ -299,7 +299,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         eventService.savePlaybackEvent(
             videoId = VideoId(videoId),
             videoIndex = 2,
-            playerId = "player-id",
             segmentStartSeconds = 123,
             segmentEndSeconds = 345,
             playbackDevice = "device-id"
@@ -309,7 +308,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.videoIndex).isEqualTo(2)
-        assertThat(event.playerId).isEqualTo("player-id")
         assertThat(event.segmentStartSeconds).isEqualTo(123)
         assertThat(event.segmentEndSeconds).isEqualTo(345)
         assertThat(event.userId).isEqualTo("user@example.com")
@@ -321,7 +319,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val videoId = aValidId()
         eventService.savePlayerInteractedWithEvent(
             videoId = VideoId(videoId),
-            playerId = "player-id",
             currentTime = 34,
             subtype = "captions-on",
             payload = mapOf<String, Any>(
@@ -335,7 +332,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
 
         assertThat(event.userId).isEqualTo("user@example.com")
-        assertThat(event.playerId).isEqualTo("player-id")
         assertThat(event.videoId).isEqualTo(videoId)
         assertThat(event.currentTime).isEqualTo(34L)
         assertThat(event.subtype).isEqualTo("captions-on")

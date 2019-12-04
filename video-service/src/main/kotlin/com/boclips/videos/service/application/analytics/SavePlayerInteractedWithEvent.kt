@@ -11,7 +11,6 @@ class SavePlayerInteractedWithEvent(val eventService: EventService) {
         event.isValidOrThrows()
 
         eventService.savePlayerInteractedWithEvent(
-            playerId = event.playerId!!,
             videoId = VideoId(event.videoId!!),
             currentTime = event.currentTime!!,
             subtype = event.subtype!!,
