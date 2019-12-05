@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -14,7 +16,9 @@ class RemoveVideoFromCollection(
         collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        collectionAccessService.getOwnedCollectionOrThrow(collectionId)
+        if (!collectionAccessService.hasWriteAccess(collectionId)) {
+            throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
+        }
 
         collectionRepository.update(
             CollectionUpdateCommand.RemoveVideoFromCollection(

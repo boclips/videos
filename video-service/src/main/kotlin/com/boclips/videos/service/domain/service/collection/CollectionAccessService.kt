@@ -1,7 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.security.utils.UserExtractor
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -15,19 +14,15 @@ class CollectionAccessService(
     private val collectionRepository: CollectionRepository,
     private val accessRuleService: AccessRuleService
 ) {
-    fun getOwnedCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(collectionId = collectionId, isForReading = false)
+    fun hasWriteAccess(collectionId: String): Boolean =
+        getCollectionOrThrow(collectionId = collectionId, isForReading = false) != null
 
-    fun getReadableCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(collectionId = collectionId, isForReading = true)
+    fun hasReadAccess(collectionId: String): Boolean =
+        getCollectionOrThrow(collectionId = collectionId, isForReading = true) != null
 
-    private fun getCollectionOrThrow(collectionId: String, isForReading: Boolean): Collection {
+    private fun getCollectionOrThrow(collectionId: String, isForReading: Boolean): Collection? {
         val user = getCurrentUser()
-        val collection = collectionRepository.find(
-            CollectionId(
-                collectionId
-            )
-        )
+        val collection = collectionRepository.find(CollectionId(collectionId))
             ?: throw CollectionNotFoundException(collectionId)
         val accessRules = accessRuleService.getRules(user)
 
@@ -36,10 +31,7 @@ class CollectionAccessService(
             isForReading && accessRules.allowsAccessTo(collection) -> collection
             collection.owner == UserId(user.id) -> collection
             UserExtractor.currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
-            else -> throw CollectionAccessNotAuthorizedException(
-                UserId(user.id),
-                collectionId
-            )
+            else -> null
         }
     }
 }

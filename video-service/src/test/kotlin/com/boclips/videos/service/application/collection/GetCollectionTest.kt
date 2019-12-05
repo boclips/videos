@@ -5,7 +5,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -37,6 +37,7 @@ class GetCollectionTest {
     lateinit var collectionAccessService: CollectionAccessService
     lateinit var videosLinkBuilder: VideosLinkBuilder
     lateinit var attachmentsLinkBuilder: AttachmentsLinkBuilder
+    lateinit var collectionRepository: CollectionRepository
 
     @BeforeEach
     fun setUp() {
@@ -57,12 +58,14 @@ class GetCollectionTest {
             AttachmentToResourceConverter(attachmentsLinkBuilder),
             videoService
         )
+
+        collectionRepository = mock()
     }
 
     @Test
     fun `finding collection by ID`() {
         val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(
+        val mockCollection = TestFactories.createCollection(
             id = collectionId,
             owner = "me@me.com",
             title = "Freshly found",
@@ -70,15 +73,23 @@ class GetCollectionTest {
         )
 
         collectionAccessService = mock {
-            on { getReadableCollectionOrThrow(collectionId.value) } doReturn onGetCollection
+            on { hasReadAccess(collectionId.value) } doReturn true
         }
 
-        val collection = GetCollection(collectionResourceFactory, collectionAccessService).invoke(collectionId.value)
+        collectionRepository = mock {
+            on { find(any()) } doReturn mockCollection
+        }
 
-        assertThat(collection.id).isEqualTo(onGetCollection.id.value)
-        assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
-        assertThat(collection.title).isEqualTo(onGetCollection.title)
-        assertThat(collection.description).isEqualTo(onGetCollection.description)
+        val collection = GetCollection(
+            collectionResourceFactory,
+            collectionAccessService,
+            collectionRepository
+        ).invoke(collectionId.value)
+
+        assertThat(collection.id).isEqualTo(mockCollection.id.value)
+        assertThat(collection.owner).isEqualTo(mockCollection.owner.value)
+        assertThat(collection.title).isEqualTo(mockCollection.title)
+        assertThat(collection.description).isEqualTo(mockCollection.description)
         assertThat(collection.videos).isNotEmpty
         assertThat(collection.videos.component1().content.id).isNotBlank()
         assertThat(collection.videos.component1().content.title).isNull()
@@ -89,24 +100,28 @@ class GetCollectionTest {
     @Test
     fun `finding collection by ID using details projection`() {
         val collectionId = CollectionId("collection-123")
-        val onGetCollection = TestFactories.createCollection(
+        val mockCollection = TestFactories.createCollection(
             id = collectionId,
             owner = "me@me.com",
             title = "Freshly found"
         )
 
         collectionAccessService = mock {
-            on { getReadableCollectionOrThrow(collectionId.value) } doReturn onGetCollection
+            on { hasReadAccess(collectionId.value) } doReturn true
         }
 
-        val collection = GetCollection(collectionResourceFactory, collectionAccessService).invoke(
+        collectionRepository = mock {
+            on { find(any()) } doReturn mockCollection
+        }
+
+        val collection = GetCollection(collectionResourceFactory, collectionAccessService, collectionRepository).invoke(
             collectionId.value,
             Projection.details
         )
 
-        assertThat(collection.id).isEqualTo(onGetCollection.id.value)
-        assertThat(collection.owner).isEqualTo(onGetCollection.owner.value)
-        assertThat(collection.title).isEqualTo(onGetCollection.title)
+        assertThat(collection.id).isEqualTo(mockCollection.id.value)
+        assertThat(collection.owner).isEqualTo(mockCollection.owner.value)
+        assertThat(collection.title).isEqualTo(mockCollection.title)
         assertThat(collection.videos).isNotEmpty
         assertThat(collection.videos.component1().content.id).isNotBlank()
         assertThat(collection.videos.component1().content.title).isNotBlank()
@@ -119,10 +134,10 @@ class GetCollectionTest {
     @Test
     fun `propagates CollectionNotFound error thrown from downstream`() {
         collectionAccessService = mock {
-            on { getReadableCollectionOrThrow(any()) } doThrow (CollectionNotFoundException("123"))
+            on { hasReadAccess(any()) } doThrow (CollectionNotFoundException("123"))
         }
 
-        val getCollection = GetCollection(collectionResourceFactory, collectionAccessService)
+        val getCollection = GetCollection(collectionResourceFactory, collectionAccessService, collectionRepository)
 
         assertThrows<CollectionNotFoundException> { getCollection(collectionId = "123") }
     }
@@ -134,13 +149,10 @@ class GetCollectionTest {
         val collectionId = CollectionId("test-collection-id")
 
         collectionAccessService = mock {
-            on { getReadableCollectionOrThrow(collectionId.value) } doThrow (CollectionAccessNotAuthorizedException(
-                UserId("normal-user@test.com"),
-                collectionId.value
-            ))
+            on { hasReadAccess(collectionId.value) } doReturn false
         }
 
-        val getCollection = GetCollection(collectionResourceFactory, collectionAccessService)
+        val getCollection = GetCollection(collectionResourceFactory, collectionAccessService, collectionRepository)
 
         assertThrows<CollectionAccessNotAuthorizedException> { getCollection(collectionId.value) }
     }

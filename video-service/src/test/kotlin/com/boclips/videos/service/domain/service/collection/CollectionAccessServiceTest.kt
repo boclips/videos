@@ -1,7 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.security.testing.setSecurityContext
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.AccessRule
@@ -36,11 +35,11 @@ class CollectionAccessServiceTest {
         collectionAccessService =
             CollectionAccessService(collectionRepository, accessRuleService)
 
-        assertThrows<CollectionNotFoundException> { collectionAccessService.getReadableCollectionOrThrow(collectionId = "123") }
+        assertThrows<CollectionNotFoundException> { collectionAccessService.hasReadAccess(collectionId = "123") }
     }
 
     @Test
-    fun `throws error when user doesn't own the private collection`() {
+    fun `does not allow user write access to a private collection they do not own`() {
         accessRuleService = mock {
             on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.specificIds(listOf()))
         }
@@ -56,17 +55,17 @@ class CollectionAccessServiceTest {
         collectionAccessService =
             CollectionAccessService(collectionRepository, accessRuleService)
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
-            collectionAccessService.getOwnedCollectionOrThrow(
-                collectionId = privateCollection.id.value
-            )
-        }
+        val hasWriteAccess = collectionAccessService.hasWriteAccess(
+            collectionId = privateCollection.id.value
+        )
+
+        assertThat(hasWriteAccess).isFalse()
     }
 
     @Test
-    fun `throws error when user doesn't own the public collection`() {
+    fun `does not allow user write access to a public collection they do not own`() {
         accessRuleService = mock {
-            on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.specificIds(listOf()))
+            on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.public())
         }
 
         setSecurityContext("attacker@example.com")
@@ -80,11 +79,11 @@ class CollectionAccessServiceTest {
         collectionAccessService =
             CollectionAccessService(collectionRepository, accessRuleService)
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
-            collectionAccessService.getOwnedCollectionOrThrow(
-                collectionId = publicCollection.id.value
-            )
-        }
+        val hasWriteAccess = collectionAccessService.hasWriteAccess(
+            collectionId = publicCollection.id.value
+        )
+
+        assertThat(hasWriteAccess).isFalse()
     }
 
     @Test
@@ -100,8 +99,8 @@ class CollectionAccessServiceTest {
         collectionAccessService =
             CollectionAccessService(collectionRepository, accessRuleService)
 
-        val collection = collectionAccessService.getReadableCollectionOrThrow(publicCollection.id.value)
+        val hasReadAccess = collectionAccessService.hasReadAccess(publicCollection.id.value)
 
-        assertThat(collection.id).isEqualTo(publicCollection.id)
+        assertThat(hasReadAccess).isTrue()
     }
 }

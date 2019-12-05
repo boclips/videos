@@ -4,6 +4,8 @@ import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
@@ -62,6 +64,31 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
                 collectionId = TestFactories.aValidId()
             )
         }
+    }
+
+    @Test
+    fun `throws error when user owns the collection`() {
+        val collectionId = saveCollection(owner = "owner@example.com", public = true)
+
+        assertThrows<CollectionIllegalOperationException> {
+            unbookmarkCollection(collectionId.value)
+        }
+
+        val collection = collectionRepository.find(collectionId)
+        assertThat(collection!!.bookmarks).isEmpty()
+    }
+
+    @Test
+    fun `throws error when collection is not public`() {
+        val collectionId = saveCollection(owner = "owner@example.com", public = false)
+
+        setSecurityContext("me@me.com")
+        assertThrows<CollectionAccessNotAuthorizedException> {
+            unbookmarkCollection(collectionId.value)
+        }
+
+        val collection = collectionRepository.find(collectionId)
+        assertThat(collection!!.bookmarks).isEmpty()
     }
 
     @Test

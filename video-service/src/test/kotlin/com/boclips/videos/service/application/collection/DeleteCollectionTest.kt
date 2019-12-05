@@ -5,7 +5,6 @@ import com.boclips.videos.service.application.collection.exceptions.CollectionAc
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.testsupport.TestFactories
@@ -39,6 +38,10 @@ class DeleteCollectionTest {
             on { find(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
+        collectionAccessService = mock {
+            on { hasWriteAccess(any()) }.thenReturn(true)
+        }
+
         val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
         val collectionId = TestFactories.aValidId()
 
@@ -53,6 +56,10 @@ class DeleteCollectionTest {
             on { find(any()) }.thenReturn(TestFactories.createCollection(owner = "me@me.com"))
         }
 
+        collectionAccessService = mock {
+            on { hasWriteAccess(any()) }.thenReturn(true)
+        }
+
         val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
         val collectionId = TestFactories.aValidId()
 
@@ -62,7 +69,7 @@ class DeleteCollectionTest {
     }
 
     @Test
-    fun `propagates errors when caller is allowed to access the collection`() {
+    fun `propagates errors when caller is not allowed to access the collection`() {
         setSecurityContext("attacker@example.com")
 
         val collectionId = CollectionId("collection-123")
@@ -73,13 +80,11 @@ class DeleteCollectionTest {
             on { find(collectionId) } doReturn collection
         }
         collectionAccessService = mock() {
-            on { getOwnedCollectionOrThrow(collectionId.value) } doThrow (CollectionAccessNotAuthorizedException(
-                UserId("attacker@example.com"),
-                collectionId.value
-            ))
+            on { hasWriteAccess(collectionId.value) } doReturn false
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
+        val deleteCollection =
+            DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
 
         assertThrows<CollectionAccessNotAuthorizedException> {
             deleteCollection(
@@ -98,10 +103,11 @@ class DeleteCollectionTest {
 
         collectionRepository = mock()
         collectionAccessService = mock() {
-            on { getOwnedCollectionOrThrow(collectionId.value) } doThrow (CollectionNotFoundException(collectionId.value))
+            on { hasWriteAccess(collectionId.value) } doThrow (CollectionNotFoundException(collectionId.value))
         }
 
-        val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
+        val deleteCollection =
+            DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
 
         assertThrows<CollectionNotFoundException> {
             deleteCollection(
