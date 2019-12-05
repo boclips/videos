@@ -16,17 +16,19 @@ class GetCollection(
     private val collectionRepository: CollectionRepository
 ) {
     operator fun invoke(collectionId: String, projection: Projection? = Projection.list): CollectionResource {
-        val resourceWrapper = when (projection) {
-            Projection.details -> collectionResourceFactory::buildCollectionDetailsResource
-            else -> collectionResourceFactory::buildCollectionListResource
-        }
+        val collection = collectionRepository.find(CollectionId(value = collectionId))
+            ?: throw CollectionNotFoundException(collectionId)
 
-        if (!collectionAccessService.hasReadAccess(collectionId)) {
+        if (!collectionAccessService.hasReadAccess(collection)) {
             throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
         }
 
         return collectionRepository.find(CollectionId(value = collectionId))
-            ?.let(resourceWrapper)
-            ?: throw CollectionNotFoundException(collectionId)
+            ?.let {
+                when (projection) {
+                    Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(it)
+                    else -> collectionResourceFactory.buildCollectionListResource(it)
+                }
+            } ?: throw CollectionNotFoundException(collectionId)
     }
 }

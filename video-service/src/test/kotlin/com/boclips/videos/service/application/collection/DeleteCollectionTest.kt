@@ -80,7 +80,7 @@ class DeleteCollectionTest {
             on { find(collectionId) } doReturn collection
         }
         collectionAccessService = mock() {
-            on { hasWriteAccess(collectionId.value) } doReturn false
+            on { hasWriteAccess(any()) } doReturn false
         }
 
         val deleteCollection =
@@ -103,7 +103,7 @@ class DeleteCollectionTest {
 
         collectionRepository = mock()
         collectionAccessService = mock() {
-            on { hasWriteAccess(collectionId.value) } doThrow (CollectionNotFoundException(collectionId.value))
+            on { hasWriteAccess(any()) } doThrow (CollectionNotFoundException(collectionId.value))
         }
 
         val deleteCollection =

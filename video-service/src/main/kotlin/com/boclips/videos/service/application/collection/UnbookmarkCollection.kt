@@ -16,12 +16,12 @@ class UnbookmarkCollection(
     private val collectionSearchService: CollectionSearchService
 ) {
     operator fun invoke(collectionId: String) {
-        if (!collectionAccessService.hasReadAccess(collectionId)) {
-            throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
-        }
-
         val collection = collectionRepository.find(CollectionId(value = collectionId))
             ?: throw CollectionNotFoundException(collectionId)
+
+        if (!collectionAccessService.hasReadAccess(collection)) {
+            throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
+        }
 
         if (collection.isMine()) throw CollectionIllegalOperationException(
             getCurrentUserId(),

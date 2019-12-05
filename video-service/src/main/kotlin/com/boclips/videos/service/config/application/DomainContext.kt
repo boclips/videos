@@ -68,10 +68,9 @@ class DomainContext(
 
     @Bean
     fun collectionAccessService(
-        collectionRepository: CollectionRepository,
         accessRuleService: AccessRuleService
     ): CollectionAccessService {
-        return CollectionAccessService(collectionRepository, accessRuleService)
+        return CollectionAccessService(accessRuleService)
     }
 
     @Primary

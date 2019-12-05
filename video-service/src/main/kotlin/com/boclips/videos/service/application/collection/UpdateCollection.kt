@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
@@ -15,18 +16,19 @@ class UpdateCollection(
     private val collectionAccessService: CollectionAccessService
 ) {
     operator fun invoke(collectionId: String, updateCollectionRequest: UpdateCollectionRequest?) {
-        if (!collectionAccessService.hasWriteAccess(collectionId)) {
+        val collection = collectionRepository.find(CollectionId(value = collectionId))
+            ?: throw CollectionNotFoundException(collectionId)
+
+        if (!collectionAccessService.hasWriteAccess(collection)) {
             throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
         }
 
-        val id = CollectionId(collectionId)
-
-        val commands = collectionUpdatesConverter.convert(id, updateCollectionRequest)
+        val commands = collectionUpdatesConverter.convert(collection.id, updateCollectionRequest)
 
         collectionRepository.update(*commands)
 
-        collectionRepository.find(id)?.let { collection ->
-            collectionSearchService.upsert(sequenceOf(collection))
+        collectionRepository.find(collection.id)?.let { updatedCollection ->
+            collectionSearchService.upsert(sequenceOf(updatedCollection))
         }
     }
 }

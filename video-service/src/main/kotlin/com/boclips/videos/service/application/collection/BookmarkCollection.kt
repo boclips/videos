@@ -19,7 +19,7 @@ class BookmarkCollection(
         val collection = collectionRepository.find(CollectionId(value = collectionId))
             ?: throw CollectionNotFoundException(collectionId)
 
-        if (!collectionAccessService.hasReadAccess(collectionId)) {
+        if (!collectionAccessService.hasReadAccess(collection)) {
             throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
         }
 

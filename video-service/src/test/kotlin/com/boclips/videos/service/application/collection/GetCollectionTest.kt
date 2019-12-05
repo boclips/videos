@@ -73,7 +73,7 @@ class GetCollectionTest {
         )
 
         collectionAccessService = mock {
-            on { hasReadAccess(collectionId.value) } doReturn true
+            on { hasReadAccess(any()) } doReturn true
         }
 
         collectionRepository = mock {
@@ -107,7 +107,7 @@ class GetCollectionTest {
         )
 
         collectionAccessService = mock {
-            on { hasReadAccess(collectionId.value) } doReturn true
+            on { hasReadAccess(any()) } doReturn true
         }
 
         collectionRepository = mock {
@@ -148,8 +148,12 @@ class GetCollectionTest {
 
         val collectionId = CollectionId("test-collection-id")
 
+        collectionRepository = mock {
+            on { find(any()) } doReturn TestFactories.createCollection()
+        }
+
         collectionAccessService = mock {
-            on { hasReadAccess(collectionId.value) } doReturn false
+            on { hasReadAccess(any()) } doReturn false
         }
 
         val getCollection = GetCollection(collectionResourceFactory, collectionAccessService, collectionRepository)
