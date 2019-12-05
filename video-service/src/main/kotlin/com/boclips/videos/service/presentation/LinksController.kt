@@ -7,6 +7,7 @@ import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.Resource
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
@@ -23,7 +24,9 @@ class LinksController(
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
-    private val tagsLinkBuilder: TagsLinkBuilder
+    private val tagsLinkBuilder: TagsLinkBuilder,
+    private val videoTypeLinkBuilder: VideoTypeLinkBuilder
+
 ) {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
@@ -50,7 +53,8 @@ class LinksController(
                 contentPartnersLinkBuilder.contentPartnerLink(null),
                 contentPartnersLinkBuilder.contentPartnersLink(),
                 disciplinesLinkBuilder.disciplines(),
-                tagsLinkBuilder.tags()
+                tagsLinkBuilder.tags(),
+                videoTypeLinkBuilder.videoTypes()
             )
         )
     }

@@ -53,6 +53,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(POST, "/v1/tags").hasRole(ROLE.INSERT_TAGS)
             .antMatchers(DELETE, "/v1/tags/*").hasRole(ROLE.DELETE_TAGS)
 
+            .antMatchers(GET, "/v1/video-types").hasRole(ROLE.VIEW_VIDEO_TYPES)
+
             .antMatchers(POST, "/v1/admin/actions/rebuild_video_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .antMatchers(POST, "/v1/admin/actions/rebuild_collection_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .antMatchers(POST, "/v1/admin/actions/build_legacy_search_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)

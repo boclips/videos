@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
@@ -54,6 +55,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
             .andExpect(jsonPath("$._links.disciplines").doesNotExist())
             .andExpect(jsonPath("$._links.tags").doesNotExist())
+            .andExpect(jsonPath("$._links.videoTypes").doesNotExist())
     }
 
     @Test
@@ -118,6 +120,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
+    }
+
+    @Test
+    fun `return videoTypes link when called as API user`() {
+        mockMvc.perform(get("/v1").asApiUser()).andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.videoTypes.href", endsWith("/video-types")))
     }
 
     @Test
