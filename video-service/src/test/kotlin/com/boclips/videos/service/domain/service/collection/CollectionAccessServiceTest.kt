@@ -17,15 +17,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class CollectionServiceTest {
-    lateinit var collectionService: CollectionService
+class CollectionAccessServiceTest {
+    lateinit var collectionAccessService: CollectionAccessService
     lateinit var collectionRepository: CollectionRepository
-    lateinit var collectionSearchService: CollectionSearchService
     lateinit var accessRuleService: AccessRuleService
 
     @BeforeEach
     fun setup() {
-        collectionSearchService = mock()
         accessRuleService = mock()
     }
 
@@ -35,10 +33,10 @@ class CollectionServiceTest {
             on { find(any()) } doAnswer { null }
         }
 
-        collectionService =
-            CollectionService(collectionRepository, collectionSearchService, accessRuleService)
+        collectionAccessService =
+            CollectionAccessService(collectionRepository, accessRuleService)
 
-        assertThrows<CollectionNotFoundException> { collectionService.getReadableCollectionOrThrow(collectionId = "123") }
+        assertThrows<CollectionNotFoundException> { collectionAccessService.getReadableCollectionOrThrow(collectionId = "123") }
     }
 
     @Test
@@ -55,10 +53,14 @@ class CollectionServiceTest {
             on { find(privateCollection.id) } doReturn privateCollection
         }
 
-        collectionService =
-            CollectionService(collectionRepository, collectionSearchService, accessRuleService)
+        collectionAccessService =
+            CollectionAccessService(collectionRepository, accessRuleService)
 
-        assertThrows<CollectionAccessNotAuthorizedException> { collectionService.getOwnedCollectionOrThrow(collectionId = privateCollection.id.value) }
+        assertThrows<CollectionAccessNotAuthorizedException> {
+            collectionAccessService.getOwnedCollectionOrThrow(
+                collectionId = privateCollection.id.value
+            )
+        }
     }
 
     @Test
@@ -75,10 +77,14 @@ class CollectionServiceTest {
             on { find(publicCollection.id) } doReturn publicCollection
         }
 
-        collectionService =
-            CollectionService(collectionRepository, collectionSearchService, accessRuleService)
+        collectionAccessService =
+            CollectionAccessService(collectionRepository, accessRuleService)
 
-        assertThrows<CollectionAccessNotAuthorizedException> { collectionService.getOwnedCollectionOrThrow(collectionId = publicCollection.id.value) }
+        assertThrows<CollectionAccessNotAuthorizedException> {
+            collectionAccessService.getOwnedCollectionOrThrow(
+                collectionId = publicCollection.id.value
+            )
+        }
     }
 
     @Test
@@ -91,10 +97,10 @@ class CollectionServiceTest {
             on { find(publicCollection.id) } doReturn publicCollection
         }
 
-        collectionService =
-            CollectionService(collectionRepository, collectionSearchService, accessRuleService)
+        collectionAccessService =
+            CollectionAccessService(collectionRepository, accessRuleService)
 
-        val collection = collectionService.getReadableCollectionOrThrow(publicCollection.id.value)
+        val collection = collectionAccessService.getReadableCollectionOrThrow(publicCollection.id.value)
 
         assertThat(collection.id).isEqualTo(publicCollection.id)
     }

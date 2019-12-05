@@ -20,8 +20,7 @@ import mu.KLogging
 
 class CollectionService(
     private val collectionRepository: CollectionRepository,
-    private val collectionSearchService: CollectionSearchService,
-    private val accessRuleService: AccessRuleService
+    private val collectionSearchService: CollectionSearchService
 ) {
     companion object : KLogging()
 
@@ -52,34 +51,6 @@ class CollectionService(
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {
         logger.info { "Counted collections for query $collectionSearchQuery" }
         return collectionSearchService.count(collectionSearchQuery.toSearchQuery())
-    }
-
-    fun getOwnedCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(collectionId = collectionId, isForReading = false)
-
-    fun getReadableCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(collectionId = collectionId, isForReading = true)
-
-    private fun getCollectionOrThrow(collectionId: String, isForReading: Boolean): Collection {
-        val user = getCurrentUser()
-        val collection = collectionRepository.find(
-            CollectionId(
-                collectionId
-            )
-        )
-            ?: throw CollectionNotFoundException(collectionId)
-        val accessRules = accessRuleService.getRules(user)
-
-        return when {
-            isForReading && collection.isPublic -> collection
-            isForReading && accessRules.allowsAccessTo(collection) -> collection
-            collection.owner == UserId(user.id) -> collection
-            currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
-            else -> throw CollectionAccessNotAuthorizedException(
-                UserId(user.id),
-                collectionId
-            )
-        }
     }
 }
 

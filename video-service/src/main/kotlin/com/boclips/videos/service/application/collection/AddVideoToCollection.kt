@@ -3,12 +3,13 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
 class AddVideoToCollection(
     private val collectionRepository: CollectionRepository,
-    private val collectionService: CollectionService
+    private val collectionService: CollectionAccessService
 ) {
     operator fun invoke(collectionId: String?, videoId: String?) {
         collectionId ?: throw Exception("Collection id cannot be null")
