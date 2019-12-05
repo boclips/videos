@@ -9,7 +9,6 @@ import com.boclips.videos.service.application.collection.exceptions.CollectionAc
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.AttachmentRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -24,9 +23,6 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var collectionRepository: CollectionRepository
 
-    @Autowired
-    lateinit var collectionService: CollectionService
-
     @Test
     fun `rename collection`() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
@@ -40,7 +36,16 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     fun `adds a lesson plan description and URL to a collection`() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(attachment = AttachmentRequest(linkToResource = "www.lesson-plan.com", description = "my lesson plan description", type = "LESSON_PLAN")))
+        updateCollection(
+            collectionId.value,
+            UpdateCollectionRequest(
+                attachment = AttachmentRequest(
+                    linkToResource = "www.lesson-plan.com",
+                    description = "my lesson plan description",
+                    type = "LESSON_PLAN"
+                )
+            )
+        )
 
         assertThat(collectionRepository.find(collectionId)!!.attachments.size).isEqualTo(1)
         assertThat(collectionRepository.find(collectionId)!!.attachments.first().linkToResource).isEqualTo("www.lesson-plan.com")
