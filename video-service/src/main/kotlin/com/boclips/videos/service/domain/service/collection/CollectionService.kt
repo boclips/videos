@@ -37,14 +37,16 @@ class CollectionService(
         logger.info { "Returning ${collections.size} collections for query $query" }
 
         val count = count(query)
-        return Page(collections, PageInfo(
-            hasMoreElements = count > query.pageIndexUpperBound(),
-            totalElements = count,
-            pageRequest = PageRequest(
-                page = query.pageIndex,
-                size = query.pageSize
+        return Page(
+            collections, PageInfo(
+                hasMoreElements = count > query.pageIndexUpperBound(),
+                totalElements = count,
+                pageRequest = PageRequest(
+                    page = query.pageIndex,
+                    size = query.pageSize
+                )
             )
-        ))
+        )
     }
 
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {
@@ -53,24 +55,12 @@ class CollectionService(
     }
 
     fun getOwnedCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(
-            collectionId = collectionId,
-            collectionRepository = collectionRepository,
-            isForReading = false
-        )
+        getCollectionOrThrow(collectionId = collectionId, isForReading = false)
 
     fun getReadableCollectionOrThrow(collectionId: String) =
-        getCollectionOrThrow(
-            collectionId = collectionId,
-            collectionRepository = collectionRepository,
-            isForReading = true
-        )
+        getCollectionOrThrow(collectionId = collectionId, isForReading = true)
 
-    private fun getCollectionOrThrow(
-        collectionId: String,
-        collectionRepository: CollectionRepository,
-        isForReading: Boolean
-    ): Collection {
+    private fun getCollectionOrThrow(collectionId: String, isForReading: Boolean): Collection {
         val user = getCurrentUser()
         val collection = collectionRepository.find(
             CollectionId(
@@ -82,9 +72,9 @@ class CollectionService(
 
         return when {
             isForReading && collection.isPublic -> collection
+            isForReading && accessRules.allowsAccessTo(collection) -> collection
             collection.owner == UserId(user.id) -> collection
             currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
-            isForReading && accessRules.allowsAccessTo(collection) -> collection
             else -> throw CollectionAccessNotAuthorizedException(
                 UserId(user.id),
                 collectionId
