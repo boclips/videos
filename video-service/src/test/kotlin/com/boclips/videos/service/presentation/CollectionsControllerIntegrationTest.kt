@@ -461,6 +461,17 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
+    fun `cannot delete a collection of another user`() {
+        val collectionId = createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
+
+        mockMvc.perform(delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher("anotherteacher@gmail.com"))
+            .andExpect(status().isNotFound)
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@gmail.com"))
+            .andExpect(status().is2xxSuccessful)
+    }
+
+    @Test
     fun `validates collection update request`() {
         val collectionId = createCollectionWithTitle("My Collection for ages")
 

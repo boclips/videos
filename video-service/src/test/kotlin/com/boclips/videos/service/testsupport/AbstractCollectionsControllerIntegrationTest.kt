@@ -70,7 +70,12 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .andExpect(status().isNoContent)
     }
 
-    fun updateCollectionAttachment(collectionId: String, attachmentType: String, attachmentDescription: String, attachmentURL: String) {
+    fun updateCollectionAttachment(
+        collectionId: String,
+        attachmentType: String,
+        attachmentDescription: String,
+        attachmentURL: String
+    ) {
         mockMvc.perform(
             MockMvcRequestBuilders.patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
                 """{"attachment": {
@@ -88,14 +93,17 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .extractLink("self")
     }
 
-    fun createCollectionWithTitle(title: String): String {
-        val email = "teacher@gmail.com"
+    fun createCollectionWithTitle(
+        title: String,
+        email: String = "teacher@gmail.com",
+        isPublic: Boolean = false
+    ): String {
         return collectionRepository.create(
             CreateCollectionCommand(
                 owner = UserId(email),
                 title = title,
                 createdByBoclips = false,
-                public = false
+                public = isPublic
             )
         ).id.value
     }

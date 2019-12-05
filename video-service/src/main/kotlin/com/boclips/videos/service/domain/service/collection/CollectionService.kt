@@ -84,7 +84,7 @@ class CollectionService(
             isForReading && collection.isPublic -> collection
             collection.owner == UserId(user.id) -> collection
             currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> collection
-            accessRules.allowsAccessTo(collection) -> collection
+            isForReading && accessRules.allowsAccessTo(collection) -> collection
             else -> throw CollectionAccessNotAuthorizedException(
                 UserId(user.id),
                 collectionId
