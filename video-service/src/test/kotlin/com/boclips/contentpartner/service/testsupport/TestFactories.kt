@@ -9,6 +9,7 @@ import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
+import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument

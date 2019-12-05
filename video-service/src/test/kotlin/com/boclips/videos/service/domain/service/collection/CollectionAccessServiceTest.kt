@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -29,8 +30,6 @@ class CollectionAccessServiceTest {
             on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.specificIds(listOf()))
         }
 
-        setSecurityContext("attacker@example.com")
-
         val privateCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = false)
 
         collectionRepository = mock {
@@ -40,7 +39,10 @@ class CollectionAccessServiceTest {
         collectionAccessService =
             CollectionAccessService(accessRuleService)
 
-        val hasWriteAccess = collectionAccessService.hasWriteAccess(collection = privateCollection)
+        val hasWriteAccess = collectionAccessService.hasWriteAccess(
+            collection = privateCollection,
+            user = UserFactory.sample(id = "attacker@example.com")
+        )
 
         assertThat(hasWriteAccess).isFalse()
     }
@@ -51,8 +53,6 @@ class CollectionAccessServiceTest {
             on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.public())
         }
 
-        setSecurityContext("attacker@example.com")
-
         val publicCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = true)
 
         collectionRepository = mock {
@@ -62,7 +62,10 @@ class CollectionAccessServiceTest {
         collectionAccessService =
             CollectionAccessService(accessRuleService)
 
-        val hasWriteAccess = collectionAccessService.hasWriteAccess(collection = publicCollection)
+        val hasWriteAccess = collectionAccessService.hasWriteAccess(
+            collection = publicCollection,
+            user = UserFactory.sample(id = "attacker@example.com")
+        )
 
         assertThat(hasWriteAccess).isFalse()
     }
@@ -80,7 +83,10 @@ class CollectionAccessServiceTest {
         collectionAccessService =
             CollectionAccessService(accessRuleService)
 
-        val hasReadAccess = collectionAccessService.hasReadAccess(collection = publicCollection)
+        val hasReadAccess = collectionAccessService.hasReadAccess(
+            collection = publicCollection,
+            user = UserFactory.sample(id = "attacker@example.com")
+        )
 
         assertThat(hasReadAccess).isTrue()
     }

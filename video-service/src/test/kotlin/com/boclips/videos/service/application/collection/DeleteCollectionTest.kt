@@ -39,7 +39,7 @@ class DeleteCollectionTest {
         }
 
         collectionAccessService = mock {
-            on { hasWriteAccess(any()) }.thenReturn(true)
+            on { hasWriteAccess(any(), any()) }.thenReturn(true)
         }
 
         val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
@@ -57,7 +57,7 @@ class DeleteCollectionTest {
         }
 
         collectionAccessService = mock {
-            on { hasWriteAccess(any()) }.thenReturn(true)
+            on { hasWriteAccess(any(), any()) }.thenReturn(true)
         }
 
         val deleteCollection = DeleteCollection(collectionRepository, collectionSearchService, collectionAccessService)
@@ -80,7 +80,7 @@ class DeleteCollectionTest {
             on { find(collectionId) } doReturn collection
         }
         collectionAccessService = mock() {
-            on { hasWriteAccess(any()) } doReturn false
+            on { hasWriteAccess(any(), any()) } doReturn false
         }
 
         val deleteCollection =
@@ -103,7 +103,7 @@ class DeleteCollectionTest {
 
         collectionRepository = mock()
         collectionAccessService = mock() {
-            on { hasWriteAccess(any()) } doThrow (CollectionNotFoundException(collectionId.value))
+            on { hasWriteAccess(any(), any()) } doThrow (CollectionNotFoundException(collectionId.value))
         }
 
         val deleteCollection =

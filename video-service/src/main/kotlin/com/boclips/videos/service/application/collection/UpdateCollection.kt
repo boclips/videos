@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -19,7 +20,7 @@ class UpdateCollection(
         val collection = collectionRepository.find(CollectionId(value = collectionId))
             ?: throw CollectionNotFoundException(collectionId)
 
-        if (!collectionAccessService.hasWriteAccess(collection)) {
+        if (!collectionAccessService.hasWriteAccess(collection, getCurrentUser())) {
             throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
         }
 

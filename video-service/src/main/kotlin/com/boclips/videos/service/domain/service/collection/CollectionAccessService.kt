@@ -1,21 +1,20 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.security.utils.User
 import com.boclips.security.utils.UserExtractor
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.AccessRuleService
 
 class CollectionAccessService(private val accessRuleService: AccessRuleService) {
-    fun hasWriteAccess(collection: Collection): Boolean =
-        hasAccess(collection = collection, readOnly = false)
+    fun hasWriteAccess(collection: Collection, user: User): Boolean =
+        hasAccess(collection = collection, readOnly = false, user = user)
 
-    fun hasReadAccess(collection: Collection): Boolean =
-        hasAccess(collection = collection, readOnly = true)
+    fun hasReadAccess(collection: Collection, user: User): Boolean =
+        hasAccess(collection = collection, readOnly = true, user = user)
 
-    private fun hasAccess(collection: Collection, readOnly: Boolean): Boolean {
-        val user = getCurrentUser()
+    private fun hasAccess(collection: Collection, readOnly: Boolean, user: User): Boolean {
         val accessRules = accessRuleService.getRules(user)
 
         return when {

@@ -73,7 +73,7 @@ class GetCollectionTest {
         )
 
         collectionAccessService = mock {
-            on { hasReadAccess(any()) } doReturn true
+            on { hasReadAccess(any(), any()) } doReturn true
         }
 
         collectionRepository = mock {
@@ -107,7 +107,7 @@ class GetCollectionTest {
         )
 
         collectionAccessService = mock {
-            on { hasReadAccess(any()) } doReturn true
+            on { hasReadAccess(any(), any()) } doReturn true
         }
 
         collectionRepository = mock {
@@ -134,7 +134,7 @@ class GetCollectionTest {
     @Test
     fun `propagates CollectionNotFound error thrown from downstream`() {
         collectionAccessService = mock {
-            on { hasReadAccess(any()) } doThrow (CollectionNotFoundException("123"))
+            on { hasReadAccess(any(), any()) } doThrow (CollectionNotFoundException("123"))
         }
 
         val getCollection = GetCollection(collectionResourceFactory, collectionAccessService, collectionRepository)
@@ -153,7 +153,7 @@ class GetCollectionTest {
         }
 
         collectionAccessService = mock {
-            on { hasReadAccess(any()) } doReturn false
+            on { hasReadAccess(any(), any()) } doReturn false
         }
 
         val getCollection = GetCollection(collectionResourceFactory, collectionAccessService, collectionRepository)
