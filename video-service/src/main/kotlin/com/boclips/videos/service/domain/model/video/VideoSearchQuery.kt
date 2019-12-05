@@ -8,6 +8,8 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import java.time.Duration
 import java.time.LocalDate
 
+import com.boclips.search.service.domain.videos.model.VideoType
+
 enum class SortKey {
     RELEASE_DATE,
     RATING,
@@ -31,7 +33,8 @@ class VideoSearchQuery(
     val userSubjectIds: Set<String> = emptySet(),
     val subjects: Set<String> = emptySet(),
     val promoted: Boolean? = null,
-    val contentPartnerNames: Set<String> = emptySet()
+    val contentPartnerNames: Set<String> = emptySet(),
+    val type: Set<VideoType> = emptySet()
 ) {
     fun toSearchQuery(): VideoQuery {
         val sort = sortBy?.let {
@@ -64,7 +67,8 @@ class VideoSearchQuery(
                 userSubjectIds = userSubjectIds,
                 subjectIds = subjects,
                 promoted = promoted,
-                contentPartnerNames = contentPartnerNames
+                contentPartnerNames = contentPartnerNames,
+                type = type
             )
         }
     }

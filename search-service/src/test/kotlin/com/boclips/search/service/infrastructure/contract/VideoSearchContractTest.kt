@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -164,6 +165,64 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result).containsExactlyInAnyOrder("4")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `finds by video type`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "Johnson Dancing",
+                    type = VideoType.INSTRUCTIONAL
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    type = setOf(VideoType.NEWS, VideoType.STOCK)
+                )
+            )
+        )
+
+        assertThat(result).containsOnly("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns all videos when type is not specified`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "Johnson Dancing",
+                    type = VideoType.INSTRUCTIONAL
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    type = emptySet()
+                )
+            )
+        )
+
+        assertThat(result).containsOnly("1", "2", "3")
     }
 
     @ParameterizedTest

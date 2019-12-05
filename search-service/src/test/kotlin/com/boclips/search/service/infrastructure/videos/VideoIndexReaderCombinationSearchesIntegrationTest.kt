@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
@@ -143,6 +144,50 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
 
         assertThat(results).hasSize(1)
         assertThat(results).containsExactly("3")
+    }
+
+    @Test
+    fun `query, type`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED TALK 1 ",
+                    type = VideoType.STOCK
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "OTHER VIDEO 1",
+                    type = VideoType.STOCK
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "TED TALK 2",
+                    type = VideoType.INSTRUCTIONAL
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    title = "TED TALK 3",
+                    type = VideoType.NEWS
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "5",
+                    title = "OTHER VIDEO 2",
+                    type = VideoType.NEWS
+                )
+            )
+        )
+
+        val result = videoIndexReader.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    type = setOf(VideoType.STOCK, VideoType.NEWS)
+                )
+            )
+        )
+
+        assertThat(result).containsOnly("1", "4")
     }
 
     @Test

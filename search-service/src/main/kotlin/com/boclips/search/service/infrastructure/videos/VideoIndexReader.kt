@@ -16,7 +16,6 @@ import org.elasticsearch.common.lucene.search.function.CombineFunction
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders.*
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
@@ -59,6 +58,18 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                             termsQuery(
                                 VideoDocument.CONTENT_PROVIDER,
                                 videoQuery.contentPartnerNames
+                            )
+                        )
+                    )
+                }
+            }
+            .apply {
+                if(videoQuery.type.isNotEmpty()){
+                    must(
+                        boolQuery().must(
+                            termsQuery(
+                                VideoDocument.TYPE,
+                                videoQuery.type
                             )
                         )
                     )
@@ -112,14 +123,14 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     }
 
     private fun boostInstructionalVideos() = { innerQuery: QueryBuilder ->
-        QueryBuilders.boostingQuery(
+        boostingQuery(
             innerQuery,
             boolQuery().mustNot(termQuery(VideoDocument.TYPE, VideoType.INSTRUCTIONAL.name))
         ).negativeBoost(0.4F)
     }
 
     private fun boostWhenSubjectsMatch(subjectIds: Set<String>) = { innerQuery: QueryBuilder ->
-        QueryBuilders.boostingQuery(
+        boostingQuery(
             innerQuery,
             subjectIds.fold(
                 boolQuery(),
@@ -128,7 +139,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     }
 
     private fun lookUpById(ids: List<String>): SearchSourceBuilder {
-        val bunchOfIds = QueryBuilders.idsQuery().addIds(*(ids.toTypedArray()))
+        val bunchOfIds = idsQuery().addIds(*(ids.toTypedArray()))
         val lookUpByIdQuery = boolQuery().should(bunchOfIds)
         return SearchSourceBuilder().query(lookUpByIdQuery)
     }

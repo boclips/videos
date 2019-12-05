@@ -4,8 +4,7 @@ import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.videos.service.domain.model.video.SortKey
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -144,6 +143,21 @@ class VideoSearchVideoQueryTest {
             .toSearchQuery()
 
         assertThat(searchQuery.source).isEqualTo(SourceType.YOUTUBE)
+    }
+
+    @Test
+    fun `allows filtering of content type`() {
+        val searchQuery = VideoSearchQuery(
+            text = "testing",
+            includeTags = emptyList(),
+            excludeTags = listOf("classroom"),
+            pageSize = 2,
+            pageIndex = 0,
+            type = setOf(VideoType.NEWS, VideoType.STOCK)
+        )
+            .toSearchQuery()
+
+        assertThat(searchQuery.type).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
 
     @Test

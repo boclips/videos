@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -71,5 +72,22 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
         val results = videoIndexReader.count(VideoQuery(includeTags = listOf("news")))
 
         assertThat(results).isEqualTo(1)
+    }
+
+    @Test
+    fun `can count by content type`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id = "3", type = VideoType.INSTRUCTIONAL),
+                SearchableVideoMetadataFactory.create(id = "4", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "5", type = VideoType.STOCK)
+            )
+        )
+
+        val results = videoIndexReader.count(VideoQuery(type = setOf(VideoType.NEWS)))
+
+        assertThat(results).isEqualTo(2)
     }
 }

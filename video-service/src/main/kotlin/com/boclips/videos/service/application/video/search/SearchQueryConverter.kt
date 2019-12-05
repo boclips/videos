@@ -1,9 +1,11 @@
 package com.boclips.videos.service.application.video.search
 
 import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.application.video.exceptions.InvalidDateException
 import com.boclips.videos.service.application.video.exceptions.InvalidDurationException
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
+import com.boclips.videos.service.application.video.exceptions.InvalidTypeException
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
@@ -38,4 +40,12 @@ class SearchQueryConverter {
             }
         }
     }
+
+    fun convertType(type: String): VideoType =
+        when (type) {
+            "NEWS" -> VideoType.NEWS
+            "STOCK" -> VideoType.STOCK
+            "INSTRUCTIONAL" -> VideoType.INSTRUCTIONAL
+            else -> throw InvalidTypeException(type, VideoType.values())
+        }
 }

@@ -136,9 +136,21 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can filter by content type`() {
+        val stockVideoId = saveVideo(title = "content type filtering", type = ContentType.STOCK)
+        saveVideo(title = "content type filtering", type = ContentType.NEWS)
+
+        mockMvc.perform(get("/v1/videos?query=content&type=STOCK").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(stockVideoId.value)))
+    }
+
+    @Test
     fun `filters out non classroom results when filter param set`() {
         val excludedVideoId =
-            saveVideo(title = "Non educational video about elephants", contentType = ContentType.STOCK)
+            saveVideo(title = "Non educational video about elephants", type = ContentType.STOCK)
 
         mockMvc.perform(get("/v1/videos?query=elephant&include_tag=classroom").asTeacher())
             .andExpect(status().isOk)
@@ -147,7 +159,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can exclude results for a particular tag`() {
-        val excludedVideoId = saveVideo(title = "Elephant news", contentType = ContentType.NEWS)
+        val excludedVideoId = saveVideo(title = "Elephant news", type = ContentType.NEWS)
 
         mockMvc.perform(get("/v1/videos?query=elephant&exclude_tag=news").asTeacher())
             .andExpect(status().isOk)
@@ -156,9 +168,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can find videos by tags`() {
-        val newsAndClassroomVideoId = saveVideo(title = "ben poos elephants", contentType = ContentType.NEWS)
+        val newsAndClassroomVideoId = saveVideo(title = "ben poos elephants", type = ContentType.NEWS)
         val classroomVideoId =
-            saveVideo(title = "Video about elephants", contentType = ContentType.INSTRUCTIONAL_CLIPS)
+            saveVideo(title = "Video about elephants", type = ContentType.INSTRUCTIONAL_CLIPS)
 
         mockMvc.perform(get("/v1/videos?query=elephants&include_tag=news&include_tag=classroom").asTeacher())
             .andExpect(status().isOk)
@@ -1069,17 +1081,17 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val today = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            contentType = ContentType.NEWS
+            type = ContentType.NEWS
         ).value
         val yesterday = saveVideo(
             title = "Yesterday Video",
             date = LocalDate.now().minusDays(1).toString(),
-            contentType = ContentType.NEWS
+            type = ContentType.NEWS
         ).value
         val tomorrow = saveVideo(
             title = "Tomorrow Video",
             date = LocalDate.now().plusDays(1).toString(),
-            contentType = ContentType.NEWS
+            type = ContentType.NEWS
         ).value
 
         val resultActions = mockMvc.perform(
@@ -1145,7 +1157,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            contentType = ContentType.NEWS
+            type = ContentType.NEWS
         ).value
 
         mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
@@ -1168,7 +1180,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            contentType = ContentType.NEWS
+            type = ContentType.NEWS
         ).value
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
@@ -1229,7 +1241,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo(
             title = "Today Video?",
             date = LocalDate.now().toString(),
-            contentType = ContentType.NEWS
+            type = ContentType.NEWS
         ).value
 
         assertNotNull(

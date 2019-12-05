@@ -62,7 +62,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         fun `does not send events for non instructional videos`() {
             val videoId = saveVideo(
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                contentType = ContentType.NEWS
+                type = ContentType.NEWS
             ).value
 
             videoAnalysisService.analysePlayableVideo(videoId, language = null)

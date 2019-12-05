@@ -37,6 +37,9 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                     entry.value.tags.containsAll(query.includeTags)
                 }
                 .filter { entry ->
+                    if (query.type.isEmpty()) true else query.type.contains(entry.value.type)
+                }
+                .filter { entry ->
                     entry.value.durationSeconds.let { (minDuration..maxDuration).contains(it) }
                 }
                 .filter { entry ->

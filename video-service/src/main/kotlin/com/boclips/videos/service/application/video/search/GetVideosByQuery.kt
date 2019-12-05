@@ -37,12 +37,14 @@ class GetVideosByQuery(
         ageRangeMax: Int?,
         subjects: Set<String>,
         promoted: Boolean?,
-        contentPartnerNames: Set<String>
+        contentPartnerNames: Set<String>,
+        type: Set<String>
     ): Page<Video> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
-        val userSubjectIds = UserExtractor.getCurrentUser()?.let{user -> userService.getSubjectIds(user.id)} ?: emptySet()
+        val userSubjectIds =
+            UserExtractor.getCurrentUser()?.let { user -> userService.getSubjectIds(user.id) } ?: emptySet()
 
         val videoSearchQuery = VideoSearchQuery(
             text = query,
@@ -61,8 +63,8 @@ class GetVideosByQuery(
             userSubjectIds = userSubjectIds,
             subjects = subjects,
             promoted = promoted,
-            contentPartnerNames = contentPartnerNames
-
+            contentPartnerNames = contentPartnerNames,
+            type = type?.map { searchQueryConverter.convertType(it) }.toSet()
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
