@@ -68,6 +68,8 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws error when user owns the collection`() {
+        setSecurityContext("owner@example.com")
+
         val collectionId = saveCollection(owner = "owner@example.com", public = true)
 
         assertThrows<CollectionIllegalOperationException> {

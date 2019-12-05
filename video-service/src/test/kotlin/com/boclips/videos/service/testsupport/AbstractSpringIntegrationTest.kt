@@ -13,6 +13,7 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.security.utils.UserExtractor
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -307,6 +308,8 @@ abstract class AbstractSpringIntegrationTest {
         bookmarkedBy: String? = null,
         subjects: Set<Subject> = emptySet()
     ): CollectionId {
+        val currentUser = UserExtractor.getCurrentUserIfNotAnonymous()
+
         setSecurityContext(owner)
 
         val collectionId = createCollection(TestFactories.createCollectionRequest(title = title, videos = videos)).id
@@ -323,7 +326,7 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
-        return collectionId
+        return collectionId.also { setSecurityContext(currentUser?.id ?: owner) }
     }
 
     fun saveContentPartner(
