@@ -1,20 +1,13 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.security.utils.UserExtractor.currentUserHasRole
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
-import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 

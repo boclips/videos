@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.collections
 
+import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
@@ -28,8 +29,8 @@ class CollectionResourceFactory(
             videos = videoToResourceConverter.wrapVideosInResource(videoService.getPlayableVideo(collection.videos)),
             updatedAt = collection.updatedAt,
             public = collection.isPublic,
-            mine = collection.isMine(),
-            bookmarked = collection.isBookmarked(),
+            mine = collection.isOwner(getCurrentUserId()),
+            bookmarked = collection.isBookmarkedBy(getCurrentUserId()),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
@@ -46,8 +47,8 @@ class CollectionResourceFactory(
             videos = videoToResourceConverter.wrapVideoIdsInResource(collection.videos),
             updatedAt = collection.updatedAt,
             public = collection.isPublic,
-            mine = collection.isMine(),
-            bookmarked = collection.isBookmarked(),
+            mine = collection.isOwner(getCurrentUserId()),
+            bookmarked = collection.isBookmarkedBy(getCurrentUserId()),
             createdBy = collection.createdBy(),
             subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),

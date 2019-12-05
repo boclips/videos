@@ -20,17 +20,19 @@ class UnbookmarkCollection(
         val collection = collectionRepository.find(CollectionId(value = collectionId))
             ?: throw CollectionNotFoundException(collectionId)
 
+        val userId = getCurrentUserId()
+
         if (!collectionAccessService.hasReadAccess(collection, getCurrentUser())) {
-            throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
+            throw CollectionAccessNotAuthorizedException(userId, collectionId)
         }
 
-        if (collection.isMine()) throw CollectionIllegalOperationException(
-            getCurrentUserId(),
+        if (collection.isOwner(userId)) throw CollectionIllegalOperationException(
+            userId,
             collectionId,
             "unbookmark your own collection"
         )
 
-        val result = collectionRepository.update(CollectionUpdateCommand.Unbookmark(collection.id, getCurrentUserId()))
+        val result = collectionRepository.update(CollectionUpdateCommand.Unbookmark(collection.id, userId))
 
         collectionSearchService.upsert(result.map { it.collection }.asSequence())
     }

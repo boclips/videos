@@ -7,6 +7,7 @@ import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -20,11 +21,12 @@ class BookmarkCollection(
         val collection = collectionRepository.find(CollectionId(value = collectionId))
             ?: throw CollectionNotFoundException(collectionId)
 
-        if (!collectionAccessService.hasReadAccess(collection, getCurrentUser())) {
+        val currentUser = getCurrentUser()
+        if (!collectionAccessService.hasReadAccess(collection, currentUser)) {
             throw CollectionAccessNotAuthorizedException(getCurrentUserId(), collectionId)
         }
 
-        if (collection.isMine()) throw CollectionIllegalOperationException(
+        if (collection.owner == UserId(value = currentUser.id)) throw CollectionIllegalOperationException(
             getCurrentUserId(),
             collectionId,
             "bookmark your own collection"

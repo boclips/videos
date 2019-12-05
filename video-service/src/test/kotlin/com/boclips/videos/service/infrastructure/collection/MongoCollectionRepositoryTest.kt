@@ -23,7 +23,6 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Date
 
@@ -291,14 +290,17 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             collectionRepository.update(CollectionUpdateCommand.Bookmark(collection.id, UserId("user2")))
             collectionRepository.update(CollectionUpdateCommand.Bookmark(collection.id, UserId("user3")))
 
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user2")))
+                .isEqualTo(true)
 
             collectionRepository.update(CollectionUpdateCommand.Unbookmark(collection.id, UserId("user2")))
 
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(false)
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user2")))
+                .isEqualTo(false)
 
             setSecurityContext("user3")
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarked()).isEqualTo(true)
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user3")))
+                .isEqualTo(true)
         }
 
         @Test
@@ -397,7 +399,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collectionV3.updatedAt).isAfter(collectionV2.updatedAt)
         }
 
-
         @Test
         fun `update returns updated collections`() {
             val collection1 = sampleCollection(title = "Old title 1")
@@ -437,7 +438,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collectionRepository.find(collection3.id)!!.videos[0]).isEqualTo(videoId)
             assertThat(collectionRepository.find(collection3.id)!!.updatedAt).isAfterOrEqualTo(collection3.updatedAt)
         }
-
     }
 
     @Nested
@@ -460,8 +460,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             assertThat(collectionRepository.find(collection.id)!!.subjects).containsExactly(updatedSubject)
         }
-
-
     }
 
     @Nested

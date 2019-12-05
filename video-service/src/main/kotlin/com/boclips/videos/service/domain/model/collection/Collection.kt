@@ -1,12 +1,10 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.videos.service.application.getCurrentUserId
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.VideoId
-import java.time.Instant
 import java.time.ZonedDateTime
 
 data class Collection(
@@ -32,6 +30,6 @@ data class Collection(
         }
     }
 
-    fun isMine() = getCurrentUserId() == this.owner
-    fun isBookmarked() = bookmarks.contains(getCurrentUserId())
+    fun isOwner(owner: UserId) = owner == this.owner
+    fun isBookmarkedBy(user: UserId) = bookmarks.contains(user)
 }
