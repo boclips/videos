@@ -13,18 +13,16 @@ import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.TestFactories.createCollectionUpdateResult
+import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -40,11 +38,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    @BeforeEach
-    fun setUp() {
-        setSecurityContext(username = "user@example.com")
-    }
-
     @Test
     fun saveSearchEvent() {
         eventService.saveSearchEvent(
@@ -52,7 +45,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             pageIndex = 4,
             pageSize = 2,
             totalResults = 20,
-            pageVideoIds = listOf("v123")
+            pageVideoIds = listOf("v123"),
+            user = UserFactory.sample(id = "user@example.com")
         )
 
         val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
@@ -74,7 +68,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.AddVideoToCollection(
                     collectionId = CollectionId(collectionId),
-                    videoId = VideoId(videoId)
+                    videoId = VideoId(videoId),
+                    user = UserFactory.sample(id = "user@example.com")
                 )
             )
         )
@@ -95,7 +90,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.RemoveVideoFromCollection(
                     collectionId = CollectionId(collectionId),
-                    videoId = VideoId(videoId)
+                    videoId = VideoId(videoId),
+                    user = UserFactory.sample(id = "user@example.com")
                 )
             )
         )
@@ -115,7 +111,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.RenameCollection(
                     collectionId = CollectionId(collectionId),
-                    title = "the new title"
+                    title = "the new title",
+                    user = UserFactory.sample(id = "user@example.com")
                 )
             )
         )
@@ -133,7 +130,11 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
-                command = CollectionUpdateCommand.ChangeVisibility(collectionId = CollectionId(collectionId), isPublic = true)
+                command = CollectionUpdateCommand.ChangeVisibility(
+                    collectionId = CollectionId(collectionId),
+                    isPublic = true,
+                    user = UserFactory.sample(id = "user@example.com")
+                )
             )
         )
 
@@ -150,7 +151,11 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
-                command = CollectionUpdateCommand.ChangeVisibility(collectionId = CollectionId(collectionId), isPublic = false)
+                command = CollectionUpdateCommand.ChangeVisibility(
+                    collectionId = CollectionId(collectionId),
+                    isPublic = false,
+                    user = UserFactory.sample()
+                )
             )
         )
 
@@ -167,11 +172,12 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
                 collection = TestFactories.createCollection(
-                  subjects = setOf(subject)
+                    subjects = setOf(subject)
                 ),
                 command = CollectionUpdateCommand.ReplaceSubjects(
                     collectionId = CollectionId(collectionId),
-                    subjects = setOf(subject)
+                    subjects = setOf(subject),
+                    user = UserFactory.sample(id = "user@example.com")
                 )
             )
         )
@@ -194,7 +200,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
                 collection = TestFactories.createCollection(subjects = setOf(anotherSubject)),
                 command = CollectionUpdateCommand.RemoveSubjectFromCollection(
                     collectionId = CollectionId(collectionId),
-                    subjectId = removedSubject.id
+                    subjectId = removedSubject.id,
+                    user = UserFactory.sample(id = "user@example.com")
                 )
             )
         )
@@ -215,7 +222,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
                 command = CollectionUpdateCommand.ChangeAgeRange(
                     collectionId = CollectionId(collectionId),
                     minAge = 5,
-                    maxAge = 9
+                    maxAge = 9,
+                    user = UserFactory.sample(id = "user@example.com")
                 )
             )
         )
@@ -237,7 +245,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
                 command = CollectionUpdateCommand.ChangeAgeRange(
                     collectionId = CollectionId(collectionId),
                     minAge = 5,
-                    maxAge = null
+                    maxAge = null,
+                    user = UserFactory.sample()
                 )
             )
         )
@@ -250,10 +259,12 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveBookmarkCollectionEvent() {
         val collectionId = aValidId()
-        val userId = aValidId()
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
-                command = CollectionUpdateCommand.Bookmark(CollectionId(collectionId), UserId(userId))
+                command = CollectionUpdateCommand.Bookmark(
+                    CollectionId(collectionId),
+                    UserFactory.sample(id = "user@example.com")
+                )
             )
         )
 
@@ -269,7 +280,10 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
-                command = CollectionUpdateCommand.Unbookmark(CollectionId(collectionId), UserId("user@example.com"))
+                command = CollectionUpdateCommand.Unbookmark(
+                    CollectionId(collectionId),
+                    UserFactory.sample(id = "user@example.com")
+                )
             )
         )
 
@@ -283,7 +297,10 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveCollectionInteractedWithEvent() {
         val collectionId = aValidId()
-        eventService.saveCollectionInteractedWithEvent(collectionId, CollectionInteractionType.NAVIGATE_TO_COLLECTION_DETAILS
+        eventService.saveCollectionInteractedWithEvent(
+            collectionId,
+            CollectionInteractionType.NAVIGATE_TO_COLLECTION_DETAILS,
+            UserFactory.sample(id = "user@example.com")
         )
 
         val event = fakeEventBus.getEventOfType(CollectionInteractedWith::class.java)
@@ -301,7 +318,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             videoIndex = 2,
             segmentStartSeconds = 123,
             segmentEndSeconds = 345,
-            playbackDevice = "device-id"
+            playbackDevice = "device-id",
+            user = UserFactory.sample(id = "user@example.com")
         )
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
@@ -326,7 +344,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
                 Pair("language", "caption-language"),
                 Pair("id", "caption-id"),
                 Pair("label", "caption-label")
-            )
+            ),
+            user = UserFactory.sample(id = "user@example.com")
         )
 
         val event = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
@@ -345,7 +364,11 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveVideoInteractedWith() {
         val videoId = aValidId()
-        eventService.publishVideoInteractedWithEvent(videoId = VideoId(videoId), subtype = "share-to-google-classroom")
+        eventService.publishVideoInteractedWithEvent(
+            videoId = VideoId(videoId),
+            subtype = "share-to-google-classroom",
+            user = UserFactory.sample(id = "user@example.com")
+        )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
 

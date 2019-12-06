@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.subject
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.subject.SubjectChanged
+import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -46,13 +47,17 @@ class UpdateSubject(
         }
 
         collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subjectId), { collection ->
-                val newSubjects = replaceSubject(
-                    subjects = collection.subjects,
-                    idToReplace = subjectId,
-                    updatedSubject = updatedSubject
-                ).toSet()
+            val newSubjects = replaceSubject(
+                subjects = collection.subjects,
+                idToReplace = subjectId,
+                updatedSubject = updatedSubject
+            ).toSet()
 
-                CollectionUpdateCommand.ReplaceSubjects(collectionId = collection.id, subjects = newSubjects)
+            CollectionUpdateCommand.ReplaceSubjects(
+                collectionId = collection.id,
+                subjects = newSubjects,
+                user = User(boclipsEmployee = true, id = "admin", authorities = emptySet())
+            )
         })
 
         logger.info { "Updated subject ${updatedSubject.id}" }

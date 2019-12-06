@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.application.getCurrentUserId
+import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.tag.UserTag
@@ -23,7 +24,7 @@ open class TagVideo(
 
     companion object : KLogging();
 
-    open operator fun invoke(@Valid tagVideoRequest: TagVideoRequest) {
+    open operator fun invoke(@Valid tagVideoRequest: TagVideoRequest, user: User) {
         val tag = try {
             tagRepository.findById(TagId(tagVideoRequest.tagUrl!!.substringAfterLast("/")))
         } catch (e: Exception) {
@@ -38,7 +39,7 @@ open class TagVideo(
         videoRepository.update(
             VideoUpdateCommand.ReplaceTag(
                 VideoId(tagVideoRequest.videoId!!),
-                UserTag(tag = tag, userId = getCurrentUserId())
+                UserTag(tag = tag, userId = UserId(user.id))
             )
         )
     }

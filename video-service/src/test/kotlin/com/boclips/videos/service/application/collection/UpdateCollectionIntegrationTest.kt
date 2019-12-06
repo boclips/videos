@@ -4,7 +4,6 @@ import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -13,6 +12,7 @@ import com.boclips.videos.service.presentation.collections.AttachmentRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -27,7 +27,11 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     fun `rename collection`() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(title = "new title"))
+        updateCollection(
+            collectionId.value,
+            UpdateCollectionRequest(title = "new title"),
+            UserFactory.sample(id = "me@me.com")
+        )
 
         assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("new title")
     }
@@ -37,14 +41,15 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 
         updateCollection(
-            collectionId.value,
-            UpdateCollectionRequest(
+            collectionId = collectionId.value,
+            updateCollectionRequest = UpdateCollectionRequest(
                 attachment = AttachmentRequest(
                     linkToResource = "www.lesson-plan.com",
                     description = "my lesson plan description",
                     type = "LESSON_PLAN"
                 )
-            )
+            ),
+            requester = UserFactory.sample(id = "me@me.com")
         )
 
         assertThat(collectionRepository.find(collectionId)!!.attachments.size).isEqualTo(1)
@@ -57,7 +62,11 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     fun `logs an event when renaming`() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(title = "new title"))
+        updateCollection(
+            collectionId = collectionId.value,
+            updateCollectionRequest = UpdateCollectionRequest(title = "new title"),
+            requester = UserFactory.sample(id = "me@me.com")
+        )
 
         val event = fakeEventBus.getEventOfType(CollectionRenamed::class.java)
 
@@ -70,7 +79,11 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     fun `logs an event when changing visibility`() {
         val collectionId = saveCollection(owner = "me@me.com", public = false)
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(isPublic = true))
+        updateCollection(
+            collectionId = collectionId.value,
+            updateCollectionRequest = UpdateCollectionRequest(isPublic = true),
+            requester = UserFactory.sample(id = "me@me.com")
+        )
 
         val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
 
@@ -83,7 +96,11 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     fun `logs an event when changing description`() {
         val collectionId = saveCollection(owner = "me@me.com")
 
-        updateCollection(collectionId.value, UpdateCollectionRequest(description = "New Description"))
+        updateCollection(
+            collectionId = collectionId.value,
+            updateCollectionRequest = UpdateCollectionRequest(description = "New Description"),
+            requester = UserFactory.sample(id = "me@me.com")
+        )
 
         val event = fakeEventBus.getEventOfType(CollectionDescriptionChanged::class.java)
 
@@ -100,8 +117,9 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         val collectionId = saveCollection(owner = "me@me.com")
 
         updateCollection(
-            collectionId.value,
-            UpdateCollectionRequest(videos = listOf(firstVideoId.value, secondVideoId.value))
+            collectionId = collectionId.value,
+            updateCollectionRequest = UpdateCollectionRequest(videos = listOf(firstVideoId.value, secondVideoId.value)),
+            requester = UserFactory.sample(id = "me@me.com")
         )
 
         val event = fakeEventBus.getEventOfType(CollectionVideosBulkChanged::class.java)
@@ -115,10 +133,12 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     fun `throws error when user doesn't own the collection`() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 
-        setSecurityContext("attacker@example.com")
-
         assertThrows<CollectionAccessNotAuthorizedException> {
-            updateCollection(collectionId.value, UpdateCollectionRequest(title = "you have been pwned"))
+            updateCollection(
+                collectionId = collectionId.value,
+                updateCollectionRequest = UpdateCollectionRequest(title = "you have been pwned"),
+                requester = UserFactory.sample(id = "attacker@example.com")
+            )
         }
         assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("original title")
     }
@@ -130,7 +150,8 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         assertThrows<CollectionNotFoundException> {
             updateCollection(
                 collectionId = collectionId,
-                updateCollectionRequest = UpdateCollectionRequest(title = "new title")
+                updateCollectionRequest = UpdateCollectionRequest(title = "new title"),
+                requester = UserFactory.sample(id = "me@me.com")
             )
         }
     }

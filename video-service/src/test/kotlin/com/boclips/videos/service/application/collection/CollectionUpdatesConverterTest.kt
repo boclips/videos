@@ -10,6 +10,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.AttachmentRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -31,7 +32,7 @@ class CollectionUpdatesConverterTest {
 
     @Test
     fun `can handle null request`() {
-        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), null)
+        val commands = collectionUpdatesConverter.convert(CollectionId("testId"), null, UserFactory.sample())
 
         assertThat(commands).hasSize(0)
     }
@@ -39,7 +40,11 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `turn title change to command`() {
         val commands =
-            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(title = "some title"))
+            collectionUpdatesConverter.convert(
+                CollectionId("testId"),
+                UpdateCollectionRequest(title = "some title"),
+                UserFactory.sample()
+            )
 
         assertThat(commands.first()).isInstanceOf(CollectionUpdateCommand.RenameCollection::class.java)
         assertThat(commands).hasSize(1)
@@ -48,7 +53,11 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `change public visibility of collection to command`() {
         val commands =
-            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = true))
+            collectionUpdatesConverter.convert(
+                CollectionId("testId"),
+                UpdateCollectionRequest(isPublic = true),
+                UserFactory.sample()
+            )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(true)
@@ -58,7 +67,11 @@ class CollectionUpdatesConverterTest {
     @Test
     fun `change private visibility of collection to command`() {
         val commands =
-            collectionUpdatesConverter.convert(CollectionId("testId"), UpdateCollectionRequest(isPublic = false))
+            collectionUpdatesConverter.convert(
+                CollectionId("testId"),
+                UpdateCollectionRequest(isPublic = false),
+                UserFactory.sample()
+            )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
         assertThat(command.isPublic).isEqualTo(false)
@@ -70,7 +83,8 @@ class CollectionUpdatesConverterTest {
         val commands =
             collectionUpdatesConverter.convert(
                 CollectionId("testId"),
-                UpdateCollectionRequest(title = "some title", isPublic = true)
+                UpdateCollectionRequest(title = "some title", isPublic = true),
+                UserFactory.sample()
             )
 
         assertThat(commands).hasSize(2)
@@ -81,7 +95,8 @@ class CollectionUpdatesConverterTest {
         val commands =
             collectionUpdatesConverter.convert(
                 CollectionId("testId"),
-                UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5))
+                UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)),
+                UserFactory.sample()
             )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeAgeRange
@@ -98,7 +113,8 @@ class CollectionUpdatesConverterTest {
                     min = 18,
                     max = null
                 )
-            )
+            ),
+            UserFactory.sample()
         )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeAgeRange
@@ -115,7 +131,8 @@ class CollectionUpdatesConverterTest {
                     min = null,
                     max = null
                 )
-            )
+            ),
+            UserFactory.sample()
         )
 
         assertThat(commands).isEmpty()
@@ -127,7 +144,8 @@ class CollectionUpdatesConverterTest {
         whenever(subjectRepositoryMock.findById(any())).thenReturn(subject)
         val commands = collectionUpdatesConverter.convert(
             CollectionId("testId"),
-            UpdateCollectionRequest(subjects = setOf("SubjectOneId"))
+            UpdateCollectionRequest(subjects = setOf("SubjectOneId")),
+            UserFactory.sample()
         )
 
         assertThat(commands).hasSize(1)
@@ -143,7 +161,8 @@ class CollectionUpdatesConverterTest {
             CollectionId("testId"),
             UpdateCollectionRequest(
                 description = "New description"
-            )
+            ),
+            UserFactory.sample()
         )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeDescription
@@ -162,7 +181,8 @@ class CollectionUpdatesConverterTest {
             collectionId,
             UpdateCollectionRequest(
                 videos = listOf(firstId, secondId, thirdId)
-            )
+            ),
+            UserFactory.sample()
         )
 
         val command = commands.first() as CollectionUpdateCommand.BulkUpdateCollectionVideos
@@ -184,7 +204,8 @@ class CollectionUpdatesConverterTest {
                     description = "new description",
                     type = "LESSON_PLAN"
                 )
-            )
+            ),
+            UserFactory.sample()
         )
 
         val command = commands.first() as CollectionUpdateCommand.AddAttachment
@@ -198,14 +219,16 @@ class CollectionUpdatesConverterTest {
     fun `invalid attachment type throws an exception`() {
         assertThrows<InvalidAttachmentTypeException> {
             collectionUpdatesConverter.convert(
-            CollectionId("testId"),
-            UpdateCollectionRequest(
-                attachment = AttachmentRequest(
-                    linkToResource = "www.lesson-plan.com",
-                    description = "new description",
-                    type = "INVALID"
-                )
+                CollectionId("testId"),
+                UpdateCollectionRequest(
+                    attachment = AttachmentRequest(
+                        linkToResource = "www.lesson-plan.com",
+                        description = "new description",
+                        type = "INVALID"
+                    )
+                ),
+                UserFactory.sample()
             )
-        )}
+        }
     }
 }

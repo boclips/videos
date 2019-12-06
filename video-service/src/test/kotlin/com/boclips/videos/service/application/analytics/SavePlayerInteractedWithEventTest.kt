@@ -4,6 +4,7 @@ import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +28,7 @@ class SavePlayerInteractedWithEventTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `saves the event`() {
-        savePlayerInteractedWithEvent.execute(payload)
+        savePlayerInteractedWithEvent.execute(payload, UserFactory.sample())
 
         val firedEvent = fakeEventBus.getEventOfType(VideoPlayerInteractedWith::class.java)
 

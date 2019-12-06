@@ -65,12 +65,17 @@ class CollectionUpdates {
                 command.collectionId,
                 command.videoIds
             )
-            is CollectionUpdateCommand.Bookmark -> addToSet(CollectionDocument::bookmarks, command.userId.value)
-            is CollectionUpdateCommand.Unbookmark -> pull(CollectionDocument::bookmarks, command.userId.value)
+            is CollectionUpdateCommand.Bookmark -> addToSet(CollectionDocument::bookmarks, command.user.id)
+            is CollectionUpdateCommand.Unbookmark -> pull(CollectionDocument::bookmarks, command.user.id)
         }
     }
 
-    private fun replaceAttachment(collectionId: CollectionId, description: String?, linkToResource: String, type: AttachmentType): Bson {
+    private fun replaceAttachment(
+        collectionId: CollectionId,
+        description: String?,
+        linkToResource: String,
+        type: AttachmentType
+    ): Bson {
         logger.info { "Prepare replacing attachment for collection $collectionId" }
         return set(
             CollectionDocument::attachments, listOf(

@@ -1,11 +1,11 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,7 +24,7 @@ class AddVideoToCollectionTest : AbstractSpringIntegrationTest() {
         val collectionId = saveCollection(owner = "me@me.com")
         val videoId = saveVideo()
 
-        addVideoToCollection(collectionId.value, videoId.value)
+        addVideoToCollection(collectionId.value, videoId.value, UserFactory.sample(id = "me@me.com"))
 
         val collection = collectionRepository.find(CollectionId(collectionId.value))!!
         assertThat(collection.videos.map { it.value }).containsExactly(videoId.value)
@@ -35,10 +35,8 @@ class AddVideoToCollectionTest : AbstractSpringIntegrationTest() {
         val collectionId = saveCollection(owner = "me@me.com")
         val videoId = saveVideo()
 
-        setSecurityContext("attacker@example.com")
-
         assertThrows<CollectionAccessNotAuthorizedException> {
-            addVideoToCollection(collectionId.value, videoId.value)
+            addVideoToCollection(collectionId.value, videoId.value, UserFactory.sample(id = "attacker@example.com"))
         }
     }
 
@@ -47,7 +45,7 @@ class AddVideoToCollectionTest : AbstractSpringIntegrationTest() {
         val collectionId = saveCollection(owner = "me@me.com")
         val videoId = saveVideo()
 
-        addVideoToCollection(collectionId.value, videoId.value)
+        addVideoToCollection(collectionId.value, videoId.value, UserFactory.sample(id = "me@me.com"))
 
         val event = fakeEventBus.getEventOfType(VideoAddedToCollection::class.java)
 

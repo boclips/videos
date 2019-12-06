@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.security.utils.User
 import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
@@ -155,23 +156,23 @@ class MongoCollectionRepository(
     }
 
     private fun bsonMetadataUpdate(commands: List<CollectionUpdateCommand>): List<Bson> {
-        return if(commands.any { shouldSetUpdatedTime(it) })
+        return if (commands.any { shouldSetUpdatedTime(it) })
             listOf(set(CollectionDocument::updatedAt, Instant.now()))
         else
             emptyList()
     }
 
     private fun shouldSetUpdatedTime(command: CollectionUpdateCommand): Boolean {
-        return when(command) {
+        return when (command) {
             is CollectionUpdateCommand.Bookmark -> false
             is CollectionUpdateCommand.Unbookmark -> false
             else -> true
         }
     }
 
-    override fun delete(id: CollectionId) {
+    override fun delete(id: CollectionId, user: User) {
         dbCollection().deleteOne(CollectionDocument::id eq ObjectId(id.value))
-        logger.info { "Deleted collection $id" }
+        logger.info { "User $user deleted collection $id" }
     }
 
     private fun getPagedCollections(

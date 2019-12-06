@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.collection
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -11,6 +10,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -30,8 +30,7 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
         assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
 
-        setSecurityContext("me@me.com")
-        unbookmarkCollection(collectionId.value)
+        unbookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
         assertThat(collectionRepository.find(collectionId)!!.bookmarks).isEmpty()
     }
@@ -42,8 +41,7 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
         assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
 
-        setSecurityContext("me@me.com")
-        unbookmarkCollection(collectionId.value)
+        unbookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
         assertThat(
             collectionSearchService.search(
@@ -58,22 +56,20 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when collection doesn't exist`() {
-        setSecurityContext("me@me.com")
         assertThrows<CollectionNotFoundException> {
             unbookmarkCollection(
-                collectionId = TestFactories.aValidId()
+                collectionId = TestFactories.aValidId(),
+                requester = UserFactory.sample(id = "me@me.com")
             )
         }
     }
 
     @Test
     fun `throws error when user owns the collection`() {
-        setSecurityContext("owner@example.com")
-
         val collectionId = saveCollection(owner = "owner@example.com", public = true)
 
         assertThrows<CollectionIllegalOperationException> {
-            unbookmarkCollection(collectionId.value)
+            unbookmarkCollection(collectionId.value, UserFactory.sample(id = "owner@example.com"))
         }
 
         val collection = collectionRepository.find(collectionId)
@@ -84,9 +80,8 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
     fun `throws error when collection is not public`() {
         val collectionId = saveCollection(owner = "owner@example.com", public = false)
 
-        setSecurityContext("me@me.com")
         assertThrows<CollectionAccessNotAuthorizedException> {
-            unbookmarkCollection(collectionId.value)
+            unbookmarkCollection(collectionId.value, UserFactory.sample(id = "another-owner@example.com"))
         }
 
         val collection = collectionRepository.find(collectionId)
@@ -97,8 +92,7 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
     fun `logs an event`() {
         val collectionId = saveCollection(owner = "owner@example.com", public = true, bookmarkedBy = "me@me.com")
 
-        setSecurityContext("me@me.com")
-        unbookmarkCollection(collectionId.value)
+        unbookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
         val event = fakeEventBus.getEventOfType(CollectionBookmarkChanged::class.java)
 

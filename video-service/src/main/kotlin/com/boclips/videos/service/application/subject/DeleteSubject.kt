@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.subject
 
+import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
@@ -12,13 +13,14 @@ class DeleteSubject(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService
 ) {
-    operator fun invoke(subjectId: SubjectId) {
+    operator fun invoke(subjectId: SubjectId, user: User) {
         subjectRepository.delete(subjectId)
 
         collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subjectId), { collection ->
             CollectionUpdateCommand.RemoveSubjectFromCollection(
                 collectionId = collection.id,
-                subjectId = subjectId
+                subjectId = subjectId,
+                user = user
             )
         }, { updateResult ->
             collectionSearchService.upsert(sequenceOf(updateResult.collection))

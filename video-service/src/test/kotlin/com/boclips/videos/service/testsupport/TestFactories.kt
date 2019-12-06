@@ -237,7 +237,7 @@ object TestFactories {
         createdByBoclips = createdByBoclips,
         bookmarks = bookmarks,
         subjects = subjects,
-        ageRange = AgeRange.bounded(ageRangeMin,ageRangeMax),
+        ageRange = AgeRange.bounded(ageRangeMin, ageRangeMax),
         description = description,
         attachments = attachments
     )
@@ -245,7 +245,11 @@ object TestFactories {
     fun createCollectionUpdateResult(
         collectionId: CollectionId = CollectionId(aValidId()),
         collection: Collection = createCollection(id = collectionId),
-        command: CollectionUpdateCommand = CollectionUpdateCommand.RenameCollection(collectionId, "collection title")
+        command: CollectionUpdateCommand = CollectionUpdateCommand.RenameCollection(
+            collectionId,
+            "collection title",
+            UserFactory.sample()
+        )
     ): CollectionUpdateResult {
         return CollectionUpdateResult(
             collection = collection,
@@ -562,9 +566,13 @@ object AccessRuleFactory {
 }
 
 object UserFactory {
-    fun sample(roles: Set<String> = emptySet(), id: String = "some-id"): User {
+    fun sample(
+        roles: Set<String> = emptySet(),
+        id: String = "some-id",
+        boclipsEmployee: Boolean = false
+    ): User {
         return User(
-            boclipsEmployee = true,
+            boclipsEmployee = boclipsEmployee,
             id = id,
             authorities = roles.map { "ROLE_$it" }.toSet()
         )

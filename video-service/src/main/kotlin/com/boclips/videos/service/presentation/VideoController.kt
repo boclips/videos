@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
@@ -89,19 +90,20 @@ class VideoController(
             sortBy = sortBy,
             includeTags = includeTags?.let { includeTags } ?: emptyList(),
             excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
+            minDuration = minDuration,
+            maxDuration = maxDuration,
             releasedDateFrom = releasedDateFrom,
             releasedDateTo = releasedDateTo,
             pageSize = pageSize,
             pageNumber = pageNumber,
-            minDuration = minDuration,
-            maxDuration = maxDuration,
             source = source,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             subjects = subjects ?: emptySet(),
             promoted = promoted,
             contentPartnerNames = contentPartners ?: emptySet(),
-            type = type?.let { type } ?: emptySet()
+            type = type?.let { type } ?: emptySet(),
+            user = getCurrentUser()
         )
 
         return ResponseEntity(
@@ -149,7 +151,7 @@ class VideoController(
 
     @DeleteMapping("/{id}")
     fun removeVideo(@PathVariable("id") id: String?) {
-        deleteVideo(id)
+        deleteVideo(id, getCurrentUser())
     }
 
     @GetMapping("/{id}/transcript")
@@ -214,7 +216,7 @@ class VideoController(
 
     @PatchMapping(path = ["/{id}"], params = ["rating"])
     fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
-        rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id)).let { this.getVideo(id) }
+        rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id), requester = getCurrentUser()).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}"], params = ["!rating"])
     fun patchVideo(
@@ -223,9 +225,9 @@ class VideoController(
         @RequestParam(required = false) description: String?,
         @RequestParam(required = false) promoted: Boolean?
     ) =
-        updateVideo(id, title, description, promoted).let { this.getVideo(id) }
+        updateVideo(id, title, description, promoted, getCurrentUser()).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}/tags"])
     fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
-        tagVideo(TagVideoRequest(id, tagUrl)).let { this.getVideo(id) }
+        tagVideo(TagVideoRequest(id, tagUrl), getCurrentUser()).let { this.getVideo(id) }
 }

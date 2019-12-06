@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.exceptions.SubjectExistsException
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -60,7 +61,7 @@ class SubjectController(
 
     @DeleteMapping("/{id}")
     fun removeSubjects(@PathVariable id: String): ResponseEntity<Void> {
-        deleteSubject(SubjectId(value = id))
+        deleteSubject(SubjectId(value = id), getCurrentUser())
         return ResponseEntity(HttpStatus.OK)
     }
 

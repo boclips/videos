@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,13 +31,18 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             public = true
         )
 
-        val collection = createCollection(createRequest)
+        val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
         val collections = collectionService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibilityForOwners = setOf(VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())),
+                visibilityForOwners = setOf(
+                    VisibilityForOwner(
+                        owner = null,
+                        visibility = CollectionVisibilityQuery.publicOnly()
+                    )
+                ),
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
@@ -54,13 +60,18 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             public = false
         )
 
-        val collection = createCollection(createRequest)
+        val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
         val collections = collectionService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibilityForOwners = setOf(VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.privateOnly())),
+                visibilityForOwners = setOf(
+                    VisibilityForOwner(
+                        owner = null,
+                        visibility = CollectionVisibilityQuery.privateOnly()
+                    )
+                ),
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
@@ -77,13 +88,18 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             title = "title"
         )
 
-        createCollection(createRequest)
+        createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
         val collections = collectionService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibilityForOwners = setOf(VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.privateOnly())),
+                visibilityForOwners = setOf(
+                    VisibilityForOwner(
+                        owner = null,
+                        visibility = CollectionVisibilityQuery.privateOnly()
+                    )
+                ),
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
@@ -97,7 +113,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     @WithMockUser("user@boclips.com")
     fun `flags collections by Boclips employees`() {
         val createRequest = TestFactories.createCollectionRequest(title = "title", videos = emptyList())
-        val collection = createCollection(createRequest)
+        val collection =
+            createCollection(createRequest, UserFactory.sample(id = "some@teacher.com", boclipsEmployee = true))
 
         assertThat(collection.createdByBoclips).isTrue()
     }
@@ -109,7 +126,12 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             videos = listOf("http://localhost/v1/videos/a-video")
         )
 
-        assertThrows<NonNullableFieldCreateRequestException> { createCollection(createRequest) }
+        assertThrows<NonNullableFieldCreateRequestException> {
+            createCollection(
+                createRequest,
+                UserFactory.sample(id = "some@teacher.com")
+            )
+        }
     }
 
     @Test
@@ -118,7 +140,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
         val createRequest =
             TestFactories.createCollectionRequest(title = "test title", description = description)
 
-        val collection = createCollection(createRequest)
+        val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
         assertThat(collection.description).isEqualTo(description)
     }

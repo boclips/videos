@@ -20,8 +20,8 @@ import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
+import com.boclips.security.utils.User
 import com.boclips.videos.service.common.Do
-import com.boclips.videos.service.config.application.UserContext
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
@@ -30,51 +30,48 @@ import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.presentation.RefererHeaderExtractor
 
-class EventService(val eventBus: EventBus, private val userContext: UserContext) {
+class EventService(val eventBus: EventBus) {
     fun saveSearchEvent(
         query: String,
         pageIndex: Int,
         pageSize: Int,
         totalResults: Long,
-        pageVideoIds: List<String>
+        pageVideoIds: List<String>,
+        user: User
     ) {
         eventBus.publish(
             msg(
-                VideosSearched.builder()
+                builder = VideosSearched.builder()
                     .query(query)
                     .pageIndex(pageIndex)
                     .pageSize(pageSize)
                     .totalResults(totalResults)
-                    .pageVideoIds(pageVideoIds)
+                    .pageVideoIds(pageVideoIds),
+                userId = user.id
+            )
+        )
+    }
+
+    fun saveCollectionCreatedEvent(collection: Collection) {
+        eventBus.publish(CollectionCreated(EventConverter().toCollectionPayload(collection)))
+    }
+
+    fun saveCollectionDeletedEvent(collectionId: CollectionId, user: User) {
+        eventBus.publish(
+            msg(
+                builder = CollectionDeleted.builder()
+                    .collectionId(collectionId.value),
+                userId = user.id
             )
         )
     }
 
     fun saveUpdateCollectionEvent(updateResult: CollectionUpdateResult) {
         val collection = updateResult.collection
-        eventBus.publish(
-            CollectionUpdated(
-                EventConverter().toCollectionPayload(collection)
-            )
-        )
+
+        eventBus.publish(CollectionUpdated(EventConverter().toCollectionPayload(collection)))
+
         updateResult.commands.forEach { saveUpdateCollectionEvent(it, collection) }
-    }
-
-    fun saveCollectionCreatedEvent(collection: Collection) {
-        eventBus.publish(
-            CollectionCreated(
-                EventConverter().toCollectionPayload(collection)
-            )
-        )
-    }
-
-    fun saveCollectionDeletedEvent(collectionId: CollectionId) {
-        eventBus.publish(
-            msg(
-                CollectionDeleted.builder()
-                    .collectionId(collectionId.value)
-            )
-        )
     }
 
     private fun saveUpdateCollectionEvent(updateCommand: CollectionUpdateCommand, collection: Collection) {
@@ -82,88 +79,97 @@ class EventService(val eventBus: EventBus, private val userContext: UserContext)
             is CollectionUpdateCommand.AddVideoToCollection ->
                 eventBus.publish(
                     msg(
-                        VideoAddedToCollection.builder()
+                        builder = VideoAddedToCollection.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .videoId(updateCommand.videoId.value)
+                            .videoId(updateCommand.videoId.value),
+                        userId = updateCommand.user.id
                     )
                 )
             is CollectionUpdateCommand.RemoveVideoFromCollection ->
                 eventBus.publish(
                     msg(
-                        VideoRemovedFromCollection.builder()
+                        builder = VideoRemovedFromCollection.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .videoId(updateCommand.videoId.value)
+                            .videoId(updateCommand.videoId.value),
+                        userId = updateCommand.user.id
                     )
                 )
             is CollectionUpdateCommand.RenameCollection ->
                 eventBus.publish(
                     msg(
-                        CollectionRenamed.builder()
+                        builder = CollectionRenamed.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .collectionTitle(updateCommand.title)
+                            .collectionTitle(updateCommand.title),
+                        userId = updateCommand.user.id
                     )
                 )
             is CollectionUpdateCommand.ChangeVisibility ->
                 eventBus.publish(
                     msg(
-                        CollectionVisibilityChanged.builder()
+                        builder = CollectionVisibilityChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .isPublic(updateCommand.isPublic)
+                            .isPublic(updateCommand.isPublic),
+                        userId = updateCommand.user.id
                     )
                 )
             is CollectionUpdateCommand.ReplaceSubjects, is CollectionUpdateCommand.RemoveSubjectFromCollection ->
                 eventBus.publish(
                     msg(
-                        CollectionSubjectsChanged.builder()
+                        builder = CollectionSubjectsChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .subjects(collection.subjects.map { it.id.value }.toMutableSet())
+                            .subjects(collection.subjects.map { it.id.value }.toMutableSet()),
+                        userId = updateCommand.user.id
                     )
                 )
             is CollectionUpdateCommand.ChangeAgeRange ->
                 eventBus.publish(
                     msg(
-                        CollectionAgeRangeChanged.builder()
+                        builder = CollectionAgeRangeChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
                             .rangeMin(updateCommand.minAge)
-                            .rangeMax(updateCommand.maxAge)
+                            .rangeMax(updateCommand.maxAge),
+                        userId = updateCommand.user.id
                     )
                 )
 
             is CollectionUpdateCommand.ChangeDescription -> eventBus.publish(
                 msg(
-                    CollectionDescriptionChanged.builder()
+                    builder = CollectionDescriptionChanged.builder()
                         .collectionId(updateCommand.collectionId.value)
-                        .description(updateCommand.description)
+                        .description(updateCommand.description),
+                    userId = updateCommand.user.id
                 )
             )
-
-            is CollectionUpdateCommand.AddAttachment -> null// no event as this cannot be done in the app just yet
+            is CollectionUpdateCommand.AddAttachment -> null
             is CollectionUpdateCommand.BulkUpdateCollectionVideos -> eventBus.publish(
                 msg(
-                    CollectionVideosBulkChanged.builder()
+                    builder = CollectionVideosBulkChanged.builder()
                         .collectionId(updateCommand.collectionId.value)
-                        .videoIds(updateCommand.videoIds.map { it.value })
+                        .videoIds(updateCommand.videoIds.map { it.value }),
+                    userId = updateCommand.user.id
                 )
             )
             is CollectionUpdateCommand.Bookmark -> eventBus.publish(
                 msg(
-                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(true)
+                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(true),
+                    userId = updateCommand.user.id
                 )
             )
             is CollectionUpdateCommand.Unbookmark -> eventBus.publish(
                 msg(
-                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(
-                        false
-                    )
+                    builder = CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value)
+                        .isBookmarked(false),
+                    userId = updateCommand.user.id
                 )
             )
         }
     }
 
-    fun publishVideoInteractedWithEvent(videoId: VideoId, subtype: String) {
+    fun publishVideoInteractedWithEvent(videoId: VideoId, subtype: String, user: User) {
         eventBus.publish(
             msg(
-                VideoInteractedWith.builder().videoId(videoId.value).subtype(subtype)
+                builder = VideoInteractedWith.builder().videoId(videoId.value).subtype(subtype),
+                userId = user.id
             )
         )
     }
@@ -173,16 +179,18 @@ class EventService(val eventBus: EventBus, private val userContext: UserContext)
         videoIndex: Int?,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
-        playbackDevice: String?
+        playbackDevice: String?,
+        user: User
     ) {
         eventBus.publish(
             msg(
-                VideoSegmentPlayed.builder()
+                builder = VideoSegmentPlayed.builder()
                     .videoId(videoId.value)
                     .videoIndex(videoIndex)
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
-                    .playbackDevice(playbackDevice)
+                    .playbackDevice(playbackDevice),
+                userId = user.id
             )
         )
     }
@@ -191,32 +199,42 @@ class EventService(val eventBus: EventBus, private val userContext: UserContext)
         videoId: VideoId,
         currentTime: Long,
         subtype: String,
-        payload: Map<String, Any>
+        payload: Map<String, Any>,
+        user: User
     ) {
         eventBus.publish(
             msg(
-                VideoPlayerInteractedWith.builder()
+                builder = VideoPlayerInteractedWith.builder()
                     .videoId(videoId.value)
                     .currentTime(currentTime)
                     .subtype(subtype)
-                    .payload(payload)
+                    .payload(payload),
+                userId = user.id
             )
         )
     }
 
-    fun saveCollectionInteractedWithEvent(collectionId: String, subtype: CollectionInteractionType) {
+    fun saveCollectionInteractedWithEvent(
+        collectionId: String,
+        subtype: CollectionInteractionType,
+        user: User
+    ) {
         eventBus.publish(
             msg(
                 CollectionInteractedWith.builder()
                     .collectionId(collectionId)
-                    .subtype(subtype)
+                    .subtype(subtype),
+                user.id
             )
         )
     }
 
-    private fun msg(builder: AbstractEventWithUserId.AbstractEventWithUserIdBuilder<*, *>): AbstractEventWithUserId {
+    private fun msg(
+        builder: AbstractEventWithUserId.AbstractEventWithUserIdBuilder<*, *>,
+        userId: String
+    ): AbstractEventWithUserId {
         return builder
-            .userId(userContext.getUser().value)
+            .userId(userId)
             .url(RefererHeaderExtractor.getReferer())
             .build()
     }

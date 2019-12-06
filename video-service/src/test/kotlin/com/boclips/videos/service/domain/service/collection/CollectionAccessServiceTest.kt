@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
@@ -72,8 +71,6 @@ class CollectionAccessServiceTest {
 
     @Test
     fun `allows any teacher to access public collection`() {
-        setSecurityContext("nosey@example.com")
-
         val publicCollection = TestFactories.createCollection(owner = "owner@example.com", isPublic = true)
 
         collectionRepository = mock {

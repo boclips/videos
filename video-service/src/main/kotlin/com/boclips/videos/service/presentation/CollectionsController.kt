@@ -11,6 +11,7 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
@@ -67,7 +68,7 @@ class CollectionsController(
         val size: Int? = null,
         val projection: Projection = Projection.list,
         private val subject: String? = null
-    ){
+    ) {
         val subjects = subject?.split(",") ?: emptyList()
     }
 
@@ -76,7 +77,7 @@ class CollectionsController(
         collectionsRequest: CollectionsRequest
     ): MappingJacksonValue {
         val user = UserExtractor.getCurrentUser()
-        val userLabel = user?.let {"User with ID '${it.id}'"} ?: "Anonymous user"
+        val userLabel = user?.let { "User with ID '${it.id}'" } ?: "Anonymous user"
         logger.info { "$userLabel is requesting filtered collections. Request is \n$collectionsRequest" }
 
         val accessRule = user?.let { accessRuleService.getRules(it) }
@@ -108,7 +109,7 @@ class CollectionsController(
 
     @PostMapping
     fun postCollection(@Valid @RequestBody createCollectionRequest: CreateCollectionRequest): ResponseEntity<Void> {
-        val collection = createCollection(createCollectionRequest)
+        val collection = createCollection(createCollectionRequest, getCurrentUser())
         val headers = HttpHeaders().apply {
             set(HttpHeaders.LOCATION, collectionsLinkBuilder.collection(collection.id.value)?.href)
         }
@@ -117,25 +118,25 @@ class CollectionsController(
 
     @PatchMapping("/{id}")
     fun patchCollection(@PathVariable("id") id: String, @Valid @RequestBody request: UpdateCollectionRequest?): ResponseEntity<Void> {
-        updateCollection(id, request)
+        updateCollection(id, request, getCurrentUser())
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @PatchMapping("/{id}", params = ["bookmarked=true"])
     fun patchBookmarkCollection(@PathVariable("id") id: String): MappingJacksonValue {
-        bookmarkCollection(id)
+        bookmarkCollection(id, getCurrentUser())
         return this.show(id)
     }
 
     @PatchMapping("/{id}", params = ["bookmarked=false"])
     fun patchUnbookmarkCollection(@PathVariable("id") id: String): MappingJacksonValue {
-        unbookmarkCollection(id)
+        unbookmarkCollection(id, getCurrentUser())
         return this.show(id)
     }
 
     @DeleteMapping("/{id}")
     fun removeCollection(@PathVariable("id") id: String): ResponseEntity<Void> {
-        deleteCollection(id)
+        deleteCollection(id, getCurrentUser())
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
@@ -143,19 +144,19 @@ class CollectionsController(
     fun show(
         @PathVariable("id") id: String,
         @RequestParam(required = false) projection: Projection? = Projection.list
-    ) = withProjection(wrapCollection(getCollection(id, projection ?: Projection.list)))
+    ) = withProjection(wrapCollection(getCollection(id, projection ?: Projection.list, getCurrentUser())))
 
     @PutMapping("/{collection_id}/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun addVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
-        addVideoToCollection(collectionId = collectionId, videoId = videoId)
+        addVideoToCollection(collectionId = collectionId, videoId = videoId, requester = getCurrentUser())
 
         return null
     }
 
     @DeleteMapping("/{collection_id}/videos/{video_id}")
     fun removeVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): ResponseEntity<Void> {
-        removeVideoFromCollection(collectionId, videoId)
+        removeVideoFromCollection(collectionId, videoId, getCurrentUser())
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 

@@ -1,12 +1,11 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,8 +16,6 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `finding collection by ID with the list projection`() {
-        setSecurityContext("me@me.com")
-
         val savedVideoId = saveVideo()
         val savedCollectionId = saveCollection(
             owner = "me@me.com",
@@ -26,7 +23,8 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
             videos = listOf(savedVideoId.value)
         )
 
-        val retrievedCollection = getCollection.invoke(savedCollectionId.value, Projection.list)
+        val retrievedCollection =
+            getCollection.invoke(savedCollectionId.value, Projection.list, UserFactory.sample(id = "me@me.com"))
 
         assertThat(retrievedCollection.id).isEqualTo(savedCollectionId.value)
         assertThat(retrievedCollection.videos).isNotEmpty
@@ -38,8 +36,6 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `finding collection by ID with the details projection`() {
-        setSecurityContext("me@me.com")
-
         val savedVideoId = saveVideo()
         val savedCollectionId = saveCollection(
             owner = "me@me.com",
@@ -47,7 +43,8 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
             videos = listOf(savedVideoId.value)
         )
 
-        val retrievedCollection = getCollection.invoke(savedCollectionId.value, Projection.details)
+        val retrievedCollection =
+            getCollection.invoke(savedCollectionId.value, Projection.details, UserFactory.sample(id = "me@me.com"))
 
         assertThat(retrievedCollection.id).isEqualTo(savedCollectionId.value)
         assertThat(retrievedCollection.videos).isNotEmpty
@@ -59,18 +56,26 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `propagates CollectionNotFound error thrown from downstream`() {
-        assertThrows<CollectionNotFoundException> { getCollection(collectionId = "123") }
+        assertThrows<CollectionNotFoundException> {
+            getCollection(
+                collectionId = "123",
+                requester = UserFactory.sample()
+            )
+        }
     }
 
     @Test
     fun `propagates the CollectionAccessNotAuthorizedException error thrown from downstream`() {
-        setSecurityContext("attacker@example.com")
-
         val savedCollectionId = saveCollection(
             owner = "me@me.com",
             public = false
         )
 
-        assertThrows<CollectionAccessNotAuthorizedException> { getCollection(savedCollectionId.value) }
+        assertThrows<CollectionAccessNotAuthorizedException> {
+            getCollection(
+                savedCollectionId.value,
+                requester = UserFactory.sample(id = "attacker@example.com")
+            )
+        }
     }
 }

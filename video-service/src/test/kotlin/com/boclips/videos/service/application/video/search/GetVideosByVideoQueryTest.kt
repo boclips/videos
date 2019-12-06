@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -28,7 +29,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             includeTags = emptyList(),
             excludeTags = emptyList(),
             pageSize = 2,
-            pageNumber = 1
+            pageNumber = 1,
+            user = UserFactory.sample()
         )
 
         assertThat(result.pageInfo.totalElements).isEqualTo(1)
@@ -42,7 +44,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 includeTags = emptyList(),
                 excludeTags = emptyList(),
                 pageSize = 1000,
-                pageNumber = 0
+                pageNumber = 0,
+                user = UserFactory.sample()
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -55,7 +58,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 includeTags = emptyList(),
                 excludeTags = emptyList(),
                 pageSize = 0,
-                pageNumber = 0
+                pageNumber = 0,
+                user = UserFactory.sample()
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -68,7 +72,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 includeTags = emptyList(),
                 excludeTags = emptyList(),
                 pageSize = 0,
-                pageNumber = -1
+                pageNumber = -1,
+                user = UserFactory.sample()
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -97,7 +102,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             includeTags = emptyList(),
             excludeTags = emptyList(),
             pageSize = 2,
-            pageNumber = 1
+            pageNumber = 1,
+            user = UserFactory.sample()
         )
 
         assertThat(result.elements).hasSize(1)
@@ -114,7 +120,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             includeTags = listOf("classroom"),
             excludeTags = emptyList(),
             pageSize = 2,
-            pageNumber = 0
+            pageNumber = 0,
+            user = UserFactory.sample()
         )
 
         assertThat(videos.elements).hasSize(1)
@@ -131,7 +138,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             includeTags = listOf("news"),
             excludeTags = emptyList(),
             pageSize = 2,
-            pageNumber = 0
+            pageNumber = 0,
+            user = UserFactory.sample()
         )
 
         assertThat(videos.elements).hasSize(1)
@@ -149,7 +157,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             includeTags = listOf("news", "classroom"),
             excludeTags = emptyList(),
             pageSize = 2,
-            pageNumber = 0
+            pageNumber = 0,
+            user = UserFactory.sample()
         )
 
         assertThat(videos.elements.map { it.videoId.value }).containsExactly(newsAndClassroomVideoId.value)
@@ -166,7 +175,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             includeTags = emptyList(),
             excludeTags = emptyList(),
             pageSize = 2,
-            pageNumber = 1
+            pageNumber = 1,
+            user = UserFactory.sample()
         )
 
         val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
@@ -186,7 +196,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             minDuration = "PT0S",
             maxDuration = "PT10S",
             pageSize = 20,
-            pageNumber = 0
+            pageNumber = 0,
+            user = UserFactory.sample()
         )
 
         assertThat(videos.pageInfo.totalElements).isEqualTo(2)
@@ -212,7 +223,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             excludeTags = emptyList(),
             pageSize = 20,
             pageNumber = 0,
-            source = "youtube"
+            source = "youtube",
+            user = UserFactory.sample()
         )
 
         assertThat(results.pageInfo.totalElements).isEqualTo(1)

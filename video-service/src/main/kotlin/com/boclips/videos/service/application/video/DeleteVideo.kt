@@ -1,9 +1,10 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.security.utils.User
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
@@ -19,7 +20,7 @@ class DeleteVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(id: String?) {
+    operator fun invoke(id: String?, user: User) {
         if (id == null || id.isBlank()) {
             throw VideoNotFoundException()
         }
@@ -27,10 +28,10 @@ class DeleteVideo(
         val videoId = VideoId(value = id)
         val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
-        removeVideo(video)
+        removeVideo(video, user)
     }
 
-    private fun removeVideo(video: Video) {
+    private fun removeVideo(video: Video, user: User) {
         val videoIdToBeDeleted = video.videoId
 
         videoSearchService.removeFromSearch(videoIdToBeDeleted.value)
@@ -42,7 +43,8 @@ class DeleteVideo(
         collectionRepository.streamUpdate(CollectionFilter.HasVideoId(video.videoId), { collection ->
             CollectionUpdateCommand.RemoveVideoFromCollection(
                 collectionId = collection.id,
-                videoId = video.videoId
+                videoId = video.videoId,
+                user = user
             )
         })
         logger.info { "Removed video from collections" }

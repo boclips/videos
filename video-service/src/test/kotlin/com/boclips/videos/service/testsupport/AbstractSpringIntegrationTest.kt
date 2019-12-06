@@ -12,13 +12,10 @@ import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.security.testing.setSecurityContext
-import com.boclips.security.utils.UserExtractor
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
@@ -215,7 +212,6 @@ abstract class AbstractSpringIntegrationTest {
         ),
         subjectIds: Set<String> = setOf()
     ): VideoId {
-        val user = getCurrentUser()
         val retrievedContentPartnerId = try {
             createContentPartner(
                 ContentPartnerRequest(
@@ -224,7 +220,7 @@ abstract class AbstractSpringIntegrationTest {
                 )
             ).contentPartnerId.value
         } catch (e: ContentPartnerConflictException) {
-            getContentPartners.invoke(user = user, name = contentProvider).firstOrNull()?.content?.id
+            getContentPartners.invoke(user = UserFactory.sample(), name = contentProvider).firstOrNull()?.content?.id
         }
 
         when (playbackId.type) {
@@ -308,25 +304,29 @@ abstract class AbstractSpringIntegrationTest {
         bookmarkedBy: String? = null,
         subjects: Set<Subject> = emptySet()
     ): CollectionId {
-        val currentUser = UserExtractor.getCurrentUserIfNotAnonymous()
+        val user = UserFactory.sample(id = owner)
 
-        setSecurityContext(owner)
-
-        val collectionId = createCollection(TestFactories.createCollectionRequest(title = title, videos = videos)).id
+        val collectionId = createCollection(
+            createCollectionRequest = TestFactories.createCollectionRequest(title = title, videos = videos),
+            requester = user
+        ).id
 
         updateCollection(
-            collectionId.value,
-            UpdateCollectionRequest(isPublic = public, subjects = subjects.map { it.id.value }.toSet())
+            collectionId = collectionId.value,
+            updateCollectionRequest = UpdateCollectionRequest(
+                isPublic = public,
+                subjects = subjects.map { it.id.value }.toSet()
+            ),
+            requester = user
         )
 
         bookmarkedBy?.let {
-            setSecurityContext(it)
-            bookmarkCollection(collectionId.value)
+            bookmarkCollection(collectionId = collectionId.value, user = UserFactory.sample(id = it))
         }
 
         fakeEventBus.clearState()
 
-        return collectionId.also { setSecurityContext(currentUser?.id ?: owner) }
+        return collectionId
     }
 
     fun saveContentPartner(

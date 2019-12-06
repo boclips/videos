@@ -1,11 +1,12 @@
 package com.boclips.videos.service.application.analytics
 
+import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
 
 class SavePlayerInteractedWithEvent(val eventService: EventService) {
-    fun execute(event: CreatePlayerInteractedWithEvent?) {
+    fun execute(event: CreatePlayerInteractedWithEvent?, user: User) {
 
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
@@ -14,7 +15,8 @@ class SavePlayerInteractedWithEvent(val eventService: EventService) {
             videoId = VideoId(event.videoId!!),
             currentTime = event.currentTime!!,
             subtype = event.subtype!!,
-            payload = event.payload!!
+            payload = event.payload!!,
+            user = user
         )
     }
 }

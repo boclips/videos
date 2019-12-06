@@ -1,7 +1,6 @@
 package com.boclips.videos.service.client
 
 import com.boclips.kalturaclient.media.MediaEntryStatus
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.InvalidCollectionRequestException
@@ -14,6 +13,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.within
@@ -457,16 +457,22 @@ internal abstract class VideoServiceClientContractTest : AbstractVideoServiceCli
     @Test
     fun `fetch another users collections`() {
         val videoId = saveVideo()
+        val user = UserFactory.sample(id = "anotheruser@boclips.com")
 
-        setSecurityContext("anotheruser@boclips.com")
         val collection = createCollection(
-            CreateCollectionRequest(
+            createCollectionRequest = CreateCollectionRequest(
                 title = "another user's collection",
                 videos = listOf(videoId.value)
-            )
+            ),
+            requester = user
         )
+
         val cookingSubject = subjectRepository.create("Cooking")
-        updateCollection(collection.id.value, UpdateCollectionRequest(subjects = setOf(cookingSubject.id.value)))
+        updateCollection(
+            collectionId = collection.id.value,
+            updateCollectionRequest = UpdateCollectionRequest(subjects = setOf(cookingSubject.id.value)),
+            requester = user
+        )
 
         val collections: List<Collection> = getClient().getCollectionsByOwner("anotheruser@boclips.com")
 
@@ -565,12 +571,27 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
 
         val videoId = saveVideo()
 
-        setSecurityContext("user@boclips.com")
-        createCollection(CreateCollectionRequest(title = "first collection", videos = listOf(videoId.value))).apply {
-            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf(mathsSubject.id.value)))
+        val user = UserFactory.sample(id = "user@boclips.com")
+
+        createCollection(
+            createCollectionRequest = CreateCollectionRequest(title = "first collection", videos = listOf(videoId.value)),
+            requester = user
+        ).apply {
+            updateCollection(
+                collectionId = this.id.value,
+                updateCollectionRequest = UpdateCollectionRequest(subjects = setOf(mathsSubject.id.value)),
+                requester = user
+            )
         }
-        createCollection(CreateCollectionRequest(title = "second collection", videos = listOf(videoId.value))).apply {
-            updateCollection(this.id.value, UpdateCollectionRequest(subjects = setOf(frenchSubject.id.value)))
+        createCollection(
+            createCollectionRequest = CreateCollectionRequest(title = "second collection", videos = listOf(videoId.value)),
+            requester = user
+        ).apply {
+            updateCollection(
+                collectionId = this.id.value,
+                updateCollectionRequest = UpdateCollectionRequest(subjects = setOf(frenchSubject.id.value)),
+                requester = user
+            )
         }
     }
 
@@ -587,14 +608,16 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
             CreateCollectionRequest(
                 title = "First Contracted Collection",
                 videos = listOf(videoId.value)
-            )
+            ),
+            UserFactory.sample(id = "bob@alice.com")
         )
 
         val secondCollection = createCollection(
             CreateCollectionRequest(
                 title = "Second Contracted Collection",
                 videos = listOf(videoId.value)
-            )
+            ),
+            UserFactory.sample(id = "bob@alice.com")
         )
 
         userServiceClient.addContract(SelectedContentContract().apply {

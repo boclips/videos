@@ -4,6 +4,7 @@ import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,7 +23,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `saves the event`() {
-        savePlaybackEvent.execute(payload, playbackDevice = null)
+        savePlaybackEvent.execute(payload, playbackDevice = null, user = UserFactory.sample())
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 

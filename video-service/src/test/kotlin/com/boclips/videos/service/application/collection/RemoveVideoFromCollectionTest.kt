@@ -1,10 +1,10 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -25,7 +25,7 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
 
         assertThat(collectionRepository.find(collectionId)?.videos).isNotEmpty
 
-        removeVideoFromCollection(collectionId.value, videoId.value)
+        removeVideoFromCollection(collectionId.value, videoId.value, UserFactory.sample(id = "owner@collections.com"))
 
         assertThat(collectionRepository.find(collectionId)?.videos).isEmpty()
     }
@@ -35,7 +35,7 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val collectionId = saveCollection(owner = "owner@collection.com", videos = listOf(videoId.value))
 
-        removeVideoFromCollection(collectionId.value, videoId.value)
+        removeVideoFromCollection(collectionId.value, videoId.value, UserFactory.sample(id = "owner@collection.com"))
 
         val event = fakeEventBus.getEventOfType(VideoRemovedFromCollection::class.java)
 
@@ -49,10 +49,12 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val collectionId = saveCollection(owner = "owner@collections.com", videos = listOf(videoId.value))
 
-        setSecurityContext("attacker@example.com")
-
         assertThrows<CollectionAccessNotAuthorizedException> {
-            removeVideoFromCollection(collectionId.value, videoId.value)
+            removeVideoFromCollection(
+                collectionId.value,
+                videoId.value,
+                UserFactory.sample(id = "attacker@example.com")
+            )
         }
         assertThat(collectionRepository.find(collectionId)?.videos).isNotEmpty
     }

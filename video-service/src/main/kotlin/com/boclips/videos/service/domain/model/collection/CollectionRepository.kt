@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
+import com.boclips.security.utils.User
 import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
@@ -23,5 +24,6 @@ interface CollectionRepository {
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,
         updateResultConsumer: (CollectionUpdateResult) -> Unit = {}
     )
-    fun delete(id: CollectionId)
+
+    fun delete(id: CollectionId, user: User)
 }

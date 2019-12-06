@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +29,7 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
         val publicCollectionWithSubject = saveCollection(subjects = setOf(subject), public = true)
         val privateCollectionWithSubject = saveCollection(subjects = setOf(subject), public = false)
 
-        deleteSubject(subject.id)
+        deleteSubject(subject.id, UserFactory.sample())
 
         assertThat(subjectRepository.findById(subject.id)).isNull()
 

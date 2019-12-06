@@ -43,8 +43,7 @@ class DomainContext(
     private val eventBus: EventBus,
     private val mongoCollectionRepository: MongoCollectionRepository,
     private val mongoSubjectRepository: MongoSubjectRepository,
-    private val userServiceClient: UserServiceClient,
-    private val userContext: UserContext
+    private val userServiceClient: UserServiceClient
 ) {
 
     @Bean
@@ -128,5 +127,5 @@ class DomainContext(
     }
 
     @Bean
-    fun eventService(userContext: UserContext): EventService = EventService(eventBus, userContext)
+    fun eventService(): EventService = EventService(eventBus)
 }

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.security.utils.UserExtractor
+import com.boclips.security.utils.User
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -38,13 +38,14 @@ class GetVideosByQuery(
         subjects: Set<String>,
         promoted: Boolean?,
         contentPartnerNames: Set<String>,
-        type: Set<String>
+        type: Set<String>,
+        user: User
     ): Page<Video> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
         val userSubjectIds =
-            UserExtractor.getCurrentUser()?.let { user -> userService.getSubjectIds(user.id) } ?: emptySet()
+            user.let { userService.getSubjectIds(it.id) } ?: emptySet()
 
         val videoSearchQuery = VideoSearchQuery(
             text = query,
@@ -64,7 +65,7 @@ class GetVideosByQuery(
             subjects = subjects,
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
-            type = type?.map { searchQueryConverter.convertType(it) }.toSet()
+            type = type.map { searchQueryConverter.convertType(it) }.toSet()
         )
 
         val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
@@ -78,7 +79,8 @@ class GetVideosByQuery(
             pageIndex = pageNumber,
             pageSize = pageSize,
             totalResults = totalVideos,
-            pageVideoIds = videos.map { it.videoId.value }
+            pageVideoIds = videos.map { it.videoId.value },
+            user = user
         )
 
         return Page(

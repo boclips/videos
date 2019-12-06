@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
+import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import com.boclips.videos.service.testsupport.asUserWithRoles
@@ -251,7 +252,8 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
                     CollectionId(it),
                     attachment.description,
                     attachment.linkToResource,
-                    AttachmentType.LESSON_PLAN
+                    AttachmentType.LESSON_PLAN,
+                    UserFactory.sample()
                 )
             )
         }

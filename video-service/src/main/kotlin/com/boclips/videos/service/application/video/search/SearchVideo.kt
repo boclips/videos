@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.security.utils.User
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.Page
@@ -45,7 +46,8 @@ class SearchVideo(
         subjects: Set<String> = emptySet(),
         promoted: Boolean? = null,
         contentPartnerNames: Set<String> = emptySet(),
-        type: Set<String> = emptySet()
+        type: Set<String> = emptySet(),
+        user: User
     ): Page<Video> {
         return getVideosByQuery(
             query = query ?: "",
@@ -64,7 +66,8 @@ class SearchVideo(
             subjects = subjects,
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
-            type = type
+            type = type,
+            user = user
         )
     }
 

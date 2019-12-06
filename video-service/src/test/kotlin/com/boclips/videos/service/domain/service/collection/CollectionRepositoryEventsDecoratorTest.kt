@@ -6,6 +6,7 @@ import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,11 +20,12 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
     fun `publishes collection created event when collection is created`() {
         repository.create(
             CreateCollectionCommand(
-            owner = UserId(TestFactories.aValidId()),
+                owner = UserId(TestFactories.aValidId()),
                 title = "My new collection",
                 createdByBoclips = false,
                 public = false
-        ))
+            )
+        )
 
         assertThat(fakeEventBus.countEventsOfType(CollectionCreated::class.java)).isEqualTo(1)
         assertThat(fakeEventBus.getEventOfType(CollectionCreated::class.java).collection.title).isEqualTo("My new collection")
@@ -34,11 +36,13 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
         val video = saveVideo()
         val collection = saveCollection()
 
-        repository.update(CollectionUpdateCommand.AddVideoToCollection(collection, video))
+        repository.update(CollectionUpdateCommand.AddVideoToCollection(collection, video, UserFactory.sample()))
 
         assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(1)
         assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds).hasSize(1)
-        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds.first().value).isEqualTo(video.value)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds.first().value).isEqualTo(
+            video.value
+        )
     }
 
     @Test
@@ -49,7 +53,7 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
         saveCollection(videos = listOf())
 
         repository.streamUpdate(CollectionFilter.HasVideoId(video), { collectionToUpdate ->
-            CollectionUpdateCommand.RenameCollection(collectionToUpdate.id, "The new title")
+            CollectionUpdateCommand.RenameCollection(collectionToUpdate.id, "The new title", UserFactory.sample())
         })
 
         assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)
@@ -60,7 +64,7 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
     fun `publishes collection deleted events when collections are deleted`() {
         val collection = saveCollection()
 
-        repository.delete(collection)
+        repository.delete(collection, UserFactory.sample())
 
         assertThat(fakeEventBus.countEventsOfType(CollectionDeleted::class.java)).isEqualTo(1)
         assertThat(fakeEventBus.getEventOfType(CollectionDeleted::class.java).collectionId).isEqualTo(collection.value)
