@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.users.client.model.contract.SelectedContentContract
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -34,7 +33,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class Find {
-
         @Test
         fun `findAll preserves order`() {
             val owner = UserId(value = "user1")
@@ -287,7 +285,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `can bookmark and unbookmark collections`() {
-            setSecurityContext("user2")
             val collection = collectionRepository.create(
                 CreateCollectionCommand(
                     owner = UserId(value = "user1"),
@@ -323,14 +320,12 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user2")))
                 .isEqualTo(false)
 
-            setSecurityContext("user3")
             assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user3")))
                 .isEqualTo(true)
         }
 
         @Test
         fun `bookmarking doesnt change updated time`() {
-            setSecurityContext("user2")
             val collection = collectionRepository.create(
                 CreateCollectionCommand(
                     owner = UserId(value = "user1"),
@@ -504,7 +499,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class StreamingUpdate {
-
         @Test
         fun `stream update by filter`() {
             val collection = sampleCollection()
