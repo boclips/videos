@@ -20,8 +20,8 @@ import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.common.Do
+import com.boclips.videos.service.config.application.UserContext
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
@@ -30,9 +30,7 @@ import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.presentation.RefererHeaderExtractor
 
-class EventService(
-    val eventBus: EventBus
-) {
+class EventService(val eventBus: EventBus, private val userContext: UserContext) {
     fun saveSearchEvent(
         query: String,
         pageIndex: Int,
@@ -154,7 +152,9 @@ class EventService(
             )
             is CollectionUpdateCommand.Unbookmark -> eventBus.publish(
                 msg(
-                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(false)
+                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(
+                        false
+                    )
                 )
             )
         }
@@ -205,15 +205,18 @@ class EventService(
     }
 
     fun saveCollectionInteractedWithEvent(collectionId: String, subtype: CollectionInteractionType) {
-        eventBus.publish(msg(CollectionInteractedWith.builder()
-            .collectionId(collectionId)
-            .subtype(subtype)))
+        eventBus.publish(
+            msg(
+                CollectionInteractedWith.builder()
+                    .collectionId(collectionId)
+                    .subtype(subtype)
+            )
+        )
     }
 
     private fun msg(builder: AbstractEventWithUserId.AbstractEventWithUserIdBuilder<*, *>): AbstractEventWithUserId {
-        val user = getCurrentUser()
         return builder
-            .userId(user.id)
+            .userId(userContext.getUser().value)
             .url(RefererHeaderExtractor.getReferer())
             .build()
     }

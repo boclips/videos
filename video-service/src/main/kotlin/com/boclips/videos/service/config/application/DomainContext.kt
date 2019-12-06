@@ -44,7 +44,7 @@ class DomainContext(
     private val mongoCollectionRepository: MongoCollectionRepository,
     private val mongoSubjectRepository: MongoSubjectRepository,
     private val userServiceClient: UserServiceClient,
-    private val accessRuleService: AccessRuleService
+    private val userContext: UserContext
 ) {
 
     @Bean
@@ -75,8 +75,8 @@ class DomainContext(
 
     @Primary
     @Bean
-    fun collectionRepository(): CollectionRepository {
-        return CollectionRepositoryEventsDecorator(mongoCollectionRepository, eventService())
+    fun collectionRepository(eventService: EventService): CollectionRepository {
+        return CollectionRepositoryEventsDecorator(mongoCollectionRepository, eventService)
     }
 
     @Bean
@@ -128,5 +128,5 @@ class DomainContext(
     }
 
     @Bean
-    fun eventService(): EventService = EventService(eventBus)
+    fun eventService(userContext: UserContext): EventService = EventService(eventBus, userContext)
 }
