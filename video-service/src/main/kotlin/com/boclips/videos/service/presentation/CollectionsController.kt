@@ -11,7 +11,6 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
@@ -54,7 +53,7 @@ class CollectionsController(
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val withProjection: WithProjection,
     private val accessRuleService: AccessRuleService
-) {
+) : BaseController() {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
     }

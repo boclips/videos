@@ -38,7 +38,7 @@ class AdminController(
     private val broadcastVideos: BroadcastVideos,
     private val subjectClassificationService: SubjectClassificationService,
     private val videoAnalysisService: VideoAnalysisService
-) {
+) : BaseController() {
     companion object : KLogging()
 
     @PostMapping("/rebuild_video_index")

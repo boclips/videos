@@ -26,7 +26,8 @@ class GetCollections(
         return assembleResourcesPage(
             projection = collectionsRequest.projection,
             pageInfo = collections.pageInfo,
-            collections = collections.elements
+            collections = collections.elements,
+            user = user
         )
     }
 
@@ -53,10 +54,11 @@ class GetCollections(
     private fun assembleResourcesPage(
         projection: Projection,
         pageInfo: PageInfo,
-        collections: Iterable<Collection>
+        collections: Iterable<Collection>,
+        user: User
     ): Page<CollectionResource> {
         return Page(collections.map {
-            collectionResourceFactory.buildCollectionResource(it, projection)
+            collectionResourceFactory.buildCollectionResource(it, projection, user)
         }, pageInfo)
     }
 }

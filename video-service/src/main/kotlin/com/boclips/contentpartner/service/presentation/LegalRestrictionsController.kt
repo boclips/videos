@@ -27,7 +27,7 @@ class LegalRestrictionsController(
     private val createLegalRestrictions: CreateLegalRestrictions,
     private val findLegalRestrictions: FindLegalRestrictions,
     private val findAllLegalRestrictions: FindAllLegalRestrictions
-) {
+) : BaseController() {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -49,8 +49,9 @@ class LegalRestrictionsController(
     companion object {
 
         fun LegalRestrictionsResource.hateoas(): Resource<LegalRestrictionsResource> {
-            return Resource(this,
-                 getOneLink(this.id)
+            return Resource(
+                this,
+                getOneLink(this.id)
             )
         }
 

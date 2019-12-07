@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/video-types")
-class VideoTypeController {
+class VideoTypeController : BaseController() {
     @GetMapping
     fun videoTypes(): Resources<*> {
         return Resources(

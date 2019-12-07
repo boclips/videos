@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
+import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
@@ -30,6 +31,6 @@ data class Collection(
         }
     }
 
-    fun isOwner(owner: UserId) = owner == this.owner
-    fun isBookmarkedBy(user: UserId) = bookmarks.contains(user)
+    fun isOwner(owner: User) = UserId(owner.id) == this.owner
+    fun isBookmarkedBy(user: User) = bookmarks.contains(UserId(user.id))
 }

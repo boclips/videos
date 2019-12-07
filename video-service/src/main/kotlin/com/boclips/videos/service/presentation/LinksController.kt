@@ -26,8 +26,7 @@ class LinksController(
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
     private val tagsLinkBuilder: TagsLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder
-
-) {
+) : BaseController() {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
         return Resource(

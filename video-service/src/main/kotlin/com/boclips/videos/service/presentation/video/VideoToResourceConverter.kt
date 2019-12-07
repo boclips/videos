@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.application.getCurrentUserId
+import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -18,19 +19,19 @@ class VideoToResourceConverter(
     private val videosLinkBuilder: VideosLinkBuilder,
     private val playbackToResourceConverter: PlaybackToResourceConverter
 ) {
-    fun wrapVideosInResource(videos: List<Video>): List<Resource<VideoResource>> {
-        return videos.map { video -> fromVideo(video) }
+    fun wrapVideosInResource(videos: List<Video>, user: User): List<Resource<VideoResource>> {
+        return videos.map { video -> fromVideo(video, user) }
     }
 
     fun wrapVideoIdsInResource(videoIds: List<VideoId>): List<Resource<VideoResource>> {
         return videoIds.map { videoId -> wrapResourceWithHateoas(VideoResource(id = videoId.value), null) }
     }
 
-    fun fromVideo(video: Video): Resource<VideoResource> {
-        return toResource(video)
+    fun fromVideo(video: Video, user: User): Resource<VideoResource> {
+        return toResource(video, user)
     }
 
-    private fun toResource(video: Video): Resource<VideoResource> {
+    private fun toResource(video: Video, user: User): Resource<VideoResource> {
         return wrapResourceWithHateoas(
             VideoResource(
                 id = video.videoId.value,
@@ -49,7 +50,7 @@ class VideoToResourceConverter(
                 hasTranscripts = video.transcript != null,
                 ageRange = getAgeRange(video),
                 rating = video.getRatingAverage(),
-                yourRating = video.ratings.firstOrNull{ it.userId == getCurrentUserId()}?.rating?.toDouble(),
+                yourRating = video.ratings.firstOrNull { it.userId == UserId(user.id) }?.rating?.toDouble(),
                 distributionMethods = video.distributionMethods.map(
                     DistributionMethodResourceConverter::toResource
                 ).toSet(),

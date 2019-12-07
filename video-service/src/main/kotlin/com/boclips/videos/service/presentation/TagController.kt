@@ -33,7 +33,7 @@ class TagController(
     private val getTags: GetTags,
     private val createTag: CreateTag,
     private val tagsLinkBuilder: TagsLinkBuilder
-) {
+) : BaseController() {
 
     @GetMapping("/{id}")
     fun tag(@PathVariable id: String): Resource<TagResource> =

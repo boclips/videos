@@ -26,7 +26,7 @@ class UnbookmarkCollection(
             throw CollectionAccessNotAuthorizedException(userId, collectionId)
         }
 
-        if (collection.isOwner(userId)) throw CollectionIllegalOperationException(
+        if (collection.isOwner(requester)) throw CollectionIllegalOperationException(
             userId,
             collectionId,
             "unbookmark your own collection"

@@ -4,7 +4,6 @@ import com.boclips.videos.service.application.analytics.SaveCollectionInteracted
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.presentation.event.CollectionInteractedWithEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
@@ -23,7 +22,7 @@ class EventController(
     private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
     private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
     private val saveCollectionInteractedWithEvent: SaveCollectionInteractedWithEvent
-) {
+) : BaseController() {
 
     @PostMapping("/v1/events/playback")
     fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackDevice: String? = null): ResponseEntity<Void> {

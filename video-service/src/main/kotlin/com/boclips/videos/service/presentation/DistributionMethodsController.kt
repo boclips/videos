@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/distribution-methods")
-class DistributionMethodsController {
+class DistributionMethodsController : BaseController() {
     @GetMapping
     fun getDistributionMethods() =
         Resources(listOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM))

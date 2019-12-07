@@ -307,7 +307,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user2")))
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserFactory.sample(id = "user2")))
                 .isEqualTo(true)
 
             collectionRepository.update(
@@ -317,10 +317,10 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user2")))
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserFactory.sample(id = "user2")))
                 .isEqualTo(false)
 
-            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserId(value = "user3")))
+            assertThat(collectionRepository.find(collection.id)!!.isBookmarkedBy(UserFactory.sample(id = "user3")))
                 .isEqualTo(true)
         }
 

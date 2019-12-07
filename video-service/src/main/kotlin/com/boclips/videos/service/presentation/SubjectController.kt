@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.application.exceptions.SubjectExistsException
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -37,7 +36,7 @@ class SubjectController(
     private val createSubject: CreateSubject,
     private val updateSubject: UpdateSubject,
     private val subjectsLinkBuilder: SubjectsLinkBuilder
-) {
+) : BaseController() {
 
     @GetMapping("/{id}")
     fun subject(@PathVariable id: String): Resource<SubjectResource> =

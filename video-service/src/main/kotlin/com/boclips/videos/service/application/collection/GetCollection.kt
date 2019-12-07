@@ -31,8 +31,8 @@ class GetCollection(
         return collectionRepository.find(CollectionId(value = collectionId))
             ?.let {
                 when (projection) {
-                    Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(it)
-                    else -> collectionResourceFactory.buildCollectionListResource(it)
+                    Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(it, requester)
+                    else -> collectionResourceFactory.buildCollectionListResource(it, requester)
                 }
             } ?: throw CollectionNotFoundException(collectionId)
     }

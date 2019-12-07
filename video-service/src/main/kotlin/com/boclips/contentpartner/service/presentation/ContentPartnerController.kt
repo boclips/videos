@@ -5,7 +5,6 @@ import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -32,7 +31,7 @@ class ContentPartnerController(
     private val fetchContentPartner: GetContentPartner,
     private val fetchContentPartners: GetContentPartners,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
-) {
+) : BaseController() {
     @RequestMapping(
         "/{contentPartnerId}/videos/{contentPartnerVideoId}",
         method = [RequestMethod.HEAD]

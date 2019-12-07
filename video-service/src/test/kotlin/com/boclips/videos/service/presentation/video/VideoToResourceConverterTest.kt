@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.kalturaclient.TestKalturaClient
-import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -13,6 +12,7 @@ import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.playback.StreamPlaybackResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
+import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -53,7 +53,6 @@ internal class VideoToResourceConverterTest {
 
     @BeforeEach
     fun setUp() {
-        setSecurityContext("user-id")
         videosLinkBuilder = mock()
         playbackToResourceConverter = PlaybackToResourceConverter(mock(), PlaybacksLinkBuilder(TestKalturaClient()))
         videoToResourceConverter = VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
@@ -79,7 +78,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Kaltura`() {
-        val videoResource = videoToResourceConverter.fromVideo(kalturaVideo).content
+        val videoResource = videoToResourceConverter.fromVideo(kalturaVideo, UserFactory.sample(id = "user-id")).content
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -115,7 +114,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Youtube`() {
-        val videoResource = videoToResourceConverter.fromVideo(youtubeVideo).content
+        val videoResource = videoToResourceConverter.fromVideo(youtubeVideo, UserFactory.sample()).content
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -142,7 +141,7 @@ internal class VideoToResourceConverterTest {
     @Test
     fun `converts heterogenous video lists`() {
         val resultResource = videoToResourceConverter
-            .wrapVideosInResource(videos = listOf(youtubeVideo, kalturaVideo))
+            .wrapVideosInResource(videos = listOf(youtubeVideo, kalturaVideo), user = UserFactory.sample())
 
         assertThat(resultResource.map { it.content.playback!!.content.type }).containsExactlyInAnyOrder(
             "STREAM",

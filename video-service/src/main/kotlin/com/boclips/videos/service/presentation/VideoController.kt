@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.getCurrentUser
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
@@ -56,7 +55,7 @@ class VideoController(
     private val withProjection: WithProjection,
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter
-) {
+) : BaseController() {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
@@ -110,7 +109,7 @@ class VideoController(
             PagedResources(
                 videos
                     .elements.toList()
-                    .map(videoToResourceConverter::fromVideo)
+                    .map { video -> videoToResourceConverter.fromVideo(video, getCurrentUser()) }
                     .let(HateoasEmptyCollection::fixIfEmptyCollection),
                 PagedResources.PageMetadata(
                     pageSize.toLong(),
@@ -124,7 +123,7 @@ class VideoController(
     @PostMapping("/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> =
         searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
-            .map(videoToResourceConverter::fromVideo)
+            .map { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
 
@@ -142,7 +141,7 @@ class VideoController(
         return ResponseEntity(
             withProjection(
                 searchVideo.byId(id)
-                    .let(videoToResourceConverter::fromVideo)
+                    .let { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
             ),
             headers,
             HttpStatus.OK
@@ -176,7 +175,7 @@ class VideoController(
     fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
             createVideo(createVideoRequest)
-                .let(videoToResourceConverter::fromVideo)
+                .let { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(
                 ExceptionDetails(
@@ -216,7 +215,10 @@ class VideoController(
 
     @PatchMapping(path = ["/{id}"], params = ["rating"])
     fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
-        rateVideo(rateVideoRequest = RateVideoRequest(rating = rating, videoId = id), requester = getCurrentUser()).let { this.getVideo(id) }
+        rateVideo(
+            rateVideoRequest = RateVideoRequest(rating = rating, videoId = id),
+            requester = getCurrentUser()
+        ).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}"], params = ["!rating"])
     fun patchVideo(

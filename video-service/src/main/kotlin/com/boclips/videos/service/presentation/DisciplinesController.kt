@@ -30,7 +30,7 @@ class DisciplinesController(
     private val createDiscipline: CreateDiscipline,
     private val replaceDisciplineSubjects: ReplaceDisciplineSubjects,
     private val disciplinesLinkBuilder: DisciplinesLinkBuilder
-) {
+) : BaseController()  {
 
     @GetMapping("/{id}")
     fun discipline(@PathVariable id: String): Resource<DisciplineResource> =
