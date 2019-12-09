@@ -6,4 +6,3 @@ import com.boclips.security.utils.UserExtractor
 open class BaseController {
     fun getCurrentUser() = UserExtractor.getCurrentUser() ?: User(false, "anonymousUser", emptySet())
 }
-

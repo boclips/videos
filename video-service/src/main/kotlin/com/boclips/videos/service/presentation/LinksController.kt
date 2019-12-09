@@ -38,7 +38,6 @@ class LinksController(
                 videosLinkBuilder.adminSearchLink(),
                 videosLinkBuilder.adminVideoSearchLink(),
                 collectionsLinkBuilder.adminCollectionSearch(),
-
                 videosLinkBuilder.videosLink(),
                 videosLinkBuilder.searchVideosLink(),
                 collectionsLinkBuilder.bookmarkedCollections(),
