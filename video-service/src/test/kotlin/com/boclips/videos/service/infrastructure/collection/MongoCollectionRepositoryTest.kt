@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -628,7 +628,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val contract = SelectedContentContract().apply {
+        val contract = SelectedCollectionsContract().apply {
             name = "Selected content"
             collectionIds = listOf(firstCollection.id.value, secondCollection.id.value)
         }

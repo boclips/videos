@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
-import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -37,7 +37,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         )
     }
 
-    val testContract = SelectedContentContract().apply {
+    val testContract = SelectedCollectionsContract().apply {
         name = "Test Contract"
         collectionIds = listOf("test-collection-id")
     }

@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.security.utils.User
 import com.boclips.users.client.UserServiceClient
-import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.UserId
@@ -25,7 +25,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         val collectionIds: List<CollectionId> = userServiceClient.getContracts(user.id)
             .flatMap { contract ->
                 when (contract) {
-                    is SelectedContentContract -> contract.collectionIds.map { CollectionId(it) }
+                    is SelectedCollectionsContract -> contract.collectionIds.map { CollectionId(it) }
                     else -> emptyList()
                 }
             }

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
@@ -108,8 +108,8 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         ).id.value
     }
 
-    fun createSelectedContentContract(vararg contractedCollectionIds: String) {
-        userServiceClient.addContract(SelectedContentContract().apply {
+    fun createSelectedCollectionsContract(vararg contractedCollectionIds: String) {
+        userServiceClient.addContract(SelectedCollectionsContract().apply {
             name = UUID.randomUUID().toString()
             collectionIds = contractedCollectionIds.toList()
         })

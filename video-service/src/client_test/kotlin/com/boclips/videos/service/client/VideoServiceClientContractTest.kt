@@ -1,7 +1,7 @@
 package com.boclips.videos.service.client
 
 import com.boclips.kalturaclient.media.MediaEntryStatus
-import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.InvalidCollectionRequestException
 import com.boclips.videos.service.client.exceptions.UnauthorisedException
@@ -620,7 +620,7 @@ internal class ApiVideoServiceClientContractTest : VideoServiceClientContractTes
             UserFactory.sample(id = "bob@alice.com")
         )
 
-        userServiceClient.addContract(SelectedContentContract().apply {
+        userServiceClient.addContract(SelectedCollectionsContract().apply {
             collectionIds = listOf(firstCollection.id.value, secondCollection.id.value)
         })
 

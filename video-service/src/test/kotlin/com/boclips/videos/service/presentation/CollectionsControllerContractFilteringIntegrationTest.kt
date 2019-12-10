@@ -22,7 +22,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
         val secondCollection = createCollection(title = "My Second Collection", public = false)
         createCollection(title = "My Third Collection", public = false)
 
-        createSelectedContentContract(firstCollection, secondCollection)
+        createSelectedCollectionsContract(firstCollection, secondCollection)
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -41,7 +41,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
         val collectionId = createCollection(title = "A Collection", public = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
 
-        createSelectedContentContract(collectionId)
+        createSelectedCollectionsContract(collectionId)
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -66,7 +66,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
         val collectionId = createCollection(title = "A Collection", public = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
 
-        createSelectedContentContract(collectionId)
+        createSelectedCollectionsContract(collectionId)
 
         mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -88,7 +88,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
 
     @Test
     fun `returns empty result set when user has an empty SelectedContent contract`() {
-        createSelectedContentContract("1")
+        createSelectedCollectionsContract("1")
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)

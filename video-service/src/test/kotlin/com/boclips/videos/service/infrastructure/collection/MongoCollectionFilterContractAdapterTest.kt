@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.users.client.model.contract.Contract
-import com.boclips.users.client.model.contract.SelectedContentContract
+import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.bson.types.ObjectId
@@ -21,7 +21,7 @@ class MongoCollectionFilterContractAdapterTest {
         val firstId = ObjectId()
         val secondId = ObjectId()
         val thirdId = ObjectId()
-        val selectedContent = SelectedContentContract().apply {
+        val selectedContent = SelectedCollectionsContract().apply {
             collectionIds = listOf(firstId.toHexString(), secondId.toHexString(), thirdId.toHexString())
         }
 
