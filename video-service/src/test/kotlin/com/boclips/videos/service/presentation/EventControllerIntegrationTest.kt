@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import javax.servlet.http.Cookie
 
 class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -27,7 +29,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Nested
-    inner class SinglePlaybackEvents {
+    inner class PlaybackEvents {
         @Test
         fun `single playback events is being saved`() {
             val videoId = aValidId()
@@ -79,6 +81,39 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
             )
                 .andExpect(status().isCreated)
+        }
+
+        @Test
+        fun `batched playback events for authorized users are being saved`() {
+            val videoId = aValidId()
+            mockMvc.perform(
+                post("/v1/events/playback")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .asTeacher(email = "teacher@gmail.com")
+                    .header("Referer", "https://teachers.boclips.com/videos?q=abc")
+                    .content(
+                        """[{
+                    "videoId" : "$videoId",
+                    "videoIndex" : 987,
+                    "segmentStartSeconds" : 5,
+                    "segmentEndSeconds" : 101,
+                    "videoDurationSeconds" : 200,
+                    "captureTime": "${ZonedDateTime.of(2019, 11, 18, 0, 0, 0, 0, ZoneOffset.UTC)}",
+                    "searchId" : "srch-123"
+                    },{
+                    "videoId" : "$videoId",
+                    "videoIndex" : 98,
+                    "segmentStartSeconds" : 0,
+                    "segmentEndSeconds" : 90,
+                    "videoDurationSeconds" : 200,
+                    "captureTime": "${ZonedDateTime.of(2019, 11, 18, 0, 0, 0, 0, ZoneOffset.UTC)}",
+                    "searchId" : "srch-123"
+                    }]""".trimMargin()
+                    )
+            )
+                .andExpect(status().isCreated)
+
+            assertThat(fakeEventBus.countEventsOfType(VideoSegmentPlayed::class.java)).isEqualTo(2)
         }
     }
 

@@ -9,20 +9,25 @@ class SavePlaybackEvent(
     private val eventService: EventService
 ) {
     fun execute(
-        event: CreatePlaybackEventCommand?,
+        events: List<CreatePlaybackEventCommand>?,
         playbackDevice: String?,
         user: User
     ) {
-        event ?: throw InvalidEventException("Event cannot be null")
-        event.isValidOrThrows()
+        events ?: throw InvalidEventException("Event cannot be null")
 
-        eventService.savePlaybackEvent(
-            videoId = VideoId(event.videoId!!),
-            videoIndex = event.videoIndex,
-            segmentStartSeconds = event.segmentStartSeconds!!,
-            segmentEndSeconds = event.segmentEndSeconds!!,
-            playbackDevice = playbackDevice,
-            user = user
-        )
+        events.forEach { event ->
+            event.isValidOrThrows()
+        }
+
+        events.forEach { event ->
+            eventService.savePlaybackEvent(
+                videoId = VideoId(event.videoId!!),
+                videoIndex = event.videoIndex,
+                segmentStartSeconds = event.segmentStartSeconds!!,
+                segmentEndSeconds = event.segmentEndSeconds!!,
+                playbackDevice = playbackDevice,
+                user = user
+            )
+        }
     }
 }

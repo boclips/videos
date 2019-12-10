@@ -3,6 +3,7 @@ package com.boclips.videos.service.config
 import com.boclips.web.EnableBoclipsApiErrors
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.Version
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.SerializerProvider
@@ -46,6 +47,7 @@ class WebConfig(
                     it.objectMapper.registerModule(Jackson2HalModule())
                     it.objectMapper.setHandlerInstantiator(instantiator)
                     it.objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true)
+                    it.objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
                     it.supportedMediaTypes = listOf(HAL_JSON, HAL_JSON_UTF8, MediaType.ALL)
 
                     val customizations = SimpleModule("VideoServiceCustomizations", Version(1, 0, 0, null, "com.boclips", "video-service"))
