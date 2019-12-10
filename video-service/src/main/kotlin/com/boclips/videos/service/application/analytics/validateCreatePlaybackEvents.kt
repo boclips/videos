@@ -14,9 +14,7 @@ fun validateCreatePlaybackEvents(playbackEvents: List<CreatePlaybackEventCommand
 
     playbackEvents.forEach { event: CreatePlaybackEventCommand ->
         event.isValidOrThrows()
-        if (event.captureTime == null) throw InvalidEventException(
-            "Event captureTime cannot be null"
-        )
+        if (event.captureTime == null) throw InvalidEventException("Event captureTime cannot be null")
     }
 
     return

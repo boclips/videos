@@ -11,6 +11,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -114,6 +116,49 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isCreated)
 
             assertThat(fakeEventBus.countEventsOfType(VideoSegmentPlayed::class.java)).isEqualTo(2)
+        }
+
+        @Test
+        fun `batched invalid playback events return error message`() {
+            val videoId = aValidId()
+
+            mockMvc.perform(
+                post("/v1/events/playback")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .asTeacher(email = "teacher@gmail.com")
+                    .header("Referer", "https://teachers.boclips.com/videos?q=abc")
+                    .content(
+                        """[{
+                    "videoId" : "$videoId",
+                    "videoIndex" : 987,
+                    "segmentStartSeconds" : 5,
+                    "segmentEndSeconds" : 101,
+                    "videoDurationSeconds" : 200,
+                    "searchId" : "srch-123"
+                    },{
+                    "videoId" : "$videoId",
+                    "videoIndex" : 98,
+                    "segmentStartSeconds" : 0,
+                    "segmentEndSeconds" : 90,
+                    "videoDurationSeconds" : 200,
+                    "captureTime": "${ZonedDateTime.of(2019, 11, 18, 0, 0, 0, 0, ZoneOffset.UTC)}",
+                    "searchId" : "srch-123"
+                    }]""".trimMargin()
+                    )
+            )
+                .andExpect(status().`is`(400))
+                .andExpect(
+                    MockMvcResultMatchers.jsonPath(
+                        "$.message",
+                        Matchers.containsString("Event captureTime cannot be null")
+                    )
+                )
+                .andExpect(
+                    MockMvcResultMatchers.jsonPath(
+                        "$.error",
+                        Matchers.containsString("Invalid Event")
+                    )
+                )
         }
     }
 
