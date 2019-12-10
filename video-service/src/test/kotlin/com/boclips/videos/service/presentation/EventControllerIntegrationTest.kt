@@ -35,7 +35,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val content = """{
             "videoId":"$videoId",
             "videoIndex":135,
-            "captureTime":"2019-02-21T15:34:37.186Z",
             "segmentStartSeconds":1469.128248,
             "segmentEndSeconds":1470.728248
         }""".trimIndent()
@@ -59,6 +58,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(event.segmentEndSeconds).isEqualTo(1470L)
             assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
             assertThat(event.playbackDevice).isEqualTo("device-id")
+            assertThat(event.timestamp).isNotNull()
         }
 
         @Test
@@ -74,7 +74,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "segmentStartSeconds" : 0,
                     "segmentEndSeconds" : 100,
                     "videoDurationSeconds" : 200,
-                    "captureTime" : "2018-01-01T00:00:00.000Z",
                     "searchId" : "srch-123"
                     }""".trimMargin()
                     )
