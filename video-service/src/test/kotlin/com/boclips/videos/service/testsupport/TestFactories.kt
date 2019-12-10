@@ -48,6 +48,7 @@ import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
+import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.tag.CreateTagRequest
@@ -578,3 +579,22 @@ object UserFactory {
         )
     }
 }
+
+object CreatePlaybackEventCommandFactory {
+    fun sample(
+        videoId: String = TestFactories.aValidId(),
+        videoIndex: Int = 0,
+        segmentStartSeconds: Long = 0,
+        segmentEndSeconds: Long = 0,
+        captureTime: ZonedDateTime? = null
+    ): CreatePlaybackEventCommand {
+        return CreatePlaybackEventCommand(
+            videoId = videoId,
+            videoIndex = videoIndex,
+            segmentStartSeconds = segmentStartSeconds,
+            segmentEndSeconds = segmentEndSeconds,
+            captureTime = captureTime
+        )
+    }
+}
+

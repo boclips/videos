@@ -2,12 +2,14 @@ package com.boclips.videos.service.presentation.event
 
 import com.boclips.videos.service.application.analytics.InvalidEventException
 import com.boclips.videos.service.common.isNullOrNegative
+import java.time.ZonedDateTime
 
 data class CreatePlaybackEventCommand(
     val videoId: String?,
     val videoIndex: Int?,
     val segmentStartSeconds: Long?,
-    val segmentEndSeconds: Long?
+    val segmentEndSeconds: Long?,
+    val captureTime: ZonedDateTime? = null
 ) : EventCommand() {
     override fun isValidOrThrows() {
         if (this.videoId.isNullOrBlank()) throw InvalidEventException("videoId must be specified")

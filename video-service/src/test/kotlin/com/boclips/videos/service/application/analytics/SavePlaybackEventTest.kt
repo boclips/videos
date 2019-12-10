@@ -1,13 +1,15 @@
 package com.boclips.videos.service.application.analytics
 
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
-import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.CreatePlaybackEventCommandFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.ZonedDateTime
 
 class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
@@ -15,18 +17,20 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     lateinit var savePlaybackEvent: SavePlaybackEvent
     private val videoId = TestFactories.aValidId()
 
-    private val exampleEventOne = CreatePlaybackEventCommand(
+    private val exampleEventOne = CreatePlaybackEventCommandFactory.sample(
         videoId = videoId,
         videoIndex = 1,
         segmentStartSeconds = 10,
-        segmentEndSeconds = 20
+        segmentEndSeconds = 20,
+        captureTime = ZonedDateTime.now()
     )
 
-    private val exampleEventTwo = CreatePlaybackEventCommand(
+    private val exampleEventTwo = CreatePlaybackEventCommandFactory.sample(
         videoId = videoId,
         videoIndex = 1,
         segmentStartSeconds = 10,
-        segmentEndSeconds = 20
+        segmentEndSeconds = 20,
+        captureTime = ZonedDateTime.now()
     )
 
     @Test
@@ -67,5 +71,29 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[1].segmentEndSeconds).isEqualTo(20L)
         assertThat(events[1].playbackDevice).isNull()
         assertThat(events[1].timestamp).isNotNull()
+    }
+
+    @Test
+    fun `for single event we do not validate timestamp`() {
+        savePlaybackEvent.execute(
+            listOf(CreatePlaybackEventCommandFactory.sample(captureTime = null)),
+            playbackDevice = null,
+            user = UserFactory.sample()
+        )
+
+        val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
+
+        assertThat(event.timestamp).isNotNull()
+    }
+
+    @Test
+    fun `for multiple event we do validate timestamp`() {
+        val user = UserFactory.sample()
+
+        val invalidExampleEvent = CreatePlaybackEventCommandFactory.sample(captureTime = null)
+
+        assertThrows<InvalidEventException> {
+            savePlaybackEvent.execute(listOf(exampleEventOne, invalidExampleEvent), playbackDevice = null, user = user)
+        }
     }
 }

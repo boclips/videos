@@ -5,19 +5,11 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 
-class SavePlaybackEvent(
-    private val eventService: EventService
-) {
-    fun execute(
-        events: List<CreatePlaybackEventCommand>?,
-        playbackDevice: String?,
-        user: User
-    ) {
+class SavePlaybackEvent(private val eventService: EventService) {
+    fun execute(events: List<CreatePlaybackEventCommand>?, playbackDevice: String?, user: User) {
         events ?: throw InvalidEventException("Event cannot be null")
 
-        events.forEach { event ->
-            event.isValidOrThrows()
-        }
+        validateCreatePlaybackEvents(events)
 
         events.forEach { event ->
             eventService.savePlaybackEvent(
@@ -31,3 +23,4 @@ class SavePlaybackEvent(
         }
     }
 }
+
