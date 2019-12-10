@@ -7,7 +7,22 @@ import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import java.time.ZonedDateTime
 
 class SavePlaybackEvent(private val eventService: EventService) {
-    fun execute(events: List<CreatePlaybackEventCommand>?, playbackDevice: String?, user: User) {
+    fun execute(event: CreatePlaybackEventCommand?, playbackDevice: String?, user: User) {
+        event ?: throw InvalidEventException("Event cannot be null")
+        event.isValidOrThrows()
+
+        eventService.savePlaybackEvent(
+            videoId = VideoId(event.videoId!!),
+            videoIndex = event.videoIndex,
+            segmentStartSeconds = event.segmentStartSeconds!!,
+            segmentEndSeconds = event.segmentEndSeconds!!,
+            playbackDevice = playbackDevice,
+            timestamp = event.captureTime ?: ZonedDateTime.now(),
+            user = user
+        )
+    }
+
+    fun execute(events: List<CreatePlaybackEventCommand>?, user: User) {
         events ?: throw InvalidEventException("Event cannot be null")
 
         validateCreatePlaybackEvents(events)
@@ -18,7 +33,7 @@ class SavePlaybackEvent(private val eventService: EventService) {
                 videoIndex = event.videoIndex,
                 segmentStartSeconds = event.segmentStartSeconds!!,
                 segmentEndSeconds = event.segmentEndSeconds!!,
-                playbackDevice = playbackDevice,
+                playbackDevice = null,
                 timestamp = event.captureTime ?: ZonedDateTime.now(),
                 user = user
             )

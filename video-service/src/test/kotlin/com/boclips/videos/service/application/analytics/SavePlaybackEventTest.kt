@@ -22,15 +22,14 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     fun `saves one event`() {
         val user = UserFactory.sample()
         savePlaybackEvent.execute(
-            listOf(
-                CreatePlaybackEventCommandFactory.sample(
-                    videoId = videoId,
-                    videoIndex = 1,
-                    segmentStartSeconds = 10,
-                    segmentEndSeconds = 20,
-                    captureTime = ZonedDateTime.now()
-                )
-            ), playbackDevice = null, user = user
+            CreatePlaybackEventCommandFactory.sample(
+                videoId = videoId,
+                videoIndex = 1,
+                segmentStartSeconds = 10,
+                segmentEndSeconds = 20,
+                captureTime = ZonedDateTime.now()
+            )
+            , playbackDevice = null, user = user
         )
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
@@ -60,7 +59,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
                     segmentEndSeconds = 20,
                     captureTime = ZonedDateTime.now()
                 )
-            ), playbackDevice = null, user = user
+            ), user = user
         )
 
         val events = fakeEventBus.getEventsOfType(VideoSegmentPlayed::class.java)
@@ -87,7 +86,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     @Test
     fun `for single event we do not validate timestamp`() {
         savePlaybackEvent.execute(
-            listOf(CreatePlaybackEventCommandFactory.sample(captureTime = null)),
+            CreatePlaybackEventCommandFactory.sample(captureTime = null),
             playbackDevice = null,
             user = UserFactory.sample()
         )
@@ -105,7 +104,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         val validEvent = CreatePlaybackEventCommandFactory.sample(captureTime = ZonedDateTime.now())
 
         assertThrows<InvalidEventException> {
-            savePlaybackEvent.execute(listOf(validEvent, invalidEvent), playbackDevice = null, user = user)
+            savePlaybackEvent.execute(listOf(validEvent, invalidEvent), user = user)
         }
     }
 
@@ -115,7 +114,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         val captureTime = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
         val validEvent = CreatePlaybackEventCommandFactory.sample(captureTime = captureTime)
 
-        savePlaybackEvent.execute(listOf(validEvent, validEvent), playbackDevice = null, user = user)
+        savePlaybackEvent.execute(listOf(validEvent, validEvent), user = user)
 
         val events = fakeEventBus.getEventsOfType(VideoSegmentPlayed::class.java)
 

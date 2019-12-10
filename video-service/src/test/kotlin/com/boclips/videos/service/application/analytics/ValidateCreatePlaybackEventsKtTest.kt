@@ -2,19 +2,20 @@ package com.boclips.videos.service.application.analytics
 
 import com.boclips.videos.service.testsupport.CreatePlaybackEventCommandFactory
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.ZonedDateTime
 
 class ValidateCreatePlaybackEventsKtTest {
     @Test
     fun `validate null list`() {
-        org.junit.jupiter.api.assertThrows<InvalidEventException> {
+        assertThrows<InvalidEventException> {
             validateCreatePlaybackEvents(null)
         }
     }
 
     @Test
     fun `validate empty list`() {
-        org.junit.jupiter.api.assertThrows<InvalidEventException> {
+        assertThrows<InvalidEventException> {
             validateCreatePlaybackEvents(emptyList())
         }
     }
@@ -23,7 +24,9 @@ class ValidateCreatePlaybackEventsKtTest {
     fun `validate list with one item`() {
         val validEvent = CreatePlaybackEventCommandFactory.sample()
 
-        validateCreatePlaybackEvents(listOf(validEvent))
+        assertThrows<InvalidEventException> {
+            validateCreatePlaybackEvents(listOf(validEvent))
+        }
     }
 
     @Test
@@ -32,7 +35,7 @@ class ValidateCreatePlaybackEventsKtTest {
             segmentEndSeconds = -1
         )
 
-        org.junit.jupiter.api.assertThrows<InvalidEventException> {
+        assertThrows<InvalidEventException> {
             validateCreatePlaybackEvents(listOf(invalidEvent))
         }
     }
@@ -49,7 +52,7 @@ class ValidateCreatePlaybackEventsKtTest {
         val validEvent = CreatePlaybackEventCommandFactory.sample()
         val invalidEvent = CreatePlaybackEventCommandFactory.sample(segmentEndSeconds = -1)
 
-        org.junit.jupiter.api.assertThrows<InvalidEventException> {
+        assertThrows<InvalidEventException> {
             validateCreatePlaybackEvents(listOf(validEvent, invalidEvent))
         }
     }
@@ -59,7 +62,7 @@ class ValidateCreatePlaybackEventsKtTest {
         val validEvent = CreatePlaybackEventCommandFactory.sample()
         val invalidEvent = CreatePlaybackEventCommandFactory.sample(captureTime = null)
 
-        org.junit.jupiter.api.assertThrows<InvalidEventException> {
+        assertThrows<InvalidEventException> {
             validateCreatePlaybackEvents(listOf(validEvent, invalidEvent))
         }
     }

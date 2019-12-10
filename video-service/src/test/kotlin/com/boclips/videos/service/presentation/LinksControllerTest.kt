@@ -39,6 +39,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
             .andExpect(jsonPath("$._links.createPlaybackEvent").doesNotExist())
+            .andExpect(jsonPath("$._links.createPlaybackEvents").doesNotExist())
             .andExpect(jsonPath("$._links.createVideoVisitedEvent").doesNotExist())
             .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
             .andExpect(jsonPath("$._links.adminVideoSearch").doesNotExist())
@@ -104,6 +105,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andExpect(jsonPath("$._links.createPlaybackEvent").doesNotExist())
+            .andExpect(jsonPath("$._links.createPlaybackEvents.href", endsWith("events/playback/batch")))
+
             .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())
             .andExpect(jsonPath("$._links.collection.href", endsWith("collections/{id}")))
             .andExpect(jsonPath("$._links.collection.templated", equalTo(true)))

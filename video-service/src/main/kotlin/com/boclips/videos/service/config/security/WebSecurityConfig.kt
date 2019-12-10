@@ -36,6 +36,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(GET, "/v1/interactions").permitAll()
             .antMatchers(POST, "/v1/events/*").permitAll()
+            .antMatchers(POST, "/v1/events/playback/batch").hasRole(ROLE.INSERT_EVENTS)
 
             .antMatchers(GET, "/v1/subjects").permitAll()
             .antMatchers(GET, "/v1/subjects/*").permitAll()

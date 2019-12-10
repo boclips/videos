@@ -89,7 +89,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `batched playback events for authorized users are being saved`() {
             val videoId = aValidId()
             mockMvc.perform(
-                post("/v1/events/playback")
+                post("/v1/events/playback/batch")
                     .contentType(MediaType.APPLICATION_JSON)
                     .asTeacher(email = "teacher@gmail.com")
                     .header("Referer", "https://teachers.boclips.com/videos?q=abc")
@@ -102,20 +102,25 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "videoDurationSeconds" : 200,
                     "captureTime": "${ZonedDateTime.of(2019, 11, 18, 0, 0, 0, 0, ZoneOffset.UTC)}",
                     "searchId" : "srch-123"
-                    },{
-                    "videoId" : "$videoId",
-                    "videoIndex" : 98,
-                    "segmentStartSeconds" : 0,
-                    "segmentEndSeconds" : 90,
-                    "videoDurationSeconds" : 200,
-                    "captureTime": "${ZonedDateTime.of(2019, 11, 18, 0, 0, 0, 0, ZoneOffset.UTC)}",
-                    "searchId" : "srch-123"
                     }]""".trimMargin()
                     )
             )
                 .andExpect(status().isCreated)
 
-            assertThat(fakeEventBus.countEventsOfType(VideoSegmentPlayed::class.java)).isEqualTo(2)
+            assertThat(fakeEventBus.countEventsOfType(VideoSegmentPlayed::class.java)).isEqualTo(1)
+        }
+
+        @Test
+        fun `batched playback events need to be authorized`() {
+            mockMvc.perform(
+                post("/v1/events/playback/batch")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Referer", "https://teachers.boclips.com/videos?q=abc")
+                    .content(
+                        """[]""".trimMargin()
+                    )
+            )
+                .andExpect(status().isForbidden)
         }
 
         @Test
@@ -123,7 +128,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val videoId = aValidId()
 
             mockMvc.perform(
-                post("/v1/events/playback")
+                post("/v1/events/playback/batch")
                     .contentType(MediaType.APPLICATION_JSON)
                     .asTeacher(email = "teacher@gmail.com")
                     .header("Referer", "https://teachers.boclips.com/videos?q=abc")

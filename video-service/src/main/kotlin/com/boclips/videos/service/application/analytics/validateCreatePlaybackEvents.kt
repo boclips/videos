@@ -7,11 +7,6 @@ fun validateCreatePlaybackEvents(playbackEvents: List<CreatePlaybackEventCommand
         throw InvalidEventException("Event cannot be null or empty")
     }
 
-    if (playbackEvents.size == 1) {
-        playbackEvents[0].isValidOrThrows()
-        return
-    }
-
     playbackEvents.forEach { event: CreatePlaybackEventCommand ->
         event.isValidOrThrows()
         if (event.captureTime == null) throw InvalidEventException("Event captureTime cannot be null")

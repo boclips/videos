@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.presentation.LegalRestrictionsControll
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
@@ -25,7 +26,8 @@ class LinksController(
     private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
     private val tagsLinkBuilder: TagsLinkBuilder,
-    private val videoTypeLinkBuilder: VideoTypeLinkBuilder
+    private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
+    private val eventsLinkBuilder: EventsLinkBuilder
 ) : BaseController() {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
@@ -52,7 +54,8 @@ class LinksController(
                 contentPartnersLinkBuilder.contentPartnersLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
-                videoTypeLinkBuilder.videoTypes()
+                videoTypeLinkBuilder.videoTypes(),
+                eventsLinkBuilder.createPlaybackEventsLink()
             )
         )
     }
