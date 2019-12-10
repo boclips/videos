@@ -11,6 +11,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
@@ -120,5 +121,19 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
         assertThat(events[0].timestamp).isEqualTo(captureTime)
         assertThat(events[1].timestamp).isEqualTo(captureTime)
+    }
+
+    @Test
+    fun `transforms any other timezone than UTC to UTC`() {
+        val user = UserFactory.sample()
+        val validEvent = CreatePlaybackEventCommandFactory.sample(
+            captureTime = ZonedDateTime.parse("2018-01-01T22:30:22+10:00")
+        )
+
+        savePlaybackEvent.execute(listOf(validEvent), user = user)
+
+        val events = fakeEventBus.getEventsOfType(VideoSegmentPlayed::class.java)
+
+        assertThat(events[0].timestamp.format(DateTimeFormatter.ISO_ZONED_DATE_TIME)).isEqualTo("2018-01-01T12:30:22Z")
     }
 }

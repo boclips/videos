@@ -4,6 +4,7 @@ import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class SavePlaybackEvent(private val eventService: EventService) {
@@ -34,7 +35,7 @@ class SavePlaybackEvent(private val eventService: EventService) {
                 segmentStartSeconds = event.segmentStartSeconds!!,
                 segmentEndSeconds = event.segmentEndSeconds!!,
                 playbackDevice = null,
-                timestamp = event.captureTime ?: ZonedDateTime.now(),
+                timestamp = event.captureTime?.toInstant()?.atZone(ZoneOffset.UTC) ?: ZonedDateTime.now(),
                 user = user
             )
         }
