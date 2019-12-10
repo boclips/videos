@@ -27,9 +27,9 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Nested
-    inner class PlaybackEvents {
+    inner class SinglePlaybackEvents {
         @Test
-        fun `posted playback events are being saved`() {
+        fun `single playback events is being saved`() {
             val videoId = aValidId()
 
             val content = """{
@@ -62,7 +62,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `playbacks by unauthorized users are saved`() {
+        fun `single playback event by unauthorized users is saved`() {
             val videoId = aValidId()
             mockMvc.perform(
                 post("/v1/events/playback")
