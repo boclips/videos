@@ -29,6 +29,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.presentation.RefererHeaderExtractor
+import java.time.ZonedDateTime
 
 class EventService(val eventBus: EventBus) {
     fun saveSearchEvent(
@@ -180,7 +181,8 @@ class EventService(val eventBus: EventBus) {
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
         playbackDevice: String?,
-        user: User
+        user: User,
+        timestamp: ZonedDateTime
     ) {
         eventBus.publish(
             msg(
@@ -189,7 +191,8 @@ class EventService(val eventBus: EventBus) {
                     .videoIndex(videoIndex)
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
-                    .playbackDevice(playbackDevice),
+                    .playbackDevice(playbackDevice)
+                    .timestamp(timestamp),
                 userId = user.id
             )
         )

@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
@@ -17,26 +18,20 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     lateinit var savePlaybackEvent: SavePlaybackEvent
     private val videoId = TestFactories.aValidId()
 
-    private val exampleEventOne = CreatePlaybackEventCommandFactory.sample(
-        videoId = videoId,
-        videoIndex = 1,
-        segmentStartSeconds = 10,
-        segmentEndSeconds = 20,
-        captureTime = ZonedDateTime.now()
-    )
-
-    private val exampleEventTwo = CreatePlaybackEventCommandFactory.sample(
-        videoId = videoId,
-        videoIndex = 1,
-        segmentStartSeconds = 10,
-        segmentEndSeconds = 20,
-        captureTime = ZonedDateTime.now()
-    )
-
     @Test
     fun `saves one event`() {
         val user = UserFactory.sample()
-        savePlaybackEvent.execute(listOf(exampleEventOne), playbackDevice = null, user = user)
+        savePlaybackEvent.execute(
+            listOf(
+                CreatePlaybackEventCommandFactory.sample(
+                    videoId = videoId,
+                    videoIndex = 1,
+                    segmentStartSeconds = 10,
+                    segmentEndSeconds = 20,
+                    captureTime = ZonedDateTime.now()
+                )
+            ), playbackDevice = null, user = user
+        )
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
@@ -50,7 +45,23 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     @Test
     fun `saves multiple events`() {
         val user = UserFactory.sample()
-        savePlaybackEvent.execute(listOf(exampleEventOne, exampleEventTwo), playbackDevice = null, user = user)
+        savePlaybackEvent.execute(
+            listOf(
+                CreatePlaybackEventCommandFactory.sample(
+                    videoId = videoId,
+                    videoIndex = 1,
+                    segmentStartSeconds = 10,
+                    segmentEndSeconds = 20,
+                    captureTime = ZonedDateTime.now()
+                ), CreatePlaybackEventCommandFactory.sample(
+                    videoId = videoId,
+                    videoIndex = 1,
+                    segmentStartSeconds = 10,
+                    segmentEndSeconds = 20,
+                    captureTime = ZonedDateTime.now()
+                )
+            ), playbackDevice = null, user = user
+        )
 
         val events = fakeEventBus.getEventsOfType(VideoSegmentPlayed::class.java)
 
@@ -90,10 +101,25 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     fun `for multiple event we do validate timestamp`() {
         val user = UserFactory.sample()
 
-        val invalidExampleEvent = CreatePlaybackEventCommandFactory.sample(captureTime = null)
+        val invalidEvent = CreatePlaybackEventCommandFactory.sample(captureTime = null)
+        val validEvent = CreatePlaybackEventCommandFactory.sample(captureTime = ZonedDateTime.now())
 
         assertThrows<InvalidEventException> {
-            savePlaybackEvent.execute(listOf(exampleEventOne, invalidExampleEvent), playbackDevice = null, user = user)
+            savePlaybackEvent.execute(listOf(validEvent, invalidEvent), playbackDevice = null, user = user)
         }
+    }
+
+    @Test
+    fun `for multiple events we store provided timestamps`() {
+        val user = UserFactory.sample()
+        val captureTime = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+        val validEvent = CreatePlaybackEventCommandFactory.sample(captureTime = captureTime)
+
+        savePlaybackEvent.execute(listOf(validEvent, validEvent), playbackDevice = null, user = user)
+
+        val events = fakeEventBus.getEventsOfType(VideoSegmentPlayed::class.java)
+
+        assertThat(events[0].timestamp).isEqualTo(captureTime)
+        assertThat(events[1].timestamp).isEqualTo(captureTime)
     }
 }
