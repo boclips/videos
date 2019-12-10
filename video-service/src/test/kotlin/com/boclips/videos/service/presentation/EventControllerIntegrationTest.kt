@@ -11,6 +11,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -25,11 +26,13 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    @Test
-    fun `posted playback events are being saved`() {
-        val videoId = aValidId()
+    @Nested
+    inner class PlaybackEvents {
+        @Test
+        fun `posted playback events are being saved`() {
+            val videoId = aValidId()
 
-        val content = """{
+            val content = """{
             "videoId":"$videoId",
             "videoIndex":135,
             "captureTime":"2019-02-21T15:34:37.186Z",
@@ -37,25 +40,47 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             "segmentEndSeconds":1470.728248
         }""".trimIndent()
 
-        mockMvc.perform(
-            post("/v1/events/playback")
-                .asTeacher(email = "teacher@gmail.com")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Referer", "https://teachers.boclips.com/videos?q=abc")
-                .cookie(Cookie(Cookies.PLAYBACK_DEVICE, "device-id"))
-                .content(content)
-        )
-            .andExpect(status().isCreated)
+            mockMvc.perform(
+                post("/v1/events/playback")
+                    .asTeacher(email = "teacher@gmail.com")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Referer", "https://teachers.boclips.com/videos?q=abc")
+                    .cookie(Cookie(Cookies.PLAYBACK_DEVICE, "device-id"))
+                    .content(content)
+            )
+                .andExpect(status().isCreated)
 
-        val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
+            val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
-        assertThat(event.videoId).isEqualTo(videoId)
-        assertThat(event.userId).isEqualTo("teacher@gmail.com")
-        assertThat(event.videoIndex).isEqualTo(135)
-        assertThat(event.segmentStartSeconds).isEqualTo(1469L)
-        assertThat(event.segmentEndSeconds).isEqualTo(1470L)
-        assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
-        assertThat(event.playbackDevice).isEqualTo("device-id")
+            assertThat(event.videoId).isEqualTo(videoId)
+            assertThat(event.userId).isEqualTo("teacher@gmail.com")
+            assertThat(event.videoIndex).isEqualTo(135)
+            assertThat(event.segmentStartSeconds).isEqualTo(1469L)
+            assertThat(event.segmentEndSeconds).isEqualTo(1470L)
+            assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
+            assertThat(event.playbackDevice).isEqualTo("device-id")
+        }
+
+        @Test
+        fun `playbacks by unauthorized users are saved`() {
+            val videoId = aValidId()
+            mockMvc.perform(
+                post("/v1/events/playback")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """{
+                    "videoId" : "$videoId",
+                    "videoIndex" : 3,
+                    "segmentStartSeconds" : 0,
+                    "segmentEndSeconds" : 100,
+                    "videoDurationSeconds" : 200,
+                    "captureTime" : "2018-01-01T00:00:00.000Z",
+                    "searchId" : "srch-123"
+                    }""".trimMargin()
+                    )
+            )
+                .andExpect(status().isCreated)
+        }
     }
 
     @Test
@@ -120,12 +145,15 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andReturnLink(CollectionsLinkBuilder.Rels.LOG_COLLECTION_INTERACTION)
             .expand()
 
-        mockMvc.perform(post(collectionInteractedWithLink)
-            .asTeacher(email = "john@teacher.com")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""{
+        mockMvc.perform(
+            post(collectionInteractedWithLink)
+                .asTeacher(email = "john@teacher.com")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """{
                     "subtype": "NAVIGATE_TO_COLLECTION_DETAILS"
-                    }""".trimMargin())
+                    }""".trimMargin()
+                )
         )
             .andExpect(status().isOk)
 
@@ -133,26 +161,5 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.subtype).isEqualTo(CollectionInteractionType.NAVIGATE_TO_COLLECTION_DETAILS)
         assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.userId).isEqualTo("john@teacher.com")
-    }
-
-    @Test
-    fun `playbacks by unauthorized users are saved`() {
-        val videoId = aValidId()
-        mockMvc.perform(
-            post("/v1/events/playback")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{
-                    "videoId" : "$videoId",
-                    "videoIndex" : 3,
-                    "segmentStartSeconds" : 0,
-                    "segmentEndSeconds" : 100,
-                    "videoDurationSeconds" : 200,
-                    "captureTime" : "2018-01-01T00:00:00.000Z",
-                    "searchId" : "srch-123"
-                    }""".trimMargin()
-                )
-        )
-            .andExpect(status().isCreated)
     }
 }
