@@ -34,7 +34,7 @@ class GetCollections(
     fun getUnassembledCollections(
         collectionsRequest: CollectionsController.CollectionsRequest,
         accessRule: AccessRule,
-        user: User? = null
+        user: User
     ): Page<Collection> {
         val assembledQuery = collectionSearchQueryAssembler(
             query = collectionsRequest.query,

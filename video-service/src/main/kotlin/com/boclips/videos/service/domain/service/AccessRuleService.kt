@@ -23,25 +23,9 @@ data class AccessRule(val collectionAccess: CollectionAccessRule) {
         }
     }
 
-    fun canAccessUsersCollections(targetOwner: UserId): Boolean {
-        return when (this.collectionAccess) {
-            is CollectionAccessRule.Everything -> true
-            is CollectionAccessRule.SpecificOwner -> this.collectionAccess.owner == targetOwner
-            is CollectionAccessRule.SpecificIds -> true // specific ID access bypasses collection visibility
-            else -> false
-        }
-    }
-
     fun isPublic(): Boolean {
         return when (this.collectionAccess) {
             is CollectionAccessRule.PublicOnly -> true
-            else -> false
-        }
-    }
-
-    fun allowsEverything(): Boolean {
-        return when (this.collectionAccess) {
-            is CollectionAccessRule.Everything -> true
             else -> false
         }
     }
