@@ -45,7 +45,8 @@ class CreateVideoRequestToVideoConverter {
             distributionMethods = distributionMethods,
             ratings = emptyList(),
             tag = null,
-            promoted = null
+            promoted = null,
+            shareCodes = emptySet()
         )
     }
 }

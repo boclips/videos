@@ -1,6 +1,9 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.video.VideosUpdated
+import com.boclips.users.client.model.Subject
+import com.boclips.users.client.model.TeacherPlatformAttributes
+import com.boclips.users.client.model.User
 import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -674,6 +677,30 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.rating", equalTo(3.0)))
             .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
             .andExpect(jsonPath("$._links.rate").exists())
+    }
+
+    @Test
+    fun `accessing a shared video with correct code`() {
+        val videoId = saveVideo().value
+        val user = userServiceClient.addUser(User("sharer-test@boclips.com", "orgId", emptyList<Subject>(), TeacherPlatformAttributes("abcd")))
+
+        mockMvc.perform(patch("/v1/videos/$videoId?sharing=true").asTeacher("sharer-test@boclips.com"))
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoId/match?shareCode=${user.teacherPlatformAttributes.shareCode}"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `accessing a shared video with an incorrect code`() {
+        val videoId = saveVideo().value
+        userServiceClient.addUser(User("sharer-test@boclips.com", "orgId", emptyList<Subject>(), TeacherPlatformAttributes("abcd")))
+
+        mockMvc.perform(patch("/v1/videos/$videoId?sharing=true").asTeacher("sharer-test@boclips.com"))
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoId/match?shareCode=1234"))
+            .andExpect(status().isForbidden)
     }
 
     @Test

@@ -49,7 +49,8 @@ object VideoDocumentConverter {
             distributionMethods = video.distributionMethods.map(
                 DistributionMethodDocumentConverter::toDocument
             ).toSet(),
-            promoted = video.promoted
+            promoted = video.promoted,
+            shareCodes = video.shareCodes
         )
     }
 
@@ -87,7 +88,8 @@ object VideoDocumentConverter {
                     it
                 )
             },
-            promoted = document.promoted
+            promoted = document.promoted,
+            shareCodes = document.shareCodes
         )
     }
 }

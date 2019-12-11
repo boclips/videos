@@ -54,7 +54,8 @@ class VideoDocumentConverterTest {
             ratings = listOf(UserRating(3, UserId("user"))),
             ageRange = AgeRange.bounded(11, 16),
             distributionMethods = setOf(DistributionMethod.STREAM),
-            promoted = true
+            promoted = true,
+            shareCodes = setOf("1234")
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalAsset)

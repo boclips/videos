@@ -8,6 +8,8 @@ import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
+import com.boclips.security.utils.User
+import com.boclips.users.client.model.TeacherPlatformAttributes
 import com.boclips.videos.service.domain.model.RequestContext
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
@@ -95,7 +97,8 @@ object TestFactories {
             name = contentPartnerName
         ),
         videoReference: String = contentPartnerVideoId,
-        promoted: Boolean? = null
+        promoted: Boolean? = null,
+        shareCodes: Set<String>? = emptySet()
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -117,7 +120,8 @@ object TestFactories {
             videoReference = videoReference,
             ratings = ratings,
             tag = tag,
-            promoted = promoted
+            promoted = promoted,
+            shareCodes = shareCodes
         )
     }
 
@@ -249,7 +253,7 @@ object TestFactories {
         command: CollectionUpdateCommand = CollectionUpdateCommand.RenameCollection(
             collectionId,
             "collection title",
-            UserFactory.sample()
+            SecurityUserFactory.sample()
         )
     ): CollectionUpdateResult {
         return CollectionUpdateResult(
@@ -567,6 +571,35 @@ object AccessRuleFactory {
         sample(collectionAccessRule = CollectionAccessRule.asOwner(UserId(ownerId)))
 }
 
+object SecurityUserFactory {
+    fun sample(
+        roles: Set<String> = emptySet(),
+        id: String = "some-id",
+        boclipsEmployee: Boolean = false
+    ): User {
+        return User(
+            boclipsEmployee = boclipsEmployee,
+            id = id,
+            authorities = roles.map { "ROLE_$it" }.toSet()
+        )
+    }
+
+    fun createClientUser(
+        id: String = "user-id",
+        organisationAccountId: String = "organisation-id",
+        subjects: List<com.boclips.users.client.model.Subject> = emptyList(),
+        teacherPlatformAttributes: TeacherPlatformAttributes? = TeacherPlatformAttributes(null)
+    ) : com.boclips.users.client.model.User {
+        return com.boclips.users.client.model.User(
+            id,
+            organisationAccountId,
+            subjects,
+            teacherPlatformAttributes
+        )
+    }
+}
+
+
 object UserFactory {
     fun sample(
         id: String = "userio-123",
@@ -602,4 +635,3 @@ object CreatePlaybackEventCommandFactory {
         )
     }
 }
-

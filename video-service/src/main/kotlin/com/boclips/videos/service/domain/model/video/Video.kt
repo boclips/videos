@@ -28,7 +28,8 @@ data class Video(
     val ratings: List<UserRating>,
     val tag: UserTag?,
     val distributionMethods: Set<DistributionMethod>,
-    val promoted: Boolean?
+    val promoted: Boolean?,
+    val shareCodes: Set<String>?
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

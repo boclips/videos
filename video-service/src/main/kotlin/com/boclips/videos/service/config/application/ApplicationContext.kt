@@ -41,6 +41,7 @@ import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.RebuildVideoIndex
+import com.boclips.videos.service.application.video.ShareVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
@@ -53,6 +54,7 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.application.video.search.ValidateWithShareCode
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
@@ -144,6 +146,11 @@ class ApplicationContext(
     @Bean
     fun tagVideo(): TagVideo {
         return TagVideo(videoRepository, tagRepository)
+    }
+
+    @Bean
+    fun shareVideo(userServiceClient: UserServiceClient): ShareVideo {
+        return ShareVideo(userServiceClient, videoRepository)
     }
 
     @Bean
@@ -386,6 +393,11 @@ class ApplicationContext(
     @Bean
     fun findAllLegalRestrictions(): FindAllLegalRestrictions {
         return FindAllLegalRestrictions(legalRestrictionsRepository)
+    }
+
+    @Bean
+    fun validateWithShareCode(): ValidateWithShareCode {
+        return ValidateWithShareCode(videoService)
     }
 
     private fun getVideoById(): GetVideoById {

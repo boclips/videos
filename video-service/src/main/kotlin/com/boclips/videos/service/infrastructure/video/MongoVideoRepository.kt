@@ -44,6 +44,7 @@ import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
+import org.litote.kmongo.addToSet
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
 import org.litote.kmongo.div
@@ -313,6 +314,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
             is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.legalRestrictions.text)
             is ReplacePromoted -> set(VideoDocument::promoted, updateCommand.promoted)
+            is VideoUpdateCommand.AddShareCode -> addToSet(VideoDocument::shareCodes, updateCommand.shareCode)
         }
     }
 

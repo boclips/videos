@@ -5,8 +5,8 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -232,6 +232,31 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(updatedAsset.promoted).isEqualTo(true)
+    }
+
+    @Test
+    fun `update shareCodes`() {
+        val originalVideo = mongoVideoRepository.create(TestFactories.createVideo(shareCodes = setOf("abcd")))
+
+        val videoBefore = mongoVideoRepository.find(originalVideo.videoId)!!
+
+        val updatedVideo = mongoVideoRepository.update(
+            VideoUpdateCommand.AddShareCode(originalVideo.videoId, shareCode = "1234")
+        )
+
+        assertThat(videoBefore.shareCodes).containsExactly("abcd")
+        assertThat(updatedVideo.shareCodes).containsAll(setOf("abcd", "1234"))
+    }
+
+    @Test
+    fun `update shareCodes for video without shareCodes`() {
+        val originalVideo = mongoVideoRepository.create(TestFactories.createVideo(shareCodes = emptySet()))
+
+        val updatedVideo = mongoVideoRepository.update(
+            VideoUpdateCommand.AddShareCode(originalVideo.videoId, shareCode = "1234")
+        )
+
+        assertThat(updatedVideo.shareCodes).containsAll(setOf("1234"))
     }
 
     @Test
