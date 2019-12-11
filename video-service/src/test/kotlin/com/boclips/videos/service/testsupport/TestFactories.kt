@@ -437,12 +437,13 @@ object UserRatingFactory {
 }
 
 object PlaybackResourceFactory {
-    fun sample(type: String = "STREAM") =
+    fun sample(type: String = "STREAM", downloadUrl: String? = "download-url") =
         StreamPlaybackResource(
-            type,
-            "http://example.com",
-            "thumbnail-url",
-            Duration.ZERO,
+            id = "playback-id",
+            type = type,
+            thumbnailUrl = "thumbnail-url",
+            downloadUrl = downloadUrl,
+            duration = Duration.ZERO,
             streamUrl = "stream-url",
             referenceId = "reference-id"
         )
@@ -458,7 +459,7 @@ object VideoResourceFactory {
         title: String = "title",
         description: String = "description",
         contentPartnerVideoId: String = "cp-id-$id",
-        playback: PlaybackResource = PlaybackResourceFactory.sample(),
+        playback: PlaybackResource? = PlaybackResourceFactory.sample(),
         type: VideoTypeResource = VideoTypeResourceFactory.sample(),
         subjects: Set<SubjectResource> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
@@ -469,7 +470,7 @@ object VideoResourceFactory {
         rating: Double? = null
     ) = VideoResource(
         id = id,
-        playback = Resource(playback),
+        playback = playback?.let { Resource(it) },
         title = title,
         description = description,
         releasedOn = releasedOn,

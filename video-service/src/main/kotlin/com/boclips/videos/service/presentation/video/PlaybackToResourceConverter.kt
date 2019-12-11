@@ -21,6 +21,7 @@ class PlaybackToResourceConverter(
             listOfNotNull(
                 this.eventsLinkBuilder.createPlaybackEventLink(),
                 this.eventsLinkBuilder.createPlayerInteractedWithEventLink(),
+                this.playbacksLinkBuilder.downloadLink(playback),
                 this.playbacksLinkBuilder.thumbnailLink(playback),
                 this.playbacksLinkBuilder.videoPreviewLink(playback),
                 this.playbacksLinkBuilder.hlsStreamLink(playback)
@@ -36,6 +37,7 @@ class PlaybackToResourceConverter(
                 StreamPlaybackResource(
                     streamUrl = streamUrl,
                     thumbnailUrl = UriTemplate(thumbnailUrl).expand(mapOf(Pair("thumbnailWidth", 500))).toString(),
+                    downloadUrl = playback.downloadUrl,
                     duration = playback.duration,
                     id = playback.id.value,
                     referenceId = playback.referenceId

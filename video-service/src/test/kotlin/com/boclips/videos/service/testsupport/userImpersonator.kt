@@ -45,6 +45,7 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.BACKOFFICE,
                 UserRoles.VIEW_VIDEOS,
                 UserRoles.DOWNLOAD_TRANSCRIPT,
+                UserRoles.DOWNLOAD_VIDEO,
                 UserRoles.VIEW_DISABLED_VIDEOS,
                 UserRoles.INSERT_EVENTS,
                 UserRoles.UPDATE_VIDEOS,

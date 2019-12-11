@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.video.playback
 
 import com.boclips.videos.service.presentation.projections.BoclipsInternalProjection
 import com.boclips.videos.service.presentation.projections.PublicApiProjection
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonView
 import java.time.Duration
 
@@ -14,6 +15,8 @@ sealed class PlaybackResource {
     abstract var duration: Duration?
     @get:JsonView(PublicApiProjection::class)
     abstract val type: String
+
+    abstract val downloadUrl: String?
 }
 
 data class StreamPlaybackResource(
@@ -28,7 +31,9 @@ data class StreamPlaybackResource(
     @get:JsonView(PublicApiProjection::class)
     val streamUrl: String,
     @get:JsonView(BoclipsInternalProjection::class)
-    val referenceId: String
+    val referenceId: String,
+    @get:JsonIgnore
+    override val downloadUrl: String?
 ) : PlaybackResource()
 
 data class YoutubePlaybackResource(
@@ -40,4 +45,7 @@ data class YoutubePlaybackResource(
     override var thumbnailUrl: String?,
     @get:JsonView(PublicApiProjection::class)
     override var duration: Duration?
-) : PlaybackResource()
+) : PlaybackResource() {
+    override val downloadUrl: String?
+        get() = null
+}

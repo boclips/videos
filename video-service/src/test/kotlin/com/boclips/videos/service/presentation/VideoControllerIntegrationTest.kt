@@ -208,6 +208,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("YOUTUBE")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT56S")))
+            .andExpect(jsonPath("$._embedded.videos[0].playback.downloadUrl").doesNotExist())
             .andExpect(
                 jsonPath(
                     "$._embedded.videos[0].playback._links.thumbnail.href",
@@ -453,6 +454,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
                 )
                 .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+                .andExpect(jsonPath("$.playback._links.download.href").isNotEmpty())
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
@@ -484,6 +486,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.createdBy", equalTo("cp")))
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
+                .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
                 .andExpect(jsonPath("$.playback.duration", equalTo("PT23S")))
                 .andExpect(
@@ -499,6 +502,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
                 )
                 .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+                .andExpect(jsonPath("$.playback._links.download.href").doesNotExist())
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
@@ -553,6 +557,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
                 )
                 .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+                .andExpect(jsonPath("$.playback._links.download.href").doesNotExist())
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))

@@ -1,6 +1,8 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -19,6 +21,42 @@ internal class PlaybacksLinkBuilderTest {
     fun setup() {
         val fakeKalturaClient = TestKalturaClient()
         linkBuilder = PlaybacksLinkBuilder(fakeKalturaClient)
+    }
+
+    @Nested
+    inner class DownloadUrl {
+        @Test
+        fun `defined for Kaltura videos`() {
+            setSecurityContext("someone@boclips.com", UserRoles.DOWNLOAD_VIDEO)
+
+            val playback = TestFactories.createKalturaPlayback(downloadUrl = "https://download.me")
+
+            val link = linkBuilder.downloadLink(playback)
+
+            assertThat(link).isNotNull
+            assertThat(link!!.href).isEqualTo("https://download.me")
+            assertThat(link.rel).isEqualTo("download")
+        }
+
+        @Test
+        fun `not defined for Kaltura videos when user unauthorized`() {
+            setSecurityContext("someone@boclips.com")
+
+            val playback = TestFactories.createKalturaPlayback(downloadUrl = "https://download.me")
+
+            val link = linkBuilder.downloadLink(playback)
+
+            assertThat(link).isNull()
+        }
+
+        @Test
+        fun `not defined for YouTube videos`() {
+            val playback = TestFactories.createYoutubePlayback()
+
+            val link = linkBuilder.downloadLink(playback)
+
+            assertThat(link).isNull()
+        }
     }
 
     @Nested

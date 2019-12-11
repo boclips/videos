@@ -32,7 +32,7 @@ internal class PlaybackToResourceConverterTest {
         )
     }
 
-    val kalturaPlayback = TestFactories.createKalturaPlayback()
+    val kalturaPlayback = TestFactories.createKalturaPlayback(downloadUrl = "https://download-url.com")
 
     val youtubePlayback = TestFactories.createYoutubePlayback()
 
@@ -44,11 +44,13 @@ internal class PlaybackToResourceConverterTest {
         assertThat(content.streamUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id/format/applehttp/flavorParamIds/487041%2C487071%2C487081%2C487091/protocol/https/video.mp4")
         assertThat(content.duration).isEqualTo(kalturaPlayback.duration)
         assertThat(content.thumbnailUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id/width/500/vid_slices/3/vid_slice/1")
+        assertThat(content.downloadUrl).isEqualTo("https://download-url.com")
         assertThat(content.id).isEqualTo(kalturaPlayback.id.value)
         assertThat(content.referenceId).isEqualTo(kalturaPlayback.referenceId)
 
         verify(eventsLinkBuilder).createPlaybackEventLink()
         verify(eventsLinkBuilder).createPlayerInteractedWithEventLink()
+        verify(playbacksLinkBuilder).downloadLink(kalturaPlayback)
         verify(playbacksLinkBuilder, times(2)).thumbnailLink(kalturaPlayback)
         verify(playbacksLinkBuilder).videoPreviewLink(kalturaPlayback)
         verify(playbacksLinkBuilder, times(2)).hlsStreamLink(kalturaPlayback)
