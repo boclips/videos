@@ -4,10 +4,13 @@ import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
+import mu.KLogging
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class SavePlaybackEvent(private val eventService: EventService) {
+    companion object : KLogging()
+
     fun execute(event: CreatePlaybackEventCommand?, playbackDevice: String?, user: User) {
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
@@ -27,6 +30,8 @@ class SavePlaybackEvent(private val eventService: EventService) {
         events ?: throw InvalidEventException("Event cannot be null")
 
         validateCreatePlaybackEvents(events)
+
+        logger.info { "Received batch of ${events.size} playback events by user ${user.id}" }
 
         events.forEach { event ->
             eventService.savePlaybackEvent(
