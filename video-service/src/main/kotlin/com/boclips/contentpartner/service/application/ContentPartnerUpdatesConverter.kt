@@ -8,7 +8,7 @@ import com.boclips.contentpartner.service.domain.model.LegalRestrictionsReposito
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
-import java.util.*
+import java.util.Currency
 
 class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: LegalRestrictionsRepository) {
     fun convert(id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest): List<ContentPartnerUpdateCommand> {
@@ -23,7 +23,10 @@ class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: Le
     }
 }
 
-class ContentPartnerUpdateCommandCreator(val id: ContentPartnerId, val contentPartnerRequest: ContentPartnerRequest) {
+class ContentPartnerUpdateCommandCreator(
+    val id: ContentPartnerId,
+    private val contentPartnerRequest: ContentPartnerRequest
+) {
 
     fun updateHiddenDeliveryMethodsOrNot(): ContentPartnerUpdateCommand? {
         return contentPartnerRequest.distributionMethods

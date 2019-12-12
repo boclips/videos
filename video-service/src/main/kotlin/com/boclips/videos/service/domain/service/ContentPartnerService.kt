@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.ContentPartner
@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component
 class ContentPartnerService(val contentPartnerRepository: ContentPartnerRepository) {
 
     fun findById(id: String): ContentPartner? {
-        val contentPartner = find(ContentPartnerId(id)) ?: throw ContentPartnerNotFoundException(id)
+        val contentPartner = find(ContentPartnerId(id)) ?: throw ContentPartnerNotFoundException(
+            id
+        )
         return ContentPartner(
             contentPartnerId = contentPartner.contentPartnerId,
             name = contentPartner.name

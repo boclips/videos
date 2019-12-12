@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.application
 
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.domain.model.*
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -28,7 +29,9 @@ class CreateContentPartner(
         )
 
         if (contentPartnerRepository.findAll(filters).toList().isNotEmpty()) {
-            throw ContentPartnerConflictException(request.name)
+            throw ContentPartnerConflictException(
+                request.name
+            )
         }
 
         return contentPartnerRepository

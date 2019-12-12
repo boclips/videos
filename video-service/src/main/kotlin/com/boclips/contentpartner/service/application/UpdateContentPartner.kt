@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.application
 
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
@@ -30,7 +31,9 @@ class UpdateContentPartner(
         contentPartnerRepository.update(updateCommands)
 
         val contentPartner = contentPartnerRepository.findById(id)
-            ?: throw ContentPartnerNotFoundException("Could not find content partner: ${id.value}")
+            ?: throw ContentPartnerNotFoundException(
+                "Could not find content partner: ${id.value}"
+            )
 
         videoService.updateContentPartnerInVideos(contentPartner)
 

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -37,7 +36,6 @@ class VideoService(
         return playableVideos
     }
 
-    // TODO this returns all videos matched by query, does not take into account whether video is playable
     fun count(videoSearchQuery: VideoSearchQuery): Long {
         logger.info { "Counted videos for query $videoSearchQuery" }
         return videoSearchService.count(videoSearchQuery.toSearchQuery())
@@ -91,11 +89,7 @@ class VideoService(
         return videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
     }
 
-    fun getPlayableVideos(contentPartnerId: ContentPartnerId): List<Video> {
-        return videoRepository.findByContentPartnerId(contentPartnerId)
-    }
-
-    //TODO use "correct" content partner
+    //TODO Event Interface
     fun updateContentPartnerInVideos(contentPartner: com.boclips.contentpartner.service.domain.model.ContentPartner) {
         logger.info { "Starting updating videos for content partner: $contentPartner" }
 

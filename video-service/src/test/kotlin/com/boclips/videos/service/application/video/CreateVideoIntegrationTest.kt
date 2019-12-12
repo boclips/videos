@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated

@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.application
+package com.boclips.contentpartner.service.application.exceptions
 
 import com.boclips.web.exceptions.BoclipsApiException
 import com.boclips.web.exceptions.ExceptionDetails

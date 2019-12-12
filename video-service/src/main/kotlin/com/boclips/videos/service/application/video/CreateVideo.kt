@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.contentpartner.service.application.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
@@ -24,6 +24,7 @@ import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoCo
 import io.micrometer.core.instrument.Counter
 import mu.KLogging
 
+// TODO Interface to Content Partner domain
 class CreateVideo(
     private val videoService: VideoService,
     private val subjectRepository: SubjectRepository,
@@ -43,7 +44,9 @@ class CreateVideo(
         }
 
         val contentPartner = findContentPartner(createRequest)
-            ?: throw ContentPartnerNotFoundException("Could not find content partner with id: ${createRequest.providerId}")
+            ?: throw ContentPartnerNotFoundException(
+                "Could not find content partner with id: ${createRequest.providerId}"
+            )
 
         val distributionMethods = findDistributionMethods(contentPartner.contentPartnerId)
 
@@ -52,7 +55,13 @@ class CreateVideo(
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 
         val videoToBeCreated =
-            createVideoRequestToVideoConverter.convert(createRequest, videoPlayback, contentPartner, distributionMethods, subjects)
+            createVideoRequestToVideoConverter.convert(
+                createVideoRequest = createRequest,
+                videoPlayback = videoPlayback,
+                contentPartner = contentPartner,
+                distributionMethods = distributionMethods,
+                subjects = subjects
+            )
 
         val createdVideo = try {
             videoService.create(videoToBeCreated)
@@ -71,9 +80,7 @@ class CreateVideo(
         return searchVideo.byId(createdVideo.videoId.value, user)
     }
 
-    private fun findContentPartner(
-        createRequest: CreateVideoRequest
-    ): ContentPartner? =
+    private fun findContentPartner(createRequest: CreateVideoRequest): ContentPartner? =
         createRequest.providerId?.let {
             contentPartnerService.findById(createRequest.providerId)
         }
