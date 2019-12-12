@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.hasSize

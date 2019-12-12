@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
