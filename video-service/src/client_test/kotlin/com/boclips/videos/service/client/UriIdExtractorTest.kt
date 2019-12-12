@@ -18,11 +18,20 @@ class UriIdExtractorTest {
 
     @Test
     fun `extractId throws on non-video URIs`() {
-        val uri = URI.create("https://video-service.boclips.com/v1/videos")
+        val uri = URI.create("https://video-service.boclips.com/v1/videos/garbage")
 
         assertThrows<IllegalArgumentException> {
             UriIdExtractor.extractId(uri, UriIdExtractor.VIDEO_ID_URI_PATTERN)
         }
+    }
+
+    @Test
+    fun `extractId handles legacy video ids`() {
+        val uri = URI.create("https://video-service.boclips.com/v1/videos/5678")
+
+        val id = UriIdExtractor.extractId(uri, UriIdExtractor.VIDEO_ID_URI_PATTERN)
+
+        assertThat(id).isEqualTo("5678")
     }
 
     @Test
