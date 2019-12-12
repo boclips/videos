@@ -18,6 +18,7 @@ open class BaseController {
             isPermittedToViewAnyCollection = userRequest?.hasRole(UserRoles.VIEW_ANY_COLLECTION) ?: false,
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,
+            isPermittedToShareVideo = userRequest?.hasRole(UserRoles.SHARE_VIDEOS) ?: false,
             context = RequestContext(origin = referer)
         )
     }
@@ -30,5 +31,6 @@ object Administrator : User(
     isPermittedToRateVideos = true,
     isPermittedToViewAnyCollection = true,
     isPermittedToUpdateVideo = true,
+    isPermittedToShareVideo = true,
     context = RequestContext(origin = null)
 )

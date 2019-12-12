@@ -253,7 +253,7 @@ object TestFactories {
         command: CollectionUpdateCommand = CollectionUpdateCommand.RenameCollection(
             collectionId,
             "collection title",
-            SecurityUserFactory.sample()
+            UserFactory.sample()
         )
     ): CollectionUpdateResult {
         return CollectionUpdateResult(
@@ -604,7 +604,8 @@ object UserFactory {
     fun sample(
         id: String = "userio-123",
         boclipsEmployee: Boolean = false,
-        isPermittedToViewAnyCollection: Boolean = false
+        isPermittedToViewAnyCollection: Boolean = false,
+        isPermittedToShareVideo: Boolean = false
     ): com.boclips.videos.service.domain.model.User {
         return com.boclips.videos.service.domain.model.User(
             id = UserId(id),
@@ -613,7 +614,8 @@ object UserFactory {
             context = RequestContext(origin = "https://teachers.boclips.com"),
             isPermittedToUpdateVideo = true,
             isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
-            isPermittedToRateVideos = true
+            isPermittedToRateVideos = true,
+            isPermittedToShareVideo = isPermittedToShareVideo
         )
     }
 }
@@ -635,3 +637,4 @@ object CreatePlaybackEventCommandFactory {
         )
     }
 }
+

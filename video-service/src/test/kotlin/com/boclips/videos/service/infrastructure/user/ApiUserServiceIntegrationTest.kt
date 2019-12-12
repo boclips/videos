@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.user
 
 import com.boclips.users.client.model.Subject
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.SecurityUserFactory
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,7 +16,7 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun getSubjectIds() {
-        userServiceClient.addUser(UserFactory.createClientUser("bob@boclips.com", "organisation-1", Arrays.asList(Subject("subject-1"))))
+        userServiceClient.addUser(SecurityUserFactory.createClientUser("bob@boclips.com", "organisation-1", Arrays.asList(Subject("subject-1"))))
 
         val subjectIds = userService.getSubjectIds("bob@boclips.com")
 
@@ -31,7 +32,7 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `getSubjectIds returns cached subjects`() {
-        userServiceClient.addUser(UserFactory.createClientUser("bob@boclips.com", "organisation-1", Arrays.asList(Subject("subject-1"))))
+        userServiceClient.addUser(SecurityUserFactory.createClientUser("bob@boclips.com", "organisation-1", Arrays.asList(Subject("subject-1"))))
         userService.getSubjectIds("bob@boclips.com")
         userServiceClient.clearUser()
 

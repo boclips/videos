@@ -9,6 +9,7 @@ open class User(
     val isPermittedToViewAnyCollection: Boolean,
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
+    val isPermittedToShareVideo: Boolean,
     val context: RequestContext
 )
 
