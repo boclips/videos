@@ -25,11 +25,9 @@ import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.presentation.RefererHeaderExtractor
 import java.time.ZonedDateTime
 
 class EventService(val eventBus: EventBus) {
@@ -49,7 +47,7 @@ class EventService(val eventBus: EventBus) {
                     .pageSize(pageSize)
                     .totalResults(totalResults)
                     .pageVideoIds(pageVideoIds),
-                userId = user.id
+                user = user
             )
         )
     }
@@ -63,7 +61,7 @@ class EventService(val eventBus: EventBus) {
             msg(
                 builder = CollectionDeleted.builder()
                     .collectionId(collectionId.value),
-                userId = user.id
+                user = user
             )
         )
     }
@@ -84,7 +82,7 @@ class EventService(val eventBus: EventBus) {
                         builder = VideoAddedToCollection.builder()
                             .collectionId(updateCommand.collectionId.value)
                             .videoId(updateCommand.videoId.value),
-                        userId = updateCommand.user.id
+                        user = updateCommand.user
                     )
                 )
             is CollectionUpdateCommand.RemoveVideoFromCollection ->
@@ -93,7 +91,7 @@ class EventService(val eventBus: EventBus) {
                         builder = VideoRemovedFromCollection.builder()
                             .collectionId(updateCommand.collectionId.value)
                             .videoId(updateCommand.videoId.value),
-                        userId = updateCommand.user.id
+                        user = updateCommand.user
                     )
                 )
             is CollectionUpdateCommand.RenameCollection ->
@@ -102,7 +100,7 @@ class EventService(val eventBus: EventBus) {
                         builder = CollectionRenamed.builder()
                             .collectionId(updateCommand.collectionId.value)
                             .collectionTitle(updateCommand.title),
-                        userId = updateCommand.user.id
+                        user = updateCommand.user
                     )
                 )
             is CollectionUpdateCommand.ChangeVisibility ->
@@ -111,7 +109,7 @@ class EventService(val eventBus: EventBus) {
                         builder = CollectionVisibilityChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
                             .isPublic(updateCommand.isPublic),
-                        userId = updateCommand.user.id
+                        user = updateCommand.user
                     )
                 )
             is CollectionUpdateCommand.ReplaceSubjects, is CollectionUpdateCommand.RemoveSubjectFromCollection ->
@@ -120,7 +118,7 @@ class EventService(val eventBus: EventBus) {
                         builder = CollectionSubjectsChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
                             .subjects(collection.subjects.map { it.id.value }.toMutableSet()),
-                        userId = updateCommand.user.id
+                        user = updateCommand.user
                     )
                 )
             is CollectionUpdateCommand.ChangeAgeRange ->
@@ -130,7 +128,7 @@ class EventService(val eventBus: EventBus) {
                             .collectionId(updateCommand.collectionId.value)
                             .rangeMin(updateCommand.minAge)
                             .rangeMax(updateCommand.maxAge),
-                        userId = updateCommand.user.id
+                        user = updateCommand.user
                     )
                 )
 
@@ -139,7 +137,7 @@ class EventService(val eventBus: EventBus) {
                     builder = CollectionDescriptionChanged.builder()
                         .collectionId(updateCommand.collectionId.value)
                         .description(updateCommand.description),
-                    userId = updateCommand.user.id
+                    user = updateCommand.user
                 )
             )
             is CollectionUpdateCommand.AddAttachment -> null
@@ -148,20 +146,20 @@ class EventService(val eventBus: EventBus) {
                     builder = CollectionVideosBulkChanged.builder()
                         .collectionId(updateCommand.collectionId.value)
                         .videoIds(updateCommand.videoIds.map { it.value }),
-                    userId = updateCommand.user.id
+                    user = updateCommand.user
                 )
             )
             is CollectionUpdateCommand.Bookmark -> eventBus.publish(
                 msg(
                     CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(true),
-                    userId = updateCommand.user.id
+                    user = updateCommand.user
                 )
             )
             is CollectionUpdateCommand.Unbookmark -> eventBus.publish(
                 msg(
                     builder = CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value)
                         .isBookmarked(false),
-                    userId = updateCommand.user.id
+                    user = updateCommand.user
                 )
             )
         }
@@ -171,7 +169,7 @@ class EventService(val eventBus: EventBus) {
         eventBus.publish(
             msg(
                 builder = VideoInteractedWith.builder().videoId(videoId.value).subtype(subtype),
-                userId = user.id
+                user = user
             )
         )
     }
@@ -194,7 +192,7 @@ class EventService(val eventBus: EventBus) {
                     .segmentEndSeconds(segmentEndSeconds)
                     .playbackDevice(playbackDevice)
                     .timestamp(timestamp),
-                userId = user.id
+                user = user
             )
         )
     }
@@ -213,7 +211,7 @@ class EventService(val eventBus: EventBus) {
                     .currentTime(currentTime)
                     .subtype(subtype)
                     .payload(payload),
-                userId = user.id
+                user = user
             )
         )
     }
@@ -228,18 +226,18 @@ class EventService(val eventBus: EventBus) {
                 CollectionInteractedWith.builder()
                     .collectionId(collectionId)
                     .subtype(subtype),
-                user.id
+                user
             )
         )
     }
 
     private fun msg(
         builder: AbstractEventWithUserId.AbstractEventWithUserIdBuilder<*, *>,
-        userId: UserId
+        user: User
     ): AbstractEventWithUserId {
         return builder
-            .userId(userId.value)
-            .url(RefererHeaderExtractor.getReferer())
+            .userId(user.id.value)
+            .url(user.context.origin)
             .build()
     }
 }
