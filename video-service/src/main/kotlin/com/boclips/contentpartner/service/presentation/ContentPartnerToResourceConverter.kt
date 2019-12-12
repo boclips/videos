@@ -21,7 +21,7 @@ object ContentPartnerToResourceConverter {
             distributionMethods = DistributionMethodResourceConverter.toDeliveryMethodResources(
                 contentPartner.distributionMethods
             ),
-            currency = if (user.isAdministrator)
+            currency = if (user.isPermittedToAccessBackoffice)
                 contentPartner.remittance?.currency?.currencyCode else null
         )
     }

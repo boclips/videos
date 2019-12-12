@@ -591,7 +591,7 @@ object UserFactory {
     ): com.boclips.videos.service.domain.model.User {
         return com.boclips.videos.service.domain.model.User(
             id = UserId(id),
-            isAdministrator = isAdministrator,
+            isPermittedToAccessBackoffice = isAdministrator,
             isAuthenticated = true,
             isBoclipsEmployee = boclipsEmployee,
             context = RequestContext(origin = "https://teachers.boclips.com"),

@@ -16,7 +16,7 @@ open class BaseController {
             id = UserId(value = userRequest?.id ?: "anonymousUser"),
             isBoclipsEmployee = userRequest?.boclipsEmployee ?: false,
             isAuthenticated = userRequest?.id.let { true },
-            isAdministrator = userRequest?.hasRole(UserRoles.BACKOFFICE) ?: false,
+            isPermittedToAccessBackoffice = userRequest?.hasRole(UserRoles.BACKOFFICE) ?: false,
             isPermittedToViewAnyCollection = userRequest?.hasRole(UserRoles.VIEW_ANY_COLLECTION) ?: false,
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,

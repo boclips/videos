@@ -6,11 +6,11 @@ open class User(
     val id: UserId,
     val isBoclipsEmployee: Boolean,
     val isAuthenticated: Boolean,
-    val isAdministrator: Boolean,
+    val isPermittedToAccessBackoffice: Boolean,
     val isPermittedToViewAnyCollection: Boolean,
     val isPermittedToRateVideos: Boolean,
-    val context: RequestContext,
-    val isPermittedToUpdateVideo: Boolean
+    val isPermittedToUpdateVideo: Boolean,
+    val context: RequestContext
 )
 
 data class RequestContext(val origin: String?)
