@@ -6,7 +6,6 @@ open class User(
     val id: UserId,
     val isBoclipsEmployee: Boolean,
     val isAuthenticated: Boolean,
-    val isPermittedToAccessBackoffice: Boolean,
     val isPermittedToViewAnyCollection: Boolean,
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,

@@ -220,7 +220,10 @@ abstract class AbstractSpringIntegrationTest {
                 )
             ).contentPartnerId.value
         } catch (e: ContentPartnerConflictException) {
-            getContentPartners.invoke(user = UserFactory.sample(), name = contentProvider).firstOrNull()?.content?.id
+            getContentPartners.invoke(
+                user = com.boclips.contentpartner.service.testsupport.UserFactory.sample(),
+                name = contentProvider
+            ).firstOrNull()?.content?.id
         }
 
         when (playbackId.type) {

@@ -6,11 +6,13 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.Remittance
+import com.boclips.contentpartner.service.domain.model.RequestContext
+import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
-import com.boclips.security.utils.User
 import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
@@ -87,6 +89,19 @@ object TestFactories {
         return LegalRestrictions(
             id = LegalRestrictionsId(TestFactories.aValidId()),
             text = text
+        )
+    }
+}
+
+object UserFactory {
+    fun sample(
+        isAdministrator: Boolean = false,
+        id: String = "userio-123"
+    ): User {
+        return User(
+            id = UserId(id),
+            isPermittedToAccessBackoffice = isAdministrator,
+            context = RequestContext(origin = "https://teachers.boclips.com")
         )
     }
 }

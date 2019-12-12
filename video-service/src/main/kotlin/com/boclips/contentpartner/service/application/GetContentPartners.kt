@@ -1,10 +1,10 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.presentation.ContentPartnerResource
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
-import com.boclips.videos.service.domain.model.User
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 
