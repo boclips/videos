@@ -16,7 +16,7 @@ class CollectionAccessService(private val accessRuleService: AccessRuleService) 
 
         return when {
             readOnly && collection.isPublic -> true
-            readOnly && accessRules.allowsAccessTo(collection) -> true
+            readOnly && accessRules.collectionAccess.allowsAccessTo(collection) -> true
             collection.owner == user.id -> true
             user.isPermittedToViewAnyCollection -> true
             else -> false

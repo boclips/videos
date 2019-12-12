@@ -2,9 +2,9 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
+import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.Projection
@@ -18,10 +18,10 @@ class GetCollections(
 ) {
     operator fun invoke(
         collectionsRequest: CollectionsController.CollectionsRequest,
-        accessRule: AccessRule,
+        accessRules: AccessRules,
         user: User
     ): Page<CollectionResource> {
-        val collections = getUnassembledCollections(collectionsRequest, accessRule, user)
+        val collections = getUnassembledCollections(collectionsRequest, accessRules, user)
 
         return assembleResourcesPage(
             projection = collectionsRequest.projection,
@@ -33,7 +33,7 @@ class GetCollections(
 
     fun getUnassembledCollections(
         collectionsRequest: CollectionsController.CollectionsRequest,
-        accessRule: AccessRule,
+        accessRules: AccessRules,
         user: User?
     ): Page<Collection> {
         val assembledQuery = collectionSearchQueryAssembler(
@@ -44,7 +44,7 @@ class GetCollections(
             owner = collectionsRequest.owner,
             page = collectionsRequest.page,
             size = collectionsRequest.size,
-            accessRule = accessRule,
+            accessRules = accessRules,
             user = user
         )
 

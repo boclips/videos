@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -93,7 +94,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val updatedVideo = videoService.getPlayableVideo(videoId = videoId)
+        val updatedVideo = videoService.getPlayableVideo(videoId = videoId, videoAccessRule = VideoAccessRule.Everything)
 
         assertThat(updatedVideo.distributionMethods).isEqualTo(DistributionMethod.ALL)
         assertThat(updatedVideo.legalRestrictions).isEqualTo("Legal restrictions test")

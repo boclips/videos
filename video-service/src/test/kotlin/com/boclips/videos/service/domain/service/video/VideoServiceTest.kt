@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -103,7 +104,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         fun `look up video by id`() {
             val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "abc"))
 
-            val video = videoService.getPlayableVideo(videoId)
+            val video = videoService.getPlayableVideo(videoId, VideoAccessRule.Everything)
 
             assertThat(video).isNotNull
         }
@@ -122,7 +123,12 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `look up by id throws if video does not exist`() {
-            Assertions.assertThatThrownBy { videoService.getPlayableVideo(VideoId(value = TestFactories.aValidId())) }
+            Assertions.assertThatThrownBy {
+                videoService.getPlayableVideo(
+                    VideoId(value = TestFactories.aValidId()),
+                    VideoAccessRule.Everything
+                )
+            }
                 .isInstanceOf(VideoNotFoundException::class.java)
         }
     }
@@ -134,7 +140,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val ageRange = AgeRange.bounded(2, 5)
             val video = videoService.create(TestFactories.createVideo(ageRange = ageRange))
 
-            assertThat(videoService.getPlayableVideo(video.videoId).ageRange).isEqualTo(ageRange)
+            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).ageRange).isEqualTo(
+                ageRange
+            )
         }
 
         @Test
@@ -190,7 +198,12 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 contentPartner = contentPartner.copy(name = "good bye")
             )
 
-            assertThat(videoService.getPlayableVideo(video.videoId).contentPartner.name).isEqualTo("good bye")
+            assertThat(
+                videoService.getPlayableVideo(
+                    video.videoId,
+                    VideoAccessRule.Everything
+                ).contentPartner.name
+            ).isEqualTo("good bye")
         }
 
         @Test
@@ -205,7 +218,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoService.getPlayableVideo(video.videoId).ageRange).isEqualTo(AgeRange.bounded(1, 5))
+            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).ageRange).isEqualTo(
+                AgeRange.bounded(1, 5)
+            )
         }
 
         @Test
@@ -220,7 +235,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoService.getPlayableVideo(video.videoId).distributionMethods).containsExactly(
+            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).distributionMethods).containsExactly(
                 DistributionMethod.STREAM
             )
         }
@@ -233,11 +248,14 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             videoService.updateContentPartnerInVideos(
                 contentPartner = contentPartner.copy(
-                    legalRestrictions = LegalRestrictions(id = LegalRestrictionsId("id"), text = "Legal restrictions test")
+                    legalRestrictions = LegalRestrictions(
+                        id = LegalRestrictionsId("id"),
+                        text = "Legal restrictions test"
+                    )
                 )
             )
 
-            assertThat(videoService.getPlayableVideo(video.videoId).legalRestrictions).isEqualTo("Legal restrictions test")
+            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).legalRestrictions).isEqualTo("Legal restrictions test")
         }
 
         @Test
@@ -255,13 +273,16 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             videoService.updateContentPartnerInVideos(
                 contentPartner = contentPartner.copy(
                     distributionMethods = setOf(DistributionMethod.STREAM),
-                    legalRestrictions = LegalRestrictions(id = LegalRestrictionsId("id"), text = "Multiple legal restrictions test"),
+                    legalRestrictions = LegalRestrictions(
+                        id = LegalRestrictionsId("id"),
+                        text = "Multiple legal restrictions test"
+                    ),
                     ageRange = AgeRange.bounded(3, 9)
                 )
             )
 
             videos.forEach {
-                val video = videoService.getPlayableVideo(it.videoId)
+                val video = videoService.getPlayableVideo(it.videoId, VideoAccessRule.Everything)
                 assertThat(video.distributionMethods).containsExactly(DistributionMethod.STREAM)
                 assertThat(video.ageRange).isEqualTo(AgeRange.bounded(3, 9))
                 assertThat(video.legalRestrictions).isEqualTo("Multiple legal restrictions test")

@@ -8,6 +8,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -42,13 +43,20 @@ class VideoService(
         return videoSearchService.count(videoSearchQuery.toSearchQuery())
     }
 
-    fun getPlayableVideo(videoId: VideoId): Video {
-        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
-        if (!video.isPlayable()) throw VideoPlaybackNotFound()
+    fun getPlayableVideo(
+        videoId: VideoId,
+        videoAccessRule: VideoAccessRule
+    ): Video =
+        when (videoAccessRule) {
+            is VideoAccessRule.SpecificIds -> {
+                if (!videoAccessRule.videoIds.contains(videoId)) {
+                    throw VideoNotFoundException()
+                }
 
-        logger.info { "Retrieved playable video $videoId" }
-        return video
-    }
+                getPlayableVideo(videoId)
+            }
+            VideoAccessRule.Everything -> getPlayableVideo(videoId)
+        }
 
     fun getPlayableVideo(videoIds: List<VideoId>): List<Video> {
         val videos = videoRepository.findAll(videoIds)
@@ -108,12 +116,25 @@ class VideoService(
                         videoId = video.videoId,
                         distributionMethods = contentPartner.distributionMethods
                     ),
-                    contentPartner.legalRestrictions?.let { VideoUpdateCommand.ReplaceLegalRestrictions(videoId = video.videoId, legalRestrictions = contentPartner.legalRestrictions)}
+                    contentPartner.legalRestrictions?.let {
+                        VideoUpdateCommand.ReplaceLegalRestrictions(
+                            videoId = video.videoId,
+                            legalRestrictions = contentPartner.legalRestrictions
+                        )
+                    }
                 )
             }
         }
 
         logger.info { "Finished updating videos for content partner: $contentPartner" }
+    }
+
+    private fun getPlayableVideo(videoId: VideoId): Video {
+        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
+        if (!video.isPlayable()) throw VideoPlaybackNotFound()
+
+        logger.info { "Retrieved playable video $videoId" }
+        return video
     }
 }
 

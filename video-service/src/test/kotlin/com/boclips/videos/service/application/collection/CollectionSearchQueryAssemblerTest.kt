@@ -5,11 +5,11 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery.Companion.publicOnly
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.presentation.CollectionsController
-import com.boclips.videos.service.testsupport.AccessRuleFactory
+import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -27,7 +27,7 @@ class CollectionSearchQueryAssemblerTest {
             public = true,
             page = 1,
             size = 30,
-            accessRule = AccessRuleFactory.asOwner("my-id"),
+            accessRules = AccessRulesFactory.asOwner("my-id"),
             owner = "other-id"
         )
 
@@ -44,7 +44,7 @@ class CollectionSearchQueryAssemblerTest {
         val collectionIds = arrayOf(CollectionId("1"), CollectionId("2"))
 
         val query = collectionSearchQueryAssembler(
-            accessRule = AccessRuleFactory.specificIds(*collectionIds)
+            accessRules = AccessRulesFactory.specificIds(*collectionIds)
         )
 
         assertThat(query.permittedCollections).containsExactlyInAnyOrder(*collectionIds)
@@ -57,7 +57,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = true,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.asOwner("me")
+                accessRules = AccessRulesFactory.asOwner("me")
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -71,7 +71,7 @@ class CollectionSearchQueryAssemblerTest {
                 collectionSearchQueryAssembler(
                     public = false,
                     owner = "other-folk",
-                    accessRule = AccessRuleFactory.asOwner("me")
+                    accessRules = AccessRulesFactory.asOwner("me")
                 )
             }
         }
@@ -81,7 +81,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.asOwner("me")
+                accessRules = AccessRulesFactory.asOwner("me")
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -94,7 +94,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = null,
-                accessRule = AccessRuleFactory.asOwner("me")
+                accessRules = AccessRulesFactory.asOwner("me")
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -111,7 +111,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = true,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.publicOnly()
+                accessRules = AccessRulesFactory.publicOnly()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -124,7 +124,7 @@ class CollectionSearchQueryAssemblerTest {
             assertThrows<OperationForbiddenException> {
                 collectionSearchQueryAssembler(
                     public = false,
-                    accessRule = AccessRuleFactory.publicOnly()
+                    accessRules = AccessRulesFactory.publicOnly()
                 )
             }
         }
@@ -134,7 +134,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.publicOnly()
+                accessRules = AccessRulesFactory.publicOnly()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -147,7 +147,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = null,
-                accessRule = AccessRuleFactory.publicOnly()
+                accessRules = AccessRulesFactory.publicOnly()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -163,7 +163,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = true,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.superuser()
+                accessRules = AccessRulesFactory.superuser()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -176,7 +176,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = false,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.superuser()
+                accessRules = AccessRulesFactory.superuser()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -189,7 +189,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.superuser()
+                accessRules = AccessRulesFactory.superuser()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -202,7 +202,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = false,
                 owner = null,
-                accessRule = AccessRuleFactory.superuser()
+                accessRules = AccessRulesFactory.superuser()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -215,7 +215,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = null,
-                accessRule = AccessRuleFactory.superuser()
+                accessRules = AccessRulesFactory.superuser()
             )
 
             assertThat(query.visibilityForOwners).isEmpty()
@@ -229,7 +229,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = true,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.specificIds()
+                accessRules = AccessRulesFactory.specificIds()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -242,7 +242,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = false,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.specificIds()
+                accessRules = AccessRulesFactory.specificIds()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -255,7 +255,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = "other-folk",
-                accessRule = AccessRuleFactory.specificIds()
+                accessRules = AccessRulesFactory.specificIds()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -268,7 +268,7 @@ class CollectionSearchQueryAssemblerTest {
             val query = collectionSearchQueryAssembler(
                 public = null,
                 owner = null,
-                accessRule = AccessRuleFactory.specificIds()
+                accessRules = AccessRulesFactory.specificIds()
             )
 
             assertThat(query.visibilityForOwners).isEmpty()
@@ -296,7 +296,7 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with superuser access, default to no visibility constraints`() {
             val query = collectionSearchQueryAssembler(
-                accessRule = AccessRuleFactory.superuser()
+                accessRules = AccessRulesFactory.superuser()
             )
 
             assertThat(query.visibilityForOwners).isEmpty()
@@ -305,7 +305,7 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with owner access, default to all public and private owned collections`() {
             val query = collectionSearchQueryAssembler(
-                accessRule = AccessRuleFactory.asOwner("me")
+                accessRules = AccessRulesFactory.asOwner("me")
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -317,7 +317,7 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with specific ID access, default to no visibility constraints`() {
             val query = collectionSearchQueryAssembler(
-                accessRule = AccessRuleFactory.specificIds(
+                accessRules = AccessRulesFactory.specificIds(
                     CollectionId("blah")
                 )
             )
@@ -328,7 +328,7 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with public access, default to all public collections`() {
             val query = collectionSearchQueryAssembler(
-                accessRule = AccessRuleFactory.publicOnly()
+                accessRules = AccessRulesFactory.publicOnly()
             )
 
             assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
@@ -339,7 +339,7 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with owner access, take bookmarkedBy from access rule`() {
             val query = collectionSearchQueryAssembler(
-                accessRule = AccessRuleFactory.asOwner(ownerId = "access"),
+                accessRules = AccessRulesFactory.asOwner(ownerId = "access"),
                 user = UserFactory.sample(id = "authenticated"),
                 bookmarked = true
             )
@@ -350,7 +350,7 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with superuser access, take bookmarkedBy from passed-in user`() {
             val query = collectionSearchQueryAssembler(
-                accessRule = AccessRuleFactory.superuser(),
+                accessRules = AccessRulesFactory.superuser(),
                 user = UserFactory.sample(id = "authenticated"),
                 bookmarked = true
             )
@@ -362,7 +362,7 @@ class CollectionSearchQueryAssemblerTest {
         fun `with specific ID access, throw error when requesting bookmarked collections`() {
             assertThrows<OperationForbiddenException> {
                 collectionSearchQueryAssembler(
-                    accessRule = AccessRuleFactory.specificIds(),
+                    accessRules = AccessRulesFactory.specificIds(),
                     bookmarked = true
                 )
             }
@@ -372,7 +372,7 @@ class CollectionSearchQueryAssemblerTest {
         fun `with public access, throw error when requesting bookmarked collections`() {
             assertThrows<OperationForbiddenException> {
                 collectionSearchQueryAssembler(
-                    accessRule = AccessRuleFactory.publicOnly(),
+                    accessRules = AccessRulesFactory.publicOnly(),
                     bookmarked = true
                 )
             }
@@ -387,7 +387,7 @@ class CollectionSearchQueryAssemblerTest {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
-        accessRule: AccessRule = AccessRuleFactory.publicOnly(),
+        accessRules: AccessRules = AccessRulesFactory.publicOnly(),
         user: User? = null
     ) = CollectionSearchQueryAssembler()(
         query,
@@ -397,7 +397,7 @@ class CollectionSearchQueryAssemblerTest {
         owner,
         page,
         size,
-        accessRule,
+        accessRules,
         user
     )
 }

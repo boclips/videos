@@ -258,7 +258,8 @@ abstract class AbstractSpringIntegrationTest {
                 ageRangeMin = ageRange.min(),
                 ageRangeMax = ageRange.max(),
                 subjects = subjectIds
-            )
+            ),
+            UserFactory.sample()
         )
 
         fakeEventBus.clearState()

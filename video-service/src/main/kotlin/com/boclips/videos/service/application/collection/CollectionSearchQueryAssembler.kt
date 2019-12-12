@@ -3,11 +3,12 @@ package com.boclips.videos.service.application.collection
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.common.UserId
-import com.boclips.videos.service.domain.service.AccessRule
-import com.boclips.videos.service.domain.service.CollectionAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.presentation.CollectionsController
 import mu.KLogging
 
@@ -20,29 +21,32 @@ class CollectionSearchQueryAssembler {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
-        accessRule: AccessRule = AccessRule(CollectionAccessRule.public()),
+        accessRules: AccessRules = AccessRules(
+            CollectionAccessRule.public(),
+            VideoAccessRule.Everything
+        ),
         user: User? = null
     ): CollectionSearchQuery {
         val bookmarker =
             if (bookmarked == true)
-                when (accessRule.collectionAccess) {
-                    is CollectionAccessRule.SpecificOwner -> accessRule.collectionAccess.owner
+                when (accessRules.collectionAccess) {
+                    is CollectionAccessRule.SpecificOwner -> accessRules.collectionAccess.owner
                     is CollectionAccessRule.Everything -> user?.id
                     else -> throw OperationForbiddenException(
                         "This user cannot have bookmarked collections"
                     )
                 } else null
 
-        bookmarker?.let { logger.info("Looking for collections bookmarked by $it")}
-        logger.info { "User has collection access: ${accessRule.collectionAccess}" }
+        bookmarker?.let { logger.info("Looking for collections bookmarked by $it") }
+        logger.info { "User has collection access: ${accessRules.collectionAccess}" }
 
         return CollectionSearchQuery(
             text = query ?: "",
             subjectIds = subjects ?: emptyList(),
             bookmarkedBy = bookmarker?.value,
-            visibilityForOwners = accessRule.getVisibility(public = public, owner = owner),
-            permittedCollections = when (accessRule.collectionAccess) {
-                is CollectionAccessRule.SpecificIds -> accessRule.collectionAccess.collectionIds.toList()
+            visibilityForOwners = accessRules.getVisibility(public = public, owner = owner),
+            permittedCollections = when (accessRules.collectionAccess) {
+                is CollectionAccessRule.SpecificIds -> accessRules.collectionAccess.collectionIds.toList()
                 else -> null
             },
             pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE,
@@ -53,7 +57,7 @@ class CollectionSearchQueryAssembler {
     companion object : KLogging()
 }
 
-private fun AccessRule.getVisibility(public: Boolean?, owner: String?): Set<VisibilityForOwner> =
+private fun AccessRules.getVisibility(public: Boolean?, owner: String?): Set<VisibilityForOwner> =
     when (this.collectionAccess) {
         CollectionAccessRule.PublicOnly -> {
             if (public == false) throw OperationForbiddenException("User cannot access private collections")

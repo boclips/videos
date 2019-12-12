@@ -10,11 +10,13 @@ import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.security.utils.User
 import com.boclips.users.client.model.TeacherPlatformAttributes
+import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.RequestContext
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.common.AgeRange
@@ -37,9 +39,8 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.AccessRule
-import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
@@ -551,10 +552,14 @@ object CollectionsRequestFactory {
     fun unfiltered() = sample()
 }
 
-object AccessRuleFactory {
-    fun sample(collectionAccessRule: CollectionAccessRule = CollectionAccessRule.everything()): AccessRule {
-        return AccessRule(
-            collectionAccess = collectionAccessRule
+object AccessRulesFactory {
+    fun sample(
+        collectionAccessRule: CollectionAccessRule = CollectionAccessRule.everything(),
+        videoAccessRule: VideoAccessRule = VideoAccessRule.Everything
+    ): AccessRules {
+        return AccessRules(
+            collectionAccess = collectionAccessRule,
+            videoAccess = videoAccessRule
         )
     }
 
@@ -564,10 +569,10 @@ object AccessRuleFactory {
     fun specificIds(vararg collectionIds: CollectionId) =
         sample(collectionAccessRule = CollectionAccessRule.specificIds(collectionIds.toList()))
 
-    fun superuser(): AccessRule =
+    fun superuser(): AccessRules =
         sample(collectionAccessRule = CollectionAccessRule.everything())
 
-    fun asOwner(ownerId: String): AccessRule =
+    fun asOwner(ownerId: String): AccessRules =
         sample(collectionAccessRule = CollectionAccessRule.asOwner(UserId(ownerId)))
 }
 

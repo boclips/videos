@@ -1,9 +1,10 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.videos.service.domain.model.AccessRules
+import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.AccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
-import com.boclips.videos.service.domain.service.CollectionAccessRule
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.any
@@ -26,7 +27,10 @@ class CollectionAccessServiceTest {
     @Test
     fun `does not allow user write access to a private collection they do not own`() {
         accessRuleService = mock {
-            on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.specificIds(listOf()))
+            on { getRules(any()) } doReturn AccessRules(
+                CollectionAccessRule.specificIds(listOf()),
+                VideoAccessRule.Everything
+            )
         }
 
         val privateCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = false)
@@ -49,7 +53,10 @@ class CollectionAccessServiceTest {
     @Test
     fun `does not allow user write access to a public collection they do not own`() {
         accessRuleService = mock {
-            on { getRules(any()) } doReturn AccessRule(CollectionAccessRule.public())
+            on { getRules(any()) } doReturn AccessRules(
+                CollectionAccessRule.public(),
+                VideoAccessRule.Everything
+            )
         }
 
         val publicCollection = TestFactories.createCollection(owner = "innocent@example.com", isPublic = true)

@@ -20,8 +20,9 @@ class SearchVideo(
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?): Video {
-        return getVideoById(resolveToAssetId(id)!!)
+    fun byId(id: String?, user: User): Video {
+
+        return getVideoById(resolveToAssetId(id)!!, user)
     }
 
     fun byIds(ids: List<String>): List<Video> {

@@ -8,14 +8,16 @@ import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -47,10 +49,11 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createCreateVideoRequest(
                 playbackId = "entry-\$123",
                 providerId = contentPartner.contentPartnerId.value
-            )
+            ),
+            UserFactory.sample()
         )
 
-        assertThat(videoService.getPlayableVideo(video.videoId)).isNotNull
+        assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything)).isNotNull
     }
 
     @Test
@@ -65,10 +68,11 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     playbackId = "8889",
                     playbackProvider = "YOUTUBE",
                     providerId = contentPartner.contentPartnerId.value
-                )
+                ),
+                UserFactory.sample()
             )
 
-        assertThat(videoService.getPlayableVideo(video.videoId)).isNotNull
+        assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything)).isNotNull
     }
 
     @Test
@@ -81,7 +85,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 TestFactories.createCreateVideoRequest(
                     playbackId = "1234",
                     providerId = contentPartner.contentPartnerId.value
-                )
+                ),
+                UserFactory.sample()
             )
         }
 
@@ -110,7 +115,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 TestFactories.createCreateVideoRequest(
                     playbackId = "entry-$123",
                     providerId = "4321"
-                )
+                ),
+                UserFactory.sample()
             )
         }
     }
@@ -118,7 +124,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws if provider id is null`() {
         assertThrows<InvalidCreateRequestException> {
-            createVideo(TestFactories.createCreateVideoRequest(providerId = null))
+            createVideo(TestFactories.createCreateVideoRequest(providerId = null), UserFactory.sample())
         }
     }
 
@@ -137,10 +143,11 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.createCreateVideoRequest(
                 playbackId = "entry-\$123",
                 providerId = contentPartner.contentPartnerId.value
-            )
+            ),
+            UserFactory.sample()
         )
 
-        val video = videoService.getPlayableVideo(createdVideo.videoId)
+        val video = videoService.getPlayableVideo(createdVideo.videoId, VideoAccessRule.Everything)
 
         assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
     }
@@ -161,7 +168,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             playbackId = "entry-$123"
         )
 
-        assertThrows<NonNullableFieldCreateRequestException> { createVideo(createRequest) }
+        assertThrows<NonNullableFieldCreateRequestException> { createVideo(createRequest, UserFactory.sample()) }
     }
 
     @Test
@@ -173,7 +180,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             providerId = contentPartner.contentPartnerId.value
         )
 
-        assertThrows<VideoPlaybackNotFound> { createVideo(createRequest) }
+        assertThrows<VideoPlaybackNotFound> { createVideo(createRequest, UserFactory.sample()) }
     }
 
     @Test
@@ -191,7 +198,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 playbackId = "entry-\$123",
                 analyseVideo = true,
                 providerId = contentPartner.contentPartnerId.value
-            )
+            ),
+            UserFactory.sample()
         )
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
@@ -211,7 +219,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 playbackId = "1",
                 title = "parabole",
                 providerId = contentPartner.contentPartnerId.value
-            )
+            ),
+            UserFactory.sample()
         )
 
         val event = fakeEventBus.getEventOfType(VideoCreated::class.java)
@@ -240,7 +249,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 providerId = contentPartner.contentPartnerId.value
             )
 
-        val video = createVideo(createRequest)
+        val video = createVideo(createRequest, UserFactory.sample())
         assertThat(video.distributionMethods).containsExactlyInAnyOrder(
             DistributionMethod.DOWNLOAD,
             DistributionMethod.STREAM
@@ -282,6 +291,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 providerId = contentPartner.contentPartnerId.value
             )
 
-        createVideo(createRequest)
+        createVideo(createRequest, UserFactory.sample())
     }
 }

@@ -8,6 +8,7 @@ import com.boclips.videos.service.application.subject.SubjectClassificationServi
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -36,7 +37,7 @@ class CreateVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(createRequest: CreateVideoRequest): Video {
+    operator fun invoke(createRequest: CreateVideoRequest, user: User): Video {
         if (createRequest.providerId == null) {
             throw InvalidCreateRequestException("providerId cannot be null")
         }
@@ -67,7 +68,7 @@ class CreateVideo(
 
         videoCounter.increment()
 
-        return searchVideo.byId(createdVideo.videoId.value)
+        return searchVideo.byId(createdVideo.videoId.value, user)
     }
 
     private fun findContentPartner(

@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.video.exceptions.SearchRequestVali
 import com.boclips.videos.service.application.video.search.SearchVideo.Companion.isAlias
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -25,7 +26,7 @@ class SearchVideoTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws exception when id is null`() {
-        Assertions.assertThatThrownBy { searchVideo.byId(null) }
+        Assertions.assertThatThrownBy { searchVideo.byId(null, UserFactory.sample()) }
             .isInstanceOf(SearchRequestValidationException::class.java)
     }
 }

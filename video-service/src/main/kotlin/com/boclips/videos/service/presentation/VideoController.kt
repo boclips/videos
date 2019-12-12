@@ -145,7 +145,7 @@ class VideoController(
 
         return ResponseEntity(
             withProjection(
-                searchVideo.byId(id)
+                searchVideo.byId(id, getCurrentUser())
                     .let { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
             ),
             headers,
@@ -173,7 +173,7 @@ class VideoController(
 
     @GetMapping("/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
-        val videoTitle = searchVideo.byId(videoId).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+        val videoTitle = searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
 
         val videoTranscript: String = videoTranscriptService.getTranscript(videoId).let {
             if (it.contains(Regex("\\n\\n"))) {
@@ -192,7 +192,7 @@ class VideoController(
     @PostMapping
     fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
-            createVideo(createVideoRequest)
+            createVideo(createVideoRequest, getCurrentUser())
                 .let { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(

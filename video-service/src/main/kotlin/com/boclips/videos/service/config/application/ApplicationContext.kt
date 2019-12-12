@@ -60,6 +60,7 @@ import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
@@ -100,7 +101,8 @@ class ApplicationContext(
     val disciplineRepository: DisciplineRepository,
     val contentPartnerService: ContentPartnerService,
     val userService: UserService,
-    val legalRestrictionsRepository: LegalRestrictionsRepository
+    val legalRestrictionsRepository: LegalRestrictionsRepository,
+    val accessRuleService: AccessRuleService
 ) {
     @Bean
     fun searchVideo(
@@ -401,7 +403,7 @@ class ApplicationContext(
     }
 
     private fun getVideoById(): GetVideoById {
-        return GetVideoById(videoService)
+        return GetVideoById(videoService, accessRuleService)
     }
 
     private fun getVideosByQuery(searchQueryConverter: SearchQueryConverter): GetVideosByQuery {

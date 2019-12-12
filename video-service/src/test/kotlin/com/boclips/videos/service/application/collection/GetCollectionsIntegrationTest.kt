@@ -2,13 +2,13 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.AccessRuleFactory
+import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.CollectionsRequestFactory
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.AbstractAssert
@@ -30,13 +30,13 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
         val description: String,
         val availableCollections: List<SaveCollectionRequest>,
         val chooseExpectedCollections: (List<CollectionId>) -> List<CollectionId>,
-        val buildAccessRule: (List<CollectionId>) -> AccessRule,
+        val buildAccessRules: (List<CollectionId>) -> AccessRules,
         val filter: CollectionsController.CollectionsRequest,
         val user: User? = null
     )
 
     companion object {
-        private val superuserTests = AccessRuleFactory.superuser().let { access ->
+        private val superuserTests = AccessRulesFactory.superuser().let { access ->
             listOf(
                 TestCase(
                     "for super-user, get all collections with no filter",
@@ -84,7 +84,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         }
 
-        private val specificOwnerTests = AccessRuleFactory.asOwner("my-id").let { access ->
+        private val specificOwnerTests = AccessRulesFactory.asOwner("my-id").let { access ->
             listOf(
                 TestCase(
                     "for specific owner, get all owned collections along with public collections",
@@ -136,7 +136,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     { listOf(it[0], it[3]) },
-                    { AccessRuleFactory.specificIds(it[0], it[3]) },
+                    { AccessRulesFactory.specificIds(it[0], it[3]) },
                     CollectionsRequestFactory.unfiltered()
                 ),
                 TestCase(
@@ -148,7 +148,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     { listOf(it[0]) },
-                    { AccessRuleFactory.specificIds(it[0], it[3]) },
+                    { AccessRulesFactory.specificIds(it[0], it[3]) },
                     CollectionsRequestFactory.sample(public = true)
                 ),
                 TestCase(
@@ -160,12 +160,12 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     { listOf(it[3]) },
-                    { AccessRuleFactory.specificIds(it[0], it[3]) },
+                    { AccessRulesFactory.specificIds(it[0], it[3]) },
                     CollectionsRequestFactory.sample(public = false)
                 )
             )
 
-        private val publicOnlyTests = AccessRuleFactory.publicOnly().let { access ->
+        private val publicOnlyTests = AccessRulesFactory.publicOnly().let { access ->
             listOf(
                 TestCase(
                     "for public only, gets just public collections",
@@ -215,7 +215,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
 
         val collectionPage = getCollections.getUnassembledCollections(
             testCase.filter,
-            testCase.buildAccessRule(availableIds),
+            testCase.buildAccessRules(availableIds),
             testCase.user
         )
 
@@ -228,7 +228,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
         assertThrows<OperationForbiddenException> {
             getCollections.getUnassembledCollections(
                 collectionsRequest = CollectionsRequestFactory.sample(public = false),
-                accessRule = AccessRuleFactory.publicOnly(),
+                accessRules = AccessRulesFactory.publicOnly(),
                 user = UserFactory.sample()
             )
         }
