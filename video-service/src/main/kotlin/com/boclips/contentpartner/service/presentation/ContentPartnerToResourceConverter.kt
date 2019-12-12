@@ -3,8 +3,7 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.application.LegalRestrictionsResource
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.security.utils.User
-import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 
@@ -22,7 +21,7 @@ object ContentPartnerToResourceConverter {
             distributionMethods = DistributionMethodResourceConverter.toDeliveryMethodResources(
                 contentPartner.distributionMethods
             ),
-            currency = if (user.hasRole(UserRoles.BACKOFFICE))
+            currency = if (user.isAdministrator)
                 contentPartner.remittance?.currency?.currencyCode else null
         )
     }

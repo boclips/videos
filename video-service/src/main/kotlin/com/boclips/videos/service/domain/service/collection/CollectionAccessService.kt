@@ -1,10 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.security.utils.User
-import com.boclips.security.utils.UserExtractor
-import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.AccessRuleService
 
 class CollectionAccessService(private val accessRuleService: AccessRuleService) {
@@ -20,8 +17,8 @@ class CollectionAccessService(private val accessRuleService: AccessRuleService) 
         return when {
             readOnly && collection.isPublic -> true
             readOnly && accessRules.allowsAccessTo(collection) -> true
-            collection.owner == UserId(user.id) -> true
-            UserExtractor.currentUserHasRole(UserRoles.VIEW_ANY_COLLECTION) -> true
+            collection.owner == user.id -> true
+            user.isPermittedToViewAnyCollection -> true
             else -> false
         }
     }

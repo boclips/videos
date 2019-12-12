@@ -26,7 +26,7 @@ class CollectionUpdatesConverterTest {
 
     @BeforeEach
     fun setUp() {
-        subjectRepositoryMock = mock<SubjectRepository>()
+        subjectRepositoryMock = mock()
         collectionUpdatesConverter = CollectionUpdatesConverter(subjectRepositoryMock)
     }
 

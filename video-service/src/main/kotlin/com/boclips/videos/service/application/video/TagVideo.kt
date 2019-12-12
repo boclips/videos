@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.security.utils.User
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.tag.UserTag
@@ -39,7 +38,7 @@ open class TagVideo(
         videoRepository.update(
             VideoUpdateCommand.ReplaceTag(
                 VideoId(tagVideoRequest.videoId!!),
-                UserTag(tag = tag, userId = UserId(user.id))
+                UserTag(tag = tag, userId = user.id)
             )
         )
     }

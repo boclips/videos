@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.Video
@@ -50,7 +50,7 @@ class VideoToResourceConverter(
                 hasTranscripts = video.transcript != null,
                 ageRange = getAgeRange(video),
                 rating = video.getRatingAverage(),
-                yourRating = video.ratings.firstOrNull { it.userId == UserId(user.id) }?.rating?.toDouble(),
+                yourRating = video.ratings.firstOrNull { it.userId == user.id }?.rating?.toDouble(),
                 distributionMethods = video.distributionMethods.map(
                     DistributionMethodResourceConverter::toResource
                 ).toSet(),

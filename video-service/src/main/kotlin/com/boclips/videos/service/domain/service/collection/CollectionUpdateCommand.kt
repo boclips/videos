@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.subject.Subject

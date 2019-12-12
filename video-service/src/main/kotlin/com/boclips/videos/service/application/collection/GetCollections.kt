@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.security.utils.User
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.collection.CollectionService
@@ -34,7 +34,7 @@ class GetCollections(
     fun getUnassembledCollections(
         collectionsRequest: CollectionsController.CollectionsRequest,
         accessRule: AccessRule,
-        user: User
+        user: User?
     ): Page<Collection> {
         val assembledQuery = collectionSearchQueryAssembler(
             query = collectionsRequest.query,

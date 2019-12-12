@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.security.utils.User
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Video
@@ -20,12 +20,12 @@ class DeleteVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(id: String?, user: User) {
-        if (id == null || id.isBlank()) {
+    operator fun invoke(videoId: String?, user: User) {
+        if (videoId == null || videoId.isBlank()) {
             throw VideoNotFoundException()
         }
 
-        val videoId = VideoId(value = id)
+        val videoId = VideoId(value = videoId)
         val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
         removeVideo(video, user)

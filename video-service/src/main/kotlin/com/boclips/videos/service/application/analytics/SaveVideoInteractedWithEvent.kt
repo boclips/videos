@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.analytics
 
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.events.EventService
 

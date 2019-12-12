@@ -4,8 +4,8 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery.Companion.privateOnly
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery.Companion.publicOnly
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
-import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.presentation.CollectionsController
@@ -318,7 +318,8 @@ class CollectionSearchQueryAssemblerTest {
         fun `with specific ID access, default to no visibility constraints`() {
             val query = collectionSearchQueryAssembler(
                 accessRule = AccessRuleFactory.specificIds(
-                    CollectionId("blah"))
+                    CollectionId("blah")
+                )
             )
 
             assertThat(query.visibilityForOwners).isEmpty()
@@ -377,7 +378,6 @@ class CollectionSearchQueryAssemblerTest {
             }
         }
     }
-
 
     private fun collectionSearchQueryAssembler(
         query: String? = null,

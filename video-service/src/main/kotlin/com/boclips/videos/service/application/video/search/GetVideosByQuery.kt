@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.security.utils.User
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -45,7 +45,7 @@ class GetVideosByQuery(
         validatePageNumber(pageNumber)
 
         val userSubjectIds =
-            user.let { userService.getSubjectIds(it.id) } ?: emptySet()
+            user.let { userService.getSubjectIds(it.id.value) } ?: emptySet()
 
         val videoSearchQuery = VideoSearchQuery(
             text = query,

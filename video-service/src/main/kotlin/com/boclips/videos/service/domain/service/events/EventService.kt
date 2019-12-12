@@ -20,11 +20,12 @@ import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
-import com.boclips.security.utils.User
 import com.boclips.videos.service.common.Do
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
+import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -234,10 +235,10 @@ class EventService(val eventBus: EventBus) {
 
     private fun msg(
         builder: AbstractEventWithUserId.AbstractEventWithUserIdBuilder<*, *>,
-        userId: String
+        userId: UserId
     ): AbstractEventWithUserId {
         return builder
-            .userId(userId)
+            .userId(userId.value)
             .url(RefererHeaderExtractor.getReferer())
             .build()
     }

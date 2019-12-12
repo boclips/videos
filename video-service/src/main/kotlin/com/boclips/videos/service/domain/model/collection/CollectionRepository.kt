@@ -1,9 +1,9 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.security.utils.User
 import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -75,13 +74,13 @@ class CollectionsController(
     fun getFilteredCollections(
         collectionsRequest: CollectionsRequest
     ): MappingJacksonValue {
-        val user = UserExtractor.getCurrentUser()
-        val userLabel = user?.let { "User with ID '${it.id}'" } ?: "Anonymous user"
-        logger.info { "$userLabel is requesting filtered collections. Request is \n$collectionsRequest" }
+        val user = getCurrentUser()
 
-        val accessRule = user?.let { accessRuleService.getRules(it) }
-            ?: throw OperationForbiddenException("User must be authenticated to access collections")
+        if (!user.isAuthenticated) {
+            throw OperationForbiddenException("User must be authenticated to access collections")
+        }
 
+        val accessRule = user.let { accessRuleService.getRules(it) }
         val collectionsPage = getCollections(collectionsRequest, accessRule, user)
 
         val collectionResources = collectionsPage.elements.map(::wrapCollection)

@@ -1,11 +1,9 @@
 package com.boclips.videos.service.infrastructure
 
-import com.boclips.security.utils.User
 import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.model.contract.SelectedCollectionsContract
-import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.AccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.CollectionAccessRule
@@ -22,7 +20,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         backoff = Backoff(multiplier = 1.5)
     )
     override fun getRules(user: User): AccessRule {
-        val collectionIds: List<CollectionId> = userServiceClient.getContracts(user.id)
+        val collectionIds: List<CollectionId> = userServiceClient.getContracts(user.id.value)
             .flatMap { contract ->
                 when (contract) {
                     is SelectedCollectionsContract -> contract.collectionIds.map { CollectionId(it) }
@@ -32,8 +30,8 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         return AccessRule(
             when {
                 collectionIds.isNotEmpty() -> CollectionAccessRule.specificIds(collectionIds)
-                user.hasRole(UserRoles.VIEW_ANY_COLLECTION) -> CollectionAccessRule.everything()
-                else -> CollectionAccessRule.asOwner(UserId(user.id))
+                user.isPermittedToViewAnyCollection -> CollectionAccessRule.everything()
+                else -> CollectionAccessRule.asOwner(user.id)
             }
         )
     }

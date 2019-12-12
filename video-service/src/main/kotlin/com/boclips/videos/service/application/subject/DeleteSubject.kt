@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter

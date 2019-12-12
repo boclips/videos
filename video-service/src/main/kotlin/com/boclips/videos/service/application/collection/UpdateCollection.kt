@@ -1,11 +1,10 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.security.utils.User
 import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
@@ -21,7 +20,7 @@ class UpdateCollection(
             ?: throw CollectionNotFoundException(collectionId)
 
         if (!collectionAccessService.hasWriteAccess(collection, requester)) {
-            throw CollectionAccessNotAuthorizedException(UserId(requester.id), collectionId)
+            throw CollectionAccessNotAuthorizedException(requester.id, collectionId)
         }
 
         val commands = collectionUpdatesConverter.convert(collection.id, updateCollectionRequest, requester)

@@ -9,6 +9,7 @@ import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.RequestContext
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -567,7 +568,7 @@ object AccessRuleFactory {
         sample(collectionAccessRule = CollectionAccessRule.asOwner(UserId(ownerId)))
 }
 
-object UserFactory {
+object SecurityUserFactory {
     fun sample(
         roles: Set<String> = emptySet(),
         id: String = "some-id",
@@ -577,6 +578,26 @@ object UserFactory {
             boclipsEmployee = boclipsEmployee,
             id = id,
             authorities = roles.map { "ROLE_$it" }.toSet()
+        )
+    }
+}
+
+object UserFactory {
+    fun sample(
+        isAdministrator: Boolean = false,
+        id: String = "userio-123",
+        boclipsEmployee: Boolean = false,
+        isPermittedToViewAnyCollection: Boolean = false
+    ): com.boclips.videos.service.domain.model.User {
+        return com.boclips.videos.service.domain.model.User(
+            id = UserId(id),
+            isAdministrator = isAdministrator,
+            isAuthenticated = true,
+            isBoclipsEmployee = boclipsEmployee,
+            context = RequestContext(origin = "https://teachers.boclips.com"),
+            isPermittedToUpdateVideo = true,
+            isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
+            isPermittedToRateVideos = true
         )
     }
 }

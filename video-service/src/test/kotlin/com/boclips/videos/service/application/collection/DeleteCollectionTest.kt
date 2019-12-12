@@ -41,7 +41,10 @@ class DeleteCollectionTest : AbstractSpringIntegrationTest() {
         val collectionId = saveCollection(owner = "alice@notme.com")
 
         assertThrows<CollectionAccessNotAuthorizedException> {
-            deleteCollection(collectionId = collectionId.value, user = UserFactory.sample(id = "rob@me.com"))
+            deleteCollection(
+                collectionId = collectionId.value,
+                user = UserFactory.sample(id = "rob@me.com")
+            )
         }
     }
 

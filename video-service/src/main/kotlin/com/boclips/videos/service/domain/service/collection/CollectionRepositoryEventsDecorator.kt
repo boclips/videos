@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository

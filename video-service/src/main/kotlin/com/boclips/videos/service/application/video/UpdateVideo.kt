@@ -1,8 +1,7 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
-import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -19,9 +18,9 @@ open class UpdateVideo(private val videoRepository: VideoRepository) {
         title: String?,
         description: String?,
         promoted: Boolean?,
-        requester: User
+        user: User
     ) {
-        if (requester.hasRole(UserRoles.UPDATE_VIDEOS).not()) throw OperationForbiddenException()
+        if (user.isPermittedToUpdateVideo.not()) throw OperationForbiddenException()
 
         val updateTitle = title?.let { VideoUpdateCommand.ReplaceTitle(VideoId(id), it) }
         val updateDescription = description?.let { VideoUpdateCommand.ReplaceDescription(VideoId(id), it) }

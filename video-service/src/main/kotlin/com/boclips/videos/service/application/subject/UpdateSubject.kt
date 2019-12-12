@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.subject
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.subject.SubjectChanged
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -13,6 +13,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
+import com.boclips.videos.service.presentation.Administrator
 import mu.KLogging
 
 class UpdateSubject(
@@ -56,7 +57,7 @@ class UpdateSubject(
             CollectionUpdateCommand.ReplaceSubjects(
                 collectionId = collection.id,
                 subjects = newSubjects,
-                user = User(boclipsEmployee = true, id = "admin", authorities = emptySet())
+                user = Administrator as User
             )
         })
 

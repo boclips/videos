@@ -4,13 +4,11 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerResource
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
-import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
+import com.boclips.videos.service.domain.model.User
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
-class GetContentPartner(
-    private val contentPartnerRepository: ContentPartnerRepository
-) {
+class GetContentPartner(private val contentPartnerRepository: ContentPartnerRepository) {
     operator fun invoke(contentPartnerId: String?, user: User): ContentPartnerResource {
         val id = getOrThrow(contentPartnerId, "contentPartnerId")
 

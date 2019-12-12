@@ -59,7 +59,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
         assertThrows<CollectionNotFoundException> {
             getCollection(
                 collectionId = "123",
-                requester = UserFactory.sample()
+                user = UserFactory.sample()
             )
         }
     }
@@ -74,7 +74,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
         assertThrows<CollectionAccessNotAuthorizedException> {
             getCollection(
                 savedCollectionId.value,
-                requester = UserFactory.sample(id = "attacker@example.com")
+                user = UserFactory.sample(id = "attacker@example.com")
             )
         }
     }

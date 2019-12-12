@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.videos.service.config.security.UserRoles.UPDATE_VIDEOS
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -25,7 +24,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             title = null,
             description = "new description",
             promoted = true,
-            requester = UserFactory.sample(id = "admin@boclips.com", roles = setOf(UPDATE_VIDEOS))
+            user = UserFactory.sample(id = "admin@boclips.com")
         )
 
         val updatedVideo = videoRepository.find(videoId)!!

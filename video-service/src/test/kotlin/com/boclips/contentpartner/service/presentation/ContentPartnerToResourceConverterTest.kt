@@ -3,7 +3,6 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.UserFactory
@@ -14,7 +13,7 @@ import java.util.Currency
 class ContentPartnerToResourceConverterTest {
     @Test
     fun `convert content partner to resource`() {
-        val user = UserFactory.sample(roles = setOf(UserRoles.BACKOFFICE))
+        val user = UserFactory.sample(isAdministrator = true)
 
         val contentPartner = TestFactories.createContentPartner(
             credit = Credit.PartnerCredit,
@@ -37,7 +36,7 @@ class ContentPartnerToResourceConverterTest {
 
     @Test
     fun `converted content partner resource has no currency if user does not have backoffice role`() {
-        val user = UserFactory.sample(roles = setOf())
+        val user = UserFactory.sample()
 
         val contentPartner = TestFactories.createContentPartner(
             credit = Credit.PartnerCredit,

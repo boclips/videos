@@ -217,7 +217,7 @@ class VideoController(
     fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
         rateVideo(
             rateVideoRequest = RateVideoRequest(rating = rating, videoId = id),
-            requester = getCurrentUser()
+            user = getCurrentUser()
         ).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}"], params = ["!rating"])

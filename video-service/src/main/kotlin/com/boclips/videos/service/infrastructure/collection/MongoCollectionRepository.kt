@@ -1,11 +1,11 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.security.utils.User
 import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException

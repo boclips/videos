@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.common.UserId
@@ -36,6 +36,7 @@ sealed class CollectionAccessRule {
     data class SpecificOwner(val owner: UserId) : CollectionAccessRule() {
         fun isMe(user: UserId) = owner == user
     }
+
     data class SpecificIds(val collectionIds: Set<CollectionId>) : CollectionAccessRule()
     object Everything : CollectionAccessRule()
 

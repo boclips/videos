@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.service.AccessRule
@@ -227,8 +227,9 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
     fun `trying to get private collections when public only access`() {
         assertThrows<OperationForbiddenException> {
             getCollections.getUnassembledCollections(
-                CollectionsRequestFactory.sample(public = false),
-                AccessRuleFactory.publicOnly()
+                collectionsRequest = CollectionsRequestFactory.sample(public = false),
+                accessRule = AccessRuleFactory.publicOnly(),
+                user = UserFactory.sample()
             )
         }
     }

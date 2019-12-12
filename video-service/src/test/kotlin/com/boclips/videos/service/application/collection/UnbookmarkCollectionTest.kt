@@ -59,7 +59,7 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
         assertThrows<CollectionNotFoundException> {
             unbookmarkCollection(
                 collectionId = TestFactories.aValidId(),
-                requester = UserFactory.sample(id = "me@me.com")
+                user = UserFactory.sample(id = "me@me.com")
             )
         }
     }

@@ -56,10 +56,7 @@ class CreateVideo(
         val createdVideo = try {
             videoService.create(videoToBeCreated)
         } catch (ex: VideoNotCreatedException) {
-            throw VideoAssetAlreadyExistsException(
-                ex.video.contentPartner.name,
-                ex.video.videoReference
-            )
+            throw VideoAssetAlreadyExistsException(ex.video.contentPartner.name, ex.video.videoReference)
         }
 
         if (createRequest.analyseVideo) {

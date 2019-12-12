@@ -2,8 +2,8 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
-import com.boclips.security.utils.User
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.service.AccessRule
@@ -27,7 +27,7 @@ class CollectionSearchQueryAssembler {
             if (bookmarked == true)
                 when (accessRule.collectionAccess) {
                     is CollectionAccessRule.SpecificOwner -> accessRule.collectionAccess.owner
-                    is CollectionAccessRule.Everything -> user?.let { UserId(it.id) }
+                    is CollectionAccessRule.Everything -> user?.id
                     else -> throw OperationForbiddenException(
                         "This user cannot have bookmarked collections"
                     )

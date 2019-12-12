@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.collections
 
-import com.boclips.security.utils.User
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.Projection
@@ -15,20 +15,13 @@ class CollectionResourceFactory(
     private val attachmentToResourceConverter: AttachmentToResourceConverter,
     private val videoService: VideoService
 ) {
-    fun buildCollectionResource(
-        collection: Collection,
-        projection: Projection,
-        user: User
-    ) =
+    fun buildCollectionResource(collection: Collection, projection: Projection, user: User) =
         when (projection) {
             Projection.list -> buildCollectionListResource(collection, user)
             Projection.details -> buildCollectionDetailsResource(collection, user)
         }
 
-    fun buildCollectionDetailsResource(
-        collection: Collection,
-        user: User
-    ): CollectionResource {
+    fun buildCollectionDetailsResource(collection: Collection, user: User): CollectionResource {
         return CollectionResource(
             id = collection.id.value,
             owner = collection.owner.value,
