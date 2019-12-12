@@ -54,7 +54,7 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.application.video.search.ValidateWithShareCode
+import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository

@@ -26,6 +26,8 @@ class VideosLinkBuilder {
         const val RATE = "rate"
         const val TAG = "tag"
         const val UPDATE = "update"
+        const val SHARE = "share"
+        const val VALIDATE_SHARE_CODE = "validateShareCode"
     }
 
     fun self(videoResource: VideoResource): Link = ControllerLinkBuilder.linkTo(
@@ -46,7 +48,25 @@ class VideosLinkBuilder {
     fun searchVideosLink() = when {
         currentUserHasRole(UserRoles.VIEW_VIDEOS) -> ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .search(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+                .search(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )
         ).withRel(Rels.SEARCH_VIDEOS)
 
         else -> null
@@ -108,5 +128,20 @@ class VideosLinkBuilder {
             ControllerLinkBuilder.methodOn(VideoController::class.java)
                 .patchVideo(id = video.videoId.value, title = null, description = null, promoted = null)
         ).withRel(Rels.UPDATE)
+    }
+
+    fun shareLink(video: Video): Link? {
+        return when {
+            currentUserHasRole(UserRoles.SHARE_VIDEOS) -> ControllerLinkBuilder.linkTo(
+                ControllerLinkBuilder.methodOn(VideoController::class.java)
+                    .patchSharing(id = video.videoId.value, sharing = true)
+            ).withRel(Rels.SHARE)
+            else -> null
+        }
+    }
+
+    fun validateShareCodeLink(video: Video): Link {
+        return ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(VideoController::class.java)
+            .validateShareCode(video.videoId.value, null)).withRel(Rels.VALIDATE_SHARE_CODE)
     }
 }

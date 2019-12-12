@@ -7,11 +7,11 @@ import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.ShareVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.InvalidShareCodeException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.application.video.search.ValidateWithShareCode
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
@@ -239,10 +239,13 @@ class VideoController(
         ).let { this.getVideo(id) }
 
     @PatchMapping("/{id}", params = ["sharing=true"])
-    fun patchSharing(@PathVariable("id") id: String): ResponseEntity<Void> {
-        shareVideo(id, getCurrentUser())
-
-        return ResponseEntity(HttpHeaders(), HttpStatus.OK)
+    fun patchSharing(@PathVariable("id") id: String, @RequestParam sharing: Boolean): ResponseEntity<Void> {
+        return if (sharing) {
+            shareVideo(id, getCurrentUser())
+            ResponseEntity(HttpHeaders(), HttpStatus.OK)
+        } else {
+            ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
     }
 
     @PatchMapping(path = ["/{id}"], params = ["!rating"])

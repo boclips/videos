@@ -527,6 +527,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         containsString("/videos/$kalturaVideoId")
                     )
                 )
+                .andExpect(jsonPath("$._links.share.href").doesNotExist())
+                .andExpect(jsonPath("$._links.validateShareCode.href", containsString("/videos/$kalturaVideoId/match?shareCode={shareCode}")))
                 .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
                 .andExpect(jsonPath("$.contentPartnerId").doesNotExist())
                 .andExpect(jsonPath("$.type").doesNotExist())
@@ -582,6 +584,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.type").doesNotExist())
                 .andExpect(jsonPath("$.status").doesNotExist())
         }
+    }
+
+    @Test
+    fun `returns 200 for valid video as Teacher user`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
+            .andExpect(jsonPath("$._links.share.href", containsString("/videos/$kalturaVideoId?sharing=true")))
     }
 
     @Test

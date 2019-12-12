@@ -13,6 +13,7 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
                 UserRoles.VIEW_VIDEOS,
                 UserRoles.RATE_VIDEOS,
                 UserRoles.TAG_VIDEOS,
+                UserRoles.SHARE_VIDEOS,
                 UserRoles.VIEW_DISCIPLINES,
                 UserRoles.VIEW_TAGS,
                 UserRoles.DOWNLOAD_TRANSCRIPT,

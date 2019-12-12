@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.video.search
+package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.InvalidShareCodeException
 import com.boclips.videos.service.domain.service.video.VideoService

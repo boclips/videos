@@ -19,6 +19,7 @@ object UserRoles {
     const val INSERT_VIDEOS = "INSERT_VIDEOS"
     const val UPDATE_VIDEOS = "UPDATE_VIDEOS"
     const val RATE_VIDEOS = "RATE_VIDEOS"
+    const val SHARE_VIDEOS = "SHARE_VIDEOS"
     const val DOWNLOAD_TRANSCRIPT = "DOWNLOAD_TRANSCRIPT"
     const val DOWNLOAD_VIDEO = "DOWNLOAD_VIDEO"
 

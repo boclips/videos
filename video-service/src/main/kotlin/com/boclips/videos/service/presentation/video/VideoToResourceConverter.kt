@@ -86,7 +86,9 @@ class VideoToResourceConverter(
             videosLinkBuilder.createVideoInteractedWithEvent(videoResource),
             video?.let { videosLinkBuilder.rateLink(it) },
             video?.let { videosLinkBuilder.updateLink(it) },
-            video?.let { videosLinkBuilder.tagLink(it) }
+            video?.let { videosLinkBuilder.tagLink(it) },
+            video?.let { videosLinkBuilder.shareLink(it) },
+            video?.let { videosLinkBuilder.validateShareCodeLink(it) }
         )
     )
 }

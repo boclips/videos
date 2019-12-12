@@ -268,4 +268,28 @@ class VideosLinkBuilderTest {
         assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId{?title,description,promoted}")
         assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.UPDATE)
     }
+
+    @Test
+    fun `share link`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.SHARE_VIDEOS)
+
+        val video = createVideo(videoId = validVideoId)
+
+        val link = builder.shareLink(video)
+
+        assertThat(link).isNotNull
+        assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId?sharing=true")
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.SHARE)
+    }
+
+    @Test
+    fun `validate shareCode link`() {
+        val video = createVideo(videoId = validVideoId)
+
+        val link = builder.validateShareCodeLink(video)
+
+        assertThat(link).isNotNull
+        assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId/match?shareCode={shareCode}")
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.VALIDATE_SHARE_CODE)
+    }
 }
