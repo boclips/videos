@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsController
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
@@ -27,8 +28,9 @@ class LinksController(
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
     private val tagsLinkBuilder: TagsLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
-    private val eventsLinkBuilder: EventsLinkBuilder
-) : BaseController() {
+    private val eventsLinkBuilder: EventsLinkBuilder,
+    accessRuleService: AccessRuleService
+) : BaseController(accessRuleService) {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
         return Resource(

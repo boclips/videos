@@ -7,6 +7,7 @@ import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.subject.UpdateSubject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
@@ -35,8 +36,9 @@ class SubjectController(
     private val getSubjects: GetSubjects,
     private val createSubject: CreateSubject,
     private val updateSubject: UpdateSubject,
-    private val subjectsLinkBuilder: SubjectsLinkBuilder
-) : BaseController() {
+    private val subjectsLinkBuilder: SubjectsLinkBuilder,
+    accessRuleService: AccessRuleService
+) : BaseController(accessRuleService) {
 
     @GetMapping("/{id}")
     fun subject(@PathVariable id: String): Resource<SubjectResource> =

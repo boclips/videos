@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.disciplines.CreateDisciplineRequest
 import com.boclips.videos.service.presentation.disciplines.DisciplineResource
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -29,8 +30,9 @@ class DisciplinesController(
     private val getDisciplines: GetDisciplines,
     private val createDiscipline: CreateDiscipline,
     private val replaceDisciplineSubjects: ReplaceDisciplineSubjects,
-    private val disciplinesLinkBuilder: DisciplinesLinkBuilder
-) : BaseController()  {
+    private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
+    accessRuleService: AccessRuleService
+) : BaseController(accessRuleService) {
 
     @GetMapping("/{id}")
     fun discipline(@PathVariable id: String): Resource<DisciplineResource> =

@@ -8,10 +8,10 @@ import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
-import com.boclips.security.utils.User
 import com.boclips.users.client.model.TeacherPlatformAttributes
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.RequestContext
+import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -67,6 +67,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.Locale
+import com.boclips.security.utils.User as SecurityUser
 
 object TestFactories {
 
@@ -581,8 +582,8 @@ object SecurityUserFactory {
         roles: Set<String> = emptySet(),
         id: String = "some-id",
         boclipsEmployee: Boolean = false
-    ): User {
-        return User(
+    ): SecurityUser {
+        return SecurityUser(
             boclipsEmployee = boclipsEmployee,
             id = id,
             authorities = roles.map { "ROLE_$it" }.toSet()
@@ -594,7 +595,7 @@ object SecurityUserFactory {
         organisationAccountId: String = "organisation-id",
         subjects: List<com.boclips.users.client.model.Subject> = emptyList(),
         teacherPlatformAttributes: TeacherPlatformAttributes? = TeacherPlatformAttributes(null)
-    ) : com.boclips.users.client.model.User {
+    ): com.boclips.users.client.model.User {
         return com.boclips.users.client.model.User(
             id,
             organisationAccountId,
@@ -604,15 +605,18 @@ object SecurityUserFactory {
     }
 }
 
-
 object UserFactory {
     fun sample(
         id: String = "userio-123",
         boclipsEmployee: Boolean = false,
         isPermittedToViewAnyCollection: Boolean = false,
-        isPermittedToShareVideo: Boolean = false
-    ): com.boclips.videos.service.domain.model.User {
-        return com.boclips.videos.service.domain.model.User(
+        isPermittedToShareVideo: Boolean = false,
+        accessRulesSupplier: (user: User) -> AccessRules = { AccessRules(
+            videoAccess = VideoAccessRule.Everything,
+            collectionAccess = CollectionAccessRule.Everything
+        ) }
+    ): User {
+        return User(
             id = UserId(id),
             isAuthenticated = true,
             isBoclipsEmployee = boclipsEmployee,
@@ -620,7 +624,8 @@ object UserFactory {
             isPermittedToUpdateVideo = true,
             isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
-            isPermittedToShareVideo = isPermittedToShareVideo
+            isPermittedToShareVideo = isPermittedToShareVideo,
+            accessRulesSupplier = accessRulesSupplier
         )
     }
 }

@@ -10,8 +10,11 @@ open class User(
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
     val isPermittedToShareVideo: Boolean,
-    val context: RequestContext
-)
+    val context: RequestContext,
+    val accessRulesSupplier: (user: User) -> AccessRules
+) {
+    val accessRules: AccessRules by lazy { accessRulesSupplier(this) }
+}
 
 data class RequestContext(val origin: String?)
 

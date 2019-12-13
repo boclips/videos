@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.domain.model.tag.TagId
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.tag.CreateTagRequest
 import com.boclips.videos.service.presentation.tag.TagResource
@@ -32,8 +33,9 @@ class TagController(
     private val deleteTag: DeleteTag,
     private val getTags: GetTags,
     private val createTag: CreateTag,
-    private val tagsLinkBuilder: TagsLinkBuilder
-) : BaseController() {
+    private val tagsLinkBuilder: TagsLinkBuilder,
+    accessRuleService: AccessRuleService
+) : BaseController(accessRuleService) {
 
     @GetMapping("/{id}")
     fun tag(@PathVariable id: String): Resource<TagResource> =

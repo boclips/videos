@@ -13,6 +13,7 @@ import com.boclips.videos.service.application.video.exceptions.InvalidShareCodeE
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.video.AdminSearchRequest
@@ -59,8 +60,9 @@ class VideoController(
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
     private val shareVideo: ShareVideo,
-    private val validateWithShareCode: ValidateWithShareCode
-) : BaseController() {
+    private val validateWithShareCode: ValidateWithShareCode,
+    accessRuleService: AccessRuleService
+) : BaseController(accessRuleService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500

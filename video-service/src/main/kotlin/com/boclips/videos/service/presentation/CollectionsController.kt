@@ -51,8 +51,8 @@ class CollectionsController(
     private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val withProjection: WithProjection,
-    private val accessRuleService: AccessRuleService
-) : BaseController() {
+    accessRuleService: AccessRuleService
+) : BaseController(accessRuleService) {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
     }
@@ -80,8 +80,7 @@ class CollectionsController(
             throw OperationForbiddenException("User must be authenticated to access collections")
         }
 
-        val accessRule = user.let { accessRuleService.getRules(it) }
-        val collectionsPage = getCollections(collectionsRequest, accessRule, user)
+        val collectionsPage = getCollections(collectionsRequest, user.accessRules, user)
 
         val collectionResources = collectionsPage.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
