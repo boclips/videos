@@ -126,7 +126,13 @@ class VideosLinkBuilder {
     fun updateLink(video: Video) = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
         ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .patchVideo(id = video.videoId.value, title = null, description = null, promoted = null)
+                .patchVideo(
+                    id = video.videoId.value,
+                    title = null,
+                    description = null,
+                    promoted = null,
+                    subjectIds = null
+                )
         ).withRel(Rels.UPDATE)
     }
 

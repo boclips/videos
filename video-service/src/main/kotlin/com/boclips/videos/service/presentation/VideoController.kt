@@ -253,11 +253,12 @@ class VideoController(
         @PathVariable id: String,
         @RequestParam(required = false) title: String?,
         @RequestParam(required = false) description: String?,
-        @RequestParam(required = false) promoted: Boolean?
-    ) =
-        updateVideo(id, title, description, promoted, getCurrentUser()).let { this.getVideo(id) }
+        @RequestParam(required = false) promoted: Boolean?,
+        @RequestParam(required = false) subjectIds: List<String>?
+    ) = updateVideo(id, title, description, promoted, subjectIds, getCurrentUser()).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/{id}/tags"])
     fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
         tagVideo(TagVideoRequest(id, tagUrl), getCurrentUser()).let { this.getVideo(id) }
 }
+

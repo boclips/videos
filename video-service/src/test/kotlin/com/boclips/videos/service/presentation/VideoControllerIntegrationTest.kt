@@ -185,9 +185,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can find videos by promoted flag`() {
         val promotedVideoId = saveVideo(title = "ben poos elephants")
-
-        val unpromotedVideoId =
-            saveVideo(title = "Video about elephants")
+        val unpromotedVideoId = saveVideo(title = "Video about elephants")
 
         setPromoted(promotedVideoId.value, true)
         setPromoted(unpromotedVideoId.value, false)
@@ -1230,6 +1228,37 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo(videoId)))
             .andExpect(jsonPath("$._links.transcript.href").doesNotHaveJsonPath())
+    }
+
+    @Test
+    fun `it updates the subjects of the given video`() {
+        val sampleSubject1 = saveSubject("Design")
+        val sampleSubject2 = saveSubject("Art")
+
+        val videoToUpdate = saveVideo(
+            playbackId = PlaybackId(value = "subject-test", type = PlaybackProviderType.YOUTUBE),
+            title = "subject video",
+            description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
+            date = "2019-01-01",
+            subjectIds = setOf(sampleSubject1.id.value, sampleSubject2.id.value),
+            duration = Duration.ofSeconds(6),
+            contentProvider = "max",
+            ageRange = UnboundedAgeRange
+        ).value
+
+        val newSubject = saveSubject("Maths")
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate?subjectIds=${newSubject.id.value},${sampleSubject2.id.value}")
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.subjects[0].name", equalTo("Art")))
+            .andExpect(jsonPath("$.subjects[1].name", equalTo("Maths")))
+            .andExpect(jsonPath("$.subjects", hasSize<Int>(2)))
     }
 
     private fun getRatingLink(videoId: String): String {
