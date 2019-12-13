@@ -16,7 +16,13 @@ import org.elasticsearch.common.lucene.search.function.CombineFunction
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.QueryBuilders.*
+import org.elasticsearch.index.query.QueryBuilders.boolQuery
+import org.elasticsearch.index.query.QueryBuilders.boostingQuery
+import org.elasticsearch.index.query.QueryBuilders.idsQuery
+import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
+import org.elasticsearch.index.query.QueryBuilders.multiMatchQuery
+import org.elasticsearch.index.query.QueryBuilders.termQuery
+import org.elasticsearch.index.query.QueryBuilders.termsQuery
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.SearchHits
@@ -64,7 +70,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 }
             }
             .apply {
-                if(videoQuery.type.isNotEmpty()){
+                if (videoQuery.type.isNotEmpty()) {
                     must(
                         boolQuery().must(
                             termsQuery(
@@ -103,6 +109,14 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                             .let(boostWhenSubjectsMatch(videoQuery.userSubjectIds))
                     )
                 }
+            }.apply {
+                if (!videoQuery.permittedVideoIds.isNullOrEmpty()) {
+                    must(
+                        boolQuery().must(
+                            idsQuery().addIds(*(videoQuery.permittedVideoIds.toTypedArray()))
+                        )
+                    )
+                }
             }
 
 
@@ -114,7 +128,9 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             Do exhaustive when (sort) {
                 is Sort.ByField -> esQuery.sort(sort.fieldName.name, EsSortOrder.fromString(sort.order.toString()))
                 is Sort.ByRandom -> esQuery.query(
-                    FunctionScoreQueryBuilder(esQuery.query(), ScoreFunctionBuilders.randomFunction()).boostMode(CombineFunction.REPLACE)
+                    FunctionScoreQueryBuilder(esQuery.query(), ScoreFunctionBuilders.randomFunction()).boostMode(
+                        CombineFunction.REPLACE
+                    )
                 )
             }
         }

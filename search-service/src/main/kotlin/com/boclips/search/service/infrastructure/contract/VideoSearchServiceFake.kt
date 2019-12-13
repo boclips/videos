@@ -28,6 +28,9 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                 .map { video -> video.key }
             else -> index
                 .filter { entry ->
+                    query.permittedVideoIds.isNullOrEmpty() || query.permittedVideoIds.contains(entry.value.id)
+                }
+                .filter { entry ->
                     entry.value.title.contains(phrase, ignoreCase = true)
                         || entry.value.description.contains(phrase, ignoreCase = true)
                         || entry.value.contentProvider.contains(phrase, ignoreCase = true)
