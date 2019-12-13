@@ -15,7 +15,7 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
 
     override fun idsMatching(index: MutableMap<String, VideoMetadata>, query: VideoQuery): List<String> {
         val phrase = query.phrase
-        val ids = query.ids
+        val idsToLookup = query.ids
 
         val minDuration: Long = if (query.minDuration != null) query.minDuration.seconds else 0
         val maxDuration: Long = if (query.maxDuration != null) query.maxDuration.seconds else Long.MAX_VALUE
@@ -24,7 +24,11 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
         val releaseDateTo: LocalDate = query.releaseDateTo ?: LocalDate.MAX
 
         return when {
-            ids.isNotEmpty() -> index.filter { ids.contains(it.key) }
+            idsToLookup.isNotEmpty() -> index.filter {
+                val permittedIdsToLookup =
+                    if (query.permittedVideoIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(query.permittedVideoIds)
+                permittedIdsToLookup.contains(it.key)
+            }
                 .map { video -> video.key }
             else -> index
                 .filter { entry ->

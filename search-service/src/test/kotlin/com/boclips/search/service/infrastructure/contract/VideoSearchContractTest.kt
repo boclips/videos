@@ -1375,4 +1375,82 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         assertThat(results).containsExactlyInAnyOrder("1", "3")
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can limit search when looking up by id`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1"),
+                SearchableVideoMetadataFactory.create(id = "2"),
+                SearchableVideoMetadataFactory.create(id = "3")
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    ids = listOf("1", "2"),
+                    permittedVideoIds = setOf("1", "3")
+                )
+            )
+        )
+
+        assertThat(results).containsExactlyInAnyOrder("1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `does not limit search when looking up by id if no permitted ids are specified`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1"),
+                SearchableVideoMetadataFactory.create(id = "2"),
+                SearchableVideoMetadataFactory.create(id = "3")
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    ids = listOf("1", "2"),
+                    permittedVideoIds = emptySet()
+                )
+            )
+        )
+
+        assertThat(results).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `does not limit search when looking up by id if no permitted ids is null`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1"),
+                SearchableVideoMetadataFactory.create(id = "2"),
+                SearchableVideoMetadataFactory.create(id = "3")
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    ids = listOf("1", "2"),
+                    permittedVideoIds = null
+                )
+            )
+        )
+
+        assertThat(results).containsExactlyInAnyOrder("1", "2")
+    }
 }

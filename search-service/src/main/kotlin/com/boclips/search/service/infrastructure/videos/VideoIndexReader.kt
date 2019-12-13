@@ -43,7 +43,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     }
 
     private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchHits {
-        val query = if (isIdLookup(videoQuery)) lookUpById(videoQuery.ids) else findBySearchTerm(videoQuery)
+        val query =
+            if (isIdLookup(videoQuery)) lookUpById(videoQuery.ids, videoQuery.permittedVideoIds) else findBySearchTerm(
+                videoQuery
+            )
         val request = SearchRequest(
             arrayOf(VideosIndex.getIndexAlias()),
             query.from(startIndex).size(windowSize).explain(false)
@@ -154,8 +157,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         ).negativeBoost(0.5F)
     }
 
-    private fun lookUpById(ids: List<String>): SearchSourceBuilder {
-        val bunchOfIds = idsQuery().addIds(*(ids.toTypedArray()))
+    private fun lookUpById(idsToLookup: List<String>, permittedIds: Set<String>?): SearchSourceBuilder {
+        val permittedIdsToLookup =
+            if (permittedIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(permittedIds)
+        val bunchOfIds = idsQuery().addIds(*(permittedIdsToLookup.toTypedArray()))
         val lookUpByIdQuery = boolQuery().should(bunchOfIds)
         return SearchSourceBuilder().query(lookUpByIdQuery)
     }
