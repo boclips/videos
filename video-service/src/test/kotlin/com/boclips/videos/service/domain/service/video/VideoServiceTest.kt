@@ -3,8 +3,10 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -13,8 +15,6 @@ import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
@@ -28,9 +28,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoService: VideoService
-
-    @Autowired
-    lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Autowired
     lateinit var videoRepository: VideoRepository
@@ -208,13 +205,18 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates age range of videos by content partner`() {
-            val contentPartner = saveContentPartner(ageRange = AgeRangeRequest(null, null))
+            val contentPartner = saveContentPartner(
+                ageRange = AgeRangeRequest(
+                    null,
+                    null
+                )
+            )
             val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
             videoService.create(video)
 
             videoService.updateContentPartnerInVideos(
                 contentPartner = contentPartner.copy(
-                    ageRange = AgeRange.bounded(1, 5)
+                    ageRange = com.boclips.contentpartner.service.domain.model.AgeRange.bounded(1, 5)
                 )
             )
 
@@ -235,7 +237,12 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).distributionMethods).containsExactly(
+            assertThat(
+                videoService.getPlayableVideo(
+                    video.videoId,
+                    VideoAccessRule.Everything
+                ).distributionMethods
+            ).containsExactly(
                 DistributionMethod.STREAM
             )
         }
@@ -255,7 +262,12 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).legalRestrictions).isEqualTo("Legal restrictions test")
+            assertThat(
+                videoService.getPlayableVideo(
+                    video.videoId,
+                    VideoAccessRule.Everything
+                ).legalRestrictions
+            ).isEqualTo("Legal restrictions test")
         }
 
         @Test
@@ -277,7 +289,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                         id = LegalRestrictionsId("id"),
                         text = "Multiple legal restrictions test"
                     ),
-                    ageRange = AgeRange.bounded(3, 9)
+                    ageRange = com.boclips.contentpartner.service.domain.model.AgeRange.bounded(3, 9)
                 )
             )
 

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 
 sealed class CollectionAccessRule {
     object PublicOnly : CollectionAccessRule()

@@ -1,15 +1,15 @@
 package com.boclips.contentpartner.service.infrastructure
 
+import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.Remittance
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import org.bson.types.ObjectId
-import java.util.*
+import java.util.Currency
 
 object ContentPartnerDocumentConverter {
     fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {

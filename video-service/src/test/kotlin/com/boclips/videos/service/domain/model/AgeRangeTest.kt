@@ -1,9 +1,9 @@
-package com.boclips.videos.service.domain.model.common
+package com.boclips.videos.service.domain.model
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class AgeRangeTest {
+class AgeRangeTest {
 
     @Test
     fun `bounded age range`() {

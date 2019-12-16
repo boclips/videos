@@ -1,11 +1,11 @@
 package com.boclips.contentpartner.service.infrastructure
 
+import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId

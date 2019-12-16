@@ -4,6 +4,8 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerC
 import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
+import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.BoundedAgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
@@ -15,8 +17,6 @@ import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -25,8 +25,8 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestMongoProcess
 import com.damnhandy.uri.template.UriTemplate
@@ -164,7 +164,10 @@ abstract class AbstractSpringIntegrationTest {
         type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
-        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
+        ageRange: AgeRange = BoundedAgeRange(
+            min = 7,
+            max = 11
+        ),
         distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
@@ -228,7 +231,10 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveContentPartner(
         name: String = "TeD",
-        ageRange: AgeRangeRequest = AgeRangeRequest(3, 10),
+        ageRange: AgeRangeRequest = AgeRangeRequest(
+            3,
+            10
+        ),
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null

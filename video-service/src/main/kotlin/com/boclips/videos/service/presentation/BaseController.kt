@@ -5,8 +5,8 @@ import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.RequestContext
 import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
 

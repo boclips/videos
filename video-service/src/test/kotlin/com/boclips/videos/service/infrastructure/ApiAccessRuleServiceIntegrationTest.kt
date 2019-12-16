@@ -5,7 +5,7 @@ import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.users.client.model.contract.SelectedVideosContract
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -55,7 +55,10 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
-            assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.SpecificOwner(owner = UserId(value = user.id.value)))
+            assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.SpecificOwner(owner = UserId(
+                value = user.id.value
+            )
+            ))
         }
 
         @Test

@@ -9,7 +9,7 @@ import com.boclips.videos.service.application.collection.exceptions.CollectionAc
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -31,7 +31,11 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = collectionRepository.find(collectionId)
         assertThat(collection).isNotNull
-        assertThat(collection!!.bookmarks).containsExactly(UserId("me@me.com"))
+        assertThat(collection!!.bookmarks).containsExactly(
+            UserId(
+                "me@me.com"
+            )
+        )
     }
 
     @Test

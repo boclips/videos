@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.domain.model.User
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId

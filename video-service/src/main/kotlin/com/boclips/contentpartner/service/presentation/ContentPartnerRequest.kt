@@ -1,10 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.application.CurrencyCode
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
-import org.hibernate.validator.constraints.Currency
-import java.util.*
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 

@@ -1,13 +1,13 @@
 package com.boclips.contentpartner.service.application
 
+import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand.ReplaceDistributionMethods
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
+import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
 import java.util.Currency
 
 class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: LegalRestrictionsRepository) {

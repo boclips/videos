@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -33,7 +33,11 @@ object CollectionDocumentConverter {
             updatedAt = ZonedDateTime.ofInstant(collectionDocument.updatedAt, ZoneOffset.UTC),
             isPublic = isPubliclyVisible,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
-            bookmarks = collectionDocument.bookmarks.map { UserId(it) }.toSet(),
+            bookmarks = collectionDocument.bookmarks.map {
+                UserId(
+                    it
+                )
+            }.toSet(),
             subjects = subjects,
             ageRange = if (collectionDocument.ageRangeMin !== null) AgeRange.bounded(
                 min = collectionDocument.ageRangeMin,

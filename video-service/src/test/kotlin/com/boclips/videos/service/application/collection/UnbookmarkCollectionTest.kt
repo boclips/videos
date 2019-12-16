@@ -7,7 +7,7 @@ import com.boclips.videos.service.application.collection.exceptions.CollectionAc
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -28,7 +28,11 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
     fun `the bookmark gets deleted`() {
         val collectionId = saveCollection(owner = "owner@example.com", public = true, bookmarkedBy = "me@me.com")
 
-        assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
+        assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(
+            UserId(
+                "me@me.com"
+            )
+        )
 
         unbookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
@@ -39,7 +43,11 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
     fun `the bookmark gets deleted from search`() {
         val collectionId = saveCollection(owner = "owner@example.com", public = true, bookmarkedBy = "me@me.com")
 
-        assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(UserId("me@me.com"))
+        assertThat(collectionRepository.find(collectionId)!!.bookmarks).containsExactly(
+            UserId(
+                "me@me.com"
+            )
+        )
 
         unbookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 

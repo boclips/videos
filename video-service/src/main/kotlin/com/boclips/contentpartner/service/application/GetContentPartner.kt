@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateR
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class GetContentPartner(private val contentPartnerRepository: ContentPartnerRepository) {
+    // TODO remove getOrThrow()
     operator fun invoke(contentPartnerId: String?, user: User): ContentPartnerResource {
         val id = getOrThrow(contentPartnerId, "contentPartnerId")
 

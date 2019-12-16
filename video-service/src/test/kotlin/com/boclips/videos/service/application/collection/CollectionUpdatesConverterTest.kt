@@ -95,7 +95,11 @@ class CollectionUpdatesConverterTest {
         val commands =
             collectionUpdatesConverter.convert(
                 CollectionId("testId"),
-                UpdateCollectionRequest(ageRange = AgeRangeRequest(min = 3, max = 5)),
+                UpdateCollectionRequest(ageRange = AgeRangeRequest(
+                    min = 3,
+                    max = 5
+                )
+                ),
                 UserFactory.sample()
             )
 

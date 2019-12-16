@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.testsupport.TestFactories.createUserTag
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -157,7 +157,10 @@ class VideosLinkBuilderTest {
             builder.rateLink(
                 createVideo(
                     videoId = validVideoId,
-                    ratings = listOf(UserRating(rating = 3, userId = UserId("another-teacher")))
+                    ratings = listOf(UserRating(rating = 3, userId = UserId(
+                        "another-teacher"
+                    )
+                    ))
                 )
             )
 
@@ -289,7 +292,7 @@ class VideosLinkBuilderTest {
         val link = builder.validateShareCodeLink(video)
 
         assertThat(link).isNotNull
-        assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId/match?shareCode={shareCode}")
-        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.VALIDATE_SHARE_CODE)
+        assertThat(link.href).isEqualTo("/v1/videos/$validVideoId/match?shareCode={shareCode}")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.VALIDATE_SHARE_CODE)
     }
 }

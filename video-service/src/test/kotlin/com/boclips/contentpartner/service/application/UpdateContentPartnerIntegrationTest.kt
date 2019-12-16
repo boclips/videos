@@ -2,18 +2,18 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.UnboundedAgeRange
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.eventbus.events.video.VideosUpdated
-import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

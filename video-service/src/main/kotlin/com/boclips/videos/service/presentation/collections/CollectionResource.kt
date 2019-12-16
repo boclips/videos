@@ -7,7 +7,6 @@ import com.boclips.videos.service.presentation.video.VideoResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.core.Relation
-import java.time.Instant
 import java.time.ZonedDateTime
 
 @Relation(collectionRelation = "collections")

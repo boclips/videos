@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.domain.model
 
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import java.util.*
 

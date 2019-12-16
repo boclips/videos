@@ -10,6 +10,7 @@ import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.users.client.model.TeacherPlatformAttributes
 import com.boclips.videos.service.domain.model.AccessRules
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.RequestContext
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.attachment.Attachment
@@ -19,8 +20,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -372,7 +372,10 @@ object TestFactories {
         title: String = "collection title",
         isPublic: Boolean = true,
         subjects: Set<String> = emptySet(),
-        ageRange: AgeRangeRequest = AgeRangeRequest(min = 3, max = 5)
+        ageRange: AgeRangeRequest = AgeRangeRequest(
+            min = 3,
+            max = 5
+        )
     ): UpdateCollectionRequest {
         return UpdateCollectionRequest(
             title = title,
@@ -441,7 +444,10 @@ object TestFactories {
 }
 
 object UserRatingFactory {
-    fun sample(rating: Int = 3, userId: UserId = UserId("me")): UserRating =
+    fun sample(rating: Int = 3, userId: UserId = UserId(
+        "me"
+    )
+    ): UserRating =
         UserRating(rating, userId)
 }
 
@@ -577,7 +583,11 @@ object AccessRulesFactory {
         sample(collectionAccessRule = CollectionAccessRule.everything())
 
     fun asOwner(ownerId: String): AccessRules =
-        sample(collectionAccessRule = CollectionAccessRule.asOwner(UserId(ownerId)))
+        sample(collectionAccessRule = CollectionAccessRule.asOwner(
+            UserId(
+                ownerId
+            )
+        ))
 }
 
 object SecurityUserFactory {

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.common
+package com.boclips.contentpartner.service.domain.model
 
 data class UserId(val value: String) {
     override fun toString(): String {

@@ -4,9 +4,9 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.model.common.UserId
 import com.boclips.videos.service.presentation.CollectionsController
 import mu.KLogging
 

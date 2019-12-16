@@ -1,8 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.application.LegalRestrictionsResource
-import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeResource
 import org.springframework.hateoas.core.Relation
 
 @Relation(collectionRelation = "contentPartners")

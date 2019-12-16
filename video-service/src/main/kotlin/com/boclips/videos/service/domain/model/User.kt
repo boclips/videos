@@ -1,7 +1,5 @@
 package com.boclips.videos.service.domain.model
 
-import com.boclips.videos.service.domain.model.common.UserId
-
 open class User(
     val id: UserId,
     val isBoclipsEmployee: Boolean,

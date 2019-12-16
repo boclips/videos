@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 
 data class CollectionFilter(
     val query: String? = null,

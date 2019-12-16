@@ -4,8 +4,7 @@ import com.boclips.contentpartner.service.application.LegalRestrictionsResource
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.User
-import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeToResourceConverter
 
 object ContentPartnerToResourceConverter {
     fun convert(contentPartner: ContentPartner, user: User): ContentPartnerResource {

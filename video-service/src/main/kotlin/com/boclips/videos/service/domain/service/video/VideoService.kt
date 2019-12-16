@@ -4,7 +4,8 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.domain.model.common.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -80,10 +81,15 @@ class VideoService(
         }
 
         var newAgeRange = videoToBeCreated.ageRange
-
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
             contentPartnerRepository.findById(videoToBeCreated.contentPartner.contentPartnerId)
-                ?.apply { newAgeRange = this.ageRange }
+                ?.apply {
+                    newAgeRange = if (this.ageRange.min() != null && this.ageRange.max() != null) {
+                        AgeRange.bounded(this.ageRange.min(), this.ageRange.max())
+                    } else {
+                        AgeRange.unbounded()
+                    }
+                }
         }
 
         return videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
@@ -105,7 +111,10 @@ class VideoService(
                             name = contentPartner.name
                         )
                     ),
-                    VideoUpdateCommand.ReplaceAgeRange(videoId = video.videoId, ageRange = contentPartner.ageRange),
+                    VideoUpdateCommand.ReplaceAgeRange(
+                        videoId = video.videoId,
+                        ageRange = AgeRange.bounded(contentPartner.ageRange.min(), contentPartner.ageRange.max())
+                    ),
                     VideoUpdateCommand.ReplaceDistributionMethods(
                         videoId = video.videoId,
                         distributionMethods = contentPartner.distributionMethods

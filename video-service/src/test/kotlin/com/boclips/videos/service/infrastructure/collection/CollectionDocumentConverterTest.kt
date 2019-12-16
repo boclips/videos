@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -48,7 +48,11 @@ class CollectionDocumentConverterTest {
         assertThat(collection.isPublic).isEqualTo(false)
         assertThat(collection.ageRange.min()).isEqualTo(5)
         assertThat(collection.ageRange.max()).isEqualTo(10)
-        assertThat(collection.bookmarks).containsExactly(UserId(value = "user-1"))
+        assertThat(collection.bookmarks).containsExactly(
+            UserId(
+                value = "user-1"
+            )
+        )
         assertThat(collection.description).isEqualTo("Good description")
         assertThat(collection.subjects.first().name).isEqualTo("subject-1")
         assertThat(collection.subjects.first().id.value).isNotBlank()

@@ -1,17 +1,19 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
-import com.boclips.contentpartner.service.domain.model.*
+import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.ContentPartner
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
-import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 import org.bson.types.ObjectId
-import java.util.*
+import java.util.Currency
 
-class CreateContentPartner(
-    private val contentPartnerRepository: ContentPartnerRepository
-) {
+class CreateContentPartner(private val contentPartnerRepository: ContentPartnerRepository) {
     operator fun invoke(request: ContentPartnerRequest): ContentPartner {
         val ageRange = request.ageRange?.let {
             AgeRange
@@ -46,7 +48,7 @@ class CreateContentPartner(
                     } ?: Credit.PartnerCredit,
                     legalRestrictions = null,
                     distributionMethods = methods,
-                    remittance = request.currency?.let{ Remittance( Currency.getInstance(it) )}
+                    remittance = request.currency?.let { Remittance(Currency.getInstance(it)) }
                 )
             )
     }

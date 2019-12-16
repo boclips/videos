@@ -1,6 +1,5 @@
-package com.boclips.videos.service.presentation
+package com.boclips.contentpartner.service.presentation
 
-import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import org.springframework.hateoas.Resources
 import org.springframework.web.bind.annotation.GetMapping
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/distribution-methods")
-class DistributionMethodsController(accessRuleService: AccessRuleService) : BaseController(accessRuleService) {
+class DistributionMethodsController : BaseController() {
     @GetMapping
     fun getDistributionMethods() =
         Resources(listOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM))

@@ -1,6 +1,5 @@
-package com.boclips.videos.service.presentation
+package com.boclips.contentpartner.service.presentation
 
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.equalTo

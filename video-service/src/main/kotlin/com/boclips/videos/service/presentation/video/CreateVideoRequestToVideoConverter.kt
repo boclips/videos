@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
-import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test

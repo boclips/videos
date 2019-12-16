@@ -6,8 +6,8 @@ import com.boclips.eventbus.domain.user.UserId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.domain.video.VideoType
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -30,7 +30,7 @@ class EventConverter {
     }
 
     private fun toVideoType(contentType: ContentType): VideoType {
-        return when(contentType) {
+        return when (contentType) {
             ContentType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
             ContentType.NEWS -> VideoType.NEWS
             ContentType.STOCK -> VideoType.STOCK
@@ -58,7 +58,6 @@ class EventConverter {
         return com.boclips.eventbus.domain.video.ContentPartner.of(contentPartner.name)
     }
 
-
     fun toCollectionPayload(collection: Collection): com.boclips.eventbus.domain.collection.Collection {
         return com.boclips.eventbus.domain.collection.Collection.builder()
             .id(CollectionId(collection.id.value))
@@ -71,7 +70,7 @@ class EventConverter {
             .ownerId(UserId(collection.owner.value))
             .isPublic(collection.isPublic)
             .ageRange(com.boclips.eventbus.domain.AgeRange(collection.ageRange.min(), collection.ageRange.max()))
-            .bookmarks(collection.bookmarks.map{ UserId(it.value)})
+            .bookmarks(collection.bookmarks.map { UserId(it.value) })
             .build()
     }
 }

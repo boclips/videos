@@ -2,11 +2,11 @@ package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -642,7 +642,9 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     private fun sampleCollection(
-        owner: UserId = UserId(value = "user1"),
+        owner: UserId = UserId(
+            value = "user1"
+        ),
         title: String = "Collection title",
         createdByBoclips: Boolean = false,
         public: Boolean = false

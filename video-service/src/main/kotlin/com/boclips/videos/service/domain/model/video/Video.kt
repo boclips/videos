@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.tag.UserTag
@@ -27,7 +27,7 @@ data class Video(
     val ageRange: AgeRange,
     val ratings: List<UserRating>,
     val tag: UserTag?,
-    // TODO: distribution method is a content partner concern, not a video concern. Availability?
+    // TODO: distribution method is a content partner concern, not a video concern.
     val distributionMethods: Set<DistributionMethod>,
     val promoted: Boolean?,
     val shareCodes: Set<String>?,

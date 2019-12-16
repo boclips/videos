@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation.video
 
 import com.boclips.kalturaclient.TestKalturaClient
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -34,7 +34,10 @@ internal class VideoToResourceConverterTest {
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
-        ratings = listOf(UserRating(rating = 3, userId = UserId("user-id"))),
+        ratings = listOf(UserRating(rating = 3, userId = UserId(
+            "user-id"
+        )
+        )),
         tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id"),
         promoted = true
     )

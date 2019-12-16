@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.DistributionMethod

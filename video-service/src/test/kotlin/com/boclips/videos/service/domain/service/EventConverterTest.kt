@@ -4,9 +4,9 @@ import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoType
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.TestFactories

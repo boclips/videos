@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -48,7 +48,12 @@ class ContentPartnerRequestTest {
 
     @Test
     fun `invalid age range`() {
-        val validRequest = TestFactories.createContentPartnerRequest(ageRange = AgeRangeRequest(min = -666, max = null))
+        val validRequest = TestFactories.createContentPartnerRequest(
+            ageRange = AgeRangeRequest(
+                min = -666,
+                max = null
+            )
+        )
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }

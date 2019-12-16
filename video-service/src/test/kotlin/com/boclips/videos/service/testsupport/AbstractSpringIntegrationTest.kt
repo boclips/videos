@@ -1,12 +1,14 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
@@ -22,9 +24,9 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.VideoSearchUpdater
+import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.common.AgeRange
-import com.boclips.videos.service.domain.model.common.BoundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -38,9 +40,7 @@ import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.damnhandy.uri.template.UriTemplate
@@ -205,7 +205,10 @@ abstract class AbstractSpringIntegrationTest {
         type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
-        ageRange: AgeRange = BoundedAgeRange(min = 7, max = 11),
+        ageRange: AgeRange = BoundedAgeRange(
+            min = 7,
+            max = 11
+        ),
         distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM

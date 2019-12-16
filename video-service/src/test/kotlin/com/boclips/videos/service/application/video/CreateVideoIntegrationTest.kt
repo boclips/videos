@@ -14,7 +14,7 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory

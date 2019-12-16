@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.common.UserId
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME

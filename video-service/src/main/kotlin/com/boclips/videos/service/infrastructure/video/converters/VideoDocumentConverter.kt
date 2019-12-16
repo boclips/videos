@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.videos.service.domain.model.common.AgeRange
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video

@@ -1,15 +1,15 @@
 package com.boclips.contentpartner.service.application
 
+import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.domain.model.common.AgeRange
 import com.boclips.videos.service.domain.model.video.DistributionMethod
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
