@@ -25,12 +25,9 @@ class GetCollection(
             throw CollectionAccessNotAuthorizedException(user.id, collectionId)
         }
 
-        return collectionRepository.find(CollectionId(value = collectionId))
-            ?.let {
-                when (projection) {
-                    Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(it, user)
-                    else -> collectionResourceFactory.buildCollectionListResource(it, user)
-                }
-            } ?: throw CollectionNotFoundException(collectionId)
+        return when (projection) {
+            Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(collection, user)
+            else -> collectionResourceFactory.buildCollectionListResource(collection, user)
+        }
     }
 }

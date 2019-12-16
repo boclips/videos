@@ -149,7 +149,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             saveVideo()
             val videoId2 = saveVideo()
 
-            val video = videoService.getPlayableVideos(listOf(videoId1, videoId2))
+            val video = videoService.getPlayableVideos(listOf(videoId1, videoId2), VideoAccessRule.Everything)
 
             assertThat(video).hasSize(2)
             assertThat(video.map { it.videoId }).containsExactly(videoId1, videoId2)

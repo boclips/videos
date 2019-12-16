@@ -9,6 +9,7 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.nullValue
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -93,5 +94,52 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(0)))
+    }
+
+    @Nested
+    inner class VideoContracts {
+        @Test
+        fun `limits videos returned on a collection search results to contracted ones`() {
+            val collectionId = createCollection(title = "A Collection", public = false)
+            val contractedVideoId = saveVideo()
+            val nonContractedVideoId = saveVideo()
+            addVideo(collectionId, contractedVideoId.value)
+            addVideo(collectionId, nonContractedVideoId.value)
+
+            createSelectedVideosContract(contractedVideoId.value)
+            createSelectedCollectionsContract(collectionId)
+
+            mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(contractedVideoId.value)))
+
+            mockMvc.perform(get("/v1/collections?projection=list").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(contractedVideoId.value)))
+        }
+
+        @Test
+        fun `limits videos returned on a single collection to contracted ones`() {
+            val collectionId = createCollection(title = "A Collection", public = false)
+            val contractedVideoId = saveVideo()
+            val nonContractedVideoId = saveVideo()
+            addVideo(collectionId, contractedVideoId.value)
+            addVideo(collectionId, nonContractedVideoId.value)
+
+            createSelectedVideosContract(contractedVideoId.value)
+            createSelectedCollectionsContract(collectionId)
+
+            mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.videos[0].id", equalTo(contractedVideoId.value)))
+
+            mockMvc.perform(get("/v1/collections/$collectionId?projection=list").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.videos[0].id", equalTo(contractedVideoId.value)))
+        }
     }
 }

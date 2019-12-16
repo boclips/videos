@@ -25,8 +25,8 @@ class SearchVideo(
         return getVideoById(resolveToAssetId(id)!!, user)
     }
 
-    fun byIds(ids: List<String>): List<Video> {
-        return getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) })
+    fun byIds(ids: List<String>, user: User): List<Video> {
+        return getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) }, user)
     }
 
     fun byQuery(

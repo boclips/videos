@@ -57,8 +57,13 @@ class VideoService(
             VideoAccessRule.Everything -> getPlayableVideo(videoId)
         }
 
-    fun getPlayableVideos(videoIds: List<VideoId>): List<Video> {
-        val videos = videoRepository.findAll(videoIds)
+    fun getPlayableVideos(videoIds: List<VideoId>, accessRule: VideoAccessRule): List<Video> {
+        val permittedVideoIds = when (accessRule) {
+            is VideoAccessRule.SpecificIds -> videoIds.intersect(accessRule.videoIds)
+            VideoAccessRule.Everything -> videoIds
+        }.toList()
+
+        val videos = videoRepository.findAll(permittedVideoIds)
 
         if (videoIds.size != videos.size) {
             logger.info {

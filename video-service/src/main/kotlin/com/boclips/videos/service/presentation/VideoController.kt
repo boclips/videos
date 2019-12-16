@@ -128,11 +128,13 @@ class VideoController(
     }
 
     @PostMapping("/search")
-    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> =
-        searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
-            .map { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
+    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> {
+        val user = getCurrentUser()
+        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), user)
+            .map { videoToResourceConverter.fromVideo(it, user) }
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
+    }
 
     @CrossOrigin(allowCredentials = "true")
     @GetMapping(path = ["/{id}"])

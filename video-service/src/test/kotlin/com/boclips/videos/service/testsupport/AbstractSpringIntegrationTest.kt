@@ -16,6 +16,7 @@ import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
+import com.boclips.users.client.model.contract.SelectedVideosContract
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -384,5 +385,12 @@ abstract class AbstractSpringIntegrationTest {
         val response = andReturn().response.contentAsString
         val link = JsonPath.parse(response).read<String>(hrefPath)
         return UriTemplate.fromTemplate(link)
+    }
+
+    fun createSelectedVideosContract(vararg contractedVideoIds: String) {
+        userServiceClient.addContract(SelectedVideosContract().apply {
+            name = UUID.randomUUID().toString()
+            videoIds = contractedVideoIds.toList()
+        })
     }
 }

@@ -4,13 +4,13 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.testsupport.AbstractVideoAccessRulesIntegrationTest
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class BaseControllerIntegrationTest : AbstractVideoAccessRulesIntegrationTest() {
+class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var controller: VideoController
 
