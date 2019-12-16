@@ -40,6 +40,7 @@ import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
@@ -100,7 +101,8 @@ object TestFactories {
         ),
         videoReference: String = contentPartnerVideoId,
         promoted: Boolean? = null,
-        shareCodes: Set<String>? = emptySet()
+        shareCodes: Set<String>? = emptySet(),
+        assets: Set<VideoAsset>? = null
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -123,7 +125,8 @@ object TestFactories {
             ratings = ratings,
             tag = tag,
             promoted = promoted,
-            shareCodes = shareCodes
+            shareCodes = shareCodes,
+            assets = assets
         )
     }
 

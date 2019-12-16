@@ -30,7 +30,8 @@ data class Video(
     // TODO: distribution method is a content partner concern, not a video concern. Availability?
     val distributionMethods: Set<DistributionMethod>,
     val promoted: Boolean?,
-    val shareCodes: Set<String>?
+    val shareCodes: Set<String>?,
+    val assets: Set<VideoAsset>?
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

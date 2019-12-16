@@ -13,7 +13,6 @@ import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
 
-
 object VideoDocumentConverter {
     fun toVideoDocument(video: Video): VideoDocument {
         return VideoDocument(
@@ -41,11 +40,13 @@ object VideoDocumentConverter {
                     it
                 )
             },
-            tags = video.tag?.let { listOf(
-                UserTagDocumentConverter.toDocument(
-                    it
+            tags = video.tag?.let {
+                listOf(
+                    UserTagDocumentConverter.toDocument(
+                        it
+                    )
                 )
-            ) } ?: emptyList(),
+            } ?: emptyList(),
             distributionMethods = video.distributionMethods.map(
                 DistributionMethodDocumentConverter::toDocument
             ).toSet(),
@@ -89,7 +90,8 @@ object VideoDocumentConverter {
                 )
             },
             promoted = document.promoted,
-            shareCodes = document.shareCodes
+            shareCodes = document.shareCodes,
+            assets = null
         )
     }
 }
