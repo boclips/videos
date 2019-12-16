@@ -46,11 +46,9 @@ import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.presentation.CollectionsController
-import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
-import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.presentation.subject.SubjectResource
@@ -361,23 +359,6 @@ object TestFactories {
             .language(Locale.US)
             .segments(emptyList())
             .build()
-    }
-
-    fun createUpdateCollectionRequest(
-        title: String = "collection title",
-        isPublic: Boolean = true,
-        subjects: Set<String> = emptySet(),
-        ageRange: AgeRangeRequest = AgeRangeRequest(
-            min = 3,
-            max = 5
-        )
-    ): UpdateCollectionRequest {
-        return UpdateCollectionRequest(
-            title = title,
-            isPublic = isPublic,
-            subjects = subjects,
-            ageRange = ageRange
-        )
     }
 
     fun createKalturaPlaybackDocument(

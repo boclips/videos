@@ -150,14 +150,16 @@ class ContentEnrichersTest {
 
         excluded.forEach {
             val title = "biology space animation $it"
-            assertThat(
-                isClassroom(
-                    createVideo(
-                        title = title,
-                        type = ContentType.STOCK
-                    )
-                )
-            ).withFailMessage("Expected '$title' to be excluded").isFalse()
+            val video = createVideo(title = title, type = ContentType.STOCK)
+
+            assertThat(isClassroom(video)).withFailMessage("Expected '$title' to be excluded").isFalse()
         }
+    }
+
+    @Test
+    fun `excludes videos with specific ids`() {
+        val video = createVideo(videoId = "5c54d6a2d8eafeecae205289", type = ContentType.INSTRUCTIONAL_CLIPS)
+
+        assertThat(isClassroom(video)).withFailMessage("Expected '${video.videoId}' to be excluded").isFalse()
     }
 }

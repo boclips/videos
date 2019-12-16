@@ -8,10 +8,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 
-class ShareVideo(
-    private val userServiceClient: UserServiceClient,
-    private val videoRepository: VideoRepository
-) {
+class ShareVideo(private val userServiceClient: UserServiceClient, private val videoRepository: VideoRepository) {
     operator fun invoke(videoId: String, user: User) {
         if (!user.isPermittedToShareVideo) {
             throw OperationForbiddenException()
