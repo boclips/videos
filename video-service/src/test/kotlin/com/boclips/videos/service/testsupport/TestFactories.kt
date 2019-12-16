@@ -102,6 +102,7 @@ object TestFactories {
         ),
         videoReference: String = contentPartnerVideoId,
         promoted: Boolean? = null,
+        subjectsWereSetManually: Boolean? = null,
         shareCodes: Set<String>? = emptySet()
     ): Video {
         return Video(
@@ -125,7 +126,8 @@ object TestFactories {
             ratings = ratings,
             tag = tag,
             promoted = promoted,
-            shareCodes = shareCodes
+            shareCodes = shareCodes,
+            subjectsWereSetManually = null
         )
     }
 
@@ -423,7 +425,6 @@ object TestFactories {
             name = name
         )
     }
-
 
     fun createSubjectDocument(name: String): SubjectDocument {
         return SubjectDocument(id = ObjectId(), name = name)

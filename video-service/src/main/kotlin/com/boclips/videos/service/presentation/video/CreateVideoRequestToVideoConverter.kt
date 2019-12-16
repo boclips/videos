@@ -46,7 +46,10 @@ class CreateVideoRequestToVideoConverter {
             ratings = emptyList(),
             tag = null,
             promoted = null,
-            shareCodes = emptySet()
+            shareCodes = emptySet(),
+            // if subjects were provided, they were set manually (this endpoint
+            // is not used by the classifier)
+            subjectsWereSetManually = subjects.isNotEmpty()
         )
     }
 }

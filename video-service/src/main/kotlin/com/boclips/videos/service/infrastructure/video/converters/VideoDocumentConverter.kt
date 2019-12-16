@@ -51,7 +51,8 @@ object VideoDocumentConverter {
                 DistributionMethodDocumentConverter::toDocument
             ).toSet(),
             promoted = video.promoted,
-            shareCodes = video.shareCodes
+            shareCodes = video.shareCodes,
+            subjectsWereSetManually = video.subjectsWereSetManually
         )
     }
 
@@ -90,7 +91,8 @@ object VideoDocumentConverter {
                 )
             },
             promoted = document.promoted,
-            shareCodes = document.shareCodes
+            shareCodes = document.shareCodes,
+            subjectsWereSetManually = document.subjectsWereSetManually
         )
     }
 }

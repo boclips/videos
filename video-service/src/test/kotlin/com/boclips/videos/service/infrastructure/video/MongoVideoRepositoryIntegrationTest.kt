@@ -170,6 +170,32 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `update subjectsWereSetManually`() {
+        val originalAsset = mongoVideoRepository.create(
+            TestFactories.createVideo(
+                title = "original title",
+                subjects = setOf()
+            )
+        )
+
+        assertThat(originalAsset.subjectsWereSetManually).isNull()
+
+        val afterStep1 = mongoVideoRepository.update(
+            VideoUpdateCommand.ReplaceSubjectsWereSetManually(originalAsset.videoId, true)
+        )
+
+        assertThat(afterStep1).isEqualToIgnoringGivenFields(originalAsset, "subjectsWereSetManually")
+        assertThat(afterStep1.subjectsWereSetManually).isTrue()
+
+        val afterStep2 = mongoVideoRepository.update(
+            VideoUpdateCommand.ReplaceSubjectsWereSetManually(originalAsset.videoId, false)
+        )
+
+        assertThat(afterStep2).isEqualToIgnoringGivenFields(originalAsset, "subjectsWereSetManually")
+        assertThat(afterStep2.subjectsWereSetManually).isFalse()
+    }
+
+    @Test
     fun `update age range`() {
         val originalAsset = mongoVideoRepository.create(
             createVideo(

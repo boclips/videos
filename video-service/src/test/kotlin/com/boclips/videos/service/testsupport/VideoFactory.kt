@@ -39,7 +39,8 @@ object VideoFactory {
         rating: List<UserRatingDocument> = emptyList(),
         distributionMethods: Set<DistributionMethodDocument>? = null,
         tags: List<UserTagDocument> = emptyList(),
-        promoted: Boolean? = null
+        promoted: Boolean? = null,
+        subjectsWereSetManually: Boolean? = false
     ): VideoDocument {
         return VideoDocument(
             id = id,
@@ -61,7 +62,8 @@ object VideoFactory {
             rating = rating,
             distributionMethods = distributionMethods,
             tags = tags,
-            promoted = promoted
+            promoted = promoted,
+            subjectsWereSetManually = subjectsWereSetManually
         )
     }
 

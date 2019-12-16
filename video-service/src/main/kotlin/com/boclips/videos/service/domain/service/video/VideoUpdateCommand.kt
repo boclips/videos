@@ -32,6 +32,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceDescription(videoId: VideoId, val description: String) : VideoUpdateCommand(videoId)
     class ReplaceLegalRestrictions(videoId: VideoId, val legalRestrictions: LegalRestrictions): VideoUpdateCommand(videoId)
     class ReplacePromoted(videoId: VideoId, val promoted: Boolean): VideoUpdateCommand(videoId)
+    class ReplaceSubjectsWereSetManually(videoId: VideoId, val subjectsWereSetManually: Boolean): VideoUpdateCommand(videoId)
     class AddShareCode(videoId: VideoId, val shareCode: String): VideoUpdateCommand(videoId)
 }
 

@@ -49,7 +49,7 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
-    fun `uses the subjects`() {
+    fun `uses the subjects and sets subjectsWereSetManually to true`() {
         val playback = TestFactories.createKalturaPlayback()
 
         val video = converter.convert(
@@ -62,6 +62,22 @@ class CreateVideoRequestToVideoConverterTest {
 
         assertThat(video.subjects).hasSize(1)
         assertThat(video.subjects.first().id).isNotNull
+        assertThat(video.subjectsWereSetManually).isTrue()
+    }
+
+    @Test
+    fun `without subjects, subjectsWereSetManually is false`() {
+        val playback = TestFactories.createKalturaPlayback()
+
+        val video = converter.convert(
+            TestFactories.createCreateVideoRequest(),
+            playback,
+            contentPartner,
+            emptySet(),
+            listOf()
+        )
+
+        assertThat(video.subjectsWereSetManually).isFalse()
     }
 
     @Test

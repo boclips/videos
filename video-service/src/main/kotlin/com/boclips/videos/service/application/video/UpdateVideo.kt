@@ -35,8 +35,19 @@ open class UpdateVideo(
             val validNewSubjects = allSubjects.filter { subjectIdList.contains(it.id.value) }
             VideoUpdateCommand.ReplaceSubjects(VideoId(id), validNewSubjects)
         }
+        val updateSubjectsWereSetManually = subjectIds?.let {
+            VideoUpdateCommand.ReplaceSubjectsWereSetManually(VideoId(id), true)
+        }
 
-        videoRepository.bulkUpdate(listOfNotNull(updateTitle, updateDescription, replacePromoted, updateSubjectIds))
+        videoRepository.bulkUpdate(
+            listOfNotNull(
+                updateTitle,
+                updateDescription,
+                replacePromoted,
+                updateSubjectIds,
+                updateSubjectsWereSetManually
+            )
+        )
 
         logger.info { "Updated video $id" }
     }

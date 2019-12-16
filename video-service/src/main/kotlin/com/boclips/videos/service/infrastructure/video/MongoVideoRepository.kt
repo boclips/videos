@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddShareCode
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDescription
@@ -20,6 +21,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePromoted
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjectsWereSetManually
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTitle
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
@@ -314,7 +316,11 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
             is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.legalRestrictions.text)
             is ReplacePromoted -> set(VideoDocument::promoted, updateCommand.promoted)
-            is VideoUpdateCommand.AddShareCode -> addToSet(VideoDocument::shareCodes, updateCommand.shareCode)
+            is AddShareCode -> addToSet(VideoDocument::shareCodes, updateCommand.shareCode)
+            is ReplaceSubjectsWereSetManually -> set(
+                VideoDocument::subjectsWereSetManually,
+                updateCommand.subjectsWereSetManually
+            )
         }
     }
 

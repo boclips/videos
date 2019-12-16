@@ -16,7 +16,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: VideoRepository
 
     @Test
-    fun `only specified fields are updated`() {
+    fun `matching fields are updated, subjects and subjectsWereSetManually included`() {
         val videoId = saveVideo(title = "title", description = "description")
         val subjectsList = listOf(
             saveSubject(name = "Design"),
@@ -40,5 +40,28 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.description).isEqualTo("new description")
         assertThat(updatedVideo.promoted).isEqualTo(true)
         assertThat(updatedVideo.subjects).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
+        assertThat(updatedVideo.subjectsWereSetManually).isTrue()
+    }
+
+    @Test
+    fun `with no subjects specified, subjectsWereSetManually stays false`() {
+        val videoId = saveVideo(
+            title = "title",
+            description = "description",
+            subjectIds = emptySet()
+        )
+        updateVideo(
+            id = videoId.value,
+            title = null,
+            description = "new description",
+            promoted = true,
+            subjectIds = null,
+            user = UserFactory.sample(id = "admin@boclips.com")
+        )
+
+        val updatedVideo = videoRepository.find(videoId)!!
+
+        assertThat(updatedVideo.subjects).isEmpty()
+        assertThat(updatedVideo.subjectsWereSetManually).isFalse()
     }
 }

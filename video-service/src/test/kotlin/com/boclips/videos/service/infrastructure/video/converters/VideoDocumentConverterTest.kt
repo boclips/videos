@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.VideoFactory.createVideoDocument
 import org.assertj.core.api.Assertions.assertThat
@@ -19,7 +20,7 @@ import java.util.Locale
 class VideoDocumentConverterTest {
     @Test
     fun `converts a video to document to video`() {
-        val originalAsset = TestFactories.createVideo(
+        val originalAsset: Video = TestFactories.createVideo(
             videoId = "5c1786db5236de0001d77747",
             title = "the title",
             description = "the description",
@@ -55,7 +56,8 @@ class VideoDocumentConverterTest {
             ageRange = AgeRange.bounded(11, 16),
             distributionMethods = setOf(DistributionMethod.STREAM),
             promoted = true,
-            shareCodes = setOf("1234")
+            shareCodes = setOf("1234"),
+            subjectsWereSetManually = false
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalAsset)
