@@ -211,7 +211,8 @@ class VideoController(
                         "error" to e.message,
                         "processed request" to createVideoRequest
                     )
-                )
+                ),
+                e
             )
             throw InvalidRequestApiException(
                 ExceptionDetails(
