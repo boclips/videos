@@ -68,10 +68,11 @@ class GetVideosByQuery(
             type = type.map { searchQueryConverter.convertType(it) }.toSet()
         )
 
-        val totalVideos = videoService.count(videoSearchQuery = videoSearchQuery)
+        val totalVideos =
+            videoService.count(videoSearchQuery = videoSearchQuery, videoAccessRule = user.accessRules.videoAccess)
         logger.info { "Found $totalVideos videos for query $videoSearchQuery" }
 
-        val videos: List<Video> = videoService.search(videoSearchQuery)
+        val videos: List<Video> = videoService.search(videoSearchQuery, user.accessRules.videoAccess)
         logger.info { "Return ${videos.size} out of $pageSize results for query $videoSearchQuery" }
 
         eventService.saveSearchEvent(

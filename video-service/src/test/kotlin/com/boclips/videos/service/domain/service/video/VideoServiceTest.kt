@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.presentation.DistributionMethodResource
@@ -48,7 +47,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     excludeTags = emptyList(),
                     pageSize = 10,
                     pageIndex = 0
-                )
+                ),
+                VideoAccessRule.Everything
             )
 
             assertThat(videos).isNotEmpty
@@ -69,7 +69,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     excludeTags = emptyList(),
                     pageSize = 10,
                     pageIndex = 0
-                )
+                ),
+                VideoAccessRule.Everything
             )
 
             assertThat(videos).isNotEmpty
@@ -91,10 +92,46 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     excludeTags = emptyList(),
                     pageSize = 10,
                     pageIndex = 0
-                )
+                ),
+                VideoAccessRule.Everything
             )
 
             assertThat(size).isEqualTo(1)
+        }
+
+        @Test
+        fun `limits search results when specific id access rule is provided`() {
+            val firstVideo = saveVideo(title = "access")
+            saveVideo(title = "no access")
+
+            val searchResults = videoService.search(
+                VideoSearchQuery(
+                    text = "access", includeTags = emptyList(),
+                    excludeTags = emptyList(),
+                    pageSize = 10,
+                    pageIndex = 0
+                ), VideoAccessRule.SpecificIds(setOf(firstVideo))
+            )
+
+            assertThat(searchResults).hasSize(1)
+            assertThat(searchResults.map { it.videoId }).containsExactly(firstVideo)
+        }
+
+        @Test
+        fun `count takes specific ids access into ac-count (pun intended)`() {
+            val firstVideo = saveVideo(title = "access")
+            saveVideo(title = "no access")
+
+            val searchResults = videoService.count(
+                VideoSearchQuery(
+                    text = "access", includeTags = emptyList(),
+                    excludeTags = emptyList(),
+                    pageSize = 10,
+                    pageIndex = 0
+                ), VideoAccessRule.SpecificIds(setOf(firstVideo))
+            )
+
+            assertThat(searchResults).isEqualTo(1)
         }
 
         @Test

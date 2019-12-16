@@ -5,10 +5,9 @@ import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import java.time.Duration
 import java.time.LocalDate
-
-import com.boclips.search.service.domain.videos.model.VideoType
 
 enum class SortKey {
     RELEASE_DATE,
@@ -36,7 +35,7 @@ class VideoSearchQuery(
     val contentPartnerNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet()
 ) {
-    fun toSearchQuery(): VideoQuery {
+    fun toSearchQuery(videoAccessRule: VideoAccessRule): VideoQuery {
         val sort = sortBy?.let {
             when (it) {
                 SortKey.RELEASE_DATE -> Sort.ByField(
@@ -68,7 +67,11 @@ class VideoSearchQuery(
                 subjectIds = subjects,
                 promoted = promoted,
                 contentPartnerNames = contentPartnerNames,
-                type = type
+                type = type,
+                permittedVideoIds = when (videoAccessRule) {
+                    is VideoAccessRule.SpecificIds -> videoAccessRule.videoIds.map { videoId -> videoId.value }.toSet()
+                    VideoAccessRule.Everything -> null
+                }
             )
         }
     }

@@ -23,9 +23,9 @@ class VideoService(
 ) {
     companion object : KLogging()
 
-    fun search(query: VideoSearchQuery): List<Video> {
+    fun search(query: VideoSearchQuery, videoAccessRule: VideoAccessRule): List<Video> {
         val searchRequest = PaginatedSearchRequest(
-            query = query.toSearchQuery(),
+            query = query.toSearchQuery(videoAccessRule),
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
@@ -37,9 +37,9 @@ class VideoService(
         return playableVideos
     }
 
-    fun count(videoSearchQuery: VideoSearchQuery): Long {
+    fun count(videoSearchQuery: VideoSearchQuery, videoAccessRule: VideoAccessRule): Long {
         logger.info { "Counted videos for query $videoSearchQuery" }
-        return videoSearchService.count(videoSearchQuery.toSearchQuery())
+        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccessRule))
     }
 
     fun getPlayableVideo(

@@ -72,8 +72,10 @@ import com.boclips.security.utils.User as SecurityUser
 
 object TestFactories {
 
+    fun createVideoId() = VideoId(aValidId())
+
     fun createVideo(
-        videoId: String = ObjectId().toHexString(),
+        videoId: String = createVideoId().value,
         title: String = "title",
         description: String = "description",
         contentPartnerName: String = "Reuters",

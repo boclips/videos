@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
@@ -14,7 +14,6 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -29,9 +28,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoService: VideoService
-
-    @Autowired
-    lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Autowired
     lateinit var videoCounter: Counter
@@ -98,7 +94,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     excludeTags = emptyList(),
                     pageSize = 0,
                     pageIndex = 0
-                )
+                ),
+                VideoAccessRule.Everything
             )
         ).isEqualTo(0)
     }

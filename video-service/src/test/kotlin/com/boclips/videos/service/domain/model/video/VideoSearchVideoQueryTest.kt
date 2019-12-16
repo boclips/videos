@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -20,7 +21,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery()
+            .toSearchQuery(videoAccessRule = VideoAccessRule.Everything)
 
         assertThat(searchQuery.phrase).isEqualTo("normal phrase")
     }
@@ -34,7 +35,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.ids).containsExactly("11")
     }
@@ -48,7 +49,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.ids).containsExactly("11", "12", "13")
     }
@@ -62,7 +63,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.includeTags).contains("classroom")
     }
@@ -76,7 +77,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.excludeTags).contains("classroom")
     }
@@ -91,7 +92,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
 
@@ -109,7 +110,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             sortBy = SortKey.RANDOM
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.sort is Sort.ByRandom<VideoMetadata>)
     }
@@ -124,7 +125,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             sortBy = null
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.sort).isNull()
     }
@@ -140,7 +141,7 @@ class VideoSearchVideoQueryTest {
             sortBy = SortKey.RELEASE_DATE,
             source = SourceType.YOUTUBE
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.source).isEqualTo(SourceType.YOUTUBE)
     }
@@ -155,7 +156,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             type = setOf(VideoType.NEWS, VideoType.STOCK)
         )
-            .toSearchQuery()
+            .toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.type).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
@@ -171,7 +172,7 @@ class VideoSearchVideoQueryTest {
             sortBy = SortKey.RELEASE_DATE,
             releaseDateFrom = LocalDate.of(2000, 1, 1),
             releaseDateTo = LocalDate.of(2001, 1, 1)
-        ).toSearchQuery()
+        ).toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
         assertThat(searchQuery.releaseDateFrom).isEqualTo(LocalDate.of(2000, 1, 1))
@@ -186,8 +187,39 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toSearchQuery()
+        ).toSearchQuery(VideoAccessRule.Everything)
 
         assertThat(searchQuery.promoted).isEqualTo(true)
+    }
+
+    @Test
+    fun `limits query to specific ids`() {
+        val firstId = TestFactories.createVideoId()
+        val secondId = TestFactories.createVideoId()
+
+        val searchQuery = VideoSearchQuery(
+            text = "",
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageIndex = 0,
+            promoted = true
+        ).toSearchQuery(VideoAccessRule.SpecificIds(setOf(firstId, secondId)))
+
+        assertThat(searchQuery.permittedVideoIds).containsExactlyInAnyOrder(firstId.value, secondId.value)
+    }
+
+    @Test
+    fun `does not limit ids when has access to everything`() {
+        val searchQuery = VideoSearchQuery(
+            text = "",
+            includeTags = emptyList(),
+            excludeTags = emptyList(),
+            pageSize = 2,
+            pageIndex = 0,
+            promoted = true
+        ).toSearchQuery(VideoAccessRule.Everything)
+
+        assertThat(searchQuery.permittedVideoIds).isNull()
     }
 }
