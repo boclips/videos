@@ -45,6 +45,7 @@ import com.boclips.videos.service.application.video.ShareVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.VideoSearchUpdater
@@ -54,7 +55,6 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
@@ -403,7 +403,7 @@ class ApplicationContext(
     }
 
     private fun getVideoById(): GetVideoById {
-        return GetVideoById(videoService, accessRuleService)
+        return GetVideoById(videoService)
     }
 
     private fun getVideosByQuery(searchQueryConverter: SearchQueryConverter): GetVideosByQuery {

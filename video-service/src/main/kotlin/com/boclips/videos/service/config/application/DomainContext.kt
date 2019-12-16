@@ -12,7 +12,6 @@ import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionRepositoryEventsDecorator
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
@@ -66,10 +65,8 @@ class DomainContext(
     }
 
     @Bean
-    fun collectionAccessService(
-        accessRuleService: AccessRuleService
-    ): CollectionAccessService {
-        return CollectionAccessService(accessRuleService)
+    fun collectionAccessService(): CollectionAccessService {
+        return CollectionAccessService()
     }
 
     @Primary

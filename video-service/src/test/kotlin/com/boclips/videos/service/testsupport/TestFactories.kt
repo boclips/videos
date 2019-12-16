@@ -616,7 +616,7 @@ object UserFactory {
         isPermittedToShareVideo: Boolean = false,
         accessRulesSupplier: (user: User) -> AccessRules = { AccessRules(
             videoAccess = VideoAccessRule.Everything,
-            collectionAccess = CollectionAccessRule.Everything
+            collectionAccess = CollectionAccessRule.PublicOnly
         ) }
     ): User {
         return User(
