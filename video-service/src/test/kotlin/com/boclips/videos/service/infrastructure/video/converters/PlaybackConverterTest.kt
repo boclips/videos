@@ -3,8 +3,11 @@ package com.boclips.videos.service.infrastructure.video.converters
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.VideoAsset
+import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.VideoFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -17,7 +20,8 @@ class PlaybackConverterTest {
             entryId = "entry_id_1234",
             referenceId = "1234",
             duration = Duration.ofSeconds(100),
-            downloadUrl = "download"
+            downloadUrl = "download",
+            assets = setOf(VideoFactory.createVideoAsset())
         )
 
         val playbackDocument: PlaybackDocument = PlaybackConverter.toDocument(originalPlayback)
@@ -27,6 +31,7 @@ class PlaybackConverterTest {
         assertThat(playbackDocument.downloadUrl).isEqualTo("download")
         assertThat(playbackDocument.duration).isEqualTo(100)
         assertThat(playbackDocument.lastVerified).isNotNull()
+        assertThat(playbackDocument.assets).hasSize(1)
     }
 
     @Test
@@ -35,7 +40,16 @@ class PlaybackConverterTest {
             id = "1234",
             entryId = "entry_id_1234",
             duration = 100,
-            downloadUrl = "download"
+            downloadUrl = "download",
+            assets = listOf(
+                VideoFactory.createVideoAssetDocument(
+                    id = "the_asset_id",
+                    sizeKb = 100,
+                    width = 200,
+                    height = 300,
+                    bitrateKbps = 400
+                )
+            )
         )
 
         val playback = PlaybackConverter.toPlayback(document) as VideoPlayback.StreamPlayback
@@ -43,6 +57,15 @@ class PlaybackConverterTest {
         assertThat(playback.referenceId).isEqualTo("1234")
         assertThat(playback.downloadUrl).isEqualTo("download")
         assertThat(playback.duration).isEqualTo(Duration.ofSeconds(100))
+        assertThat(playback.assets?.first()).isEqualTo(
+            VideoAsset(
+                id = VideoAssetId("the_asset_id"),
+                sizeKb = 100,
+                width = 200,
+                height = 300,
+                bitrateKbps = 400
+            )
+        )
     }
 
     @Test

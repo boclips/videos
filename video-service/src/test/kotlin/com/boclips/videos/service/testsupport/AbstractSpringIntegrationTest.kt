@@ -12,6 +12,7 @@ import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
@@ -186,9 +187,14 @@ abstract class AbstractSpringIntegrationTest {
     fun createMediaEntry(
         id: String = "1",
         duration: Duration = Duration.ofMinutes(1),
-        status: MediaEntryStatus = MediaEntryStatus.READY
-    ) =
+        status: MediaEntryStatus = MediaEntryStatus.READY,
+        assets: Set<Asset> = emptySet()
+    ) {
         fakeKalturaClient.createMediaEntry(id, "ref-$id", duration, status)
+        if(assets.isNotEmpty()) {
+            fakeKalturaClient.setAssets(id, assets.toMutableList())
+        }
+    }
 
     fun saveVideo(
         playbackId: PlaybackId = PlaybackId(

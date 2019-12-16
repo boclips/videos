@@ -1,6 +1,8 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoAsset
+import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -9,6 +11,7 @@ import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.TopicDocument
 import com.boclips.videos.service.infrastructure.video.UserRatingDocument
 import com.boclips.videos.service.infrastructure.video.UserTagDocument
+import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.Instant
@@ -86,6 +89,38 @@ object VideoFactory {
         )
     }
 
+    fun createVideoAsset(
+        id: VideoAssetId = VideoAssetId("1"),
+        sizeKb: Int = 1024,
+        width: Int = 640,
+        height: Int = 640,
+        bitrateKbps: Int = 128
+    ): VideoAsset {
+        return VideoAsset(
+            id = id,
+            sizeKb = sizeKb,
+            width = width,
+            height = height,
+            bitrateKbps = bitrateKbps
+        )
+    }
+
+    fun createVideoAssetDocument(
+        id: String? = "asset-id",
+        sizeKb: Int? = 1024,
+        width: Int? = 1920,
+        height: Int? = 1080,
+        bitrateKbps: Int? = 1024
+    ): VideoAssetDocument {
+        return VideoAssetDocument(
+            id = id,
+            sizeKb = sizeKb,
+            width = width,
+            height = height,
+            bitrateKbps = bitrateKbps
+        )
+    }
+
     fun createPlaybackDocument(
         type: String = "KALTURA",
         id: String = "playback-id",
@@ -93,7 +128,8 @@ object VideoFactory {
         thumbnailUrl: List<String>? = null,
         downloadUrl: String? = null,
         lastVerified: Instant? = null,
-        duration: Int? = null
+        duration: Int? = null,
+        assets: List<VideoAssetDocument> = emptyList()
     ): PlaybackDocument {
         return PlaybackDocument(
             type = type,
@@ -102,7 +138,8 @@ object VideoFactory {
             thumbnailUrl = thumbnailUrl,
             downloadUrl = downloadUrl,
             lastVerified = lastVerified,
-            duration = duration
+            duration = duration,
+            assets = assets
         )
     }
 }

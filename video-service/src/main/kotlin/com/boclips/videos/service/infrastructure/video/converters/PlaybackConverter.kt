@@ -6,7 +6,10 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
+import com.boclips.videos.service.domain.model.video.VideoAsset
+import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
+import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import mu.KLogging
 import java.time.Duration
 import java.time.Instant
@@ -22,7 +25,8 @@ object PlaybackConverter : KLogging() {
                 downloadUrl = videoPlayback.downloadUrl,
                 thumbnailUrl = null,
                 lastVerified = Instant.now(),
-                duration = videoPlayback.duration.seconds.toInt()
+                duration = videoPlayback.duration.seconds.toInt(),
+                assets = videoPlayback.assets?.map { convertAssetsToDocument(it) }
             )
             is YoutubePlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
@@ -31,7 +35,8 @@ object PlaybackConverter : KLogging() {
                 thumbnailUrl = listOf(videoPlayback.thumbnailUrl),
                 downloadUrl = null,
                 lastVerified = Instant.now(),
-                duration = videoPlayback.duration.seconds.toInt()
+                duration = videoPlayback.duration.seconds.toInt(),
+                assets = null
             )
             else -> throw IllegalStateException("Stream class ${videoPlayback.javaClass.name} not supported.")
         }
@@ -56,7 +61,8 @@ object PlaybackConverter : KLogging() {
                     id = PlaybackId(type = PlaybackProviderType.KALTURA, value = playbackDocument.entryId!!),
                     referenceId = playbackDocument.id,
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
-                    downloadUrl = playbackDocument.downloadUrl!!
+                    downloadUrl = playbackDocument.downloadUrl!!,
+                    assets = playbackDocument.assets?.map { convertDocumentToAsset(it) }?.toSet()
                 )
             }
             PlaybackDocument.PLAYBACK_TYPE_YOUTUBE -> {
@@ -76,5 +82,25 @@ object PlaybackConverter : KLogging() {
             }
             else -> throw java.lang.IllegalStateException("Could not find video provider ${playbackDocument.type}")
         }
+    }
+
+    private fun convertAssetsToDocument(asset: VideoAsset): VideoAssetDocument {
+        return VideoAssetDocument(
+            asset.id.value,
+            asset.sizeKb,
+            asset.width,
+            asset.height,
+            asset.bitrateKbps
+        )
+    }
+
+    private fun convertDocumentToAsset(asset: VideoAssetDocument): VideoAsset {
+        return VideoAsset(
+            VideoAssetId(asset.id!!),
+            asset.sizeKb!!,
+            asset.width!!,
+            asset.height!!,
+            asset.bitrateKbps!!
+        )
     }
 }

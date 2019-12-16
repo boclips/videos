@@ -7,14 +7,38 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.KalturaFactories
+import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
-import com.boclips.videos.service.testsupport.TestFactories.createKalturaCaptionAsset
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.Locale
 
 class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
+
+    @Test
+    fun `return video with assets`() {
+        createMediaEntry(id = "1", assets = setOf(KalturaFactories.createKalturaAsset()))
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
+
+        val videoPlayback = playbackById[playbackId] as StreamPlayback
+
+        assertThat(videoPlayback.assets).hasSize(1)
+    }
+
+    @Test
+    fun `list of assets is empty when no assets in kaltura`() {
+        createMediaEntry(id = "1")
+
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
+
+        val videoPlayback = playbackById[playbackId] as StreamPlayback
+
+        assertThat(videoPlayback.assets).hasSize(0)
+    }
 
     @Test
     fun `returns streaming information for videos`() {
@@ -120,7 +144,10 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(allCaptions).isEmpty()
     }
 
-    private fun mediaEntryWithCaptionsByEntryId(label: String, language: KalturaLanguage = KalturaLanguage.ENGLISH): PlaybackId {
+    private fun mediaEntryWithCaptionsByEntryId(
+        label: String,
+        language: KalturaLanguage = KalturaLanguage.ENGLISH
+    ): PlaybackId {
         val existingCaptions = createKalturaCaptionAsset(label = label, language = language)
         createMediaEntry(id = "entry-id")
         fakeKalturaClient.createCaptionsFileWithEntryId("entry-id", existingCaptions, "old captions")

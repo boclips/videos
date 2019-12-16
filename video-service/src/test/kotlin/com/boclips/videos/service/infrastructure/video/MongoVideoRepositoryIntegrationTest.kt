@@ -15,6 +15,9 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
+import com.boclips.videos.service.testsupport.TestFactories.createVideo
+import com.boclips.videos.service.testsupport.VideoFactory.createVideoAsset
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.Document
 import org.bson.types.ObjectId
@@ -37,18 +40,28 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create a video`() {
-        val video = TestFactories.createVideo()
-        val createdAsset = mongoVideoRepository.create(video)
+        val video = createVideo(playback = createKalturaPlayback(assets = setOf(createVideoAsset())))
+        val createdVideo = mongoVideoRepository.create(video)
 
-        assertThat(createdAsset).isEqualToIgnoringGivenFields(video, "playback")
+        assertThat(createdVideo).isEqualToIgnoringGivenFields(video, "playback")
+        assertThat(createdVideo.playback).isInstanceOf(StreamPlayback::class.java)
+        assertThat((createdVideo.playback as StreamPlayback).assets).isNotEmpty
     }
 
     @Test
     fun `find a video`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo())
-        val retrievedAsset = mongoVideoRepository.find(originalAsset.videoId)!!
+        val originalVideo = mongoVideoRepository.create(
+            createVideo(
+                playback = createKalturaPlayback(
+                    assets = setOf(
+                        createVideoAsset()
+                    )
+                )
+            )
+        )
+        val retrievedVideo = mongoVideoRepository.find(originalVideo.videoId)!!
 
-        assertThat(retrievedAsset).isEqualTo(originalAsset)
+        assertThat(retrievedVideo).isEqualTo(originalVideo)
     }
 
     @Test
@@ -58,9 +71,9 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `lookup videos by ids maintains video order`() {
-        val id1 = mongoVideoRepository.create(TestFactories.createVideo()).videoId
-        val id2 = mongoVideoRepository.create(TestFactories.createVideo()).videoId
-        val id3 = mongoVideoRepository.create(TestFactories.createVideo()).videoId
+        val id1 = mongoVideoRepository.create(createVideo()).videoId
+        val id2 = mongoVideoRepository.create(createVideo()).videoId
+        val id3 = mongoVideoRepository.create(createVideo()).videoId
 
         val videos = mongoVideoRepository.findAll(listOf(id2, id1, id3))
 
@@ -69,7 +82,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `lookup videos only return videos once`() {
-        val id1 = mongoVideoRepository.create(TestFactories.createVideo()).videoId
+        val id1 = mongoVideoRepository.create(createVideo()).videoId
 
         val videos = mongoVideoRepository.findAll(listOf(id1, id1, id1))
 
@@ -79,7 +92,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `delete a video`() {
         val id = TestFactories.aValidId()
-        val originalAsset = TestFactories.createVideo(videoId = id)
+        val originalAsset = createVideo(videoId = id)
 
         mongoVideoRepository.create(originalAsset)
         mongoVideoRepository.delete(VideoId(id))
@@ -90,8 +103,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `update playback`() {
         val originalAsset = mongoVideoRepository.create(
-            TestFactories.createVideo(
-                playback = TestFactories.createKalturaPlayback(entryId = "original-entry")
+            createVideo(
+                playback = createKalturaPlayback(entryId = "original-entry")
             )
         )
 
@@ -99,7 +112,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 VideoUpdateCommand.ReplacePlayback(
                     originalAsset.videoId,
-                    TestFactories.createKalturaPlayback(
+                    createKalturaPlayback(
                         duration = Duration.ZERO,
                         entryId = "new-entry",
                         downloadUrl = "download-url-updated"
@@ -118,7 +131,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `update title`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo(title = "old title"))
+        val originalAsset = mongoVideoRepository.create(createVideo(title = "old title"))
 
         val updatedAsset =
             mongoVideoRepository.update(VideoUpdateCommand.ReplaceTitle(originalAsset.videoId, "new title"))
@@ -128,7 +141,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `update description`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo(description = "old description"))
+        val originalAsset = mongoVideoRepository.create(createVideo(description = "old description"))
 
         val updatedAsset =
             mongoVideoRepository.update(VideoUpdateCommand.ReplaceDescription(originalAsset.videoId, "new description"))
@@ -139,7 +152,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `update subjects`() {
         val originalAsset = mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "original title",
                 subjects = setOf(maths)
             )
@@ -159,7 +172,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `update age range`() {
         val originalAsset = mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "original title"
             )
         )
@@ -177,7 +190,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `update user rating`() {
         val originalAsset = mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "original title"
             )
         )
@@ -209,7 +222,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `update video tag`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo())
+        val originalAsset = mongoVideoRepository.create(createVideo())
         val tag = TestFactories.createUserTag(label = "Alex", userId = "user-1")
         val updatedAsset = mongoVideoRepository.update(
             VideoUpdateCommand.ReplaceTag(
@@ -223,7 +236,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `update promoted`() {
-        val originalAsset = mongoVideoRepository.create(TestFactories.createVideo())
+        val originalAsset = mongoVideoRepository.create(createVideo())
         val updatedAsset = mongoVideoRepository.update(
             VideoUpdateCommand.ReplacePromoted(
                 originalAsset.videoId, true
@@ -236,7 +249,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `update shareCodes`() {
-        val originalVideo = mongoVideoRepository.create(TestFactories.createVideo(shareCodes = setOf("abcd")))
+        val originalVideo = mongoVideoRepository.create(createVideo(shareCodes = setOf("abcd")))
 
         val videoBefore = mongoVideoRepository.find(originalVideo.videoId)!!
 
@@ -250,7 +263,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `update shareCodes for video without shareCodes`() {
-        val originalVideo = mongoVideoRepository.create(TestFactories.createVideo(shareCodes = emptySet()))
+        val originalVideo = mongoVideoRepository.create(createVideo(shareCodes = emptySet()))
 
         val updatedVideo = mongoVideoRepository.update(
             VideoUpdateCommand.AddShareCode(originalVideo.videoId, shareCode = "1234")
@@ -274,9 +287,9 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `bulk update applies multiple independent updates at once`() {
         val originalVideo1 = mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "original title 1",
-                playback = TestFactories.createKalturaPlayback(
+                playback = createKalturaPlayback(
                     duration = Duration.ofMinutes(1)
                 ),
                 subjects = setOf(maths)
@@ -284,9 +297,9 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val originalVideo2 = mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "original title 2",
-                playback = TestFactories.createKalturaPlayback(
+                playback = createKalturaPlayback(
                     duration = Duration.ofMinutes(99)
                 ),
                 subjects = setOf(maths)
@@ -325,7 +338,13 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo1.playback.duration).isEqualTo(Duration.ofMinutes(10))
         assertThat(updatedVideo1.subjects).isEmpty()
 
-        assertThat(updatedVideo2).isEqualToIgnoringGivenFields(originalVideo2, "subjects", "duration", "playback", "promoted")
+        assertThat(updatedVideo2).isEqualToIgnoringGivenFields(
+            originalVideo2,
+            "subjects",
+            "duration",
+            "playback",
+            "promoted"
+        )
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
         assertThat(updatedVideo2.subjects).isEqualTo(setOf(biology))
         assertThat(updatedVideo2.promoted).isTrue()
@@ -333,7 +352,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find by content partner name and content partner video id`() {
-        val video = TestFactories.createVideo(
+        val video = createVideo(
             videoId = TestFactories.aValidId(),
             contentPartnerName = "TED Talks",
             contentPartnerVideoId = "ted-id-1"
@@ -351,7 +370,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartnerId =
             ContentPartnerId(value = "5d319070871956b43f45eb82")
 
-        val video = TestFactories.createVideo(
+        val video = createVideo(
             videoId = TestFactories.aValidId(),
             contentPartnerVideoId = "ted-id-1",
             contentPartnerId = contentPartnerId
@@ -379,7 +398,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can update hidden from search for delivery methods`() {
         val video =
-            mongoVideoRepository.create(TestFactories.createVideo(distributionMethods = emptySet()))
+            mongoVideoRepository.create(createVideo(distributionMethods = emptySet()))
         mongoVideoRepository.update(
             VideoUpdateCommand.ReplaceDistributionMethods(
                 video.videoId,
@@ -396,7 +415,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces language`() {
-        val video = mongoVideoRepository.create(TestFactories.createVideo(language = Locale.TAIWAN))
+        val video = mongoVideoRepository.create(createVideo(language = Locale.TAIWAN))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceLanguage(video.videoId, Locale.GERMAN))
 
@@ -407,7 +426,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces transcript`() {
-        val video = mongoVideoRepository.create(TestFactories.createVideo(transcript = null))
+        val video = mongoVideoRepository.create(createVideo(transcript = null))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(video.videoId, "bla bla bla"))
 
@@ -418,7 +437,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces eventBus`() {
-        val video = mongoVideoRepository.create(TestFactories.createVideo(transcript = null))
+        val video = mongoVideoRepository.create(createVideo(transcript = null))
         val topic = Topic(
             name = "Bayesian Methods",
             language = Locale.US,
@@ -435,7 +454,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces keywords`() {
-        val video = mongoVideoRepository.create(TestFactories.createVideo(keywords = listOf("old")))
+        val video = mongoVideoRepository.create(createVideo(keywords = listOf("old")))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceKeywords(video.videoId, setOf("new")))
 
@@ -447,11 +466,11 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `finds videos by content partner`() {
         val video1 =
-            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 1", contentPartnerName = "TED"))
+            mongoVideoRepository.create(createVideo(title = "Video 1", contentPartnerName = "TED"))
         val video2 =
-            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 2", contentPartnerName = "TED"))
+            mongoVideoRepository.create(createVideo(title = "Video 2", contentPartnerName = "TED"))
         val video3 =
-            mongoVideoRepository.create(TestFactories.createVideo(title = "Video 3", contentPartnerName = "Reuters"))
+            mongoVideoRepository.create(createVideo(title = "Video 3", contentPartnerName = "Reuters"))
 
         val videos = mongoVideoRepository.findByContentPartnerName(contentPartnerName = "TED")
 
@@ -465,7 +484,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartnerId = ObjectId().toHexString()
         val video1 =
             mongoVideoRepository.create(
-                TestFactories.createVideo(
+                createVideo(
                     title = "Video 1",
                     contentPartnerId = ContentPartnerId(value = contentPartnerId)
                 )
@@ -473,23 +492,24 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val video2 =
             mongoVideoRepository.create(
-                TestFactories.createVideo(
+                createVideo(
                     title = "Video 2",
                     contentPartnerId = ContentPartnerId(value = contentPartnerId)
                 )
             )
 
         mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "Video 3",
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString())
             )
         )
 
         val videos =
-            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
-                value = contentPartnerId
-            )
+            mongoVideoRepository.findByContentPartnerId(
+                contentPartnerId = ContentPartnerId(
+                    value = contentPartnerId
+                )
             )
 
         assertThat(videos).containsExactly(video1, video2)
@@ -500,14 +520,14 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val id = ObjectId.get().toHexString()
         val video1 =
             mongoVideoRepository.create(
-                TestFactories.createVideo(
+                createVideo(
                     title = "Video 1",
                     contentPartnerId = ContentPartnerId(id)
                 )
             )
         val video2 =
             mongoVideoRepository.create(
-                TestFactories.createVideo(
+                createVideo(
                     title = "Video 2",
                     contentPartnerId = ContentPartnerId(id)
                 )
@@ -515,15 +535,16 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val id2 = ObjectId.get().toHexString()
         mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "Video 3",
                 contentPartnerId = ContentPartnerId(id2)
             )
         )
 
-        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
-            id
-        )
+        val videos = mongoVideoRepository.findByContentPartnerId(
+            contentPartnerId = ContentPartnerId(
+                id
+            )
         )
 
         assertThat(videos).containsExactly(video1, video2)

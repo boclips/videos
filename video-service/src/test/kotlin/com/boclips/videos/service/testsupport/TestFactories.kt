@@ -6,8 +6,6 @@ import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
-import com.boclips.kalturaclient.captionasset.CaptionAsset
-import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.users.client.model.TeacherPlatformAttributes
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.AgeRange
@@ -46,6 +44,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateComm
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
+import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
@@ -103,8 +102,7 @@ object TestFactories {
         ),
         videoReference: String = contentPartnerVideoId,
         promoted: Boolean? = null,
-        shareCodes: Set<String>? = emptySet(),
-        assets: Set<VideoAsset>? = null
+        shareCodes: Set<String>? = emptySet()
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -127,8 +125,7 @@ object TestFactories {
             ratings = ratings,
             tag = tag,
             promoted = promoted,
-            shareCodes = shareCodes,
-            assets = assets
+            shareCodes = shareCodes
         )
     }
 
@@ -156,6 +153,7 @@ object TestFactories {
 
     fun createKalturaPlayback(
         entryId: String = "entry-id",
+        assets: Set<VideoAsset>? = emptySet(),
         duration: Duration = Duration.ofSeconds(11),
         downloadUrl: String = "kaltura-download",
         referenceId: String = "555"
@@ -164,7 +162,8 @@ object TestFactories {
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = entryId),
             referenceId = referenceId,
             downloadUrl = downloadUrl,
-            duration = duration
+            duration = duration,
+            assets = assets
         )
     }
 
@@ -360,16 +359,6 @@ object TestFactories {
             .build()
     }
 
-    fun createKalturaCaptionAsset(
-        language: KalturaLanguage = KalturaLanguage.ENGLISH,
-        label: String = language.getName()
-    ): CaptionAsset {
-        return CaptionAsset.builder()
-            .language(language)
-            .label(label)
-            .build()
-    }
-
     fun createUpdateCollectionRequest(
         title: String = "collection title",
         isPublic: Boolean = true,
@@ -392,7 +381,8 @@ object TestFactories {
         entryId: String? = "entry-id",
         downloadUrl: String? = null,
         lastVerified: Instant? = null,
-        duration: Int? = null
+        duration: Int? = null,
+        assets: List<VideoAssetDocument>? = emptyList()
     ): PlaybackDocument {
         return PlaybackDocument(
             type = "KALTURA",
@@ -401,7 +391,8 @@ object TestFactories {
             thumbnailUrl = null,
             downloadUrl = downloadUrl,
             lastVerified = lastVerified,
-            duration = duration
+            duration = duration,
+            assets = assets
         )
     }
 
@@ -416,7 +407,8 @@ object TestFactories {
             thumbnailUrl = null,
             downloadUrl = null,
             lastVerified = null,
-            duration = duration
+            duration = duration,
+            assets = null
         )
     }
 
@@ -432,13 +424,6 @@ object TestFactories {
         )
     }
 
-    fun createContentPartnerDocument(
-        objectId: ObjectId = ObjectId.get(),
-        name: String = "content partner"
-    ) = ContentPartnerDocument(
-        id = objectId,
-        name = name
-    )
 
     fun createSubjectDocument(name: String): SubjectDocument {
         return SubjectDocument(id = ObjectId(), name = name)
@@ -626,10 +611,12 @@ object UserFactory {
         boclipsEmployee: Boolean = false,
         isPermittedToViewAnyCollection: Boolean = false,
         isPermittedToShareVideo: Boolean = false,
-        accessRulesSupplier: (user: User) -> AccessRules = { AccessRules(
-            videoAccess = VideoAccessRule.Everything,
-            collectionAccess = CollectionAccessRule.PublicOnly
-        ) }
+        accessRulesSupplier: (user: User) -> AccessRules = {
+            AccessRules(
+                videoAccess = VideoAccessRule.Everything,
+                collectionAccess = CollectionAccessRule.PublicOnly
+            )
+        }
     ): User {
         return User(
             id = UserId(id),

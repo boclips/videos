@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.playback
 
+import com.boclips.videos.service.domain.model.video.VideoAsset
 import java.time.Duration
 
 sealed class VideoPlayback {
@@ -16,7 +17,8 @@ sealed class VideoPlayback {
         override val id: PlaybackId,
         override val duration: Duration,
         val referenceId: String,
-        val downloadUrl: String
+        val downloadUrl: String,
+        val assets: Set<VideoAsset>?
     ) : VideoPlayback()
 
     data class FaultyPlayback(

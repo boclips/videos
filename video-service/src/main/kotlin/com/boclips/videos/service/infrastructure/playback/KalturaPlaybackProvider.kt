@@ -4,13 +4,14 @@ import com.boclips.eventbus.domain.video.Captions
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
+import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.MediaEntryStatus
-import com.boclips.kalturaclient.media.streams.StreamFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
+import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import mu.KLogging
@@ -21,7 +22,12 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
     companion object : KLogging()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, StreamPlayback> {
-        return kalturaClient.getEntriesByIds(playbackIds.map { it.value })
+
+        val entryIds = playbackIds.map { it.value }
+
+        val assetsByEntryId = kalturaClient.getAssetsByEntryIds(entryIds)
+
+        return kalturaClient.getEntriesByIds(entryIds)
             .map { PlaybackId(KALTURA, it.key) to it.value }.toMap()
             .asSequence()
             .filter { it.value.status == MediaEntryStatus.READY }
@@ -30,7 +36,8 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                     id = PlaybackId(type = KALTURA, value = it.value.id),
                     referenceId = it.value.referenceId,
                     duration = it.value.duration,
-                    downloadUrl = it.value.downloadUrl
+                    downloadUrl = it.value.downloadUrl,
+                    assets = convertAssetsToSet(assetsByEntryId[it.value.id])
                 )
 
                 (it.key to videoPlayback)
@@ -92,5 +99,11 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
 
     private fun retrieveCaptionFiles(playbackId: PlaybackId): List<CaptionAsset> {
         return kalturaClient.getCaptionFilesByEntryId(playbackId.value)
+    }
+
+    private fun convertAssetsToSet(kalturaAssets: List<Asset>?): Set<VideoAsset> {
+        return kalturaAssets.orEmpty()
+            .map(VideoAssetConverter::convert)
+            .toSet()
     }
 }

@@ -2,6 +2,14 @@ package com.boclips.videos.service.infrastructure.video
 
 import java.time.Instant
 
+data class VideoAssetDocument(
+    val id: String?,
+    val sizeKb: Int?,
+    val width: Int?,
+    val height: Int?,
+    val bitrateKbps: Int?
+)
+
 data class PlaybackDocument(
     val type: String,
     val id: String,
@@ -9,7 +17,8 @@ data class PlaybackDocument(
     val thumbnailUrl: List<String>?,
     val downloadUrl: String?,
     val lastVerified: Instant?,
-    val duration: Int?
+    val duration: Int?,
+    val assets: List<VideoAssetDocument>?
 ) {
 
     companion object {

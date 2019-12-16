@@ -90,8 +90,7 @@ object VideoDocumentConverter {
                 )
             },
             promoted = document.promoted,
-            shareCodes = document.shareCodes,
-            assets = null
+            shareCodes = document.shareCodes
         )
     }
 }
