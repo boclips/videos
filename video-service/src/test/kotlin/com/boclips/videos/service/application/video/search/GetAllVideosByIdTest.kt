@@ -16,6 +16,6 @@ internal class GetAllVideosByIdTest {
 
         getAllVideosById(listOf(VideoId("5c542ab85438cdbcb56ddf02"), VideoId("5c542ab85438cdbcb56ddf02")))
 
-        verify(videoService).getPlayableVideo(argThat<List<VideoId>> { size == 1 })
+        verify(videoService).getPlayableVideos(argThat<List<VideoId>> { size == 1 })
     }
 }

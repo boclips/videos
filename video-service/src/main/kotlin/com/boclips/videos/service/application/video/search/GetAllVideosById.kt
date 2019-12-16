@@ -8,6 +8,6 @@ class GetAllVideosById(
     private val videoService: VideoService
 ) {
     operator fun invoke(videoIds: List<VideoId>): List<Video> {
-        return videoService.getPlayableVideo(videoIds.toSet().toList())
+        return videoService.getPlayableVideos(videoIds.toSet().toList())
     }
 }

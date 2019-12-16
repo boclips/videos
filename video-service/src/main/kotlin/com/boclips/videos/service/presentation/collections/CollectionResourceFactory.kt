@@ -27,7 +27,7 @@ class CollectionResourceFactory(
             owner = collection.owner.value,
             title = collection.title,
             videos = videoToResourceConverter.wrapVideosInResource(
-                videoService.getPlayableVideo(collection.videos),
+                videoService.getPlayableVideos(collection.videos),
                 user
             ),
             updatedAt = collection.updatedAt,
