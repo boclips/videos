@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.video
+package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -52,7 +52,11 @@ class RebuildVideoIndexTest {
             }
         }
 
-        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, contentPartnerService, searchService)
+        val rebuildSearchIndex = RebuildVideoIndex(
+            videoRepository,
+            contentPartnerService,
+            searchService
+        )
 
         assertThat(rebuildSearchIndex.invoke()).isCompleted.hasNotFailed()
 
@@ -76,7 +80,11 @@ class RebuildVideoIndexTest {
             } doThrow (MongoClientException("Boom"))
         }
 
-        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, contentPartnerService, searchService)
+        val rebuildSearchIndex = RebuildVideoIndex(
+            videoRepository,
+            contentPartnerService,
+            searchService
+        )
 
         assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }

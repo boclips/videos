@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat

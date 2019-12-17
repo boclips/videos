@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation.collections
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter

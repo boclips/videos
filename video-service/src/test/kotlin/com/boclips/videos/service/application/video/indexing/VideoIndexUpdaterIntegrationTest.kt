@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.video
+package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.eventbus.events.video.VideoCreated

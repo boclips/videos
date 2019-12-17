@@ -25,7 +25,7 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.VideoIndexUpdater
+import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId

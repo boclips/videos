@@ -4,7 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever

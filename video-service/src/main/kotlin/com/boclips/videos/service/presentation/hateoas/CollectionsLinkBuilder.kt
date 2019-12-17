@@ -5,7 +5,7 @@ import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.EventController
-import com.boclips.videos.service.presentation.Projection
+import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.mvc.ControllerLinkBuilder

@@ -3,10 +3,10 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
+import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
+import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.BroadcastVideos
-import com.boclips.videos.service.application.video.RebuildLegacySearchIndex
-import com.boclips.videos.service.application.video.RebuildVideoIndex
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.domain.service.AccessRuleService

@@ -16,6 +16,7 @@ import com.boclips.videos.service.presentation.collections.CreateCollectionReque
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
+import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import mu.KLogging
 import org.springframework.hateoas.PagedResources

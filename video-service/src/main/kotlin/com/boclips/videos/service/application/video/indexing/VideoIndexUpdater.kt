@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.video
+package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService

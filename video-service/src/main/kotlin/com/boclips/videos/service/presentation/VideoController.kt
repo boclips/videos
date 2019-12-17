@@ -15,6 +15,7 @@ import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
+import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.videos.service.presentation.video.AdminSearchRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.RateVideoRequest

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.application.video
+package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
@@ -49,7 +49,11 @@ class RebuildLegacySearchIndexTest {
             }
         }
 
-        val future = RebuildLegacySearchIndex(videoRepository, contentPartnerService, legacyVideoSearchService).invoke()
+        val future = RebuildLegacySearchIndex(
+            videoRepository,
+            contentPartnerService,
+            legacyVideoSearchService
+        ).invoke()
 
         assertThat(future).isCompleted.hasNotFailed()
 
@@ -64,7 +68,11 @@ class RebuildLegacySearchIndexTest {
             )
         )
         val rebuildSearchIndex =
-            RebuildLegacySearchIndex(videoRepository, contentPartnerService, legacyVideoSearchService)
+            RebuildLegacySearchIndex(
+                videoRepository,
+                contentPartnerService,
+                legacyVideoSearchService
+            )
 
         rebuildSearchIndex()
 
@@ -83,7 +91,11 @@ class RebuildLegacySearchIndexTest {
             )
         )
         val rebuildSearchIndex =
-            RebuildLegacySearchIndex(videoRepository, contentPartnerService, legacyVideoSearchService)
+            RebuildLegacySearchIndex(
+                videoRepository,
+                contentPartnerService,
+                legacyVideoSearchService
+            )
 
         rebuildSearchIndex()
 
@@ -99,7 +111,11 @@ class RebuildLegacySearchIndexTest {
         }
 
         val rebuildSearchIndex =
-            RebuildLegacySearchIndex(videoRepository, contentPartnerService, legacyVideoSearchService)
+            RebuildLegacySearchIndex(
+                videoRepository,
+                contentPartnerService,
+                legacyVideoSearchService
+            )
 
         assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }

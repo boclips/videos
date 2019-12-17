@@ -5,7 +5,7 @@ import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.domain.model.UserId
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.presentation.RefererHeaderExtractor
+import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
 
 open class BaseController {
     fun getCurrentUser(): User {

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service.presentation.support
 
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
