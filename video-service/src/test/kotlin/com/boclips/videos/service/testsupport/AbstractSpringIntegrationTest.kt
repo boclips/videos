@@ -64,7 +64,8 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.Collections
 import java.util.UUID
 
@@ -201,7 +202,7 @@ abstract class AbstractSpringIntegrationTest {
             .playCount(0)
             .tags(Collections.emptyList())
             .flavorParamsIds(listOf("1", "2", "3", "4"))
-            .createdAt(LocalDateTime.now())
+            .createdAt(ZonedDateTime.now(ZoneOffset.UTC))
             .conversionProfileId(1234560)
             .width(width)
             .height(height)
