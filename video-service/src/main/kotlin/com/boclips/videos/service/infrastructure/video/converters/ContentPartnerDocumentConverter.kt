@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentPartner
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import org.bson.types.ObjectId
 

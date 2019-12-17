@@ -96,7 +96,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo = videoService.getPlayableVideo(videoId = videoId, videoAccessRule = VideoAccessRule.Everything)
 
-        assertThat(updatedVideo.distributionMethods).isEqualTo(DistributionMethod.ALL)
         assertThat(updatedVideo.legalRestrictions).isEqualTo("Legal restrictions test")
     }
 

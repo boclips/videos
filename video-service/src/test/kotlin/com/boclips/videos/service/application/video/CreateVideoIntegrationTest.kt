@@ -226,34 +226,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `it gets the distribution method from its content partner`() {
-        createMediaEntry(
-            id = "entry-$123",
-            duration = Duration.ofMinutes(1)
-        )
-
-        val contentPartner = saveContentPartner(
-            distributionMethods = setOf(
-                DistributionMethodResource.DOWNLOAD,
-                DistributionMethodResource.STREAM
-            )
-        )
-
-        val createRequest =
-            TestFactories.createCreateVideoRequest(
-                title = "the latest and greatest Bloomberg video",
-                playbackId = "entry-\$123",
-                providerId = contentPartner.contentPartnerId.value
-            )
-
-        val video = createVideo(createRequest, UserFactory.sample())
-        assertThat(video.distributionMethods).containsExactlyInAnyOrder(
-            DistributionMethod.DOWNLOAD,
-            DistributionMethod.STREAM
-        )
-    }
-
-    @Test
     fun `bumps video counter when video created`() {
         val videoCounterBefore = videoCounter.count()
 

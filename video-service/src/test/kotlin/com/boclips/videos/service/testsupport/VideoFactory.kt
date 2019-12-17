@@ -38,7 +38,6 @@ object VideoFactory {
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         rating: List<UserRatingDocument> = emptyList(),
-        distributionMethods: Set<DistributionMethodDocument>? = null,
         tags: List<UserTagDocument> = emptyList(),
         promoted: Boolean? = null,
         subjectsWereSetManually: Boolean? = false
@@ -61,7 +60,6 @@ object VideoFactory {
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             rating = rating,
-            distributionMethods = distributionMethods,
             tags = tags,
             promoted = promoted,
             subjectsWereSetManually = subjectsWereSetManually

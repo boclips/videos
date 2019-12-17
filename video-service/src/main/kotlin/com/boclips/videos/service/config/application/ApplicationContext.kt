@@ -34,7 +34,6 @@ import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BroadcastVideos
-import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -46,8 +45,8 @@ import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.application.video.VideoAnalysisService
+import com.boclips.videos.service.application.video.VideoIndexUpdater
 import com.boclips.videos.service.application.video.VideoPlaybackService
-import com.boclips.videos.service.application.video.VideoSearchUpdater
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
@@ -163,11 +162,6 @@ class ApplicationContext(
     }
 
     @Bean
-    fun bulkVideoUpdate(): BulkUpdateVideo {
-        return BulkUpdateVideo(videoRepository)
-    }
-
-    @Bean
     fun deleteVideos(): DeleteVideo {
         return DeleteVideo(videoRepository, collectionRepository, videoSearchService, playbackRepository)
     }
@@ -254,7 +248,7 @@ class ApplicationContext(
 
     @Bean
     fun rebuildSearchIndex(): RebuildVideoIndex {
-        return RebuildVideoIndex(videoRepository, videoSearchService)
+        return RebuildVideoIndex(videoRepository, contentPartnerService, videoSearchService)
     }
 
     @Bean
@@ -264,7 +258,7 @@ class ApplicationContext(
 
     @Bean
     fun buildLegacySearchIndex(): RebuildLegacySearchIndex {
-        return RebuildLegacySearchIndex(videoRepository, legacyVideoSearchService)
+        return RebuildLegacySearchIndex(videoRepository, contentPartnerService, legacyVideoSearchService)
     }
 
     @Bean
@@ -363,13 +357,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun bulkUpdateVideo(): BulkUpdateVideo {
-        return BulkUpdateVideo(videoRepository)
-    }
-
-    @Bean
-    fun videoUpdateService(): VideoSearchUpdater {
-        return VideoSearchUpdater(videoRepository, videoSearchService, legacyVideoSearchService)
+    fun videoUpdateService(): VideoIndexUpdater {
+        return VideoIndexUpdater(videoRepository, contentPartnerService, videoSearchService, legacyVideoSearchService)
     }
 
     @Bean

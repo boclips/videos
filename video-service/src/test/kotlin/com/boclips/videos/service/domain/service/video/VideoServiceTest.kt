@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -189,7 +190,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val video = videoService.create(
                 TestFactories.createVideo(
                     contentPartnerName = "Our content partner",
-                    contentPartnerId = contentPartner.contentPartnerId,
+                    contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
                     ageRange = AgeRange.unbounded()
                 )
             )
@@ -204,7 +205,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             videoService.create(
                 TestFactories.createVideo(
-                    contentPartnerId = contentPartner.contentPartnerId,
+                    contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
                     videoReference = "video-123"
                 )
             )
@@ -212,7 +213,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             assertThrows<VideoNotCreatedException> {
                 videoService.create(
                     TestFactories.createVideo(
-                        contentPartnerId = contentPartner.contentPartnerId,
+                        contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
                         videoReference = "video-123"
                     )
                 )
@@ -225,7 +226,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         @Test
         fun `updates content partner of videos`() {
             val contentPartner = saveContentPartner(name = "hello")
-            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            val video = TestFactories
+                .createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
+
             videoService.create(video)
 
             videoService.updateContentPartnerInVideos(
@@ -248,7 +251,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     null
                 )
             )
-            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            val video =
+                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
             videoService.create(video)
 
             videoService.updateContentPartnerInVideos(
@@ -263,31 +267,11 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `updates distribution methods of videos by content partner`() {
-            val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
-            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
-            videoService.create(video)
-
-            videoService.updateContentPartnerInVideos(
-                contentPartner = contentPartner.copy(
-                    distributionMethods = setOf(DistributionMethod.STREAM)
-                )
-            )
-
-            assertThat(
-                videoService.getPlayableVideo(
-                    video.videoId,
-                    VideoAccessRule.Everything
-                ).distributionMethods
-            ).containsExactly(
-                DistributionMethod.STREAM
-            )
-        }
-
-        @Test
         fun `updates legal restrictions of videos by content partner`() {
             val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
-            val video = TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+            val video =
+                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
+
             videoService.create(video)
 
             videoService.updateContentPartnerInVideos(
@@ -311,9 +295,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         fun `updates multiple videos associated to a content partner`() {
             val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
             val videos = listOf(
-                TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId),
-                TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId),
-                TestFactories.createVideo(contentPartnerId = contentPartner.contentPartnerId)
+                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value)),
+                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value)),
+                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
             )
             videos.forEach {
                 videoService.create(it)
@@ -332,7 +316,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             videos.forEach {
                 val video = videoService.getPlayableVideo(it.videoId, VideoAccessRule.Everything)
-                assertThat(video.distributionMethods).containsExactly(DistributionMethod.STREAM)
                 assertThat(video.ageRange).isEqualTo(AgeRange.bounded(3, 9))
                 assertThat(video.legalRestrictions).isEqualTo("Multiple legal restrictions test")
 

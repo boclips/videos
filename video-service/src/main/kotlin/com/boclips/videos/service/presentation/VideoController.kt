@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -17,7 +16,6 @@ import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.video.AdminSearchRequest
-import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.RateVideoRequest
 import com.boclips.videos.service.presentation.video.TagVideoRequest
@@ -51,7 +49,6 @@ class VideoController(
     private val searchVideo: SearchVideo,
     private val deleteVideo: DeleteVideo,
     private val createVideo: CreateVideo,
-    private val bulkUpdateVideo: BulkUpdateVideo,
     private val updateVideo: UpdateVideo,
     private val rateVideo: RateVideo,
     private val videoTranscriptService: VideoTranscriptService,
@@ -177,7 +174,8 @@ class VideoController(
 
     @GetMapping("/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
-        val videoTitle = searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+        val videoTitle =
+            searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
 
         val videoTranscript: String = videoTranscriptService.getTranscript(videoId).let {
             if (it.contains(Regex("\\n\\n"))) {
@@ -228,12 +226,6 @@ class VideoController(
         return ResponseEntity(HttpHeaders().apply {
             set(HttpHeaders.LOCATION, resource.getLink("self").href)
         }, HttpStatus.CREATED)
-    }
-
-    @PatchMapping
-    fun patchMultipleVideos(@RequestBody bulkUpdateRequest: BulkUpdateRequest?): ResponseEntity<Void> {
-        bulkUpdateVideo(bulkUpdateRequest)
-        return ResponseEntity(HttpHeaders(), HttpStatus.NO_CONTENT)
     }
 
     @PatchMapping(path = ["/{id}"], params = ["rating"])

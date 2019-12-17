@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -87,7 +88,11 @@ class VideoService(
 
         var newAgeRange = videoToBeCreated.ageRange
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
-            contentPartnerRepository.findById(videoToBeCreated.contentPartner.contentPartnerId)
+            contentPartnerRepository.findById(
+                contentPartnerId = ContentPartnerId(
+                    value = videoToBeCreated.contentPartner.contentPartnerId.value
+                )
+            )
                 ?.apply {
                     newAgeRange = if (this.ageRange.min() != null && this.ageRange.max() != null) {
                         AgeRange.bounded(this.ageRange.min(), this.ageRange.max())
@@ -104,25 +109,26 @@ class VideoService(
     fun updateContentPartnerInVideos(contentPartner: com.boclips.contentpartner.service.domain.model.ContentPartner) {
         logger.info { "Starting updating videos for content partner: $contentPartner" }
 
+        val contentPartnerId =
+            com.boclips.videos.service.domain.model.video.ContentPartnerId(value = contentPartner.contentPartnerId.value)
+
         videoRepository.streamUpdate(
-            VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartner.contentPartnerId)
+            VideoFilter.ContentPartnerIdIs(
+                contentPartnerId = contentPartnerId
+            )
         ) { videos ->
             videos.flatMap { video ->
                 listOfNotNull(
                     VideoUpdateCommand.ReplaceContentPartner(
                         videoId = video.videoId,
                         contentPartner = ContentPartner(
-                            contentPartnerId = contentPartner.contentPartnerId,
+                            contentPartnerId = contentPartnerId,
                             name = contentPartner.name
                         )
                     ),
                     VideoUpdateCommand.ReplaceAgeRange(
                         videoId = video.videoId,
                         ageRange = AgeRange.bounded(contentPartner.ageRange.min(), contentPartner.ageRange.max())
-                    ),
-                    VideoUpdateCommand.ReplaceDistributionMethods(
-                        videoId = video.videoId,
-                        distributionMethods = contentPartner.distributionMethods
                     ),
                     contentPartner.legalRestrictions?.let {
                         VideoUpdateCommand.ReplaceLegalRestrictions(

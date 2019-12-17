@@ -4,8 +4,8 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.boclips.videos.service.testsupport.TestFactories
@@ -13,20 +13,20 @@ import com.mongodb.MongoClientException
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doThrow
-import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class RebuildVideoIndexTest {
-
     lateinit var searchService: VideoSearchService
+    lateinit var contentPartnerService: ContentPartnerService
 
     @BeforeEach
     fun setUp() {
         val inMemorySearchService = VideoSearchServiceFake()
         searchService = DefaultVideoSearch(inMemorySearchService, inMemorySearchService)
+        contentPartnerService = ContentPartnerService(mock())
     }
 
     @Test
@@ -39,9 +39,9 @@ class RebuildVideoIndexTest {
 
         val videoRepository = mock<VideoRepository> {
             on {
-                streamAll(eq(VideoFilter.IsStreamable), any())
+                streamAll(any())
             } doAnswer { invocations ->
-                val consumer = invocations.getArgument(1) as (Sequence<Video>) -> Unit
+                val consumer = invocations.getArgument(0) as (Sequence<Video>) -> Unit
 
                 consumer(
                     sequenceOf(
@@ -52,9 +52,9 @@ class RebuildVideoIndexTest {
             }
         }
 
-        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, searchService)
+        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, contentPartnerService, searchService)
 
-        assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
+        assertThat(rebuildSearchIndex.invoke()).isCompleted.hasNotFailed()
 
         val searchRequest = PaginatedSearchRequest(
             VideoQuery(
@@ -72,11 +72,11 @@ class RebuildVideoIndexTest {
     fun `the future surfaces any underlying exceptions`() {
         val videoRepository = mock<VideoRepository> {
             on {
-                streamAll(any(), any())
+                streamAll(any())
             } doThrow (MongoClientException("Boom"))
         }
 
-        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, searchService)
+        val rebuildSearchIndex = RebuildVideoIndex(videoRepository, contentPartnerService, searchService)
 
         assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
     }

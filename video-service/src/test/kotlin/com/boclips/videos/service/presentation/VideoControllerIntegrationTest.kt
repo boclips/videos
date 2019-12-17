@@ -1,20 +1,17 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.users.client.model.Subject
 import com.boclips.users.client.model.TeacherPlatformAttributes
 import com.boclips.users.client.model.User
+import com.boclips.videos.service.domain.model.BoundedAgeRange
+import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository.Companion.collectionName
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
-import com.boclips.videos.service.domain.model.BoundedAgeRange
-import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import com.boclips.videos.service.presentation.video.BulkUpdateRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
@@ -25,7 +22,6 @@ import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
-import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -70,7 +66,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = "cp",
+            contentProvider = "enabled-cp",
             legalRestrictions = "None",
             ageRange = BoundedAgeRange(min = 5, max = 7)
         ).value
@@ -81,7 +77,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "it's a video from youtube",
             date = "2017-02-11",
             duration = Duration.ofSeconds(56),
-            contentProvider = "cp2",
+            contentProvider = "enabled-cp2",
             ageRange = UnboundedAgeRange
         ).value
 
@@ -91,11 +87,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
             date = "2018-05-10",
             duration = Duration.ofSeconds(6),
-            contentProvider = "cp",
-            ageRange = UnboundedAgeRange
+            contentProvider = "disabled-cp",
+            ageRange = UnboundedAgeRange,
+            distributionMethods = emptySet()
         ).value
-
-        removeDistributionMethods(disabledVideoId)
     }
 
     @Test
@@ -109,7 +104,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp")))
+            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("enabled-cp")))
             .andExpect(jsonPath("$._embedded.videos[0].legalRestrictions", equalTo("None")))
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].name", equalTo("Maths")))
@@ -205,7 +200,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants took out jobs")))
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a video from youtube")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2017-02-11")))
-            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("cp2")))
+            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("enabled-cp2")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("YOUTUBE")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT56S")))
@@ -272,7 +267,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns video with specific content partner`() {
-        mockMvc.perform(get("/v1/videos?content_partner=cp2").asTeacher())
+        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -290,7 +285,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             legalRestrictions = "None"
         ).value
 
-        mockMvc.perform(get("/v1/videos?content_partner=cp2&content_partner=cp3").asTeacher())
+        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2&content_partner=cp3").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -338,7 +333,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = "cp",
+            contentProvider = "enabled-cp",
             legalRestrictions = "None"
         ).value
 
@@ -359,7 +354,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = "cp",
+            contentProvider = "enabled-cp",
             legalRestrictions = "None"
         ).value
 
@@ -434,8 +429,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$.createdBy", equalTo("cp")))
-                .andExpect(jsonPath("$.contentPartner", equalTo("cp")))
+                .andExpect(jsonPath("$.createdBy", equalTo("enabled-cp")))
+                .andExpect(jsonPath("$.contentPartner", equalTo("enabled-cp")))
                 .andExpect(jsonPath("$.contentPartnerId").exists())
                 .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-entry-id-123")))
                 .andExpect(jsonPath("$.playback.id").exists())
@@ -484,7 +479,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$.createdBy", equalTo("cp")))
+                .andExpect(jsonPath("$.createdBy", equalTo("enabled-cp")))
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
                 .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
@@ -526,7 +521,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
                 )
                 .andExpect(jsonPath("$._links.share.href").doesNotExist())
-                .andExpect(jsonPath("$._links.validateShareCode.href", containsString("/videos/$kalturaVideoId/match?shareCode={shareCode}")))
+                .andExpect(
+                    jsonPath(
+                        "$._links.validateShareCode.href",
+                        containsString("/videos/$kalturaVideoId/match?shareCode={shareCode}")
+                    )
+                )
                 .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
                 .andExpect(jsonPath("$.contentPartnerId").doesNotExist())
                 .andExpect(jsonPath("$.type").doesNotExist())
@@ -542,7 +542,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
-                .andExpect(jsonPath("$.createdBy", equalTo("cp")))
+                .andExpect(jsonPath("$.createdBy", equalTo("enabled-cp")))
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
@@ -691,7 +691,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `accessing a shared video with correct code`() {
         val videoId = saveVideo().value
-        val user = userServiceClient.addUser(User("sharer-test@boclips.com", "orgId", emptyList<Subject>(), TeacherPlatformAttributes("abcd")))
+        val user = userServiceClient.addUser(
+            User(
+                "sharer-test@boclips.com",
+                "orgId",
+                emptyList<Subject>(),
+                TeacherPlatformAttributes("abcd")
+            )
+        )
 
         mockMvc.perform(patch("/v1/videos/$videoId?sharing=true").asTeacher("sharer-test@boclips.com"))
             .andExpect(status().isOk)
@@ -703,7 +710,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `accessing a shared video with an incorrect code`() {
         val videoId = saveVideo().value
-        userServiceClient.addUser(User("sharer-test@boclips.com", "orgId", emptyList<Subject>(), TeacherPlatformAttributes("abcd")))
+        userServiceClient.addUser(
+            User(
+                "sharer-test@boclips.com",
+                "orgId",
+                emptyList<Subject>(),
+                TeacherPlatformAttributes("abcd")
+            )
+        )
 
         mockMvc.perform(patch("/v1/videos/$videoId?sharing=true").asTeacher("sharer-test@boclips.com"))
             .andExpect(status().isOk)
@@ -1081,43 +1095,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `bulk updates disables videos through streaming search`() {
-        val videoIds = listOf(saveVideo().value, saveVideo().value, saveVideo().value)
-
-        mockMvc.perform(
-            patch("/v1/videos").asBoclipsEmployee()
-                .content(
-                    """{
-                    "ids": ["${videoIds[0]}", "${videoIds[1]}"],
-                    "distributionMethods": ["${DistributionMethodResource.DOWNLOAD}"] }
-                    """.trimMargin()
-                )
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isNoContent)
-
-        videoIds
-            .zip(
-                listOf(
-                    listOf(DistributionMethodResource.DOWNLOAD.toString()),
-                    listOf(DistributionMethodResource.DOWNLOAD.toString()),
-                    listOf(DistributionMethodResource.DOWNLOAD.toString(), DistributionMethodResource.STREAM.toString())
-                )
-            ).forEach { (id, statuses) ->
-                mockMvc.perform(get("/v1/videos/$id").asBoclipsEmployee())
-                    .andExpect(status().isOk)
-                    .andExpect(jsonPath("$.distributionMethods", equalTo(statuses)))
-            }
-
-        assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
-
-        val videosUpdated = fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos.map { it.id.value }
-        assertThat(videosUpdated).containsExactlyInAnyOrder(
-            videoIds[0],
-            videoIds[1]
-        )
-    }
-
-    @Test
     fun `it sorts news by releaseDate descending`() {
         val today = saveVideo(
             title = "Today Video",
@@ -1323,15 +1300,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         return videoId
-    }
-
-    private fun removeDistributionMethods(videoId: String) {
-        bulkUpdateVideo.invoke(
-            bulkUpdateRequest = BulkUpdateRequest(
-                ids = listOf(videoId),
-                distributionMethods = emptySet()
-            )
-        )
     }
 
     private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)

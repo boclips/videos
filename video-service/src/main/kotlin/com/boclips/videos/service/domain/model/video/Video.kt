@@ -27,8 +27,6 @@ data class Video(
     val ageRange: AgeRange,
     val ratings: List<UserRating>,
     val tag: UserTag?,
-    // TODO: distribution method is a content partner concern, not a video concern.
-    val distributionMethods: Set<DistributionMethod>,
     val promoted: Boolean?,
     val shareCodes: Set<String>?,
     val subjectsWereSetManually: Boolean?

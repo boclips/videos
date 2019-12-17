@@ -1,6 +1,5 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -34,7 +33,6 @@ import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Dimensions
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
@@ -90,7 +88,6 @@ object TestFactories {
         language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
-        distributionMethods: Set<DistributionMethod> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         ratings: List<UserRating> = emptyList(),
         tag: UserTag? = null,
@@ -117,7 +114,6 @@ object TestFactories {
             language = language,
             transcript = transcript,
             topics = topics,
-            distributionMethods = distributionMethods,
             ageRange = ageRange,
             contentPartner = contentPartner,
             videoReference = videoReference,
@@ -566,7 +562,7 @@ object AccessRulesFactory {
                 UserId(
                     ownerId
                 )
-            )
+                )
         )
 }
 

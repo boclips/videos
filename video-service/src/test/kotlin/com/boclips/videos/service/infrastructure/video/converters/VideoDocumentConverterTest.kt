@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.ContentPartner
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
@@ -55,7 +55,6 @@ class VideoDocumentConverterTest {
             ),
             ratings = listOf(UserRating(3, UserId("user"))),
             ageRange = AgeRange.bounded(11, 16),
-            distributionMethods = setOf(DistributionMethod.STREAM),
             promoted = true,
             shareCodes = setOf("1234"),
             subjectsWereSetManually = false
@@ -65,15 +64,6 @@ class VideoDocumentConverterTest {
         val recoveredVideo = VideoDocumentConverter.toVideo(document)
 
         assertThat(recoveredVideo).isEqualTo(originalVideo)
-    }
-
-    @Test
-    fun `converts null distributionMethods into ALL distribution methods`() {
-        val videoDocument = createVideoDocument(distributionMethods = null)
-
-        val video = VideoDocumentConverter.toVideo(videoDocument)
-
-        assertThat(video.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 
     @Test

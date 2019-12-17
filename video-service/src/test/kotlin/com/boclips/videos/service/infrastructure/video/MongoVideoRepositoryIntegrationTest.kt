@@ -1,12 +1,11 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -422,24 +421,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update hidden from search for delivery methods`() {
-        val video =
-            mongoVideoRepository.create(createVideo(distributionMethods = emptySet()))
-        mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceDistributionMethods(
-                video.videoId,
-                setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM)
-            )
-        )
-        assertThat(mongoVideoRepository.find(video.videoId)!!.distributionMethods).isEqualTo(
-            setOf(
-                DistributionMethod.DOWNLOAD,
-                DistributionMethod.STREAM
-            )
-        )
-    }
-
-    @Test
     fun `replaces language`() {
         val video = mongoVideoRepository.create(createVideo(language = Locale.TAIWAN))
 
@@ -532,11 +513,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val videos =
-            mongoVideoRepository.findByContentPartnerId(
-                contentPartnerId = ContentPartnerId(
-                    value = contentPartnerId
-                )
-            )
+            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(value = contentPartnerId))
 
         assertThat(videos).containsExactly(video1, video2)
     }
@@ -567,12 +544,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val videos = mongoVideoRepository.findByContentPartnerId(
-            contentPartnerId = ContentPartnerId(
-                id
-            )
-        )
-
+        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(id))
         assertThat(videos).containsExactly(video1, video2)
     }
 

@@ -24,9 +24,8 @@ import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
-import com.boclips.videos.service.application.video.BulkUpdateVideo
 import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.VideoSearchUpdater
+import com.boclips.videos.service.application.video.VideoIndexUpdater
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -112,9 +111,6 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var bookmarkCollection: BookmarkCollection
 
     @Autowired
-    lateinit var bulkUpdateVideo: BulkUpdateVideo
-
-    @Autowired
     lateinit var mongoClient: MongoClient
 
     @Autowired
@@ -127,7 +123,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createTag: CreateTag
 
     @Autowired
-    lateinit var searchUpdater: VideoSearchUpdater
+    lateinit var indexUpdater: VideoIndexUpdater
 
     @Autowired
     lateinit var subjectClassificationService: SubjectClassificationService

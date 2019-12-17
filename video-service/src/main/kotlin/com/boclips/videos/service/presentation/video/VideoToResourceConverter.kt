@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
 import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
-import com.boclips.videos.service.presentation.deliveryMethod.DistributionMethodResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.subject.SubjectResource
 import com.boclips.videos.service.presentation.video.playback.PlaybackResource
@@ -50,9 +49,6 @@ class VideoToResourceConverter(
                 ageRange = getAgeRange(video),
                 rating = video.getRatingAverage(),
                 yourRating = video.ratings.firstOrNull { it.userId == user.id }?.rating?.toDouble(),
-                distributionMethods = video.distributionMethods.map(
-                    DistributionMethodResourceConverter::toResource
-                ).toSet(),
                 bestFor = video.tag?.let { TagResource(it.tag.label) },
                 promoted = video.promoted
             ), video

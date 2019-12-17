@@ -1,9 +1,11 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -23,16 +25,19 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
+class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoRepository: VideoRepository
+
+    @Autowired
+    lateinit var contentPartnerRepository: ContentPartnerRepository
 
     @Nested
     inner class OnVideoCreated {
         @Test
         fun `does not add new video to search indices`() {
-            val video = createVideo(distributionMethods = setOf())
+            val video = createVideo(emptySet())
 
             fakeEventBus.publish(
                 VideoCreated.builder()
@@ -49,7 +54,7 @@ class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
     inner class OnVideoUpdated {
         @Test
         fun `add updated video to download index`() {
-            val video = createVideo(setOf(DistributionMethod.DOWNLOAD))
+            val video = createVideo(distributionMethods = setOf(DistributionMethod.DOWNLOAD))
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideoUpdated.builder()
@@ -167,7 +172,6 @@ class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         fun `never adds youtube videos to legacy search`() {
             val savedVideo = videoRepository.create(
                 TestFactories.createVideo(
-                    distributionMethods = setOf(DistributionMethod.DOWNLOAD),
                     playback = VideoPlayback.YoutubePlayback(
                         id = PlaybackId.from("hi", "YOUTUBE"),
                         duration = Duration.ofSeconds(1),
@@ -199,14 +203,16 @@ class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         fun `streaming index is still updated if removing from legacy search service fails`() {
             whenever(legacyVideoSearchService.removeFromSearch(any())).thenThrow(RuntimeException())
 
-            val video = createVideo(distributionMethods = setOf(DistributionMethod.STREAM))
+            val video = createVideo(setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM))
 
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
+            val count = videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))
+
+            assertThat(count).isEqualTo(1)
         }
 
         @Test
         fun `streaming index is still updated if adding to legacy search service fails`() {
-            val video = createVideo(distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD))
+            val video = createVideo(setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM))
 
             whenever(legacyVideoSearchService.upsert(any(), any())).thenThrow(RuntimeException())
 
@@ -214,13 +220,19 @@ class VideoSearchUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         }
     }
 
-    private fun createVideo(distributionMethods: Set<DistributionMethod>): Video {
-        val video = videoRepository.create(
-            TestFactories.createVideo(
-                distributionMethods = distributionMethods
-            )
+    private fun createVideo(distributionMethods: Set<DistributionMethod> = emptySet()): Video {
+        val contentPartner = com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner(
+            distributionMethods = distributionMethods
         )
+
+        val createdContentPartner = contentPartnerRepository.create(contentPartner)
+
+        val video = videoRepository.create(
+            TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = createdContentPartner.contentPartnerId.value))
+        )
+
         reset(legacyVideoSearchService)
+
         return video
     }
 }

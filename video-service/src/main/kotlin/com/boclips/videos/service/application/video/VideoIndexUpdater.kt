@@ -7,12 +7,14 @@ import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 
-class VideoSearchUpdater(
+class VideoIndexUpdater(
     private val videoRepository: VideoRepository,
+    private val contentPartnerService: ContentPartnerService,
     private val videoSearchService: VideoSearchService,
     private val legacyVideoSearchService: LegacyVideoSearchService
 ) {
@@ -46,31 +48,6 @@ class VideoSearchUpdater(
         bulkUpdateDownloadIndex(videos)
     }
 
-    private fun bulkUpdateStreamIndex(updatedVideos: List<Video>) {
-        val videosToUpsert = updatedVideos.filter { it.distributionMethods.contains(DistributionMethod.STREAM) }
-        val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.STREAM) }
-
-        videoSearchService.upsert(videosToUpsert.asSequence())
-        logger.info { "Indexed ${videosToUpsert.size} videos for ${DistributionMethod.STREAM}" }
-
-        videoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
-        logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.STREAM}" }
-    }
-
-    private fun bulkUpdateDownloadIndex(updatedVideos: List<Video>) {
-        val videosToUpsert = updatedVideos
-            .filter { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
-            .filter { it.isBoclipsHosted() }
-
-        val videosToRemove = updatedVideos.filterNot { it.distributionMethods.contains(DistributionMethod.DOWNLOAD) }
-
-        legacyVideoSearchService.upsert(videosToUpsert.map(VideoToLegacyVideoMetadataConverter::convert).asSequence())
-        logger.info { "Indexed ${videosToUpsert.size} videos for ${DistributionMethod.DOWNLOAD}" }
-
-        legacyVideoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
-        logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.DOWNLOAD}" }
-    }
-
     private fun updateIndexWith(updatedVideo: Video) {
         try {
             updateDownloadIndex(updatedVideo)
@@ -84,8 +61,33 @@ class VideoSearchUpdater(
         updateStreamIndex(updatedVideo)
     }
 
+    private fun bulkUpdateStreamIndex(updatedVideos: List<Video>) {
+        val videosToUpsert = updatedVideos.filter { isStreamable(it) }
+        val videosToRemove = updatedVideos.filterNot { isStreamable(it) }
+
+        videoSearchService.upsert(videosToUpsert.asSequence())
+        logger.info { "Indexed ${videosToUpsert.size} videos for ${DistributionMethod.STREAM}" }
+
+        videoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
+        logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.STREAM}" }
+    }
+
+    private fun bulkUpdateDownloadIndex(updatedVideos: List<Video>) {
+        val videosToUpsert = updatedVideos
+            .filter { isDownloadable(it) }
+            .filter { it.isBoclipsHosted() }
+
+        val videosToRemove = updatedVideos.filterNot { isDownloadable(it) }
+
+        legacyVideoSearchService.upsert(videosToUpsert.map(VideoToLegacyVideoMetadataConverter::convert).asSequence())
+        logger.info { "Indexed ${videosToUpsert.size} videos for ${DistributionMethod.DOWNLOAD}" }
+
+        legacyVideoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
+        logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.DOWNLOAD}" }
+    }
+
     private fun updateStreamIndex(updatedVideo: Video) {
-        if (updatedVideo.distributionMethods.contains(DistributionMethod.STREAM)) {
+        if (isStreamable(updatedVideo)) {
             videoSearchService.upsert(sequenceOf(updatedVideo))
             logger.info { "Indexed video ${updatedVideo.videoId} for ${DistributionMethod.STREAM}" }
         } else {
@@ -95,7 +97,7 @@ class VideoSearchUpdater(
     }
 
     private fun updateDownloadIndex(updatedVideo: Video) {
-        if (updatedVideo.distributionMethods.contains(DistributionMethod.DOWNLOAD)) {
+        if (isDownloadable(updatedVideo)) {
             if (updatedVideo.isBoclipsHosted()) {
                 legacyVideoSearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(updatedVideo)))
                 logger.info { "Indexed video ${updatedVideo.videoId} for ${DistributionMethod.DOWNLOAD}" }
@@ -104,5 +106,13 @@ class VideoSearchUpdater(
             legacyVideoSearchService.removeFromSearch(updatedVideo.videoId.value)
             logger.info { "Removed video ${updatedVideo.videoId} from ${DistributionMethod.DOWNLOAD}" }
         }
+    }
+
+    private fun isDownloadable(video: Video): Boolean {
+        return contentPartnerService.findAvailabilityFor(video.contentPartner.contentPartnerId).isDownloadable()
+    }
+
+    private fun isStreamable(video: Video): Boolean {
+        return contentPartnerService.findAvailabilityFor(video.contentPartner.contentPartnerId).isStreamable()
     }
 }

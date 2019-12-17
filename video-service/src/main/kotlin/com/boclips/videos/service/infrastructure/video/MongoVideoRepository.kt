@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -13,7 +13,6 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddSha
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDescription
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDistributionMethods
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
@@ -30,7 +29,6 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.ContentPartnerDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.DistributionMethodDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.converters.TopicDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocumentConverter
@@ -40,7 +38,6 @@ import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Filters.or
 import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
@@ -48,7 +45,6 @@ import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
 import org.litote.kmongo.addToSet
 import org.litote.kmongo.combine
-import org.litote.kmongo.contains
 import org.litote.kmongo.div
 import org.litote.kmongo.elemMatch
 import org.litote.kmongo.eq
@@ -64,7 +60,6 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
     VideoRepository {
 
     companion object : KLogging() {
-
         const val collectionName = "videos"
     }
 
@@ -120,18 +115,6 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoFilter.ContentTypeIs -> VideoDocument::contentType eq filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
-            VideoFilter.IsDownloadable -> or(
-                VideoDocument::distributionMethods eq null,
-                VideoDocument::distributionMethods contains DistributionMethodDocument(
-                    DistributionMethodDocument.DELIVERY_METHOD_DOWNLOAD
-                )
-            )
-            VideoFilter.IsStreamable -> or(
-                VideoDocument::distributionMethods eq null,
-                VideoDocument::distributionMethods contains DistributionMethodDocument(
-                    DistributionMethodDocument.DELIVERY_METHOD_STREAM
-                )
-            )
             is VideoFilter.HasSubjectId -> VideoDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(filter.subjectId.value))
         }
 
@@ -308,10 +291,6 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                     contentPartnerDocument.copy(lastModified = Instant.now())
                 )
             }
-            is ReplaceDistributionMethods -> set(
-                VideoDocument::distributionMethods,
-                updateCommand.distributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
-            )
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
             is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.legalRestrictions.text)

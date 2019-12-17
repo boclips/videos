@@ -2,7 +2,6 @@ package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
@@ -47,9 +46,6 @@ object VideoDocumentConverter {
                     )
                 )
             } ?: emptyList(),
-            distributionMethods = video.distributionMethods.map(
-                DistributionMethodDocumentConverter::toDocument
-            ).toSet(),
             promoted = video.promoted,
             shareCodes = video.shareCodes,
             subjectsWereSetManually = video.subjectsWereSetManually
@@ -82,9 +78,6 @@ object VideoDocumentConverter {
                     it
                 )
             },
-            distributionMethods = document.distributionMethods?.map(
-                DistributionMethodDocumentConverter::fromDocument
-            )?.toSet() ?: DistributionMethod.ALL,
             tag = document.tags.firstOrNull()?.let {
                 UserTagDocumentConverter.toTag(
                     it

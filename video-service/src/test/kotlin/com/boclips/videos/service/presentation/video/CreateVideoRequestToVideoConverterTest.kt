@@ -4,7 +4,6 @@ import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateR
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.web.exceptions.BoclipsApiException
 import org.assertj.core.api.AbstractThrowableAssert
@@ -35,7 +34,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
         val playback = TestFactories.createKalturaPlayback(duration = expectedDuration)
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, emptySet(), subjects)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
 
         assertThat(video.playback.duration).isEqualTo(expectedDuration)
     }
@@ -43,7 +42,7 @@ class CreateVideoRequestToVideoConverterTest {
     @Test
     fun `uses the playback`() {
         val playback = TestFactories.createKalturaPlayback()
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, emptySet(), subjects)
+        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
 
         assertThat(video.playback).isEqualTo(playback)
     }
@@ -56,7 +55,6 @@ class CreateVideoRequestToVideoConverterTest {
             TestFactories.createCreateVideoRequest(),
             playback,
             contentPartner,
-            emptySet(),
             subjects
         )
 
@@ -87,7 +85,6 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(title = null),
                 videoPlayback,
                 contentPartner,
-                emptySet(),
                 subjects
             )
         }
@@ -102,7 +99,6 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(description = null),
                 videoPlayback,
                 contentPartner,
-                emptySet(),
                 subjects
             )
         }
@@ -117,7 +113,6 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(keywords = null),
                 videoPlayback,
                 contentPartner,
-                emptySet(),
                 subjects
             )
         }
@@ -132,7 +127,6 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(releasedOn = null),
                 videoPlayback,
                 contentPartner,
-                emptySet(),
                 subjects
             )
         }
@@ -147,7 +141,6 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(providerVideoId = null),
                 videoPlayback,
                 contentPartner,
-                emptySet(),
                 subjects
             )
         }
@@ -162,7 +155,6 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(videoType = null),
                 videoPlayback,
                 contentPartner,
-                emptySet(),
                 subjects
             )
         }
@@ -177,27 +169,9 @@ class CreateVideoRequestToVideoConverterTest {
                 TestFactories.createCreateVideoRequest(legalRestrictions = null),
                 videoPlayback,
                 contentPartner,
-                emptySet(),
                 subjects
             ).legalRestrictions
         ).isEmpty()
-    }
-
-    @Test
-    fun `use content partner enabled delivery methods`() {
-        val contentPartner = TestFactories.createContentPartner()
-
-        val video = converter.convert(
-            TestFactories.createCreateVideoRequest(
-                providerId = contentPartner.contentPartnerId.value
-            ),
-            TestFactories.createKalturaPlayback(),
-            contentPartner,
-            DistributionMethod.ALL,
-            subjects
-        )
-
-        assertThat(video.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 }
 

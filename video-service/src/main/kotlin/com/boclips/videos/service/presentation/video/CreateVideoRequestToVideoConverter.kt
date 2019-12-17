@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import org.bson.types.ObjectId
@@ -18,7 +17,6 @@ class CreateVideoRequestToVideoConverter {
         createVideoRequest: CreateVideoRequest,
         videoPlayback: VideoPlayback,
         contentPartner: ContentPartner,
-        distributionMethods: Set<DistributionMethod>,
         subjects: List<Subject>
     ): Video {
         return Video(
@@ -42,7 +40,6 @@ class CreateVideoRequestToVideoConverter {
             topics = emptySet(),
             language = null,
             transcript = null,
-            distributionMethods = distributionMethods,
             ratings = emptyList(),
             tag = null,
             promoted = null,

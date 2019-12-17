@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
-import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
@@ -72,14 +71,6 @@ class VideosLinkBuilder {
         else -> null
     }
 
-    fun videosLink() =
-        getIfHasAnyRole(UserRoles.UPDATE_VIDEOS, UserRoles.INSERT_VIDEOS) {
-            ControllerLinkBuilder.linkTo(
-                ControllerLinkBuilder.methodOn(VideoController::class.java)
-                    .patchMultipleVideos(null)
-            ).withRel(Rels.VIDEOS)
-        }
-
     fun adminSearchLink() = getIfHasRole(UserRoles.VIEW_DISABLED_VIDEOS) {
         ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
@@ -147,7 +138,9 @@ class VideosLinkBuilder {
     }
 
     fun validateShareCodeLink(video: Video): Link {
-        return ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(VideoController::class.java)
-            .validateShareCode(video.videoId.value, null)).withRel(Rels.VALIDATE_SHARE_CODE)
+        return ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(VideoController::class.java)
+                .validateShareCode(video.videoId.value, null)
+        ).withRel(Rels.VALIDATE_SHARE_CODE)
     }
 }

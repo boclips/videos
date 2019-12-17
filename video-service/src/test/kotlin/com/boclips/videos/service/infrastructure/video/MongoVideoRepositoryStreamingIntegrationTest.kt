@@ -1,21 +1,18 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
-import org.litote.kmongo.eq
 import org.springframework.beans.factory.annotation.Autowired
 
 class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTest() {
@@ -40,56 +37,6 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         mongoVideoRepository.streamAll { videos = it.toList() }
 
         assertThat(videos).hasSize(2)
-    }
-
-    @Test
-    fun `stream all streamable videos`() {
-        mongoVideoRepository.create(
-            TestFactories.createVideo(
-                videoId = TestFactories.aValidId(),
-                distributionMethods = setOf(DistributionMethod.DOWNLOAD)
-            )
-        )
-
-        val streamableVideos = listOf(
-            createVideoWithLegacyDistributionMethods(),
-            mongoVideoRepository.create(
-                TestFactories.createVideo(
-                    videoId = TestFactories.aValidId(),
-                    distributionMethods = setOf(DistributionMethod.STREAM)
-                )
-            )
-        )
-
-        var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.IsStreamable) { videos = it.toList() }
-
-        assertThat(videos).isEqualTo(streamableVideos)
-    }
-
-    @Test
-    fun `stream all downloadable videos`() {
-        mongoVideoRepository.create(
-            TestFactories.createVideo(
-                videoId = TestFactories.aValidId(),
-                distributionMethods = setOf(DistributionMethod.STREAM)
-            )
-        )
-
-        val downloadableVideos = listOf(
-            createVideoWithLegacyDistributionMethods(),
-            mongoVideoRepository.create(
-                TestFactories.createVideo(
-                    videoId = TestFactories.aValidId(),
-                    distributionMethods = setOf(DistributionMethod.DOWNLOAD)
-                )
-            )
-        )
-
-        var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.IsDownloadable) { videos = it.toList() }
-
-        assertThat(videos).isEqualTo(downloadableVideos)
     }
 
     @Test
@@ -136,25 +83,36 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `stream all by content partner id`() {
         val contentPartnerIdToFind = ObjectId().toHexString()
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(
-            value = contentPartnerIdToFind
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                contentPartnerId = ContentPartnerId(
+                    value = contentPartnerIdToFind
+                )
+            )
         )
-        ))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(
-            value = contentPartnerIdToFind
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                contentPartnerId = ContentPartnerId(
+                    value = contentPartnerIdToFind
+                )
+            )
         )
-        ))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerId = ContentPartnerId(
-            value = ObjectId().toHexString()
+        mongoVideoRepository.create(
+            TestFactories.createVideo(
+                contentPartnerId = ContentPartnerId(
+                    value = ObjectId().toHexString()
+                )
+            )
         )
-        ))
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.ContentPartnerIdIs(
-            ContentPartnerId(
-                value = contentPartnerIdToFind
+        mongoVideoRepository.streamAll(
+            VideoFilter.ContentPartnerIdIs(
+                ContentPartnerId(
+                    value = contentPartnerIdToFind
+                )
             )
-        )) {
+        ) {
             videos = it.toList()
         }
 
@@ -236,19 +194,5 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
             .containsExactlyInAnyOrder("MathsIsForLosers")
 
         assertThat(mongoVideoRepository.find(videoId = video2.videoId)!!.subjects).isEmpty()
-    }
-
-    private fun createVideoWithLegacyDistributionMethods(): Video {
-        val legacyVideo = mongoVideoRepository.create(TestFactories.createVideo())
-
-        mongoClient
-            .getDatabase(DATABASE_NAME)
-            .getCollection(MongoVideoRepository.collectionName)
-            .updateOne(
-                VideoDocument::id eq ObjectId(legacyVideo.videoId.value),
-                org.litote.kmongo.set(VideoDocument::distributionMethods, null)
-            )
-
-        return mongoVideoRepository.find(legacyVideo.videoId)!!
     }
 }
