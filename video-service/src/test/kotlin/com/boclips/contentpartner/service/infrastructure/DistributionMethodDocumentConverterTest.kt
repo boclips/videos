@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video.converters
+package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.junit.jupiter.api.Test

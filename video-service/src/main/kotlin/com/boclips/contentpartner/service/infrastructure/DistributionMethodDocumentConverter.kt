@@ -1,6 +1,6 @@
-package com.boclips.videos.service.infrastructure.video.converters
+package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 
 object DistributionMethodDocumentConverter {

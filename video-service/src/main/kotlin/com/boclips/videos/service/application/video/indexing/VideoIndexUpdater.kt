@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.video.indexing
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository

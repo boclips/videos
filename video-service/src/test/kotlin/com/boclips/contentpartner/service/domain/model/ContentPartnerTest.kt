@@ -1,7 +1,6 @@
 package com.boclips.contentpartner.service.domain.model
 
 import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

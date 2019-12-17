@@ -9,7 +9,7 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
-import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import org.bson.types.ObjectId
 import java.util.Currency
 

@@ -1,6 +1,6 @@
-package com.boclips.videos.service.presentation.deliveryMethod
+package com.boclips.contentpartner.service.presentation
 
-import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

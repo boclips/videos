@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest

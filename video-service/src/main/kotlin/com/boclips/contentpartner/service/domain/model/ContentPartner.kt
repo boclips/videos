@@ -1,7 +1,5 @@
 package com.boclips.contentpartner.service.domain.model
 
-import com.boclips.videos.service.domain.model.video.DistributionMethod
-
 data class ContentPartner(
     val contentPartnerId: ContentPartnerId,
     val name: String,

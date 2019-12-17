@@ -5,7 +5,7 @@ import com.boclips.contentpartner.service.presentation.LegalRestrictionsControll
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.DistributionMethodsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
@@ -38,7 +38,7 @@ class LinksController(
                 videosLinkBuilder.videoLink(),
                 collectionsLinkBuilder.publicCollections(),
                 subjectsLinkBuilder.subjects(),
-                distributionMethodsLinkBuilder.distributionMethods(),
+                distributionMethodsLinkBuilder.distributionMethods(), //belongs to contentpartner-service links
                 videosLinkBuilder.adminSearchLink(),
                 videosLinkBuilder.adminVideoSearchLink(),
                 collectionsLinkBuilder.adminCollectionSearch(),

@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.domain.model
 
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import java.util.*
 
 sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId) {

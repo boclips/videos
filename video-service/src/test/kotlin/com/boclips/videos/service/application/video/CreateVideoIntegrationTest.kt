@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
@@ -9,7 +8,6 @@ import com.boclips.videos.service.application.exceptions.InvalidCreateRequestExc
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery

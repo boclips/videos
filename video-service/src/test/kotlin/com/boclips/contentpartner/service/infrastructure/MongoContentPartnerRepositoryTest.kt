@@ -8,7 +8,7 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.videos.service.domain.model.video.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions

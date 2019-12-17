@@ -1,7 +1,8 @@
-package com.boclips.videos.service.presentation.hateoas
+package com.boclips.contentpartner.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -35,6 +36,9 @@ class DistributionMethodsLinkBuilderTest {
     fun setUp() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
-        builder = DistributionMethodsLinkBuilder(mock)
+        builder =
+            DistributionMethodsLinkBuilder(
+                mock
+            )
     }
 }

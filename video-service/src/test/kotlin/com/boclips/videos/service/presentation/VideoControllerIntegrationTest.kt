@@ -1042,14 +1042,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
-            .andExpect(
-                jsonPath(
-                    "$._embedded.videos[0].distributionMethods",
-                    hasSize<Int>(0)
-                )
-            )
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$disabledVideoId")))
-
             .andExpect(jsonPath("$.page").doesNotExist())
     }
 
