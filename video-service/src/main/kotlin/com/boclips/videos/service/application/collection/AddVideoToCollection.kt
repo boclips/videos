@@ -16,7 +16,7 @@ class AddVideoToCollection(
         collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        val collection = collectionService.findWritable(CollectionId(value = collectionId), user = requester)
+        collectionService.findWritable(CollectionId(value = collectionId), user = requester)
             ?: throw CollectionNotFoundException(collectionId)
 
         collectionRepository.update(

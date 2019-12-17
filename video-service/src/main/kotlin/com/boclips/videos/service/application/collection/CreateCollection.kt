@@ -17,17 +17,16 @@ class CreateCollection(
 ) {
     operator fun invoke(createCollectionRequest: CreateCollectionRequest, requester: User): Collection {
         val title = getOrThrow(createCollectionRequest.title, "title")
-        val collection =
-            collectionRepository.create(
-                CreateCollectionCommand(
-                    owner = requester.id,
-                    title = title,
-                    description = createCollectionRequest.description,
-                    createdByBoclips = requester.isBoclipsEmployee,
-                    public = createCollectionRequest.public ?: false,
-                    subjects = createCollectionRequest.subjects.map { SubjectId(it) }.toSet()
-                )
+        val collection = collectionRepository.create(
+            CreateCollectionCommand(
+                owner = requester.id,
+                title = title,
+                description = createCollectionRequest.description,
+                createdByBoclips = requester.isBoclipsEmployee,
+                public = createCollectionRequest.public ?: false,
+                subjects = createCollectionRequest.subjects.map { SubjectId(it) }.toSet()
             )
+        )
 
         createCollectionRequest.videos.forEach { video ->
             addVideoToCollection(collection.id.value, video.substringAfterLast("/videos/"), requester)

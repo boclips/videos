@@ -16,7 +16,7 @@ class RemoveVideoFromCollection(
         collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        val collection = collectionService.findWritable(CollectionId(value = collectionId), user = user)
+        collectionService.findWritable(CollectionId(value = collectionId), user = user)
             ?: throw CollectionNotFoundException(collectionId)
 
         collectionRepository.update(
