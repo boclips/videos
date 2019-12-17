@@ -6,6 +6,7 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
@@ -16,6 +17,17 @@ import java.time.Duration
 import java.util.Locale
 
 class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
+
+    @Test
+    fun `return video with original dimensions`() {
+        createMediaEntry(id = "1", width = 1280, height = 720)
+
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
+        val playback = playbackById[playbackId]
+
+        assertThat(playback?.originalDimensions).isEqualTo(Dimensions(1280, 720))
+    }
 
     @Test
     fun `return video with assets`() {

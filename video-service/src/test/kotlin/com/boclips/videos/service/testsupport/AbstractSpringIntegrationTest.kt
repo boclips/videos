@@ -13,6 +13,7 @@ import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.flavorAsset.Asset
+import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
@@ -64,6 +65,8 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.Collections
 import java.util.UUID
 
 @SpringBootTest
@@ -189,10 +192,26 @@ abstract class AbstractSpringIntegrationTest {
         id: String = "1",
         duration: Duration = Duration.ofMinutes(1),
         status: MediaEntryStatus = MediaEntryStatus.READY,
+        width: Int = 1920,
+        height: Int = 1080,
         assets: Set<Asset> = emptySet()
     ) {
-        fakeKalturaClient.createMediaEntry(id, "ref-$id", duration, status)
-        if(assets.isNotEmpty()) {
+        val mediaEntry = MediaEntry.builder()
+            .referenceId("ref-$id")
+            .id(id)
+            .downloadUrl("https://download.com/entryId/$id/format/download")
+            .duration(duration)
+            .status(status)
+            .playCount(0)
+            .tags(Collections.emptyList())
+            .flavorParamsIds(listOf("1", "2", "3", "4"))
+            .createdAt(LocalDateTime.now())
+            .conversionProfileId(1234560)
+            .width(width)
+            .height(height)
+            .build()
+        fakeKalturaClient.addMediaEntry(mediaEntry)
+        if (assets.isNotEmpty()) {
             fakeKalturaClient.setAssets(id, assets.toMutableList())
         }
     }
