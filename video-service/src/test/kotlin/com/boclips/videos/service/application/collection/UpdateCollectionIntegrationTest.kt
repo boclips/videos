@@ -4,7 +4,6 @@ import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -133,7 +132,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     fun `throws error when user doesn't own the collection`() {
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
+        assertThrows<CollectionNotFoundException> {
             updateCollection(
                 collectionId = collectionId.value,
                 updateCollectionRequest = UpdateCollectionRequest(title = "you have been pwned"),

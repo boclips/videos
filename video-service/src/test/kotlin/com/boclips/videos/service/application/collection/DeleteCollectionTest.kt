@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -40,7 +39,7 @@ class DeleteCollectionTest : AbstractSpringIntegrationTest() {
     fun `propagates errors when caller is not allowed to access the collection`() {
         val collectionId = saveCollection(owner = "alice@notme.com")
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
+        assertThrows<CollectionNotFoundException> {
             deleteCollection(
                 collectionId = collectionId.value,
                 user = UserFactory.sample(id = "rob@me.com")

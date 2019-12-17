@@ -1,27 +1,22 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 
 class UpdateCollection(
     private val collectionSearchService: CollectionSearchService,
     private val collectionRepository: CollectionRepository,
     private val collectionUpdatesConverter: CollectionUpdatesConverter,
-    private val collectionAccessService: CollectionAccessService
+    private val collectionService: CollectionService
 ) {
     operator fun invoke(collectionId: String, updateCollectionRequest: UpdateCollectionRequest?, requester: User) {
-        val collection = collectionRepository.find(CollectionId(value = collectionId))
+        val collection = collectionService.findWritable(CollectionId(value = collectionId), user = requester)
             ?: throw CollectionNotFoundException(collectionId)
-
-        if (!collectionAccessService.hasWriteAccess(collection, requester)) {
-            throw CollectionAccessNotAuthorizedException(requester.id, collectionId)
-        }
 
         val commands = collectionUpdatesConverter.convert(collection.id, updateCollectionRequest, requester)
 

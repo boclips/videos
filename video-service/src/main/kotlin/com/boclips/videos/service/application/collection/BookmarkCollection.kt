@@ -1,27 +1,22 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
 class BookmarkCollection(
     private val collectionRepository: CollectionRepository,
-    private val collectionAccessService: CollectionAccessService,
-    private val collectionSearchService: CollectionSearchService
+    private val collectionSearchService: CollectionSearchService,
+    private val collectionService: CollectionService
 ) {
     operator fun invoke(collectionId: String, user: User) {
-        val collection = collectionRepository.find(CollectionId(value = collectionId))
+        val collection = collectionService.find(CollectionId(value = collectionId), user = user)
             ?: throw CollectionNotFoundException(collectionId)
-
-        if (!collectionAccessService.hasReadAccess(collection, user)) {
-            throw CollectionAccessNotAuthorizedException(user.id, collectionId)
-        }
 
         if (collection.owner == user.id) throw CollectionIllegalOperationException(
             user.id,

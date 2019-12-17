@@ -49,11 +49,21 @@ class CollectionService(
         return collectionSearchService.count(collectionSearchQuery.toSearchQuery())
     }
 
-    fun find(id: CollectionId, user: User): Collection? {
+    fun find(id: CollectionId, user: User): Collection? =
+        findIf(id, user, ::hasReadAccess)
+
+    fun findWritable(id: CollectionId, user: User): Collection? =
+        findIf(id, user, ::hasWriteAccess)
+
+    private fun findIf(
+        id: CollectionId,
+        user: User,
+        condition: (Collection, User) -> Boolean
+    ): Collection? {
         val videoAccess = user.accessRules.videoAccess
 
         return collectionRepository.find(id)
-            ?.takeIf { hasReadAccess(it, user) }
+            ?.takeIf { condition(it, user) }
             ?.let { collection ->
                 collection.copy(
                     videos = when (videoAccess) {
@@ -66,14 +76,27 @@ class CollectionService(
             }
     }
 
+    private fun hasWriteAccess(
+        collection: Collection,
+        user: User
+    ): Boolean =
+        collectionAccessService.hasWriteAccess(collection, user).also {
+            if (!it) {
+                logger.info {
+                    "User ${user.id} does not have write access to Collection ${collection.id}"
+                }
+            }
+        }
+
     private fun hasReadAccess(
         collection: Collection,
         user: User
-    ): Boolean {
-        return collectionAccessService.hasReadAccess(collection, user).also {
+    ): Boolean =
+        collectionAccessService.hasReadAccess(collection, user).also {
             if (!it) {
-                logger.info { "User ${user.id} does not have access to Collection ${collection.id}" }
+                logger.info {
+                    "User ${user.id} does not have read access to Collection ${collection.id}"
+                }
             }
         }
-    }
 }

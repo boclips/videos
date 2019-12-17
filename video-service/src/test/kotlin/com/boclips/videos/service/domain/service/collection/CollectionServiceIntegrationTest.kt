@@ -16,7 +16,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
     lateinit var collectionService: CollectionService
 
     @Test
-    fun `Can find a collection by ID`() {
+    fun `can find a collection by ID`() {
         val videoId = TestFactories.createVideoId()
         val collectionId = saveCollection(videos = listOf(videoId.value), public = true)
         val collection = collectionService.find(
@@ -28,7 +28,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
     }
 
     @Test
-    fun `Can find a collection by ID with only permitted videos included`() {
+    fun `can find a collection by ID with only permitted videos included`() {
         val firstPermittedId = TestFactories.createVideoId()
         val secondPermittedId = TestFactories.createVideoId()
 
@@ -59,7 +59,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
     }
 
     @Test
-    fun `Cannot find missing collection by ID`() {
+    fun `cannot find missing collection by ID`() {
         assertThat(
             collectionService.find(
                 CollectionId("nonexistent"),
@@ -69,7 +69,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
     }
 
     @Test
-    fun `Cannot find collection that access rules do not permit`() {
+    fun `cannot find collection that access rules do not permit`() {
         val collectionId = saveCollection()
         assertThat(
             collectionService.find(
@@ -82,5 +82,26 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
                 })
             )
         ).isNull()
+    }
+
+    @Test
+    fun `can find collection that we have write access to`() {
+        val collectionId = saveCollection()
+        val collection = collectionService.findWritable(
+            collectionId,
+            UserFactory.sample(isPermittedToViewAnyCollection = true)
+        )!!
+        assertThat(collection.id).isEqualTo(collectionId)
+    }
+
+    @Test
+    fun `cannot find collection if we don't have write access to`() {
+        val collectionId = saveCollection()
+        val collection = collectionService.findWritable(
+            collectionId,
+            UserFactory.sample(isPermittedToViewAnyCollection = false)
+        )
+
+        assertThat(collection).isNull()
     }
 }

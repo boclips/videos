@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
+import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -49,7 +49,7 @@ class RemoveVideoFromCollectionTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo()
         val collectionId = saveCollection(owner = "owner@collections.com", videos = listOf(videoId.value))
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
+        assertThrows<CollectionNotFoundException> {
             removeVideoFromCollection(
                 collectionId.value,
                 videoId.value,

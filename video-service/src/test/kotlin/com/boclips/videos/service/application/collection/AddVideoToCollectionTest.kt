@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -35,7 +35,7 @@ class AddVideoToCollectionTest : AbstractSpringIntegrationTest() {
         val collectionId = saveCollection(owner = "me@me.com")
         val videoId = saveVideo()
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
+        assertThrows<CollectionNotFoundException> {
             addVideoToCollection(collectionId.value, videoId.value, UserFactory.sample(id = "attacker@example.com"))
         }
     }

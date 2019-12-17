@@ -5,11 +5,10 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -72,7 +71,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
     fun `throws error when collection is not public`() {
         val collectionId = saveCollection(owner = "owner@example.com", public = false)
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
+        assertThrows<CollectionNotFoundException> {
             bookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
         }
 
