@@ -8,13 +8,28 @@ import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoAsset
+import com.boclips.eventbus.domain.video.Dimensions as EventDimensions
+import com.boclips.eventbus.domain.video.VideoAsset as EventVideoAsset
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {
+        val originalDimensions = when (video.playback) {
+            is VideoPlayback.StreamPlayback -> video.playback.originalDimensions?.let { toDimensionsPayload(it) }
+            else -> null
+        }
+
+        val assets = when (video.playback) {
+            is VideoPlayback.StreamPlayback -> video.playback.assets?.let { assets -> assets.map { toAssetPayload(it) } }
+            else -> null
+        }
+
         val subjects = toSubjectPayload(video.subjects)
         return com.boclips.eventbus.domain.video.Video.builder()
             .id(VideoId(video.videoId.value))
@@ -26,7 +41,23 @@ class EventConverter {
             .durationSeconds(video.playback.duration.seconds.toInt())
             .type(toVideoType(video.type))
             .ingestedOn(video.ingestedOn)
+            .originalDimensions(originalDimensions)
+            .assets(assets)
             .build()
+    }
+
+    fun toAssetPayload(asset: VideoAsset): EventVideoAsset {
+        return EventVideoAsset
+            .builder()
+            .bitrateKbps(asset.bitrateKbps)
+            .id(asset.id.value)
+            .sizeKb(asset.sizeKb)
+            .dimensions(toDimensionsPayload(asset.dimensions))
+            .build()
+    }
+
+    private fun toDimensionsPayload(dimensions: Dimensions): EventDimensions {
+        return EventDimensions(dimensions.width, dimensions.height)
     }
 
     private fun toVideoType(contentType: ContentType): VideoType {

@@ -5,12 +5,15 @@ import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.Dimensions
+import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
+import com.boclips.videos.service.testsupport.VideoFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -28,7 +31,11 @@ class EventConverterTest {
             videoId = id,
             title = "the title",
             contentPartnerName = "the content partner",
-            playback = TestFactories.createKalturaPlayback(duration = Duration.ofMinutes(2)),
+            playback = TestFactories.createKalturaPlayback(
+                duration = Duration.ofMinutes(2),
+                originalDimensions = Dimensions(1920, 1080),
+                assets = setOf(VideoFactory.createVideoAsset())
+            ),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
             type = ContentType.INSTRUCTIONAL_CLIPS,
             ingestedOn = LocalDate.ofYearDay(2020, 20),
@@ -48,6 +55,39 @@ class EventConverterTest {
         assertThat(videoEvent.durationSeconds).isEqualTo(120)
         assertThat(videoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
         assertThat(videoEvent.ingestedOn).isEqualTo("2020-01-20")
+        assertThat(videoEvent.assets).hasSize(1)
+        assertThat(videoEvent.originalDimensions.width).isEqualTo(1920)
+        assertThat(videoEvent.originalDimensions.height).isEqualTo(1080)
+    }
+
+    @Test
+    fun `creates a video event object when original dimensions are not known`() {
+        val id = TestFactories.aValidId()
+        val video = createVideo(
+            videoId = id,
+            playback = TestFactories.createKalturaPlayback(
+                originalDimensions = null
+            )
+        )
+
+        val videoEvent = converter.toVideoPayload(video)
+
+        assertThat(videoEvent.originalDimensions).isNull()
+    }
+
+    @Test
+    fun `creates a video event object as stream playback without assets`() {
+        val id = TestFactories.aValidId()
+        val video = createVideo(
+            videoId = id,
+            playback = TestFactories.createKalturaPlayback(
+                assets = null
+            )
+        )
+
+        val videoEvent = converter.toVideoPayload(video)
+
+        assertThat(videoEvent.assets).isNull()
     }
 
     @Test
@@ -64,7 +104,7 @@ class EventConverterTest {
     @Test
     fun `sets correct playback provider type when YouTube`() {
         val video = createVideo(
-                playback = TestFactories.createYoutubePlayback()
+            playback = TestFactories.createYoutubePlayback()
         )
 
         val videoEvent = converter.toVideoPayload(video)
@@ -106,5 +146,23 @@ class EventConverterTest {
         assertThat(publicCollectionEvent.bookmarks).containsExactly(com.boclips.eventbus.domain.user.UserId("bookmarked-user-id"))
         assertThat(publicCollectionEvent.createdAt).isEqualTo("2017-11-10T01:02:03Z")
         assertThat(publicCollectionEvent.updatedAt).isEqualTo("2018-11-10T01:02:03Z")
+    }
+
+    @Test
+    fun `converts video assets`() {
+        val asset = VideoFactory.createVideoAsset(
+            id = VideoAssetId("asset-id"),
+            sizeKb = 10,
+            dimensions = Dimensions(1280, 720),
+            bitrateKbps = 100
+        )
+
+        val eventAsset = converter.toAssetPayload(asset)
+
+        assertThat(eventAsset.id).isEqualTo("asset-id")
+        assertThat(eventAsset.sizeKb).isEqualTo(10)
+        assertThat(eventAsset.dimensions.width).isEqualTo(1280)
+        assertThat(eventAsset.dimensions.height).isEqualTo(720)
+        assertThat(eventAsset.bitrateKbps).isEqualTo(100)
     }
 }
