@@ -41,6 +41,17 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `ignores 0-byte assets`() {
+        createMediaEntry(id = "1", assets = setOf(KalturaFactories.createKalturaAsset(size = 0)))
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        val playbackById = kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))
+
+        val videoPlayback = playbackById[playbackId] as StreamPlayback
+
+        assertThat(videoPlayback.assets).isEmpty()
+    }
+
+    @Test
     fun `list of assets is empty when no assets in kaltura`() {
         createMediaEntry(id = "1")
 

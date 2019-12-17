@@ -42,7 +42,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                     referenceId = it.value.referenceId,
                     duration = it.value.duration,
                     downloadUrl = it.value.downloadUrl,
-                    assets = convertAssetsToSet(assetsByEntryId[it.value.id]),
+                    assets = convertAndValidateAssetsToSet(assetsByEntryId[it.value.id]),
                     originalDimensions = Dimensions(width = it.value.width, height = it.value.height)
                 )
                 (it.key to videoPlayback)
@@ -106,8 +106,9 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
         return kalturaClient.getCaptionFilesByEntryId(playbackId.value)
     }
 
-    private fun convertAssetsToSet(kalturaAssets: List<Asset>?): Set<VideoAsset> {
+    private fun convertAndValidateAssetsToSet(kalturaAssets: List<Asset>?): Set<VideoAsset> {
         return kalturaAssets.orEmpty()
+            .filter { it.sizeKb != 0 }
             .map(VideoAssetConverter::convert)
             .toSet()
     }

@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.video.VideoAssetId
 
 object KalturaFactories {
 
-
     fun createKalturaCaptionAsset(
         language: KalturaLanguage = KalturaLanguage.ENGLISH,
         label: String = language.getName()
@@ -18,7 +17,13 @@ object KalturaFactories {
             .build()
     }
 
-    fun createKalturaAsset(id: VideoAssetId = VideoAssetId("1"), bitrate: Int = 128, width: Int = 1920, height: Int = 1080, size: Int = 1024): Asset {
+    fun createKalturaAsset(
+        id: VideoAssetId = VideoAssetId("1"),
+        bitrate: Int = 128,
+        width: Int = 1920,
+        height: Int = 1080,
+        size: Int = 1024
+    ): Asset {
         return Asset.builder()
             .id(id.value)
             .bitrateKbps(bitrate)
