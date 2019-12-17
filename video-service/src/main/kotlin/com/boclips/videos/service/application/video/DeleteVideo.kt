@@ -20,12 +20,12 @@ class DeleteVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(videoId: String?, user: User) {
-        if (videoId == null || videoId.isBlank()) {
+    operator fun invoke(id: String?, user: User) {
+        if (id == null || id.isBlank()) {
             throw VideoNotFoundException()
         }
 
-        val videoId = VideoId(value = videoId)
+        val videoId = VideoId(value = id)
         val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
         removeVideo(video, user)

@@ -71,7 +71,6 @@ class CreateVideoRequestToVideoConverterTest {
             TestFactories.createCreateVideoRequest(),
             playback,
             contentPartner,
-            emptySet(),
             listOf()
         )
 
