@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId as ContentPartnerServiceContentPartnerId
 
@@ -19,6 +20,7 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
         )
     }
 
+    @Cacheable("availabilities")
     fun findAvailabilityFor(contentPartnerId: ContentPartnerId): Availability {
         return contentPartnerRepository.findById(
             contentPartnerId = ContentPartnerServiceContentPartnerId(
