@@ -193,8 +193,7 @@ class ApplicationContext(
                 AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
             ),
-            collectionAccessService,
-            collectionRepository
+            collectionService
         )
     }
 

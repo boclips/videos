@@ -59,9 +59,10 @@ class DomainContext(
     @Bean
     fun collectionService(
         collectionRepository: CollectionRepository,
-        collectionSearchService: CollectionSearchService
+        collectionSearchService: CollectionSearchService,
+        collectionAccessService: CollectionAccessService
     ): CollectionService {
-        return CollectionService(collectionRepository, collectionSearchService)
+        return CollectionService(collectionRepository, collectionSearchService, collectionAccessService)
     }
 
     @Bean

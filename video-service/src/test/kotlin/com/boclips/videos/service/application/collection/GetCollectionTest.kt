@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.application.collection.exceptions.CollectionAccessNotAuthorizedException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.presentation.Projection
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -65,13 +64,13 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `propagates the CollectionAccessNotAuthorizedException error thrown from downstream`() {
+    fun `propagates the CollectionNotFoundException when access of collection is not permitted`() {
         val savedCollectionId = saveCollection(
             owner = "me@me.com",
             public = false
         )
 
-        assertThrows<CollectionAccessNotAuthorizedException> {
+        assertThrows<CollectionNotFoundException> {
             getCollection(
                 savedCollectionId.value,
                 user = UserFactory.sample(id = "attacker@example.com")
