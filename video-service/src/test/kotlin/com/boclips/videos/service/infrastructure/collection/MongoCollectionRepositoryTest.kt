@@ -3,10 +3,10 @@ package com.boclips.videos.service.infrastructure.collection
 import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -77,28 +77,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `findAll will ignore invalid IDs`() {
             assertThat(collectionRepository.findAll(ids = listOf(CollectionId(value = "1234")))).isEmpty()
-        }
-
-        @Test
-        fun `find by subject`() {
-            val collection = collectionRepository.create(
-                CreateCollectionCommand(
-                    owner = UserId(value = "user1"),
-                    title = "Collection title",
-                    createdByBoclips = false,
-                    public = false
-                )
-            )
-
-            val subject = TestFactories.createSubject()
-
-            collectionRepository.update(
-                CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(subject), UserFactory.sample())
-            )
-
-            val findAllBySubject = collectionRepository.findAllBySubject(subject.id)
-
-            assertThat(findAllBySubject).hasSize(1)
         }
     }
 

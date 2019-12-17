@@ -11,7 +11,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
-import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
@@ -29,7 +28,6 @@ import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
 import org.litote.kmongo.descendingSort
-import org.litote.kmongo.div
 import org.litote.kmongo.elemMatch
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -87,11 +85,6 @@ class MongoCollectionRepository(
             .map { it.id to it }.toMap()
 
         return ids.mapNotNull { id -> collections[id] }
-    }
-
-    override fun findAllBySubject(subjectId: SubjectId): List<Collection> {
-        return dbCollection().find(CollectionDocument::subjects / SubjectDocument::id eq ObjectId(subjectId.value))
-            .mapNotNull(CollectionDocumentConverter::toCollection)
     }
 
     override fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection> {
