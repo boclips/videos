@@ -25,7 +25,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
 
         val entryIds = playbackIds.map { it.value }
 
-        if(entryIds.isEmpty()) {
+        if (entryIds.isEmpty()) {
             return emptyMap()
         }
 

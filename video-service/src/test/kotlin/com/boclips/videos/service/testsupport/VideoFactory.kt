@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
@@ -101,8 +102,7 @@ object VideoFactory {
         return VideoAsset(
             id = id,
             sizeKb = sizeKb,
-            width = width,
-            height = height,
+            dimensions = Dimensions(width = width, height = height),
             bitrateKbps = bitrateKbps
         )
     }

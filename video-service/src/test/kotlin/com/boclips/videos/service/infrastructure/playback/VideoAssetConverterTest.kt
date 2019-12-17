@@ -20,8 +20,8 @@ class VideoAssetConverterTest() {
 
         assertThat(asset.id.value).isEqualTo("abc")
         assertThat(asset.bitrateKbps).isEqualTo(124)
-        assertThat(asset.width).isEqualTo(480)
-        assertThat(asset.height).isEqualTo(320)
+        assertThat(asset.dimensions.width).isEqualTo(480)
+        assertThat(asset.dimensions.height).isEqualTo(320)
         assertThat(asset.sizeKb).isEqualTo(1024)
     }
 }

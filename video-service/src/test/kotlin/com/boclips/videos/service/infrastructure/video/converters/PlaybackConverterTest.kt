@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.video.converters
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -61,8 +62,7 @@ class PlaybackConverterTest {
             VideoAsset(
                 id = VideoAssetId("the_asset_id"),
                 sizeKb = 100,
-                width = 200,
-                height = 300,
+                dimensions = Dimensions(width = 200, height = 300),
                 bitrateKbps = 400
             )
         )

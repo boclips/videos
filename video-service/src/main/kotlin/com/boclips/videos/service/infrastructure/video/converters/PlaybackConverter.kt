@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
+import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -86,21 +87,20 @@ object PlaybackConverter : KLogging() {
 
     private fun convertAssetsToDocument(asset: VideoAsset): VideoAssetDocument {
         return VideoAssetDocument(
-            asset.id.value,
-            asset.sizeKb,
-            asset.width,
-            asset.height,
-            asset.bitrateKbps
+            id = asset.id.value,
+            sizeKb = asset.sizeKb,
+            width = asset.dimensions.width,
+            height = asset.dimensions.height,
+            bitrateKbps = asset.bitrateKbps
         )
     }
 
     private fun convertDocumentToAsset(asset: VideoAssetDocument): VideoAsset {
         return VideoAsset(
-            VideoAssetId(asset.id!!),
-            asset.sizeKb!!,
-            asset.width!!,
-            asset.height!!,
-            asset.bitrateKbps!!
+            id = VideoAssetId(value = asset.id!!),
+            sizeKb = asset.sizeKb!!,
+            dimensions = Dimensions(asset.width!!, asset.height!!),
+            bitrateKbps = asset.bitrateKbps!!
         )
     }
 }
