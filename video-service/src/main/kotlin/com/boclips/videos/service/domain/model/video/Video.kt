@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.model.video
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.tag.UserTag
 import java.time.LocalDate
 import java.util.Locale
@@ -20,7 +19,7 @@ data class Video(
     val ingestedOn: LocalDate,
     val type: ContentType,
     val legalRestrictions: String,
-    val subjects: Set<Subject>,
+    val subjects: VideoSubjects,
     val topics: Set<Topic>,
     val language: Locale?,
     val transcript: String?,
@@ -28,8 +27,7 @@ data class Video(
     val ratings: List<UserRating>,
     val tag: UserTag?,
     val promoted: Boolean?,
-    val shareCodes: Set<String>?,
-    val subjectsWereSetManually: Boolean?
+    val shareCodes: Set<String>?
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

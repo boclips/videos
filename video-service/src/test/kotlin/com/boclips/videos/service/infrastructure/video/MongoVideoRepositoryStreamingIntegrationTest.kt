@@ -190,9 +190,9 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
             }
         }
 
-        assertThat(mongoVideoRepository.find(videoId = video1.videoId)!!.subjects.map { it.name })
+        assertThat(mongoVideoRepository.find(videoId = video1.videoId)!!.subjects.items.map { it.name })
             .containsExactlyInAnyOrder("MathsIsForLosers")
 
-        assertThat(mongoVideoRepository.find(videoId = video2.videoId)!!.subjects).isEmpty()
+        assertThat(mongoVideoRepository.find(videoId = video2.videoId)!!.subjects.items).isEmpty()
     }
 }

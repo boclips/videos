@@ -48,8 +48,10 @@ class UpdateSubjectIntegrationTest : AbstractSpringIntegrationTest() {
                 .build()
         )
 
-        assertThat(videoRepository.find(savedVideo)!!.subjects.map { it.name }).containsExactlyInAnyOrder("MathIsFun", "English")
-        assertThat(videoRepository.find(anotherSavedVideo)!!.subjects.map { it.name }).containsExactlyInAnyOrder("English")
+        assertThat(videoRepository.find(savedVideo)!!.subjects.items.map { it.name })
+            .containsExactlyInAnyOrder("MathIsFun", "English")
+        assertThat(videoRepository.find(anotherSavedVideo)!!.subjects.items.map { it.name })
+            .containsExactlyInAnyOrder("English")
     }
 
     @Test

@@ -39,8 +39,8 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.title).isEqualTo("title")
         assertThat(updatedVideo.description).isEqualTo("new description")
         assertThat(updatedVideo.promoted).isEqualTo(true)
-        assertThat(updatedVideo.subjects).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
-        assertThat(updatedVideo.subjectsWereSetManually).isTrue()
+        assertThat(updatedVideo.subjects.items).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
+        assertThat(updatedVideo.subjects.setManually).isTrue()
     }
 
     @Test
@@ -61,7 +61,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo = videoRepository.find(videoId)!!
 
-        assertThat(updatedVideo.subjects).isEmpty()
-        assertThat(updatedVideo.subjectsWereSetManually).isFalse()
+        assertThat(updatedVideo.subjects.items).isEmpty()
+        assertThat(updatedVideo.subjects.setManually).isFalse()
     }
 }

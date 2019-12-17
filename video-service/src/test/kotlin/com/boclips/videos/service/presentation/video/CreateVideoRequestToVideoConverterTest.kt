@@ -38,7 +38,7 @@ class CreateVideoRequestToVideoConverterTest {
 
         assertThat(video.playback.duration).isEqualTo(expectedDuration)
     }
-
+                                                                                                                                                                                           
     @Test
     fun `uses the playback`() {
         val playback = TestFactories.createKalturaPlayback()
@@ -58,9 +58,9 @@ class CreateVideoRequestToVideoConverterTest {
             subjects
         )
 
-        assertThat(video.subjects).hasSize(1)
-        assertThat(video.subjects.first().id).isNotNull
-        assertThat(video.subjectsWereSetManually).isTrue()
+        assertThat(video.subjects.items).hasSize(1)
+        assertThat(video.subjects.items.first().id).isNotNull
+        assertThat(video.subjects.setManually).isTrue()
     }
 
     @Test
@@ -74,7 +74,7 @@ class CreateVideoRequestToVideoConverterTest {
             listOf()
         )
 
-        assertThat(video.subjectsWereSetManually).isFalse()
+        assertThat(video.subjects.setManually).isFalse()
     }
 
     @Test

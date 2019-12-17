@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoSubjects
 import org.bson.types.ObjectId
 import java.time.LocalDate
 
@@ -36,17 +37,20 @@ class CreateVideoRequestToVideoConverter {
             } else {
                 AgeRange.unbounded()
             },
-            subjects = subjects.toSet(),
+            subjects =
+                VideoSubjects(
+                    // if subjects were provided, they were set manually (this endpoint
+                    // is not used by the classifier)
+                    setManually = subjects.isNotEmpty(),
+                    items = subjects.toSet()
+                ),
             topics = emptySet(),
             language = null,
             transcript = null,
             ratings = emptyList(),
             tag = null,
             promoted = null,
-            shareCodes = emptySet(),
-            // if subjects were provided, they were set manually (this endpoint
-            // is not used by the classifier)
-            subjectsWereSetManually = subjects.isNotEmpty()
+            shareCodes = emptySet()
         )
     }
 }

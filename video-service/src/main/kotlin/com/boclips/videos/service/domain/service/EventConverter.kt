@@ -30,7 +30,7 @@ class EventConverter {
             else -> null
         }
 
-        val subjects = toSubjectPayload(video.subjects)
+        val subjects = toSubjectPayload(video.subjects.items)
         return com.boclips.eventbus.domain.video.Video.builder()
             .id(VideoId(video.videoId.value))
             .title(video.title)

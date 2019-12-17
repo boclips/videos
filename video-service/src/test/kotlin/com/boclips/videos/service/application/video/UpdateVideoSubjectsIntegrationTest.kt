@@ -32,7 +32,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
         fakeEventBus.publish(event)
 
         val video = videoRepository.find(videoId)!!
-        assertThat(video.subjects).containsExactly(maths)
+        assertThat(video.subjects.items).containsExactly(maths)
     }
 
     @Test
@@ -51,7 +51,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
         fakeEventBus.publish(event)
 
         val video = videoRepository.find(videoId)!!
-        assertThat(video.subjects).containsExactly(subject)
+        assertThat(video.subjects.items).containsExactly(subject)
     }
 
     @Test

@@ -165,33 +165,33 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects")
-        assertThat(updatedAsset.subjects).containsOnly(biology)
+        assertThat(updatedAsset.subjects.items).containsOnly(biology)
     }
 
     @Test
-    fun `update subjectsWereSetManually`() {
+    fun `update setManually`() {
         val originalAsset = mongoVideoRepository.create(
-            TestFactories.createVideo(
+            createVideo(
                 title = "original title",
-                subjects = setOf()
+                subjects = emptySet()
             )
         )
 
-        assertThat(originalAsset.subjectsWereSetManually).isNull()
+        assertThat(originalAsset.subjects.setManually).isNull()
 
         val afterStep1 = mongoVideoRepository.update(
             VideoUpdateCommand.ReplaceSubjectsWereSetManually(originalAsset.videoId, true)
         )
 
-        assertThat(afterStep1).isEqualToIgnoringGivenFields(originalAsset, "subjectsWereSetManually")
-        assertThat(afterStep1.subjectsWereSetManually).isTrue()
+        assertThat(afterStep1).isEqualToIgnoringGivenFields(originalAsset, "subjects")
+        assertThat(afterStep1.subjects.setManually).isTrue()
 
         val afterStep2 = mongoVideoRepository.update(
             VideoUpdateCommand.ReplaceSubjectsWereSetManually(originalAsset.videoId, false)
         )
 
-        assertThat(afterStep2).isEqualToIgnoringGivenFields(originalAsset, "subjectsWereSetManually")
-        assertThat(afterStep2.subjectsWereSetManually).isFalse()
+        assertThat(afterStep2).isEqualToIgnoringGivenFields(originalAsset, "subjects")
+        assertThat(afterStep2.subjects.setManually).isFalse()
     }
 
     @Test
@@ -361,7 +361,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedVideo1).isEqualToIgnoringGivenFields(originalVideo1, "subjects", "duration", "playback")
         assertThat(updatedVideo1.playback.duration).isEqualTo(Duration.ofMinutes(10))
-        assertThat(updatedVideo1.subjects).isEmpty()
+        assertThat(updatedVideo1.subjects.items).isEmpty()
 
         assertThat(updatedVideo2).isEqualToIgnoringGivenFields(
             originalVideo2,
@@ -371,7 +371,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             "promoted"
         )
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
-        assertThat(updatedVideo2.subjects).isEqualTo(setOf(biology))
+        assertThat(updatedVideo2.subjects.items).isEqualTo(setOf(biology))
         assertThat(updatedVideo2.promoted).isTrue()
     }
 

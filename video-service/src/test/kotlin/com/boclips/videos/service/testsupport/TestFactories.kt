@@ -40,6 +40,7 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoSubjects
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -98,7 +99,6 @@ object TestFactories {
         ),
         videoReference: String = contentPartnerVideoId,
         promoted: Boolean? = null,
-        subjectsWereSetManually: Boolean? = null,
         shareCodes: Set<String>? = emptySet()
     ): Video {
         return Video(
@@ -111,7 +111,10 @@ object TestFactories {
             ingestedOn = ingestedOn,
             type = type,
             legalRestrictions = legalRestrictions,
-            subjects = subjects,
+            subjects = VideoSubjects(
+                items = subjects,
+                setManually=null
+            ),
             language = language,
             transcript = transcript,
             topics = topics,
@@ -121,8 +124,7 @@ object TestFactories {
             ratings = ratings,
             tag = tag,
             promoted = promoted,
-            shareCodes = shareCodes,
-            subjectsWereSetManually = null
+            shareCodes = shareCodes
         )
     }
 

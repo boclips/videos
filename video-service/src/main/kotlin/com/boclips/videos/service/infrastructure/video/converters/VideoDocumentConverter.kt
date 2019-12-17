@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoSubjects
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
@@ -25,7 +26,7 @@ object VideoDocumentConverter {
             playback = PlaybackConverter.toDocument(video.playback),
             contentType = video.type.name,
             keywords = video.keywords,
-            subjects = video.subjects.map(SubjectDocumentConverter::toSubjectDocument),
+            subjects = video.subjects.items.map(SubjectDocumentConverter::toSubjectDocument),
             releaseDate = Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             ingestDate = Date.from(video.ingestedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             legalRestrictions = video.legalRestrictions,
@@ -48,7 +49,7 @@ object VideoDocumentConverter {
             } ?: emptyList(),
             promoted = video.promoted,
             shareCodes = video.shareCodes,
-            subjectsWereSetManually = video.subjectsWereSetManually
+            subjectsWereSetManually = video.subjects.setManually
         )
     }
 
@@ -62,7 +63,7 @@ object VideoDocumentConverter {
             playback = PlaybackConverter.toPlayback(document.playback),
             type = ContentType.valueOf(document.contentType!!),
             keywords = document.keywords,
-            subjects = document.subjects.map(SubjectDocumentConverter::toSubject).toSet(),
+            subjects = subjectsFromVideoDocument(document),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             ingestedOn = (document.ingestDate ?: document.id.date).toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             legalRestrictions = document.legalRestrictions,
@@ -84,8 +85,13 @@ object VideoDocumentConverter {
                 )
             },
             promoted = document.promoted,
-            shareCodes = document.shareCodes,
-            subjectsWereSetManually = document.subjectsWereSetManually
+            shareCodes = document.shareCodes
         )
     }
+
+    private fun subjectsFromVideoDocument(document: VideoDocument): VideoSubjects =
+        VideoSubjects(
+            setManually = document.subjectsWereSetManually,
+            items = document.subjects.map(SubjectDocumentConverter::toSubject).toSet()
+        )
 }

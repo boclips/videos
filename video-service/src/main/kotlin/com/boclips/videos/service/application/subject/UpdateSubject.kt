@@ -38,7 +38,7 @@ class UpdateSubject(
         videoRepository.streamUpdate(VideoFilter.HasSubjectId(subjectId)) { videos ->
             videos.map { video ->
                 val newSubjects = replaceSubject(
-                    subjects = video.subjects,
+                    subjects = video.subjects.items,
                     idToReplace = subjectId,
                     updatedSubject = updatedSubject
                 )

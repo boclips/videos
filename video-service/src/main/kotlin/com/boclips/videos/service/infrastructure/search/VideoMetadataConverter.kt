@@ -11,6 +11,9 @@ import com.boclips.videos.service.domain.service.video.ContentEnrichers
 
 object VideoMetadataConverter {
     fun convert(video: Video): VideoMetadata {
+        val subjects = video.subjects.items
+            .map { SubjectMetadata(id = it.id.value, name = it.name) }
+            .toSet()
         return VideoMetadata(
             id = video.videoId.value,
             title = video.title,
@@ -25,7 +28,7 @@ object VideoMetadataConverter {
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
             type = VideoTypeConverter.convert(video.type),
-            subjects = video.subjects.map { SubjectMetadata(id = it.id.value, name = it.name) }.toSet(),
+            subjects = subjects,
             promoted = video.promoted,
             meanRating = video.getRatingAverage()
         )
