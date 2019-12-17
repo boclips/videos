@@ -5,6 +5,8 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.TestFactories.createCreateVideoRequest
+import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
 import com.boclips.web.exceptions.BoclipsApiException
 import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions.assertThat
@@ -13,6 +15,8 @@ import org.assertj.core.api.Condition
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.util.function.Predicate
 
 class CreateVideoRequestToVideoConverterTest {
@@ -25,34 +29,42 @@ class CreateVideoRequestToVideoConverterTest {
     @BeforeEach
     fun setUp() {
         converter = CreateVideoRequestToVideoConverter()
-        videoPlayback = TestFactories.createKalturaPlayback()
+        videoPlayback = createKalturaPlayback()
         contentPartner = TestFactories.createContentPartner()
         subjects = listOf(TestFactories.createSubject())
     }
 
     @Test
+    fun `sets ingestion timestamp`() {
+        val video = converter.convert(createCreateVideoRequest(), createKalturaPlayback(), contentPartner, subjects)
+
+        assertThat(video.ingestedAt).isAfter(LocalDate.now().atStartOfDay(ZoneOffset.UTC))
+        assertThat(video.ingestedAt).isBefore(LocalDate.now().plusDays(1).atStartOfDay(ZoneOffset.UTC))
+    }
+
+    @Test
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
-        val playback = TestFactories.createKalturaPlayback(duration = expectedDuration)
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
+        val playback = createKalturaPlayback(duration = expectedDuration)
+        val video = converter.convert(createCreateVideoRequest(), playback, contentPartner, subjects)
 
         assertThat(video.playback.duration).isEqualTo(expectedDuration)
     }
-                                                                                                                                                                                           
+
     @Test
     fun `uses the playback`() {
-        val playback = TestFactories.createKalturaPlayback()
-        val video = converter.convert(TestFactories.createCreateVideoRequest(), playback, contentPartner, subjects)
+        val playback = createKalturaPlayback()
+        val video = converter.convert(createCreateVideoRequest(), playback, contentPartner, subjects)
 
         assertThat(video.playback).isEqualTo(playback)
     }
 
     @Test
     fun `uses the subjects and sets subjectsWereSetManually to true`() {
-        val playback = TestFactories.createKalturaPlayback()
+        val playback = createKalturaPlayback()
 
         val video = converter.convert(
-            TestFactories.createCreateVideoRequest(),
+            createCreateVideoRequest(),
             playback,
             contentPartner,
             subjects
@@ -65,10 +77,10 @@ class CreateVideoRequestToVideoConverterTest {
 
     @Test
     fun `without subjects, subjectsWereSetManually is false`() {
-        val playback = TestFactories.createKalturaPlayback()
+        val playback = createKalturaPlayback()
 
         val video = converter.convert(
-            TestFactories.createCreateVideoRequest(),
+            createCreateVideoRequest(),
             playback,
             contentPartner,
             listOf()
@@ -81,7 +93,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when title is null`() {
         assertThatThrownBy {
             converter.convert(
-                TestFactories.createCreateVideoRequest(title = null),
+                createCreateVideoRequest(title = null),
                 videoPlayback,
                 contentPartner,
                 subjects
@@ -95,7 +107,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when description is null`() {
         assertThatThrownBy {
             converter.convert(
-                TestFactories.createCreateVideoRequest(description = null),
+                createCreateVideoRequest(description = null),
                 videoPlayback,
                 contentPartner,
                 subjects
@@ -109,7 +121,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when keywords is null`() {
         assertThatThrownBy {
             converter.convert(
-                TestFactories.createCreateVideoRequest(keywords = null),
+                createCreateVideoRequest(keywords = null),
                 videoPlayback,
                 contentPartner,
                 subjects
@@ -123,7 +135,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when releasedOn is null`() {
         assertThatThrownBy {
             converter.convert(
-                TestFactories.createCreateVideoRequest(releasedOn = null),
+                createCreateVideoRequest(releasedOn = null),
                 videoPlayback,
                 contentPartner,
                 subjects
@@ -137,7 +149,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when contentProviderId is null`() {
         assertThatThrownBy {
             converter.convert(
-                TestFactories.createCreateVideoRequest(providerVideoId = null),
+                createCreateVideoRequest(providerVideoId = null),
                 videoPlayback,
                 contentPartner,
                 subjects
@@ -151,7 +163,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `throws when content type is null`() {
         assertThatThrownBy {
             converter.convert(
-                TestFactories.createCreateVideoRequest(videoType = null),
+                createCreateVideoRequest(videoType = null),
                 videoPlayback,
                 contentPartner,
                 subjects
@@ -165,7 +177,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `empty string when restrictions is null`() {
         assertThat(
             converter.convert(
-                TestFactories.createCreateVideoRequest(legalRestrictions = null),
+                createCreateVideoRequest(legalRestrictions = null),
                 videoPlayback,
                 contentPartner,
                 subjects

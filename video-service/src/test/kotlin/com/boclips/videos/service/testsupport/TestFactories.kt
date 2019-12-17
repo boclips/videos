@@ -86,6 +86,7 @@ object TestFactories {
         subjects: Set<Subject> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         ingestedOn: LocalDate = LocalDate.now(),
+        ingestedAt: ZonedDateTime? = ZonedDateTime.now(),
         legalRestrictions: String = "",
         language: Locale? = null,
         transcript: String? = null,
@@ -109,6 +110,7 @@ object TestFactories {
             keywords = keywords,
             releasedOn = releasedOn,
             ingestedOn = ingestedOn,
+            ingestedAt = ingestedAt,
             type = type,
             legalRestrictions = legalRestrictions,
             subjects = VideoSubjects(

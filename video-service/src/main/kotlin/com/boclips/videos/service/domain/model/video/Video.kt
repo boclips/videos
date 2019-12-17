@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Locale
 
 data class Video(
@@ -17,6 +18,7 @@ data class Video(
     val keywords: List<String>,
     val releasedOn: LocalDate,
     val ingestedOn: LocalDate,
+    val ingestedAt: ZonedDateTime?,
     val type: ContentType,
     val legalRestrictions: String,
     val subjects: VideoSubjects,

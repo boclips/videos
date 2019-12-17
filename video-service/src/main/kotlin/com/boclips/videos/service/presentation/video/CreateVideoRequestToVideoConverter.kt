@@ -11,6 +11,8 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
 import org.bson.types.ObjectId
 import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 // TODO refactor to use javax validation in the first place
 class CreateVideoRequestToVideoConverter {
@@ -28,6 +30,7 @@ class CreateVideoRequestToVideoConverter {
             keywords = getOrThrow(createVideoRequest.keywords, "keywords"),
             releasedOn = getOrThrow(createVideoRequest.releasedOn, "releasedOn"),
             ingestedOn = LocalDate.now(),
+            ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
             contentPartner = contentPartner,
             videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
             type = ContentType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),

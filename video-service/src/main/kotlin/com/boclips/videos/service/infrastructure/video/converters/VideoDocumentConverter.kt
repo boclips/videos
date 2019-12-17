@@ -10,6 +10,7 @@ import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.Date
 import java.util.Locale
 
@@ -29,6 +30,7 @@ object VideoDocumentConverter {
             subjects = video.subjects.items.map(SubjectDocumentConverter::toSubjectDocument),
             releaseDate = Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             ingestDate = Date.from(video.ingestedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
+            ingestedAt = video.ingestedAt?.toString(),
             legalRestrictions = video.legalRestrictions,
             language = video.language?.toLanguageTag(),
             transcript = video.transcript,
@@ -65,6 +67,7 @@ object VideoDocumentConverter {
             keywords = document.keywords,
             subjects = subjectsFromVideoDocument(document),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
+            ingestedAt = document.ingestedAt?.let { ZonedDateTime.parse(it) },
             ingestedOn = (document.ingestDate ?: document.id.date).toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             legalRestrictions = document.legalRestrictions,
             language = document.language?.let(Locale::forLanguageTag),

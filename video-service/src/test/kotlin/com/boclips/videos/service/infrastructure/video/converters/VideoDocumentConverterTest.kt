@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Locale
 
 class VideoDocumentConverterTest {
@@ -35,6 +36,7 @@ class VideoDocumentConverterTest {
             keywords = listOf("keyword1", "keyword2"),
             subjects = setOf(TestFactories.createSubject(), TestFactories.createSubject()),
             releasedOn = LocalDate.ofYearDay(2018, 10),
+            ingestedAt = ZonedDateTime.now(),
             ingestedOn = LocalDate.ofYearDay(2019, 29),
             legalRestrictions = "legal restrictions",
             language = Locale.GERMANY,
