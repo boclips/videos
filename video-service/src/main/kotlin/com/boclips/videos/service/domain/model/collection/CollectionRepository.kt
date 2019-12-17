@@ -1,8 +1,5 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.users.client.model.contract.Contract
-import com.boclips.videos.service.common.Page
-import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
@@ -14,7 +11,6 @@ interface CollectionRepository {
     fun find(id: CollectionId): Collection?
     fun findAll(ids: List<CollectionId>): List<Collection>
     fun streamAll(consumer: (Sequence<Collection>) -> Unit)
-    fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection>
     fun create(command: CreateCollectionCommand): Collection
     fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult>
     fun streamUpdate(

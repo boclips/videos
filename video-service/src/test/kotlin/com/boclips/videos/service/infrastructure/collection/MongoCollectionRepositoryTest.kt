@@ -1,7 +1,5 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.users.client.model.contract.SelectedCollectionsContract
-import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -576,47 +574,6 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         collectionRepository.streamAll { collections = it.toList() }
 
         assertThat(collections).hasSize(3)
-    }
-
-    @Test
-    fun `returns collections which correspond to provided SelectedContent contract`() {
-        val ownerId = UserId(value = "test-user")
-        val firstCollection = collectionRepository.create(
-            CreateCollectionCommand(
-                owner = ownerId,
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
-            )
-        )
-        val secondCollection = collectionRepository.create(
-            CreateCollectionCommand(
-                owner = ownerId,
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
-            )
-        )
-        collectionRepository.create(
-            CreateCollectionCommand(
-                owner = ownerId,
-                title = "Starting Title",
-                createdByBoclips = false,
-                public = false
-            )
-        )
-
-        val contract = SelectedCollectionsContract().apply {
-            name = "Selected content"
-            collectionIds = listOf(firstCollection.id.value, secondCollection.id.value)
-        }
-        val pageRequest = PageRequest(0, 10)
-
-        val collectionsByContract = collectionRepository.getByContracts(listOf(contract), pageRequest)
-
-        assertThat(collectionsByContract.elements).hasSize(2)
-        assertThat(collectionsByContract.elements).extracting("id")
-            .containsExactlyInAnyOrder(firstCollection.id, secondCollection.id)
     }
 
     private fun sampleCollection(

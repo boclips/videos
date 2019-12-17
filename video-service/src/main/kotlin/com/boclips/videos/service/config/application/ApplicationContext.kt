@@ -15,7 +15,6 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
-import com.boclips.videos.service.application.collection.GetContractedCollections
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
@@ -200,7 +199,6 @@ class ApplicationContext(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder,
-        getContractedCollections: GetContractedCollections,
         userServiceClient: UserServiceClient,
         collectionFilterAssembler: CollectionSearchQueryAssembler
     ): GetCollections {
@@ -218,11 +216,6 @@ class ApplicationContext(
 
     @Bean
     fun assembleCollectionFilter() = CollectionSearchQueryAssembler()
-
-    @Bean
-    fun getContractedCollections(collectionRepository: CollectionRepository): GetContractedCollections {
-        return GetContractedCollections(collectionRepository)
-    }
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {

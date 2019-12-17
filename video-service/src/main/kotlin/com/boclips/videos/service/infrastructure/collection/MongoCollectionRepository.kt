@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.users.client.model.contract.Contract
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -24,7 +23,6 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.bson.types.ObjectId.isValid
 import org.litote.kmongo.`in`
-import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
 import org.litote.kmongo.descendingSort
@@ -85,13 +83,6 @@ class MongoCollectionRepository(
             .map { it.id to it }.toMap()
 
         return ids.mapNotNull { id -> collections[id] }
-    }
-
-    override fun getByContracts(contracts: List<Contract>, pageRequest: PageRequest): Page<Collection> {
-        val criteria = and(
-            contracts.map(mongoCollectionFilterContractAdapter::adapt)
-        )
-        return getPagedCollections(pageRequest, criteria)
     }
 
     override fun streamAll(consumer: (Sequence<Collection>) -> Unit) {
