@@ -50,11 +50,7 @@ class CollectionResourceFactory(
             id = collection.id.value,
             owner = collection.owner.value,
             title = collection.title,
-            videos = videoToResourceConverter.wrapVideoIdsInResource(
-                videoService.getPlayableVideos(
-                    collection.videos,
-                    user.accessRules.videoAccess
-                ).map { it.videoId }),
+            videos = videoToResourceConverter.wrapVideoIdsInResource(collection.videos),
             updatedAt = collection.updatedAt,
             public = collection.isPublic,
             mine = collection.isOwner(user),

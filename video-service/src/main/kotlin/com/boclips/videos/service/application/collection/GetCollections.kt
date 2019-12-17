@@ -44,7 +44,7 @@ class GetCollections(
             user = user
         )
 
-        return collectionService.search(assembledQuery)
+        return collectionService.search(assembledQuery, user.accessRules)
     }
 
     private fun assembleResourcesPage(

@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -20,14 +21,16 @@ class CollectionService(
 ) {
     companion object : KLogging()
 
-    fun search(query: CollectionSearchQuery): Page<Collection> {
+    fun search(query: CollectionSearchQuery, accessRules: AccessRules): Page<Collection> {
         val searchRequest = PaginatedSearchRequest(
             query = query.toSearchQuery(),
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
         val collectionIds = collectionSearchService.search(searchRequest).map { CollectionId(value = it) }
-        val collections = collectionRepository.findAll(collectionIds)
+        val collections = collectionRepository.findAll(collectionIds).map {
+            withPermittedVideos(it, accessRules.videoAccess)
+        }
 
         logger.info { "Returning ${collections.size} collections for query $query" }
 
@@ -65,14 +68,7 @@ class CollectionService(
         return collectionRepository.find(id)
             ?.takeIf { condition(it, user) }
             ?.let { collection ->
-                collection.copy(
-                    videos = when (videoAccess) {
-                        VideoAccessRule.Everything ->
-                            collection.videos
-                        is VideoAccessRule.SpecificIds ->
-                            collection.videos.intersect(videoAccess.videoIds).toList()
-                    }
-                )
+                withPermittedVideos(collection, videoAccess)
             }
     }
 
@@ -98,5 +94,11 @@ class CollectionService(
                     "User ${user.id} does not have read access to Collection ${collection.id}"
                 }
             }
+        }
+
+    private fun withPermittedVideos(collection: Collection, videoAccessRule: VideoAccessRule): Collection =
+        when (videoAccessRule) {
+            is VideoAccessRule.SpecificIds -> collection.copy(videos = collection.videos.intersect(videoAccessRule.videoIds).toList())
+            VideoAccessRule.Everything -> collection
         }
 }

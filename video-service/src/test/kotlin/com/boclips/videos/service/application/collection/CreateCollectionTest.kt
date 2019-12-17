@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -46,7 +47,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
-            )
+            ),
+            accessRules = AccessRulesFactory.sample()
         ).elements
 
         assertThat(collections).hasSize(1)
@@ -75,7 +77,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
-            )
+            ),
+            accessRules = AccessRulesFactory.sample()
         ).elements
 
         assertThat(collections).hasSize(1)
@@ -103,7 +106,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null
-            )
+            ),
+            accessRules = AccessRulesFactory.sample()
         ).elements
 
         assertThat(collections.first().isPublic).isFalse()
