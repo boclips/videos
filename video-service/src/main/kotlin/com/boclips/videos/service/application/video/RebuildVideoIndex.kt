@@ -25,7 +25,7 @@ open class RebuildVideoIndex(
                 videos.filter { video ->
                     contentPartnerService
                         .findAvailabilityFor(video.contentPartner.contentPartnerId)
-                        .isDownloadable()
+                        .isStreamable()
                 }
                 videoSearchService.safeRebuildIndex(videos, notifier)
             }
