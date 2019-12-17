@@ -41,7 +41,8 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                     referenceId = it.value.referenceId,
                     duration = it.value.duration,
                     downloadUrl = it.value.downloadUrl,
-                    assets = convertAssetsToSet(assetsByEntryId[it.value.id])
+                    assets = convertAssetsToSet(assetsByEntryId[it.value.id]),
+                    originalDimensions = null
                 )
 
                 (it.key to videoPlayback)

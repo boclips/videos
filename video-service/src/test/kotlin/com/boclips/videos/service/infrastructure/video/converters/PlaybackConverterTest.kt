@@ -22,7 +22,8 @@ class PlaybackConverterTest {
             referenceId = "1234",
             duration = Duration.ofSeconds(100),
             downloadUrl = "download",
-            assets = setOf(VideoFactory.createVideoAsset())
+            assets = setOf(VideoFactory.createVideoAsset()),
+            originalDimensions = Dimensions(width = 320, height = 480)
         )
 
         val playbackDocument: PlaybackDocument = PlaybackConverter.toDocument(originalPlayback)
@@ -33,6 +34,8 @@ class PlaybackConverterTest {
         assertThat(playbackDocument.duration).isEqualTo(100)
         assertThat(playbackDocument.lastVerified).isNotNull()
         assertThat(playbackDocument.assets).hasSize(1)
+        assertThat(playbackDocument.originalWidth).isEqualTo(320)
+        assertThat(playbackDocument.originalHeight).isEqualTo(480)
     }
 
     @Test
@@ -50,10 +53,13 @@ class PlaybackConverterTest {
                     height = 300,
                     bitrateKbps = 400
                 )
-            )
+            ),
+            originalWidth = 200,
+            originalHeight = 300
         )
 
         val playback = PlaybackConverter.toPlayback(document) as VideoPlayback.StreamPlayback
+
         assertThat(playback.id.value).isEqualTo("entry_id_1234")
         assertThat(playback.referenceId).isEqualTo("1234")
         assertThat(playback.downloadUrl).isEqualTo("download")
@@ -66,6 +72,22 @@ class PlaybackConverterTest {
                 bitrateKbps = 400
             )
         )
+        assertThat(playback.originalDimensions?.height).isEqualTo(300)
+        assertThat(playback.originalDimensions?.width).isEqualTo(200)
+    }
+
+    @Test
+    fun `converting from Kaltura document to a playback when no original dimensions`() {
+        val document = TestFactories.createKalturaPlaybackDocument(
+            originalWidth = null,
+            originalHeight = null,
+            downloadUrl = "download-url",
+            duration = 10
+        )
+
+        val playback = PlaybackConverter.toPlayback(document) as VideoPlayback.StreamPlayback
+
+        assertThat(playback.originalDimensions).isNull()
     }
 
     @Test

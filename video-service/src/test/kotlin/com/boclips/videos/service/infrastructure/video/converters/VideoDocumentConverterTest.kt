@@ -20,7 +20,7 @@ import java.util.Locale
 class VideoDocumentConverterTest {
     @Test
     fun `converts a video to document to video`() {
-        val originalAsset: Video = TestFactories.createVideo(
+        val originalVideo: Video = TestFactories.createVideo(
             videoId = "5c1786db5236de0001d77747",
             title = "the title",
             description = "the description",
@@ -30,6 +30,7 @@ class VideoDocumentConverterTest {
                 contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                 name = "Some name"
             ),
+            playback = TestFactories.createKalturaPlayback(),
             videoReference = "video-123",
             type = ContentType.NEWS,
             keywords = listOf("keyword1", "keyword2"),
@@ -60,10 +61,10 @@ class VideoDocumentConverterTest {
             subjectsWereSetManually = false
         )
 
-        val document = VideoDocumentConverter.toVideoDocument(originalAsset)
-        val reconvertedAsset = VideoDocumentConverter.toVideo(document)
+        val document = VideoDocumentConverter.toVideoDocument(originalVideo)
+        val recoveredVideo = VideoDocumentConverter.toVideo(document)
 
-        assertThat(reconvertedAsset).isEqualTo(originalAsset)
+        assertThat(recoveredVideo).isEqualTo(originalVideo)
     }
 
     @Test

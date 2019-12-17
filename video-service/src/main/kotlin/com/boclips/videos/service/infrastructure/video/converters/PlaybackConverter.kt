@@ -27,7 +27,9 @@ object PlaybackConverter : KLogging() {
                 thumbnailUrl = null,
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt(),
-                assets = videoPlayback.assets?.map { convertAssetsToDocument(it) }
+                assets = videoPlayback.assets?.map { convertAssetsToDocument(it) },
+                originalWidth = videoPlayback.originalDimensions?.width,
+                originalHeight = videoPlayback.originalDimensions?.height
             )
             is YoutubePlayback -> PlaybackDocument(
                 id = videoPlayback.id.value,
@@ -37,7 +39,9 @@ object PlaybackConverter : KLogging() {
                 downloadUrl = null,
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt(),
-                assets = null
+                assets = null,
+                originalWidth = null,
+                originalHeight = null
             )
             else -> throw IllegalStateException("Stream class ${videoPlayback.javaClass.name} not supported.")
         }
@@ -63,7 +67,12 @@ object PlaybackConverter : KLogging() {
                     referenceId = playbackDocument.id,
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     downloadUrl = playbackDocument.downloadUrl!!,
-                    assets = playbackDocument.assets?.map { convertDocumentToAsset(it) }?.toSet()
+                    assets = playbackDocument.assets?.map { convertDocumentToAsset(it) }?.toSet(),
+                    originalDimensions = convertOriginalDimensions(
+                        width = playbackDocument.originalWidth,
+                        height = playbackDocument.originalHeight
+
+                    )
                 )
             }
             PlaybackDocument.PLAYBACK_TYPE_YOUTUBE -> {
@@ -83,6 +92,13 @@ object PlaybackConverter : KLogging() {
             }
             else -> throw java.lang.IllegalStateException("Could not find video provider ${playbackDocument.type}")
         }
+    }
+
+    private fun convertOriginalDimensions(width: Int?, height: Int?): Dimensions? {
+        if (width != null && height != null) {
+            return Dimensions(width, height)
+        }
+        return null
     }
 
     private fun convertAssetsToDocument(asset: VideoAsset): VideoAssetDocument {

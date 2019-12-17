@@ -18,7 +18,9 @@ data class PlaybackDocument(
     val downloadUrl: String?,
     val lastVerified: Instant?,
     val duration: Int?,
-    val assets: List<VideoAssetDocument>?
+    val assets: List<VideoAssetDocument>?,
+    val originalWidth: Int?,
+    val originalHeight: Int?
 ) {
 
     companion object {

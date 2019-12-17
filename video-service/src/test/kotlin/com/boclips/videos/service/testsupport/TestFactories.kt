@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.RequestContext
 import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -18,7 +19,6 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -33,6 +33,7 @@ import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -42,7 +43,6 @@ import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
-import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.presentation.CollectionsController
@@ -158,14 +158,16 @@ object TestFactories {
         assets: Set<VideoAsset>? = emptySet(),
         duration: Duration = Duration.ofSeconds(11),
         downloadUrl: String = "kaltura-download",
-        referenceId: String = "555"
+        referenceId: String = "555",
+        originalDimensions: Dimensions = Dimensions(width = 360, height = 480)
     ): StreamPlayback {
         return StreamPlayback(
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = entryId),
             referenceId = referenceId,
             downloadUrl = downloadUrl,
             duration = duration,
-            assets = assets
+            assets = assets,
+            originalDimensions = originalDimensions
         )
     }
 
@@ -384,6 +386,8 @@ object TestFactories {
         downloadUrl: String? = null,
         lastVerified: Instant? = null,
         duration: Int? = null,
+        originalWidth: Int? = null,
+        originalHeight: Int? = null,
         assets: List<VideoAssetDocument>? = emptyList()
     ): PlaybackDocument {
         return PlaybackDocument(
@@ -394,6 +398,8 @@ object TestFactories {
             downloadUrl = downloadUrl,
             lastVerified = lastVerified,
             duration = duration,
+            originalWidth = originalWidth,
+            originalHeight = originalHeight,
             assets = assets
         )
     }
@@ -410,6 +416,8 @@ object TestFactories {
             downloadUrl = null,
             lastVerified = null,
             duration = duration,
+            originalWidth = null,
+            originalHeight = null,
             assets = null
         )
     }
@@ -432,9 +440,10 @@ object TestFactories {
 }
 
 object UserRatingFactory {
-    fun sample(rating: Int = 3, userId: UserId = UserId(
-        "me"
-    )
+    fun sample(
+        rating: Int = 3, userId: UserId = UserId(
+            "me"
+        )
     ): UserRating =
         UserRating(rating, userId)
 }
@@ -571,11 +580,13 @@ object AccessRulesFactory {
         sample(collectionAccessRule = CollectionAccessRule.everything())
 
     fun asOwner(ownerId: String): AccessRules =
-        sample(collectionAccessRule = CollectionAccessRule.asOwner(
-            UserId(
-                ownerId
+        sample(
+            collectionAccessRule = CollectionAccessRule.asOwner(
+                UserId(
+                    ownerId
+                )
             )
-        ))
+        )
 }
 
 object SecurityUserFactory {

@@ -95,14 +95,13 @@ object VideoFactory {
     fun createVideoAsset(
         id: VideoAssetId = VideoAssetId("1"),
         sizeKb: Int = 1024,
-        width: Int = 640,
-        height: Int = 640,
+        dimensions: Dimensions = Dimensions(width = 360, height = 480),
         bitrateKbps: Int = 128
     ): VideoAsset {
         return VideoAsset(
             id = id,
             sizeKb = sizeKb,
-            dimensions = Dimensions(width = width, height = height),
+            dimensions = dimensions,
             bitrateKbps = bitrateKbps
         )
     }
@@ -131,7 +130,9 @@ object VideoFactory {
         downloadUrl: String? = null,
         lastVerified: Instant? = null,
         duration: Int? = null,
-        assets: List<VideoAssetDocument> = emptyList()
+        assets: List<VideoAssetDocument> = emptyList(),
+        originalWidth: Int? = null,
+        originalHeight: Int? = null
     ): PlaybackDocument {
         return PlaybackDocument(
             type = type,
@@ -141,7 +142,9 @@ object VideoFactory {
             downloadUrl = downloadUrl,
             lastVerified = lastVerified,
             duration = duration,
-            assets = assets
+            assets = assets,
+            originalHeight = originalHeight,
+            originalWidth = originalWidth
         )
     }
 }
