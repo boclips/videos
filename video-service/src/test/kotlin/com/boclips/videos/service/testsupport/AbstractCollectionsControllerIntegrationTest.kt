@@ -3,7 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.users.client.model.contract.SelectedCollectionsContract
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.jayway.jsonpath.JsonPath
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired

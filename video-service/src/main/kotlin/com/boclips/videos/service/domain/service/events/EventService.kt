@@ -27,7 +27,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.EventConverter
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import java.time.ZonedDateTime
 
 class EventService(val eventBus: EventBus) {

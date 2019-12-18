@@ -11,8 +11,8 @@ import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedEx
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.mongodb.MongoClient

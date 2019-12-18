@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service.collection
+package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId

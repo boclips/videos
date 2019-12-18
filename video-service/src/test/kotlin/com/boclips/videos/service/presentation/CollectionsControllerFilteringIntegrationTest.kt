@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.UserFactory

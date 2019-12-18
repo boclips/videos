@@ -7,8 +7,8 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
