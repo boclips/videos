@@ -79,7 +79,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2017-02-11",
             duration = Duration.ofSeconds(56),
             contentProvider = "enabled-cp2",
-            ageRange = UnboundedAgeRange
+            ageRange = BoundedAgeRange(min = 7, max = 10)
         ).value
 
         disabledVideoId = saveVideo(

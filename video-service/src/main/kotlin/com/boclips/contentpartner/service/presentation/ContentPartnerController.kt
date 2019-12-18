@@ -70,12 +70,20 @@ class ContentPartnerController(
         @RequestParam("accreditedToYtChannelId", required = false) accreditedToYtChannelId: String?
     ): Resources<Resource<ContentPartnerResource>> {
         val user = getCurrentUser()
-        return fetchContentPartners(
-            user = user,
+        val contentPartners = fetchContentPartners(
             name = name,
             official = official,
             accreditedToYtChannelId = accreditedToYtChannelId
         )
+
+        val resources = contentPartners.map {
+            Resource(
+                ContentPartnerToResourceConverter.convert(it, user),
+                contentPartnersLinkBuilder.self(it.contentPartnerId.value)
+            )
+        }
+
+        return Resources(resources)
     }
 
     @GetMapping("/{id}")

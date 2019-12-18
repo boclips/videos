@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.testsupport.UserFactory
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -11,13 +10,10 @@ class GetContentPartnersTest : AbstractSpringIntegrationTest() {
         val contentPartner1 = saveContentPartner(name = "hello")
         saveContentPartner(name = "good night")
 
-        val user = UserFactory.sample()
-        val contentPartners = getContentPartners.invoke(user = user, name = "hello", official = null)
+        val contentPartners = getContentPartners.invoke(name = "hello", official = null)
 
-        val returnedContentPartnerIds = contentPartners.content.map { it.content.id }
-        assertThat(returnedContentPartnerIds).containsExactly(
-            contentPartner1.contentPartnerId.value
-        )
+        val returnedContentPartnerIds = contentPartners.map { it.contentPartnerId }
+        assertThat(returnedContentPartnerIds).containsExactly(contentPartner1.contentPartnerId)
     }
 
     @Test
@@ -25,11 +21,10 @@ class GetContentPartnersTest : AbstractSpringIntegrationTest() {
         saveContentPartner(name = "Youtube CP Name", accreditedToYtChannel = "1234")
         val officialContentPartner = saveContentPartner(name = "CP Name", accreditedToYtChannel = null)
 
-        val user = UserFactory.sample()
-        val contentPartners = getContentPartners.invoke(user = user, official = true)
+        val contentPartners = getContentPartners.invoke(official = true)
 
-        val returnedContentPartnerIds = contentPartners.content.map { it.content.id }
-        assertThat(returnedContentPartnerIds).containsExactly(officialContentPartner.contentPartnerId.value)
+        val returnedContentPartnerIds = contentPartners.map { it.contentPartnerId }
+        assertThat(returnedContentPartnerIds).containsExactly(officialContentPartner.contentPartnerId)
     }
 
     @Test
@@ -37,10 +32,9 @@ class GetContentPartnersTest : AbstractSpringIntegrationTest() {
         saveContentPartner(name = "cp-1", accreditedToYtChannel = "1236")
         val contentPartnerWithYtId = saveContentPartner(name = "cp-2", accreditedToYtChannel = "1234")
 
-        val user = UserFactory.sample()
-        val contentPartners = getContentPartners.invoke(user = user, accreditedToYtChannelId = "1234")
+        val contentPartners = getContentPartners.invoke(accreditedToYtChannelId = "1234")
 
-        val returnedContentPartnerIds = contentPartners.content.map { it.content.id }
-        assertThat(returnedContentPartnerIds).containsExactly(contentPartnerWithYtId.contentPartnerId.value)
+        val returnedContentPartnerIds = contentPartners.map { it.contentPartnerId }
+        assertThat(returnedContentPartnerIds).containsExactly(contentPartnerWithYtId.contentPartnerId)
     }
 }

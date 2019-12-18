@@ -6,7 +6,6 @@ import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.eventbus.events.video.VideoSubjectClassified
@@ -238,19 +237,8 @@ abstract class AbstractSpringIntegrationTest {
         ),
         subjectIds: Set<String> = setOf()
     ): VideoId {
-        val retrievedContentPartnerId = try {
-            createContentPartner(
-                ContentPartnerRequest(
-                    name = contentProvider,
-                    distributionMethods = distributionMethods
-                )
-            ).contentPartnerId.value
-        } catch (e: ContentPartnerConflictException) {
-            getContentPartners.invoke(
-                user = com.boclips.contentpartner.service.testsupport.UserFactory.sample(),
-                name = contentProvider
-            ).firstOrNull()?.content?.id
-        }
+        val retrievedContentPartnerId =
+            saveContentPartner(name = contentProvider, distributionMethods = distributionMethods).contentPartnerId.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -366,15 +354,19 @@ abstract class AbstractSpringIntegrationTest {
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null
     ): ContentPartner {
-        val createdContentPartner = createContentPartner(
-            com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerRequest(
-                name = name,
-                ageRange = ageRange,
-                accreditedToYtChannel = accreditedToYtChannel,
-                distributionMethods = distributionMethods,
-                currency = currency
+        val createdContentPartner = try {
+            createContentPartner(
+                com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerRequest(
+                    name = name,
+                    ageRange = ageRange,
+                    accreditedToYtChannel = accreditedToYtChannel,
+                    distributionMethods = distributionMethods,
+                    currency = currency
+                )
             )
-        )
+        } catch (e: ContentPartnerConflictException) {
+            getContentPartners.invoke(name = name).first()
+        }
 
         fakeEventBus.clearState()
 

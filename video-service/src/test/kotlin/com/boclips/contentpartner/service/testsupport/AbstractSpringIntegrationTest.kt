@@ -180,12 +180,9 @@ abstract class AbstractSpringIntegrationTest {
                     name = contentProvider,
                     distributionMethods = distributionMethods
                 )
-            ).contentPartnerId.value
+            ).contentPartnerId
         } catch (e: ContentPartnerConflictException) {
-            getContentPartners.invoke(
-                user = UserFactory.sample(),
-                name = contentProvider
-            ).firstOrNull()?.content?.id
+            getContentPartners.invoke(name = contentProvider).firstOrNull()!!.contentPartnerId
         }
 
         when (playbackId.type) {
@@ -206,7 +203,7 @@ abstract class AbstractSpringIntegrationTest {
 
         val video = createVideo(
             CreateVideoRequest(
-                providerId = contentProviderId ?: retrievedContentPartnerId,
+                providerId = contentProviderId ?: retrievedContentPartnerId.value,
                 providerVideoId = contentProviderVideoId,
                 title = title,
                 description = description,
