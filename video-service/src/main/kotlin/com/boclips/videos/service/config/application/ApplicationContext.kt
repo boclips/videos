@@ -37,17 +37,17 @@ import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
-import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.ShareVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.VideoTranscriptService
+import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
+import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
+import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
@@ -60,8 +60,9 @@ import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.ContentPartnerService
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionWriteService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
@@ -89,6 +90,7 @@ class ApplicationContext(
     val playbackRepository: PlaybackRepository,
     val legacyVideoSearchService: LegacyVideoSearchService,
     val collectionReadService: CollectionReadService,
+    val collectionWriteService: CollectionWriteService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
     val eventBus: EventBus,
@@ -167,8 +169,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun createCollection(addVideoToCollection: AddVideoToCollection): CreateCollection {
-        return CreateCollection(collectionRepository, addVideoToCollection, collectionSearchService, collectionReadService)
+    fun createCollection(): CreateCollection {
+        return CreateCollection(collectionWriteService, collectionSearchService)
     }
 
     @Bean

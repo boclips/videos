@@ -4,11 +4,11 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -444,7 +444,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection2 = sampleCollection()
             val collection3 = sampleCollection()
 
-            val videoId = VideoId(value = ObjectId().toHexString())
+            val videoId = TestFactories.createVideoId()
 
             collectionRepository.update(
                 CollectionUpdateCommand.ChangeVisibility(
@@ -462,6 +462,13 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     videoId = videoId,
                     user = UserFactory.sample(id = "user2")
                 )
+
+                // TODO: Bulk adding videos to the same collection does not work :(
+                // ,CollectionUpdateCommand.AddVideoToCollection(
+                //     collectionId = collection3.id,
+                //     videoId = secondVideoId,
+                //     user = UserFactory.sample(id = "user2")
+                // )
             )
 
             assertThat(collectionRepository.find(collection.id)!!.isPublic).isTrue()
