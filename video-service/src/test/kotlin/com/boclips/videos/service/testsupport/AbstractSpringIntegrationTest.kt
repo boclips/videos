@@ -247,8 +247,8 @@ abstract class AbstractSpringIntegrationTest {
             )
             YOUTUBE -> {
                 fakeYoutubePlaybackProvider.addVideo(
-                    playbackId.value,
-                    "https://youtube.com/thumb/${playbackId.value}.png",
+                    youtubeId = playbackId.value,
+                    thumbnailUrl = "https://youtube.com/thumb/${playbackId.value}.png",
                     duration = duration
                 )
 

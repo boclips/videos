@@ -148,8 +148,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `filters out non classroom results when filter param set`() {
-        val excludedVideoId =
-            saveVideo(title = "Non educational video about elephants", type = ContentType.STOCK)
+        val excludedVideoId = saveVideo(title = "Non educational video about elephants", type = ContentType.STOCK)
 
         mockMvc.perform(get("/v1/videos?query=elephant&include_tag=classroom").asTeacher())
             .andExpect(status().isOk)
@@ -253,14 +252,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns video with correct source`() {
         mockMvc.perform(get("/v1/videos?query=elephants&source=boclips").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
-    }
-
-    @Test
-    fun `returns video within specified age range`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&age_range_min=5&age_range_max=11").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))

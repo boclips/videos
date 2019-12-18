@@ -57,23 +57,6 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                 }.filter { entry ->
                     (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
                 }.filter { entry ->
-                    if (query.ageRangeMin == null && query.ageRangeMax == null) {
-                        true
-                    } else if (query.ageRangeMin == null) {
-                        entry.value.ageRangeMin?.let { videoMin ->
-                            query.ageRangeMax != null && videoMin <= query.ageRangeMax
-                        } ?: false
-                    } else {
-                        entry.value.ageRangeMin?.let { videoMin ->
-                            val videoMax = entry.value.ageRangeMax
-                            val queryMin = query.ageRangeMin
-                            val queryMax = query.ageRangeMax
-
-                            compareAgeRanges(videoMin, queryMin, videoMax, queryMax)
-                        } ?: false
-                    }
-
-                }.filter { entry ->
                     if (query.subjectIds.isEmpty()) {
                         true
                     } else {
@@ -92,14 +75,5 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                 }
                 .map { video -> video.key }
         }
-    }
-
-    private fun compareAgeRanges(videoMin: Int, queryMin: Int, videoMax: Int?, queryMax: Int?): Boolean {
-        return (
-            videoMin <= queryMin
-                && (videoMax == null || videoMax >= queryMin)
-                || videoMin >= queryMin
-                && (videoMax == null || queryMax == null || videoMin <= queryMax)
-            )
     }
 }
