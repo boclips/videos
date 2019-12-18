@@ -168,7 +168,7 @@ class ApplicationContext(
 
     @Bean
     fun createCollection(addVideoToCollection: AddVideoToCollection): CreateCollection {
-        return CreateCollection(collectionRepository, addVideoToCollection, collectionSearchService)
+        return CreateCollection(collectionRepository, addVideoToCollection, collectionSearchService, collectionService)
     }
 
     @Bean
