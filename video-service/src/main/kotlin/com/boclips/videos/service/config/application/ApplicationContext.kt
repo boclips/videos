@@ -61,7 +61,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
@@ -88,7 +88,7 @@ class ApplicationContext(
     val collectionSearchService: CollectionSearchService,
     val playbackRepository: PlaybackRepository,
     val legacyVideoSearchService: LegacyVideoSearchService,
-    val collectionService: CollectionService,
+    val collectionReadService: CollectionReadService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
     val eventBus: EventBus,
@@ -168,7 +168,7 @@ class ApplicationContext(
 
     @Bean
     fun createCollection(addVideoToCollection: AddVideoToCollection): CreateCollection {
-        return CreateCollection(collectionRepository, addVideoToCollection, collectionSearchService, collectionService)
+        return CreateCollection(collectionRepository, addVideoToCollection, collectionSearchService, collectionReadService)
     }
 
     @Bean
@@ -184,7 +184,7 @@ class ApplicationContext(
                 AttachmentToResourceConverter(attachmentsLinkBuilder),
                 videoService
             ),
-            collectionService
+            collectionReadService
         )
     }
 
@@ -197,7 +197,7 @@ class ApplicationContext(
         collectionFilterAssembler: CollectionSearchQueryAssembler
     ): GetCollections {
         return GetCollections(
-            collectionService,
+            collectionReadService,
             CollectionResourceFactory(
                 VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
                 SubjectToResourceConverter(),
@@ -213,12 +213,12 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionRepository, collectionService)
+        return AddVideoToCollection(collectionRepository, collectionReadService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionRepository, collectionService)
+        return RemoveVideoFromCollection(collectionRepository, collectionReadService)
     }
 
     @Bean
@@ -227,23 +227,23 @@ class ApplicationContext(
             collectionSearchService,
             collectionRepository,
             collectionUpdatesConverter,
-            collectionService
+            collectionReadService
         )
     }
 
     @Bean
     fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionRepository, collectionSearchService, collectionService)
+        return BookmarkCollection(collectionRepository, collectionSearchService, collectionReadService)
     }
 
     @Bean
     fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionRepository, collectionSearchService, collectionService)
+        return UnbookmarkCollection(collectionRepository, collectionSearchService, collectionReadService)
     }
 
     @Bean
     fun deleteCollection(): DeleteCollection {
-        return DeleteCollection(collectionRepository, collectionSearchService, collectionService)
+        return DeleteCollection(collectionRepository, collectionSearchService, collectionReadService)
     }
 
     @Bean

@@ -5,15 +5,15 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionReadService
 
 class DeleteCollection(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService,
-    private val collectionService: CollectionService
+    private val collectionReadService: CollectionReadService
 ) {
     operator fun invoke(collectionId: String, user: User) {
-        collectionService.findWritable(CollectionId(value = collectionId), user = user)
+        collectionReadService.findWritable(CollectionId(value = collectionId), user = user)
             ?: throw CollectionNotFoundException(collectionId)
 
         collectionRepository.delete(CollectionId(collectionId), user)

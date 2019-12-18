@@ -14,7 +14,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
-class CollectionService(
+class CollectionReadService(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService,
     private val collectionAccessService: CollectionAccessService

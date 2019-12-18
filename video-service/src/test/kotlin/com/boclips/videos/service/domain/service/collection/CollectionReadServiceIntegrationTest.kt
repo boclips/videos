@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest() {
+internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var collectionService: CollectionService
+    lateinit var collectionReadService: CollectionReadService
 
     @Nested
     inner class SearchingForCollections {
@@ -35,7 +35,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
                 )
             )
 
-            val pagedCollectionResult = collectionService.search(
+            val pagedCollectionResult = collectionReadService.search(
                 query = CollectionSearchQuery(
                     text = "a collection",
                     pageSize = 1,
@@ -70,7 +70,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
         fun `can find a collection by ID`() {
             val videoId = TestFactories.createVideoId()
             val collectionId = saveCollection(videos = listOf(videoId.value), public = true)
-            val collection = collectionService.find(
+            val collection = collectionReadService.find(
                 collectionId,
                 UserFactory.sample()
             )!!
@@ -92,7 +92,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
                 )
             )
 
-            val collection = collectionService.find(
+            val collection = collectionReadService.find(
                 collectionId, UserFactory.sample(accessRulesSupplier = {
                     AccessRulesFactory.sample(
                         videoAccessRule = VideoAccessRule.SpecificIds(
@@ -112,7 +112,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `cannot find missing collection by ID`() {
             assertThat(
-                collectionService.find(
+                collectionReadService.find(
                     CollectionId("nonexistent"),
                     UserFactory.sample()
                 )
@@ -123,7 +123,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
         fun `cannot find collection that access rules do not permit`() {
             val collectionId = saveCollection()
             assertThat(
-                collectionService.find(
+                collectionReadService.find(
                     collectionId, UserFactory.sample(accessRulesSupplier = {
                         AccessRulesFactory.sample(
                             collectionAccessRule = CollectionAccessRule.specificIds(
@@ -141,7 +141,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `can find collection that we have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionService.findWritable(
+            val collection = collectionReadService.findWritable(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = true)
             )!!
@@ -151,7 +151,7 @@ internal class CollectionServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `cannot find collection if we don't have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionService.findWritable(
+            val collection = collectionReadService.findWritable(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = false)
             )

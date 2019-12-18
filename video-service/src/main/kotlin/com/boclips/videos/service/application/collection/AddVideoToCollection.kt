@@ -5,18 +5,18 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
 class AddVideoToCollection(
     private val collectionRepository: CollectionRepository,
-    private val collectionService: CollectionService
+    private val collectionReadService: CollectionReadService
 ) {
     operator fun invoke(collectionId: String?, videoId: String?, requester: User) {
         collectionId ?: throw Exception("Collection id cannot be null")
         videoId ?: throw Exception("Video id cannot be null")
 
-        collectionService.findWritable(CollectionId(value = collectionId), user = requester)
+        collectionReadService.findWritable(CollectionId(value = collectionId), user = requester)
             ?: throw CollectionNotFoundException(collectionId)
 
         collectionRepository.update(

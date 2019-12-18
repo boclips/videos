@@ -6,16 +6,16 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 
 class BookmarkCollection(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService,
-    private val collectionService: CollectionService
+    private val collectionReadService: CollectionReadService
 ) {
     operator fun invoke(collectionId: String, user: User) {
-        val collection = collectionService.find(CollectionId(value = collectionId), user = user)
+        val collection = collectionReadService.find(CollectionId(value = collectionId), user = user)
             ?: throw CollectionNotFoundException(collectionId)
 
         if (collection.owner == user.id) throw CollectionIllegalOperationException(

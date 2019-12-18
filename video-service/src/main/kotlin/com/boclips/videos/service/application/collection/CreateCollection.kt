@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 
@@ -15,7 +15,7 @@ class CreateCollection(
     private val collectionRepository: CollectionRepository,
     private val addVideoToCollection: AddVideoToCollection,
     private val collectionSearchService: CollectionSearchService,
-    private val collectionService: CollectionService
+    private val collectionReadService: CollectionReadService
 ) {
     operator fun invoke(createCollectionRequest: CreateCollectionRequest, requester: User): Collection {
         val title = getOrThrow(createCollectionRequest.title, "title")
@@ -36,7 +36,7 @@ class CreateCollection(
 
         collectionSearchService.upsert(sequenceOf(collection))
 
-        return collectionService.find(collection.id, requester)
+        return collectionReadService.find(collection.id, requester)
             ?: throw CollectionCreationException("Cannot find created collection")
     }
 }

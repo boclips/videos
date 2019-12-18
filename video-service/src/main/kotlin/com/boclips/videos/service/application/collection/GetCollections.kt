@@ -4,14 +4,14 @@ import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.presentation.collections.CollectionResource
 import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
 
 class GetCollections(
-    private val collectionService: CollectionService,
+    private val collectionReadService: CollectionReadService,
     private val collectionResourceFactory: CollectionResourceFactory,
     private val collectionSearchQueryAssembler: CollectionSearchQueryAssembler
 ) {
@@ -44,7 +44,7 @@ class GetCollections(
             user = user
         )
 
-        return collectionService.search(assembledQuery, user.accessRules)
+        return collectionReadService.search(assembledQuery, user.accessRules)
     }
 
     private fun assembleResourcesPage(

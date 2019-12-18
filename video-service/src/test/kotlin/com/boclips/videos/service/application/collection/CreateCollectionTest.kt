@@ -5,7 +5,7 @@ import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.service.collection.CollectionService
+import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories
@@ -23,7 +23,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRepository: CollectionRepository
 
     @Autowired
-    lateinit var collectionService: CollectionService
+    lateinit var collectionReadService: CollectionReadService
 
     @Test
     fun `makes searchable if public`() {
@@ -34,7 +34,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
-        val collections = collectionService.search(
+        val collections = collectionReadService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
@@ -64,7 +64,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
-        val collections = collectionService.search(
+        val collections = collectionReadService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
@@ -93,7 +93,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
-        val collections = collectionService.search(
+        val collections = collectionReadService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
