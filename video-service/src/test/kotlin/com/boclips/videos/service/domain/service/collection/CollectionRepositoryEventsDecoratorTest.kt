@@ -4,6 +4,7 @@ import com.boclips.eventbus.events.collection.CollectionCreated
 import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory

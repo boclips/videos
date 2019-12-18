@@ -1,7 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.videos.service.domain.model.User
-import com.boclips.videos.service.domain.service.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.collection.CreateCollectionCommand
 

@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.subject
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.service.collection.CollectionFilter
+import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
