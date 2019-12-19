@@ -4,16 +4,15 @@ import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.UnboundedAgeRange
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.eventbus.events.video.VideosUpdated
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -78,28 +77,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `videos get updated`() {
-        val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions test")
-        updateContentPartner(
-            contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = ContentPartnerRequest(
-                name = "My better content partner",
-                ageRange = AgeRangeRequest(min = 9, max = 14),
-                distributionMethods = setOf(
-                    DistributionMethodResource.STREAM,
-                    DistributionMethodResource.DOWNLOAD
-                ),
-                legalRestrictions = LegalRestrictionsRequest(id = legalRestrictionsId.value)
-            )
-        )
-
-        val updatedVideo = videoService.getPlayableVideo(videoId = videoId, videoAccessRule = VideoAccessRule.Everything)
-
-        assertThat(updatedVideo.legalRestrictions).isEqualTo("Legal restrictions test")
-    }
-
-    @Test
-    fun `event gets published`() {
+    fun `emits event`() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             request = ContentPartnerRequest(
@@ -110,8 +88,11 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(fakeEventBus.countEventsOfType(VideosUpdated::class.java)).isEqualTo(1)
-        assertThat(fakeEventBus.getEventsOfType(VideosUpdated::class.java).first().videos).hasSize(1)
+        assertThat(fakeEventBus.countEventsOfType(ContentPartnerUpdated::class.java)).isEqualTo(1)
+
+        val event = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java)
+
+        assertThat(event.contentPartner.id).isNotNull
     }
 
     @Test

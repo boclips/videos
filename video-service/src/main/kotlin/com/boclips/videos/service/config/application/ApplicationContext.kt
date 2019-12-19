@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.domain.model.LegalRestrictionsReposito
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.UserServiceClient
+import com.boclips.videos.service.application.ContentPartnerUpdated
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CollectionSearchQueryAssembler
@@ -374,6 +375,11 @@ class ApplicationContext(
             videoSearchService,
             legacyVideoSearchService
         )
+    }
+
+    @Bean
+    fun contentPartnerUpdated(): ContentPartnerUpdated {
+        return ContentPartnerUpdated(videoRepository)
     }
 
     @Bean

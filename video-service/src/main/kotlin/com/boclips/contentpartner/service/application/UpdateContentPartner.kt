@@ -6,7 +6,8 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,20 +15,19 @@ class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val contentPartnerUpdatesConverter: ContentPartnerUpdatesConverter,
     private val createLegalRestrictions: CreateLegalRestrictions,
-    private val videoService: VideoService
+    private val eventBus: EventBus
 ) {
     operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
 
         request.legalRestrictions?.let { legalRestrictionsRequest ->
-            if(legalRestrictionsRequest.id == "") {
+            if (legalRestrictionsRequest.id.isNullOrEmpty()) {
                 val legalRestrictions = createLegalRestrictions(legalRestrictionsRequest.text)
                 request.legalRestrictions = LegalRestrictionsRequest(id = legalRestrictions.id)
             }
         }
 
         val updateCommands = contentPartnerUpdatesConverter.convert(id, request)
-
         contentPartnerRepository.update(updateCommands)
 
         val contentPartner = contentPartnerRepository.findById(id)
@@ -35,7 +35,23 @@ class UpdateContentPartner(
                 "Could not find content partner: ${id.value}"
             )
 
-        videoService.updateContentPartnerInVideos(contentPartner)
+        eventBus.publish(
+            ContentPartnerUpdated.builder()
+                .contentPartner(
+                    com.boclips.eventbus.domain.contentpartner.ContentPartner.builder()
+                        .id(com.boclips.eventbus.domain.contentpartner.ContentPartnerId(contentPartner.contentPartnerId.value))
+                        .name(contentPartner.name)
+                        .ageRange(
+                            com.boclips.eventbus.domain.AgeRange.builder()
+                                .min(contentPartner.ageRange.min())
+                                .max(contentPartner.ageRange.max())
+                                .build()
+                        )
+                        .legalRestrictions(contentPartner.legalRestrictions?.text)
+                        .build()
+                )
+                .build()
+        )
 
         return contentPartner
     }

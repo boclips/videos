@@ -7,10 +7,8 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
-import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -103,44 +101,6 @@ class VideoService(
         }
 
         return videoRepository.create(videoToBeCreated.copy(ageRange = newAgeRange))
-    }
-
-    //TODO Event Interface
-    fun updateContentPartnerInVideos(contentPartner: com.boclips.contentpartner.service.domain.model.ContentPartner) {
-        logger.info { "Starting updating videos for content partner: $contentPartner" }
-
-        val contentPartnerId =
-            com.boclips.videos.service.domain.model.video.ContentPartnerId(value = contentPartner.contentPartnerId.value)
-
-        videoRepository.streamUpdate(
-            VideoFilter.ContentPartnerIdIs(
-                contentPartnerId = contentPartnerId
-            )
-        ) { videos ->
-            videos.flatMap { video ->
-                listOfNotNull(
-                    VideoUpdateCommand.ReplaceContentPartner(
-                        videoId = video.videoId,
-                        contentPartner = ContentPartner(
-                            contentPartnerId = contentPartnerId,
-                            name = contentPartner.name
-                        )
-                    ),
-                    VideoUpdateCommand.ReplaceAgeRange(
-                        videoId = video.videoId,
-                        ageRange = AgeRange.bounded(contentPartner.ageRange.min(), contentPartner.ageRange.max())
-                    ),
-                    contentPartner.legalRestrictions?.let {
-                        VideoUpdateCommand.ReplaceLegalRestrictions(
-                            videoId = video.videoId,
-                            legalRestrictions = contentPartner.legalRestrictions
-                        )
-                    }
-                )
-            }
-        }
-
-        logger.info { "Finished updating videos for content partner: $contentPartner" }
     }
 
     private fun getPlayableVideo(videoId: VideoId): Video {

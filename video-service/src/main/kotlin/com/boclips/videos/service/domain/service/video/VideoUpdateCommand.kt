@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
@@ -26,7 +25,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceTag(videoId: VideoId, val tag: UserTag) : VideoUpdateCommand(videoId)
     class ReplaceTitle(videoId: VideoId, val title: String) : VideoUpdateCommand(videoId)
     class ReplaceDescription(videoId: VideoId, val description: String) : VideoUpdateCommand(videoId)
-    class ReplaceLegalRestrictions(videoId: VideoId, val legalRestrictions: LegalRestrictions): VideoUpdateCommand(videoId)
+    class ReplaceLegalRestrictions(videoId: VideoId, val text: String): VideoUpdateCommand(videoId)
     class ReplacePromoted(videoId: VideoId, val promoted: Boolean): VideoUpdateCommand(videoId)
     class ReplaceSubjectsWereSetManually(videoId: VideoId, val subjectsWereSetManually: Boolean): VideoUpdateCommand(videoId)
     class AddShareCode(videoId: VideoId, val shareCode: String): VideoUpdateCommand(videoId)

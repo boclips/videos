@@ -310,7 +310,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             }
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
-            is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.legalRestrictions.text)
+            is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.text)
             is ReplacePromoted -> set(VideoDocument::promoted, updateCommand.promoted)
             is AddShareCode -> addToSet(VideoDocument::shareCodes, updateCommand.shareCode)
             is ReplaceSubjectsWereSetManually -> set(

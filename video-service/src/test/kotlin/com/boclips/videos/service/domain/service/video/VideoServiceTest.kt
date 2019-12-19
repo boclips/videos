@@ -1,8 +1,5 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
@@ -10,7 +7,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -217,108 +213,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                         videoReference = "video-123"
                     )
                 )
-            }
-        }
-    }
-
-    @Nested
-    inner class UpdateContentPartnerInVideo {
-        @Test
-        fun `updates content partner of videos`() {
-            val contentPartner = saveContentPartner(name = "hello")
-            val video = TestFactories
-                .createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
-
-            videoService.create(video)
-
-            videoService.updateContentPartnerInVideos(
-                contentPartner = contentPartner.copy(name = "good bye")
-            )
-
-            assertThat(
-                videoService.getPlayableVideo(
-                    video.videoId,
-                    VideoAccessRule.Everything
-                ).contentPartner.name
-            ).isEqualTo("good bye")
-        }
-
-        @Test
-        fun `updates age range of videos by content partner`() {
-            val contentPartner = saveContentPartner(
-                ageRange = AgeRangeRequest(
-                    null,
-                    null
-                )
-            )
-            val video =
-                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
-            videoService.create(video)
-
-            videoService.updateContentPartnerInVideos(
-                contentPartner = contentPartner.copy(
-                    ageRange = com.boclips.contentpartner.service.domain.model.AgeRange.bounded(1, 5)
-                )
-            )
-
-            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).ageRange).isEqualTo(
-                AgeRange.bounded(1, 5)
-            )
-        }
-
-        @Test
-        fun `updates legal restrictions of videos by content partner`() {
-            val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
-            val video =
-                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
-
-            videoService.create(video)
-
-            videoService.updateContentPartnerInVideos(
-                contentPartner = contentPartner.copy(
-                    legalRestrictions = LegalRestrictions(
-                        id = LegalRestrictionsId("id"),
-                        text = "Legal restrictions test"
-                    )
-                )
-            )
-
-            assertThat(
-                videoService.getPlayableVideo(
-                    video.videoId,
-                    VideoAccessRule.Everything
-                ).legalRestrictions
-            ).isEqualTo("Legal restrictions test")
-        }
-
-        @Test
-        fun `updates multiple videos associated to a content partner`() {
-            val contentPartner = saveContentPartner(distributionMethods = DistributionMethodResource.values().toSet())
-            val videos = listOf(
-                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value)),
-                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value)),
-                TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value))
-            )
-            videos.forEach {
-                videoService.create(it)
-            }
-
-            videoService.updateContentPartnerInVideos(
-                contentPartner = contentPartner.copy(
-                    distributionMethods = setOf(DistributionMethod.STREAM),
-                    legalRestrictions = LegalRestrictions(
-                        id = LegalRestrictionsId("id"),
-                        text = "Multiple legal restrictions test"
-                    ),
-                    ageRange = com.boclips.contentpartner.service.domain.model.AgeRange.bounded(3, 9)
-                )
-            )
-
-            videos.forEach {
-                val video = videoService.getPlayableVideo(it.videoId, VideoAccessRule.Everything)
-                assertThat(video.ageRange).isEqualTo(AgeRange.bounded(3, 9))
-                assertThat(video.legalRestrictions).isEqualTo("Multiple legal restrictions test")
-
             }
         }
     }
