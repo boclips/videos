@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping("/v1/content-partners")
@@ -87,9 +88,9 @@ class ContentPartnerController(
     }
 
     @GetMapping("/{id}")
-    fun getContentPartner(@PathVariable("id") contentPartnerId: String?): Resource<ContentPartnerResource> {
+    fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): Resource<ContentPartnerResource> {
         val user = getCurrentUser()
-        return fetchContentPartner(contentPartnerId, user).let {
+        return fetchContentPartner(contentPartnerId!!, user).let {
             Resource(it, contentPartnersLinkBuilder.self(it.id))
         }
     }

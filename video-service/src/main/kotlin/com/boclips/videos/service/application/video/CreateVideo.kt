@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
-import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
@@ -36,10 +35,6 @@ class CreateVideo(
     companion object : KLogging()
 
     operator fun invoke(createRequest: CreateVideoRequest, user: User): Video {
-        if (createRequest.providerId == null) {
-            throw InvalidCreateRequestException("providerId cannot be null")
-        }
-
         val contentPartner = findContentPartner(createRequest)
             ?: throw ContentPartnerNotFoundException(
                 "Could not find content partner with id: ${createRequest.providerId}"

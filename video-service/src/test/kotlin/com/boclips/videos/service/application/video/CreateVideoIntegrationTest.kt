@@ -4,7 +4,6 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerN
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
-import com.boclips.videos.service.application.exceptions.InvalidCreateRequestException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
@@ -112,13 +111,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 ),
                 UserFactory.sample()
             )
-        }
-    }
-
-    @Test
-    fun `throws if provider id is null`() {
-        assertThrows<InvalidCreateRequestException> {
-            createVideo(TestFactories.createCreateVideoRequest(providerId = null), UserFactory.sample())
         }
     }
 

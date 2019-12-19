@@ -25,7 +25,7 @@ data class CreateVideoRequest(
 
     @field:NotBlank(message = "Video type is required")
     val videoType: String? = null,
-    
+
     val youtubeChannelId: String? = null,
     val legalRestrictions: String? = null,
     val playbackId: String? = null,
