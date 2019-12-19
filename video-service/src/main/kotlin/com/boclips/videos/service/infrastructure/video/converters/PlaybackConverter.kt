@@ -68,10 +68,10 @@ object PlaybackConverter : KLogging() {
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     downloadUrl = playbackDocument.downloadUrl!!,
                     assets = playbackDocument.assets?.map { convertDocumentToAsset(it) }?.toSet(),
+                    createdAt = null,
                     originalDimensions = convertOriginalDimensions(
                         width = playbackDocument.originalWidth,
                         height = playbackDocument.originalHeight
-
                     )
                 )
             }

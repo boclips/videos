@@ -157,6 +157,7 @@ object TestFactories {
         assets: Set<VideoAsset>? = emptySet(),
         duration: Duration = Duration.ofSeconds(11),
         downloadUrl: String = "kaltura-download",
+        createdAt: ZonedDateTime? = null,
         referenceId: String = "555",
         originalDimensions: Dimensions? = Dimensions(width = 360, height = 480)
     ): StreamPlayback {
@@ -164,6 +165,7 @@ object TestFactories {
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = entryId),
             referenceId = referenceId,
             downloadUrl = downloadUrl,
+            createdAt = createdAt,
             duration = duration,
             assets = assets,
             originalDimensions = originalDimensions

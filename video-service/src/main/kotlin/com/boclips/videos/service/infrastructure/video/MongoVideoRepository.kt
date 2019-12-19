@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
@@ -250,6 +251,22 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         return videoId
     }
 
+    private fun replacePlaybackUpdate(command: ReplacePlayback): Bson {
+        val playback = command.playback
+        val updates = mutableListOf(
+            set(VideoDocument::playback, PlaybackConverter.toDocument(playback))
+        )
+        if(playback is VideoPlayback.StreamPlayback) {
+            if(playback.createdAt != null) {
+                updates.add(
+                    set(VideoDocument::ingestedAt, playback.createdAt.toString())
+                )
+            }
+        }
+
+        return combine(*updates.toTypedArray())
+    }
+
     private fun updatedOperation(updateCommand: VideoUpdateCommand): Bson {
         return when (updateCommand) {
             is ReplaceDuration -> set(
@@ -267,7 +284,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 updateCommand.eventBus.map(TopicDocumentConverter::toDocument)
             )
             is ReplaceKeywords -> set(VideoDocument::keywords, updateCommand.keywords)
-            is ReplacePlayback -> set(VideoDocument::playback, PlaybackConverter.toDocument(updateCommand.playback))
+            is ReplacePlayback -> replacePlaybackUpdate(updateCommand)
             is AddRating -> throw IllegalStateException("cannot add rating in a single query")
             is ReplaceTag -> set(
                 VideoDocument::tags,

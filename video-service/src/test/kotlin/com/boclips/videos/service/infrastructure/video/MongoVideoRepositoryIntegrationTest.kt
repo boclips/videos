@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
+import java.time.ZonedDateTime
 import java.util.Date
 import java.util.Locale
 
@@ -126,6 +127,31 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedAsset.playback.id.value).isEqualTo("new-entry")
         assertThat(updatedAsset.playback.duration).isEqualTo(Duration.ZERO)
         assertThat((updatedAsset.playback as StreamPlayback).downloadUrl).isEqualTo("download-url-updated")
+    }
+
+    @Test
+    fun `update playback sets ingestion timestamp when not known`() {
+        val originalAsset = mongoVideoRepository.create(
+            createVideo(
+                ingestedAt = null,
+                playback = createKalturaPlayback()
+            )
+        )
+
+        mongoVideoRepository.bulkUpdate(
+            listOf(
+                VideoUpdateCommand.ReplacePlayback(
+                    originalAsset.videoId,
+                    createKalturaPlayback(
+                        createdAt = ZonedDateTime.parse("2018-06-01T12:30:00Z")
+                    )
+                )
+            )
+        )
+
+        val updatedAsset = mongoVideoRepository.find(originalAsset.videoId)
+
+        assertThat(updatedAsset!!.ingestedAt).isEqualTo(ZonedDateTime.parse("2018-06-01T12:30:00Z"))
     }
 
     @Test

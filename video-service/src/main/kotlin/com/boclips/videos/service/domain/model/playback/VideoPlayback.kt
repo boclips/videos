@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.model.playback
 import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import java.time.Duration
+import java.time.ZonedDateTime
 
 sealed class VideoPlayback {
     abstract val id: PlaybackId
@@ -19,6 +20,7 @@ sealed class VideoPlayback {
         override val duration: Duration,
         val referenceId: String,
         val downloadUrl: String,
+        val createdAt: ZonedDateTime?,
         val assets: Set<VideoAsset>?,
         val originalDimensions: Dimensions?
     ) : VideoPlayback()
