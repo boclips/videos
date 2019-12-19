@@ -5,7 +5,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
-import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.VideoFactory
@@ -66,7 +65,7 @@ class PlaybackConverterTest {
         assertThat(playback.duration).isEqualTo(Duration.ofSeconds(100))
         assertThat(playback.assets?.first()).isEqualTo(
             VideoAsset(
-                id = VideoAssetId("the_asset_id"),
+                reference = "the_asset_id",
                 sizeKb = 100,
                 dimensions = Dimensions(width = 200, height = 300),
                 bitrateKbps = 400

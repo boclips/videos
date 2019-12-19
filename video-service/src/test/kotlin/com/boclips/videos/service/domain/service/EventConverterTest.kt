@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Dimensions
-import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -151,7 +150,7 @@ class EventConverterTest {
     @Test
     fun `converts video assets`() {
         val asset = VideoFactory.createVideoAsset(
-            id = VideoAssetId("asset-id"),
+            reference = "asset-id",
             sizeKb = 10,
             dimensions = Dimensions(1280, 720),
             bitrateKbps = 100

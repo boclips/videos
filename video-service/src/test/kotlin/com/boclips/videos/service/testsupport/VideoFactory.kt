@@ -3,10 +3,8 @@ package com.boclips.videos.service.testsupport
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
-import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
-import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.TopicDocument
@@ -93,13 +91,13 @@ object VideoFactory {
     }
 
     fun createVideoAsset(
-        id: VideoAssetId = VideoAssetId("1"),
+        reference: String = "asset-1",
         sizeKb: Int = 1024,
         dimensions: Dimensions = Dimensions(width = 360, height = 480),
         bitrateKbps: Int = 128
     ): VideoAsset {
         return VideoAsset(
-            id = id,
+            reference = reference,
             sizeKb = sizeKb,
             dimensions = dimensions,
             bitrateKbps = bitrateKbps

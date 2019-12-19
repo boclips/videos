@@ -50,7 +50,7 @@ class EventConverter {
         return EventVideoAsset
             .builder()
             .bitrateKbps(asset.bitrateKbps)
-            .id(asset.id.value)
+            .id(asset.reference)
             .sizeKb(asset.sizeKb)
             .dimensions(toDimensionsPayload(asset.dimensions))
             .build()

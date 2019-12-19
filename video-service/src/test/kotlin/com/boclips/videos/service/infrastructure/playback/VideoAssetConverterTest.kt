@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.playback
 
-import com.boclips.videos.service.domain.model.video.VideoAssetId
 import com.boclips.videos.service.testsupport.KalturaFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -10,7 +9,7 @@ class VideoAssetConverterTest() {
     fun convert() {
         val asset = VideoAssetConverter.convert(
             KalturaFactories.createKalturaAsset(
-                id = VideoAssetId("abc"),
+                id = "abc",
                 bitrate = 124,
                 width = 480,
                 height = 320,
@@ -18,7 +17,7 @@ class VideoAssetConverterTest() {
             )
         )
 
-        assertThat(asset.id.value).isEqualTo("abc")
+        assertThat(asset.reference).isEqualTo("abc")
         assertThat(asset.bitrateKbps).isEqualTo(124)
         assertThat(asset.dimensions.width).isEqualTo(480)
         assertThat(asset.dimensions.height).isEqualTo(320)

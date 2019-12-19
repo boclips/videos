@@ -3,7 +3,6 @@ package com.boclips.videos.service.testsupport
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.flavorAsset.Asset
-import com.boclips.videos.service.domain.model.video.VideoAssetId
 
 object KalturaFactories {
 
@@ -18,14 +17,14 @@ object KalturaFactories {
     }
 
     fun createKalturaAsset(
-        id: VideoAssetId = VideoAssetId("1"),
+        id: String = "1",
         bitrate: Int = 128,
         width: Int = 1920,
         height: Int = 1080,
         size: Int = 1024
     ): Asset {
         return Asset.builder()
-            .id(id.value)
+            .id(id)
             .bitrateKbps(bitrate)
             .width(width)
             .height(height)
