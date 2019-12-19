@@ -115,7 +115,7 @@ object TestFactories {
             legalRestrictions = legalRestrictions,
             subjects = VideoSubjects(
                 items = subjects,
-                setManually=null
+                setManually = null
             ),
             language = language,
             transcript = transcript,
@@ -189,7 +189,7 @@ object TestFactories {
 
     fun createCreateVideoRequest(
         providerVideoId: String? = "AP-1",
-        providerId: String? = null,
+        providerId: String? = "provider-id",
         title: String? = "an AP video",
         description: String? = "an AP video about penguins",
         releasedOn: LocalDate? = LocalDate.now(),
@@ -199,7 +199,8 @@ object TestFactories {
         playbackId: String? = "123",
         playbackProvider: String? = "KALTURA",
         analyseVideo: Boolean = false,
-        subjects: Set<String> = setOf()
+        subjects: Set<String> = setOf(),
+        youtubeChannelId: String = "1234"
     ) = CreateVideoRequest(
         providerId = providerId,
         providerVideoId = providerVideoId,
@@ -212,7 +213,8 @@ object TestFactories {
         playbackId = playbackId,
         playbackProvider = playbackProvider,
         analyseVideo = analyseVideo,
-        subjects = subjects
+        subjects = subjects,
+        youtubeChannelId = youtubeChannelId
     )
 
     fun createCollectionRequest(
@@ -569,7 +571,7 @@ object AccessRulesFactory {
                 UserId(
                     ownerId
                 )
-                )
+            )
         )
 }
 

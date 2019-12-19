@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.application.collection.exceptions.CollectionCreationException
-import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
@@ -16,10 +15,9 @@ class CreateCollection(
     private val collectionSearchService: CollectionSearchService
 ) {
     operator fun invoke(createCollectionRequest: CreateCollectionRequest, requester: User): Collection {
-        val title = getOrThrow(createCollectionRequest.title, "title")
         val createCollectionCommand = CreateCollectionCommand(
             owner = requester.id,
-            title = title,
+            title = createCollectionRequest.title!!,
             description = createCollectionRequest.description,
             createdByBoclips = requester.isBoclipsEmployee,
             public = createCollectionRequest.public ?: false,

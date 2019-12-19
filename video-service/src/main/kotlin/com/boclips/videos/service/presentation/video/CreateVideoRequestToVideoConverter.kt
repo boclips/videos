@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation.video
 
-import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException.Companion.getOrThrow
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
@@ -14,7 +13,6 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-// TODO refactor to use javax validation in the first place
 class CreateVideoRequestToVideoConverter {
     fun convert(
         createVideoRequest: CreateVideoRequest,
@@ -25,15 +23,15 @@ class CreateVideoRequestToVideoConverter {
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
             playback = videoPlayback,
-            title = getOrThrow(createVideoRequest.title, "title"),
-            description = getOrThrow(createVideoRequest.description, "description"),
-            keywords = getOrThrow(createVideoRequest.keywords, "keywords"),
-            releasedOn = getOrThrow(createVideoRequest.releasedOn, "releasedOn"),
+            title =createVideoRequest.title!!,
+            description = createVideoRequest.description!!,
+            keywords = createVideoRequest.keywords!!,
+            releasedOn = createVideoRequest.releasedOn!!,
             ingestedOn = LocalDate.now(),
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
             contentPartner = contentPartner,
-            videoReference = getOrThrow(createVideoRequest.providerVideoId, "providerVideoId"),
-            type = ContentType.valueOf(getOrThrow(createVideoRequest.videoType, "videoType")),
+            videoReference = createVideoRequest.providerVideoId!!,
+            type = ContentType.valueOf(createVideoRequest.videoType!!),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             ageRange = if (createVideoRequest.ageRangeMin !== null) {
                 AgeRange.bounded(createVideoRequest.ageRangeMin, createVideoRequest.ageRangeMax)
@@ -42,8 +40,6 @@ class CreateVideoRequestToVideoConverter {
             },
             subjects =
                 VideoSubjects(
-                    // if subjects were provided, they were set manually (this endpoint
-                    // is not used by the classifier)
                     setManually = subjects.isNotEmpty(),
                     items = subjects.toSet()
                 ),

@@ -2,7 +2,6 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
-import com.boclips.videos.service.application.exceptions.NonNullableFieldCreateRequestException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
@@ -13,7 +12,6 @@ import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.test.context.support.WithMockUser
 
@@ -121,21 +119,6 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             createCollection(createRequest, UserFactory.sample(id = "some@teacher.com", boclipsEmployee = true))
 
         assertThat(collection.createdByBoclips).isTrue()
-    }
-
-    @Test
-    fun `throws when title is null`() {
-        val createRequest = TestFactories.createCollectionRequest(
-            title = null,
-            videos = listOf("http://localhost/v1/videos/a-video")
-        )
-
-        assertThrows<NonNullableFieldCreateRequestException> {
-            createCollection(
-                createRequest,
-                UserFactory.sample(id = "some@teacher.com")
-            )
-        }
     }
 
     @Test

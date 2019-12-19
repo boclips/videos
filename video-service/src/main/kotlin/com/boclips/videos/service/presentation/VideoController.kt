@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/v1/videos")
@@ -193,7 +194,7 @@ class VideoController(
     }
 
     @PostMapping
-    fun postVideo(@RequestBody createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
+    fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
             createVideo(createVideoRequest, getCurrentUser())
                 .let { videoToResourceConverter.fromVideo(it, getCurrentUser()) }

@@ -72,8 +72,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[0].segmentEndSeconds).isEqualTo(20L)
         assertThat(events[0].playbackDevice).isNull()
         assertThat(events[0].timestamp).isNotNull()
-        /* TODO make referrer explicit parameter and assert value here:
-          assertThat(events.first().url).isEqualTo("https://teachers.boclips.com/videos?q=abc")*/
+        assertThat(events.first().url).isEqualTo("https://teachers.boclips.com")
 
         assertThat(events[1].videoId).isEqualTo(videoId)
         assertThat(events[1].userId).isEqualTo(user.id.value)
