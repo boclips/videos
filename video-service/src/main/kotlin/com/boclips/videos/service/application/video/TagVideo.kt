@@ -16,14 +16,14 @@ import org.springframework.validation.annotation.Validated
 import javax.validation.Valid
 
 @Validated
-open class TagVideo(
+class TagVideo(
     private val videoRepository: VideoRepository,
     private val tagRepository: TagRepository
 ) {
 
     companion object : KLogging();
 
-    open operator fun invoke(@Valid tagVideoRequest: TagVideoRequest, user: User) {
+    operator fun invoke(@Valid tagVideoRequest: TagVideoRequest, user: User) {
         val tag = try {
             tagRepository.findById(TagId(tagVideoRequest.tagUrl!!.substringAfterLast("/")))
         } catch (e: Exception) {
