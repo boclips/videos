@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionUpdateComman
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.video.VideoId
 
-class CollectionWriteService(
+class CollectionCreationService(
     private val collectionRepository: CollectionRepository,
     private val collectionReadService: CollectionReadService
 ) {

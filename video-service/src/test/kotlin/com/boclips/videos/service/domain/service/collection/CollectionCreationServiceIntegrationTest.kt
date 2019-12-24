@@ -12,16 +12,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class CollectionWriteServiceIntegrationTest : AbstractSpringIntegrationTest() {
+class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var collectionWriteService: CollectionWriteService
+    lateinit var collectionCreationService: CollectionCreationService
 
     @Autowired
     lateinit var collectionRepository: CollectionRepository
 
     @Test
     fun `can create a collection`() {
-        val createdCollection = collectionWriteService.create(
+        val createdCollection = collectionCreationService.create(
             CreateCollectionCommand(
                 owner = UserId(value = "123"),
                 title = "Wow, did you see that?",
@@ -50,7 +50,7 @@ class CollectionWriteServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can create a collection with videos`() {
         val firstVideoId = TestFactories.createVideoId()
         val secondVideoId = TestFactories.createVideoId()
-        val createdCollection = collectionWriteService.create(
+        val createdCollection = collectionCreationService.create(
             CreateCollectionCommand(
                 owner = UserId(value = "123"),
                 title = "Wow, did you see that?",
@@ -69,7 +69,7 @@ class CollectionWriteServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returned collection does not contain videos that access rules do not permit`() {
         val videoId = TestFactories.createVideoId()
-        val createdCollection = collectionWriteService.create(
+        val createdCollection = collectionCreationService.create(
             CreateCollectionCommand(
                 owner = UserId(value = "123"),
                 title = "Wow, did you see that?",

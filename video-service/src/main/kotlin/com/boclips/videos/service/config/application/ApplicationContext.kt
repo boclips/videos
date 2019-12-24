@@ -63,7 +63,7 @@ import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionWriteService
+import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
@@ -91,7 +91,7 @@ class ApplicationContext(
     val playbackRepository: PlaybackRepository,
     val legacyVideoSearchService: LegacyVideoSearchService,
     val collectionReadService: CollectionReadService,
-    val collectionWriteService: CollectionWriteService,
+    val collectionCreationService: CollectionCreationService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
     val eventBus: EventBus,
@@ -171,7 +171,7 @@ class ApplicationContext(
 
     @Bean
     fun createCollection(): CreateCollection {
-        return CreateCollection(collectionWriteService, collectionSearchService)
+        return CreateCollection(collectionCreationService, collectionSearchService)
     }
 
     @Bean
