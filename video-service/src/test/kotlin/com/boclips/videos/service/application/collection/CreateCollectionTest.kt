@@ -44,7 +44,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 ),
                 pageSize = 1,
                 pageIndex = 0,
-                permittedCollections = null
+                permittedCollections = null,
+                hasLessonPlans = null
             ),
             accessRules = AccessRulesFactory.sample()
         ).elements
@@ -74,6 +75,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 ),
                 pageSize = 1,
                 pageIndex = 0,
+                hasLessonPlans = null,
                 permittedCollections = null
             ),
             accessRules = AccessRulesFactory.sample()
@@ -103,6 +105,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 ),
                 pageSize = 1,
                 pageIndex = 0,
+                hasLessonPlans = null,
                 permittedCollections = null
             ),
             accessRules = AccessRulesFactory.sample()

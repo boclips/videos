@@ -41,6 +41,9 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                     true
             }
             .filter { entry ->
+                if (query.has_lesson_plans != null) query.has_lesson_plans == entry.value.hasLessonPlans else true
+            }
+            .filter { entry ->
                 if (query.permittedIds != null)
                     query.permittedIds.contains(entry.value.id)
                 else

@@ -47,7 +47,8 @@ internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationT
                             owner = null,
                             visibility = CollectionVisibilityQuery.privateOnly()
                         )
-                    )
+                    ),
+                    hasLessonPlans = null
                 ),
                 accessRules = AccessRulesFactory.sample(
                     videoAccessRule = VideoAccessRule.SpecificIds(

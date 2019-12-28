@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.UserId
-import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.collection.CollectionVisibilityDocument
@@ -80,6 +80,84 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$.subjects[*].id", containsInAnyOrder(math.id.value, physics.id.value)))
             .andExpect(jsonPath("$.public", equalTo(true)))
+    }
+
+    @Test
+    fun `get collections filtered by lesson plan as attachment`() {
+        val collectionWithLessonPlan =
+            createCollection(
+                title = "collection with lesson plans",
+                description = "collection with a LESSON_PLAN attachment"
+            ).apply {
+                updateCollectionToBePublic(this)
+            }
+
+        createCollection("collection without lesson plans").apply {
+            updateCollectionToBePublic(this)
+        }
+
+        updateCollectionAttachment(
+            collectionId = collectionWithLessonPlan,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "collection with lesson plan",
+            attachmentURL = "http://www.google.com"
+        )
+
+
+        mockMvc.perform(
+            get("/v1/collections?public=true&query=collection&hasLessonPlans=true").asApiUser().contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.collections[0].description",
+                    equalTo("collection with a LESSON_PLAN attachment")
+                )
+            )
+    }
+
+    @Test
+    fun `get collections without lesson plans`() {
+        val collectionWithLessonPlan =
+            createCollection(
+                title = "collection with lesson plans",
+                description = "collection with a LESSON_PLAN attachment"
+            ).apply {
+                updateCollectionToBePublic(this)
+            }
+
+        updateCollectionAttachment(
+            collectionId = collectionWithLessonPlan,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "collection with lesson plan",
+            attachmentURL = "http://www.google.com"
+        )
+
+        createCollection("collection without lesson plans 1").apply {
+            updateCollectionToBePublic(this)
+        }
+        createCollection("collection without lesson plans 2").apply {
+            updateCollectionToBePublic(this)
+        }
+
+
+
+
+        mockMvc.perform(
+            get("/v1/collections?public=true&query=collection&hasLessonPlans=false").asApiUser().contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.collections[0].title",
+                    equalTo("collection without lesson plans 1")
+                )
+            ).andExpect(
+                jsonPath(
+                    "$._embedded.collections[1].title",
+                    equalTo("collection without lesson plans 2")
+                )
+            )
     }
 
     @Test
@@ -462,7 +540,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `cannot delete a collection of another user`() {
-        val collectionId = createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
+        val collectionId =
+            createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
 
         mockMvc.perform(delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher("anotherteacher@gmail.com"))
             .andExpect(status().isNotFound)

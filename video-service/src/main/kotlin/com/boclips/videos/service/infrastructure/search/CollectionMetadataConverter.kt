@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 
 object CollectionMetadataConverter {
     fun convert(collection: com.boclips.videos.service.domain.model.collection.Collection): CollectionMetadata {
@@ -13,6 +14,7 @@ object CollectionMetadataConverter {
             visibility = if (collection.isPublic) CollectionVisibility.PUBLIC else CollectionVisibility.PRIVATE,
             bookmarkedByUsers = collection.bookmarks.map { it.value }.toSet(),
             hasAttachments = collection.attachments.isNotEmpty(),
+            hasLessonPlans = if (collection.attachments.isNotEmpty()) collection.attachments.any { it.type == AttachmentType.LESSON_PLAN } else false,
             description = collection.description
         )
     }

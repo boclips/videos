@@ -19,6 +19,7 @@ class CollectionSearchQueryAssembler {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
+        hasLessonPlans: Boolean? = null,
         user: User
     ): CollectionSearchQuery {
         val collectionAccess = user.accessRules.collectionAccess
@@ -46,7 +47,8 @@ class CollectionSearchQueryAssembler {
                 else -> null
             },
             pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE,
-            pageIndex = page ?: 0
+            pageIndex = page ?: 0,
+            hasLessonPlans = hasLessonPlans ?: null
         )
     }
 

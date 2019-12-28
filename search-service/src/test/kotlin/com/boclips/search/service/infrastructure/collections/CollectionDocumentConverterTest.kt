@@ -21,6 +21,39 @@ class CollectionDocumentConverterTest {
                 "visibility": "public",
                 "subjects": ["crispity", "crunchy"],
                 "owner": "juan",
+                "description": "Collection under test",
+                "hasLessonPlans": "false"
+            }
+        """.trimIndent()
+            )
+        )
+
+        val collection = elasticSearchResultConverter.convert(searchHit)
+
+        assertThat(collection).isEqualTo(
+            CollectionDocument(
+                id = "14",
+                title = "The title",
+                visibility = "public",
+                subjects = listOf("crispity", "crunchy"),
+                hasAttachments = false,
+                owner = "juan",
+                description = "Collection under test",
+                hasLessonPlans = false
+            )
+        )
+    }
+    @Test
+    fun `convert search hit without lesson plans`() {
+        val searchHit = SearchHit(14).sourceRef(
+            BytesArray(
+                """
+            {
+                "id": "14",
+                "title": "The title",
+                "visibility": "public",
+                "subjects": ["crispity", "crunchy"],
+                "owner": "juan",
                 "description": "Collection under test"
             }
         """.trimIndent()
@@ -37,7 +70,8 @@ class CollectionDocumentConverterTest {
                 subjects = listOf("crispity", "crunchy"),
                 hasAttachments = false,
                 owner = "juan",
-                description = "Collection under test"
+                description = "Collection under test",
+                hasLessonPlans = null
             )
         )
     }
