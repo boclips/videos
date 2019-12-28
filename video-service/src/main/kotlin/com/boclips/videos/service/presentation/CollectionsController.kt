@@ -66,15 +66,23 @@ class CollectionsController(
         val page: Int? = null,
         val size: Int? = null,
         val projection: Projection = Projection.list,
-        val has_lesson_plans: Boolean? = null,
-        private val subject: String? = null
+        val hasLessonPlans: Boolean? = null,
+        val subject: String? = null
     ) {
         val subjects = subject?.split(",") ?: emptyList()
     }
 
     @GetMapping
     fun getFilteredCollections(
-        collectionsRequest: CollectionsRequest
+        @RequestParam(name = "query", required = false) query: String?,
+        @RequestParam(name = "public", required = false) public: Boolean?,
+        @RequestParam(name = "bookmarked", required = false) bookmarked: Boolean?,
+        @RequestParam(name = "owner", required = false) owner: String?,
+        @RequestParam(name = "page", required = false) page: Int?,
+        @RequestParam(name = "size", required = false) size: Int?,
+        @RequestParam(name = "projection", required = false) projection: Projection?,
+        @RequestParam(name = "has_lesson_plans", required = false) hasLessonPlans: Boolean?,
+        @RequestParam(name = "subject", required = false) subject: String?
     ): MappingJacksonValue {
         val user = getCurrentUser()
 
@@ -82,7 +90,19 @@ class CollectionsController(
             throw OperationForbiddenException("User must be authenticated to access collections")
         }
 
-        val collectionsPage = getCollections(collectionsRequest, user)
+        val collectionRequest = CollectionsRequest(
+            query = query,
+            public = public,
+            bookmarked = bookmarked,
+            owner = owner,
+            page = page,
+            size = size,
+            projection = projection.let { projection } ?: Projection.list,
+            hasLessonPlans = hasLessonPlans,
+            subject = subject
+        )
+
+        val collectionsPage = getCollections(collectionRequest, user)
 
         val collectionResources = collectionsPage.elements.map(::wrapCollection)
             .let(HateoasEmptyCollection::fixIfEmptyCollection)

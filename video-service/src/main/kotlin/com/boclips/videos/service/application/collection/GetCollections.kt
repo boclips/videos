@@ -7,8 +7,8 @@ import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.presentation.CollectionsController
-import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
+import com.boclips.videos.service.presentation.projections.Projection
 
 class GetCollections(
     private val collectionReadService: CollectionReadService,
@@ -41,7 +41,7 @@ class GetCollections(
             owner = collectionsRequest.owner,
             page = collectionsRequest.page,
             size = collectionsRequest.size,
-            hasLessonPlans = collectionsRequest.has_lesson_plans,
+            hasLessonPlans = collectionsRequest.hasLessonPlans,
             user = user
         )
 
