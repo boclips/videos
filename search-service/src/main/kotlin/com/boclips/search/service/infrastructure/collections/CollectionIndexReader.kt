@@ -141,8 +141,8 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 }
             }
             .apply {
-                if (query.has_lesson_plans != null) {
-                    filter(QueryBuilders.termsQuery(CollectionDocument.HAS_LESSON_PLANS, query.has_lesson_plans))
+                if (query.hasLessonPlans != null) {
+                    filter(QueryBuilders.termsQuery(CollectionDocument.HAS_LESSON_PLANS, query.hasLessonPlans))
                 }
             }
     }

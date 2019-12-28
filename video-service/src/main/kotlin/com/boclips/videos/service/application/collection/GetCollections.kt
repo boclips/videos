@@ -41,7 +41,7 @@ class GetCollections(
             owner = collectionsRequest.owner,
             page = collectionsRequest.page,
             size = collectionsRequest.size,
-            hasLessonPlans = collectionsRequest.hasLessonPlans,
+            hasLessonPlans = collectionsRequest.has_lesson_plans,
             user = user
         )
 

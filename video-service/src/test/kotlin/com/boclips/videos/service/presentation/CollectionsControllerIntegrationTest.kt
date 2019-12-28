@@ -105,7 +105,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
 
         mockMvc.perform(
-            get("/v1/collections?public=true&query=collection&hasLessonPlans=true").asApiUser().contentType(MediaType.APPLICATION_JSON)
+            get("/v1/collections?public=true&query=collection&has_lesson_plans=true").asApiUser().contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(
@@ -144,7 +144,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
 
         mockMvc.perform(
-            get("/v1/collections?public=true&query=collection&hasLessonPlans=false").asApiUser().contentType(MediaType.APPLICATION_JSON)
+            get("/v1/collections?public=true&query=collection&has_lesson_plans=false").asApiUser().contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(
@@ -540,8 +540,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `cannot delete a collection of another user`() {
-        val collectionId =
-            createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
+        val collectionId = createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
 
         mockMvc.perform(delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher("anotherteacher@gmail.com"))
             .andExpect(status().isNotFound)

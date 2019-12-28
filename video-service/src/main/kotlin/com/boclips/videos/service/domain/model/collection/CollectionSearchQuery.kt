@@ -29,7 +29,7 @@ class CollectionSearchQuery(
             )
             else -> null
         },
-        has_lesson_plans = this.hasLessonPlans
+        hasLessonPlans = this.hasLessonPlans
     )
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize

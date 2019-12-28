@@ -10,7 +10,7 @@ class CollectionQuery(
     val subjectIds: List<String> = emptyList(),
     val permittedIds: List<String>? = null,
     val bookmarkedBy: String? = null,
-    val has_lesson_plans: Boolean? = null
+    val hasLessonPlans: Boolean? = null
 ) : SearchQuery<CollectionMetadata>(phrase, sort)
 
 data class VisibilityForOwner (

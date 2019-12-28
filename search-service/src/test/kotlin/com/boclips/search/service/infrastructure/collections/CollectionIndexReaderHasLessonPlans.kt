@@ -45,7 +45,7 @@ class CollectionIndexReaderHasLessonPlans : EmbeddedElasticSearchIntegrationTest
                 PaginatedSearchRequest(
                     query = CollectionQuery(
                         phrase = "Beautiful",
-                        has_lesson_plans = true
+                        hasLessonPlans = true
                     )
                 )
             )
