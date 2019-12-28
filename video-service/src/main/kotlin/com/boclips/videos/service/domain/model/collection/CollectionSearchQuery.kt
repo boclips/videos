@@ -13,7 +13,8 @@ class CollectionSearchQuery(
     val bookmarkedBy: String? = null,
     val pageSize: Int,
     val pageIndex: Int,
-    val permittedCollections: List<CollectionId>?
+    val permittedCollections: List<CollectionId>?,
+    val hasLessonPlans: Boolean?
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
@@ -27,7 +28,8 @@ class CollectionSearchQuery(
                 SortOrder.DESC
             )
             else -> null
-        }
+        },
+        has_lesson_plans = this.hasLessonPlans
     )
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize

@@ -16,7 +16,8 @@ class CollectionSearchQueryTest {
             visibilityForOwners = emptySet(),
             pageIndex = 0,
             pageSize = 0,
-            permittedCollections = null
+            permittedCollections = null,
+            hasLessonPlans = null
         )
 
         assertThat(query.toSearchQuery().sort).isNull()
@@ -30,7 +31,8 @@ class CollectionSearchQueryTest {
             visibilityForOwners = emptySet(),
             pageIndex = 0,
             pageSize = 0,
-            permittedCollections = null
+            permittedCollections = null,
+            hasLessonPlans = null
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(Sort.ByField(CollectionMetadata::hasAttachments, SortOrder.DESC))
@@ -44,7 +46,8 @@ class CollectionSearchQueryTest {
             visibilityForOwners = emptySet(),
             pageIndex = 0,
             pageSize = 0,
-            permittedCollections = null
+            permittedCollections = null,
+            hasLessonPlans = null
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(Sort.ByField(CollectionMetadata::hasAttachments, SortOrder.DESC))
@@ -58,7 +61,8 @@ class CollectionSearchQueryTest {
             visibilityForOwners = emptySet(),
             pageIndex = 0,
             pageSize = 0,
-            permittedCollections = listOf(CollectionId("some-collection-id"))
+            permittedCollections = listOf(CollectionId("some-collection-id")),
+            hasLessonPlans = null
         )
 
         assertThat(query.toSearchQuery().permittedIds).containsExactly("some-collection-id")

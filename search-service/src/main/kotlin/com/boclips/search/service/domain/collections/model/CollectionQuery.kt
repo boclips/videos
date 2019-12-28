@@ -9,7 +9,8 @@ class CollectionQuery(
     val visibilityForOwners: Set<VisibilityForOwner> = emptySet(),
     val subjectIds: List<String> = emptyList(),
     val permittedIds: List<String>? = null,
-    val bookmarkedBy: String? = null
+    val bookmarkedBy: String? = null,
+    val has_lesson_plans: Boolean? = null
 ) : SearchQuery<CollectionMetadata>(phrase, sort)
 
 data class VisibilityForOwner (

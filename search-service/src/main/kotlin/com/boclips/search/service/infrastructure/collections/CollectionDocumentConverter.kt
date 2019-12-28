@@ -11,5 +11,8 @@ class CollectionDocumentConverter {
             if (it.hasAttachments == null) {
                 return it.copy(hasAttachments = false)
             }
+            if (it.hasLessonPlans == null) {
+                return it.copy(hasLessonPlans = false)
+            }
         }
 }

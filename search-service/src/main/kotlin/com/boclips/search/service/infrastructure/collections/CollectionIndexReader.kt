@@ -49,8 +49,11 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
         val esQuery = SearchSourceBuilder().query(mainQuery(query))
 
         if (query.sort != null) {
-            Do exhaustive  when(query.sort) {
-                is Sort.ByField ->  esQuery.sort(query.sort.fieldName.name, SortOrder.fromString(query.sort.order.toString()))
+            Do exhaustive when (query.sort) {
+                is Sort.ByField -> esQuery.sort(
+                    query.sort.fieldName.name,
+                    SortOrder.fromString(query.sort.order.toString())
+                )
                 is Sort.ByRandom -> TODO()
             }
         }
@@ -135,6 +138,11 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             .apply {
                 if (query.permittedIds != null) {
                     filter(QueryBuilders.termsQuery(CollectionDocument.ID, query.permittedIds))
+                }
+            }
+            .apply {
+                if (query.has_lesson_plans != null) {
+                    filter(QueryBuilders.termsQuery(CollectionDocument.HAS_LESSON_PLANS, query.has_lesson_plans))
                 }
             }
     }

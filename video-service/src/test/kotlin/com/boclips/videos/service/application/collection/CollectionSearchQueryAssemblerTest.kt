@@ -30,7 +30,8 @@ class CollectionSearchQueryAssemblerTest {
             page = 1,
             size = 30,
             user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.asOwner("my-id") }),
-            owner = "other-id"
+            owner = "other-id",
+            hasLessonPlans = true
         )
 
         assertThat(query.text).isEqualTo("minute physics")
@@ -39,6 +40,7 @@ class CollectionSearchQueryAssemblerTest {
         assertThat(query.bookmarkedBy).isEqualTo("my-id")
         assertThat(query.pageIndex).isEqualTo(1)
         assertThat(query.pageSize).isEqualTo(30)
+        assertThat(query.hasLessonPlans).isTrue()
     }
 
     @Test
@@ -285,6 +287,7 @@ class CollectionSearchQueryAssemblerTest {
 
             assertThat(query.pageIndex).isEqualTo(0)
             assertThat(query.pageSize).isEqualTo(CollectionsController.COLLECTIONS_PAGE_SIZE)
+            assertThat(query.hasLessonPlans).isNull()
         }
 
         @Test
@@ -400,6 +403,7 @@ class CollectionSearchQueryAssemblerTest {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
+        hasLessonPlans: Boolean? = null,
         user: User = UserFactory.sample(accessRulesSupplier = {
             AccessRules(
                 videoAccess = VideoAccessRule.Everything,
@@ -414,6 +418,7 @@ class CollectionSearchQueryAssemblerTest {
         owner,
         page,
         size,
+        hasLessonPlans,
         user
     )
 }

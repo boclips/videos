@@ -66,6 +66,7 @@ class CollectionsController(
         val page: Int? = null,
         val size: Int? = null,
         val projection: Projection = Projection.list,
+        val hasLessonPlans: Boolean? = null,
         private val subject: String? = null
     ) {
         val subjects = subject?.split(",") ?: emptyList()

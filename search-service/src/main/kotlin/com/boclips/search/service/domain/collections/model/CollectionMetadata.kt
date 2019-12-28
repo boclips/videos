@@ -8,5 +8,6 @@ data class CollectionMetadata(
     val owner: String,
     val bookmarkedByUsers: Set<String>,
     val hasAttachments: Boolean,
-    val description: String?
+    val description: String?,
+    val hasLessonPlans: Boolean?
 )

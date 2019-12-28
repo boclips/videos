@@ -90,7 +90,8 @@ object SearchableCollectionMetadataFactory {
         hasAttachments: Boolean = false,
         owner: String = "some-user-id",
         bookmarkedBy: Set<String> = setOf(owner),
-        description: String = ""
+        description: String = "",
+        hasLessonPlans: Boolean? = null
     ) = CollectionMetadata(
         id = id,
         title = title,
@@ -99,7 +100,8 @@ object SearchableCollectionMetadataFactory {
         owner = owner,
         bookmarkedByUsers = bookmarkedBy,
         hasAttachments = hasAttachments,
-        description = description
+        description = description,
+        hasLessonPlans = hasLessonPlans
     )
 }
 

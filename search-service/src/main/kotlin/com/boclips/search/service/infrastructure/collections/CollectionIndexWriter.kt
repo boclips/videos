@@ -35,7 +35,8 @@ class CollectionIndexWriter private constructor(client: RestHighLevelClient, ind
         hasAttachments = entry.hasAttachments,
         owner = entry.owner,
         bookmarkedBy = entry.bookmarkedByUsers,
-        description = entry.description
+        description = entry.description,
+        hasLessonPlans = entry.hasLessonPlans
     )
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id

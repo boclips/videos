@@ -47,7 +47,8 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
                     visibilityForOwners = emptySet(),
                     pageIndex = 0,
                     pageSize = 10,
-                    permittedCollections = null
+                    permittedCollections = null,
+                    hasLessonPlans = null
                 )
             )
         ).isEqualTo(0)

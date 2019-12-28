@@ -519,6 +519,17 @@ object AttachmentFactory {
         linkToResource = linkToResource,
         type = type
     )
+    fun sampleWithLessonPlan(
+        id: String = ObjectId().toHexString(),
+        description: String = "description",
+        linkToResource: String = "https://example.com",
+        type: AttachmentType = AttachmentType.LESSON_PLAN
+    ) = Attachment(
+        attachmentId = AttachmentId(id),
+        description = description,
+        linkToResource = linkToResource,
+        type = type
+    )
 }
 
 object CollectionsRequestFactory {
