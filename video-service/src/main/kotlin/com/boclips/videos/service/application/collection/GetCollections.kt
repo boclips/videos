@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.User
@@ -7,8 +8,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.projections.Projection
-import com.boclips.videos.service.presentation.collections.CollectionResource
-import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 
 class GetCollections(
     private val collectionReadService: CollectionReadService,

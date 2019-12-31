@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.tag
 
+import com.boclips.videos.api.response.tag.TagResource
 import com.boclips.videos.service.domain.model.tag.TagRepository
-import com.boclips.videos.service.presentation.tag.TagResource
 
 class GetTags(
     private val tagRepository: TagRepository

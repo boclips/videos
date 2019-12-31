@@ -139,6 +139,7 @@ ext["solr.version"] = solrVersion
 
 dependencies {
     implementation project(':search-service')
+    implementation project(':video-service-api')
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")

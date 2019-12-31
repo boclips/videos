@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.subject
 
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.presentation.subject.SubjectResource
+import com.boclips.videos.api.response.subject.SubjectResource
 
 class GetSubjects(
     private val subjectRepository: SubjectRepository

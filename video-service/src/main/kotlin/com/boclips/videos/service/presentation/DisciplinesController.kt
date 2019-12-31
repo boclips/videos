@@ -1,12 +1,12 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.discipline.CreateDisciplineRequest
+import com.boclips.videos.api.response.discipline.DisciplineResource
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.domain.service.AccessRuleService
-import com.boclips.videos.service.presentation.disciplines.CreateDisciplineRequest
-import com.boclips.videos.service.presentation.disciplines.DisciplineResource
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -47,7 +47,7 @@ class DisciplinesController(
         }
 
     @GetMapping
-    fun disciplines(): Resources<Resource<*>> {
+    fun disciplines(): Resources<Resource<DisciplineResource>> {
         return Resources(
             getDisciplines().map { Resource(it) },
             listOfNotNull(disciplinesLinkBuilder.disciplines("self"))

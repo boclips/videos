@@ -1,11 +1,11 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
-import com.boclips.videos.service.presentation.collections.CollectionResource
-import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 import com.boclips.videos.service.presentation.projections.Projection
 
 class GetCollection(

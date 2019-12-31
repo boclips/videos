@@ -2,11 +2,11 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.security.utils.UserExtractor.getIfHasRole
+import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.EventController
 import com.boclips.videos.service.presentation.VideoController
-import com.boclips.videos.service.presentation.video.VideoResource
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.stereotype.Component

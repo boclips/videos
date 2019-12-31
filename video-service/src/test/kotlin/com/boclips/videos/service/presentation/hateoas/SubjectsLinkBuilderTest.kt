@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.presentation.subject.SubjectResource
+import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

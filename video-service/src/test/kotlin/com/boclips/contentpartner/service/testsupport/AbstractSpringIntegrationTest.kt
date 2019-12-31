@@ -27,7 +27,7 @@ import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.contentpartner.service.presentation.DistributionMethodResource
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.service.presentation.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestMongoProcess
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
