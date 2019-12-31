@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.service.application.collection.exceptions.InvalidAttachmentTypeException
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -8,7 +9,6 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
 
 class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
     fun convert(

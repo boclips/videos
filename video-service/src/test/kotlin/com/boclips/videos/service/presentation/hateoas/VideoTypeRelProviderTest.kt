@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.presentation.subject.SubjectResource
+import com.boclips.videos.api.response.subject.SubjectResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

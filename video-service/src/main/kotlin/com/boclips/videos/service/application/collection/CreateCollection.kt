@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.service.application.collection.exceptions.CollectionCreationException
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -8,7 +9,6 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
 
 class CreateCollection(
     private val collectionCreationService: CollectionCreationService,

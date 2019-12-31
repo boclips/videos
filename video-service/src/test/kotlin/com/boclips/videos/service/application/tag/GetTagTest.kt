@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.tag
 
+import com.boclips.videos.api.response.tag.TagResource
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.TagRepository
-import com.boclips.videos.service.presentation.tag.TagResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever

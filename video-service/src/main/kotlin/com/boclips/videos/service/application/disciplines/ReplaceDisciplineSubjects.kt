@@ -1,8 +1,9 @@
 package com.boclips.videos.service.application.disciplines
 
+import com.boclips.videos.api.response.discipline.DisciplineResource
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.presentation.disciplines.DisciplineResource
+import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class ReplaceDisciplineSubjects(
@@ -18,7 +19,7 @@ class ReplaceDisciplineSubjects(
         return discipline.copy(subjects = subjectRepository.findByIds(subjectUris.map { it.substringAfter("/subjects/") }))
             .let {
                 disciplineRepository.update(discipline = it)
-                DisciplineResource.from(it)
+                DisciplineConverter.from(it)
             }
     }
 }

@@ -69,15 +69,15 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.ageRange.AgeRangeToResourceConverter
-import com.boclips.videos.service.presentation.attachments.AttachmentToResourceConverter
-import com.boclips.videos.service.presentation.collections.CollectionResourceFactory
+import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
+import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
+import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import com.boclips.videos.service.presentation.subject.SubjectToResourceConverter
-import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
-import com.boclips.videos.service.presentation.video.PlaybackToResourceConverter
-import com.boclips.videos.service.presentation.video.VideoToResourceConverter
+import com.boclips.videos.service.presentation.converters.SubjectToResourceConverter
+import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
+import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
+import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -182,9 +182,14 @@ class ApplicationContext(
     ): GetCollection {
         return GetCollection(
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+                VideoToResourceConverter(
+                    videosLinkBuilder,
+                    playbackToResourceConverter
+                ),
                 SubjectToResourceConverter(),
-                AttachmentToResourceConverter(attachmentsLinkBuilder),
+                AttachmentToResourceConverter(
+                    attachmentsLinkBuilder
+                ),
                 videoService
             ),
             collectionReadService
@@ -202,9 +207,14 @@ class ApplicationContext(
         return GetCollections(
             collectionReadService,
             CollectionResourceFactory(
-                VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter),
+                VideoToResourceConverter(
+                    videosLinkBuilder,
+                    playbackToResourceConverter
+                ),
                 SubjectToResourceConverter(),
-                AttachmentToResourceConverter(attachmentsLinkBuilder),
+                AttachmentToResourceConverter(
+                    attachmentsLinkBuilder
+                ),
                 videoService
             ),
             collectionFilterAssembler

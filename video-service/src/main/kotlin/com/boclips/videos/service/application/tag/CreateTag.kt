@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.tag
 
+import com.boclips.videos.api.request.tag.CreateTagRequest
+import com.boclips.videos.api.response.tag.TagResource
 import com.boclips.videos.service.application.exceptions.TagExistsException
 import com.boclips.videos.service.domain.model.tag.TagRepository
-import com.boclips.videos.service.presentation.tag.CreateTagRequest
-import com.boclips.videos.service.presentation.tag.TagResource
 
 open class CreateTag(
     private val tagRepository: TagRepository

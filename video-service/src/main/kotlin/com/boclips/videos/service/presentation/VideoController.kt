@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.video.AdminSearchRequest
+import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -16,11 +18,9 @@ import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.support.Cookies
-import com.boclips.videos.service.presentation.video.AdminSearchRequest
-import com.boclips.videos.service.presentation.video.CreateVideoRequest
 import com.boclips.videos.service.presentation.video.RateVideoRequest
 import com.boclips.videos.service.presentation.video.TagVideoRequest
-import com.boclips.videos.service.presentation.video.VideoToResourceConverter
+import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper

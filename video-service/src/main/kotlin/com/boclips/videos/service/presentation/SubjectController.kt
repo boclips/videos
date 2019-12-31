@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.service.application.exceptions.SubjectExistsException
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
@@ -9,8 +10,7 @@ import com.boclips.videos.service.application.subject.UpdateSubject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
-import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
-import com.boclips.videos.service.presentation.subject.SubjectResource
+import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import org.springframework.hateoas.Resource

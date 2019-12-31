@@ -2,6 +2,9 @@ package com.boclips.videos.service.client
 
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.users.client.model.contract.SelectedCollectionsContract
+import com.boclips.videos.api.request.collection.CreateCollectionRequest
+import com.boclips.videos.api.request.collection.UpdateCollectionRequest
+import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.service.client.exceptions.IllegalVideoRequestException
 import com.boclips.videos.service.client.exceptions.InvalidCollectionRequestException
 import com.boclips.videos.service.client.exceptions.UnauthorisedException
@@ -10,9 +13,6 @@ import com.boclips.videos.service.client.internal.FakeClient
 import com.boclips.videos.service.client.testsupport.AbstractVideoServiceClientSpringIntegrationTest
 import com.boclips.videos.service.client.testsupport.TestFactories
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.presentation.collections.CreateCollectionRequest
-import com.boclips.videos.service.presentation.collections.UpdateCollectionRequest
-import com.boclips.videos.service.presentation.subject.CreateSubjectRequest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

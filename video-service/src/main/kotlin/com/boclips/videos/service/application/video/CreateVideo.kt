@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
+import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
@@ -16,8 +17,7 @@ import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.video.CreateVideoRequest
-import com.boclips.videos.service.presentation.video.CreateVideoRequestToVideoConverter
+import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import io.micrometer.core.instrument.Counter
 import mu.KLogging
 
@@ -71,7 +71,7 @@ class CreateVideo(
 
     private fun findContentPartner(createRequest: CreateVideoRequest): ContentPartner? =
         createRequest.providerId?.let {
-            contentPartnerService.findById(createRequest.providerId)
+            contentPartnerService.findById(createRequest.providerId!!)
         }
 
     private fun triggerVideoAnalysis(createdVideo: Video) {

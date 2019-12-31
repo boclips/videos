@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.tag.CreateTagRequest
+import com.boclips.videos.api.response.tag.TagResource
 import com.boclips.videos.service.application.exceptions.TagExistsException
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
@@ -8,8 +10,6 @@ import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
-import com.boclips.videos.service.presentation.tag.CreateTagRequest
-import com.boclips.videos.service.presentation.tag.TagResource
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import org.springframework.hateoas.Resource
@@ -42,7 +42,7 @@ class TagController(
         getTag(id).let { Resource(it, tagsLinkBuilder.tag(it, "self")) }
 
     @GetMapping
-    fun tags(): Resources<Resource<*>> {
+    fun tags(): Resources<Resource<TagResource>> {
         return Resources(
             getTags().map { Resource(it, tagsLinkBuilder.tag(it, "self")) },
             tagsLinkBuilder.tags("self")
