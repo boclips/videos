@@ -1,7 +1,6 @@
 package com.boclips.videos.service.client.internal.resources
 
 import com.boclips.videos.service.client.VideoId
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.net.URI
@@ -12,8 +11,9 @@ import java.time.Month
 class CollectionResourceTest {
     @Test
     fun `converts resource to collection`() {
-        val collectionUri = "https://video-service.com/v1/collections/${TestFactories.aValidId()}"
-        val videoId = TestFactories.aValidId()
+        val collectionUri = "https://video-service.com/v1/collections/cof1fadef1fadef1fadef1fa"
+        val videoId = "def1fadef1fadef1fadef1fa"
+
         val releaseDate = LocalDate.of(2000, Month.JANUARY, 5)
         val resource = CollectionResource().apply {
             _links = CollectionLinks(Link(collectionUri))
@@ -53,7 +53,7 @@ class CollectionResourceTest {
         assertThat(collection.isPublic).isTrue()
 
         val video = collection.videos.component1()
-        assertThat(video.videoId).isEqualTo(VideoId(URI("https://video-service.com/v1/videos/$videoId")))
+        assertThat(video.videoId).isEqualTo(VideoId(URI("https://video-service.com/v1/videos/def1fadef1fadef1fadef1fa")))
         assertThat(video.title).isEqualTo("The best video")
         assertThat(video.description).isEqualTo("Seriously, the best thing you're gonna see")
         assertThat(video.releasedOn).isEqualTo(releaseDate)
@@ -69,12 +69,12 @@ class CollectionResourceTest {
     @Test
     fun `maps playback to null if it's not returned on the resource`() {
         val resource = CollectionResource().apply {
-            _links = CollectionLinks(Link("https://video-service.com/v1/collections/${TestFactories.aValidId()}"))
+            _links = CollectionLinks(Link("https://video-service.com/v1/collections/cof1fadef1fadef1fadef1fa"))
             title = "the title"
             subjects = setOf(SubjectResource().apply { this.id = "maths" })
             videos = listOf(VideoResource().apply {
                 _links = VideoLinks().apply {
-                    self = Link().apply { href = "https://video-service.com/v1/videos/${TestFactories.aValidId()}" }
+                    self = Link().apply { href = "https://video-service.com/v1/videos/def1fadef1fadef1fadef1fa" }
                 }
             })
         }

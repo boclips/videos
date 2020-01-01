@@ -1,6 +1,5 @@
 package com.boclips.videos.api.request.video
 
-import com.boclips.videos.service.presentation.video.RateVideoRequest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

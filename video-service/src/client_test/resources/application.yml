@@ -1,7 +1,0 @@
-server:
-  port: 9876
-video-service:
-  base-url: ""
-  access-token-uri: ""
-  client-id: ""
-  client-secret: ""

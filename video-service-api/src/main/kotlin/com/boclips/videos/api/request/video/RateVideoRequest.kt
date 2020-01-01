@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.video
+package com.boclips.videos.api.request.video
 
 import org.hibernate.validator.constraints.Range
 import javax.validation.constraints.NotNull

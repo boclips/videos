@@ -1,62 +1,17 @@
-buildscript {
-    ext.kotlin_version = '1.3.61'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
 plugins {
-    id 'org.springframework.boot' version '2.1.9.RELEASE'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.41'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.3.41'
+    id "org.jetbrains.kotlin.jvm" version '1.3.41'
     id 'com.adarshr.test-logger' version '1.2.0'
-    id 'net.ltgt.apt' version '0.10'
 }
 
-apply plugin: 'io.spring.dependency-management'
 apply plugin: 'kotlin'
 apply plugin: 'idea'
 
-group = 'com.boclips'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-
-    flatDir {
-        dirs 'libs'
-    }
-}
-
-idea {
-    module {
-        testSourceDirs += file('src/client_test/kotlin')
-        testResourceDirs += file('src/client_test/resources')
-    }
-}
-
-compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
-    }
-}
-
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-allprojects {
-    repositories {
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-        maven { url 'http://repo.spring.io/libs-release/' }
-    }
+    maven { url 'https://jitpack.io' }
+    maven { url 'http://repo.spring.io/libs-release/' }
 }
 
 test {
@@ -66,10 +21,22 @@ test {
 ext["junit-jupiter.version"] = junitVersion
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    implementation("org.springframework.boot:spring-boot-starter-hateoas:2.0.1.RELEASE")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
     testImplementation('org.mockito:mockito-junit-jupiter:2.23.0')
     testImplementation('org.assertj:assertj-core:3.14.0')
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

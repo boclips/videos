@@ -18,8 +18,8 @@ import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.support.Cookies
-import com.boclips.videos.service.presentation.video.RateVideoRequest
-import com.boclips.videos.service.presentation.video.TagVideoRequest
+import com.boclips.videos.api.request.video.RateVideoRequest
+import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException

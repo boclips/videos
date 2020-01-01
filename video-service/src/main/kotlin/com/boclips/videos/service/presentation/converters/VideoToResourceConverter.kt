@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
+import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.api.response.subject.SubjectResource
 import org.springframework.hateoas.Resource

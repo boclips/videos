@@ -5,10 +5,6 @@ import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.projections.Projection
-import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
-import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
-import com.boclips.videos.service.presentation.converters.SubjectToResourceConverter
-import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 
 class CollectionResourceFactory(
     private val videoToResourceConverter: VideoToResourceConverter,
