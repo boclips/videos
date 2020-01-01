@@ -3,7 +3,7 @@ package com.boclips.videos.api.response.video
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.request.video.PlaybackResource
-import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
+import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonView

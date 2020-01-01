@@ -1,7 +1,7 @@
 package com.boclips.videos.api.response.collection
 
 import com.boclips.videos.api.response.video.VideoResource
-import com.boclips.videos.service.presentation.ageRange.AgeRangeResource
+import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.Resource

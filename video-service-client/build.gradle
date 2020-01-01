@@ -1,0 +1,86 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.9.RELEASE'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.41'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.3.41'
+    id 'com.adarshr.test-logger' version '1.2.0'
+    id 'net.ltgt.apt' version '0.10'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+
+group = 'com.boclips'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'http://repo.spring.io/libs-release/' }
+    }
+}
+
+springBoot {
+    mainClassName = "com.boclips.videos.service.client.VideoServiceClient"
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart',
+                'Implementation-Version': version,
+                'Main-Class': 'com.boclips.videos.service.client.VideoServiceClient'
+    }
+
+    archiveName("video-service-client-1.0.0.jar")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext["junit-jupiter.version"] = junitVersion
+
+dependencies {
+    apt('org.projectlombok:lombok:1.18.4')
+
+    compile('org.springframework.retry:spring-retry')
+    compile("com.github.boclips:kaltura-client:0.117.0")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
+    compile("io.github.microutils:kotlin-logging:1.4.9")
+    compile('org.apache.commons:commons-lang3:3.7')
+    compile("org.bouncycastle:bcprov-jdk15on:1.60")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.9.10")
+    compile("com.damnhandy:handy-uri-templates:2.1.8")
+
+    compileOnly('org.projectlombok:lombok:1.18.4')
+    compileOnly('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
+    compileOnly("org.springframework.boot:spring-boot-starter-test")
+    compileOnly("org.springframework.boot:spring-boot-actuator")
+
+    testCompile('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
+    testCompile("org.junit.jupiter:junit-jupiter")
+    testCompile('org.mockito:mockito-junit-jupiter:2.23.0')
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.14.0'
+}

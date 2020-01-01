@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.video
+package com.boclips.videos.api.request.video
 
 import javax.validation.constraints.NotNull
 

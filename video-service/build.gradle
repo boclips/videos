@@ -8,6 +8,7 @@ plugins {
 
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'idea'
+apply plugin: 'kotlin'
 
 group = 'com.boclips'
 version = '0.0.1-SNAPSHOT'
@@ -21,30 +22,7 @@ repositories {
     }
 }
 
-idea {
-    module {
-        testSourceDirs += file('src/client_test/kotlin')
-        testResourceDirs += file('src/client_test/resources')
-    }
-}
-
 sourceSets {
-    client {
-        java {
-            srcDir 'src/client/java'
-        }
-    }
-
-    client_test {
-        kotlin {
-            compileClasspath += client.output + main.output + test.output
-            runtimeClasspath += client.output + main.output + test.output
-
-            srcDir 'src/client_test/kotlin'
-        }
-        resources.srcDir file('src/client_test/resources')
-    }
-
     youtubeContractTest {
         kotlin {
             compileClasspath += main.output + test.output
@@ -76,20 +54,6 @@ compileYoutubeContractTestKotlin {
     }
 }
 
-compileClientKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
-    }
-}
-
-compileClient_testKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
-    }
-}
-
 allprojects {
     repositories {
         mavenCentral()
@@ -109,44 +73,21 @@ task testYoutubeContract(type: Test) {
     useJUnitPlatform()
 }
 
-task testClient(type: Test) {
-    testClassesDirs = sourceSets.client_test.output.classesDirs
-    classpath = sourceSets.client_test.runtimeClasspath
-
-    useJUnitPlatform()
-}
-
-task buildClient(type: Jar) {
-    from(sourceSets.client.runtimeClasspath) {
-        include '**/*.class'
-        include '**/*.jar'
-    }
-
-    archiveName("video-service-client-${version}.jar")
-}
-
-task sourcesJarClient(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.client.allSource
-}
-
 test.finalizedBy(testYoutubeContract)
-test.finalizedBy(testClient)
 
 ext["junit-jupiter.version"] = junitVersion
 ext["elasticsearch.version"] = elasticSearchVersion
 ext["solr.version"] = solrVersion
 
 dependencies {
-    implementation project(':search-service')
     implementation project(':video-service-api')
+    implementation project(':search-service')
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-
     implementation('org.springframework.retry:spring-retry')
 
     implementation("org.mongodb:mongo-java-driver:3.10.1")
@@ -184,39 +125,13 @@ dependencies {
     testImplementation('org.yaml:snakeyaml:1.23')
 
     youtubeContractTestImplementation sourceSets.main.output
-
     youtubeContractTestImplementation configurations.compile
     youtubeContractTestImplementation configurations.testImplementation
-
     youtubeContractTestRuntime configurations.runtime
     youtubeContractTestRuntime configurations.testRuntime
-
-    clientCompileOnly('org.projectlombok:lombok:1.18.4')
-    clientApt('org.projectlombok:lombok:1.18.4')
-    clientImplementation("com.fasterxml.jackson.core:jackson-databind:2.9.10")
-    clientCompileOnly('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
-    clientCompileOnly("org.springframework.boot:spring-boot-starter-test")
-    client_testImplementation('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
-    clientCompileOnly("org.springframework.boot:spring-boot-actuator")
-    client_testImplementation("org.springframework.boot:spring-boot-actuator")
 
     testImplementation("com.github.tomakehurst:wiremock:2.19.0") {
         exclude group: 'junit', module: 'junit'
     }
     testImplementation("com.damnhandy:handy-uri-templates:2.1.8")
-
-    clientImplementation("com.damnhandy:handy-uri-templates:2.1.8")
-
-    client_testImplementation sourceSets.main.output
-    client_testImplementation sourceSets.test.output
-    client_testImplementation sourceSets.client.output
-
-    client_testImplementation configurations.compile
-    client_testImplementation configurations.testImplementation
-    client_testImplementation configurations.clientCompile
-    client_testImplementation configurations.clientImplementation
-
-    client_testRuntime configurations.runtime
-    client_testRuntime configurations.testRuntime
-    client_testRuntime configurations.clientRuntime
 }
