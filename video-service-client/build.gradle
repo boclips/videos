@@ -65,6 +65,17 @@ ext["junit-jupiter.version"] = junitVersion
 dependencies {
     apt('org.projectlombok:lombok:1.18.4')
 
+    compile project(':video-service-api')
+
+    compile group: 'io.github.openfeign', name: 'feign-core', version: '10.7.0'
+    compile group: 'io.github.openfeign', name: 'feign-jackson', version: '10.7.0'
+    compile group: 'io.github.openfeign', name: 'feign-okhttp', version: '10.7.0'
+    compile group: 'io.github.openfeign', name: 'feign-slf4j', version: '10.7.0'
+
+    compile('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
+
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.10.1'
+
     compile('org.springframework.retry:spring-retry')
     compile("com.github.boclips:kaltura-client:0.117.0")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
@@ -73,6 +84,7 @@ dependencies {
     compile("org.bouncycastle:bcprov-jdk15on:1.60")
     compile("com.fasterxml.jackson.core:jackson-databind:2.9.10")
     compile("com.damnhandy:handy-uri-templates:2.1.8")
+    compile("org.springframework.boot:spring-boot-starter-hateoas:2.0.1.RELEASE")
 
     compileOnly('org.projectlombok:lombok:1.18.4')
     compileOnly('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
