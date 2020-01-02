@@ -10,7 +10,6 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
 import org.bson.types.ObjectId
-import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -28,7 +27,6 @@ class CreateVideoRequestToVideoConverter {
             description = createVideoRequest.description!!,
             keywords = createVideoRequest.keywords!!,
             releasedOn = createVideoRequest.releasedOn!!,
-            ingestedOn = LocalDate.now(),
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
             contentPartner = contentPartner,
             videoReference = createVideoRequest.providerVideoId!!,

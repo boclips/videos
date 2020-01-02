@@ -130,31 +130,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `update playback sets ingestion timestamp when not known`() {
-        val originalAsset = mongoVideoRepository.create(
-            createVideo(
-                ingestedAt = null,
-                playback = createKalturaPlayback()
-            )
-        )
-
-        mongoVideoRepository.bulkUpdate(
-            listOf(
-                VideoUpdateCommand.ReplacePlayback(
-                    originalAsset.videoId,
-                    createKalturaPlayback(
-                        createdAt = ZonedDateTime.parse("2018-06-01T12:30:00Z")
-                    )
-                )
-            )
-        )
-
-        val updatedAsset = mongoVideoRepository.find(originalAsset.videoId)
-
-        assertThat(updatedAsset!!.ingestedAt).isEqualTo(ZonedDateTime.parse("2018-06-01T12:30:00Z"))
-    }
-
-    @Test
     fun `update title`() {
         val originalAsset = mongoVideoRepository.create(createVideo(title = "old title"))
 

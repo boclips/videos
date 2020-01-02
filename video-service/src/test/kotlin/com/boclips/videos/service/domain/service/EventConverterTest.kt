@@ -16,7 +16,6 @@ import com.boclips.videos.service.testsupport.VideoFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
-import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -37,7 +36,7 @@ class EventConverterTest {
             ),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
             type = ContentType.INSTRUCTIONAL_CLIPS,
-            ingestedOn = LocalDate.ofYearDay(2020, 20),
+            ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             ageRange = AgeRange.bounded(5, 10)
         )
 
@@ -53,7 +52,8 @@ class EventConverterTest {
         assertThat(videoEvent.ageRange.max).isEqualTo(10)
         assertThat(videoEvent.durationSeconds).isEqualTo(120)
         assertThat(videoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
-        assertThat(videoEvent.ingestedOn).isEqualTo("2020-01-20")
+        assertThat(videoEvent.ingestedOn).isEqualTo("2020-11-12")
+        assertThat(videoEvent.ingestedAt).isEqualTo("2020-11-12T13:14:15.16Z")
         assertThat(videoEvent.assets).hasSize(1)
         assertThat(videoEvent.originalDimensions.width).isEqualTo(1920)
         assertThat(videoEvent.originalDimensions.height).isEqualTo(1080)

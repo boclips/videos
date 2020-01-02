@@ -15,7 +15,6 @@ data class VideoDocument(
     val keywords: List<String>,
     val subjects: List<SubjectDocument>,
     val releaseDate: Date,
-    val ingestDate: Date?,
     val ingestedAt: String?,
     val legalRestrictions: String,
     val language: String?,

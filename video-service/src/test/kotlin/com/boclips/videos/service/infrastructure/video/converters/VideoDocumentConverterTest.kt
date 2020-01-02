@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.Locale
 
@@ -36,8 +37,7 @@ class VideoDocumentConverterTest {
             keywords = listOf("keyword1", "keyword2"),
             subjects = setOf(TestFactories.createSubject(), TestFactories.createSubject()),
             releasedOn = LocalDate.ofYearDay(2018, 10),
-            ingestedAt = ZonedDateTime.now(),
-            ingestedOn = LocalDate.ofYearDay(2019, 29),
+            ingestedAt = ZonedDateTime.of(2019, 11, 12, 13, 14, 15, 160000000,  ZoneOffset.UTC),
             legalRestrictions = "legal restrictions",
             language = Locale.GERMANY,
             transcript = "hello",
@@ -67,11 +67,11 @@ class VideoDocumentConverterTest {
     }
 
     @Test
-    fun `infers ingest date from the id when it is not known`() {
-        val videoDocument = createVideoDocument(ingestDate = null, id = ObjectId("5de302800000000000000000"))
+    fun `infers ingest time from the id when it is not known`() {
+        val videoDocument = createVideoDocument(ingestedAt = null, id = ObjectId("5de3ae1c0000000000000000"))
 
         val video = VideoDocumentConverter.toVideo(videoDocument)
 
-        assertThat(video.ingestedOn).isEqualTo("2019-12-01")
+        assertThat(video.ingestedAt).isEqualTo("2019-12-01T12:12:12Z")
     }
 }
