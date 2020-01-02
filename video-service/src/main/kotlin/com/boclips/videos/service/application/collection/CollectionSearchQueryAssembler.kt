@@ -48,7 +48,7 @@ class CollectionSearchQueryAssembler {
             },
             pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE,
             pageIndex = page ?: 0,
-            hasLessonPlans = hasLessonPlans ?: null
+            hasLessonPlans = hasLessonPlans
         )
     }
 

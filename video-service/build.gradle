@@ -96,15 +96,15 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     implementation('com.github.boclips:boclips-spring-web:0.64.0')
-    implementation('com.github.boclips:boclips-spring-security:0.190.0')
+    implementation('com.github.boclips:boclips-spring-security:0.286.0')
     implementation("com.github.boclips:event-bus:2.10.0")
 
     implementation("com.github.boclips:kaltura-client:0.117.0")
+
     implementation("com.github.boclips:user-service:0.324.0")
     // Required by user-service client
     implementation('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
-
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1")
     implementation("io.github.microutils:kotlin-logging:1.4.9")
     implementation('com.google.apis:google-api-services-youtube:v3-rev206-1.25.0')
     implementation('org.apache.commons:commons-lang3:3.7')

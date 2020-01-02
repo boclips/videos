@@ -9,6 +9,7 @@ logging:
   config: "classpath:logback.xml"
   level:
     com.boclips.kalturaclient: debug
+    feign: debug
 
 management:
   endpoint:

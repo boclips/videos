@@ -56,6 +56,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.cache.CacheManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -68,7 +69,7 @@ import java.time.ZonedDateTime
 import java.util.Collections
 import java.util.UUID
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test", "fakes", "fakes-kaltura", "fakes-search", "fakes-youtube", "fakes-security")
@@ -142,6 +143,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var cacheManager: CacheManager
+
+    @LocalServerPort
+    var randomServerPort: Int = 0
 
     companion object : KLogging() {
         private var mongoProcess: MongodProcess? = null

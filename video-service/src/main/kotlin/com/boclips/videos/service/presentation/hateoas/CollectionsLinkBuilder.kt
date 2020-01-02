@@ -20,26 +20,34 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun collection(id: String?) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { collectionResourceLink(id, "collection") }
 
     fun editCollection(collectionResource: CollectionResource) =
-        if (collectionResource.mine) collectionResourceLink(collectionResource.id, "edit") else null
+        collectionResource.mine?.let { if (it) collectionResourceLink(collectionResource.id, "edit") else null }
 
     fun removeCollection(collectionResource: CollectionResource) =
-        if (collectionResource.mine) collectionResourceLink(collectionResource.id, "remove") else null
+        collectionResource.mine?.let { if (it) collectionResourceLink(collectionResource.id, "remove") else null }
 
     fun addVideoToCollection(collectionResource: CollectionResource) =
-        if (collectionResource.mine) Link(
-            getCollectionsRoot()
-                .pathSegment(collectionResource.id)
-                .pathSegment("videos")
-                .toUriString() + "/{video_id}", "addVideo"
-        ) else null
+        collectionResource.mine?.let {
+            if (it) {
+                Link(
+                    getCollectionsRoot()
+                        .pathSegment(collectionResource.id)
+                        .pathSegment("videos")
+                        .toUriString() + "/{video_id}", "addVideo"
+                )
+            } else null
+        }
 
     fun removeVideoFromCollection(collectionResource: CollectionResource) =
-        if (collectionResource.mine) Link(
-            getCollectionsRoot()
-                .pathSegment(collectionResource.id)
-                .pathSegment("videos")
-                .toUriString() + "/{video_id}", "removeVideo"
-        ) else null
+        collectionResource.mine?.let {
+            if (it) {
+                Link(
+                    getCollectionsRoot()
+                        .pathSegment(collectionResource.id)
+                        .pathSegment("videos")
+                        .toUriString() + "/{video_id}", "removeVideo"
+                )
+            } else null
+        }
 
     private fun collectionResourceLink(id: String?, rel: String): Link {
         return if (id == null) {
@@ -168,7 +176,9 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     }
 
     fun bookmark(collectionResource: CollectionResource) =
-        if (collectionResource.bookmarked || collectionResource.mine || !collectionResource.public) {
+        if (collectionResource.bookmarked == null || collectionResource.mine == null || collectionResource.public == null) {
+            null
+        } else if (collectionResource.bookmarked!! || collectionResource.mine!! || !collectionResource.public!!) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collectionResource.id)
@@ -178,7 +188,9 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
 
     fun unbookmark(collectionResource: CollectionResource) =
-        if (!collectionResource.bookmarked || collectionResource.mine || !collectionResource.public) {
+        if (collectionResource.bookmarked == null || collectionResource.mine == null || collectionResource.public == null) {
+            null
+        } else if (!collectionResource.bookmarked!! || collectionResource.mine!! || !collectionResource.public!!) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collectionResource.id)
@@ -187,10 +199,10 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             Link(href, "unbookmark")
         }
 
-    fun interactedWith(collectionResource: CollectionResource)= ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(EventController::class.java)
-                .logCollectionInteractedWithEvent(collectionId = collectionResource.id, data = null)
-        ).withRel(Rels.LOG_COLLECTION_INTERACTION)
+    fun interactedWith(collectionResource: CollectionResource) = ControllerLinkBuilder.linkTo(
+        ControllerLinkBuilder.methodOn(EventController::class.java)
+            .logCollectionInteractedWithEvent(collectionId = collectionResource.id!!, data = null)
+    ).withRel(Rels.LOG_COLLECTION_INTERACTION)
 
     fun projections() =
         ProjectionsCollectionsLinkBuilder(

@@ -4,7 +4,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import feign.RequestLine
 import org.springframework.hateoas.Resources
 
-interface SubjectsClient : HttpClient {
+interface SubjectsClient {
     @RequestLine("GET /v1/subjects")
     fun subjects(): Resources<SubjectResource>
 }
