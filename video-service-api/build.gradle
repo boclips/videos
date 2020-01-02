@@ -43,6 +43,7 @@ dependencies {
     testImplementation('org.mockito:mockito-junit-jupiter:2.23.0')
     testImplementation('org.assertj:assertj-core:3.14.0')
     testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
+    testImplementation('org.springframework:spring-test:5.2.2.RELEASE')
 }
 
 compileKotlin {
