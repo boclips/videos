@@ -18,6 +18,10 @@ test {
     useJUnitPlatform()
 }
 
+jar {
+    archiveName("video-service-api-0.0.1-SNAPSHOT.jar")
+}
+
 ext["junit-jupiter.version"] = junitVersion
 
 dependencies {
