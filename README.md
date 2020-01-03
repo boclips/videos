@@ -18,21 +18,14 @@ The video search query is owned by the search service. It's goal is to return re
 > To serve the ones that need it.
 
 If you are looking to integrate with the video-service, but you don't want to handle the HTTP requests yourselves,
-the video-service client is a Java  wrapper for the video service.
-
-It currently only covers a small subset of the API endpoints, but we are looking to extend it as we go along.
+the video-service client HTTP  wrapper for the video service.
 
 The client is publicly distributed using [JitPack](https://jitpack.io/#boclips/videos).
 
 ### Releasing a new client version
 
-Releasing a new version of the client, entails cutting a new release. The concourse pipeline has a job for just that.
-
-This is what needs to be done:
-
-1. Make your changes & ensure the `build-video-service` job succeeds
-2. Trigger the [`cut-release-video-service-client`](https://concourse.devboclips.net/teams/main/pipelines/boclips/jobs/cut-release-video-service-client) job
-3. Specify the new version in the `build.gradle` file of the project using the client
+A new client is cut whenever CI tags the comment, which happens before any form of validation. 
+This means we can cut potentially broken versions of the client. We should change that. 
 
 # Development
 
