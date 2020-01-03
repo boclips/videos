@@ -32,9 +32,9 @@ class SubjectsClientFake : SubjectsClient {
         database[id] = SubjectResource(id = id, name = createSubjectRequest.name)
     }
 
-    fun add(createSubjectRequest: CreateSubjectRequest) : SubjectResource {
+    fun add(subjectResource: SubjectResource) : SubjectResource {
         val id = "${id++}"
-        database[id] = SubjectResource(id = id, name = createSubjectRequest.name)
+        database[id] = subjectResource
         return database[id]!!
     }
 
