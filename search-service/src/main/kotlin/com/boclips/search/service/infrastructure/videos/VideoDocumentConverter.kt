@@ -25,11 +25,11 @@ object VideoDocumentConverter {
             ageRangeMax = video.ageRangeMax,
             ageRangeMin = video.ageRangeMin,
             type = video.type.name,
-            subjectIds = video.subjects.map { subject -> subject.id }.toSet(),
-            subjectNames = video.subjects.map {subject -> subject.name}.toSet(),
+            subjectIds = video.subjects.items.map { subject -> subject.id }.toSet(),
+            subjectNames = video.subjects.items.map { subject -> subject.name }.toSet(),
+            subjectsSetManually = video.subjects.setManually,
             promoted = video.promoted,
             meanRating = video.meanRating
         )
     }
-
 }

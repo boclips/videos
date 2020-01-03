@@ -954,6 +954,84 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by manually-tagged subjects`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    title = "TED",
+                    subjectsSetManually = true
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED",
+                    subjectsSetManually = false
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "TED",
+                    subjectsSetManually = null
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjectsSetManually = true
+                )
+            )
+        )
+
+        assertThat(results).containsAll(listOf("0"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("1", "2"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by non-manually-tagged subjects`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "0",
+                    title = "TED",
+                    subjectsSetManually = true
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED",
+                    subjectsSetManually = false
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "TED",
+                    subjectsSetManually = null
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "TED",
+                    subjectsSetManually = false
+                )
+            )
+        )
+
+        assertThat(results).containsAll(listOf("1"))
+        assertThat(results).doesNotContainAnyElementsOf(listOf("0", "2"))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `can filter by subject on videos with multiple subjects`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>

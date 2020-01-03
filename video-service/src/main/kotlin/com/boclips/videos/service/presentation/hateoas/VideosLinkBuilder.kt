@@ -64,6 +64,7 @@ class VideosLinkBuilder {
                     null,
                     null,
                     null,
+                    null,
                     null
                 )
         ).withRel(Rels.SEARCH_VIDEOS)

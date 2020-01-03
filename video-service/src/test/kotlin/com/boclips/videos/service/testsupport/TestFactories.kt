@@ -84,6 +84,7 @@ object TestFactories {
         type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = listOf("keyword"),
         subjects: Set<Subject> = emptySet(),
+        subjectsSetManually: Boolean? = null,
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         ingestedAt: ZonedDateTime = ZonedDateTime.now(),
         legalRestrictions: String = "",
@@ -113,7 +114,7 @@ object TestFactories {
             legalRestrictions = legalRestrictions,
             subjects = VideoSubjects(
                 items = subjects,
-                setManually = null
+                setManually = subjectsSetManually
             ),
             language = language,
             transcript = transcript,

@@ -27,7 +27,8 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.PROMOTED to mapOf(
                     "type" to "boolean"
                 ),
-                VideoDocument.MEAN_RATING to IndexConfiguration.Fields.double
+                VideoDocument.MEAN_RATING to IndexConfiguration.Fields.double,
+                VideoDocument.SUBJECTS_SET_MANUALLY to IndexConfiguration.Fields.boolean
             )
         )
     }

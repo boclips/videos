@@ -15,7 +15,8 @@ class SearchVideo(
     private val getVideoById: GetVideoById,
     private val getAllVideosById: GetAllVideosById,
     private val getVideosByQuery: GetVideosByQuery,
-    private val videoRepository: VideoRepository) {
+    private val videoRepository: VideoRepository
+) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
@@ -44,6 +45,7 @@ class SearchVideo(
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         subjects: Set<String> = emptySet(),
+        subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
         contentPartnerNames: Set<String> = emptySet(),
         type: Set<String> = emptySet(),
@@ -64,6 +66,7 @@ class SearchVideo(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             subjects = subjects,
+            subjectsSetManually = subjectsSetManually,
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type,

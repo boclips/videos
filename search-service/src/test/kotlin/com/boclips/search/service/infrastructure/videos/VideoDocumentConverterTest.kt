@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
 import org.assertj.core.api.Assertions.assertThat
@@ -59,7 +60,8 @@ class VideoDocumentConverterTest {
                 subjectIds = setOf("boring-subject-id"),
                 subjectNames = setOf("boring-subject-name"),
                 promoted = null,
-                meanRating = null
+                meanRating = null,
+                subjectsSetManually = null
             )
         )
     }
@@ -106,7 +108,10 @@ class VideoDocumentConverterTest {
             ageRangeMin = 10,
             ageRangeMax = 16,
             type = VideoType.INSTRUCTIONAL,
-            subjects = setOf(SubjectMetadata(id = "subjectId", name = "subjectName")),
+            subjects = SubjectsMetadata(
+                items = setOf(SubjectMetadata(id = "subjectId", name = "subjectName")),
+                setManually = false
+            ),
             promoted = null,
             meanRating = 3.8
         )
@@ -131,7 +136,8 @@ class VideoDocumentConverterTest {
                 subjectIds = setOf("subjectId"),
                 subjectNames = setOf("subjectName"),
                 promoted = null,
-                meanRating = 3.8
+                meanRating = 3.8,
+                subjectsSetManually = false
             )
         )
     }

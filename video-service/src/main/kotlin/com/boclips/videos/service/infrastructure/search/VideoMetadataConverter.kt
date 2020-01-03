@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -28,7 +29,10 @@ object VideoMetadataConverter {
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
             type = VideoTypeConverter.convert(video.type),
-            subjects = subjects,
+            subjects = SubjectsMetadata(
+                items = subjects,
+                setManually = video.subjects.setManually
+            ),
             promoted = video.promoted,
             meanRating = video.getRatingAverage()
         )

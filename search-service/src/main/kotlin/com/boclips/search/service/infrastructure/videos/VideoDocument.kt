@@ -21,7 +21,8 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(SUBJECT_IDS) val subjectIds: Set<String>?,
     @param:JsonProperty(SUBJECT_NAMES) val subjectNames: Set<String>?,
     @param:JsonProperty(PROMOTED) val promoted: Boolean?,
-    @param:JsonProperty(MEAN_RATING) val meanRating: Double?
+    @param:JsonProperty(MEAN_RATING) val meanRating: Double?,
+    @param:JsonProperty(SUBJECTS_SET_MANUALLY) val subjectsSetManually: Boolean?
 ) {
     companion object {
         const val ID = "id"
@@ -41,5 +42,6 @@ data class VideoDocument @JsonCreator constructor(
         const val TYPE = "type"
         const val PROMOTED = "promoted"
         const val MEAN_RATING = "meanRating"
+        const val SUBJECTS_SET_MANUALLY = "subjectsSetManually"
     }
 }

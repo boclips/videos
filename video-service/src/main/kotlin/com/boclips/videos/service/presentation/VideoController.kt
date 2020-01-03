@@ -84,6 +84,7 @@ class VideoController(
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "subject", required = false) subjects: Set<String>?,
+        @RequestParam(name = "subjects_set_manually", required = false) subjectsSetManually: Boolean?,
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
         @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
         @RequestParam(name = "type", required = false) type: Set<String>?
@@ -105,6 +106,7 @@ class VideoController(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             subjects = subjects ?: emptySet(),
+            subjectsSetManually = subjectsSetManually,
             promoted = promoted,
             contentPartnerNames = contentPartners ?: emptySet(),
             type = type?.let { type } ?: emptySet(),

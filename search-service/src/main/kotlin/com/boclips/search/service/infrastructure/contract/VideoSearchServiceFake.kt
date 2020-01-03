@@ -61,11 +61,13 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                         true
                     } else {
                         query.subjectIds.any { querySubject ->
-                            entry.value.subjects.any { videoSubject ->
+                            entry.value.subjects.items.any { videoSubject ->
                                 videoSubject.id.contains(querySubject)
                             }
                         }
                     }
+                }.filter { entry ->
+                    query.subjectsSetManually?.let { entry.value.subjects.setManually == it } ?: true
                 }.filter { entry ->
                     query.promoted?.let { entry.value.promoted == it } ?: true
                 }.filter { entry ->

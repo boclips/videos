@@ -193,6 +193,24 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can find videos with subjects that have been manually tagged`() {
+        saveVideo(title = "my subject will NOT be edited")
+
+        val editedVideo = saveVideo(title = "my subject will be edited")
+        val newSubject = saveSubject("Maths")
+
+        mockMvc.perform(
+            patch("/v1/videos/${editedVideo.value}?subjectIds=${newSubject.id.value}")
+                .asBoclipsEmployee()
+        )
+
+        mockMvc.perform(get("/v1/videos?query=subject&subjects_set_manually=true").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(editedVideo.value)))
+    }
+
+    @Test
     fun `returns Youtube videos when query matches`() {
         mockMvc.perform(get("/v1/videos?query=jobs").asTeacher())
             .andExpect(status().isOk)

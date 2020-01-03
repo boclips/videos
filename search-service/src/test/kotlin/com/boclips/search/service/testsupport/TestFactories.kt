@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoDocument
@@ -27,6 +28,7 @@ object SearchableVideoMetadataFactory {
         ageRangeMax: Int? = 11,
         type: VideoType = VideoType.INSTRUCTIONAL,
         subjects: Set<SubjectMetadata> = emptySet(),
+        subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
         meanRating: Double? = 5.0
     ) = VideoMetadata(
@@ -43,7 +45,7 @@ object SearchableVideoMetadataFactory {
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
         type = type,
-        subjects = subjects,
+        subjects = SubjectsMetadata(items = subjects, setManually = subjectsSetManually),
         promoted = promoted,
         meanRating = meanRating
     )
@@ -76,7 +78,8 @@ object TestFactories {
             subjectNames = setOf("boring-names"),
             type = VideoType.INSTRUCTIONAL.name,
             promoted = null,
-            meanRating = null
+            meanRating = null,
+            subjectsSetManually = null
         )
     }
 }

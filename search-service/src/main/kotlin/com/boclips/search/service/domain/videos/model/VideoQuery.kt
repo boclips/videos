@@ -20,6 +20,7 @@ class VideoQuery(
     val ageRangeMax: Int? = null,
     val userSubjectIds: Set<String> = emptySet(),
     val subjectIds: Set<String> = emptySet(),
+    val subjectsSetManually: Boolean? = null,
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet(),

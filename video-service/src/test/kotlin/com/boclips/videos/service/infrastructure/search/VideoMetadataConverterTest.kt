@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
@@ -43,6 +44,7 @@ class VideoMetadataConverterTest {
                     name = "subject name"
                 )
             ),
+            subjectsSetManually = true,
             promoted = true,
             ratings = emptyList()
         )
@@ -64,8 +66,9 @@ class VideoMetadataConverterTest {
                 ageRangeMin = 5,
                 ageRangeMax = 11,
                 type = VideoType.INSTRUCTIONAL,
-                subjects = setOf(
-                    SubjectMetadata(id = "subject-id", name = "subject name")
+                subjects = SubjectsMetadata(
+                    items = setOf(SubjectMetadata(id = "subject-id", name = "subject name")),
+                    setManually = true
                 ),
                 promoted = true,
                 meanRating = null

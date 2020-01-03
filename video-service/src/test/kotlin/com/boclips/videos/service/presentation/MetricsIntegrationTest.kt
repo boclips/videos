@@ -2,6 +2,8 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asIngestor
+import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.asUserWithRoles
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -48,7 +50,7 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isCreated)
             .andReturn().response.getHeader("Location")
 
-        mockMvc.perform(get("/actuator/prometheus"))
+        mockMvc.perform(get("/actuator/prometheus").asUserWithRoles())
             .andExpect(status().isOk)
             .andExpect(content().string(containsString("boclips_created_video_count_total ")))
     }

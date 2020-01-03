@@ -15,6 +15,11 @@ enum class SortKey {
     RANDOM
 }
 
+data class SubjectQuery(
+    val ids: Set<String> = emptySet(),
+    val setManually: Boolean? = null
+)
+
 class VideoSearchQuery(
     val text: String,
     val sortBy: SortKey? = null,
@@ -30,7 +35,7 @@ class VideoSearchQuery(
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
     val userSubjectIds: Set<String> = emptySet(),
-    val subjects: Set<String> = emptySet(),
+    val subjectQuery: SubjectQuery = SubjectQuery(),
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet()
@@ -64,7 +69,8 @@ class VideoSearchQuery(
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
                 userSubjectIds = userSubjectIds,
-                subjectIds = subjects,
+                subjectIds = subjectQuery.ids,
+                subjectsSetManually = subjectQuery.setManually,
                 promoted = promoted,
                 contentPartnerNames = contentPartnerNames,
                 type = type,

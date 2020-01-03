@@ -120,6 +120,17 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                         )
                     )
                 }
+            }.apply {
+                videoQuery.subjectsSetManually?.let { subjectsSetManually ->
+                    must(
+                        boolQuery().must(
+                            termsQuery(
+                                VideoDocument.SUBJECTS_SET_MANUALLY,
+                                subjectsSetManually
+                            )
+                        )
+                    )
+                }
             }
 
 

@@ -5,6 +5,7 @@ import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.domain.model.video.SubjectQuery
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.events.EventService
@@ -39,7 +40,8 @@ class GetVideosByQuery(
         promoted: Boolean?,
         contentPartnerNames: Set<String>,
         type: Set<String>,
-        user: User
+        user: User,
+        subjectsSetManually: Boolean?
     ): Page<Video> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -62,7 +64,7 @@ class GetVideosByQuery(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             userSubjectIds = userSubjectIds,
-            subjects = subjects,
+            subjectQuery = SubjectQuery(ids = subjects, setManually = subjectsSetManually),
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type.map { searchQueryConverter.convertType(it) }.toSet()
