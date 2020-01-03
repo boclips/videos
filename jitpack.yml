@@ -1,6 +1,2 @@
 install:
-  - ./build-artifacts
-env:
-  ARTIFACT: video-service-api
-before_install:
-  - export ARTIFACT=video-service-api
+  - ./gradlew video-service-api:install

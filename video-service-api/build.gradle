@@ -5,6 +5,7 @@ plugins {
 
 apply plugin: 'kotlin'
 apply plugin: 'idea'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
 
@@ -16,10 +17,6 @@ repositories {
 
 test {
     useJUnitPlatform()
-}
-
-jar {
-    archiveName("video-service-api-0.0.1-SNAPSHOT.jar")
 }
 
 ext["junit-jupiter.version"] = junitVersion
