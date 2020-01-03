@@ -4,12 +4,12 @@ import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.eventbus.events.video.VideoSubjectClassified
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
@@ -71,12 +71,9 @@ class SubjectClassificationService(
             if (subjects.isNotEmpty()) {
                 val updateCommand = VideoUpdateCommand.ReplaceSubjects(videoId, subjects)
                 videoRepository.update(updateCommand)
-                logger.info { "Updates subjects of video ${videoId.value}: ${subjects.joinToString(", ") { it.name }}" }
+                logger.info { "Update subjects of video ${videoId.value}: ${subjects.joinToString(", ") { it.name }}" }
             } else {
-                logger.info(
-                    "Not found",
-                    "Subject with id ${videoSubjectClassified.subjects.map { it.value }} cannot be found"
-                )
+                logger.info("Subjects with ids ${videoSubjectClassified.subjects.map { it.value }} cannot be found for video ${videoId.value}")
             }
         } catch (e: Exception) {
             logger.error(e) { "Updating subjects of video ${videoId.value} failed and will not be retried" }
