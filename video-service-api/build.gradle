@@ -30,14 +30,8 @@ dependencies {
     implementation('org.springframework.security.oauth:spring-security-oauth2:2.1.4.RELEASE')
     implementation('com.github.boclips:boclips-spring-security:0.286.0')
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.10.1'
-    implementation("com.github.boclips:kaltura-client:0.117.0")
-    implementation("io.github.microutils:kotlin-logging:1.4.9")
-    implementation('org.apache.commons:commons-lang3:3.7')
-    implementation("org.bouncycastle:bcprov-jdk15on:1.60")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.9.10")
-    implementation("com.damnhandy:handy-uri-templates:2.1.8")
+    compileOnly group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.10.1'
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.9.10")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
     testImplementation('org.mockito:mockito-junit-jupiter:2.23.0')
