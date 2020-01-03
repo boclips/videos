@@ -52,7 +52,6 @@ class EventConverterTest {
         assertThat(videoEvent.ageRange.max).isEqualTo(10)
         assertThat(videoEvent.durationSeconds).isEqualTo(120)
         assertThat(videoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
-        assertThat(videoEvent.ingestedOn).isEqualTo("2020-11-12")
         assertThat(videoEvent.ingestedAt).isEqualTo("2020-11-12T13:14:15.16Z")
         assertThat(videoEvent.assets).hasSize(1)
         assertThat(videoEvent.originalDimensions.width).isEqualTo(1920)

@@ -40,7 +40,6 @@ class EventConverter {
             .ageRange(toAgeRangePayload(video.ageRange))
             .durationSeconds(video.playback.duration.seconds.toInt())
             .type(toVideoType(video.type))
-            .ingestedOn(video.ingestedAt.toLocalDate())
             .ingestedAt(video.ingestedAt)
             .originalDimensions(originalDimensions)
             .assets(assets)
