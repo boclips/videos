@@ -31,4 +31,14 @@ class SubjectsClientFake : SubjectsClient {
         val id = "${id++}"
         database[id] = SubjectResource(id = id, name = createSubjectRequest.name)
     }
+
+    fun add(createSubjectRequest: CreateSubjectRequest) : SubjectResource {
+        val id = "${id++}"
+        database[id] = SubjectResource(id = id, name = createSubjectRequest.name)
+        return database[id]!!
+    }
+
+    fun clear() {
+        database.clear()
+    }
 }
