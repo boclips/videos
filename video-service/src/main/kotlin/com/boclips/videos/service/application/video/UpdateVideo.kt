@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -17,25 +18,18 @@ open class UpdateVideo(
 
     companion object : KLogging();
 
-    open operator fun invoke(
-        id: String,
-        title: String?,
-        description: String?,
-        promoted: Boolean?,
-        subjectIds: List<String>?,
-        user: User
-    ) {
+    open operator fun invoke(id: String, updateRequest: UpdateVideoRequest, user: User) {
         if (user.isPermittedToUpdateVideo.not()) throw OperationForbiddenException()
 
-        val updateTitle = title?.let { VideoUpdateCommand.ReplaceTitle(VideoId(id), it) }
-        val updateDescription = description?.let { VideoUpdateCommand.ReplaceDescription(VideoId(id), it) }
-        val replacePromoted = promoted?.let { VideoUpdateCommand.ReplacePromoted(VideoId(id), it) }
-        val updateSubjectIds = subjectIds?.let { subjectIdList ->
+        val updateTitle = updateRequest.title?.let { VideoUpdateCommand.ReplaceTitle(VideoId(id), it) }
+        val updateDescription = updateRequest.description?.let { VideoUpdateCommand.ReplaceDescription(VideoId(id), it) }
+        val replacePromoted = updateRequest.promoted?.let { VideoUpdateCommand.ReplacePromoted(VideoId(id), it) }
+        val updateSubjectIds = updateRequest.subjectIds?.let { subjectIdList ->
             val allSubjects = subjectRepository.findAll()
             val validNewSubjects = allSubjects.filter { subjectIdList.contains(it.id.value) }
             VideoUpdateCommand.ReplaceSubjects(VideoId(id), validNewSubjects)
         }
-        val updateSubjectsWereSetManually = subjectIds?.let {
+        val updateSubjectsWereSetManually = updateRequest.subjectIds?.let {
             VideoUpdateCommand.ReplaceSubjectsWereSetManually(VideoId(id), true)
         }
 

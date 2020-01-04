@@ -1,9 +1,10 @@
-package com.boclips.videos.service.presentation
+package com.boclips.videos.service
 
 import com.boclips.videos.api.httpclient.CollectionsClient
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.TestTokenFactory
+import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.config.security.UserRoles
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Collectors
 
@@ -22,13 +24,39 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
     @Nested
     inner class Videos {
         @Test
-        fun `can fetch a video`() {
-            val savedVideo = saveVideo()
+        fun `fetch, update and delete a video`() {
+            val videosClient = VideosClient.create(
+                apiUrl = "http://localhost:$randomServerPort",
+                objectMapper = objectMapper,
+                tokenFactory = TestTokenFactory(
+                    "the@owner.com",
+                    UserRoles.INSERT_VIDEOS,
+                    UserRoles.UPDATE_VIDEOS,
+                    UserRoles.VIEW_VIDEOS,
+                    UserRoles.REMOVE_VIDEOS,
+                    UserRoles.SHARE_VIDEOS,
+                    UserRoles.RATE_VIDEOS,
+                    UserRoles.DOWNLOAD_TRANSCRIPT
+                )
+            )
 
-            val videosClient =
-                VideosClient.create(apiUrl = "http://localhost:$randomServerPort", objectMapper = objectMapper)
+            val createdVideo = saveVideo()
 
-            assertThat(videosClient.getVideo(savedVideo.value)).isNotNull
+            assertThat(videosClient.getVideo(createdVideo.value)).isNotNull
+
+            videosClient.updateVideo(
+                createdVideo.value,
+                VideoServiceApiFactory.createUpdateVideoRequest(title = "new title")
+            )
+            videosClient.updateVideoRating(createdVideo.value, 4)
+
+            assertThat(videosClient.getVideo(createdVideo.value).content.title).isEqualTo("new title")
+            assertThat(videosClient.getVideo(createdVideo.value).content.yourRating).isEqualTo(4.0)
+
+            videosClient.deleteVideo(createdVideo.value)
+            assertThrows<Exception> {
+                videosClient.deleteVideo(createdVideo.value)
+            }
         }
     }
 

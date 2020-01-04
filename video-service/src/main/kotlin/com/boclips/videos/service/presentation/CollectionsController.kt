@@ -14,6 +14,7 @@ import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.Projection
@@ -51,6 +52,7 @@ class CollectionsController(
     private val bookmarkCollection: BookmarkCollection,
     private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
+    private val collectionResourceFactory: CollectionResourceFactory,
     private val withProjection: WithProjection,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService) {
@@ -163,7 +165,16 @@ class CollectionsController(
     fun show(
         @PathVariable("id") id: String,
         @RequestParam(required = false) projection: Projection? = Projection.list
-    ) = withProjection(wrapCollection(getCollection(id, projection ?: Projection.list, getCurrentUser())))
+    ): MappingJacksonValue {
+        val collection = getCollection(id, projection ?: Projection.list, getCurrentUser())
+
+        val collectionResource = when (projection) {
+            Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(collection, getCurrentUser())
+            else -> collectionResourceFactory.buildCollectionListResource(collection, getCurrentUser())
+        }
+
+        return withProjection(wrapCollection(collectionResource))
+    }
 
     @PutMapping("/{collection_id}/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

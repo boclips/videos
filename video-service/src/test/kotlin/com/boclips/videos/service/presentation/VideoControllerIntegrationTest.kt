@@ -1236,9 +1236,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.subjects", hasSize<Int>(2)))
             .andExpect(jsonPath("$.subjects[0].name", equalTo("Art")))
             .andExpect(jsonPath("$.subjects[1].name", equalTo("Maths")))
-            .andExpect(jsonPath("$.subjects", hasSize<Int>(2)))
     }
 
     private fun getRatingLink(videoId: String): String {

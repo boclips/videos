@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerN
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
+import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
@@ -11,7 +12,6 @@ import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
@@ -38,7 +38,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = saveContentPartner()
 
         val video = createVideo(
-            TestFactories.createCreateVideoRequest(
+            VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.contentPartnerId.value,
                 playbackId = "entry-\$123"
             ),
@@ -56,7 +56,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val video =
             createVideo(
-                TestFactories.createCreateVideoRequest(
+                VideoServiceApiFactory.createCreateVideoRequest(
                     providerId = contentPartner.contentPartnerId.value,
                     playbackId = "8889",
                     playbackProvider = "YOUTUBE"
@@ -74,7 +74,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThrows<VideoPlaybackNotFound> {
             createVideo(
-                TestFactories.createCreateVideoRequest(
+                VideoServiceApiFactory.createCreateVideoRequest(
                     providerId = contentPartner.contentPartnerId.value,
                     playbackId = "1234"
                 ),
@@ -105,7 +105,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThrows<ContentPartnerNotFoundException> {
             createVideo(
-                TestFactories.createCreateVideoRequest(
+                VideoServiceApiFactory.createCreateVideoRequest(
                     providerId = "4321",
                     playbackId = "entry-$123"
                 ),
@@ -126,7 +126,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = saveContentPartner()
 
         val createdVideo = createVideo(
-            TestFactories.createCreateVideoRequest(
+            VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.contentPartnerId.value,
                 playbackId = "entry-\$123"
             ),
@@ -141,7 +141,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws when playback provider ID or type are missing`() {
         val contentPartner = saveContentPartner()
-        val createRequest = TestFactories.createCreateVideoRequest(
+        val createRequest = VideoServiceApiFactory.createCreateVideoRequest(
             providerId = contentPartner.contentPartnerId.value,
             playbackId = null,
             playbackProvider = null
@@ -160,7 +160,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = saveContentPartner()
 
         val video: Video = createVideo(
-            TestFactories.createCreateVideoRequest(
+            VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.contentPartnerId.value,
                 videoType = "INSTRUCTIONAL_CLIPS",
                 playbackId = "entry-\$123",
@@ -182,7 +182,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = saveContentPartner()
 
         createVideo(
-            TestFactories.createCreateVideoRequest(
+            VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.contentPartnerId.value,
                 title = "parabole",
                 playbackId = "1"
@@ -223,7 +223,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = saveContentPartner()
 
         val createRequest =
-            TestFactories.createCreateVideoRequest(
+            VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.contentPartnerId.value,
                 title = title,
                 videoType = ContentType.INSTRUCTIONAL_CLIPS.toString(),

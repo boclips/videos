@@ -7,45 +7,49 @@ import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.testsupport.TestFactories.createUserTag
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.VideoResourceFactory
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.util.UriComponentsBuilder
 
 class VideosLinkBuilderTest {
-    val builder = VideosLinkBuilder()
+    private lateinit var videosLinkBuilder: VideosLinkBuilder
+    private val validVideoId: String = ObjectId().toHexString()
 
-    val validVideoId = ObjectId().toHexString()
-
-    @AfterEach
+    @BeforeEach
     fun setUp() {
-        SecurityContextHolder.clearContext()
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+
+        videosLinkBuilder = VideosLinkBuilder(mock)
     }
 
     @Test
     fun `self link`() {
-        val link = VideosLinkBuilder().self(VideoResourceFactory.sample(id = "self-test"))
+        val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test"))
 
-        assertThat(link.href).isEqualTo("/v1/videos/self-test")
+        assertThat(link.href).isEqualTo("https://localhost/v1/videos/self-test")
         assertThat(link.rel).isEqualTo("self")
         assertThat(link.isTemplated).isFalse()
     }
 
     @Test
     fun `interaction link`() {
-        val link = VideosLinkBuilder().createVideoInteractedWithEvent(VideoResourceFactory.sample(id = "video-id"))
+        val link = videosLinkBuilder.createVideoInteractedWithEvent(VideoResourceFactory.sample(id = "video-id"))
 
-        assertThat(link.href).isEqualTo("/v1/videos/video-id/events?logVideoInteraction=true&type={type}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/videos/video-id/events?logVideoInteraction=true&type={type}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION)
         assertThat(link.isTemplated).isTrue()
     }
 
     @Test
     fun `video link`() {
-        val link = VideosLinkBuilder().videoLink()
+        val link = videosLinkBuilder.videoLink()
 
-        assertThat(link.href).isEqualTo("/v1/videos/{id}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/videos/{id}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.VIDEO)
         assertThat(link.isTemplated).isTrue()
     }
@@ -54,16 +58,16 @@ class VideosLinkBuilderTest {
     fun `search link when authenticated`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
 
-        val link = VideosLinkBuilder().searchVideosLink()!!
+        val link = videosLinkBuilder.searchVideosLink()!!
 
-        assertThat(link.href).isEqualTo("/v1/videos{?query,sort_by,include_tag,exclude_tag,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
+        assertThat(link.href).contains("/v1/videos{?query,sort_by,include_tag,exclude_tag,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.SEARCH_VIDEOS)
         assertThat(link.isTemplated).isTrue()
     }
 
     @Test
     fun `search link when not authenticated`() {
-        val link = VideosLinkBuilder().searchVideosLink()
+        val link = videosLinkBuilder.searchVideosLink()
 
         assertThat(link).isNull()
     }
@@ -72,7 +76,7 @@ class VideosLinkBuilderTest {
     fun `adminSearch link when user can search disabled videos`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISABLED_VIDEOS)
 
-        val link = VideosLinkBuilder().adminSearchLink()
+        val link = videosLinkBuilder.adminSearchLink()
 
         assertThat(link?.href).isEqualTo("/v1/videos/search")
         assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.ADMIN_SEARCH)
@@ -83,14 +87,14 @@ class VideosLinkBuilderTest {
     fun `adminSearch link returns null when user can't search disabled videos`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
 
-        assertThat(VideosLinkBuilder().adminSearchLink()).isNull()
+        assertThat(videosLinkBuilder.adminSearchLink()).isNull()
     }
 
     @Test
     fun `transcript link returns a link when authenticated`() {
         setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
 
-        val link = VideosLinkBuilder().transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
+        val link = videosLinkBuilder.transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
 
         assertThat(link).isNotNull
 
@@ -103,7 +107,7 @@ class VideosLinkBuilderTest {
     fun `transcript link returns null when video has no transcripts`() {
         setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
 
-        val link = VideosLinkBuilder().transcriptLink(
+        val link = videosLinkBuilder.transcriptLink(
             VideoResourceFactory.sample(
                 id = "transcript-test",
                 hasTranscripts = false
@@ -115,7 +119,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `transcript link returns null when not authenticated`() {
-        val link = VideosLinkBuilder().transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
+        val link = videosLinkBuilder.transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
 
         assertThat(link).isNull()
     }
@@ -125,13 +129,16 @@ class VideosLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
         val link =
-            builder.rateLink(
+            videosLinkBuilder.rateLink(
                 createVideo(
                     videoId = validVideoId,
-                    ratings = listOf(UserRating(rating = 3, userId = UserId(
-                        "another-teacher"
+                    ratings = listOf(
+                        UserRating(
+                            rating = 3, userId = UserId(
+                                "another-teacher"
+                            )
+                        )
                     )
-                    ))
                 )
             )
 
@@ -146,7 +153,7 @@ class VideosLinkBuilderTest {
     fun `rate link returns a link when no rating by current User`() {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
-        val link = builder.rateLink(createVideo(videoId = validVideoId))
+        val link = videosLinkBuilder.rateLink(createVideo(videoId = validVideoId))
 
         assertThat(link).isNotNull
 
@@ -160,7 +167,7 @@ class VideosLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.RATE_VIDEOS)
 
         val link =
-            builder.rateLink(
+            videosLinkBuilder.rateLink(
                 createVideo(
                     ratings = listOf(
                         UserRating(
@@ -177,7 +184,9 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `rate link returns null when not authenticated`() {
-        val link = builder.rateLink(createVideo())
+        setSecurityContext("anonymousUser")
+
+        val link = videosLinkBuilder.rateLink(createVideo())
 
         assertThat(link).isNull()
     }
@@ -187,7 +196,7 @@ class VideosLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.TAG_VIDEOS)
 
         val link =
-            builder.tagLink(
+            videosLinkBuilder.tagLink(
                 createVideo(
                     videoId = validVideoId,
                     tag = null
@@ -206,7 +215,7 @@ class VideosLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.TAG_VIDEOS)
 
         val link =
-            builder.tagLink(
+            videosLinkBuilder.tagLink(
                 createVideo(
                     videoId = validVideoId,
                     tag = createUserTag()
@@ -218,7 +227,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `tag link returns null when not authenticated`() {
-        val link = builder.tagLink(createVideo())
+        val link = videosLinkBuilder.tagLink(createVideo())
 
         assertThat(link).isNull()
     }
@@ -227,7 +236,7 @@ class VideosLinkBuilderTest {
     fun `update link is null when user us not allowed`() {
         setSecurityContext("teacher@boclips.com")
 
-        val link = builder.updateLink(createVideo(videoId = validVideoId))
+        val link = videosLinkBuilder.updateLink(createVideo(videoId = validVideoId))
 
         assertThat(link).isNull()
     }
@@ -236,10 +245,10 @@ class VideosLinkBuilderTest {
     fun `update link is there when user is allowed`() {
         setSecurityContext("boclip@boclips.com", UserRoles.UPDATE_VIDEOS)
 
-        val link = builder.updateLink(createVideo(videoId = validVideoId))
+        val link = videosLinkBuilder.updateLink(createVideo(videoId = validVideoId))
 
         assertThat(link).isNotNull
-        assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId{?title,description,promoted,subjectIds}")
+        assertThat(link?.href).contains("/v1/videos/$validVideoId{?title,description,promoted,subjectIds}")
         assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.UPDATE)
     }
 
@@ -249,7 +258,7 @@ class VideosLinkBuilderTest {
 
         val video = createVideo(videoId = validVideoId)
 
-        val link = builder.shareLink(video)
+        val link = videosLinkBuilder.shareLink(video)
 
         assertThat(link).isNotNull
         assertThat(link?.href).isEqualTo("/v1/videos/$validVideoId?sharing=true")
@@ -260,7 +269,7 @@ class VideosLinkBuilderTest {
     fun `validate shareCode link`() {
         val video = createVideo(videoId = validVideoId)
 
-        val link = builder.validateShareCodeLink(video)
+        val link = videosLinkBuilder.validateShareCodeLink(video)
 
         assertThat(link).isNotNull
         assertThat(link.href).isEqualTo("/v1/videos/$validVideoId/match?shareCode={shareCode}")

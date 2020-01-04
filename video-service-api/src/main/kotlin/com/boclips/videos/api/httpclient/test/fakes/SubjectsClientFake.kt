@@ -6,7 +6,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 
-class SubjectsClientFake : SubjectsClient {
+class SubjectsClientFake : SubjectsClient, FakeClient<SubjectResource> {
     private val database: MutableMap<String, SubjectResource> = LinkedHashMap()
     private var id = 0
 
@@ -32,13 +32,13 @@ class SubjectsClientFake : SubjectsClient {
         database[id] = SubjectResource(id = id, name = createSubjectRequest.name)
     }
 
-    fun add(subjectResource: SubjectResource) : SubjectResource {
+    override fun add(subjectResource: SubjectResource): SubjectResource {
         val id = "${id++}"
         database[id] = subjectResource
         return database[id]!!
     }
 
-    fun clear() {
+    override fun clear() {
         database.clear()
     }
 }

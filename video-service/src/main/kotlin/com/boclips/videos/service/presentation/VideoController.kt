@@ -2,6 +2,9 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.video.AdminSearchRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.RateVideoRequest
+import com.boclips.videos.api.request.video.TagVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -15,12 +18,10 @@ import com.boclips.videos.service.application.video.exceptions.VideoAssetAlready
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.support.Cookies
-import com.boclips.videos.api.request.video.RateVideoRequest
-import com.boclips.videos.api.request.video.TagVideoRequest
-import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -252,11 +253,13 @@ class VideoController(
     @PatchMapping(path = ["/{id}"], params = ["!rating"])
     fun patchVideo(
         @PathVariable id: String,
-        @RequestParam(required = false) title: String?,
-        @RequestParam(required = false) description: String?,
-        @RequestParam(required = false) promoted: Boolean?,
-        @RequestParam(required = false) subjectIds: List<String>?
-    ) = updateVideo(id, title, description, promoted, subjectIds, getCurrentUser()).let { this.getVideo(id) }
+        @RequestParam subjectIds: List<String>? = emptyList(), //TODO: move to updateRequest if the spring gods allow it
+        updateRequest: UpdateVideoRequest
+    ): ResponseEntity<MappingJacksonValue> {
+        val updateRequestWithSubjects = updateRequest.copy(subjectIds = subjectIds)
+
+        return updateVideo(id, updateRequestWithSubjects, getCurrentUser()).let { this.getVideo(id) }
+    }
 
     @PatchMapping(path = ["/{id}/tags"])
     fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =

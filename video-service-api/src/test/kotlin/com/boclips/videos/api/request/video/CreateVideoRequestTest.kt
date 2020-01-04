@@ -1,6 +1,6 @@
 package com.boclips.videos.api.request.video
 
-import com.boclips.videos.api.httpclient.test.Factories
+import com.boclips.videos.api.request.VideoServiceApiFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,14 +19,14 @@ class CreateVideoRequestTest {
 
     @Test
     fun `successfully validate video`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest())
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest())
 
         assertThat(violations).hasSize(0)
     }
 
     @Test
     fun `provider video id must be set`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest(providerVideoId = null))
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(providerVideoId = null))
 
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("Provider video id is required")
@@ -34,7 +34,7 @@ class CreateVideoRequestTest {
 
     @Test
     fun `provider id must be set`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest(providerId = null))
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(providerId = null))
 
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("Provider id is required")
@@ -42,7 +42,7 @@ class CreateVideoRequestTest {
 
     @Test
     fun `validate title`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest(title = null))
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(title = null))
 
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("A video title is required")
@@ -50,7 +50,7 @@ class CreateVideoRequestTest {
 
     @Test
     fun `validate description`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest(description = null))
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(description = null))
 
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("A video description is required")
@@ -58,7 +58,7 @@ class CreateVideoRequestTest {
 
     @Test
     fun `validate keywords`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest(keywords = null))
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(keywords = null))
 
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("Keywords are required")
@@ -66,7 +66,7 @@ class CreateVideoRequestTest {
 
     @Test
     fun `validate released on date`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest(releasedOn = null))
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(releasedOn = null))
 
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("Released on date is required")
@@ -74,7 +74,7 @@ class CreateVideoRequestTest {
 
     @Test
     fun `validate video type`() {
-        val violations = validator.validate(Factories.createCreateVideoRequest(videoType = null))
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(videoType = null))
 
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("Video type is required")

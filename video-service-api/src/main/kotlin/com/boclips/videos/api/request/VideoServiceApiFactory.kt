@@ -1,11 +1,18 @@
-package com.boclips.videos.api.httpclient.test
+package com.boclips.videos.api.request
 
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
+import com.boclips.videos.api.request.subject.CreateSubjectRequest
+import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
 import java.time.LocalDate
 
-class Factories {
+class VideoServiceApiFactory {
     companion object {
+        fun createSubjectRequest(name: String? = null): CreateSubjectRequest = CreateSubjectRequest(name = name)
+
+        fun createTagRequest(label: String? = null): CreateTagRequest = CreateTagRequest(label = label)
+
         fun createCreateVideoRequest(
             providerVideoId: String? = "AP-1",
             providerId: String? = "provider-id",
@@ -47,5 +54,19 @@ class Factories {
             videos = videos,
             public = public
         )
+
+        fun createUpdateVideoRequest(
+            title: String? = "video-title",
+            description: String? = "description",
+            promoted: Boolean? = false,
+            subjectIds: List<String>? = emptyList()
+        ): UpdateVideoRequest {
+            return UpdateVideoRequest(
+                title = title,
+                description = description,
+                promoted = promoted,
+                subjectIds = subjectIds
+            )
+        }
     }
 }

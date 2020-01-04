@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asTeacher
@@ -22,6 +23,8 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `video counter increases when we create a video`() {
+        setSecurityContext("anonymousUser")
+
         createMediaEntry(
             id = "entry-$123",
             duration = Duration.ofMinutes(1)

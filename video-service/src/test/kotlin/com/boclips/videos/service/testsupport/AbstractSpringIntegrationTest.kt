@@ -17,6 +17,7 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedVideosContract
+import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -329,7 +330,7 @@ abstract class AbstractSpringIntegrationTest {
         val user = UserFactory.sample(id = owner)
 
         val collectionId = createCollection(
-            createCollectionRequest = TestFactories.createCollectionRequest(title = title, videos = videos),
+            createCollectionRequest = createCollectionRequest(title = title, videos = videos),
             requester = user
         ).id
 

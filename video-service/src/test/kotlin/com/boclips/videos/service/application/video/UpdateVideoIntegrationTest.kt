@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -27,10 +28,12 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateVideo(
             id = videoId.value,
-            title = null,
-            description = "new description",
-            promoted = true,
-            subjectIds = subjectIdList,
+            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
+                title = null,
+                description = "new description",
+                promoted = true,
+                subjectIds = subjectIdList
+            ),
             user = UserFactory.sample(id = "admin@boclips.com")
         )
 
@@ -52,10 +55,12 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
         updateVideo(
             id = videoId.value,
-            title = null,
-            description = "new description",
-            promoted = true,
-            subjectIds = null,
+            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
+                title = null,
+                description = "new description",
+                promoted = true,
+                subjectIds = null
+            ),
             user = UserFactory.sample(id = "admin@boclips.com")
         )
 

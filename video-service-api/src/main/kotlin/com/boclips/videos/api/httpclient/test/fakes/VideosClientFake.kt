@@ -1,42 +1,69 @@
 package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.httpclient.VideosClient
-import com.boclips.videos.api.request.video.AdminSearchRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
 
-class VideosClientFake : VideosClient {
+class VideosClientFake : VideosClient, FakeClient<VideoResource> {
+    private val database: MutableMap<String, VideoResource> = LinkedHashMap()
+    private var id = 0
+
     override fun getVideo(videoId: String): Resource<VideoResource> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Resource(database[videoId]!!)
     }
 
-    override fun getVideoTranscript(videoId: String): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun updateVideo(videoId: String, updateVideoRequest: UpdateVideoRequest) {
+        val video = database[videoId]!!
+
+        val updatedVideo = video.copy(
+            description = updateVideoRequest.description ?: video.description,
+            title = updateVideoRequest.title ?: video.title,
+            promoted = updateVideoRequest.promoted ?: video.promoted,
+            subjects = updateVideoRequest.subjectIds?.let { subjects ->
+                subjects.map { SubjectResource(id = it) }.toSet()
+            } ?: video.subjects
+        )
+
+        database[videoId] = updatedVideo
     }
 
     override fun createVideo(createVideoRequest: CreateVideoRequest): Resource<VideoResource> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val newVideo = VideoResource(
+            id = "${id++}",
+            title = createVideoRequest.title,
+            description = createVideoRequest.description
+        )
+
+        database[newVideo.id!!] = newVideo
+        return Resource(newVideo)
     }
 
-    override fun deleteVideo(videoId: String): Resource<VideoResource> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun deleteVideo(videoId: String) {
+        database.remove(videoId)
     }
 
-    override fun updateVideo(videoId: String): Resource<Void> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun updateVideoRating(videoId: String, rating: Int) {
+        val updatedVideo = database[videoId]!!.copy(yourRating = rating.toDouble())
+        database.replace(videoId, updatedVideo)
     }
 
-    override fun searchVideos(searchRequest: AdminSearchRequest): Resources<VideoResource> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun updateVideoSharing(videoId: String, sharing: Boolean) {
+        TODO("not implemented")
     }
 
-    override fun updateVideoRating(videoId: String, rating: String): Resource<Void> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getVideoTranscript(videoId: String): String {
+        TODO("not implemented")
     }
 
-    override fun updateVideoSharing(videoId: String): Resource<Void> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun add(element: VideoResource): VideoResource {
+        database[element.id!!] = element
+        return element
+    }
+
+    override fun clear() {
+        database.clear()
     }
 }

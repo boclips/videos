@@ -2,12 +2,12 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
+import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory
-import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +25,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `makes searchable if public`() {
-        val createRequest = TestFactories.createCollectionRequest(
+        val createRequest = VideoServiceApiFactory.createCollectionRequest(
             title = "title",
             public = true
         )
@@ -56,7 +56,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `makes searchable if private`() {
-        val createRequest = TestFactories.createCollectionRequest(
+        val createRequest = VideoServiceApiFactory.createCollectionRequest(
             title = "title",
             public = false
         )
@@ -87,7 +87,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `collection is private by default`() {
-        val createRequest = TestFactories.createCollectionRequest(
+        val createRequest = VideoServiceApiFactory.createCollectionRequest(
             title = "title"
         )
 
@@ -117,7 +117,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     @WithMockUser("user@boclips.com")
     fun `flags collections by Boclips employees`() {
-        val createRequest = TestFactories.createCollectionRequest(title = "title", videos = emptyList())
+        val createRequest = VideoServiceApiFactory.createCollectionRequest(title = "title", videos = emptyList())
         val collection =
             createCollection(createRequest, UserFactory.sample(id = "some@teacher.com", boclipsEmployee = true))
 
@@ -128,7 +128,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     fun `allows to set a description`() {
         val description = "test description"
         val createRequest =
-            TestFactories.createCollectionRequest(title = "test title", description = description)
+            VideoServiceApiFactory.createCollectionRequest(title = "test title", description = description)
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 

@@ -61,9 +61,9 @@ import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
@@ -72,12 +72,12 @@ import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
-import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import com.boclips.videos.service.presentation.converters.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
+import com.boclips.videos.service.presentation.converters.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -180,20 +180,7 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetCollection {
-        return GetCollection(
-            CollectionResourceFactory(
-                VideoToResourceConverter(
-                    videosLinkBuilder,
-                    playbackToResourceConverter
-                ),
-                SubjectToResourceConverter(),
-                AttachmentToResourceConverter(
-                    attachmentsLinkBuilder
-                ),
-                videoService
-            ),
-            collectionReadService
-        )
+        return GetCollection(collectionReadService)
     }
 
     @Bean

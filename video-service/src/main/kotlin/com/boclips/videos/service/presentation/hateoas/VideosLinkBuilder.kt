@@ -1,19 +1,20 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
+import com.boclips.security.utils.UserExtractor.getIfAuthenticated
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.presentation.EventController
 import com.boclips.videos.service.presentation.VideoController
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.SEARCH_VIDEOS
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.VIDEO
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
-import org.springframework.stereotype.Component
 
-@Component
-class VideosLinkBuilder {
-
+class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     object Rels {
         const val VIDEO = "video"
         const val LOG_VIDEO_INTERACTION = "logInteraction"
@@ -29,46 +30,32 @@ class VideosLinkBuilder {
         const val VALIDATE_SHARE_CODE = "validateShareCode"
     }
 
-    fun self(videoResource: VideoResource): Link = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(VideoController::class.java)
-            .getVideo(videoResource.id)
-    ).withSelfRel()
+    fun self(videoResource: VideoResource): Link =
+        Link(getVideosRoot().pathSegment(videoResource.id).build().toUriString(), "self")
 
-    fun videoLink(): Link = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(VideoController::class.java)
-            .getVideo(null)
-    ).withRel(Rels.VIDEO)
+    fun videoLink(): Link = Link(getVideosRoot().pathSegment("{id}").build().toUriString(), VIDEO)
 
-    fun createVideoInteractedWithEvent(videoResource: VideoResource): Link = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(EventController::class.java)
-            .logVideoInteractedWithEvent(videoId = videoResource.id!!, logVideoInteraction = true, type = null)
-    ).withRel(Rels.LOG_VIDEO_INTERACTION)
+    fun createVideoInteractedWithEvent(videoResource: VideoResource): Link =
+        Link(
+            getVideosRoot()
+                .pathSegment("${videoResource.id}")
+                .pathSegment("events")
+                .queryParam("logVideoInteraction", true)
+                .queryParam("type", "{type}")
+                .build()
+                .toUriString(), LOG_VIDEO_INTERACTION
+        )
 
     fun searchVideosLink() = when {
-        currentUserHasRole(UserRoles.VIEW_VIDEOS) -> ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .search(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-                )
-        ).withRel(Rels.SEARCH_VIDEOS)
-
+        currentUserHasRole(UserRoles.VIEW_VIDEOS) -> {
+            Link(
+                getVideosRoot()
+                    .build()
+                    .toUriString()
+                    + "{?query,sort_by,include_tag,exclude_tag,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,size,page,subject,subjects_set_manually,promoted,content_partner,type}",
+                SEARCH_VIDEOS
+            )
+        }
         else -> null
     }
 
@@ -97,15 +84,17 @@ class VideosLinkBuilder {
         ).withRel(Rels.TRANSCRIPT)
     }
 
-    fun rateLink(video: Video) = getIfHasRole(UserRoles.RATE_VIDEOS) {
-        ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .patchRating(null, video.videoId.value)
-        ).withRel(Rels.RATE)
-    }
+    fun rateLink(video: Video) =
+        getIfAuthenticated {
+            getIfHasRole(UserRoles.RATE_VIDEOS) {
+                ControllerLinkBuilder.linkTo(
+                    ControllerLinkBuilder.methodOn(VideoController::class.java)
+                        .patchRating(null, video.videoId.value)
+                ).withRel(Rels.RATE)
+            }
+        }
 
     fun tagLink(video: Video) = when {
-
         !currentUserHasRole(UserRoles.TAG_VIDEOS) -> null
         video.tag != null -> null
 
@@ -116,16 +105,16 @@ class VideosLinkBuilder {
     }
 
     fun updateLink(video: Video) = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
-        ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .patchVideo(
-                    id = video.videoId.value,
-                    title = null,
-                    description = null,
-                    promoted = null,
-                    subjectIds = null
-                )
-        ).withRel(Rels.UPDATE)
+        getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+            Link(
+                getVideosRoot()
+                    .pathSegment(video.videoId.value)
+                    .build()
+                    .toUriString()
+                    + "{?title,description,promoted,subjectIds}"
+                , UPDATE
+            )
+        }
     }
 
     fun shareLink(video: Video): Link? {
@@ -144,4 +133,8 @@ class VideosLinkBuilder {
                 .validateShareCode(video.videoId.value, null)
         ).withRel(Rels.VALIDATE_SHARE_CODE)
     }
+
+    private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()
+        .replacePath("/v1/videos")
+        .replaceQueryParams(null)
 }

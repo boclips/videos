@@ -6,13 +6,13 @@ import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.users.client.model.TeacherPlatformAttributes
-import com.boclips.videos.api.request.collection.CreateCollectionRequest
-import com.boclips.videos.api.request.subject.CreateSubjectRequest
-import com.boclips.videos.api.request.tag.CreateTagRequest
-import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
+import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.collection.CollectionResource
+import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.RequestContext
@@ -24,6 +24,7 @@ import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.discipline.Discipline
 import com.boclips.videos.service.domain.model.discipline.DisciplineId
@@ -48,16 +49,11 @@ import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
-import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.presentation.CollectionsController
-import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
-import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.api.response.video.VideoResource
-import com.boclips.videos.api.response.video.VideoTypeResource
 import org.bson.types.ObjectId
 import org.springframework.hateoas.Resource
 import java.time.Duration
@@ -134,9 +130,6 @@ object TestFactories {
             id = SubjectId(id), name = name
         )
 
-    fun createSubjectRequest(name: String? = null): CreateSubjectRequest =
-        CreateSubjectRequest(name = name)
-
     fun createUserTag(id: String = aValidId(), label: String = id, userId: String = "user id"): UserTag =
         UserTag(
             tag = createTag(id, label),
@@ -148,8 +141,29 @@ object TestFactories {
             id = TagId(id), label = label
         )
 
-    fun createTagRequest(label: String? = null): CreateTagRequest =
-        CreateTagRequest(label = label)
+    object CollectionsRequestFactory {
+        fun sample(
+            query: String? = null,
+            subjects: List<String> = emptyList(),
+            owner: String? = null,
+            page: Int = 0,
+            size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE,
+            public: Boolean? = null,
+            bookmarked: Boolean? = null
+        ): CollectionsController.CollectionsRequest {
+            return CollectionsController.CollectionsRequest(
+                query = query,
+                subject = if (subjects.isNotEmpty()) subjects.joinToString(",") else null,
+                public = public,
+                owner = owner,
+                page = page,
+                size = size,
+                bookmarked = bookmarked
+            )
+        }
+
+        fun unfiltered() = sample()
+    }
 
     fun createKalturaPlayback(
         entryId: String = "entry-id",
@@ -185,48 +199,6 @@ object TestFactories {
             thumbnailUrl = thumbnailUrl
         )
     }
-
-    fun createCreateVideoRequest(
-        providerVideoId: String? = "AP-1",
-        providerId: String? = "provider-id",
-        title: String? = "an AP video",
-        description: String? = "an AP video about penguins",
-        releasedOn: LocalDate? = LocalDate.now(),
-        legalRestrictions: String? = "None",
-        keywords: List<String>? = listOf("k1", "k2"),
-        videoType: String? = "NEWS",
-        playbackId: String? = "123",
-        playbackProvider: String? = "KALTURA",
-        analyseVideo: Boolean = false,
-        subjects: Set<String> = setOf(),
-        youtubeChannelId: String = "1234"
-    ) = CreateVideoRequest(
-        providerId = providerId,
-        providerVideoId = providerVideoId,
-        title = title,
-        description = description,
-        releasedOn = releasedOn,
-        legalRestrictions = legalRestrictions,
-        keywords = keywords,
-        videoType = videoType,
-        playbackId = playbackId,
-        playbackProvider = playbackProvider,
-        analyseVideo = analyseVideo,
-        subjects = subjects,
-        youtubeChannelId = youtubeChannelId
-    )
-
-    fun createCollectionRequest(
-        title: String? = "collection title",
-        description: String? = null,
-        videos: List<String> = listOf(),
-        public: Boolean? = null
-    ) = CreateCollectionRequest(
-        title = title,
-        description = description,
-        videos = videos,
-        public = public
-    )
 
     fun createCollection(
         id: CollectionId = CollectionId("collection-id"),
@@ -529,30 +501,6 @@ object AttachmentFactory {
         linkToResource = linkToResource,
         type = type
     )
-}
-
-object CollectionsRequestFactory {
-    fun sample(
-        query: String? = null,
-        subjects: List<String> = emptyList(),
-        owner: String? = null,
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE,
-        public: Boolean? = null,
-        bookmarked: Boolean? = null
-    ): CollectionsController.CollectionsRequest {
-        return CollectionsController.CollectionsRequest(
-            query = query,
-            subject = if (subjects.isNotEmpty()) subjects.joinToString(",") else null,
-            public = public,
-            owner = owner,
-            page = page,
-            size = size,
-            bookmarked = bookmarked
-        )
-    }
-
-    fun unfiltered() = sample()
 }
 
 object AccessRulesFactory {
