@@ -1,6 +1,9 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
+import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.api.response.subject.SubjectCollectionResource
+import com.boclips.videos.api.response.subject.SubjectsResource
 import com.boclips.videos.service.application.exceptions.SubjectExistsException
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
@@ -10,11 +13,9 @@ import com.boclips.videos.service.application.subject.UpdateSubject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
-import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -45,18 +46,20 @@ class SubjectController(
         getSubject(id).let { Resource(it, subjectsLinkBuilder.self(it)) }
 
     @GetMapping
-    fun subjects(): Resources<Resource<*>> {
+    fun subjects(): SubjectsResource {
         val subjectResources = getSubjects().map {
-            Resource(
-                it, listOfNotNull(
+            it.copy(
+                _links = listOfNotNull(
                     subjectsLinkBuilder.self(it),
                     subjectsLinkBuilder.updateSubject(it)
                 )
+                    .map { it.rel to it }.toMap()
             )
         }
-        return Resources(
-            subjectResources,
-            subjectsLinkBuilder.subjects("self")
+
+        return SubjectsResource(
+            _embedded = SubjectCollectionResource(subjectResources),
+            _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel to it }.toMap()
         )
     }
 

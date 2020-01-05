@@ -3,19 +3,19 @@ package com.boclips.videos.api.httpclient.test.fakes
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.response.subject.SubjectResource
-import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
+import com.boclips.videos.api.response.subject.SubjectCollectionResource
+import com.boclips.videos.api.response.subject.SubjectsResource
 
 class SubjectsClientFake : SubjectsClient, FakeClient<SubjectResource> {
     private val database: MutableMap<String, SubjectResource> = LinkedHashMap()
     private var id = 0
 
-    override fun getSubjects(): Resources<SubjectResource> {
-        return Resources(database.values)
+    override fun getSubjects(): SubjectsResource {
+        return SubjectsResource(_embedded = SubjectCollectionResource(subjects = database.values.toList()), _links = null)
     }
 
-    override fun getSubject(id: String): Resource<SubjectResource> {
-        return Resource(database[id] ?: error("no such element"))
+    override fun getSubject(id: String): SubjectResource {
+        return database[id] ?: error("no such element")
     }
 
     override fun deleteSubject(id: String) {

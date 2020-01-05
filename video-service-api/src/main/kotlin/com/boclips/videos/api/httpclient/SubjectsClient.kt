@@ -4,6 +4,7 @@ import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
 import com.boclips.videos.api.httpclient.helper.TokenFactory
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.api.response.subject.SubjectsResource
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Feign
 import feign.Logger
@@ -14,16 +15,14 @@ import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.okhttp.OkHttpClient
 import feign.slf4j.Slf4jLogger
-import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
 import org.springframework.web.bind.annotation.RequestBody
 
 interface SubjectsClient {
     @RequestLine("GET /v1/subjects")
-    fun getSubjects(): Resources<SubjectResource>
+    fun getSubjects(): SubjectsResource
 
     @RequestLine("GET /v1/subjects/{subjectId}")
-    fun getSubject(@Param("subjectId") id: String): Resource<SubjectResource>
+    fun getSubject(@Param("subjectId") id: String): SubjectResource
 
     @RequestLine("DELETE /v1/subjects/{subjectId}")
     fun deleteSubject(@Param("subjectId") id: String)

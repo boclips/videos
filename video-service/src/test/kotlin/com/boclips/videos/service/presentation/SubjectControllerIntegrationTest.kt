@@ -81,6 +81,7 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andExpect(jsonPath("$._embedded.subjects[0]._links.update").doesNotExist())
+            .andExpect(jsonPath("$._links.self").exists())
     }
 
     @Test

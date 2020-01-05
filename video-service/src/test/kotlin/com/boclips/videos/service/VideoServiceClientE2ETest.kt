@@ -94,7 +94,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             subjectsClient.create(CreateSubjectRequest(name = "Maths"))
             subjectsClient.create(CreateSubjectRequest(name = "French"))
 
-            val initialSubjects = subjectsClient.getSubjects().content.stream().collect(Collectors.toList())
+            val initialSubjects = subjectsClient.getSubjects()._embedded.subjects.stream().collect(Collectors.toList())
             assertThat(initialSubjects).hasSize(2)
 
             val firstSubject = initialSubjects[0] as SubjectResource
@@ -103,7 +103,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             subjectsClient.deleteSubject(firstSubject.id)
             subjectsClient.updateSubject(secondSubject, CreateSubjectRequest(name = "German"))
 
-            val updatedSubjects = subjectsClient.getSubjects().content.stream().collect(Collectors.toList())
+            val updatedSubjects = subjectsClient.getSubjects()._embedded.subjects.stream().collect(Collectors.toList())
             assertThat(updatedSubjects).hasSize(1)
             assertThat((updatedSubjects[0] as SubjectResource).name).isEqualTo("German")
         }

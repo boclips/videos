@@ -1,10 +1,15 @@
 package com.boclips.videos.api.response.subject
 
-import org.springframework.hateoas.core.Relation
+import com.boclips.videos.api.response.ResourceLinks
+import org.springframework.hateoas.Link
 
-@Relation(collectionRelation = "subjects")
+data class SubjectCollectionResource(
+    val subjects: List<SubjectResource>
+)
+
 data class SubjectResource(
     val id: String,
     val name: String? = null,
-    val lessonPlan: Boolean? = false
-)
+    val lessonPlan: Boolean? = false,
+    override var _links: Map<String, Link>? = null
+) : ResourceLinks()
