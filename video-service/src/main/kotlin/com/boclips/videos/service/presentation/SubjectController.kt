@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.api.response.subject.SubjectCollectionResource
+import com.boclips.videos.api.response.subject.SubjectsWrapperResource
 import com.boclips.videos.api.response.subject.SubjectsResource
 import com.boclips.videos.service.application.exceptions.SubjectExistsException
 import com.boclips.videos.service.application.subject.CreateSubject
@@ -58,7 +58,7 @@ class SubjectController(
         }
 
         return SubjectsResource(
-            _embedded = SubjectCollectionResource(subjectResources),
+            _embedded = SubjectsWrapperResource(subjectResources),
             _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel to it }.toMap()
         )
     }

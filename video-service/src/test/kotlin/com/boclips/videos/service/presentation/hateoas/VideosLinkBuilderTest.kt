@@ -4,6 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.TestFactories.createUserTag
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.VideoResourceFactory
@@ -29,7 +30,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `self link`() {
-        val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test"))
+        val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test").id)
 
         assertThat(link.href).isEqualTo("https://localhost/v1/videos/self-test")
         assertThat(link.rel).isEqualTo("self")
@@ -38,7 +39,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `interaction link`() {
-        val link = videosLinkBuilder.createVideoInteractedWithEvent(VideoResourceFactory.sample(id = "video-id"))
+        val link = videosLinkBuilder.createVideoInteractedWithEvent(VideoResourceFactory.sample(id = "video-id").id)
 
         assertThat(link.href).isEqualTo("https://localhost/v1/videos/video-id/events?logVideoInteraction=true&type={type}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION)
@@ -94,11 +95,12 @@ class VideosLinkBuilderTest {
     fun `transcript link returns a link when authenticated`() {
         setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
 
-        val link = videosLinkBuilder.transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
+        val videoId = aValidId()
+        val link = videosLinkBuilder.transcriptLink(createVideo(videoId = videoId, transcript = "hi"))
 
         assertThat(link).isNotNull
 
-        assertThat(link!!.href).isEqualTo("/v1/videos/transcript-test/transcript")
+        assertThat(link!!.href).isEqualTo("/v1/videos/$videoId/transcript")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.TRANSCRIPT)
         assertThat(link.isTemplated).isFalse()
     }
@@ -108,9 +110,9 @@ class VideosLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
 
         val link = videosLinkBuilder.transcriptLink(
-            VideoResourceFactory.sample(
-                id = "transcript-test",
-                hasTranscripts = false
+            createVideo(
+                videoId = aValidId(),
+                transcript = null
             )
         )
 
@@ -119,7 +121,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `transcript link returns null when not authenticated`() {
-        val link = videosLinkBuilder.transcriptLink(VideoResourceFactory.sample(id = "transcript-test"))
+        val link = videosLinkBuilder.transcriptLink(createVideo())
 
         assertThat(link).isNull()
     }

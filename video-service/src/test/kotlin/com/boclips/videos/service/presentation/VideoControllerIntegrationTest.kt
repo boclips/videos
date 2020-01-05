@@ -1076,6 +1076,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.page").doesNotExist())
+            .andExpect(jsonPath("$._links").doesNotExist())
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
     }
 

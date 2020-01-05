@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
-import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.testsupport.TestFactories
@@ -40,8 +39,8 @@ internal class PlaybackToResourceConverterTest {
 
     @Test
     fun `converts a resource from a Kaltura playback`() {
-        val resource = this.playbackToResourceConverter.wrapPlaybackInResource(kalturaPlayback)
-        val content = resource.content as StreamPlaybackResource
+        val resource = this.playbackToResourceConverter.convert(kalturaPlayback)
+        val content = resource as StreamPlaybackResource
 
         assertThat(content.streamUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id/format/applehttp/flavorParamIds/487041%2C487071%2C487081%2C487091/protocol/https/video.mp4")
         assertThat(content.duration).isEqualTo(kalturaPlayback.duration)
@@ -61,7 +60,7 @@ internal class PlaybackToResourceConverterTest {
     @Test
     fun `converts a resource from a Youtube playback`() {
         val resource =
-            this.playbackToResourceConverter.wrapPlaybackInResource(youtubePlayback).content as YoutubePlaybackResource
+            this.playbackToResourceConverter.convert(youtubePlayback) as YoutubePlaybackResource
 
         assertThat(resource.duration).isEqualTo(youtubePlayback.duration)
         assertThat(resource.thumbnailUrl).isEqualTo(youtubePlayback.thumbnailUrl)

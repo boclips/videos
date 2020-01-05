@@ -2,6 +2,8 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
+import com.boclips.videos.api.request.video.YoutubePlaybackResource
+import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -9,7 +11,6 @@ import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.UserFactory
@@ -25,7 +26,7 @@ internal class VideoToResourceConverterTest {
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
 
-    val kalturaVideo = createVideo(
+    private val kalturaVideo = createVideo(
         title = "Do what you love",
         description = "Best bottle slogan",
         contentPartnerName = "WeWork",
@@ -34,15 +35,18 @@ internal class VideoToResourceConverterTest {
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         ageRange = AgeRange.bounded(min = 5, max = 11),
-        ratings = listOf(UserRating(rating = 3, userId = UserId(
-            "user-id"
-        )
-        )),
+        ratings = listOf(
+            UserRating(
+                rating = 3, userId = UserId(
+                    "user-id"
+                )
+            )
+        ),
         tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id"),
         promoted = true
     )
 
-    val youtubeVideo = createVideo(
+    private val youtubeVideo = createVideo(
         title = "Do what you love on youtube",
         description = "Best bottle slogan",
         contentPartnerName = "JacekWork",
@@ -73,7 +77,7 @@ internal class VideoToResourceConverterTest {
     fun `converts a video from AssetId`() {
         val videoId = ObjectId().toHexString()
         val videoResource =
-            videoToResourceConverter.wrapVideoIdsInResource(listOf(VideoId(videoId))).first().content
+            videoToResourceConverter.convertVideoIds(listOf(VideoId(videoId))).first()
 
         assertThat(videoResource.id).isEqualTo(videoId)
         assertThat(videoResource.title).isNull()
@@ -89,7 +93,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Kaltura`() {
-        val videoResource = videoToResourceConverter.fromVideo(kalturaVideo, UserFactory.sample(id = "user-id")).content
+        val videoResource = videoToResourceConverter.convertVideo(kalturaVideo, UserFactory.sample(id = "user-id"))
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -114,7 +118,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.bestFor!!.label).isEqualTo("tag-label")
         assertThat(videoResource.promoted).isEqualTo(true)
 
-        val playbackResource = videoResource.playback!!.content as StreamPlaybackResource
+        val playbackResource = videoResource.playback!! as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")
         assertThat(playbackResource.thumbnailUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id/width/500/vid_slices/3/vid_slice/1")
         assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
@@ -125,7 +129,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Youtube`() {
-        val videoResource = videoToResourceConverter.fromVideo(youtubeVideo, UserFactory.sample()).content
+        val videoResource = videoToResourceConverter.convertVideo(youtubeVideo, UserFactory.sample())
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -140,10 +144,10 @@ internal class VideoToResourceConverterTest {
         )
         assertThat(videoResource.type!!.id).isEqualTo(3)
         assertThat(videoResource.type!!.name).isEqualTo("Instructional Clips")
-        assertThat(videoResource.playback!!.content.type).isEqualTo("YOUTUBE")
-        assertThat(videoResource.playback!!.content.thumbnailUrl).isEqualTo("youtube-thumbnail")
-        assertThat(videoResource.playback!!.content.duration).isEqualTo(Duration.ofSeconds(21))
-        assertThat(videoResource.playback!!.content.id).isEqualTo("444")
+        assertThat((videoResource.playback!! as YoutubePlaybackResource).type).isEqualTo("YOUTUBE")
+        assertThat((videoResource.playback!! as YoutubePlaybackResource).thumbnailUrl).isEqualTo("youtube-thumbnail")
+        assertThat((videoResource.playback!! as YoutubePlaybackResource).duration).isEqualTo(Duration.ofSeconds(21))
+        assertThat((videoResource.playback!! as YoutubePlaybackResource).id).isEqualTo("444")
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
         assertThat(videoResource.legalRestrictions).isEqualTo("Many")
         assertThat(videoResource.bestFor!!.label).isEqualTo("tag-label")
@@ -152,9 +156,9 @@ internal class VideoToResourceConverterTest {
     @Test
     fun `converts heterogenous video lists`() {
         val resultResource = videoToResourceConverter
-            .wrapVideosInResource(videos = listOf(youtubeVideo, kalturaVideo), user = UserFactory.sample())
+            .convertVideos(videos = listOf(youtubeVideo, kalturaVideo), user = UserFactory.sample())
 
-        assertThat(resultResource.map { it.content.playback!!.content.type }).containsExactlyInAnyOrder(
+        assertThat(resultResource.map { it.playback!!.type }).containsExactlyInAnyOrder(
             "STREAM",
             "YOUTUBE"
         )

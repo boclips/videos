@@ -5,14 +5,13 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
-import org.springframework.hateoas.Resource
 
 class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     private val database: MutableMap<String, VideoResource> = LinkedHashMap()
     private var id = 0
 
-    override fun getVideo(videoId: String): Resource<VideoResource> {
-        return Resource(database[videoId]!!)
+    override fun getVideo(videoId: String): VideoResource {
+        return database[videoId]!!
     }
 
     override fun updateVideo(videoId: String, updateVideoRequest: UpdateVideoRequest) {
@@ -30,15 +29,16 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         database[videoId] = updatedVideo
     }
 
-    override fun createVideo(createVideoRequest: CreateVideoRequest): Resource<VideoResource> {
+    override fun createVideo(createVideoRequest: CreateVideoRequest): VideoResource {
         val newVideo = VideoResource(
             id = "${id++}",
             title = createVideoRequest.title,
-            description = createVideoRequest.description
+            description = createVideoRequest.description,
+            _links = null
         )
 
         database[newVideo.id!!] = newVideo
-        return Resource(newVideo)
+        return newVideo
     }
 
     override fun deleteVideo(videoId: String) {

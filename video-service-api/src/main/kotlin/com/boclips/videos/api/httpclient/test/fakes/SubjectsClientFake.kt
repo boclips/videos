@@ -3,7 +3,7 @@ package com.boclips.videos.api.httpclient.test.fakes
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.api.response.subject.SubjectCollectionResource
+import com.boclips.videos.api.response.subject.SubjectsWrapperResource
 import com.boclips.videos.api.response.subject.SubjectsResource
 
 class SubjectsClientFake : SubjectsClient, FakeClient<SubjectResource> {
@@ -11,7 +11,7 @@ class SubjectsClientFake : SubjectsClient, FakeClient<SubjectResource> {
     private var id = 0
 
     override fun getSubjects(): SubjectsResource {
-        return SubjectsResource(_embedded = SubjectCollectionResource(subjects = database.values.toList()), _links = null)
+        return SubjectsResource(_embedded = SubjectsWrapperResource(subjects = database.values.toList()), _links = null)
     }
 
     override fun getSubject(id: String): SubjectResource {

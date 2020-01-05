@@ -250,7 +250,7 @@ object TestFactories {
         id: String = "collection-id",
         owner: String = "collection owner",
         title: String = "collection title",
-        videos: List<Resource<VideoResource>> = emptyList(),
+        videos: List<VideoResource> = emptyList(),
         updatedAt: ZonedDateTime = ZonedDateTime.now(),
         isPublic: Boolean = false,
         isBookmarked: Boolean = false,
@@ -414,7 +414,8 @@ object PlaybackResourceFactory {
             downloadUrl = downloadUrl,
             duration = Duration.ZERO,
             streamUrl = "stream-url",
-            referenceId = "reference-id"
+            referenceId = "reference-id",
+            _links = null
         )
 }
 
@@ -439,7 +440,7 @@ object VideoResourceFactory {
         rating: Double? = null
     ) = VideoResource(
         id = id,
-        playback = playback?.let { Resource(it) },
+        playback = playback,
         title = title,
         description = description,
         releasedOn = releasedOn,
@@ -450,7 +451,8 @@ object VideoResourceFactory {
         contentPartner = contentPartner,
         badges = badges,
         hasTranscripts = hasTranscripts,
-        rating = rating
+        rating = rating,
+        _links = null
     )
 }
 

@@ -16,17 +16,16 @@ import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.okhttp.OkHttpClient
 import feign.slf4j.Slf4jLogger
-import org.springframework.hateoas.Resource
 
 interface VideosClient {
     @RequestLine("GET /v1/videos/{videoId}")
-    fun getVideo(@Param("videoId") videoId: String): Resource<VideoResource>
+    fun getVideo(@Param("videoId") videoId: String): VideoResource
 
     @RequestLine("PATCH /v1/videos/{videoId}")
     fun updateVideo(@Param("videoId") videoId: String, @QueryMap updateVideoRequest: UpdateVideoRequest)
 
     @RequestLine("POST /v1/videos/{videoId}")
-    fun createVideo(createVideoRequest: CreateVideoRequest): Resource<VideoResource>
+    fun createVideo(createVideoRequest: CreateVideoRequest): VideoResource
 
     @RequestLine("DELETE /v1/videos/{videoId}")
     fun deleteVideo(@Param("videoId") videoId: String)

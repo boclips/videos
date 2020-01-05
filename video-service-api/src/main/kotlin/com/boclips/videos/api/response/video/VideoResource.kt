@@ -3,15 +3,14 @@ package com.boclips.videos.api.response.video
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.request.video.PlaybackResource
+import com.boclips.videos.api.response.ResourceWithLinks
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonView
-import org.springframework.hateoas.Resource
-import org.springframework.hateoas.core.Relation
+import org.springframework.hateoas.Link
 import java.time.LocalDate
 
-@Relation(collectionRelation = "videos")
 data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val id: String? = null,
@@ -22,7 +21,7 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val releasedOn: LocalDate? = null,
     @get:JsonView(PublicApiProjection::class)
-    val playback: Resource<PlaybackResource>? = null,
+    val playback: PlaybackResource? = null,
     @get:JsonView(PublicApiProjection::class)
     val subjects: Set<SubjectResource> = emptySet(),
     @get:JsonView(PublicApiProjection::class)
@@ -41,7 +40,6 @@ data class VideoResource(
     val createdBy: String? = null,
     @get:JsonView(PublicApiProjection::class)
     val promoted: Boolean? = null,
-
     @get:JsonView(BoclipsInternalProjection::class)
     val contentPartner: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
@@ -51,10 +49,7 @@ data class VideoResource(
     @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
     @get:JsonIgnore
-    val hasTranscripts: Boolean? = null
-)
+    val hasTranscripts: Boolean? = null,
+    override var _links: Map<String, Link>?
+) : ResourceWithLinks()
 
-data class TagResource(
-    @get:JsonView(PublicApiProjection::class)
-    val label: String
-)

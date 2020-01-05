@@ -5,6 +5,8 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.video.VideosWrapperResource
+import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -19,7 +21,6 @@ import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
-import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.web.exceptions.ExceptionDetails
@@ -27,7 +28,6 @@ import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
 import org.springframework.hateoas.PagedResources
-import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -89,7 +89,7 @@ class VideoController(
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
         @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
         @RequestParam(name = "type", required = false) type: Set<String>?
-    ): ResponseEntity<PagedResources<*>> {
+    ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
         val videos = searchVideo.byQuery(
@@ -114,28 +114,32 @@ class VideoController(
             user = getCurrentUser()
         )
 
-        return ResponseEntity(
-            PagedResources(
-                videos
-                    .elements.toList()
-                    .map { video -> videoToResourceConverter.fromVideo(video, getCurrentUser()) }
-                    .let(HateoasEmptyCollection::fixIfEmptyCollection),
-                PagedResources.PageMetadata(
-                    pageSize.toLong(),
-                    pageNumber.toLong(),
-                    videos.pageInfo.totalElements
-                )
-            ), HttpStatus.OK
+        val videosResource = VideosResource(
+            _embedded = VideosWrapperResource(videos = videos
+                .elements.toList()
+                .map { video -> videoToResourceConverter.convertVideo(video, getCurrentUser()) }),
+            _links = null,
+            page = PagedResources.PageMetadata(
+                pageSize.toLong(),
+                pageNumber.toLong(),
+                videos.pageInfo.totalElements
+            )
         )
+
+        return ResponseEntity(videosResource, HttpStatus.OK)
     }
 
     @PostMapping("/search")
-    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<Resources<*>> {
+    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
         val user = getCurrentUser()
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), user)
-            .map { videoToResourceConverter.fromVideo(it, user) }
-            .let(HateoasEmptyCollection::fixIfEmptyCollection)
-            .let { ResponseEntity(Resources(it), HttpStatus.CREATED) }
+            .map { videoToResourceConverter.convertVideo(it, user) }
+            .let {
+                ResponseEntity(
+                    VideosResource(_embedded = VideosWrapperResource(videos = it), _links = null, page = null),
+                    HttpStatus.CREATED
+                )
+            }
     }
 
     @CrossOrigin(allowCredentials = "true")
@@ -152,7 +156,7 @@ class VideoController(
         return ResponseEntity(
             withProjection(
                 searchVideo.byId(id, getCurrentUser())
-                    .let { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
+                    .let { videoToResourceConverter.convertVideo(it, getCurrentUser()) }
             ),
             headers,
             HttpStatus.OK
@@ -200,7 +204,7 @@ class VideoController(
     fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
             createVideo(createVideoRequest, getCurrentUser())
-                .let { videoToResourceConverter.fromVideo(it, getCurrentUser()) }
+                .let { videoToResourceConverter.convertVideo(it, getCurrentUser()) }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(
                 ExceptionDetails(
@@ -229,7 +233,7 @@ class VideoController(
         }
 
         return ResponseEntity(HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, resource.getLink("self").href)
+            set(HttpHeaders.LOCATION, resource._links?.get("self")?.href)
         }, HttpStatus.CREATED)
     }
 

@@ -13,7 +13,7 @@ data class CollectionResource(
     val id: String? = null,
     val owner: String? = null,
     val title: String? = null,
-    val videos: List<Resource<VideoResource>>,
+    val videos: List<VideoResource>,
     val updatedAt: ZonedDateTime? = null,
     val public: Boolean? = null,
     @get:JsonIgnore

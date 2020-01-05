@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.security.utils.UserExtractor.getIfAuthenticated
 import com.boclips.security.utils.UserExtractor.getIfHasRole
-import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.VideoController
@@ -30,15 +29,15 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val VALIDATE_SHARE_CODE = "validateShareCode"
     }
 
-    fun self(videoResource: VideoResource): Link =
-        Link(getVideosRoot().pathSegment(videoResource.id).build().toUriString(), "self")
+    fun self(videoId: String?): Link =
+        Link(getVideosRoot().pathSegment(videoId).build().toUriString(), "self")
 
     fun videoLink(): Link = Link(getVideosRoot().pathSegment("{id}").build().toUriString(), VIDEO)
 
-    fun createVideoInteractedWithEvent(videoResource: VideoResource): Link =
+    fun createVideoInteractedWithEvent(videoId: String?): Link =
         Link(
             getVideosRoot()
-                .pathSegment("${videoResource.id}")
+                .pathSegment("$videoId")
                 .pathSegment("events")
                 .queryParam("logVideoInteraction", true)
                 .queryParam("type", "{type}")
@@ -73,14 +72,13 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         ).withRel(Rels.ADMIN_VIDEO_SEARCH)
     }
 
-    fun transcriptLink(videoResource: VideoResource) = when {
-
+    fun transcriptLink(video: Video) = when {
         !currentUserHasRole(UserRoles.DOWNLOAD_TRANSCRIPT) -> null
-        videoResource.hasTranscripts == false -> null
+        !video.hasTranscript() -> null
 
         else -> ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .getTranscript(videoResource.id)
+                .getTranscript(video.videoId.value)
         ).withRel(Rels.TRANSCRIPT)
     }
 

@@ -3,9 +3,21 @@ package com.boclips.videos.api.request.video
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonView
+import org.springframework.hateoas.Link
 import java.time.Duration
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = StreamPlaybackResource::class, name = "STREAM"),
+    JsonSubTypes.Type(value = YoutubePlaybackResource::class, name = "YOUTUBE")
+)
 sealed class PlaybackResource {
     @get:JsonView(PublicApiProjection::class)
     abstract var id: String?
@@ -15,8 +27,8 @@ sealed class PlaybackResource {
     abstract var duration: Duration?
     @get:JsonView(PublicApiProjection::class)
     abstract val type: String
-
     abstract val downloadUrl: String?
+    abstract val _links: Map<String, Link>?
 }
 
 data class StreamPlaybackResource(
@@ -31,9 +43,10 @@ data class StreamPlaybackResource(
     @get:JsonView(PublicApiProjection::class)
     val streamUrl: String,
     @get:JsonView(BoclipsInternalProjection::class)
-    val referenceId: String,
+    var referenceId: String?,
     @get:JsonIgnore
-    override val downloadUrl: String?
+    override val downloadUrl: String?,
+    override val _links: Map<String, Link>?
 ) : PlaybackResource()
 
 data class YoutubePlaybackResource(
@@ -44,7 +57,8 @@ data class YoutubePlaybackResource(
     @get:JsonView(PublicApiProjection::class)
     override var thumbnailUrl: String?,
     @get:JsonView(PublicApiProjection::class)
-    override var duration: Duration?
+    override var duration: Duration?,
+    override val _links: Map<String, Link>?
 ) : PlaybackResource() {
     override val downloadUrl: String?
         get() = null

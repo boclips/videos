@@ -46,6 +46,10 @@ data class Video(
     fun isRatedByUser(user: UserId) =
         ratings.any { it.userId == user }
 
+    fun hasTranscript(): Boolean {
+        return this.transcript != null
+    }
+
     override fun toString(): String {
         return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}', videoReference='$videoReference')"
     }
