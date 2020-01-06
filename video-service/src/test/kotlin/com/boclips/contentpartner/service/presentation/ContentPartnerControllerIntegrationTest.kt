@@ -27,21 +27,6 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     lateinit var mockMvc: MockMvc
 
     @Test
-    fun `video lookup by provider id returns 200 when video exists`() {
-        val contentPartner = saveContentPartner(name = "ted")
-        saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
-
-        mockMvc.perform(head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc").asIngestor())
-            .andExpect(status().isOk)
-    }
-
-    @Test
-    fun `video lookup by provider id returns 404 when video does not exist`() {
-        mockMvc.perform(head("/v1/content-partners/ted/videos/xyz").asIngestor())
-            .andExpect(status().isNotFound)
-    }
-
-    @Test
     fun `post video lookup by provider id returns 200 when video exists`() {
         val contentPartner = saveContentPartner(name = "ted")
         saveVideo(

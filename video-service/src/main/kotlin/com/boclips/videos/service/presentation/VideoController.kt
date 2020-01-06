@@ -5,8 +5,8 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
-import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.api.response.video.VideosResource
+import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -18,7 +18,9 @@ import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.InvalidShareCodeException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.projections.WithProjection
@@ -41,13 +43,13 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/v1/videos")
 class VideoController(
     private val searchVideo: SearchVideo,
     private val deleteVideo: DeleteVideo,
@@ -61,6 +63,7 @@ class VideoController(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val shareVideo: ShareVideo,
     private val validateWithShareCode: ValidateWithShareCode,
+    private val videoRepository: VideoRepository,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService) {
     companion object : KLogging() {
@@ -69,7 +72,7 @@ class VideoController(
         const val DEFAULT_PAGE_INDEX = 0
     }
 
-    @GetMapping
+    @GetMapping("/v1/videos")
     fun search(
         @RequestParam(name = "query", required = false) query: String?,
         @RequestParam(name = "sort_by", required = false) sortBy: SortKey?,
@@ -129,7 +132,7 @@ class VideoController(
         return ResponseEntity(videosResource, HttpStatus.OK)
     }
 
-    @PostMapping("/search")
+    @PostMapping("/v1/videos/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
         val user = getCurrentUser()
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), user)
@@ -143,7 +146,7 @@ class VideoController(
     }
 
     @CrossOrigin(allowCredentials = "true")
-    @GetMapping(path = ["/{id}"])
+    @GetMapping(path = ["/v1/videos/{id}"])
     fun getVideo(@PathVariable("id") id: String?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null): ResponseEntity<MappingJacksonValue> {
         val headers = HttpHeaders()
         if (playbackConsumer == null) {
@@ -163,7 +166,7 @@ class VideoController(
         )
     }
 
-    @GetMapping(path = ["/{id}/match"], params = ["shareCode"])
+    @GetMapping(path = ["/v1/videos/{id}/match"], params = ["shareCode"])
     fun validateShareCode(@PathVariable("id") id: String?, @RequestParam shareCode: String? = null): ResponseEntity<Void> {
         shareCode?.let {
             try {
@@ -176,12 +179,12 @@ class VideoController(
         return ResponseEntity(HttpStatus.OK)
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/v1/videos/{id}")
     fun removeVideo(@PathVariable("id") id: String?) {
         deleteVideo(id, getCurrentUser())
     }
 
-    @GetMapping("/{id}/transcript")
+    @GetMapping("/v1/videos/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
         val videoTitle =
             searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
@@ -200,7 +203,7 @@ class VideoController(
         return ResponseEntity(videoTranscript, headers, HttpStatus.OK)
     }
 
-    @PostMapping
+    @PostMapping("/v1/videos")
     fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
         val resource = try {
             createVideo(createVideoRequest, getCurrentUser())
@@ -237,14 +240,14 @@ class VideoController(
         }, HttpStatus.CREATED)
     }
 
-    @PatchMapping(path = ["/{id}"], params = ["rating"])
+    @PatchMapping(path = ["/v1/videos/{id}"], params = ["rating"])
     fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
         rateVideo(
             rateVideoRequest = RateVideoRequest(rating = rating, videoId = id),
             user = getCurrentUser()
         ).let { this.getVideo(id) }
 
-    @PatchMapping("/{id}", params = ["sharing=true"])
+    @PatchMapping("/v1/videos/{id}", params = ["sharing=true"])
     fun patchSharing(@PathVariable("id") id: String, @RequestParam sharing: Boolean): ResponseEntity<Void> {
         return if (sharing) {
             shareVideo(id, getCurrentUser())
@@ -254,7 +257,7 @@ class VideoController(
         }
     }
 
-    @PatchMapping(path = ["/{id}"], params = ["!rating"])
+    @PatchMapping(path = ["/v1/videos/{id}"], params = ["!rating"])
     fun patchVideo(
         @PathVariable id: String,
         @RequestParam subjectIds: List<String>? = emptyList(), //TODO: move to updateRequest if the spring gods allow it
@@ -265,8 +268,25 @@ class VideoController(
         return updateVideo(id, updateRequestWithSubjects, getCurrentUser()).let { this.getVideo(id) }
     }
 
-    @PatchMapping(path = ["/{id}/tags"])
+    @PatchMapping(path = ["/v1/videos/{id}/tags"])
     fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
         tagVideo(TagVideoRequest(id, tagUrl), getCurrentUser()).let { this.getVideo(id) }
+
+    @RequestMapping(
+        "/v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}",
+        method = [RequestMethod.HEAD]
+    )
+    fun lookupVideoByProviderId(
+        @PathVariable("contentPartnerId") contentPartnerId: String,
+        @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
+    ): ResponseEntity<Void> {
+        val exists = videoRepository.existsVideoFromContentPartnerId(
+            ContentPartnerId(value = contentPartnerId),
+            contentPartnerVideoId
+        )
+
+        val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
+        return ResponseEntity(status)
+    }
 }
 

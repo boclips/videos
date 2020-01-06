@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
@@ -1243,6 +1244,24 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.subjects", hasSize<Int>(2)))
             .andExpect(jsonPath("$.subjects[0].name", equalTo("Art")))
             .andExpect(jsonPath("$.subjects[1].name", equalTo("Maths")))
+    }
+
+    @Nested
+    inner class VideoExists {
+        @Test
+        fun `video lookup by provider id returns 200 when video exists`() {
+            val contentPartner = saveContentPartner(name = "ted")
+            saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
+
+            mockMvc.perform(MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc").asIngestor())
+                .andExpect(status().isOk)
+        }
+
+        @Test
+        fun `video lookup by provider id returns 404 when video does not exist`() {
+            mockMvc.perform(MockMvcRequestBuilders.head("/v1/content-partners/ted/videos/xyz").asIngestor())
+                .andExpect(status().isNotFound)
+        }
     }
 
     private fun getRatingLink(videoId: String): String {

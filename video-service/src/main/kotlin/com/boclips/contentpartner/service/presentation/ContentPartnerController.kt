@@ -33,23 +33,6 @@ class ContentPartnerController(
     private val fetchContentPartners: GetContentPartners,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
 ) : BaseController() {
-    @RequestMapping(
-        "/{contentPartnerId}/videos/{contentPartnerVideoId}",
-        method = [RequestMethod.HEAD]
-    )
-    fun lookupVideoByProviderId(
-        @PathVariable("contentPartnerId") contentPartnerId: String,
-        @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
-    ): ResponseEntity<Void> {
-        val exists = videoRepository.existsVideoFromContentPartnerId(
-            ContentPartnerId(value = contentPartnerId),
-            contentPartnerVideoId
-        )
-
-        val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
-        return ResponseEntity(status)
-    }
-
     @PostMapping("/{contentPartnerId}/videos/search")
     fun postSearchVideoByProviderId(
         @PathVariable("contentPartnerId") contentPartnerId: String,
