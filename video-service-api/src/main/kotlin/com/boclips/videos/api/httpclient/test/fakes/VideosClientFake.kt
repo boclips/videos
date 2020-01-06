@@ -2,16 +2,27 @@ package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideosResource
+import com.boclips.videos.api.response.video.VideosWrapperResource
 
 class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     private val database: MutableMap<String, VideoResource> = LinkedHashMap()
     private var id = 0
 
-    override fun getVideo(videoId: String): VideoResource {
+    override fun getVideo(
+        videoId: String
+    ): VideoResource {
         return database[videoId]!!
+    }
+
+    override fun searchVideos(searchVideosRequest: SearchVideosRequest): VideosResource {
+        return VideosResource(
+            _embedded = VideosWrapperResource(database.values.toList())
+        )
     }
 
     override fun updateVideo(videoId: String, updateVideoRequest: UpdateVideoRequest) {

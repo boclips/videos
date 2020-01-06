@@ -9,7 +9,7 @@ class VideosResource(
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var page: PagedResources.PageMetadata? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var _links: Map<String, Link>?
+    var _links: Map<String, Link>? = null
 )
 
 data class VideosWrapperResource(

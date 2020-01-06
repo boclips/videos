@@ -3,8 +3,10 @@ package com.boclips.videos.api.httpclient
 import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
 import com.boclips.videos.api.httpclient.helper.TokenFactory
 import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideosResource
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Feign
 import feign.Logger
@@ -19,10 +21,20 @@ import feign.slf4j.Slf4jLogger
 
 interface VideosClient {
     @RequestLine("GET /v1/videos/{videoId}")
-    fun getVideo(@Param("videoId") videoId: String): VideoResource
+    fun getVideo(
+        @Param("videoId") videoId: String
+    ): VideoResource
+
+    @RequestLine("GET /v1/videos")
+    fun searchVideos(
+        @QueryMap searchVideosRequest: SearchVideosRequest = SearchVideosRequest()
+    ): VideosResource
 
     @RequestLine("PATCH /v1/videos/{videoId}")
-    fun updateVideo(@Param("videoId") videoId: String, @QueryMap updateVideoRequest: UpdateVideoRequest)
+    fun updateVideo(
+        @Param("videoId") videoId: String,
+        @QueryMap updateVideoRequest: UpdateVideoRequest
+    )
 
     @RequestLine("POST /v1/videos/{videoId}")
     fun createVideo(createVideoRequest: CreateVideoRequest): VideoResource

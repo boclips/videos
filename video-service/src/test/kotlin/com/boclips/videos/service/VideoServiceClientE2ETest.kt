@@ -6,6 +6,7 @@ import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.TestTokenFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
+import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -60,6 +61,42 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThrows<Exception> {
                 videosClient.deleteVideo(createdVideo.value)
             }
+        }
+
+        @Test
+        fun `search videos with filters`() {
+            val videosClient = VideosClient.create(
+                apiUrl = "http://localhost:$randomServerPort",
+                objectMapper = objectMapper,
+                tokenFactory = TestTokenFactory(
+                    "the@owner.com",
+                    UserRoles.INSERT_VIDEOS,
+                    UserRoles.UPDATE_VIDEOS,
+                    UserRoles.VIEW_VIDEOS,
+                    UserRoles.REMOVE_VIDEOS,
+                    UserRoles.SHARE_VIDEOS,
+                    UserRoles.RATE_VIDEOS,
+                    UserRoles.DOWNLOAD_TRANSCRIPT
+                )
+            )
+
+            saveVideo() // normal video, subjects not set manually
+            val editedVideo = saveVideo()
+            val subject = saveSubject("A Subject")
+
+            videosClient.updateVideo(
+                editedVideo.value,
+                VideoServiceApiFactory.createUpdateVideoRequest(subjectIds = listOf(subject.id.value))
+            )
+
+            val allVideos = videosClient
+                .searchVideos(SearchVideosRequest())
+            assertThat(allVideos._embedded.videos).hasSize(2)
+
+            val filteredVideos = videosClient
+                .searchVideos(SearchVideosRequest(subjects_set_manually = true))
+            assertThat(filteredVideos._embedded.videos).hasSize(1)
+            assertThat(filteredVideos._embedded.videos[0].id).isEqualTo(editedVideo.value)
         }
     }
 
