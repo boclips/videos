@@ -132,6 +132,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.page.totalElements", equalTo(1)))
             .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
             .andExpect(jsonPath("$.page.number", equalTo(0)))
+
+            .andExpect(jsonPath("$._links").doesNotHaveJsonPath())
     }
 
     @Test
