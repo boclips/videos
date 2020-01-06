@@ -41,25 +41,36 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val createdVideo = saveVideo()
-            assertThat(videosClient.getVideo(createdVideo.value)).isNotNull
+            createMediaEntry(id = "123")
+            val contentPartner = saveContentPartner()
+
+            val createdVideo =
+                videosClient.createVideo(
+                    VideoServiceApiFactory.createCreateVideoRequest(
+                        providerId = contentPartner.contentPartnerId.value,
+                        providerVideoId = "abc",
+                        playbackId = "123"
+                    )
+                ).id!!
+
+            assertThat(videosClient.getVideo(createdVideo)).isNotNull
 
             videosClient.updateVideo(
-                createdVideo.value,
+                createdVideo,
                 VideoServiceApiFactory.createUpdateVideoRequest(title = "new title")
             )
-            videosClient.updateVideoRating(createdVideo.value, 4)
+            videosClient.updateVideoRating(createdVideo, 4)
 
-            val updatedVideo = videosClient.getVideo(createdVideo.value)
+            val updatedVideo = videosClient.getVideo(createdVideo)
             assertThat(updatedVideo.title).isEqualTo("new title")
             assertThat(updatedVideo.yourRating).isEqualTo(4.0)
             assertThat(updatedVideo.playback).isNotNull
             assertThat(updatedVideo.playback!!.id).isNotNull()
             assertThat(updatedVideo._links?.get("self")?.href).isNotEmpty()
 
-            videosClient.deleteVideo(createdVideo.value)
+            videosClient.deleteVideo(createdVideo)
             assertThrows<Exception> {
-                videosClient.deleteVideo(createdVideo.value)
+                videosClient.deleteVideo(createdVideo)
             }
         }
 

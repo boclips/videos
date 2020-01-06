@@ -5,6 +5,7 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.service.application.video.CreateVideo
@@ -204,8 +205,8 @@ class VideoController(
     }
 
     @PostMapping("/v1/videos")
-    fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<Any> {
-        val resource = try {
+    fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<VideoResource> {
+        val resource: VideoResource = try {
             createVideo(createVideoRequest, getCurrentUser())
                 .let { videoToResourceConverter.convertVideo(it, getCurrentUser()) }
         } catch (e: VideoAssetAlreadyExistsException) {
@@ -235,7 +236,7 @@ class VideoController(
             )
         }
 
-        return ResponseEntity(HttpHeaders().apply {
+        return ResponseEntity(resource, HttpHeaders().apply {
             set(HttpHeaders.LOCATION, resource._links?.get("self")?.href)
         }, HttpStatus.CREATED)
     }

@@ -96,7 +96,7 @@ fun MockHttpServletRequestBuilder.asIngestor() =
     this.with(
         SecurityMockMvcRequestPostProcessors
             .user("ingestor")
-            .roles(UserRoles.INSERT_VIDEOS)
+            .roles(UserRoles.INSERT_VIDEOS, UserRoles.VIEW_VIDEOS)
     )
 
 fun MockHttpServletRequestBuilder.asSubjectClassifier() =
