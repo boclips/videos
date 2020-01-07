@@ -86,8 +86,7 @@ class MongoSubjectRepository(
     private fun toSubject(subjectDocument: SubjectDocument): Subject {
         return Subject(
             id = SubjectId(value = subjectDocument.id.toHexString()),
-            name = subjectDocument.name,
-            lessonPlan = subjectDocument.lessonPlan
+            name = subjectDocument.name
         )
     }
 

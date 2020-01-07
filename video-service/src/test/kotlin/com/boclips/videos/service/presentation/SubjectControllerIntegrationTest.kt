@@ -50,7 +50,6 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get(subjectUrl))
             .andExpect(jsonPath("$.id").exists())
             .andExpect(jsonPath("$.name", equalTo("Mathematics")))
-            .andExpect(jsonPath("$.lessonPlan", equalTo(false)))
             .andExpect(jsonPath("$._links.self.href").exists())
     }
 
@@ -73,7 +72,6 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.subjects[0].name").exists())
-            .andExpect(jsonPath("$._embedded.subjects[0].lessonPlan").exists())
             .andExpect(
                 jsonPath(
                     "$._embedded.subjects[0]._links.self.href",

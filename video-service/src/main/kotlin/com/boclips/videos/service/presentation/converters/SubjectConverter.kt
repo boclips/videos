@@ -7,8 +7,7 @@ class SubjectConverter {
     companion object {
         fun from(subject: Subject) = SubjectResource(
             id = subject.id.value,
-            name = subject.name,
-            lessonPlan = subject.lessonPlan
+            name = subject.name
         )
     }
 }
