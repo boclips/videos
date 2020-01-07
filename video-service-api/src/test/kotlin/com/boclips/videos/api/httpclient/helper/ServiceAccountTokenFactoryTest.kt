@@ -37,7 +37,7 @@ class ServiceAccountTokenFactoryTest {
 
     @Test
     fun `refreshes token after expiry`(@WiremockResolver.Wiremock server: WireMockServer, @WiremockUriResolver.WiremockUri uri: String) {
-        stubTokenResponse(server = server, token = "token-123", expiry = 0)
+        stubTokenResponse(server = server, token = "token-123", expiry = -1)
 
         val serviceAccountTokenFactory = ServiceAccountTokenFactory(
             ServiceAccountCredentials(
@@ -48,7 +48,6 @@ class ServiceAccountTokenFactoryTest {
         )
 
         assertThat(serviceAccountTokenFactory.getAccessToken()).isEqualTo("token-123")
-
         stubTokenResponse(server = server, token = "token-456")
 
         assertThat(serviceAccountTokenFactory.getAccessToken()).isEqualTo("token-456")
