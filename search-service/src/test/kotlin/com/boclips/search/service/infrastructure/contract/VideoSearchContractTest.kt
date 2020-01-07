@@ -169,6 +169,110 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `finds videos by best for tags`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", tags = listOf("news")),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "Beer Trump",
+                    description = "Behave like a gentleman, cane like a sponge"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    title = "Trump to attack UK",
+                    contentProvider = "BBC",
+                    tags = listOf("news")
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    "Trump",
+                    bestFor = listOf("news")
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("4")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns all results if best for tags not provided`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", tags = listOf("news")),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "Beer Trump",
+                    description = "Behave like a gentleman, cane like a sponge"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    title = "Trump to attack UK",
+                    contentProvider = "BBC",
+                    tags = listOf("news")
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    "Trump"
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("2", "4")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns all results if empty best for tags are given`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", tags = listOf("news")),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "Beer Trump",
+                    description = "Behave like a gentleman, cane like a sponge"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    title = "Trump to attack UK",
+                    contentProvider = "BBC",
+                    tags = listOf("news")
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "Trump",
+                    bestFor = emptyList()
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("2", "4")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `finds by video type`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>

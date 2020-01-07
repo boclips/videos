@@ -69,6 +69,21 @@ class VideoSearchVideoQueryTest {
     }
 
     @Test
+    fun `allows filtering by bestFor`() {
+        val searchQuery = VideoSearchQuery(
+            text = "id:3222",
+            includeTags = listOf("classroom"),
+            excludeTags = emptyList(),
+            bestFor = listOf("explainer"),
+            pageSize = 2,
+            pageIndex = 0
+        )
+            .toSearchQuery(VideoAccessRule.Everything)
+
+        assertThat(searchQuery.bestFor).contains("explainer")
+    }
+
+    @Test
     fun `allows filtering by absence of tag`() {
         val searchQuery = VideoSearchQuery(
             text = "id:11,12,13",

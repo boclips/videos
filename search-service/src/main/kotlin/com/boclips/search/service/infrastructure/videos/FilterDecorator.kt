@@ -18,6 +18,9 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
         existingQuery.filter(filterByTag(videoQuery.includeTags))
         existingQuery.mustNot(matchTags(videoQuery.excludeTags))
 
+        if (videoQuery.bestFor != null) {
+            existingQuery.filter(filterByTag(videoQuery.bestFor))
+        }
         if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
             existingQuery.must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
         }

@@ -215,5 +215,17 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 )
             }
         }
+
+        @Test
+        fun `create video with best for tags`() {
+            val tagLabel = "explainer"
+            val video = videoService.create(
+                TestFactories.createVideo(
+                    tag = TestFactories.createUserTag(label = tagLabel)
+                )
+            )
+
+            assertThat(video.tag!!.tag.label).isEqualTo(tagLabel)
+        }
     }
 }

@@ -66,7 +66,8 @@ object VideoDocumentConverter {
             keywords = document.keywords,
             subjects = subjectsFromVideoDocument(document),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
-            ingestedAt = document.ingestedAt?.let { ZonedDateTime.parse(it) } ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
+            ingestedAt = document.ingestedAt?.let { ZonedDateTime.parse(it) }
+                ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
             legalRestrictions = document.legalRestrictions,
             language = document.language?.let(Locale::forLanguageTag),
             transcript = document.transcript,

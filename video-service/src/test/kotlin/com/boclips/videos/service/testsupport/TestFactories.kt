@@ -492,6 +492,7 @@ object AttachmentFactory {
         linkToResource = linkToResource,
         type = type
     )
+
     fun sampleWithLessonPlan(
         id: String = ObjectId().toHexString(),
         description: String = "description",

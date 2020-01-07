@@ -3,6 +3,8 @@ package com.boclips.videos.service.presentation
 import com.boclips.users.client.model.Subject
 import com.boclips.users.client.model.TeacherPlatformAttributes
 import com.boclips.users.client.model.User
+import com.boclips.videos.api.request.video.TagVideoRequest
+import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -14,6 +16,7 @@ import com.boclips.videos.service.infrastructure.video.MongoVideoRepository.Comp
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -23,6 +26,7 @@ import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
@@ -55,6 +59,9 @@ import javax.servlet.http.Cookie
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var tagVideo: TagVideo
 
     lateinit var disabledVideoId: String
     lateinit var kalturaVideoId: String
@@ -178,6 +185,32 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(newsAndClassroomVideoId.value)))
             .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(classroomVideoId.value))))
+    }
+
+    @Test
+    fun `can find videos by single best for tag`() {
+        val explainerTagUrl = createTag("explainer")
+        val otherTagUrl = createTag("other")
+        val testUser = UserFactory.sample()
+
+        val firstExplainerVideoId = saveVideo(title = "Video with tags")
+        tagVideo(TagVideoRequest(videoId = firstExplainerVideoId.value, tagUrl = explainerTagUrl), testUser)
+
+        val secondExplainerVideoId = saveVideo(title = "Video with tags")
+        tagVideo(TagVideoRequest(videoId = secondExplainerVideoId.value, tagUrl = explainerTagUrl), testUser)
+
+        val otherVideo = saveVideo(title = "Video with tags")
+        tagVideo(TagVideoRequest(videoId = otherVideo.value, tagUrl = otherTagUrl), testUser)
+
+        mockMvc.perform(get("/v1/videos?query=tags&best_for=explainer").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.videos[*].id",
+                    containsInAnyOrder(firstExplainerVideoId.value, secondExplainerVideoId.value)
+                )
+            )
     }
 
     @Test
@@ -799,7 +832,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = saveVideo().value
 
         val tagVideoUrl = getTaggingLink(videoId)
-        val tagUrl = createTag("A tag").andReturn().response.getHeader("Location")!!
+        val tagUrl = createTag("A tag")
 
         mockMvc.perform(
             patch(tagVideoUrl).content(tagUrl)
@@ -1291,7 +1324,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         return tagUrl
     }
 
-    private fun createTag(name: String): ResultActions {
+    private fun createTag(name: String): String {
         return mockMvc.perform(
             post("/v1/tags").content(
                 """
@@ -1303,7 +1336,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
-        )
+        ).andReturn().response.getHeader("Location")!!
     }
 
     private fun setPromoted(videoId: String, promoted: Boolean): ResultActions {

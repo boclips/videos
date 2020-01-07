@@ -164,4 +164,16 @@ class VideoMetadataConverterTest {
             Offset.offset(0.00001)
         )
     }
+
+    @Test
+    fun `keeps tags explicitly set on the video`() {
+        val video = TestFactories.createVideo(
+            type = ContentType.INSTRUCTIONAL_CLIPS,
+            tag = TestFactories.createUserTag(label = "explainer")
+        )
+
+        val videoMetadata = VideoMetadataConverter.convert(video)
+
+        assertThat(videoMetadata.tags).containsExactlyInAnyOrder("classroom", "explainer")
+    }
 }

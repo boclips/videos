@@ -39,10 +39,16 @@ object VideoMetadataConverter {
     }
 
     private fun tagsFrom(video: Video): List<String> {
-        return listOf(
-            Pair("classroom", ContentEnrichers.isClassroom(video)),
-            Pair("news", ContentEnrichers.isNews(video))
-        ).fold(emptyList()) { acc, pair -> if (pair.second) acc.plus(pair.first) else acc }
+        val tags = mutableListOf(video.tag?.tag?.label)
+
+        if (ContentEnrichers.isClassroom(video)) {
+            tags.add("classroom")
+        }
+        if (ContentEnrichers.isNews(video)) {
+            tags.add("news")
+        }
+
+        return tags.filterNotNull().toList()
     }
 
     private fun convertPlaybackTypeToSourceType(playbackType: PlaybackProviderType): SourceType =
