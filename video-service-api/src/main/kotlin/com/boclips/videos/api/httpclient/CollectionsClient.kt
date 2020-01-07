@@ -20,6 +20,7 @@ interface CollectionsClient {
     fun getCollection(@Param("collectionId") collectionId: String): Resource<CollectionResource>
 
     companion object {
+        @JvmStatic
         fun create(
             apiUrl: String,
             objectMapper: ObjectMapper = ObjectMapperDefinition.default(),

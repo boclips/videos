@@ -9,10 +9,13 @@ import java.time.LocalDate
 
 class VideoServiceApiFactory {
     companion object {
+        @JvmStatic
         fun createSubjectRequest(name: String? = null): CreateSubjectRequest = CreateSubjectRequest(name = name)
 
+        @JvmStatic
         fun createTagRequest(label: String? = null): CreateTagRequest = CreateTagRequest(label = label)
 
+        @JvmStatic
         fun createCreateVideoRequest(
             providerVideoId: String? = "AP-1",
             providerId: String? = "provider-id",
@@ -43,6 +46,7 @@ class VideoServiceApiFactory {
             youtubeChannelId = youtubeChannelId
         )
 
+        @JvmStatic
         fun createCollectionRequest(
             title: String? = "collection title",
             description: String? = null,
@@ -55,6 +59,7 @@ class VideoServiceApiFactory {
             public = public
         )
 
+        @JvmStatic
         fun createUpdateVideoRequest(
             title: String? = "video-title",
             description: String? = "description",

@@ -34,6 +34,7 @@ interface SubjectsClient {
     fun create(@RequestBody createSubjectRequest: CreateSubjectRequest)
 
     companion object {
+        @JvmStatic
         fun create(
             apiUrl: String,
             objectMapper: ObjectMapper = ObjectMapperDefinition.default(),

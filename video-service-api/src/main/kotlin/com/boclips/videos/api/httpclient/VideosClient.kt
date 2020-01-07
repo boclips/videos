@@ -52,6 +52,7 @@ interface VideosClient {
     fun getVideoTranscript(@Param("videoId") videoId: String): String
 
     companion object {
+        @JvmStatic
         fun create(
             apiUrl: String,
             objectMapper: ObjectMapper = ObjectMapperDefinition.default(),
