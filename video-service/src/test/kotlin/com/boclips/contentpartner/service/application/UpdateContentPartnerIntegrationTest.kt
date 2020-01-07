@@ -3,13 +3,13 @@ package com.boclips.contentpartner.service.application
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.UnboundedAgeRange
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
-import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
+import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -38,9 +38,12 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @BeforeEach
     fun setUp() {
         originalContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
+            VideoServiceApiFactory.createContentPartnerRequest(
                 name = "My content partner",
-                ageRange = AgeRangeRequest(min = 7, max = 11),
+                ageRange = AgeRangeRequest(
+                    min = 7,
+                    max = 11
+                ),
                 distributionMethods = emptySet(),
                 legalRestrictions = null
             )
@@ -56,14 +59,19 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions")
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = ContentPartnerRequest(
+            createRequest = CreateContentPartnerRequest(
                 name = "My better content partner",
-                ageRange = AgeRangeRequest(min = 9, max = 14),
+                ageRange = AgeRangeRequest(
+                    min = 9,
+                    max = 14
+                ),
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
                 ),
-                legalRestrictions = LegalRestrictionsRequest(id = legalRestrictionsId.value)
+                legalRestrictions = LegalRestrictionsRequest(
+                    id = legalRestrictionsId.value
+                )
             )
         )
 
@@ -80,7 +88,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `emits event`() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = ContentPartnerRequest(
+            createRequest = CreateContentPartnerRequest(
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
@@ -99,8 +107,11 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `legal restrictions get created when id not set`() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            request = ContentPartnerRequest(
-                legalRestrictions = LegalRestrictionsRequest(id = "", text = "New legal restrictions")
+            createRequest = CreateContentPartnerRequest(
+                legalRestrictions = LegalRestrictionsRequest(
+                    id = "",
+                    text = "New legal restrictions"
+                )
             )
         )
 

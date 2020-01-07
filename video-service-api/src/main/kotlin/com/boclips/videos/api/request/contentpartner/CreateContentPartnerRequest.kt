@@ -1,11 +1,10 @@
-package com.boclips.contentpartner.service.presentation
+package com.boclips.videos.api.request.contentpartner
 
-import com.boclips.contentpartner.service.application.CurrencyCode
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
-data class ContentPartnerRequest(
+data class CreateContentPartnerRequest(
     @field:NotBlank
     val name: String? = null,
     val accreditedToYtChannelId: String? = null,

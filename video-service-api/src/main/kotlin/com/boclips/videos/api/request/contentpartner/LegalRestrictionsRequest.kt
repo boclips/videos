@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.presentation
+package com.boclips.videos.api.request.contentpartner
 
 data class LegalRestrictionsRequest(
     val id: String? = null,

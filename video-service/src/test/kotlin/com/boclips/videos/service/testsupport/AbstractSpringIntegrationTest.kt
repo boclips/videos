@@ -6,8 +6,8 @@ import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
@@ -17,6 +17,7 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.contract.SelectedVideosContract
+import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
@@ -354,14 +355,17 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveContentPartner(
         name: String = "TeD",
-        ageRange: AgeRangeRequest = AgeRangeRequest(3, 10),
+        ageRange: AgeRangeRequest = AgeRangeRequest(
+            3,
+            10
+        ),
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null
     ): ContentPartner {
         val createdContentPartner = try {
             createContentPartner(
-                com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerRequest(
+                VideoServiceApiFactory.createContentPartnerRequest(
                     name = name,
                     ageRange = ageRange,
                     accreditedToYtChannel = accreditedToYtChannel,

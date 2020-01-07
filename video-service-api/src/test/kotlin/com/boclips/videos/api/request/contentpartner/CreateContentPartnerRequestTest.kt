@@ -1,14 +1,13 @@
-package com.boclips.contentpartner.service.presentation
+package com.boclips.videos.api.request.contentpartner
 
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.videos.api.request.VideoServiceApiFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.validation.Validation
 import javax.validation.Validator
 
-class ContentPartnerRequestTest {
+class CreateContentPartnerRequestTest {
 
     lateinit var validator: Validator
 
@@ -20,35 +19,35 @@ class ContentPartnerRequestTest {
 
     @Test
     fun `validates a valid request`() {
-        val validRequest = TestFactories.createContentPartnerRequest()
+        val validRequest = VideoServiceApiFactory.createContentPartnerRequest()
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(0)
     }
 
     @Test
     fun `invalid name`() {
-        val validRequest = TestFactories.createContentPartnerRequest(name = null)
+        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(name = null)
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }
 
     @Test
     fun `invalid currency`() {
-        val validRequest = TestFactories.createContentPartnerRequest(currency = "not a valid currency")
+        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(currency = "not a valid currency")
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }
 
     @Test
     fun `blank name`() {
-        val validRequest = TestFactories.createContentPartnerRequest(name = "")
+        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(name = "")
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }
 
     @Test
     fun `invalid age range`() {
-        val validRequest = TestFactories.createContentPartnerRequest(
+        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(
             ageRange = AgeRangeRequest(
                 min = -666,
                 max = null

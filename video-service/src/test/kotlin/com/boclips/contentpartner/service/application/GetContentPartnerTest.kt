@@ -13,7 +13,7 @@ class GetContentPartnerTest {
         val user = UserFactory.sample()
 
         assertThrows<ResourceNotFoundApiException> {
-            GetContentPartner(mock()).invoke("doesn't exist id", user)
+            GetContentPartner(mock(), mock()).invoke("doesn't exist id", user)
         }
     }
 }

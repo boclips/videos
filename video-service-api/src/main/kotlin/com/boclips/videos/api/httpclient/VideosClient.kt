@@ -26,9 +26,7 @@ interface VideosClient {
     ): VideoResource
 
     @RequestLine("GET /v1/videos")
-    fun searchVideos(
-        @QueryMap searchVideosRequest: SearchVideosRequest = SearchVideosRequest()
-    ): VideosResource
+    fun searchVideos(@QueryMap searchVideosRequest: SearchVideosRequest = SearchVideosRequest()): VideosResource
 
     @RequestLine("PATCH /v1/videos/{videoId}")
     fun updateVideo(

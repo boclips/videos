@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId

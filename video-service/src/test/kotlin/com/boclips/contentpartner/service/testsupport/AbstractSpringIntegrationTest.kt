@@ -1,19 +1,23 @@
 package com.boclips.contentpartner.service.testsupport
 
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.BoundedAgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
+import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.CreateVideo
@@ -25,9 +29,6 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
-import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.testsupport.TestMongoProcess
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
@@ -176,7 +177,7 @@ abstract class AbstractSpringIntegrationTest {
     ): VideoId {
         val retrievedContentPartnerId = try {
             createContentPartner(
-                ContentPartnerRequest(
+                CreateContentPartnerRequest(
                     name = contentProvider,
                     distributionMethods = distributionMethods
                 )
@@ -237,7 +238,7 @@ abstract class AbstractSpringIntegrationTest {
         currency: String? = null
     ): ContentPartner {
         val createdContentPartner = createContentPartner(
-            TestFactories.createContentPartnerRequest(
+            VideoServiceApiFactory.createContentPartnerRequest(
                 name = name,
                 ageRange = ageRange,
                 accreditedToYtChannel = accreditedToYtChannel,

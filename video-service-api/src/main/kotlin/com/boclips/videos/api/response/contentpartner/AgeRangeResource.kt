@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.presentation.ageRange
+package com.boclips.videos.api.response.contentpartner
 
 data class AgeRangeResource(
     val min: Int?,

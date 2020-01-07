@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import org.springframework.hateoas.Resources
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

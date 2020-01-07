@@ -1,6 +1,7 @@
 package com.boclips.videos.service
 
 import com.boclips.videos.api.httpclient.CollectionsClient
+import com.boclips.videos.api.httpclient.ContentPartnersClient
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.TestTokenFactory
@@ -159,4 +160,27 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThat((updatedSubjects[0] as SubjectResource).name).isEqualTo("German")
         }
     }
+
+    @Nested
+    inner class ContentPartners {
+        @Test
+        fun `create and list content partners`() {
+            val contentPartnersClient = ContentPartnersClient.create(
+                apiUrl = "http://localhost:$randomServerPort",
+                objectMapper = objectMapper,
+                tokenFactory = TestTokenFactory(
+                    "sombody@world.com",
+                    UserRoles.INSERT_CONTENT_PARTNERS,
+                    UserRoles.VIEW_CONTENT_PARTNERS
+                )
+            )
+
+            contentPartnersClient.create(VideoServiceApiFactory.createContentPartnerRequest(name = "TED"))
+
+            val contentPartners = contentPartnersClient.getContentPartners()._embedded.contentPartners
+            assertThat(contentPartners).hasSize(1)
+            assertThat(contentPartners.first().name).isEqualTo("TED")
+        }
+    }
+
 }

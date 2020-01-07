@@ -3,13 +3,13 @@ package com.boclips.contentpartner.service.application
 import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
-import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
-import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.presentation.DistributionMethodResource
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeRequest
+import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +26,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating distribution methods`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
-            contentPartnerRequest = ContentPartnerRequest(
+            createContentPartnerRequest = CreateContentPartnerRequest(
                 name = "Hello",
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
@@ -41,7 +41,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating the name`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
-            contentPartnerRequest = ContentPartnerRequest(
+            createContentPartnerRequest = CreateContentPartnerRequest(
                 name = "Hello",
                 ageRange = null
             )
@@ -57,7 +57,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating the age range`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
-            contentPartnerRequest = ContentPartnerRequest(
+            createContentPartnerRequest = CreateContentPartnerRequest(
                 ageRange = AgeRangeRequest(1, 3),
                 name = null,
                 accreditedToYtChannelId = "test"
@@ -74,8 +74,10 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
         val legalRestrictions = legalRestrictionsRepository.create("No restrictions")
         val commands = contentPartnerUpdatesConverter.convert(
             id = ContentPartnerId(value = "123"),
-            contentPartnerRequest = ContentPartnerRequest(
-                legalRestrictions = LegalRestrictionsRequest(id = legalRestrictions.id.value)
+            createContentPartnerRequest = CreateContentPartnerRequest(
+                legalRestrictions = LegalRestrictionsRequest(
+                    id = legalRestrictions.id.value
+                )
             )
         )
 
@@ -90,7 +92,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating the currency`() {
         val commands = ContentPartnerUpdatesConverter(legalRestrictionsRepository).convert(
             id = ContentPartnerId(value = "123"),
-            contentPartnerRequest = ContentPartnerRequest(
+            createContentPartnerRequest = CreateContentPartnerRequest(
                 currency = "GBP"
             )
         )

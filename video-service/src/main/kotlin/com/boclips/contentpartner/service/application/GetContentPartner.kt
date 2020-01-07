@@ -3,11 +3,14 @@ package com.boclips.contentpartner.service.application
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.User
-import com.boclips.contentpartner.service.presentation.ContentPartnerResource
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
+import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
-class GetContentPartner(private val contentPartnerRepository: ContentPartnerRepository) {
+class GetContentPartner(
+    private val contentPartnerRepository: ContentPartnerRepository,
+    private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter
+) {
     operator fun invoke(contentPartnerId: String, user: User): ContentPartnerResource {
         val contentPartner = contentPartnerRepository.findById(
             ContentPartnerId(value = contentPartnerId)
@@ -17,6 +20,6 @@ class GetContentPartner(private val contentPartnerRepository: ContentPartnerRepo
                 message = "No content partner found for this id: $contentPartnerId"
             )
 
-        return ContentPartnerToResourceConverter.convert(contentPartner, user)
+        return contentPartnerToResourceConverter.convert(contentPartner, user)
     }
 }

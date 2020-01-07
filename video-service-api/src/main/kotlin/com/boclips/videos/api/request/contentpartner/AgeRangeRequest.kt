@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.presentation.ageRange
+package com.boclips.videos.api.request.contentpartner
 
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min

@@ -6,6 +6,8 @@ import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
+import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -14,10 +16,14 @@ class ApplicationContext(
     val legalRestrictionsRepository: LegalRestrictionsRepository,
     val contentPartnerRepository: ContentPartnerRepository
 ) {
+    @Bean
+    fun getContentPartnerToResourceConverter(contentPartnersLinkBuilder: ContentPartnersLinkBuilder): ContentPartnerToResourceConverter {
+        return ContentPartnerToResourceConverter(contentPartnersLinkBuilder)
+    }
 
     @Bean
-    fun getContentPartner(): GetContentPartner {
-        return GetContentPartner(contentPartnerRepository)
+    fun getContentPartner(contentPartnerToResourceConverter: ContentPartnerToResourceConverter): GetContentPartner {
+        return GetContentPartner(contentPartnerRepository, contentPartnerToResourceConverter)
     }
 
     @Bean

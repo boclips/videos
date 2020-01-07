@@ -1,10 +1,14 @@
 package com.boclips.videos.api.request
 
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import java.time.LocalDate
 
 class VideoServiceApiFactory {
@@ -71,6 +75,28 @@ class VideoServiceApiFactory {
                 description = description,
                 promoted = promoted,
                 subjectIds = subjectIds
+            )
+        }
+
+        @JvmStatic
+        fun createContentPartnerRequest(
+            name: String? = "TED",
+            ageRange: AgeRangeRequest? = AgeRangeRequest(
+                min = 5,
+                max = 11
+            ),
+            accreditedToYtChannel: String? = null,
+            distributionMethods: Set<DistributionMethodResource>? = null,
+            legalRestrictions: LegalRestrictionsRequest? = null,
+            currency: String? = null
+        ): CreateContentPartnerRequest {
+            return CreateContentPartnerRequest(
+                name = name,
+                ageRange = ageRange,
+                accreditedToYtChannelId = accreditedToYtChannel,
+                distributionMethods = distributionMethods,
+                legalRestrictions = legalRestrictions,
+                currency = currency
             )
         }
     }

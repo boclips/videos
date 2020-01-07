@@ -1,15 +1,19 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.contentpartner.service.testsupport.UserFactory
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.Currency
 
 class ContentPartnerToResourceConverterTest {
+    val contentPartnerToResourceConverter =
+        ContentPartnerToResourceConverter(contentPartnersLinkBuilder = ContentPartnersLinkBuilder())
+
     @Test
     fun `convert content partner to resource`() {
         val user = UserFactory.sample(isAdministrator = true)
@@ -21,7 +25,7 @@ class ContentPartnerToResourceConverterTest {
             remittance = Remittance(Currency.getInstance("GBP"))
         )
 
-        val contentPartnerResource = ContentPartnerToResourceConverter.convert(contentPartner, user)
+        val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner, user)
 
         assertThat(contentPartnerResource.id).isNotEmpty()
         assertThat(contentPartnerResource.name).isNotEmpty()
@@ -44,7 +48,7 @@ class ContentPartnerToResourceConverterTest {
             remittance = Remittance(Currency.getInstance("GBP"))
         )
 
-        val contentPartnerResource = ContentPartnerToResourceConverter.convert(contentPartner, user)
+        val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner, user)
 
         assertThat(contentPartnerResource.id).isNotEmpty()
         assertThat(contentPartnerResource.currency).isEqualTo(null)

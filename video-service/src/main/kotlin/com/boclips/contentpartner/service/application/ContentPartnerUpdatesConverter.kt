@@ -6,13 +6,13 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateComma
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand.ReplaceDistributionMethods
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import java.util.Currency
 
 class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: LegalRestrictionsRepository) {
-    fun convert(id: ContentPartnerId, contentPartnerRequest: ContentPartnerRequest): List<ContentPartnerUpdateCommand> {
-        val commandCreator = ContentPartnerUpdateCommandCreator(id, contentPartnerRequest)
+    fun convert(id: ContentPartnerId, createContentPartnerRequest: CreateContentPartnerRequest): List<ContentPartnerUpdateCommand> {
+        val commandCreator = ContentPartnerUpdateCommandCreator(id, createContentPartnerRequest)
         return listOfNotNull(
             commandCreator.updateNameOrNot(),
             commandCreator.updateAgeRangeOrNot(),
@@ -25,11 +25,11 @@ class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: Le
 
 class ContentPartnerUpdateCommandCreator(
     val id: ContentPartnerId,
-    private val contentPartnerRequest: ContentPartnerRequest
+    private val createContentPartnerRequest: CreateContentPartnerRequest
 ) {
 
     fun updateHiddenDeliveryMethodsOrNot(): ContentPartnerUpdateCommand? {
-        return contentPartnerRequest.distributionMethods
+        return createContentPartnerRequest.distributionMethods
             ?.let {
                 DistributionMethodResourceConverter.toDistributionMethods(it)
             }
@@ -39,22 +39,22 @@ class ContentPartnerUpdateCommandCreator(
     }
 
     fun updateNameOrNot(): ContentPartnerUpdateCommand.ReplaceName? =
-        contentPartnerRequest.name?.let {
+        createContentPartnerRequest.name?.let {
             ContentPartnerUpdateCommand.ReplaceName(contentPartnerId = id, name = it)
         }
 
     fun updateAgeRangeOrNot(): ContentPartnerUpdateCommand.ReplaceAgeRange? =
-        contentPartnerRequest.ageRange?.let {
+        createContentPartnerRequest.ageRange?.let {
             ContentPartnerUpdateCommand.ReplaceAgeRange(id, AgeRange.bounded(min = it.min, max = it.max))
         }
 
     fun updateLegalRestrictionsOrNot(legalRestrictionsRepository: LegalRestrictionsRepository): ContentPartnerUpdateCommand.ReplaceLegalRestrictions? =
-        contentPartnerRequest.legalRestrictions
+        createContentPartnerRequest.legalRestrictions
             ?.let { restrictionsRequest -> legalRestrictionsRepository.findById(LegalRestrictionsId(restrictionsRequest.id!!)) }
             ?.let { restrictions -> ContentPartnerUpdateCommand.ReplaceLegalRestrictions(id, restrictions) }
 
     fun updateCurrencyOrNot(): ContentPartnerUpdateCommand.ReplaceCurrency? =
-        contentPartnerRequest.currency?.let {
+        createContentPartnerRequest.currency?.let {
             ContentPartnerUpdateCommand.ReplaceCurrency(id, Currency.getInstance(it))
         }
 }

@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.presentation
+package com.boclips.videos.api.response.contentpartner
 
 import org.springframework.hateoas.core.Relation
 

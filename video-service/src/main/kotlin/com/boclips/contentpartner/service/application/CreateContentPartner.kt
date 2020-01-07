@@ -6,49 +6,49 @@ import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.contentpartner.service.domain.model.Remittance
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
-import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.Remittance
+import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import org.bson.types.ObjectId
 import java.util.Currency
 
 class CreateContentPartner(private val contentPartnerRepository: ContentPartnerRepository) {
-    operator fun invoke(request: ContentPartnerRequest): ContentPartner {
-        val ageRange = request.ageRange?.let {
+    operator fun invoke(createRequest: CreateContentPartnerRequest): ContentPartner {
+        val ageRange = createRequest.ageRange?.let {
             AgeRange
                 .bounded(min = it.min, max = it.max)
         } ?: AgeRange.unbounded()
 
-        val methods = request.distributionMethods?.let(
+        val methods = createRequest.distributionMethods?.let(
             DistributionMethodResourceConverter::toDistributionMethods
         ) ?: DistributionMethod.ALL
 
+        val name = createRequest.name!!
+
         val filters = ContentPartnerFiltersConverter.convert(
-            name = request.name!!,
-            official = request.accreditedToYtChannelId == null,
-            accreditedYTChannelId = request.accreditedToYtChannelId
+            name = name,
+            official = createRequest.accreditedToYtChannelId == null,
+            accreditedYTChannelId = createRequest.accreditedToYtChannelId
         )
 
         if (contentPartnerRepository.findAll(filters).toList().isNotEmpty()) {
-            throw ContentPartnerConflictException(
-                request.name
-            )
+            throw ContentPartnerConflictException(name)
         }
 
         return contentPartnerRepository
             .create(
                 ContentPartner(
                     contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
-                    name = request.name,
+                    name = name,
                     ageRange = ageRange,
-                    credit = request.accreditedToYtChannelId?.let {
+                    credit = createRequest.accreditedToYtChannelId?.let {
                         Credit
                             .YoutubeCredit(it)
                     } ?: Credit.PartnerCredit,
                     legalRestrictions = null,
                     distributionMethods = methods,
-                    remittance = request.currency?.let { Remittance(Currency.getInstance(it)) }
+                    remittance = createRequest.currency?.let { Remittance(Currency.getInstance(it)) }
                 )
             )
     }

@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.application
+package com.boclips.videos.api.request.contentpartner
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

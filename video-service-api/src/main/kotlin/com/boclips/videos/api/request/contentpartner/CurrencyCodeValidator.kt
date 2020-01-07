@@ -1,6 +1,6 @@
-package com.boclips.contentpartner.service.application
+package com.boclips.videos.api.request.contentpartner
 
-import java.util.*
+import java.util.Currency
 import javax.validation.Constraint
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext

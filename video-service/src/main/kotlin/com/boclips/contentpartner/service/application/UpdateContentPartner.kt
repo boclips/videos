@@ -4,10 +4,10 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerN
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.presentation.ContentPartnerRequest
-import com.boclips.contentpartner.service.presentation.LegalRestrictionsRequest
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,17 +17,18 @@ class UpdateContentPartner(
     private val createLegalRestrictions: CreateLegalRestrictions,
     private val eventBus: EventBus
 ) {
-    operator fun invoke(contentPartnerId: String, request: ContentPartnerRequest): ContentPartner {
+    operator fun invoke(contentPartnerId: String, createRequest: CreateContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
 
-        request.legalRestrictions?.let { legalRestrictionsRequest ->
+        createRequest.legalRestrictions?.let { legalRestrictionsRequest ->
             if (legalRestrictionsRequest.id.isNullOrEmpty()) {
                 val legalRestrictions = createLegalRestrictions(legalRestrictionsRequest.text)
-                request.legalRestrictions = LegalRestrictionsRequest(id = legalRestrictions.id)
+                createRequest.legalRestrictions =
+                    LegalRestrictionsRequest(id = legalRestrictions.id)
             }
         }
 
-        val updateCommands = contentPartnerUpdatesConverter.convert(id, request)
+        val updateCommands = contentPartnerUpdatesConverter.convert(id, createRequest)
         contentPartnerRepository.update(updateCommands)
 
         val contentPartner = contentPartnerRepository.findById(id)

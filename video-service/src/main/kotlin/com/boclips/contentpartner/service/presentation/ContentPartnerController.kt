@@ -4,10 +4,13 @@ import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
+import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.contentpartner.ContentPartnerWrapperResource
+import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
@@ -31,7 +33,8 @@ class ContentPartnerController(
     private val updateContentPartner: UpdateContentPartner,
     private val fetchContentPartner: GetContentPartner,
     private val fetchContentPartners: GetContentPartners,
-    private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder
+    private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter
 ) : BaseController() {
     @PostMapping("/{contentPartnerId}/videos/search")
     fun postSearchVideoByProviderId(
@@ -52,7 +55,7 @@ class ContentPartnerController(
         @RequestParam("name", required = false) name: String?,
         @RequestParam("official", required = false) official: Boolean?,
         @RequestParam("accreditedToYtChannelId", required = false) accreditedToYtChannelId: String?
-    ): Resources<Resource<ContentPartnerResource>> {
+    ): ContentPartnersResource {
         val user = getCurrentUser()
         val contentPartners = fetchContentPartners(
             name = name,
@@ -61,13 +64,10 @@ class ContentPartnerController(
         )
 
         val resources = contentPartners.map {
-            Resource(
-                ContentPartnerToResourceConverter.convert(it, user),
-                contentPartnersLinkBuilder.self(it.contentPartnerId.value)
-            )
+            contentPartnerToResourceConverter.convert(it, user)
         }
 
-        return Resources(resources)
+        return ContentPartnersResource(_embedded = ContentPartnerWrapperResource(contentPartners = resources))
     }
 
     @GetMapping("/{id}")
@@ -79,8 +79,8 @@ class ContentPartnerController(
     }
 
     @PostMapping
-    fun postContentPartner(@Valid @RequestBody createContentPartnerRequest: ContentPartnerRequest): ResponseEntity<Void> {
-        val contentPartner = createContentPartner(createContentPartnerRequest)
+    fun postContentPartner(@Valid @RequestBody createCreateContentPartnerRequest: CreateContentPartnerRequest): ResponseEntity<Void> {
+        val contentPartner = createContentPartner(createCreateContentPartnerRequest)
 
         return ResponseEntity(HttpHeaders().apply {
             set(
@@ -93,9 +93,9 @@ class ContentPartnerController(
     @PutMapping("/{id}")
     fun putContentPartner(
         @PathVariable("id") contentPartnerId: String,
-        @Valid @RequestBody updateContentPartnerRequest: ContentPartnerRequest
+        @Valid @RequestBody updateCreateContentPartnerRequest: CreateContentPartnerRequest
     ): ResponseEntity<Void> {
-        updateContentPartner(contentPartnerId = contentPartnerId, request = updateContentPartnerRequest)
+        updateContentPartner(contentPartnerId = contentPartnerId, createRequest = updateCreateContentPartnerRequest)
 
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }

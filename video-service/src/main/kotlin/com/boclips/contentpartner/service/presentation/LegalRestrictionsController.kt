@@ -3,8 +3,8 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.FindLegalRestrictions
-import com.boclips.contentpartner.service.application.LegalRestrictionsResource
 import com.boclips.security.utils.UserExtractor.getIfHasRole
+import com.boclips.videos.api.response.contentpartner.LegalRestrictionsResource
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
