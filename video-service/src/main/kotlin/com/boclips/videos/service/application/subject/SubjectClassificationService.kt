@@ -67,6 +67,12 @@ class SubjectClassificationService(
     fun videoClassified(videoSubjectClassified: VideoSubjectClassified) {
         val videoId = VideoId(videoSubjectClassified.videoId)
         try {
+            val video = videoRepository.find(videoId)
+            if (video?.subjects?.setManually == true) {
+                logger.info { "Ignoring subjects update for video ${videoId.value} as subjects were set manually" }
+                return
+            }
+
             val subjects = subjectRepository.findByIds(videoSubjectClassified.subjects.map { it.value })
             if (subjects.isNotEmpty()) {
                 val updateCommand = VideoUpdateCommand.ReplaceSubjects(videoId, subjects)
