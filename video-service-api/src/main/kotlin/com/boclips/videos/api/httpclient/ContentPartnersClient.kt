@@ -2,11 +2,13 @@ package com.boclips.videos.api.httpclient
 
 import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
 import com.boclips.videos.api.httpclient.helper.TokenFactory
+import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Feign
 import feign.Logger
+import feign.QueryMap
 import feign.RequestLine
 import feign.RequestTemplate
 import feign.jackson.JacksonDecoder
@@ -16,7 +18,7 @@ import feign.slf4j.Slf4jLogger
 
 interface ContentPartnersClient {
     @RequestLine("GET /v1/content-partners")
-    fun getContentPartners(): ContentPartnersResource
+    fun getContentPartners(@QueryMap contentPartnerFilterRequest: ContentPartnerFilterRequest = ContentPartnerFilterRequest()): ContentPartnersResource
 
     @RequestLine("POST /v1/content-partners")
     fun create(createContentPartnerRequest: CreateContentPartnerRequest)

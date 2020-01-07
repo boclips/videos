@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
+import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnerWrapperResource
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -51,16 +51,12 @@ class ContentPartnerController(
     }
 
     @GetMapping
-    fun getContentPartners(
-        @RequestParam("name", required = false) name: String?,
-        @RequestParam("official", required = false) official: Boolean?,
-        @RequestParam("accreditedToYtChannelId", required = false) accreditedToYtChannelId: String?
-    ): ContentPartnersResource {
+    fun getContentPartners(contentPartnerFilterRequest: ContentPartnerFilterRequest): ContentPartnersResource {
         val user = getCurrentUser()
         val contentPartners = fetchContentPartners(
-            name = name,
-            official = official,
-            accreditedToYtChannelId = accreditedToYtChannelId
+            name = contentPartnerFilterRequest.name,
+            official = contentPartnerFilterRequest.official,
+            accreditedToYtChannelId = contentPartnerFilterRequest.accreditedToYtChannelId
         )
 
         val resources = contentPartners.map {

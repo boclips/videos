@@ -2,6 +2,7 @@ package com.boclips.videos.api.request
 
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
@@ -99,5 +100,16 @@ class VideoServiceApiFactory {
                 currency = currency
             )
         }
+
+        @JvmStatic
+        fun contentPartnerFilterRequest(
+            name: String? = null,
+            official: Boolean? = null,
+            accreditedToYtChannel: String? = null
+        ) = ContentPartnerFilterRequest(
+            name = name,
+            official = official,
+            accreditedToYtChannelId = accreditedToYtChannel
+        )
     }
 }

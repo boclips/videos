@@ -6,13 +6,25 @@ import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.contentpartner.service.testsupport.UserFactory
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.web.util.UriComponentsBuilder
 import java.util.Currency
 
 class ContentPartnerToResourceConverterTest {
-    val contentPartnerToResourceConverter =
-        ContentPartnerToResourceConverter(contentPartnersLinkBuilder = ContentPartnersLinkBuilder())
+    lateinit var contentPartnerToResourceConverter: ContentPartnerToResourceConverter
+
+    @BeforeEach
+    fun setUp() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        contentPartnerToResourceConverter = ContentPartnerToResourceConverter(
+            contentPartnersLinkBuilder = ContentPartnersLinkBuilder(mock)
+        )
+    }
 
     @Test
     fun `convert content partner to resource`() {

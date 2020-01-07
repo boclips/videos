@@ -164,7 +164,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
     @Nested
     inner class ContentPartners {
         @Test
-        fun `create and list content partners`() {
+        fun `create and filters content partners`() {
             val contentPartnersClient = ContentPartnersClient.create(
                 apiUrl = "http://localhost:$randomServerPort",
                 objectMapper = objectMapper,
@@ -175,12 +175,41 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            contentPartnersClient.create(VideoServiceApiFactory.createContentPartnerRequest(name = "TED"))
+            contentPartnersClient.create(
+                VideoServiceApiFactory.createContentPartnerRequest(
+                    name = "TED",
+                    accreditedToYtChannel = null
+                )
+            )
+            contentPartnersClient.create(
+                VideoServiceApiFactory.createContentPartnerRequest(
+                    name = "YoutubeChannel",
+                    accreditedToYtChannel = "YT-123"
+                )
+            )
 
-            val contentPartners = contentPartnersClient.getContentPartners()._embedded.contentPartners
-            assertThat(contentPartners).hasSize(1)
-            assertThat(contentPartners.first().name).isEqualTo("TED")
+            val contentPartners = contentPartnersClient.getContentPartners()._embedded.contentPartners;
+
+            assertThat(contentPartners).hasSize(2)
+            assertThat(contentPartners.map { it.name }).containsExactlyInAnyOrder("TED", "YoutubeChannel")
+
+            val officialContentPartners = contentPartnersClient.getContentPartners(
+                contentPartnerFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(official = true)
+            )._embedded.contentPartners
+            assertThat(officialContentPartners).hasSize(1)
+            assertThat(officialContentPartners.first().name).isEqualTo("TED")
+
+            val namedContentPartners = contentPartnersClient.getContentPartners(
+                contentPartnerFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(name = "YoutubeChannel")
+            )._embedded.contentPartners
+            assertThat(namedContentPartners).hasSize(1)
+            assertThat(namedContentPartners.first().name).isEqualTo("YoutubeChannel")
+
+            val accreditedToContentPartners = contentPartnersClient.getContentPartners(
+                contentPartnerFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(accreditedToYtChannel = "YT-123")
+            )._embedded.contentPartners
+            assertThat(accreditedToContentPartners).hasSize(1)
+            assertThat(accreditedToContentPartners.first().name).isEqualTo("YoutubeChannel")
         }
     }
-
 }
