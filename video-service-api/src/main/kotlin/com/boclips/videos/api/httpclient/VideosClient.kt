@@ -21,18 +21,19 @@ import feign.slf4j.Slf4jLogger
 
 interface VideosClient {
     @RequestLine("GET /v1/videos/{videoId}")
-    fun getVideo(
-        @Param("videoId") videoId: String
-    ): VideoResource
+    fun getVideo(@Param("videoId") videoId: String): VideoResource
+
+    @RequestLine("HEAD /v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}")
+    fun probeVideoReference(
+        @Param("contentPartnerId") contentPartnerId: String,
+        @Param("contentPartnerVideoId") contentPartnerVideoId: String
+    )
 
     @RequestLine("GET /v1/videos")
     fun searchVideos(@QueryMap searchVideosRequest: SearchVideosRequest = SearchVideosRequest()): VideosResource
 
     @RequestLine("PATCH /v1/videos/{videoId}")
-    fun updateVideo(
-        @Param("videoId") videoId: String,
-        @QueryMap updateVideoRequest: UpdateVideoRequest
-    )
+    fun updateVideo(@Param("videoId") videoId: String, @QueryMap updateVideoRequest: UpdateVideoRequest)
 
     @RequestLine("POST /v1/videos/{videoId}")
     fun createVideo(createVideoRequest: CreateVideoRequest): VideoResource

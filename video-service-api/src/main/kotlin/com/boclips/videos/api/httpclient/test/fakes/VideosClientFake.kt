@@ -8,6 +8,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
+import feign.FeignException
 
 class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     private val database: MutableMap<String, VideoResource> = LinkedHashMap()
@@ -17,6 +18,13 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         videoId: String
     ): VideoResource {
         return database[videoId]!!
+    }
+
+    override fun probeVideoReference(contentPartnerId: String, contentPartnerVideoId: String) {
+        val results = database
+            .filter { it.value.contentPartnerId == contentPartnerId && it.value.contentPartnerVideoId == contentPartnerVideoId }
+
+        if (results.isEmpty()) throw FeignException.FeignClientException(404, "resource not found", null, null)
     }
 
     override fun searchVideos(searchVideosRequest: SearchVideosRequest): VideosResource {

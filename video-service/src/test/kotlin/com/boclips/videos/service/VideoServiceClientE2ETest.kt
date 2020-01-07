@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Collectors
@@ -45,6 +46,13 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             createMediaEntry(id = "123")
             val contentPartner = saveContentPartner()
 
+            assertThrows<Exception> {
+                videosClient.probeVideoReference(
+                    contentPartnerId = contentPartner.contentPartnerId.value,
+                    contentPartnerVideoId = "abc"
+                )
+            }
+
             val createdVideo =
                 videosClient.createVideo(
                     VideoServiceApiFactory.createCreateVideoRequest(
@@ -55,11 +63,14 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 ).id!!
 
             assertThat(videosClient.getVideo(createdVideo)).isNotNull
+            assertDoesNotThrow {
+                videosClient.probeVideoReference(
+                    contentPartnerId = contentPartner.contentPartnerId.value,
+                    contentPartnerVideoId = "abc"
+                )
+            }
 
-            videosClient.updateVideo(
-                createdVideo,
-                VideoServiceApiFactory.createUpdateVideoRequest(title = "new title")
-            )
+            videosClient.updateVideo(createdVideo, VideoServiceApiFactory.createUpdateVideoRequest(title = "new title"))
             videosClient.updateVideoRating(createdVideo, 4)
 
             val updatedVideo = videosClient.getVideo(createdVideo)
