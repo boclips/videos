@@ -849,6 +849,28 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns bestForTags list field on the resource`() {
+        val videoId = saveVideo().value
+
+        val tagVideoUrl = getTaggingLink(videoId)
+        val tagUrl = createTag("Tag")
+
+        mockMvc.perform(
+            patch(tagVideoUrl).content(tagUrl)
+                .contentType("text/uri-list").asTeacher()
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.bestFor.label", equalTo("Tag")))
+            .andExpect(jsonPath("$._links.tag").doesNotExist())
+
+        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.bestFor.label", equalTo("Tag")))
+            .andExpect(jsonPath("$.bestForTags[*].label", containsInAnyOrder("Tag")))
+            .andExpect(jsonPath("$._links.tag").doesNotExist())
+    }
+
+    @Test
     fun `invalid tagging`() {
         val videoId = saveVideo().value
 

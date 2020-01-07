@@ -42,6 +42,7 @@ class VideoToResourceConverter(
             rating = video.getRatingAverage(),
             yourRating = video.ratings.firstOrNull { it.userId == user.id }?.rating?.toDouble(),
             bestFor = video.tag?.let { TagResource(it.tag.label) },
+            bestForTags = video.tag?.let { listOf(TagResource(it.tag.label)) } ?: emptyList(),
             promoted = video.promoted,
             _links = (resourceLinks(video.videoId.value) + actionLinks(video)).map { it.rel to it }.toMap()
         )

@@ -116,6 +116,7 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.rating).isEqualTo(3.0)
         assertThat(videoResource.yourRating).isEqualTo(3.0)
         assertThat(videoResource.bestFor!!.label).isEqualTo("tag-label")
+        assertThat(videoResource.bestForTags!!.map { it.label }).containsOnly("tag-label")
         assertThat(videoResource.promoted).isEqualTo(true)
 
         val playbackResource = videoResource.playback!! as StreamPlaybackResource
@@ -151,6 +152,26 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
         assertThat(videoResource.legalRestrictions).isEqualTo("Many")
         assertThat(videoResource.bestFor!!.label).isEqualTo("tag-label")
+        assertThat(videoResource.bestForTags!!.map { it.label }).containsOnly("tag-label")
+    }
+
+    @Test
+    fun `converts bestForTags to empty list when video does not have a tag`() {
+        val video = createVideo(
+            title = "Do what you love on youtube",
+            description = "Best bottle slogan",
+            contentPartnerName = "JacekWork",
+            contentPartnerVideoId = "222",
+            playback = TestFactories.createYoutubePlayback(),
+            type = ContentType.INSTRUCTIONAL_CLIPS,
+            subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
+            legalRestrictions = "Many",
+            tag = null
+        )
+
+        val videoResource = videoToResourceConverter.convertVideo(video, UserFactory.sample())
+
+        assertThat(videoResource.bestForTags).isEmpty()
     }
 
     @Test
