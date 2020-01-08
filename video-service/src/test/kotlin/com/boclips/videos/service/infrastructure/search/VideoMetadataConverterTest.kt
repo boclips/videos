@@ -169,7 +169,7 @@ class VideoMetadataConverterTest {
     fun `keeps tags explicitly set on the video`() {
         val video = TestFactories.createVideo(
             type = ContentType.INSTRUCTIONAL_CLIPS,
-            tag = TestFactories.createUserTag(label = "explainer")
+            tags = listOf(TestFactories.createUserTag(label = "explainer"))
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video)

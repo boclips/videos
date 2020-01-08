@@ -41,13 +41,11 @@ object VideoDocumentConverter {
                     it
                 )
             },
-            tags = video.tag?.let {
-                listOf(
-                    UserTagDocumentConverter.toDocument(
-                        it
-                    )
+            tags = video.tags.map {
+                UserTagDocumentConverter.toDocument(
+                    it
                 )
-            } ?: emptyList(),
+            },
             promoted = video.promoted,
             shareCodes = video.shareCodes,
             subjectsWereSetManually = video.subjects.setManually
@@ -81,7 +79,7 @@ object VideoDocumentConverter {
                     it
                 )
             },
-            tag = document.tags.firstOrNull()?.let {
+            tags = document.tags.map {
                 UserTagDocumentConverter.toTag(
                     it
                 )

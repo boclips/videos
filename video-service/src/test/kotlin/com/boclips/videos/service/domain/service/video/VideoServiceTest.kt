@@ -221,11 +221,11 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val tagLabel = "explainer"
             val video = videoService.create(
                 TestFactories.createVideo(
-                    tag = TestFactories.createUserTag(label = tagLabel)
+                    tags = listOf(TestFactories.createUserTag(label = tagLabel))
                 )
             )
 
-            assertThat(video.tag!!.tag.label).isEqualTo(tagLabel)
+            assertThat(video.tags.first().tag.label).isEqualTo(tagLabel)
         }
     }
 }

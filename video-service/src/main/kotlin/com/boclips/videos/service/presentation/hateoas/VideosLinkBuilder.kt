@@ -94,7 +94,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
 
     fun tagLink(video: Video) = when {
         !currentUserHasRole(UserRoles.TAG_VIDEOS) -> null
-        video.tag != null -> null
+        video.tags.isNotEmpty() -> null
 
         else -> ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(VideoController::class.java)

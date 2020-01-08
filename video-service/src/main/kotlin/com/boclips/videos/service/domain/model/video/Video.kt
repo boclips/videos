@@ -26,7 +26,7 @@ data class Video(
     val transcript: String?,
     val ageRange: AgeRange,
     val ratings: List<UserRating>,
-    val tag: UserTag?,
+    val tags: List<UserTag>,
     val promoted: Boolean?,
     val shareCodes: Set<String>?
 ) {

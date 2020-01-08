@@ -89,7 +89,7 @@ object TestFactories {
         topics: Set<Topic> = emptySet(),
         ageRange: AgeRange = AgeRange.bounded(5, 12),
         ratings: List<UserRating> = emptyList(),
-        tag: UserTag? = null,
+        tags: List<UserTag> = emptyList(),
         contentPartner: ContentPartner = ContentPartner(
             contentPartnerId = contentPartnerId,
             name = contentPartnerName
@@ -119,7 +119,7 @@ object TestFactories {
             contentPartner = contentPartner,
             videoReference = videoReference,
             ratings = ratings,
-            tag = tag,
+            tags = tags,
             promoted = promoted,
             shareCodes = shareCodes
         )

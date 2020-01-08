@@ -255,8 +255,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
             )
         )
-
-        assertThat(updatedAsset.tag!!.tag.label).isEqualTo("Alex")
+        assertThat(updatedAsset.tags.first().tag.label).isEqualTo("Alex")
     }
 
     @Test

@@ -201,7 +201,7 @@ class VideosLinkBuilderTest {
             videosLinkBuilder.tagLink(
                 createVideo(
                     videoId = validVideoId,
-                    tag = null
+                    tags = emptyList()
                 )
             )
 
@@ -220,7 +220,7 @@ class VideosLinkBuilderTest {
             videosLinkBuilder.tagLink(
                 createVideo(
                     videoId = validVideoId,
-                    tag = createUserTag()
+                    tags = listOf(createUserTag())
                 )
             )
 

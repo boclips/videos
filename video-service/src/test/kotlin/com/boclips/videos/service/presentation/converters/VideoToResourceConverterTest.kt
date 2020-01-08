@@ -42,7 +42,7 @@ internal class VideoToResourceConverterTest {
                 )
             )
         ),
-        tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id"),
+        tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id")),
         promoted = true
     )
 
@@ -55,7 +55,7 @@ internal class VideoToResourceConverterTest {
         type = ContentType.INSTRUCTIONAL_CLIPS,
         subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
         legalRestrictions = "Many",
-        tag = TestFactories.createUserTag("tag-id", "tag-label", "user-id")
+        tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id"))
     )
 
     @BeforeEach
@@ -164,7 +164,7 @@ internal class VideoToResourceConverterTest {
             type = ContentType.INSTRUCTIONAL_CLIPS,
             subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
             legalRestrictions = "Many",
-            tag = null
+            tags = emptyList()
         )
 
         val videoResource = videoToResourceConverter.convertVideo(video, UserFactory.sample())
