@@ -840,13 +840,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
-            .andExpect(jsonPath("$.bestForTags[*].label", containsInAnyOrder("A tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
-            .andExpect(jsonPath("$.bestForTags[*].label", containsInAnyOrder("A tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
     }
 
@@ -868,7 +866,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
-            .andExpect(jsonPath("$.bestForTags[*].label", containsInAnyOrder("Tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
     }
 
