@@ -30,12 +30,15 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     }
 
     override fun searchVideos(searchVideosRequest: SearchVideosRequest): VideosResource {
-        val pageSize = (searchVideosRequest.size ?: 100).toLong()
+        val pageSize = searchVideosRequest.size ?: 100
+        val pageNumber = searchVideosRequest.page ?: 0
         return VideosResource(
-            _embedded = VideosWrapperResource(database.values.toList()),
+            _embedded = VideosWrapperResource(
+                database.values.toList().drop(pageNumber * pageSize).take((pageNumber + 1) * pageSize)
+            ),
             page = PagedResources.PageMetadata(
-                pageSize,
-                searchVideosRequest.page?.toLong() ?: 0,
+                pageSize.toLong(),
+                pageNumber.toLong(),
                 database.values.size.toLong(),
                 ceil(database.values.size.toDouble() / pageSize).toLong()
             )
