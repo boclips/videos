@@ -839,17 +839,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType("text/uri-list").asTeacher()
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor.label", equalTo("A tag")))
+            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
+            .andExpect(jsonPath("$.bestForTags[*].label", containsInAnyOrder("A tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor.label", equalTo("A tag")))
+            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
+            .andExpect(jsonPath("$.bestForTags[*].label", containsInAnyOrder("A tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
     }
 
     @Test
-    fun `returns bestForTags list field on the resource`() {
+    fun `returns bestFor list field on the resource`() {
         val videoId = saveVideo().value
 
         val tagVideoUrl = getTaggingLink(videoId)
@@ -860,12 +862,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType("text/uri-list").asTeacher()
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor.label", equalTo("Tag")))
+            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor.label", equalTo("Tag")))
+            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
             .andExpect(jsonPath("$.bestForTags[*].label", containsInAnyOrder("Tag")))
             .andExpect(jsonPath("$._links.tag").doesNotExist())
     }
