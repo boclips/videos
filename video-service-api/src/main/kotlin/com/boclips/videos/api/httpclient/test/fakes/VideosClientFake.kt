@@ -9,6 +9,8 @@ import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
 import feign.FeignException
+import org.springframework.hateoas.PagedResources
+import kotlin.math.ceil
 
 class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     private val database: MutableMap<String, VideoResource> = LinkedHashMap()
@@ -28,8 +30,15 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     }
 
     override fun searchVideos(searchVideosRequest: SearchVideosRequest): VideosResource {
+        val pageSize = (searchVideosRequest.size ?: 100).toLong()
         return VideosResource(
-            _embedded = VideosWrapperResource(database.values.toList())
+            _embedded = VideosWrapperResource(database.values.toList()),
+            page = PagedResources.PageMetadata(
+                pageSize,
+                searchVideosRequest.page?.toLong() ?: 0,
+                database.values.size.toLong(),
+                ceil(database.values.size.toDouble() / pageSize).toLong()
+            )
         )
     }
 
