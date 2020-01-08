@@ -2,16 +2,12 @@ package com.boclips.videos.api.httpclient
 
 import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
 import com.boclips.videos.api.httpclient.helper.TokenFactory
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.fasterxml.jackson.databind.ObjectMapper
-import feign.Feign
-import feign.Logger
-import feign.Param
-import feign.QueryMap
-import feign.RequestLine
-import feign.RequestTemplate
+import feign.*
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.okhttp.OkHttpClient
@@ -21,8 +17,8 @@ interface CollectionsClient {
     @RequestLine("GET /v1/collections")
     fun getCollections(@QueryMap collectionFilterRequest: CollectionFilterRequest = CollectionFilterRequest()): CollectionsResource
 
-    @RequestLine("GET /v1/collections/{collectionId}")
-    fun getCollection(@Param("collectionId") collectionId: String): CollectionResource
+    @RequestLine("GET /v1/collections/{collectionId}?projection={projection}")
+    fun getCollection(@Param("collectionId") collectionId: String, @Param("projection") projection: Projection? = null): CollectionResource
 
     companion object {
         @JvmStatic

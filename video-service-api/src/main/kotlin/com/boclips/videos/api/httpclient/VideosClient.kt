@@ -8,12 +8,7 @@ import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.fasterxml.jackson.databind.ObjectMapper
-import feign.Feign
-import feign.Logger
-import feign.Param
-import feign.QueryMap
-import feign.RequestLine
-import feign.RequestTemplate
+import feign.*
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.okhttp.OkHttpClient

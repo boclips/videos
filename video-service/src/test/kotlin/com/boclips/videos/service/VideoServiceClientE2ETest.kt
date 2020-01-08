@@ -128,9 +128,10 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
     @Nested
     inner class Collections {
         @Test
-        fun `can fetch one and many collection`() {
-            val savedCollection = saveCollection(owner = "the@owner.com", public = true)
-            saveCollection(owner = "another@owner.com", public = true)
+        fun `can fetch one and many collections, including details`() {
+            val savedVideoId = saveVideo()
+            val savedCollectionId = saveCollection(owner = "the@owner.com", public = true)
+            val collectionWithVideos = saveCollection(owner = "another@owner.com", public = true, videos = listOf(savedVideoId.value))
 
             val collectionsClient = CollectionsClient.create(
                 apiUrl = "http://localhost:$randomServerPort",
@@ -138,7 +139,10 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 tokenFactory = TestTokenFactory("the@owner.com", UserRoles.VIEW_COLLECTIONS)
             )
 
-            assertThat(collectionsClient.getCollection(collectionId = savedCollection.value)).isNotNull
+            assertThat(collectionsClient.getCollection(collectionId = savedCollectionId.value)).isNotNull
+
+            val detailedCollection = collectionsClient.getCollection(collectionWithVideos.value, Projection.details)
+            assertThat(detailedCollection.videos.first().title).isNotBlank()
 
             assertThat(collectionsClient.getCollections()._embedded.collections).hasSize(2)
 

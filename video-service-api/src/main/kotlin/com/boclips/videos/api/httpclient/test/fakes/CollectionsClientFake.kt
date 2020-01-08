@@ -1,13 +1,11 @@
 package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.httpclient.CollectionsClient
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.boclips.videos.api.response.collection.CollectionsWrapperResource
-import feign.FeignException
-import feign.Request
-import feign.RequestTemplate
 
 class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> {
     private val database: MutableMap<String, CollectionResource> = LinkedHashMap()
@@ -16,7 +14,7 @@ class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> 
         return CollectionsResource(_embedded = CollectionsWrapperResource(collections = database.values.toList()))
     }
 
-    override fun getCollection(collectionId: String): CollectionResource {
+    override fun getCollection(collectionId: String, projection: Projection?): CollectionResource {
         return database[collectionId] ?: throw FakeClient.notFoundException("Collection not found")
     }
 
