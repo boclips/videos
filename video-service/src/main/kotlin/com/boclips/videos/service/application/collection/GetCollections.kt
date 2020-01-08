@@ -1,61 +1,31 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.api.response.collection.CollectionResource
+import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.service.common.Page
-import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
-import com.boclips.videos.service.presentation.CollectionsController
-import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
-import com.boclips.videos.service.presentation.projections.Projection
 
 class GetCollections(
     private val collectionReadService: CollectionReadService,
-    private val collectionResourceFactory: CollectionResourceFactory,
     private val collectionSearchQueryAssembler: CollectionSearchQueryAssembler
 ) {
     operator fun invoke(
-        collectionsRequest: CollectionsController.CollectionsRequest,
-        user: User
-    ): Page<CollectionResource> {
-        val collections = getUnassembledCollections(collectionsRequest, user)
-
-        return assembleResourcesPage(
-            projection = collectionsRequest.projection,
-            pageInfo = collections.pageInfo,
-            collections = collections.elements,
-            user = user
-        )
-    }
-
-    fun getUnassembledCollections(
-        collectionsRequest: CollectionsController.CollectionsRequest,
+        collectionFilterRequest: CollectionFilterRequest,
         user: User
     ): Page<Collection> {
         val assembledQuery = collectionSearchQueryAssembler(
-            query = collectionsRequest.query,
-            subjects = collectionsRequest.subjects,
-            public = collectionsRequest.public,
-            bookmarked = collectionsRequest.bookmarked ?: false,
-            owner = collectionsRequest.owner,
-            page = collectionsRequest.page,
-            size = collectionsRequest.size,
-            hasLessonPlans = collectionsRequest.hasLessonPlans,
+            query = collectionFilterRequest.query,
+            subjects = collectionFilterRequest.subject?.split(",")?.toList() ?: emptyList(),
+            public = collectionFilterRequest.public,
+            bookmarked = collectionFilterRequest.bookmarked ?: false,
+            owner = collectionFilterRequest.owner,
+            page = collectionFilterRequest.page,
+            size = collectionFilterRequest.size,
+            hasLessonPlans = collectionFilterRequest.has_lesson_plans,
             user = user
         )
 
         return collectionReadService.search(assembledQuery, user.accessRules)
-    }
-
-    private fun assembleResourcesPage(
-        projection: Projection,
-        pageInfo: PageInfo,
-        collections: Iterable<Collection>,
-        user: User
-    ): Page<CollectionResource> {
-        return Page(collections.map {
-            collectionResourceFactory.buildCollectionResource(it, projection, user)
-        }, pageInfo)
     }
 }

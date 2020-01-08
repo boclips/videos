@@ -1,8 +1,11 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.Projection
+import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
-import com.boclips.videos.api.response.collection.CollectionResource
+import com.boclips.videos.api.response.collection.CollectionsResource
+import com.boclips.videos.api.response.collection.CollectionsWrapperResource
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -13,15 +16,14 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.HateoasEmptyCollection
-import com.boclips.videos.service.presentation.projections.Projection
 import com.boclips.videos.service.presentation.projections.WithProjection
 import mu.KLogging
 import org.springframework.hateoas.PagedResources
-import org.springframework.hateoas.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -67,7 +69,7 @@ class CollectionsController(
         val owner: String? = null,
         val page: Int? = null,
         val size: Int? = null,
-        val projection: Projection = Projection.list,
+        val projection: Projection? = Projection.list,
         val hasLessonPlans: Boolean? = null,
         val subject: String? = null
     ) {
@@ -75,55 +77,36 @@ class CollectionsController(
     }
 
     @GetMapping
-    fun getFilteredCollections(
-        @RequestParam(name = "query", required = false) query: String?,
-        @RequestParam(name = "public", required = false) public: Boolean?,
-        @RequestParam(name = "bookmarked", required = false) bookmarked: Boolean?,
-        @RequestParam(name = "owner", required = false) owner: String?,
-        @RequestParam(name = "page", required = false) page: Int?,
-        @RequestParam(name = "size", required = false) size: Int?,
-        @RequestParam(name = "projection", required = false) projection: Projection?,
-        @RequestParam(name = "has_lesson_plans", required = false) hasLessonPlans: Boolean?,
-        @RequestParam(name = "subject", required = false) subject: String?
-    ): MappingJacksonValue {
+    fun getFilteredCollections(collectionFilterRequest: CollectionFilterRequest): MappingJacksonValue {
         val user = getCurrentUser()
 
         if (!user.isAuthenticated) {
             throw OperationForbiddenException("User must be authenticated to access collections")
         }
 
-        val collectionRequest = CollectionsRequest(
-            query = query,
-            public = public,
-            bookmarked = bookmarked,
-            owner = owner,
-            page = page,
-            size = size,
-            projection = projection.let { projection } ?: Projection.list,
-            hasLessonPlans = hasLessonPlans,
-            subject = subject
-        )
-
-        val collectionsPage = getCollections(collectionRequest, user)
-
-        val collectionResources = collectionsPage.elements.map(::wrapCollection)
-            .let(HateoasEmptyCollection::fixIfEmptyCollection)
+        val collections: Page<Collection> = getCollections(collectionFilterRequest, user)
 
         return withProjection(
-            PagedResources(
-                collectionResources,
-                PagedResources.PageMetadata(
-                    collectionsPage.pageInfo.pageRequest.size.toLong(),
-                    collectionsPage.pageInfo.pageRequest.page.toLong(),
-                    collectionsPage.pageInfo.totalElements,
-                    collectionsPage.pageInfo.totalElements / collectionsPage.pageInfo.pageRequest.size.toLong()
+            CollectionsResource(
+                _embedded = CollectionsWrapperResource(collections.elements.map {
+                    collectionResourceFactory.buildCollectionResource(
+                        it,
+                        collectionFilterRequest.projection ?: Projection.list,
+                        user
+                    )
+                }),
+                page = PagedResources.PageMetadata(
+                    collections.pageInfo.pageRequest.size.toLong(),
+                    collections.pageInfo.pageRequest.page.toLong(),
+                    collections.pageInfo.totalElements,
+                    collections.pageInfo.totalElements / collections.pageInfo.pageRequest.size.toLong()
                 ),
-                listOfNotNull(
+                _links = listOfNotNull(
                     collectionsLinkBuilder.projections().list(),
                     collectionsLinkBuilder.projections().details(),
-                    collectionsLinkBuilder.self(),
-                    collectionsLinkBuilder.next(collectionsPage.pageInfo)
-                )
+                    collectionsLinkBuilder.self(null),
+                    collectionsLinkBuilder.next(collections.pageInfo)
+                ).map { it.rel to it }.toMap()
             )
         )
     }
@@ -173,7 +156,7 @@ class CollectionsController(
             else -> collectionResourceFactory.buildCollectionListResource(collection, getCurrentUser())
         }
 
-        return withProjection(wrapCollection(collectionResource))
+        return withProjection(collectionResource)
     }
 
     @PutMapping("/{collection_id}/videos/{video_id}")
@@ -189,18 +172,4 @@ class CollectionsController(
         removeVideoFromCollection(collectionId, videoId, getCurrentUser())
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
-
-    private fun wrapCollection(collection: CollectionResource) =
-        Resource(
-            collection, listOfNotNull(
-                collectionsLinkBuilder.self(collection),
-                collectionsLinkBuilder.editCollection(collection),
-                collectionsLinkBuilder.removeCollection(collection),
-                collectionsLinkBuilder.addVideoToCollection(collection),
-                collectionsLinkBuilder.removeVideoFromCollection(collection),
-                collectionsLinkBuilder.bookmark(collection),
-                collectionsLinkBuilder.unbookmark(collection),
-                collectionsLinkBuilder.interactedWith(collection)
-            )
-        )
 }

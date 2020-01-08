@@ -193,17 +193,6 @@ class ApplicationContext(
     ): GetCollections {
         return GetCollections(
             collectionReadService,
-            CollectionResourceFactory(
-                VideoToResourceConverter(
-                    videosLinkBuilder,
-                    playbackToResourceConverter
-                ),
-                SubjectToResourceConverter(),
-                AttachmentToResourceConverter(
-                    attachmentsLinkBuilder
-                ),
-                videoService
-            ),
             collectionFilterAssembler
         )
     }

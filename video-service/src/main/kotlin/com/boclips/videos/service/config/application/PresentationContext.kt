@@ -7,6 +7,7 @@ import com.boclips.videos.service.presentation.converters.PlaybackToResourceConv
 import com.boclips.videos.service.presentation.converters.SubjectToResourceConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -47,7 +48,8 @@ class PresentationContext(val videoService: VideoService) {
     fun collectionResourceFactory(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
-        attachmentsLinkBuilder: AttachmentsLinkBuilder
+        attachmentsLinkBuilder: AttachmentsLinkBuilder,
+        collectionsLinkBuilder: CollectionsLinkBuilder
     ): CollectionResourceFactory {
         return CollectionResourceFactory(
             VideoToResourceConverter(
@@ -58,6 +60,7 @@ class PresentationContext(val videoService: VideoService) {
             AttachmentToResourceConverter(
                 attachmentsLinkBuilder
             ),
+            collectionsLinkBuilder,
             videoService
         )
     }

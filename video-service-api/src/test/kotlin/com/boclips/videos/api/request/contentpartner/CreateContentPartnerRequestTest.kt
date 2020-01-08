@@ -9,12 +9,12 @@ import javax.validation.Validator
 
 class CreateContentPartnerRequestTest {
 
-    lateinit var validator: Validator
+    private lateinit var validator: Validator
 
     @BeforeEach
     fun setUp() {
         val factory = Validation.buildDefaultValidatorFactory()
-        validator = factory.getValidator()
+        validator = factory.validator
     }
 
     @Test

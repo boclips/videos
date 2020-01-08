@@ -1,11 +1,13 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.presentation.projections.Projection
+import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -197,8 +199,17 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link =
-            collectionsLinkBuilder.editCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
+            collectionsLinkBuilder.editCollection(
+                collection = TestFactories.createCollection(
+                    id = CollectionId("c123"),
+                    owner = user.id.value,
+                    bookmarks = setOf(user.id)
+                ),
+                user = user
+            )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123")
         assertThat(link.rel).isEqualTo("edit")
@@ -211,8 +222,17 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link =
-            collectionsLinkBuilder.removeCollection(TestFactories.createCollectionResource(id = "c123", isMine = true))
+            collectionsLinkBuilder.removeCollection(
+                collection = TestFactories.createCollection(
+                    id = CollectionId("c123"),
+                    owner = user.id.value,
+                    bookmarks = setOf(user.id)
+                ),
+                user = user
+            )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123")
         assertThat(link.rel).isEqualTo("remove")
@@ -224,12 +244,15 @@ class CollectionsLinkBuilderTest {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+        val user = UserFactory.sample()
 
         val link = collectionsLinkBuilder.addVideoToCollection(
-            TestFactories.createCollectionResource(
-                id = "c123",
-                isMine = true
-            )
+            collection = TestFactories.createCollection(
+                id = CollectionId("c123"),
+                owner = user.id.value,
+                bookmarks = setOf(user.id)
+            ),
+            user = user
         )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123/videos/{video_id}")
@@ -242,12 +265,15 @@ class CollectionsLinkBuilderTest {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=hello"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+        val user = UserFactory.sample()
 
         val link = collectionsLinkBuilder.removeVideoFromCollection(
-            TestFactories.createCollectionResource(
-                id = "c123",
-                isMine = true
-            )
+            collection = TestFactories.createCollection(
+                id = CollectionId("c123"),
+                owner = user.id.value,
+                bookmarks = setOf(user.id)
+            ),
+            user = user
         )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123/videos/{video_id}")
@@ -261,7 +287,12 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.editCollection(TestFactories.createCollectionResource(id = "c123"))
+        val link = collectionsLinkBuilder.editCollection(
+            collection = TestFactories.createCollection(
+                id = CollectionId("c123")
+            ),
+            user = UserFactory.sample()
+        )
 
         assertThat(link).isNull()
     }
@@ -272,7 +303,10 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.removeCollection(TestFactories.createCollectionResource(id = "c123"))
+        val link = collectionsLinkBuilder.removeCollection(
+            collection = TestFactories.createCollection(id = CollectionId("c123")),
+            user = UserFactory.sample()
+        )
 
         assertThat(link).isNull()
     }
@@ -283,7 +317,11 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.addVideoToCollection(TestFactories.createCollectionResource(id = "c123"))
+        val link =
+            collectionsLinkBuilder.addVideoToCollection(
+                collection = TestFactories.createCollection(id = CollectionId("c123")),
+                user = UserFactory.sample()
+            )
 
         assertThat(link).isNull()
     }
@@ -294,7 +332,11 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.removeVideoFromCollection(TestFactories.createCollectionResource(id = "c123"))
+        val link =
+            collectionsLinkBuilder.removeVideoFromCollection(
+                collection = TestFactories.createCollection(id = CollectionId("c123")),
+                user = UserFactory.sample()
+            )
 
         assertThat(link).isNull()
     }
@@ -315,7 +357,7 @@ class CollectionsLinkBuilderTest {
     fun `when interaction link`() {
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock())
 
-        val link = collectionsLinkBuilder.interactedWith(TestFactories.createCollectionResource(id = "c123"))
+        val link = collectionsLinkBuilder.interactedWith(TestFactories.createCollection(id = CollectionId("c123")))
 
         assertThat(link.href).contains("/v1/collections/c123/events")
         assertThat(link.isTemplated).isEqualTo(false)
@@ -425,12 +467,14 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.bookmark(
-            TestFactories.createCollectionResource(
+            collection = TestFactories.createCollection(
                 isPublic = true,
-                isBookmarked = false,
-                isMine = false
-            )
+                owner = "another-user"
+            ),
+            user = user
         )
 
         val url = URL(link?.href)
@@ -447,12 +491,14 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.bookmark(
-            TestFactories.createCollectionResource(
+            collection = TestFactories.createCollection(
                 isPublic = false,
-                isBookmarked = false,
-                isMine = false
-            )
+                owner = "another-user"
+            ),
+            user = user
         )
 
         assertThat(link).isNull()
@@ -464,12 +510,14 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.bookmark(
-            TestFactories.createCollectionResource(
-                isPublic = true,
-                isBookmarked = false,
-                isMine = true
-            )
+            collection = TestFactories.createCollection(
+                isPublic = false,
+                owner = user.id.value
+            ),
+            user = user
         )
 
         assertThat(link).isNull()
@@ -481,12 +529,15 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.bookmark(
-            TestFactories.createCollectionResource(
-                isPublic = true,
-                isBookmarked = true,
-                isMine = false
-            )
+            collection = TestFactories.createCollection(
+                isPublic = false,
+                owner = "another-user",
+                bookmarks = setOf(user.id)
+            ),
+            user = user
         )
 
         assertThat(link).isNull()
@@ -498,12 +549,15 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.unbookmark(
-            TestFactories.createCollectionResource(
+            collection = TestFactories.createCollection(
                 isPublic = true,
-                isBookmarked = true,
-                isMine = false
-            )
+                owner = "another-user",
+                bookmarks = setOf(user.id)
+            ),
+            user = user
         )
 
         val url = URL(link?.href)
@@ -520,12 +574,15 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.unbookmark(
-            TestFactories.createCollectionResource(
+            collection = TestFactories.createCollection(
                 isPublic = false,
-                isBookmarked = true,
-                isMine = false
-            )
+                owner = "another-user",
+                bookmarks = setOf(user.id)
+            ),
+            user = user
         )
 
         assertThat(link).isNull()
@@ -537,12 +594,15 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.unbookmark(
-            TestFactories.createCollectionResource(
+            collection = TestFactories.createCollection(
                 isPublic = true,
-                isBookmarked = true,
-                isMine = true
-            )
+                owner = user.id.value,
+                bookmarks = setOf(user.id)
+            ),
+            user = user
         )
 
         assertThat(link).isNull()
@@ -554,12 +614,14 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
+        val user = UserFactory.sample()
+
         val link = collectionsLinkBuilder.unbookmark(
-            TestFactories.createCollectionResource(
+            collection = TestFactories.createCollection(
                 isPublic = true,
-                isBookmarked = false,
-                isMine = false
-            )
+                owner = "another-user"
+            ),
+            user = user
         )
 
         assertThat(link).isNull()

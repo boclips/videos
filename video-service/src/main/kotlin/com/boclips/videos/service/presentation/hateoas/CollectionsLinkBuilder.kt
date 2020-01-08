@@ -1,12 +1,13 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.utils.UserExtractor.getIfHasRole
-import com.boclips.videos.api.response.collection.CollectionResource
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.EventController
-import com.boclips.videos.service.presentation.projections.Projection
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.stereotype.Component
@@ -19,35 +20,31 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
 
     fun collection(id: String?) = getIfHasRole(UserRoles.VIEW_COLLECTIONS) { collectionResourceLink(id, "collection") }
 
-    fun editCollection(collectionResource: CollectionResource) =
-        collectionResource.mine?.let { if (it) collectionResourceLink(collectionResource.id, "edit") else null }
+    fun editCollection(collection: Collection, user: User) =
+        if (collection.isOwner(user)) collectionResourceLink(collection.id.value, "edit") else null
 
-    fun removeCollection(collectionResource: CollectionResource) =
-        collectionResource.mine?.let { if (it) collectionResourceLink(collectionResource.id, "remove") else null }
+    fun removeCollection(collection: Collection, user: User) =
+        if (collection.isOwner(user)) collectionResourceLink(collection.id.value, "remove") else null
 
-    fun addVideoToCollection(collectionResource: CollectionResource) =
-        collectionResource.mine?.let {
-            if (it) {
-                Link(
-                    getCollectionsRoot()
-                        .pathSegment(collectionResource.id)
-                        .pathSegment("videos")
-                        .toUriString() + "/{video_id}", "addVideo"
-                )
-            } else null
-        }
+    fun addVideoToCollection(collection: Collection, user: User) =
+        if (collection.isOwner(user)) {
+            Link(
+                getCollectionsRoot()
+                    .pathSegment(collection.id.value)
+                    .pathSegment("videos")
+                    .toUriString() + "/{video_id}", "addVideo"
+            )
+        } else null
 
-    fun removeVideoFromCollection(collectionResource: CollectionResource) =
-        collectionResource.mine?.let {
-            if (it) {
-                Link(
-                    getCollectionsRoot()
-                        .pathSegment(collectionResource.id)
-                        .pathSegment("videos")
-                        .toUriString() + "/{video_id}", "removeVideo"
-                )
-            } else null
-        }
+    fun removeVideoFromCollection(collection: Collection, user: User) =
+        if (collection.isOwner(user)) {
+            Link(
+                getCollectionsRoot()
+                    .pathSegment(collection.id.value)
+                    .pathSegment("videos")
+                    .toUriString() + "/{video_id}", "removeVideo"
+            )
+        } else null
 
     private fun collectionResourceLink(id: String?, rel: String): Link {
         return if (id == null) {
@@ -154,9 +151,9 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         .queryParam("page", page)
         .queryParam("size", size)
 
-    fun self(collectionResource: CollectionResource? = null): Link {
-        if (collectionResource != null) {
-            return collectionResourceLink(collectionResource.id, "self")
+    fun self(id: String? = null): Link {
+        if (id != null) {
+            return collectionResourceLink(id, "self")
         }
         return Link(uriComponentsBuilderFactory.getInstance().toUriString())
     }
@@ -175,33 +172,29 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
-    fun bookmark(collectionResource: CollectionResource) =
-        if (collectionResource.bookmarked == null || collectionResource.mine == null || collectionResource.public == null) {
-            null
-        } else if (collectionResource.bookmarked!! || collectionResource.mine!! || !collectionResource.public!!) {
+    fun bookmark(collection: Collection, user: User) =
+        if (collection.isBookmarkedBy(user) || collection.isOwner(user) || !collection.isPublic) {
             null
         } else {
-            val href = getCollectionsRoot().pathSegment(collectionResource.id)
+            val href = getCollectionsRoot().pathSegment(collection.id.value)
                 .queryParam("bookmarked", "true")
                 .toUriString()
             Link(href, "bookmark")
         }
 
-    fun unbookmark(collectionResource: CollectionResource) =
-        if (collectionResource.bookmarked == null || collectionResource.mine == null || collectionResource.public == null) {
-            null
-        } else if (!collectionResource.bookmarked!! || collectionResource.mine!! || !collectionResource.public!!) {
+    fun unbookmark(collection: Collection, user: User) =
+        if (!collection.isBookmarkedBy(user) || collection.isOwner(user) || !collection.isPublic) {
             null
         } else {
-            val href = getCollectionsRoot().pathSegment(collectionResource.id)
+            val href = getCollectionsRoot().pathSegment(collection.id.value)
                 .queryParam("bookmarked", "false")
                 .toUriString()
             Link(href, "unbookmark")
         }
 
-    fun interactedWith(collectionResource: CollectionResource) = ControllerLinkBuilder.linkTo(
+    fun interactedWith(collection: Collection): Link = ControllerLinkBuilder.linkTo(
         ControllerLinkBuilder.methodOn(EventController::class.java)
-            .logCollectionInteractedWithEvent(collectionId = collectionResource.id!!, data = null)
+            .logCollectionInteractedWithEvent(collectionId = collection.id.value, data = null)
     ).withRel(Rels.LOG_COLLECTION_INTERACTION)
 
     fun projections() =

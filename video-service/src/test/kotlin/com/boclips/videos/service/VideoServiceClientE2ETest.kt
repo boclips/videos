@@ -5,7 +5,9 @@ import com.boclips.videos.api.httpclient.ContentPartnersClient
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.TestTokenFactory
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.response.subject.SubjectResource
@@ -126,8 +128,9 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
     @Nested
     inner class Collections {
         @Test
-        fun `can fetch a collection`() {
-            val savedCollection = saveCollection(owner = "the@owner.com")
+        fun `can fetch one and many collection`() {
+            val savedCollection = saveCollection(owner = "the@owner.com", public = true)
+            saveCollection(owner = "another@owner.com", public = true)
 
             val collectionsClient = CollectionsClient.create(
                 apiUrl = "http://localhost:$randomServerPort",
@@ -135,7 +138,16 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 tokenFactory = TestTokenFactory("the@owner.com", UserRoles.VIEW_COLLECTIONS)
             )
 
-            assertThat(collectionsClient.getCollection(savedCollection.value)).isNotNull
+            assertThat(collectionsClient.getCollection(collectionId = savedCollection.value)).isNotNull
+
+            assertThat(collectionsClient.getCollections()._embedded.collections).hasSize(2)
+
+            val collections = collectionsClient.getCollections(
+                CollectionFilterRequest(owner = "another@owner.com", public = true, projection = Projection.details)
+            )._embedded.collections
+
+            assertThat(collections).hasSize(1)
+            assertThat(collections[0].title).isNotNull()
         }
     }
 
