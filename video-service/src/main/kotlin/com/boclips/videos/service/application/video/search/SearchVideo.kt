@@ -50,6 +50,7 @@ class SearchVideo(
         promoted: Boolean? = null,
         contentPartnerNames: Set<String> = emptySet(),
         type: Set<String> = emptySet(),
+        isClassroom: Boolean? = null,
         user: User
     ): Page<Video> {
         return getVideosByQuery(
@@ -72,7 +73,8 @@ class SearchVideo(
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type,
-            user = user
+            user = user,
+            isClassroom = isClassroom
         )
     }
 

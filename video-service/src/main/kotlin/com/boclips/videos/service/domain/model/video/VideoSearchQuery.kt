@@ -39,7 +39,8 @@ class VideoSearchQuery(
     val subjectQuery: SubjectQuery = SubjectQuery(),
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
-    val type: Set<VideoType> = emptySet()
+    val type: Set<VideoType> = emptySet(),
+    val isClassroom: Boolean? = null
 ) {
     fun toSearchQuery(videoAccessRule: VideoAccessRule): VideoQuery {
         val sort = sortBy?.let {
@@ -76,6 +77,7 @@ class VideoSearchQuery(
                 promoted = promoted,
                 contentPartnerNames = contentPartnerNames,
                 type = type,
+                isClassroom = isClassroom,
                 permittedVideoIds = when (videoAccessRule) {
                     is VideoAccessRule.SpecificIds -> videoAccessRule.videoIds.map { videoId -> videoId.value }.toSet()
                     VideoAccessRule.Everything -> null

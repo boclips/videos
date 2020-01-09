@@ -1,8 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.users.client.model.Subject
-import com.boclips.users.client.model.TeacherPlatformAttributes
-import com.boclips.users.client.model.User
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.domain.model.BoundedAgeRange
@@ -185,6 +182,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(newsAndClassroomVideoId.value)))
             .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(classroomVideoId.value))))
+    }
+
+    @Test
+    fun `can find by is_classroom`() {
+        val notClassroomVideoId = saveVideo(title = "not suitable for the classroom", type = ContentType.STOCK)
+        val classroomVideoId =
+            saveVideo(title = "suitable for the classroom", type = ContentType.INSTRUCTIONAL_CLIPS)
+
+        mockMvc.perform(get("/v1/videos?query=suitable for&is_classroom=true").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(classroomVideoId.value)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(notClassroomVideoId.value))))
     }
 
     @Test

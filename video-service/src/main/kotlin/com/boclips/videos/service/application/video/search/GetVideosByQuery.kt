@@ -42,7 +42,8 @@ class GetVideosByQuery(
         contentPartnerNames: Set<String>,
         type: Set<String>,
         user: User,
-        subjectsSetManually: Boolean?
+        subjectsSetManually: Boolean?,
+        isClassroom: Boolean?
     ): Page<Video> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -69,7 +70,8 @@ class GetVideosByQuery(
             subjectQuery = SubjectQuery(ids = subjects, setManually = subjectsSetManually),
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
-            type = type.map { searchQueryConverter.convertType(it) }.toSet()
+            type = type.map { searchQueryConverter.convertType(it) }.toSet(),
+            isClassroom = isClassroom
         )
 
         val totalVideos =

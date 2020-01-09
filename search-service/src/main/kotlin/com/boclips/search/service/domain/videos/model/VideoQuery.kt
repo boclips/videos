@@ -25,5 +25,6 @@ class VideoQuery(
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet(),
-    val permittedVideoIds: Set<String>? = null
+    val permittedVideoIds: Set<String>? = null,
+    val isClassroom: Boolean? = null
 ) : SearchQuery<VideoMetadata>(phrase, sort)

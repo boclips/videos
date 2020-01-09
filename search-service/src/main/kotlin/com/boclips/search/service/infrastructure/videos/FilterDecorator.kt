@@ -39,6 +39,9 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
         if (videoQuery.promoted != null) {
             existingQuery.must(matchPromoted(videoQuery.promoted))
         }
+        if (videoQuery.isClassroom != null) {
+            existingQuery.must(matchIsClassroom(videoQuery.isClassroom))
+        }
     }
 
     private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
@@ -53,6 +56,13 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
         return QueryBuilders.termQuery(
             VideoDocument.PROMOTED,
             promoted
+        )
+    }
+
+    private fun matchIsClassroom(isClassroom: Boolean): TermQueryBuilder {
+        return QueryBuilders.termQuery(
+            VideoDocument.IS_CLASSROOM,
+            isClassroom
         )
     }
 
