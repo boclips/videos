@@ -9,6 +9,8 @@ import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
 import feign.FeignException
+import feign.Request
+import feign.RequestTemplate
 import org.springframework.hateoas.PagedResources
 import kotlin.math.ceil
 
@@ -19,14 +21,14 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     override fun getVideo(
         videoId: String
     ): VideoResource {
-        return database[videoId] ?: throw FeignException.FeignClientException(404, "Video not found", null, null)
+        return database[videoId] ?: throw FakeClient.notFoundException("Video not found")
     }
 
     override fun probeVideoReference(contentPartnerId: String, contentPartnerVideoId: String) {
         val results = database
             .filter { it.value.contentPartnerId == contentPartnerId && it.value.contentPartnerVideoId == contentPartnerVideoId }
 
-        if (results.isEmpty()) throw FeignException.FeignClientException(404, "resource not found", null, null)
+        if (results.isEmpty()) throw FakeClient.notFoundException("Video not found")
     }
 
     override fun searchVideos(searchVideosRequest: SearchVideosRequest): VideosResource {
