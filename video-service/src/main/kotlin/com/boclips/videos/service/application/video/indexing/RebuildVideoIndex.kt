@@ -26,8 +26,9 @@ open class RebuildVideoIndex(
                     contentPartnerService
                         .findAvailabilityFor(video.contentPartner.contentPartnerId)
                         .isStreamable()
+                }.let {
+                    videoSearchService.safeRebuildIndex(it, notifier)
                 }
-                videoSearchService.safeRebuildIndex(videos, notifier)
             }
 
             logger.info("Full reindex done")
