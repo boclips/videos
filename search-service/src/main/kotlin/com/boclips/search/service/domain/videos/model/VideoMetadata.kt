@@ -10,6 +10,7 @@ data class VideoMetadata(
     val releaseDate: LocalDate,
     val keywords: List<String>,
     val tags: List<String>,
+    val isClassroom: Boolean,
     val durationSeconds: Long,
     val source: SourceType,
     val transcript: String?,

@@ -71,7 +71,8 @@ class VideoMetadataConverterTest {
                     setManually = true
                 ),
                 promoted = true,
-                meanRating = null
+                meanRating = null,
+                isClassroom = true
             )
         )
     }
@@ -85,6 +86,7 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video)
 
         assertThat(videoMetadata.tags).containsExactly("classroom")
+        assertThat(videoMetadata.isClassroom).isTrue()
     }
 
     @Test
@@ -108,6 +110,7 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video)
 
         assertThat(videoMetadata.tags).containsExactly("classroom", "news")
+        assertThat(videoMetadata.isClassroom).isTrue()
     }
 
     @Test
@@ -121,6 +124,7 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video)
 
         assertThat(videoMetadata.tags).isEmpty()
+        assertThat(videoMetadata.isClassroom).isFalse()
     }
 
     @Test
@@ -175,5 +179,6 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video)
 
         assertThat(videoMetadata.tags).containsExactlyInAnyOrder("classroom", "explainer")
+        assertThat(videoMetadata.isClassroom).isTrue()
     }
 }

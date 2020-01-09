@@ -23,6 +23,7 @@ object VideoMetadataConverter {
             releaseDate = video.releasedOn,
             keywords = video.keywords,
             tags = tagsFrom(video),
+            isClassroom = ContentEnrichers.isClassroom(video),
             durationSeconds = video.playback.duration.seconds,
             source = convertPlaybackTypeToSourceType(video.playback.id.type),
             transcript = video.transcript,
