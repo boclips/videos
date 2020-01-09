@@ -33,6 +33,5 @@ data class CreateVideoRequest(
     val analyseVideo: Boolean = true,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
-    val subjects: Set<String>? = null,
-    val shareCodes: Set<String>? = emptySet()
+    val subjects: Set<String>? = null
 )

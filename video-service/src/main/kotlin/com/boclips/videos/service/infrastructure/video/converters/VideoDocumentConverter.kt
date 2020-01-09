@@ -47,7 +47,6 @@ object VideoDocumentConverter {
                 )
             },
             promoted = video.promoted,
-            shareCodes = video.shareCodes,
             subjectsWereSetManually = video.subjects.setManually
         )
     }
@@ -84,8 +83,7 @@ object VideoDocumentConverter {
                     it
                 )
             },
-            promoted = document.promoted,
-            shareCodes = document.shareCodes
+            promoted = document.promoted
         )
     }
 

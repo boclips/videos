@@ -95,8 +95,7 @@ object TestFactories {
             name = contentPartnerName
         ),
         videoReference: String = contentPartnerVideoId,
-        promoted: Boolean? = null,
-        shareCodes: Set<String>? = emptySet()
+        promoted: Boolean? = null
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -120,8 +119,7 @@ object TestFactories {
             videoReference = videoReference,
             ratings = ratings,
             tags = tags,
-            promoted = promoted,
-            shareCodes = shareCodes
+            promoted = promoted
         )
     }
 

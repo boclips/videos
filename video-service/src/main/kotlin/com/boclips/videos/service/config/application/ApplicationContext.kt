@@ -38,11 +38,9 @@ import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.ShareVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.VideoTranscriptService
@@ -70,12 +68,8 @@ import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
-import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
-import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
-import com.boclips.videos.service.presentation.converters.SubjectToResourceConverter
-import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import io.micrometer.core.instrument.Counter
@@ -147,11 +141,6 @@ class ApplicationContext(
     @Bean
     fun tagVideo(): TagVideo {
         return TagVideo(videoRepository, tagRepository)
-    }
-
-    @Bean
-    fun shareVideo(userServiceClient: UserServiceClient): ShareVideo {
-        return ShareVideo(userServiceClient, videoRepository)
     }
 
     @Bean
@@ -381,11 +370,6 @@ class ApplicationContext(
     @Bean
     fun findAllLegalRestrictions(): FindAllLegalRestrictions {
         return FindAllLegalRestrictions(legalRestrictionsRepository)
-    }
-
-    @Bean
-    fun validateWithShareCode(): ValidateWithShareCode {
-        return ValidateWithShareCode(videoService)
     }
 
     private fun getVideoById(): GetVideoById {

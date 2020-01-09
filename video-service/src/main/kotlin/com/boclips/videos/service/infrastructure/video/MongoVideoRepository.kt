@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddShareCode
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentPartner
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDescription
@@ -295,7 +294,6 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
             is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.text)
             is ReplacePromoted -> set(VideoDocument::promoted, updateCommand.promoted)
-            is AddShareCode -> addToSet(VideoDocument::shareCodes, updateCommand.shareCode)
             is ReplaceSubjectsWereSetManually -> set(
                 VideoDocument::subjectsWereSetManually,
                 updateCommand.subjectsWereSetManually

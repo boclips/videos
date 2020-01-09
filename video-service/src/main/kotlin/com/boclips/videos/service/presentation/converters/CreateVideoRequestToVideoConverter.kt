@@ -47,8 +47,7 @@ class CreateVideoRequestToVideoConverter {
             transcript = null,
             ratings = emptyList(),
             tags = emptyList(),
-            promoted = null,
-            shareCodes = emptySet()
+            promoted = null
         )
     }
 }

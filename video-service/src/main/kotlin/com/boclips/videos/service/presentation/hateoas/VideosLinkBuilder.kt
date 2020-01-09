@@ -20,13 +20,10 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val SEARCH_VIDEOS = "searchVideos"
         const val ADMIN_SEARCH = "adminSearch"
         const val ADMIN_VIDEO_SEARCH = "adminVideoSearch"
-        const val VIDEOS = "videos"
         const val TRANSCRIPT = "transcript"
         const val RATE = "rate"
         const val TAG = "tag"
         const val UPDATE = "update"
-        const val SHARE = "share"
-        const val VALIDATE_SHARE_CODE = "validateShareCode"
     }
 
     fun self(videoId: String?): Link =
@@ -113,23 +110,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                 , UPDATE
             )
         }
-    }
-
-    fun shareLink(video: Video): Link? {
-        return when {
-            currentUserHasRole(UserRoles.SHARE_VIDEOS) -> ControllerLinkBuilder.linkTo(
-                ControllerLinkBuilder.methodOn(VideoController::class.java)
-                    .patchSharing(id = video.videoId.value, sharing = true)
-            ).withRel(Rels.SHARE)
-            else -> null
-        }
-    }
-
-    fun validateShareCodeLink(video: Video): Link {
-        return ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
-                .validateShareCode(video.videoId.value, null)
-        ).withRel(Rels.VALIDATE_SHARE_CODE)
     }
 
     private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()

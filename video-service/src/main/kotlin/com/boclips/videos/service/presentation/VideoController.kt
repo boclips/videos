@@ -11,12 +11,9 @@ import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.ShareVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.ValidateWithShareCode
 import com.boclips.videos.service.application.video.VideoTranscriptService
-import com.boclips.videos.service.application.video.exceptions.InvalidShareCodeException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
@@ -62,8 +59,6 @@ class VideoController(
     private val withProjection: WithProjection,
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
-    private val shareVideo: ShareVideo,
-    private val validateWithShareCode: ValidateWithShareCode,
     private val videoRepository: VideoRepository,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService) {
@@ -169,19 +164,6 @@ class VideoController(
         )
     }
 
-    @GetMapping(path = ["/v1/videos/{id}/match"], params = ["shareCode"])
-    fun validateShareCode(@PathVariable("id") id: String?, @RequestParam shareCode: String? = null): ResponseEntity<Void> {
-        shareCode?.let {
-            try {
-                validateWithShareCode(id!!, shareCode)
-            } catch (e: InvalidShareCodeException) {
-                return ResponseEntity(HttpStatus.FORBIDDEN)
-            }
-        }
-
-        return ResponseEntity(HttpStatus.OK)
-    }
-
     @DeleteMapping("/v1/videos/{id}")
     fun removeVideo(@PathVariable("id") id: String?) {
         deleteVideo(id, getCurrentUser())
@@ -249,16 +231,6 @@ class VideoController(
             rateVideoRequest = RateVideoRequest(rating = rating, videoId = id),
             user = getCurrentUser()
         ).let { this.getVideo(id) }
-
-    @PatchMapping("/v1/videos/{id}", params = ["sharing=true"])
-    fun patchSharing(@PathVariable("id") id: String, @RequestParam sharing: Boolean): ResponseEntity<Void> {
-        return if (sharing) {
-            shareVideo(id, getCurrentUser())
-            ResponseEntity(HttpHeaders(), HttpStatus.OK)
-        } else {
-            ResponseEntity(HttpStatus.BAD_REQUEST)
-        }
-    }
 
     @PatchMapping(path = ["/v1/videos/{id}"], params = ["!rating"])
     fun patchVideo(

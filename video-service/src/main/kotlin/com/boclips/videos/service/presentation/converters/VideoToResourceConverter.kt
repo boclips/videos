@@ -77,8 +77,6 @@ class VideoToResourceConverter(
         videosLinkBuilder.rateLink(video),
         videosLinkBuilder.updateLink(video),
         videosLinkBuilder.tagLink(video),
-        videosLinkBuilder.shareLink(video),
-        videosLinkBuilder.validateShareCodeLink(video),
         videosLinkBuilder.transcriptLink(video)
     )
 }

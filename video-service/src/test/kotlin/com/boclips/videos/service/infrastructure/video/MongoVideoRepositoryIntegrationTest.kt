@@ -272,31 +272,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `update shareCodes`() {
-        val originalVideo = mongoVideoRepository.create(createVideo(shareCodes = setOf("abcd")))
-
-        val videoBefore = mongoVideoRepository.find(originalVideo.videoId)!!
-
-        val updatedVideo = mongoVideoRepository.update(
-            VideoUpdateCommand.AddShareCode(originalVideo.videoId, shareCode = "1234")
-        )
-
-        assertThat(videoBefore.shareCodes).containsExactly("abcd")
-        assertThat(updatedVideo.shareCodes).containsAll(setOf("abcd", "1234"))
-    }
-
-    @Test
-    fun `update shareCodes for video without shareCodes`() {
-        val originalVideo = mongoVideoRepository.create(createVideo(shareCodes = emptySet()))
-
-        val updatedVideo = mongoVideoRepository.update(
-            VideoUpdateCommand.AddShareCode(originalVideo.videoId, shareCode = "1234")
-        )
-
-        assertThat(updatedVideo.shareCodes).containsAll(setOf("1234"))
-    }
-
-    @Test
     fun `update throws when video not found`() {
         assertThrows<VideoNotFoundException> {
             mongoVideoRepository.update(

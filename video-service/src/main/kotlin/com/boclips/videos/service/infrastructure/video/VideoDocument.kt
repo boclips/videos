@@ -25,7 +25,6 @@ data class VideoDocument(
     val rating: List<UserRatingDocument> = emptyList(),
     val tags: List<UserTagDocument> = emptyList(),
     val promoted: Boolean? = null,
-    val shareCodes: Set<String>? = emptySet(),
     val subjectsWereSetManually: Boolean? = false
 )
 
