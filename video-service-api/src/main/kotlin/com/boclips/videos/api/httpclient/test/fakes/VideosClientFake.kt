@@ -19,7 +19,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     override fun getVideo(
         videoId: String
     ): VideoResource {
-        return database[videoId]!!
+        return database[videoId] ?: throw FeignException.FeignClientException(404, "Video not found", null, null)
     }
 
     override fun probeVideoReference(contentPartnerId: String, contentPartnerVideoId: String) {

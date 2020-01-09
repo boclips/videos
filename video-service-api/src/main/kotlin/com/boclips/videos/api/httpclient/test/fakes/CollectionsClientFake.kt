@@ -5,6 +5,7 @@ import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.boclips.videos.api.response.collection.CollectionsWrapperResource
+import feign.FeignException
 
 class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> {
     private val database: MutableMap<String, CollectionResource> = LinkedHashMap()
@@ -14,7 +15,7 @@ class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> 
     }
 
     override fun getCollection(collectionId: String): CollectionResource {
-        return database[collectionId]!!
+        return database[collectionId] ?: throw FeignException.FeignClientException(404, "Collection not found", null, null)
     }
 
     override fun add(element: CollectionResource): CollectionResource {
