@@ -97,4 +97,8 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     override fun clear() {
         database.clear()
     }
+
+    override fun findAll(): List<VideoResource> {
+        return database.values.toList()
+    }
 }

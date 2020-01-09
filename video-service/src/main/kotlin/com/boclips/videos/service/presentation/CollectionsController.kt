@@ -149,7 +149,7 @@ class CollectionsController(
         @PathVariable("id") id: String,
         @RequestParam(required = false) projection: Projection? = Projection.list
     ): MappingJacksonValue {
-        val collection = getCollection(id, projection ?: Projection.list, getCurrentUser())
+        val collection = getCollection(id, getCurrentUser())
 
         val collectionResource = when (projection) {
             Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(collection, getCurrentUser())

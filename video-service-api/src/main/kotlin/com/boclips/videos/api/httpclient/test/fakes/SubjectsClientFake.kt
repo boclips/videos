@@ -3,8 +3,8 @@ package com.boclips.videos.api.httpclient.test.fakes
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.api.response.subject.SubjectsWrapperResource
 import com.boclips.videos.api.response.subject.SubjectsResource
+import com.boclips.videos.api.response.subject.SubjectsWrapperResource
 
 class SubjectsClientFake : SubjectsClient, FakeClient<SubjectResource> {
     private val database: MutableMap<String, SubjectResource> = LinkedHashMap()
@@ -40,5 +40,9 @@ class SubjectsClientFake : SubjectsClient, FakeClient<SubjectResource> {
 
     override fun clear() {
         database.clear()
+    }
+
+    override fun findAll(): List<SubjectResource> {
+        return database.values.toList()
     }
 }

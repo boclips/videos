@@ -26,4 +26,8 @@ class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> 
     override fun clear() {
         database.clear()
     }
+
+    override fun findAll(): List<CollectionResource> {
+        return database.values.toList()
+    }
 }
