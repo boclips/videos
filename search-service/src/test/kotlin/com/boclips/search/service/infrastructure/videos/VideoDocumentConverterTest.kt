@@ -61,7 +61,8 @@ class VideoDocumentConverterTest {
                 subjectNames = setOf("boring-subject-name"),
                 promoted = null,
                 meanRating = null,
-                subjectsSetManually = null
+                subjectsSetManually = null,
+                isClassroom = null
             )
         )
     }
@@ -113,7 +114,8 @@ class VideoDocumentConverterTest {
                 setManually = false
             ),
             promoted = null,
-            meanRating = 3.8
+            meanRating = 3.8,
+            isClassroom = false
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -137,7 +139,8 @@ class VideoDocumentConverterTest {
                 subjectNames = setOf("subjectName"),
                 promoted = null,
                 meanRating = 3.8,
-                subjectsSetManually = false
+                subjectsSetManually = false,
+                isClassroom = false
             )
         )
     }

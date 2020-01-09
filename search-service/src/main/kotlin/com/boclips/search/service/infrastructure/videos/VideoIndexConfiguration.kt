@@ -28,7 +28,8 @@ class VideoIndexConfiguration : IndexConfiguration {
                     "type" to "boolean"
                 ),
                 VideoDocument.MEAN_RATING to IndexConfiguration.Fields.double,
-                VideoDocument.SUBJECTS_SET_MANUALLY to IndexConfiguration.Fields.boolean
+                VideoDocument.SUBJECTS_SET_MANUALLY to IndexConfiguration.Fields.boolean,
+                VideoDocument.IS_CLASSROOM to IndexConfiguration.Fields.boolean
             )
         )
     }

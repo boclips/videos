@@ -30,8 +30,9 @@ object SearchableVideoMetadataFactory {
         subjects: Set<SubjectMetadata> = emptySet(),
         subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
-        meanRating: Double? = 5.0
-    ) = VideoMetadata(
+        meanRating: Double? = 5.0,
+        isClassroom: Boolean = false
+        ) = VideoMetadata(
         id = id,
         title = title,
         description = description,
@@ -47,7 +48,8 @@ object SearchableVideoMetadataFactory {
         type = type,
         subjects = SubjectsMetadata(items = subjects, setManually = subjectsSetManually),
         promoted = promoted,
-        meanRating = meanRating
+        meanRating = meanRating,
+        isClassroom = isClassroom
     )
 }
 
@@ -79,7 +81,8 @@ object TestFactories {
             type = VideoType.INSTRUCTIONAL.name,
             promoted = null,
             meanRating = null,
-            subjectsSetManually = null
+            subjectsSetManually = null,
+            isClassroom = null
         )
     }
 }

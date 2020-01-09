@@ -19,6 +19,7 @@ object VideoDocumentConverter {
             releaseDate = video.releaseDate,
             keywords = video.keywords,
             tags = video.tags,
+            isClassroom = video.isClassroom,
             durationSeconds = video.durationSeconds,
             source = video.source.name,
             transcript = video.transcript,
