@@ -12,7 +12,13 @@ class ContentPartnersClientFake : ContentPartnersClient, FakeClient<ContentPartn
     private var id = 0
 
     override fun getContentPartners(contentPartnerFilterRequest: ContentPartnerFilterRequest): ContentPartnersResource {
-        return ContentPartnersResource(_embedded = ContentPartnerWrapperResource(database.values.toList()))
+        val contentPartners = if (contentPartnerFilterRequest.name != null) {
+            database.values.toList().filter { it.name == contentPartnerFilterRequest.name }
+        } else {
+            database.values.toList()
+        }
+
+        return ContentPartnersResource(_embedded = ContentPartnerWrapperResource(contentPartners))
     }
 
     override fun create(createContentPartnerRequest: CreateContentPartnerRequest) {
