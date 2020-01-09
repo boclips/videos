@@ -4,14 +4,26 @@ import com.boclips.videos.api.httpclient.CollectionsClient
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
-import org.springframework.hateoas.Resource
+import com.boclips.videos.api.response.collection.CollectionsWrapperResource
 
-class CollectionsClientFake : CollectionsClient {
+class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> {
+    private val database: MutableMap<String, CollectionResource> = LinkedHashMap()
+
     override fun getCollections(collectionFilterRequest: CollectionFilterRequest): CollectionsResource {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return CollectionsResource(_embedded = CollectionsWrapperResource(collections = database.values.toList()))
     }
 
     override fun getCollection(collectionId: String): CollectionResource {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return database[collectionId]!!
+    }
+
+    override fun add(element: CollectionResource): CollectionResource {
+        return element.apply {
+            database[element.id!!] = element
+        }
+    }
+
+    override fun clear() {
+        database.clear()
     }
 }
