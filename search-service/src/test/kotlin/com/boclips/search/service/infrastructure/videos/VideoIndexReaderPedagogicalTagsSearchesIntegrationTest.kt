@@ -86,4 +86,32 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
 
         assertThat(results).containsExactlyInAnyOrder("1", "2", "3")
     }
+
+
+    @Test
+    fun `matches tags regardless of case`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    description = "banana",
+                    tags = listOf("other")
+                )
+            )
+        )
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    description = "banana"
+                )
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery(bestFor = listOf("Other")))
+        )
+
+        assertThat(results).containsExactlyInAnyOrder("3")
+    }
 }
