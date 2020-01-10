@@ -23,8 +23,6 @@ data class SubjectQuery(
 class VideoSearchQuery(
     val text: String,
     val sortBy: SortKey? = null,
-    val includeTags: List<String>,
-    val excludeTags: List<String>,
     val bestFor: List<String>? = null,
     val minDuration: Duration? = null,
     val maxDuration: Duration? = null,
@@ -60,8 +58,6 @@ class VideoSearchQuery(
             VideoQuery(
                 ids = it.ids,
                 phrase = it.phrase,
-                includeTags = includeTags,
-                excludeTags = excludeTags,
                 bestFor = bestFor,
                 minDuration = minDuration,
                 maxDuration = maxDuration,

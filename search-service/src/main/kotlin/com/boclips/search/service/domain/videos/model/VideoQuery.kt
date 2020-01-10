@@ -9,8 +9,6 @@ class VideoQuery(
     phrase: String = "",
     sort: Sort<VideoMetadata>? = null,
     val ids: List<String> = emptyList(),
-    val includeTags: List<String> = emptyList(),
-    val excludeTags: List<String> = emptyList(),
     val bestFor: List<String>? = null,
     val minDuration: Duration? = null,
     val maxDuration: Duration? = null,

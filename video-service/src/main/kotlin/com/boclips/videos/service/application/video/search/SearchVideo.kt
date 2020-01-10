@@ -33,8 +33,6 @@ class SearchVideo(
     fun byQuery(
         query: String?,
         sortBy: SortKey? = null,
-        includeTags: List<String>,
-        excludeTags: List<String>,
         bestFor: List<String>? = null,
         minDuration: String? = null,
         maxDuration: String? = null,
@@ -56,8 +54,6 @@ class SearchVideo(
         return getVideosByQuery(
             query = query ?: "",
             sortBy = sortBy,
-            includeTags = includeTags,
-            excludeTags = excludeTags,
             bestFor = bestFor,
             minDurationString = minDuration,
             maxDurationString = maxDuration,

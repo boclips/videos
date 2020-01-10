@@ -26,8 +26,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val result = searchVideo.byQuery(
             query = null,
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageNumber = 1,
             user = UserFactory.sample()
@@ -41,8 +39,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         assertThatThrownBy {
             searchVideo.byQuery(
                 query = "query",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
                 pageSize = 1000,
                 pageNumber = 0,
                 user = UserFactory.sample()
@@ -55,8 +51,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         assertThatThrownBy {
             searchVideo.byQuery(
                 query = "query",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
                 pageSize = 0,
                 pageNumber = 0,
                 user = UserFactory.sample()
@@ -69,8 +63,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         assertThatThrownBy {
             searchVideo.byQuery(
                 query = "query",
-                includeTags = emptyList(),
-                excludeTags = emptyList(),
                 pageSize = 0,
                 pageNumber = -1,
                 user = UserFactory.sample()
@@ -99,8 +91,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val result = searchVideo.byQuery(
             query = "youtube",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageNumber = 1,
             user = UserFactory.sample()
@@ -117,8 +107,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val videos = searchVideo.byQuery(
             query = "banana",
-            includeTags = listOf("classroom"),
-            excludeTags = emptyList(),
+            isClassroom = true,
             pageSize = 2,
             pageNumber = 0,
             user = UserFactory.sample()
@@ -135,8 +124,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val videos = searchVideo.byQuery(
             query = "banana",
-            includeTags = listOf("news"),
-            excludeTags = emptyList(),
+            type = setOf("NEWS"),
             pageSize = 2,
             pageNumber = 0,
             user = UserFactory.sample()
@@ -154,8 +142,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val videos = searchVideo.byQuery(
             query = "banana",
-            includeTags = listOf("news", "classroom"),
-            excludeTags = emptyList(),
+            isClassroom = true,
+            type = setOf("NEWS"),
             pageSize = 2,
             pageNumber = 0,
             user = UserFactory.sample()
@@ -172,8 +160,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         searchVideo.byQuery(
             query = "why are camels so tall",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageNumber = 1,
             user = UserFactory.sample()
@@ -191,8 +177,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val videos = searchVideo.byQuery(
             query = "why are camels so tall",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             minDuration = "PT0S",
             maxDuration = "PT10S",
             pageSize = 20,
@@ -219,8 +203,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val results = searchVideo.byQuery(
             query = "why are camels so tall",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 20,
             pageNumber = 0,
             source = "youtube",

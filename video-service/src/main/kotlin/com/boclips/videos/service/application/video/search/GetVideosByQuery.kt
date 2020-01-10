@@ -25,8 +25,6 @@ class GetVideosByQuery(
     operator fun invoke(
         query: String,
         sortBy: SortKey?,
-        includeTags: List<String>,
-        excludeTags: List<String>,
         bestFor: List<String>?,
         minDurationString: String?,
         maxDurationString: String?,
@@ -56,8 +54,6 @@ class GetVideosByQuery(
             sortBy = sortBy,
             pageIndex = pageNumber,
             pageSize = pageSize,
-            includeTags = includeTags,
-            excludeTags = excludeTags,
             bestFor = bestFor,
             minDuration = searchQueryConverter.convertDuration(minDurationString),
             maxDuration = searchQueryConverter.convertDuration(maxDurationString),

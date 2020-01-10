@@ -41,9 +41,6 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                         || entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
                 }
                 .filter { entry ->
-                    entry.value.tags.containsAll(query.includeTags)
-                }
-                .filter { entry ->
                     if (query.bestFor.isNullOrEmpty()) true else entry.value.tags.containsAll(query.bestFor)
                 }
                 .filter { entry ->
@@ -51,9 +48,6 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                 }
                 .filter { entry ->
                     entry.value.durationSeconds.let { (minDuration..maxDuration).contains(it) }
-                }
-                .filter { entry ->
-                    entry.value.tags.none { query.excludeTags.contains(it) }
                 }
                 .filter { entry ->
                     query.source?.let { it == entry.value.source } ?: true

@@ -15,9 +15,6 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
     }
 
     private fun attachFilters(videoQuery: VideoQuery) {
-        existingQuery.filter(filterByTag(videoQuery.includeTags))
-        existingQuery.mustNot(matchTags(videoQuery.excludeTags))
-
         if (videoQuery.bestFor != null) {
             existingQuery.filter(filterByTag(videoQuery.bestFor))
         }
@@ -126,9 +123,6 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
                 }
             }
     }
-
-    private fun matchTags(excludeTags: List<String>) =
-        QueryBuilders.termsQuery(VideoDocument.TAGS, excludeTags)
 
     private fun filterByTag(includeTags: List<String>): BoolQueryBuilder? {
         return includeTags

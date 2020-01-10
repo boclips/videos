@@ -72,8 +72,6 @@ class VideoController(
     fun search(
         @RequestParam(name = "query", required = false) query: String?,
         @RequestParam(name = "sort_by", required = false) sortBy: SortKey?,
-        @RequestParam(name = "include_tag", required = false) includeTags: List<String>?,
-        @RequestParam(name = "exclude_tag", required = false) excludeTags: List<String>?,
         @RequestParam(name = "best_for", required = false) bestFor: List<String>?,
         @RequestParam(name = "duration_min", required = false) minDuration: String?,
         @RequestParam(name = "duration_max", required = false) maxDuration: String?,
@@ -96,8 +94,6 @@ class VideoController(
         val videos = searchVideo.byQuery(
             query = query,
             sortBy = sortBy,
-            includeTags = includeTags?.let { includeTags } ?: emptyList(),
-            excludeTags = excludeTags?.let { excludeTags } ?: emptyList(),
             bestFor = bestFor?.let { bestFor } ?: emptyList(),
             minDuration = minDuration,
             maxDuration = maxDuration,

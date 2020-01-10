@@ -114,39 +114,6 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
     }
 
     @Test
-    fun `age, include tag`() {
-        videoIndexWriter.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(
-                    id = "2",
-                    ageRangeMin = 3,
-                    ageRangeMax = 5,
-                    tags = listOf("classroom")
-                ),
-                SearchableVideoMetadataFactory.create(
-                    id = "3",
-                    tags = listOf("news"),
-                    ageRangeMin = 3,
-                    ageRangeMax = 5
-                )
-            )
-        )
-
-        val results = videoIndexReader.search(
-            PaginatedSearchRequest(
-                query = VideoQuery(
-                    ageRangeMin = 3,
-                    ageRangeMax = 5,
-                    includeTags = listOf("news")
-                )
-            )
-        )
-
-        assertThat(results).hasSize(1)
-        assertThat(results).containsExactly("3")
-    }
-
-    @Test
     fun `query, type`() {
         videoIndexWriter.upsert(
             sequenceOf(
@@ -262,20 +229,20 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
     }
 
     @Test
-    fun `tags, subject`() {
+    fun `best for tag, subject`() {
         videoIndexWriter.upsert(
             sequenceOf(
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
                     subjects = setOf(createSubjectMetadata("subject-one"), createSubjectMetadata("subject-two")),
-                    tags = listOf("classroom")
+                    tags = listOf("explainer")
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "HELLO",
                     subjects = setOf(createSubjectMetadata("subject-two"), createSubjectMetadata("subject-three")),
-                    tags = listOf("news")
+                    tags = listOf("other")
                 )
             )
         )
@@ -284,7 +251,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     subjectIds = setOf("subject-two"),
-                    includeTags = listOf("news")
+                    bestFor = listOf("other")
                 )
             )
         )
@@ -294,14 +261,14 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
     }
 
     @Test
-    fun `include tag, query`() {
+    fun `best for tag, query`() {
         videoIndexWriter.upsert(
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
                 SearchableVideoMetadataFactory.create(
                     id = "4",
                     description = "candy banana apple",
-                    tags = listOf("news")
+                    tags = listOf("explainer")
                 )
             )
         )
@@ -311,38 +278,12 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = "banana",
-                        includeTags = listOf("news")
+                        bestFor = listOf("explainer")
                     )
                 )
             )
 
         assertThat(results).containsExactly("4")
-    }
-
-    @Test
-    fun `exclude tags, query`() {
-        videoIndexWriter.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "3", description = "some random banana isNews"),
-                SearchableVideoMetadataFactory.create(
-                    id = "4",
-                    description = "candy banana apple",
-                    tags = listOf("news")
-                )
-            )
-        )
-
-        val results =
-            videoIndexReader.search(
-                PaginatedSearchRequest(
-                    query = VideoQuery(
-                        phrase = "banana",
-                        excludeTags = listOf("news")
-                    )
-                )
-            )
-
-        assertThat(results).containsExactly("3")
     }
 
     @Test

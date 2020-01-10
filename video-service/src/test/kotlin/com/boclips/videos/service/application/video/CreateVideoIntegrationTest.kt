@@ -86,8 +86,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             videoService.count(
                 VideoSearchQuery(
                     text = "the latest Bloomberg video",
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
                     pageSize = 0,
                     pageIndex = 0
                 ),

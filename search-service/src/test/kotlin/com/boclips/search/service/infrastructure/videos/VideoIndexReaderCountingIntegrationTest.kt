@@ -57,24 +57,6 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
     }
 
     @Test
-    fun `can count for just news results`() {
-        videoIndexWriter.upsert(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "3", description = "candy banana apple"),
-                SearchableVideoMetadataFactory.create(
-                    id = "4",
-                    description = "candy banana apple",
-                    tags = listOf("news")
-                )
-            )
-        )
-
-        val results = videoIndexReader.count(VideoQuery(includeTags = listOf("news")))
-
-        assertThat(results).isEqualTo(1)
-    }
-
-    @Test
     fun `can count by content type`() {
         videoIndexWriter.upsert(
             sequenceOf(

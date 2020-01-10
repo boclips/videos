@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure.videos
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
@@ -24,7 +25,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
     }
 
     @Test
-    fun `content partner matches exactly and has no excluded tags`() {
+    fun `content partner matches exactly and on type`() {
         val contentProvider = "Bozeman Science"
 
         videoIndexWriter.upsert(
@@ -32,12 +33,13 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     contentProvider = contentProvider,
-                    tags = listOf("news")
+                    type = VideoType.INSTRUCTIONAL
+
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     contentProvider = contentProvider,
-                    tags = emptyList()
+                    type = VideoType.NEWS
                 )
             )
         )
@@ -47,7 +49,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = contentProvider,
-                        excludeTags = listOf("news")
+                        type = setOf(VideoType.NEWS)
                     )
                 )
             )
@@ -56,7 +58,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
     }
 
     @Test
-    fun `content partner matches exactly and has included tags`() {
+    fun `content partner matches exactly and also on best for`() {
         val contentProvider = "Bozeman Science"
 
         videoIndexWriter.upsert(
@@ -78,7 +80,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = contentProvider,
-                    includeTags = listOf("education")
+                    bestFor = listOf("education")
                 )
             )
         )

@@ -21,8 +21,6 @@ class FilterDecoratorTest {
             maxDuration = Duration.ofSeconds(100),
             minDuration = Duration.ofSeconds(20),
             source = SourceType.BOCLIPS,
-            includeTags = listOf("include-tag"),
-            excludeTags = listOf("exclude-tag"),
             releaseDateFrom = LocalDate.of(2014, 1, 30),
             releaseDateTo = LocalDate.of(2015, 1, 30),
             promoted = true
@@ -154,37 +152,11 @@ class FilterDecoratorTest {
     ],
     "filter" : [
       {
-        "bool" : {
-          "must" : [
-            {
-              "term" : {
-                "tags" : {
-                  "value" : "include-tag",
-                  "boost" : 1.0
-                }
-              }
-            }
-          ],
-          "adjust_pure_negative" : true,
-          "boost" : 1.0
-        }
-      },
-      {
         "term" : {
           "source" : {
             "value" : "boclips",
             "boost" : 1.0
           }
-        }
-      }
-    ],
-    "must_not" : [
-      {
-        "terms" : {
-          "tags" : [
-            "exclude-tag"
-          ],
-          "boost" : 1.0
         }
       }
     ],

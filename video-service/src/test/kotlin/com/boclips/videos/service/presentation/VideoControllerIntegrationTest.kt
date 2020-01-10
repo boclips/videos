@@ -154,37 +154,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `filters out non classroom results when filter param set`() {
-        val excludedVideoId = saveVideo(title = "Non educational video about elephants", type = ContentType.STOCK)
-
-        mockMvc.perform(get("/v1/videos?query=elephant&include_tag=classroom").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.value))))
-    }
-
-    @Test
-    fun `can exclude results for a particular tag`() {
-        val excludedVideoId = saveVideo(title = "Elephant news", type = ContentType.NEWS)
-
-        mockMvc.perform(get("/v1/videos?query=elephant&exclude_tag=news").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(excludedVideoId.value))))
-    }
-
-    @Test
-    fun `can find videos by tags`() {
-        val newsAndClassroomVideoId = saveVideo(title = "ben poos elephants", type = ContentType.NEWS)
-        val classroomVideoId =
-            saveVideo(title = "Video about elephants", type = ContentType.INSTRUCTIONAL_CLIPS)
-
-        mockMvc.perform(get("/v1/videos?query=elephants&include_tag=news&include_tag=classroom").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(newsAndClassroomVideoId.value)))
-            .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(classroomVideoId.value))))
-    }
-
-    @Test
     fun `can find by is_classroom`() {
         val notClassroomVideoId = saveVideo(title = "not suitable for the classroom", type = ContentType.STOCK)
         val classroomVideoId =

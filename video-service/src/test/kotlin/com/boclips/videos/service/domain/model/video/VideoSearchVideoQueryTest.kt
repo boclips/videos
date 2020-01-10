@@ -16,8 +16,6 @@ class VideoSearchVideoQueryTest {
     fun `translate phrase query`() {
         val searchQuery = VideoSearchQuery(
             text = "normal phrase",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageIndex = 0
         )
@@ -30,8 +28,6 @@ class VideoSearchVideoQueryTest {
     fun `translate single id query`() {
         val searchQuery = VideoSearchQuery(
             text = "id:11",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageIndex = 0
         )
@@ -44,8 +40,6 @@ class VideoSearchVideoQueryTest {
     fun `translate multiple id query`() {
         val searchQuery = VideoSearchQuery(
             text = "id:11,12,13",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageIndex = 0
         )
@@ -55,25 +49,9 @@ class VideoSearchVideoQueryTest {
     }
 
     @Test
-    fun `allows filtering by presence of tag`() {
-        val searchQuery = VideoSearchQuery(
-            text = "id:11,12,13",
-            includeTags = listOf("classroom"),
-            excludeTags = emptyList(),
-            pageSize = 2,
-            pageIndex = 0
-        )
-            .toSearchQuery(VideoAccessRule.Everything)
-
-        assertThat(searchQuery.includeTags).contains("classroom")
-    }
-
-    @Test
     fun `allows filtering by bestFor`() {
         val searchQuery = VideoSearchQuery(
             text = "id:3222",
-            includeTags = listOf("classroom"),
-            excludeTags = emptyList(),
             bestFor = listOf("explainer"),
             pageSize = 2,
             pageIndex = 0
@@ -84,25 +62,9 @@ class VideoSearchVideoQueryTest {
     }
 
     @Test
-    fun `allows filtering by absence of tag`() {
-        val searchQuery = VideoSearchQuery(
-            text = "id:11,12,13",
-            includeTags = emptyList(),
-            excludeTags = listOf("classroom"),
-            pageSize = 2,
-            pageIndex = 0
-        )
-            .toSearchQuery(VideoAccessRule.Everything)
-
-        assertThat(searchQuery.excludeTags).contains("classroom")
-    }
-
-    @Test
     fun `allows ordering of results by releaseDate descending`() {
         val searchQuery = VideoSearchQuery(
             text = "testing",
-            includeTags = emptyList(),
-            excludeTags = listOf("classroom"),
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE
@@ -119,8 +81,6 @@ class VideoSearchVideoQueryTest {
     fun `allows ordering of results by random`() {
         val searchQuery = VideoSearchQuery(
             text = "testing",
-            includeTags = emptyList(),
-            excludeTags = listOf("classroom"),
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RANDOM
@@ -134,8 +94,6 @@ class VideoSearchVideoQueryTest {
     fun `does not sort the results without a sortBy`() {
         val searchQuery = VideoSearchQuery(
             text = "id:11,12,13",
-            includeTags = emptyList(),
-            excludeTags = listOf("classroom"),
             pageSize = 2,
             pageIndex = 0,
             sortBy = null
@@ -149,8 +107,6 @@ class VideoSearchVideoQueryTest {
     fun `allows filtering of source`() {
         val searchQuery = VideoSearchQuery(
             text = "testing",
-            includeTags = emptyList(),
-            excludeTags = listOf("classroom"),
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE,
@@ -165,8 +121,6 @@ class VideoSearchVideoQueryTest {
     fun `allows filtering of content type`() {
         val searchQuery = VideoSearchQuery(
             text = "testing",
-            includeTags = emptyList(),
-            excludeTags = listOf("classroom"),
             pageSize = 2,
             pageIndex = 0,
             type = setOf(VideoType.NEWS, VideoType.STOCK)
@@ -180,8 +134,6 @@ class VideoSearchVideoQueryTest {
     fun `allows filtering of release date`() {
         val searchQuery = VideoSearchQuery(
             text = "testing",
-            includeTags = emptyList(),
-            excludeTags = listOf("classroom"),
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE,
@@ -197,8 +149,6 @@ class VideoSearchVideoQueryTest {
     fun `allows filtering by promoted`() {
         val searchQuery = VideoSearchQuery(
             text = "",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageIndex = 0,
             promoted = true
@@ -214,8 +164,6 @@ class VideoSearchVideoQueryTest {
 
         val searchQuery = VideoSearchQuery(
             text = "",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageIndex = 0,
             promoted = true
@@ -228,8 +176,6 @@ class VideoSearchVideoQueryTest {
     fun `does not limit ids when has access to everything`() {
         val searchQuery = VideoSearchQuery(
             text = "",
-            includeTags = emptyList(),
-            excludeTags = emptyList(),
             pageSize = 2,
             pageIndex = 0,
             promoted = true

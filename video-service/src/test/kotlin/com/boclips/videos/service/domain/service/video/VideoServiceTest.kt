@@ -40,8 +40,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val videos = videoService.search(
                 VideoSearchQuery(
                     text = "kaltura",
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
                     pageSize = 10,
                     pageIndex = 0
                 ),
@@ -62,8 +60,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val videos = videoService.search(
                 VideoSearchQuery(
                     text = "youtube",
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
                     pageSize = 10,
                     pageIndex = 0
                 ),
@@ -85,8 +81,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val size = videoService.count(
                 VideoSearchQuery(
                     text = "youtube",
-                    includeTags = emptyList(),
-                    excludeTags = emptyList(),
                     pageSize = 10,
                     pageIndex = 0
                 ),
@@ -103,8 +97,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             val searchResults = videoService.search(
                 VideoSearchQuery(
-                    text = "access", includeTags = emptyList(),
-                    excludeTags = emptyList(),
+                    text = "access",
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccessRule.SpecificIds(setOf(firstVideo))
@@ -121,8 +114,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             val searchResults = videoService.count(
                 VideoSearchQuery(
-                    text = "access", includeTags = emptyList(),
-                    excludeTags = emptyList(),
+                    text = "access",
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccessRule.SpecificIds(setOf(firstVideo))
