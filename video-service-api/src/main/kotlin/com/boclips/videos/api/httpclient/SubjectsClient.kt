@@ -15,7 +15,6 @@ import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.okhttp.OkHttpClient
 import feign.slf4j.Slf4jLogger
-import org.springframework.web.bind.annotation.RequestBody
 
 interface SubjectsClient {
     @RequestLine("GET /v1/subjects")
@@ -28,10 +27,10 @@ interface SubjectsClient {
     fun deleteSubject(@Param("subjectId") id: String)
 
     @RequestLine("PUT /v1/subjects/{subjectId}")
-    fun updateSubject(@Param("subjectId") id: String, @RequestBody createSubjectRequest: CreateSubjectRequest)
+    fun updateSubject(@Param("subjectId") id: String, createSubjectRequest: CreateSubjectRequest)
 
     @RequestLine("POST /v1/subjects")
-    fun create(@RequestBody createSubjectRequest: CreateSubjectRequest)
+    fun create(createSubjectRequest: CreateSubjectRequest)
 
     companion object {
         @JvmStatic
