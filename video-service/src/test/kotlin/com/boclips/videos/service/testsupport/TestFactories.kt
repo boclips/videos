@@ -244,35 +244,6 @@ object TestFactories {
         )
     }
 
-    fun createCollectionResource(
-        id: String = "collection-id",
-        owner: String = "collection owner",
-        title: String = "collection title",
-        videos: List<VideoResource> = emptyList(),
-        updatedAt: ZonedDateTime = ZonedDateTime.now(),
-        isPublic: Boolean = false,
-        isBookmarked: Boolean = false,
-        isMine: Boolean = false,
-        createdBy: String = "Johnny Bravo",
-        subjects: Set<Resource<SubjectResource>> = emptySet(),
-        ageRange: AgeRangeResource? = null,
-        description: String? = null
-    ) = CollectionResource(
-        id = id,
-        owner = owner,
-        title = title,
-        videos = videos,
-        updatedAt = updatedAt,
-        public = isPublic,
-        mine = isMine,
-        bookmarked = isBookmarked,
-        createdBy = createdBy,
-        subjects = subjects,
-        ageRange = ageRange,
-        description = description,
-        attachments = emptySet()
-    )
-
     fun aValidId(): String {
         return ObjectId().toHexString()
     }
@@ -408,10 +379,8 @@ object PlaybackResourceFactory {
         StreamPlaybackResource(
             id = "playback-id",
             type = type,
-            thumbnailUrl = "thumbnail-url",
             downloadUrl = downloadUrl,
             duration = Duration.ZERO,
-            streamUrl = "stream-url",
             referenceId = "reference-id",
             _links = null
         )

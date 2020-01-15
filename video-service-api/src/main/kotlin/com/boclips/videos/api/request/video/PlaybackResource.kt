@@ -22,8 +22,6 @@ sealed class PlaybackResource {
     @get:JsonView(PublicApiProjection::class)
     abstract var id: String?
     @get:JsonView(PublicApiProjection::class)
-    abstract var thumbnailUrl: String?
-    @get:JsonView(PublicApiProjection::class)
     abstract var duration: Duration?
     @get:JsonView(PublicApiProjection::class)
     abstract val type: String
@@ -37,11 +35,7 @@ data class StreamPlaybackResource(
     @get:JsonView(PublicApiProjection::class)
     override var id: String?,
     @get:JsonView(PublicApiProjection::class)
-    override var thumbnailUrl: String?,
-    @get:JsonView(PublicApiProjection::class)
     override var duration: Duration?,
-    @get:JsonView(PublicApiProjection::class)
-    val streamUrl: String,
     @get:JsonView(BoclipsInternalProjection::class)
     var referenceId: String?,
     @get:JsonIgnore
@@ -54,8 +48,6 @@ data class YoutubePlaybackResource(
     override val type: String = "YOUTUBE",
     @get:JsonView(PublicApiProjection::class)
     override var id: String?,
-    @get:JsonView(PublicApiProjection::class)
-    override var thumbnailUrl: String?,
     @get:JsonView(PublicApiProjection::class)
     override var duration: Duration?,
     override val _links: Map<String, Link>?

@@ -460,9 +460,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.videos[0].contentProvider").doesNotExist())
             .andExpect(jsonPath("$.videos[0].playback", not(nullValue())))
             .andExpect(jsonPath("$.videos[0].playback.duration", not(nullValue())))
-            .andExpect(jsonPath("$.videos[0].playback.thumbnailUrl", not(isEmptyOrNullString())))
             .andExpect(jsonPath("$.videos[0].subjects", not(nullValue())))
             .andExpect(jsonPath("$.videos[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$.videos[0].playback._links.thumbnail.href", not(isEmptyOrNullString())))
             .andReturn()
     }
 

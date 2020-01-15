@@ -120,10 +120,8 @@ internal class VideoToResourceConverterTest {
 
         val playbackResource = videoResource.playback!! as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")
-        assertThat(playbackResource.thumbnailUrl).isEqualTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/entry-id/width/500/vid_slices/3/vid_slice/1")
         assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(playbackResource.id).isEqualTo("entry-id")
-        assertThat(playbackResource.streamUrl).contains("applehttp")
         assertThat(playbackResource.referenceId).isEqualTo("555")
     }
 
@@ -145,7 +143,6 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.type!!.id).isEqualTo(3)
         assertThat(videoResource.type!!.name).isEqualTo("Instructional Clips")
         assertThat((videoResource.playback!! as YoutubePlaybackResource).type).isEqualTo("YOUTUBE")
-        assertThat((videoResource.playback!! as YoutubePlaybackResource).thumbnailUrl).isEqualTo("youtube-thumbnail")
         assertThat((videoResource.playback!! as YoutubePlaybackResource).duration).isEqualTo(Duration.ofSeconds(21))
         assertThat((videoResource.playback!! as YoutubePlaybackResource).id).isEqualTo("444")
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
