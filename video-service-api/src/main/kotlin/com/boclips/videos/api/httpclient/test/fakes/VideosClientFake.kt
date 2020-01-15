@@ -3,15 +3,16 @@ package com.boclips.videos.api.httpclient.test.fakes
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.SearchVideosRequest
+import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.request.video.YoutubePlaybackResource
+import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
-import feign.FeignException
-import feign.Request
-import feign.RequestTemplate
 import org.springframework.hateoas.PagedResources
+import java.time.LocalDate
 import kotlin.math.ceil
 
 class VideosClientFake : VideosClient, FakeClient<VideoResource> {
@@ -67,6 +68,20 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             id = "${id++}",
             title = createVideoRequest.title,
             description = createVideoRequest.description,
+            contentPartnerId = createVideoRequest.providerId,
+            playback = when (createVideoRequest.playbackProvider) {
+                "YOUTUBE" -> YoutubePlaybackResource(id = createVideoRequest.playbackId)
+                "KALTURA" -> StreamPlaybackResource(
+                    id = createVideoRequest.playbackId,
+                    referenceId = createVideoRequest.playbackProvider,
+                    duration = null
+                )
+                else -> throw IllegalStateException("Could not determine the playback provider ${createVideoRequest.playbackProvider}")
+            },
+            releasedOn = LocalDate.now(),
+            legalRestrictions = createVideoRequest.legalRestrictions,
+            ageRange = AgeRangeResource(min = createVideoRequest.ageRangeMin, max = createVideoRequest.ageRangeMax),
+            contentPartnerVideoId = createVideoRequest.providerVideoId,
             _links = null
         )
 
