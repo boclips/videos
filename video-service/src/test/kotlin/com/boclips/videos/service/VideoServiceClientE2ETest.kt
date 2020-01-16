@@ -131,7 +131,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
         fun `can fetch one and many collections, including details`() {
             val savedVideoId = saveVideo()
             val savedCollectionId = saveCollection(owner = "the@owner.com", public = true)
-            val collectionWithVideos = saveCollection(owner = "another@owner.com", public = true, videos = listOf(savedVideoId.value))
+            val collectionWithVideos =
+                saveCollection(owner = "another@owner.com", public = true, videos = listOf(savedVideoId.value))
 
             val collectionsClient = CollectionsClient.create(
                 apiUrl = "http://localhost:$randomServerPort",
@@ -215,7 +216,11 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val contentPartners = contentPartnersClient.getContentPartners()._embedded.contentPartners;
+            val contentPartners = contentPartnersClient.getContentPartners()._embedded.contentPartners
+
+            val contentPartnerId =
+                contentPartnersClient.getContentPartners()._embedded.contentPartners.toList().first().id
+            assertThat(contentPartnersClient.getContentPartner(contentPartnerId = contentPartnerId)).isNotNull
 
             assertThat(contentPartners).hasSize(2)
             assertThat(contentPartners.map { it.name }).containsExactlyInAnyOrder("TED", "YoutubeChannel")

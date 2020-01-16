@@ -21,6 +21,10 @@ class ContentPartnersClientFake : ContentPartnersClient, FakeClient<ContentPartn
         return ContentPartnersResource(_embedded = ContentPartnerWrapperResource(contentPartners))
     }
 
+    override fun getContentPartner(contentPartnerId: String): ContentPartnerResource {
+        return database[contentPartnerId]!!
+    }
+
     override fun create(createContentPartnerRequest: CreateContentPartnerRequest) {
         val id = "${id++}"
         database[id] = ContentPartnerResource(
