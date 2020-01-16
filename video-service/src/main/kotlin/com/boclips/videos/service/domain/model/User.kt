@@ -8,6 +8,7 @@ open class User(
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
     val isPermittedToShareVideo: Boolean,
+    val eventId: UserId? = null,
     val context: RequestContext,
     val accessRulesSupplier: (user: User) -> AccessRules
 ) {

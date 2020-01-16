@@ -8,8 +8,6 @@ import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.users.client.model.TeacherPlatformAttributes
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
-import com.boclips.videos.api.response.agerange.AgeRangeResource
-import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
@@ -55,7 +53,6 @@ import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import org.bson.types.ObjectId
-import org.springframework.hateoas.Resource
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -537,6 +534,7 @@ object UserFactory {
         boclipsEmployee: Boolean = false,
         isPermittedToViewAnyCollection: Boolean = false,
         isPermittedToShareVideo: Boolean = false,
+        eventId: String? = null,
         accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
                 videoAccess = VideoAccessRule.Everything,
@@ -553,6 +551,7 @@ object UserFactory {
             isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
             isPermittedToShareVideo = isPermittedToShareVideo,
+            eventId = eventId?.let(::UserId),
             accessRulesSupplier = accessRulesSupplier
         )
     }

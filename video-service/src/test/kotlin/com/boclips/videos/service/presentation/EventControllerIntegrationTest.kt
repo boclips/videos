@@ -10,6 +10,7 @@ import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
@@ -30,6 +31,35 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Nested
+    inner class OverridingUserIdViaHeader {
+        @Test
+        fun `it uses user id provided via Boclips-User-Id header in the event`() {
+            val videoId = aValidId()
+
+            val userId = "123"
+            mockMvc.perform(
+                post("/v1/events/playback")
+                    .asApiUser(email = "teacher@gmail.com")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Boclips-User-Id", userId)
+                    .content(
+                        """{
+                            "videoId":"$videoId",
+                            "videoIndex":135,
+                            "segmentStartSeconds":1469.128248,
+                            "segmentEndSeconds":1470.728248
+                        }""".trimIndent()
+                    )
+            )
+                .andExpect(status().isCreated)
+
+            val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
+
+            assertThat(event.userId).isEqualTo(userId)
+        }
+    }
 
     @Nested
     inner class PlaybackEvents {

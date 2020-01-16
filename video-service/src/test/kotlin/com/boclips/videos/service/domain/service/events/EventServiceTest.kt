@@ -393,4 +393,19 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
     }
+
+    @Test
+    fun `events use overriding ID when present`() {
+        val videoId = aValidId()
+        val overridingId = "overriding-id"
+        eventService.publishVideoInteractedWithEvent(
+            videoId = VideoId(videoId),
+            subtype = "share-to-google-classroom",
+            user = UserFactory.sample(id = "user@example.com", eventId = overridingId)
+        )
+
+        val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
+
+        assertThat(event.userId).isEqualTo(overridingId)
+    }
 }
