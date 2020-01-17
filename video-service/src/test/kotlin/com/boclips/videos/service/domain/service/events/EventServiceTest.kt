@@ -14,8 +14,8 @@ import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
@@ -401,7 +401,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         eventService.publishVideoInteractedWithEvent(
             videoId = VideoId(videoId),
             subtype = "share-to-google-classroom",
-            user = UserFactory.sample(id = "user@example.com", eventId = overridingId)
+            user = UserFactory.sample(id = "user@example.com", eventIdSupplier = { overridingId })
         )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)

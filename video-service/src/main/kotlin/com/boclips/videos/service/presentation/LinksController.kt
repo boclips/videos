@@ -2,10 +2,11 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsController
+import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
@@ -29,8 +30,9 @@ class LinksController(
     private val tagsLinkBuilder: TagsLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
+    getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
-) : BaseController(accessRuleService) {
+) : BaseController(accessRuleService, getUserIdOverride) {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
         return Resource(

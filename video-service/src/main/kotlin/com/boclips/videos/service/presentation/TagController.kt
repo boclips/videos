@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
@@ -34,8 +35,9 @@ class TagController(
     private val getTags: GetTags,
     private val createTag: CreateTag,
     private val tagsLinkBuilder: TagsLinkBuilder,
+    getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
-) : BaseController(accessRuleService) {
+) : BaseController(accessRuleService, getUserIdOverride) {
 
     @GetMapping("/{id}")
     fun tag(@PathVariable id: String): Resource<TagResource> =

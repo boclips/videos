@@ -9,14 +9,19 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.service.AccessRuleService
-import com.boclips.videos.service.presentation.support.BoclipsUserIdHeaderExtractor
+import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
 
-open class BaseController(private val accessRuleService: AccessRuleService) {
+open class BaseController(
+    private val accessRuleService: AccessRuleService,
+    private val getUserIdOverride: GetUserIdOverride
+) {
     fun getCurrentUser(): User {
         val userRequest = UserExtractor.getCurrentUserIfNotAnonymous()
         val referer = RefererHeaderExtractor.getReferer()
-        val boclipsUserId = BoclipsUserIdHeaderExtractor.getUserId()
+        val eventIdSupplier = {
+            userRequest?.let(getUserIdOverride::invoke)
+        }
 
         val id = UserId(value = userRequest?.id ?: "anonymousUser")
         return User(
@@ -27,7 +32,7 @@ open class BaseController(private val accessRuleService: AccessRuleService) {
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,
             isPermittedToShareVideo = userRequest?.hasRole(UserRoles.SHARE_VIDEOS) ?: false,
-            eventId = boclipsUserId?.let(::UserId),
+            eventIdSupplier = eventIdSupplier,
             context = RequestContext(origin = referer),
             accessRulesSupplier = { user ->
                 if (user.isAuthenticated) accessRuleService.getRules(user) else AccessRules.anonymousAccess()

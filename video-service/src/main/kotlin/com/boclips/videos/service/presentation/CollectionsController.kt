@@ -19,6 +19,7 @@ import com.boclips.videos.service.application.exceptions.OperationForbiddenExcep
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.projections.WithProjection
@@ -56,8 +57,9 @@ class CollectionsController(
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val collectionResourceFactory: CollectionResourceFactory,
     private val withProjection: WithProjection,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService) {
+    accessRuleService: AccessRuleService,
+    getUserIdOverride: GetUserIdOverride
+) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
     }

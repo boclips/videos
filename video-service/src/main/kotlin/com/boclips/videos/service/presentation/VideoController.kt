@@ -20,6 +20,7 @@ import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.support.Cookies
@@ -60,8 +61,9 @@ class VideoController(
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
     private val videoRepository: VideoRepository,
+    getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
-) : BaseController(accessRuleService) {
+) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500

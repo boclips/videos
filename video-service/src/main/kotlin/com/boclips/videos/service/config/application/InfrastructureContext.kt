@@ -4,7 +4,9 @@ import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
+import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.infrastructure.ApiAccessRuleService
+import com.boclips.videos.service.infrastructure.ApiGetUserIdOverride
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
@@ -30,6 +32,11 @@ class InfrastructureContext(
     @Bean
     fun apiAccessRuleService(userServiceClient: UserServiceClient): ApiAccessRuleService {
         return ApiAccessRuleService(userServiceClient)
+    }
+
+    @Bean
+    fun getUserIdOverride(userServiceClient: UserServiceClient): GetUserIdOverride {
+        return ApiGetUserIdOverride(userServiceClient)
     }
 
     @Bean

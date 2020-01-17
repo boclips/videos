@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
 import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.event.CollectionInteractedWithEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
@@ -24,8 +25,9 @@ class EventController(
     private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
     private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
     private val saveCollectionInteractedWithEvent: SaveCollectionInteractedWithEvent,
+    getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
-) : BaseController(accessRuleService) {
+) : BaseController(accessRuleService, getUserIdOverride) {
 
     @PostMapping("/v1/events/playback")
     fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackDevice: String? = null): ResponseEntity<Void> {

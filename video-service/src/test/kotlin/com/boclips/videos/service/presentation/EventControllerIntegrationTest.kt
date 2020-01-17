@@ -5,6 +5,9 @@ import com.boclips.eventbus.events.collection.CollectionInteractionType
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.users.client.model.Account
+import com.boclips.users.client.model.Organisation
+import com.boclips.users.client.model.User
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
@@ -35,15 +38,50 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class OverridingUserIdViaHeader {
         @Test
-        fun `it uses user id provided via Boclips-User-Id header in the event`() {
+        fun `it uses user id provided via Boclips-User-Id header in the event when organisation allows that`() {
             val videoId = aValidId()
+            val userId = aValidId()
+            val overrideUserId = aValidId()
+            val accountId = aValidId()
 
-            val userId = "123"
+            userServiceClient.addUser(User(userId, accountId, emptyList(), null))
+            userServiceClient.addAccount(Account(accountId, Organisation(true)))
+
             mockMvc.perform(
                 post("/v1/events/playback")
-                    .asApiUser(email = "teacher@gmail.com")
+                    .asApiUser(email = userId)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Boclips-User-Id", userId)
+                    .header("Boclips-User-Id", overrideUserId)
+                    .content(
+                        """{
+                            "videoId":"$videoId",
+                            "segmentStartSeconds":1469.128248,
+                            "segmentEndSeconds":1470.728248
+                        }""".trimIndent()
+                    )
+            )
+                .andExpect(status().isCreated)
+
+            val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
+
+            assertThat(event.userId).isEqualTo(overrideUserId)
+        }
+
+        @Test
+        fun `it does not use id provided in the header if organisation does not allow that`() {
+            val videoId = aValidId()
+            val userId = aValidId()
+            val overrideUserId = aValidId()
+            val accountId = aValidId()
+
+            userServiceClient.addUser(User(userId, accountId, emptyList(), null))
+            userServiceClient.addAccount(Account(accountId, Organisation(false)))
+
+            mockMvc.perform(
+                post("/v1/events/playback")
+                    .asApiUser(email = userId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Boclips-User-Id", overrideUserId)
                     .content(
                         """{
                             "videoId":"$videoId",
