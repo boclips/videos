@@ -23,7 +23,7 @@ class CreateVideoRequestToVideoConverter {
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
             playback = videoPlayback,
-            title =createVideoRequest.title!!,
+            title = createVideoRequest.title!!,
             description = createVideoRequest.description!!,
             keywords = createVideoRequest.keywords!!,
             releasedOn = createVideoRequest.releasedOn!!,
@@ -37,11 +37,10 @@ class CreateVideoRequestToVideoConverter {
             } else {
                 AgeRange.unbounded()
             },
-            subjects =
-                VideoSubjects(
-                    setManually = subjects.isNotEmpty(),
-                    items = subjects.toSet()
-                ),
+            subjects = VideoSubjects(
+                setManually = subjects.isNotEmpty(),
+                items = subjects.toSet()
+            ),
             topics = emptySet(),
             language = null,
             transcript = null,
