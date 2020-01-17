@@ -1,5 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.eventbus.domain.ResourceType
+import com.boclips.eventbus.events.resource.ResourcesSearched
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
@@ -50,18 +52,60 @@ internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationT
                     ),
                     hasLessonPlans = null
                 ),
-                accessRules = AccessRulesFactory.sample(
-                    videoAccessRule = VideoAccessRule.SpecificIds(
-                        setOf(
-                            firstPermittedId,
-                            secondPermittedId
+
+                user = UserFactory.sample(accessRulesSupplier = {
+                    AccessRulesFactory.sample(
+                        videoAccessRule = VideoAccessRule.SpecificIds(
+                            setOf(
+                                firstPermittedId,
+                                secondPermittedId
+                            )
                         )
                     )
-                )
+                })
             )
 
             assertThat(pagedCollectionResult.elements).hasSize(1)
             assertThat(pagedCollectionResult.elements.first().videos).containsExactly(firstPermittedId)
+        }
+
+        @Test
+        fun `when searching collections it sends a ResourcesSearched event`() {
+            val collectionId = saveCollection(
+                title = "a collection", videos = listOf(
+                    TestFactories.createVideoId().value,
+                    TestFactories.createVideoId().value
+                )
+            )
+
+            val collectionSearchQuery = CollectionSearchQuery(
+                text = "a collection",
+                pageSize = 1,
+                pageIndex = 0,
+                subjectIds = emptyList(),
+                permittedCollections = null,
+                visibilityForOwners = setOf(
+                    VisibilityForOwner(
+                        owner = null,
+                        visibility = CollectionVisibilityQuery.privateOnly()
+                    )
+                ),
+                hasLessonPlans = null
+            )
+
+            collectionReadService.search(
+                query = collectionSearchQuery,
+                user = UserFactory.sample(id = "user-id-34")
+            )
+
+            val event = fakeEventBus.getEventOfType(ResourcesSearched::class.java)
+            assertThat(event.query).isEqualTo("a collection")
+            assertThat(event.resourceType).isEqualTo(ResourceType.COLLECTION)
+            assertThat(event.pageIndex).isEqualTo(0)
+            assertThat(event.pageSize).isEqualTo(1)
+            assertThat(event.totalResults).isEqualTo(1)
+            assertThat(event.pageResourceIds).containsExactly(collectionId.value)
+            assertThat(event.userId).isEqualTo("user-id-34")
         }
     }
 

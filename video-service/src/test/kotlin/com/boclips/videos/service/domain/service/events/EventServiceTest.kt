@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.events
 
+import com.boclips.eventbus.domain.ResourceType
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.eventbus.events.collection.CollectionInteractedWith
@@ -9,6 +10,7 @@ import com.boclips.eventbus.events.collection.CollectionSubjectsChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
+import com.boclips.eventbus.events.resource.ResourcesSearched
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -58,6 +60,29 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.totalResults).isEqualTo(20)
         assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.pageVideoIds).containsExactly("v123")
+    }
+
+    @Test
+    fun saveResourcesSearched() {
+        eventService.saveResourcesSearched(
+            resourceType = ResourceType.COLLECTION,
+            query = "Turtles",
+            pageIndex = 40,
+            pageSize = 2,
+            totalResults= 400,
+            pageResourceIds = listOf("id-1","id-2","id-89"),
+            user = UserFactory.sample( id = "waterloo-3")
+        )
+
+        val event = fakeEventBus.getEventOfType(ResourcesSearched::class.java)
+
+        assertThat(event.resourceType).isEqualTo(ResourceType.COLLECTION)
+        assertThat(event.query).isEqualTo("Turtles")
+        assertThat(event.pageIndex).isEqualTo(40)
+        assertThat(event.pageSize).isEqualTo(2)
+        assertThat(event.totalResults).isEqualTo(400)
+        assertThat(event.userId).isEqualTo("waterloo-3")
+        assertThat(event.pageResourceIds).containsExactly("id-1","id-2","id-89")
     }
 
     @Test

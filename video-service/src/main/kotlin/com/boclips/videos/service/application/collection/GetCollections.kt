@@ -26,6 +26,6 @@ class GetCollections(
             user = user
         )
 
-        return collectionReadService.search(assembledQuery, user.accessRules)
+        return collectionReadService.search(assembledQuery, user)
     }
 }

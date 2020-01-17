@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.events
 
 import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.domain.ResourceType
 import com.boclips.eventbus.events.base.AbstractEventWithUserId
 import com.boclips.eventbus.events.collection.CollectionAgeRangeChanged
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
@@ -16,6 +17,7 @@ import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
+import com.boclips.eventbus.events.resource.ResourcesSearched
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -31,6 +33,7 @@ import com.boclips.videos.service.domain.service.EventConverter
 import java.time.ZonedDateTime
 
 class EventService(val eventBus: EventBus) {
+
     fun saveSearchEvent(
         query: String,
         pageIndex: Int,
@@ -50,6 +53,27 @@ class EventService(val eventBus: EventBus) {
                 user = user
             )
         )
+    }
+
+    fun saveResourcesSearched(
+        resourceType: ResourceType,
+        query: String,
+        pageIndex: Int,
+        pageSize: Int,
+        totalResults: Long,
+        pageResourceIds: List<String>,
+        user: User
+    ) {
+        eventBus.publish(msg(
+            builder = ResourcesSearched.builder()
+                .resourceType(resourceType)
+                .query(query)
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .pageResourceIds(pageResourceIds)
+                .totalResults(totalResults),
+            user = user
+        ))
     }
 
     fun saveCollectionCreatedEvent(collection: Collection) {

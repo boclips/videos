@@ -1,27 +1,31 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.eventbus.domain.ResourceType
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
-import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
 class CollectionReadService(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService,
-    private val collectionAccessService: CollectionAccessService
+    private val collectionAccessService: CollectionAccessService,
+    private val eventService: EventService
 ) {
     companion object : KLogging()
 
-    fun search(query: CollectionSearchQuery, accessRules: AccessRules): Page<Collection> {
+    fun search(query: CollectionSearchQuery, user: User): Page<Collection> {
+
+        val accessRules = user.accessRules
         val searchRequest = PaginatedSearchRequest(
             query = query.toSearchQuery(),
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
@@ -31,6 +35,16 @@ class CollectionReadService(
         val collections = collectionRepository.findAll(collectionIds).map {
             withPermittedVideos(it, accessRules.videoAccess)
         }
+
+        eventService.saveResourcesSearched(
+            resourceType = ResourceType.COLLECTION,
+            query = query.toSearchQuery().phrase,
+            pageIndex = query.pageIndex,
+            pageSize = query.pageSize,
+            totalResults = collectionIds.size.toLong(),
+            pageResourceIds = collectionIds.map{collectionId ->  collectionId.value},
+            user = user
+        )
 
         logger.info { "Returning ${collections.size} collections for query $query" }
 

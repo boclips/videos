@@ -13,10 +13,10 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
+import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.collection.CollectionRepositoryEventsDecorator
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
@@ -61,9 +61,10 @@ class DomainContext(
     fun collectionReadService(
         collectionRepository: CollectionRepository,
         collectionSearchService: CollectionSearchService,
-        collectionAccessService: CollectionAccessService
+        collectionAccessService: CollectionAccessService,
+        eventService: EventService
     ): CollectionReadService {
-        return CollectionReadService(collectionRepository, collectionSearchService, collectionAccessService)
+        return CollectionReadService(collectionRepository, collectionSearchService, collectionAccessService, eventService)
     }
 
     @Bean
