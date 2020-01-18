@@ -12,7 +12,7 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.spring.io/libs-release/' }
+    maven { url 'http://repo.spring.io/libs-release/' }
 }
 
 test {
@@ -22,7 +22,7 @@ test {
 ext["junit-jupiter.version"] = junitVersion
 
 dependencies {
-    api group: 'io.github.openfeign', name: 'feign-core', version: '10.7.0'
+    implementation group: 'io.github.openfeign', name: 'feign-core', version: '10.7.0'
     implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '10.7.0'
     implementation group: 'io.github.openfeign', name: 'feign-okhttp', version: '10.7.0'
     implementation group: 'io.github.openfeign', name: 'feign-slf4j', version: '10.7.0'
