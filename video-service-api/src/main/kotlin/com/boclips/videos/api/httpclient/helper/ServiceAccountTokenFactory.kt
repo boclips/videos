@@ -14,7 +14,7 @@ class ServiceAccountTokenFactory(serviceAccountCredentials: ServiceAccountCreden
             refreshToken()
         }
 
-        return currentToken.access_token
+        return currentToken.access_token!!
     }
 
     private fun shouldRefreshToken(): Boolean {
@@ -27,7 +27,7 @@ class ServiceAccountTokenFactory(serviceAccountCredentials: ServiceAccountCreden
 
     private fun hasTokenExpired(previousRefreshTime: Instant): Boolean {
         val timeElapsed: Long = Duration.between(previousRefreshTime, Instant.now()).toMillis()
-        return timeElapsed > currentToken.expires_in
+        return timeElapsed > currentToken.expires_in!!
     }
 
     private fun refreshToken() {

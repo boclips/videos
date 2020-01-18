@@ -1,5 +1,6 @@
 package com.boclips.videos.api.httpclient.helper
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Feign
 import feign.Headers
@@ -18,9 +19,12 @@ interface KeycloakClient {
 
     companion object {
         fun create(
-            credentials: ServiceAccountCredentials,
-            objectMapper: ObjectMapper = ObjectMapperDefinition.default()
+            credentials: ServiceAccountCredentials
         ): KeycloakClient {
+            val objectMapper = ObjectMapper().apply {
+                this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            }
+
             return Feign.builder()
                 .client(OkHttpClient())
                 .encoder(FormEncoder())
@@ -37,5 +41,5 @@ interface KeycloakClient {
     }
 }
 
-data class TokenResponse(var access_token: String, var expires_in: Int)
+data class TokenResponse(var access_token: String? = null, var expires_in: Int? = null)
 data class TokenRequest(var grant_type: String? = "client_credentials")
