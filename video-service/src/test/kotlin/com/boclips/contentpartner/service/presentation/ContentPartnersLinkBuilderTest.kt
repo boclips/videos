@@ -27,7 +27,7 @@ class ContentPartnersLinkBuilderTest {
         val link = contentPartnersLinkBuilder.contentPartnersLink()!!
 
         assertThat(link.href).endsWith("/v1/content-partners{?name,official,accreditedToYtChannelId}")
-        assertThat(link.rel).isEqualTo(ContentPartnersLinkBuilder.Rels.CONTENT_PARTNERS)
+        assertThat(link.rel.value()).isEqualTo(ContentPartnersLinkBuilder.Rels.CONTENT_PARTNERS)
         assertThat(link.isTemplated).isTrue()
     }
 }

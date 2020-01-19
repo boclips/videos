@@ -13,8 +13,8 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
-import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -40,13 +40,13 @@ class TagController(
 ) : BaseController(accessRuleService, getUserIdOverride) {
 
     @GetMapping("/{id}")
-    fun tag(@PathVariable id: String): Resource<TagResource> =
-        getTag(id).let { Resource(it, tagsLinkBuilder.tag(it, "self")) }
+    fun tag(@PathVariable id: String): EntityModel<TagResource> =
+        getTag(id).let { EntityModel(it, tagsLinkBuilder.tag(it, "self")) }
 
     @GetMapping
-    fun tags(): Resources<Resource<TagResource>> {
-        return Resources(
-            getTags().map { Resource(it, tagsLinkBuilder.tag(it, "self")) },
+    fun tags(): CollectionModel<EntityModel<TagResource>> {
+        return CollectionModel(
+            getTags().map { EntityModel(it, tagsLinkBuilder.tag(it, "self")) },
             tagsLinkBuilder.tags("self")
         )
     }

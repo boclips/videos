@@ -24,7 +24,7 @@ import com.boclips.videos.service.presentation.converters.CollectionResourceFact
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.projections.WithProjection
 import mu.KLogging
-import org.springframework.hateoas.PagedResources
+import org.springframework.hateoas.PagedModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -79,7 +79,7 @@ class CollectionsController(
     }
 
     @GetMapping
-    fun getFilteredCollections(collectionFilterRequest: CollectionFilterRequest): MappingJacksonValue {
+    fun getFilteredCollections(collectionFilterRequest: CollectionFilterRequest): ResponseEntity<MappingJacksonValue> {
         val user = getCurrentUser()
 
         if (!user.isAuthenticated) {
@@ -88,7 +88,7 @@ class CollectionsController(
 
         val collections: Page<Collection> = getCollections(collectionFilterRequest, user)
 
-        return withProjection(
+        val payload = withProjection(
             CollectionsResource(
                 _embedded = CollectionsWrapperResource(collections.elements.map {
                     collectionResourceFactory.buildCollectionResource(
@@ -97,7 +97,7 @@ class CollectionsController(
                         user
                     )
                 }),
-                page = PagedResources.PageMetadata(
+                page = PagedModel.PageMetadata(
                     collections.pageInfo.pageRequest.size.toLong(),
                     collections.pageInfo.pageRequest.page.toLong(),
                     collections.pageInfo.totalElements,
@@ -108,9 +108,11 @@ class CollectionsController(
                     collectionsLinkBuilder.projections().details(),
                     collectionsLinkBuilder.self(null),
                     collectionsLinkBuilder.next(collections.pageInfo)
-                ).map { it.rel to it }.toMap()
+                ).map { it.rel.value() to it }.toMap()
             )
         )
+
+        return ResponseEntity(payload, HttpStatus.OK)
     }
 
     @PostMapping

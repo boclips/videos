@@ -8,7 +8,6 @@ import javax.validation.Validation
 import javax.validation.Validator
 
 class CreateContentPartnerRequestTest {
-
     private lateinit var validator: Validator
 
     @BeforeEach

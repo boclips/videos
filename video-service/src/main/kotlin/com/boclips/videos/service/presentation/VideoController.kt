@@ -28,7 +28,7 @@ import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
-import org.springframework.hateoas.PagedResources
+import org.springframework.hateoas.PagedModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -120,7 +120,7 @@ class VideoController(
                 .elements.toList()
                 .map { video -> videoToResourceConverter.convertVideo(video, getCurrentUser()) }),
             _links = null,
-            page = PagedResources.PageMetadata(
+            page = PagedModel.PageMetadata(
                 pageSize.toLong(),
                 pageNumber.toLong(),
                 videos.pageInfo.totalElements
@@ -154,14 +154,14 @@ class VideoController(
             )
         }
 
-        return ResponseEntity(
-            withProjection(
-                searchVideo.byId(id, getCurrentUser())
-                    .let { videoToResourceConverter.convertVideo(it, getCurrentUser()) }
-            ),
-            headers,
-            HttpStatus.OK
+        val resources: VideoResource = searchVideo.byId(id, getCurrentUser())
+            .let { videoToResourceConverter.convertVideo(it, getCurrentUser()) }
+
+        val body: MappingJacksonValue = withProjection(
+            resources
         )
+
+        return ResponseEntity(body, headers, HttpStatus.OK)
     }
 
     @DeleteMapping("/v1/videos/{id}")
@@ -226,7 +226,7 @@ class VideoController(
     }
 
     @PatchMapping(path = ["/v1/videos/{id}"], params = ["rating"])
-    fun patchRating(@RequestParam rating: Int?, @PathVariable id: String) =
+    fun patchRating(@RequestParam(required = true) rating: Int?, @PathVariable id: String) =
         rateVideo(
             rateVideoRequest = RateVideoRequest(rating = rating, videoId = id),
             user = getCurrentUser()

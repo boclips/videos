@@ -12,7 +12,7 @@ import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import org.springframework.hateoas.Resource
+import org.springframework.hateoas.EntityModel
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,8 +34,8 @@ class LinksController(
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
     @GetMapping
-    fun get(request: SecurityContextHolderAwareRequestWrapper): Resource<String> {
-        return Resource(
+    fun get(request: SecurityContextHolderAwareRequestWrapper): EntityModel<String> {
+        return EntityModel(
             "", listOfNotNull(
                 videosLinkBuilder.videoLink(),
                 collectionsLinkBuilder.publicCollections(),

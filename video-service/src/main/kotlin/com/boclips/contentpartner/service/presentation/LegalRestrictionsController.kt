@@ -6,11 +6,11 @@ import com.boclips.contentpartner.service.application.FindLegalRestrictions
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.response.contentpartner.LegalRestrictionsResource
 import com.boclips.videos.service.config.security.UserRoles
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
-import org.springframework.hateoas.core.DummyInvocationUtils.methodOn
-import org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.ControllerLinkBuilder.methodOn
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,25 +31,25 @@ class LegalRestrictionsController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun post(@RequestParam text: String?): Resource<LegalRestrictionsResource> {
+    fun post(@RequestParam text: String?): EntityModel<LegalRestrictionsResource> {
         return createLegalRestrictions(text = text).hateoas()
     }
 
     @GetMapping
-    fun getAll(): Resources<LegalRestrictionsResource> {
-        return Resources(findAllLegalRestrictions(), listOfNotNull(createLink()))
+    fun getAll(): CollectionModel<LegalRestrictionsResource> {
+        return CollectionModel(findAllLegalRestrictions(), listOfNotNull(createLink()))
     }
 
     @GetMapping("/{id}")
-    fun getOne(@PathVariable("id") id: String): ResponseEntity<Resource<LegalRestrictionsResource>> {
+    fun getOne(@PathVariable("id") id: String): ResponseEntity<EntityModel<LegalRestrictionsResource>> {
         val resource = findLegalRestrictions(id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
         return ResponseEntity(resource.hateoas(), HttpStatus.OK)
     }
 
     companion object {
 
-        fun LegalRestrictionsResource.hateoas(): Resource<LegalRestrictionsResource> {
-            return Resource(
+        fun LegalRestrictionsResource.hateoas(): EntityModel<LegalRestrictionsResource> {
+            return EntityModel(
                 this,
                 getOneLink(this.id)
             )

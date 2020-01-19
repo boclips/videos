@@ -24,16 +24,13 @@ class AttachmentToResourceConverterTest {
                 attachmentsLinkBuilder
             )
 
-        val resources = attachmentToResourceConverter.wrapAttachmentsInResource(setOf(attachment))
+        val resource = attachmentToResourceConverter.convert(attachment)
 
-        val resource = resources.first()
-        assertThat(resources).hasSize(1)
-
-        assertThat(resource.content.id).isEqualTo("id")
-        assertThat(resource.content.type).isEqualTo("LESSON_PLAN")
-        assertThat(resource.content.description).isEqualTo("description")
-        assertThat(resource.links).hasSize(1)
-        assertThat(resource.links[0].rel).isEqualTo("download")
-        assertThat(resource.links[0].href).isEqualTo("http://test.com")
+        assertThat(resource.id).isEqualTo("id")
+        assertThat(resource.type).isEqualTo("LESSON_PLAN")
+        assertThat(resource.description).isEqualTo("description")
+        assertThat(resource._links).hasSize(1)
+        assertThat(resource._links!!["download"]).isNotNull
+        assertThat(resource._links!!["download"]?.href).isEqualTo("http://test.com")
     }
 }

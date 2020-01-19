@@ -1,77 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
-    <suppress until="2020-04-01Z">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <suppress>
         <notes><![CDATA[
-            File name: elasticsearch-6.5.4.jar
-
-            This vulnerability is related clusters that configure  xpack.security.dls_fls.enabled  to false.
-            This option is set to true by default and we do not override that setting anywhere. See the link for reference:
-            https://www.elastic.co/guide/en/elasticsearch/reference/6.5/security-settings.html#field-document-security-settings
-
-            AO: We'd need to upgrade our elasticsearch services in order to upgrade this too.
-      ]]></notes>
-        <cpe>cpe:/a:elasticsearch:elasticsearch:6.5.4</cpe>
-        <cve>CVE-2019-7611</cve>
+   file name: libthrift-0.12.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.thrift/libthrift@.*$</packageUrl>
+        <vulnerabilityName>CVE-2019-0205</vulnerabilityName>
     </suppress>
-    <suppress until="2020-04-01Z">
+    <suppress>
         <notes><![CDATA[
-            file name: kotlin-reflect-1.3.10.jar
-
-            AO: This jar has been updated in our dependency file.
-       ]]></notes>
-        <gav regex="true">^org\.jetbrains\.kotlin:kotlin-reflect:1.3.10.*$</gav>
-        <cpe>cpe:/a:jetbrains:kotlin</cpe>
+   file name: libthrift-0.12.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.thrift/libthrift@.*$</packageUrl>
+        <vulnerabilityName>CVE-2019-0210</vulnerabilityName>
     </suppress>
-    <suppress until="2020-04-01Z">
+    <suppress>
         <notes><![CDATA[
-            File name: spring-security-*.jar in combination with Spring Framework 5.0.5.RELEASE
-
-            Affects Spring Framework 5.0.5.RELEASE only.
-            AO: However it still flags a false positive with a newer release (5.1.6.RELEASE)
-            So we'll need to leave it here for now.
-        ]]></notes>
-        <gav regex="true">^org\.springframework\.security:spring-security-.*:.*$</gav>
+   file name: tomcat-embed-websocket-9.0.29.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-websocket@.*$</packageUrl>
+        <cve>CVE-2019-17563</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: tomcat-embed-core-9.0.29.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-core@.*$</packageUrl>
+        <cve>CVE-2019-17563</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-transport-native-epoll:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-transport\-native\-epoll@.*$</packageUrl>
+        <cve>CVE-2019-16869</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec-http2:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec\-http2@.*$</packageUrl>
+        <cve>CVE-2019-16869</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-handler-proxy:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-handler\-proxy@.*$</packageUrl>
+        <cve>CVE-2019-16869</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: spring-security-web-5.2.1.RELEASE.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-web@.*$</packageUrl>
         <cve>CVE-2018-1258</cve>
     </suppress>
-    <suppress until="2020-04-01Z">
+    <suppress>
         <notes><![CDATA[
-            file name: grpc-netty-shaded-1.23.0.jar
-
-            AO: This is bought in from the event-bus dependency.
+   file name: spring-security-config-5.2.1.RELEASE.jar
    ]]></notes>
-        <gav regex="true">^io\.grpc:grpc-netty-shaded:.*$</gav>
-        <cve>CVE-2015-2156</cve>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-config@.*$</packageUrl>
+        <cve>CVE-2018-1258</cve>
     </suppress>
-    <suppress until="2020-04-01Z">
+    <suppress>
         <notes><![CDATA[
-            file name: event-bus-1.32.2.jar (shaded: io.netty:netty-tcnative-boringssl-static:2.0.22.Final)
-
-            AO: This is bought in from the event-bus dependency.
+   file name: spring-security-core-5.2.1.RELEASE.jar
    ]]></notes>
-        <gav regex="true">^io\.netty:netty-tcnative-boringssl-static:.*$</gav>
-        <cve>CVE-2015-2156</cve>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-core@.*$</packageUrl>
+        <cve>CVE-2018-1258</cve>
     </suppress>
-    <suppress until="2019-12-01Z">
+    <suppress>
         <notes><![CDATA[
-            file name: jackson-databind-2.9.10.jar
-
-            AO: https://github.com/FasterXML/jackson-databind/issues/2478 They indicate a fix should be issued around the 19th october
-      ]]></notes>
-        <gav regex="true">^com\.fasterxml\.jackson\.core:jackson-databind:.*$</gav>
-        <cpe>cpe:/a:fasterxml:jackson</cpe>
+   file name: zookeeper-3.4.13.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper@.*$</packageUrl>
+        <vulnerabilityName>CVE-2019-0201</vulnerabilityName>
     </suppress>
-    <suppress until="2019-12-01Z">
+    <suppress>
         <notes><![CDATA[
-      File name: jackson-mapper-asl-1.9.13.jar
-
-      We need to wait for Spring Security OAuth2 to update their dependency.
-      ]]></notes>
-        <cpe>cpe:/a:fasterxml:jackson:1.9.13</cpe>
-        <cve>CVE-2017-17485</cve>
-        <cve>CVE-2018-5968</cve>
-        <cve>CVE-2017-15095</cve>
-        <cve>CVE-2018-14718</cve>
-        <cve>CVE-2018-7489</cve>
-        <cve>CVE-2017-7525</cve>
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-transport-native-unix-common:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-transport\-native\-unix\-common@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-transport:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-transport@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-buffer:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-buffer@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec-http:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec\-http@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-handler:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-handler@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec-socks:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec\-socks@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-resolver:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-resolver@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-common:4.1.38.Final)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-common@.*$</packageUrl>
+        <cpe>cpe:/a:netty:netty</cpe>
     </suppress>
 </suppressions>

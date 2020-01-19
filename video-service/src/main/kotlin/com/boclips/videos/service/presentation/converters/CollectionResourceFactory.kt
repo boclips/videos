@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.collection.CollectionResource
+import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -9,8 +10,7 @@ import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 
 class CollectionResourceFactory(
     private val videoToResourceConverter: VideoToResourceConverter,
-    private val subjectToResourceConverter: SubjectToResourceConverter,
-    private val attachmentToResourceConverter: AttachmentToResourceConverter,
+    private val attachmentsToResourceConverter: AttachmentToResourceConverter,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val videoService: VideoService
 ) {
@@ -34,10 +34,10 @@ class CollectionResourceFactory(
             mine = collection.isOwner(user),
             bookmarked = collection.isBookmarkedBy(user),
             createdBy = collection.createdBy(),
-            subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
+            subjects = collection.subjects.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
-            attachments = attachmentToResourceConverter.wrapAttachmentsInResource(collection.attachments),
+            attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
             _links = listOfNotNull(
                 collectionsLinkBuilder.self(collection.id.value),
                 collectionsLinkBuilder.editCollection(collection, user),
@@ -47,7 +47,7 @@ class CollectionResourceFactory(
                 collectionsLinkBuilder.bookmark(collection, user),
                 collectionsLinkBuilder.unbookmark(collection, user),
                 collectionsLinkBuilder.interactedWith(collection)
-            ).map { it.rel to it }.toMap()
+            ).map { it.rel.value() to it }.toMap()
         )
     }
 
@@ -65,10 +65,10 @@ class CollectionResourceFactory(
             mine = collection.isOwner(user),
             bookmarked = collection.isBookmarkedBy(user),
             createdBy = collection.createdBy(),
-            subjects = subjectToResourceConverter.wrapSubjectIdsInResource(collection.subjects),
+            subjects = collection.subjects.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
-            attachments = attachmentToResourceConverter.wrapAttachmentsInResource(collection.attachments),
+            attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
             _links = listOfNotNull(
                 collectionsLinkBuilder.self(collection.id.value),
                 collectionsLinkBuilder.editCollection(collection, user),
@@ -78,7 +78,7 @@ class CollectionResourceFactory(
                 collectionsLinkBuilder.bookmark(collection, user),
                 collectionsLinkBuilder.unbookmark(collection, user),
                 collectionsLinkBuilder.interactedWith(collection)
-            ).map { it.rel to it }.toMap()
+            ).map { it.rel.value() to it }.toMap()
         )
     }
 }

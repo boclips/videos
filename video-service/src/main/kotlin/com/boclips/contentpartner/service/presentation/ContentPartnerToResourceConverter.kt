@@ -26,7 +26,7 @@ class ContentPartnerToResourceConverter(private val contentPartnersLinkBuilder: 
             ),
             currency = if (user.isPermittedToAccessBackoffice)
                 contentPartner.remittance?.currency?.currencyCode else null,
-            _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value)).map { it.rel to it }.toMap()
+            _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value)).map { it.rel.value() to it }.toMap()
         )
     }
 }

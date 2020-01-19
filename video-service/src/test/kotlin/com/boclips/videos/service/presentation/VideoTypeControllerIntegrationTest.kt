@@ -12,14 +12,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class VideoTypeControllerIntegrationTest : AbstractSpringIntegrationTest() {
-    val targetUrl = "/v1/video-types"
-
     @Autowired
     lateinit var mockMvc: MockMvc
 
     @Test
     fun `returns available video types for authenticated API users`() {
-        mockMvc.perform(get(targetUrl).asApiUser())
+        mockMvc.perform(get("/v1/video-types").asApiUser())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videoTypes", hasSize<Any>(3)))
             .andExpect(jsonPath("$._embedded.videoTypes", containsInAnyOrder("NEWS", "STOCK", "INSTRUCTIONAL")))
@@ -27,7 +25,7 @@ class VideoTypeControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns a 403 response for unauthenticated users`() {
-        mockMvc.perform(get(targetUrl))
+        mockMvc.perform(get("/v1/video-types"))
             .andExpect(status().isForbidden)
     }
 }

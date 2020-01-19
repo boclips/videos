@@ -11,7 +11,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
-import org.springframework.hateoas.PagedResources
+import org.springframework.hateoas.PagedModel
 import java.time.LocalDate
 import kotlin.math.ceil
 
@@ -39,7 +39,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             _embedded = VideosWrapperResource(
                 database.values.toList().drop(pageNumber * pageSize).take((pageNumber + 1) * pageSize)
             ),
-            page = PagedResources.PageMetadata(
+            page = PagedModel.PageMetadata(
                 pageSize.toLong(),
                 pageNumber.toLong(),
                 database.values.size.toLong(),

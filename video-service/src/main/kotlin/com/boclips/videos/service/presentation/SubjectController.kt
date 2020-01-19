@@ -16,7 +16,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
-import org.springframework.hateoas.Resource
+import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -44,8 +44,8 @@ class SubjectController(
 ) : BaseController(accessRuleService, getUserIdOverride) {
 
     @GetMapping("/{id}")
-    fun subject(@PathVariable id: String): Resource<SubjectResource> =
-        getSubject(id).let { Resource(it, subjectsLinkBuilder.self(it)) }
+    fun subject(@PathVariable id: String): EntityModel<SubjectResource> =
+        getSubject(id).let { EntityModel(it, subjectsLinkBuilder.self(it)) }
 
     @GetMapping
     fun subjects(): SubjectsResource {
@@ -55,13 +55,13 @@ class SubjectController(
                     subjectsLinkBuilder.self(it),
                     subjectsLinkBuilder.updateSubject(it)
                 )
-                    .map { it.rel to it }.toMap()
+                    .map { it.rel.value() to it }.toMap()
             )
         }
 
         return SubjectsResource(
             _embedded = SubjectsWrapperResource(subjectResources),
-            _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel to it }.toMap()
+            _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel.value() to it }.toMap()
         )
     }
 

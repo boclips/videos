@@ -9,11 +9,11 @@ object DistributionMethodResourceConverter {
     }
 
     fun toDeliveryMethodResources(distributionMethods: Set<DistributionMethod>): Set<DistributionMethodResource> {
-        return distributionMethods.map { toResource(it) }.toSet()
+        return distributionMethods.map { toModel(it) }.toSet()
     }
 
     //TODO: should be private
-    fun toResource(distributionMethod: DistributionMethod) =
+    fun toModel(distributionMethod: DistributionMethod) =
         when (distributionMethod) {
             DistributionMethod.DOWNLOAD -> DistributionMethodResource.DOWNLOAD
             DistributionMethod.STREAM -> DistributionMethodResource.STREAM

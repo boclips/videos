@@ -22,6 +22,6 @@ class AttachmentsLinkBuilderTest {
         val link: Link = linkBuilder.download(attachment)
 
         assertThat(link.href).isEqualTo("http://example.com/download")
-        assertThat(link.rel).isEqualTo("download")
+        assertThat(link.rel.value()).isEqualTo("download")
     }
 }

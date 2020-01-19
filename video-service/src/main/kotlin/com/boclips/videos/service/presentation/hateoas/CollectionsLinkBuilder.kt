@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.EventController
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.mvc.ControllerLinkBuilder
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.stereotype.Component
 
 @Component
@@ -192,8 +192,8 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             Link(href, "unbookmark")
         }
 
-    fun interactedWith(collection: Collection): Link = ControllerLinkBuilder.linkTo(
-        ControllerLinkBuilder.methodOn(EventController::class.java)
+    fun interactedWith(collection: Collection): Link = WebMvcLinkBuilder.linkTo(
+        WebMvcLinkBuilder.methodOn(EventController::class.java)
             .logCollectionInteractedWithEvent(collectionId = collection.id.value, data = null)
     ).withRel(Rels.LOG_COLLECTION_INTERACTION)
 

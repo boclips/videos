@@ -11,7 +11,7 @@ import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.SE
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.VIDEO
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.mvc.ControllerLinkBuilder
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
 class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     object Rels {
@@ -56,15 +56,15 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun adminSearchLink() = getIfHasRole(UserRoles.VIEW_DISABLED_VIDEOS) {
-        ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
+        WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(VideoController::class.java)
                 .adminSearch(null)
         ).withRel(Rels.ADMIN_SEARCH)
     }
 
     fun adminVideoSearchLink() = getIfHasRole(UserRoles.VIEW_DISABLED_VIDEOS) {
-        ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
+        WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(VideoController::class.java)
                 .adminSearch(null)
         ).withRel(Rels.ADMIN_VIDEO_SEARCH)
     }
@@ -73,8 +73,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         !currentUserHasRole(UserRoles.DOWNLOAD_TRANSCRIPT) -> null
         !video.hasTranscript() -> null
 
-        else -> ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
+        else -> WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(VideoController::class.java)
                 .getTranscript(video.videoId.value)
         ).withRel(Rels.TRANSCRIPT)
     }
@@ -82,9 +82,12 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     fun rateLink(video: Video) =
         getIfAuthenticated {
             getIfHasRole(UserRoles.RATE_VIDEOS) {
-                ControllerLinkBuilder.linkTo(
-                    ControllerLinkBuilder.methodOn(VideoController::class.java)
-                        .patchRating(null, video.videoId.value)
+                Link(
+                    getVideosRoot()
+                        .pathSegment(video.videoId.value)
+                        .queryParam("rating", "{rating}")
+                        .build()
+                        .toUriString()
                 ).withRel(Rels.RATE)
             }
         }
@@ -93,8 +96,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         !currentUserHasRole(UserRoles.TAG_VIDEOS) -> null
         video.tags.isNotEmpty() -> null
 
-        else -> ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(VideoController::class.java)
+        else -> WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(VideoController::class.java)
                 .patchTag(video.videoId.value, null)
         ).withRel(Rels.TAG)
     }

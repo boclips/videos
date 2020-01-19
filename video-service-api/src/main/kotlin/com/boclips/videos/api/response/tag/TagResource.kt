@@ -1,6 +1,6 @@
 package com.boclips.videos.api.response.tag
 
-import org.springframework.hateoas.core.Relation
+import org.springframework.hateoas.server.core.Relation
 
 @Relation(collectionRelation = "tags")
 data class TagResource(

@@ -17,7 +17,7 @@ class VideoTypeLinkBuilderIntegrationTest : AbstractSpringIntegrationTest() {
 
         val link = videoTypeLinkBuilder.videoTypes()
 
-        assertThat(link?.rel).isEqualTo("videoTypes")
+        assertThat(link?.rel?.value()).isEqualTo("videoTypes")
         assertThat(link?.href).endsWith("/v1/video-types")
     }
 }

@@ -9,8 +9,8 @@ import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubje
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
-import org.springframework.hateoas.Resource
-import org.springframework.hateoas.Resources
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -37,9 +37,9 @@ class DisciplinesController(
 ) : BaseController(accessRuleService, getUserIdOverride) {
 
     @GetMapping("/{id}")
-    fun discipline(@PathVariable id: String): Resource<DisciplineResource> =
+    fun discipline(@PathVariable id: String): EntityModel<DisciplineResource> =
         getDiscipline(id).let {
-            Resource(
+            EntityModel(
                 it,
                 listOfNotNull(
                     disciplinesLinkBuilder.discipline(it, "self"),
@@ -49,9 +49,9 @@ class DisciplinesController(
         }
 
     @GetMapping
-    fun disciplines(): Resources<Resource<DisciplineResource>> {
-        return Resources(
-            getDisciplines().map { Resource(it) },
+    fun disciplines(): CollectionModel<EntityModel<DisciplineResource>> {
+        return CollectionModel(
+            getDisciplines().map { EntityModel(it) },
             listOfNotNull(disciplinesLinkBuilder.disciplines("self"))
         )
     }

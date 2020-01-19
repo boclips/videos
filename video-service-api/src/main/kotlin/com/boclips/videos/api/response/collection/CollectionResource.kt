@@ -5,8 +5,8 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.Resource
 import java.time.ZonedDateTime
 
 data class CollectionResource(
@@ -20,10 +20,10 @@ data class CollectionResource(
     val bookmarked: Boolean? = null,
     val mine: Boolean? = null,
     val createdBy: String? = null,
-    val subjects: Set<Resource<SubjectResource>>,
+    val subjects: Set<SubjectResource>,
     val ageRange: AgeRangeResource?,
     val description: String? = null,
-    val attachments: Set<Resource<AttachmentResource>>?,
+    val attachments: Set<AttachmentResource>?,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, Link>? = null

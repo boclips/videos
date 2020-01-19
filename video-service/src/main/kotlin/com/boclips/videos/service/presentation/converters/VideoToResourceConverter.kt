@@ -43,7 +43,7 @@ class VideoToResourceConverter(
             yourRating = video.ratings.firstOrNull { it.userId == user.id }?.rating?.toDouble(),
             bestFor = video.tags.map { TagResource(it.tag.label) },
             promoted = video.promoted,
-            _links = (resourceLinks(video.videoId.value) + actionLinks(video)).map { it.rel to it }.toMap()
+            _links = (resourceLinks(video.videoId.value) + actionLinks(video)).map { it.rel.value() to it }.toMap()
         )
     }
 
@@ -51,7 +51,7 @@ class VideoToResourceConverter(
         return videoIds.map { videoId ->
             VideoResource(
                 id = videoId.value,
-                _links = resourceLinks(videoId.value).map { it.rel to it }.toMap()
+                _links = resourceLinks(videoId.value).map { it.rel.value() to it }.toMap()
             )
         }
     }

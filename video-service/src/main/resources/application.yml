@@ -1,15 +1,15 @@
 spring:
-  cloud:
-    gcp:
-      pubsub:
-        subscriber:
-          max-ack-extension-period: 60
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
 
 logging:
   config: "classpath:logback.xml"
   level:
     com.boclips.kalturaclient: debug
     feign: debug
+    org.springframework.boot: debug
 
 management:
   endpoint:
@@ -43,11 +43,6 @@ pubsub:
   video-searchability-update:
     batch-size:
       1000
-
-oauth2:
-  client-id:
-  client-secret:
-  token-url:
 
 user-service:
   base-url:

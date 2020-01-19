@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import org.springframework.hateoas.Resources
+import org.springframework.hateoas.CollectionModel
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RestController
 class DistributionMethodsController : BaseController() {
     @GetMapping
     fun getDistributionMethods() =
-        Resources(listOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM))
+        CollectionModel(listOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM))
 }
