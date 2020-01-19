@@ -6,8 +6,8 @@ import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.service.application.collection.exceptions.InvalidAttachmentTypeException
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -95,10 +95,11 @@ class CollectionUpdatesConverterTest {
         val commands =
             collectionUpdatesConverter.convert(
                 CollectionId("testId"),
-                UpdateCollectionRequest(ageRange = AgeRangeRequest(
-                    min = 3,
-                    max = 5
-                )
+                UpdateCollectionRequest(
+                    ageRange = AgeRangeRequest(
+                        min = 3,
+                        max = 5
+                    )
                 ),
                 UserFactory.sample()
             )

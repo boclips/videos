@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -190,12 +189,14 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             post("/v1/content-partners").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(originalContent)
         )
-                .andDo(MockMvcResultHandlers.print())
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isCreated)
             .andReturn().response.getHeaders("Location").first()
 
-        mockMvc.perform(put(cpUrl).asBoclipsEmployee()
-            .contentType(MediaType.APPLICATION_JSON).content(updatedContent))
+        mockMvc.perform(
+            put(cpUrl).asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(updatedContent)
+        )
             .andExpect(status().isNoContent)
 
         mockMvc.perform(get(cpUrl).asBoclipsEmployee())

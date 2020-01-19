@@ -298,7 +298,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `literal match should score higher than stem match in description`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                 SearchableVideoMetadataFactory.create(id = "1", description = "empirical"),
+                SearchableVideoMetadataFactory.create(id = "1", description = "empirical"),
                 SearchableVideoMetadataFactory.create(id = "2", description = "empirical"),
                 SearchableVideoMetadataFactory.create(id = "3", description = "empire"),
                 SearchableVideoMetadataFactory.create(id = "4", description = "empir"),
@@ -317,9 +317,18 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata(name = "art history"))),
-                SearchableVideoMetadataFactory.create(id = "2", subjects = setOf(createSubjectMetadata(name = "history"))),
-                SearchableVideoMetadataFactory.create(id = "3", subjects = setOf(createSubjectMetadata(name = "geography")))
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    subjects = setOf(createSubjectMetadata(name = "art history"))
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    subjects = setOf(createSubjectMetadata(name = "history"))
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    subjects = setOf(createSubjectMetadata(name = "geography"))
+                )
             )
         )
 
@@ -334,7 +343,10 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject when multiple subjects`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata(name = "art history"), createSubjectMetadata(name = "sport")))
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    subjects = setOf(createSubjectMetadata(name = "art history"), createSubjectMetadata(name = "sport"))
+                )
             )
         )
 
@@ -349,8 +361,16 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject and other fields`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "history of mathematics", subjects = setOf(createSubjectMetadata(name = "mathematics"))),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Roman Empire", subjects = setOf(createSubjectMetadata(name = "history")))
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "history of mathematics",
+                    subjects = setOf(createSubjectMetadata(name = "mathematics"))
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "Roman Empire",
+                    subjects = setOf(createSubjectMetadata(name = "history"))
+                )
             )
         )
 
@@ -365,9 +385,20 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match partially in subject and partially in other fields`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata(name = "sport"))),
-                SearchableVideoMetadataFactory.create(id = "2", title = "fractions", subjects = setOf(createSubjectMetadata(name = "mathematics"))),
-                SearchableVideoMetadataFactory.create(id = "3", title = "fractions", subjects = setOf(createSubjectMetadata(name = "politics")))
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    subjects = setOf(createSubjectMetadata(name = "sport"))
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "fractions",
+                    subjects = setOf(createSubjectMetadata(name = "mathematics"))
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "fractions",
+                    subjects = setOf(createSubjectMetadata(name = "politics"))
+                )
             )
         )
 
@@ -382,7 +413,10 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `phrase match in subject via a synonym`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", subjects = setOf(createSubjectMetadata(name = "mathematics")))
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    subjects = setOf(createSubjectMetadata(name = "mathematics"))
+                )
             )
         )
 
@@ -394,14 +428,18 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     }
 
     @Test
-    fun `instructional videos prioritised over news or stock`(){
+    fun `instructional videos prioritised over news or stock`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id= "1", title = "London Underground", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id= "2", title = "London Underground", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id= "3", title = "London Underground", type = VideoType.INSTRUCTIONAL),
-                SearchableVideoMetadataFactory.create(id= "4", title = "London Underground", type = VideoType.STOCK),
-                SearchableVideoMetadataFactory.create(id= "5", title = "London Underground", type = VideoType.STOCK)
+                SearchableVideoMetadataFactory.create(id = "1", title = "London Underground", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", title = "London Underground", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "London Underground",
+                    type = VideoType.INSTRUCTIONAL
+                ),
+                SearchableVideoMetadataFactory.create(id = "4", title = "London Underground", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id = "5", title = "London Underground", type = VideoType.STOCK)
             )
         )
 
@@ -412,5 +450,4 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         assertThat(results).startsWith("3")
         assertThat(results).hasSize(5)
     }
-
 }

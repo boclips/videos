@@ -64,7 +64,6 @@ class VideoIndexReaderIsClassroomIntegrationTest : EmbeddedElasticSearchIntegrat
         assertThat(results).containsExactly("3")
     }
 
-
     @Test
     fun `does not filter when classroom filter is not specified`() {
         videoIndexWriter.upsert(

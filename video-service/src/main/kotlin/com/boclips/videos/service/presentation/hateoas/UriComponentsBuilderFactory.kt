@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest
 @Component
 @Scope(scopeName = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 class UriComponentsBuilderFactory(val request: HttpServletRequest) {
-    fun getInstance() = UriComponentsBuilder.fromHttpRequest(
+    fun getInstance(): UriComponentsBuilder = UriComponentsBuilder.fromHttpRequest(
         ServletServerHttpRequest(request)
     )
 }

@@ -69,9 +69,9 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             query = "Turtles",
             pageIndex = 40,
             pageSize = 2,
-            totalResults= 400,
-            pageResourceIds = listOf("id-1","id-2","id-89"),
-            user = UserFactory.sample( id = "waterloo-3")
+            totalResults = 400,
+            pageResourceIds = listOf("id-1", "id-2", "id-89"),
+            user = UserFactory.sample(id = "waterloo-3")
         )
 
         val event = fakeEventBus.getEventOfType(ResourcesSearched::class.java)
@@ -82,7 +82,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.pageSize).isEqualTo(2)
         assertThat(event.totalResults).isEqualTo(400)
         assertThat(event.userId).isEqualTo("waterloo-3")
-        assertThat(event.pageResourceIds).containsExactly("id-1","id-2","id-89")
+        assertThat(event.pageResourceIds).containsExactly("id-1", "id-2", "id-89")
     }
 
     @Test

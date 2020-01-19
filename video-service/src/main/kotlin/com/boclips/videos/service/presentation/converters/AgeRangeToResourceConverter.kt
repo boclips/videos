@@ -1,9 +1,9 @@
 package com.boclips.videos.service.presentation.converters
 
+import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
-import com.boclips.videos.api.response.agerange.AgeRangeResource
 
 class AgeRangeToResourceConverter {
     companion object {

@@ -7,7 +7,12 @@ import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.fasterxml.jackson.databind.ObjectMapper
-import feign.*
+import feign.Feign
+import feign.Logger
+import feign.Param
+import feign.QueryMap
+import feign.RequestLine
+import feign.RequestTemplate
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import feign.okhttp.OkHttpClient

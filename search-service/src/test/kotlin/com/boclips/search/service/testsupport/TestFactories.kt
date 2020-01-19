@@ -32,7 +32,7 @@ object SearchableVideoMetadataFactory {
         promoted: Boolean? = null,
         meanRating: Double? = 5.0,
         isClassroom: Boolean = false
-        ) = VideoMetadata(
+    ) = VideoMetadata(
         id = id,
         title = title,
         description = description,

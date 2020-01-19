@@ -50,7 +50,7 @@ data class YoutubePlaybackResource(
     override var id: String?,
     @get:JsonView(PublicApiProjection::class)
     override var duration: Duration? = null,
-    override val _links: Map<String, Link>?=  null
+    override val _links: Map<String, Link>? = null
 ) : PlaybackResource() {
     override val downloadUrl: String?
         get() = null

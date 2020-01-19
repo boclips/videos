@@ -17,8 +17,8 @@ class MongoLegalRestrictionsRepository(private val mongoClient: MongoClient) :
     companion object : KLogging() {
 
         const val COLLECTION_NAME = "legalRestrictions"
-
     }
+
     override fun create(text: String): LegalRestrictions {
         val document = LegalRestrictionsDocument(
             id = ObjectId.get(),

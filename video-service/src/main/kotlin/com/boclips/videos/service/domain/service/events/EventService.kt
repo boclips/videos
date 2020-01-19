@@ -64,16 +64,18 @@ class EventService(val eventBus: EventBus) {
         pageResourceIds: List<String>,
         user: User
     ) {
-        eventBus.publish(msg(
-            builder = ResourcesSearched.builder()
-                .resourceType(resourceType)
-                .query(query)
-                .pageIndex(pageIndex)
-                .pageSize(pageSize)
-                .pageResourceIds(pageResourceIds)
-                .totalResults(totalResults),
-            user = user
-        ))
+        eventBus.publish(
+            msg(
+                builder = ResourcesSearched.builder()
+                    .resourceType(resourceType)
+                    .query(query)
+                    .pageIndex(pageIndex)
+                    .pageSize(pageSize)
+                    .pageResourceIds(pageResourceIds)
+                    .totalResults(totalResults),
+                user = user
+            )
+        )
     }
 
     fun saveCollectionCreatedEvent(collection: Collection) {

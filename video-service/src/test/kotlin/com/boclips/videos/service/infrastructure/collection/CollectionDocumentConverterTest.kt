@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -65,10 +65,12 @@ class CollectionDocumentConverterTest {
 
     @Test
     fun `derives creation time from id when timestamp is missing`() {
-        val collection = CollectionDocumentConverter.toCollection(collectionDocument.copy(
-            id = ObjectId("5dcd28400000000000000000"),
-            createdAt = null
-        ))!!
+        val collection = CollectionDocumentConverter.toCollection(
+            collectionDocument.copy(
+                id = ObjectId("5dcd28400000000000000000"),
+                createdAt = null
+            )
+        )!!
 
         assertThat(collection.createdAt).isEqualTo("2019-11-14T10:11:12Z")
     }

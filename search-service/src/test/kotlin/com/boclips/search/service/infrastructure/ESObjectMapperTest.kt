@@ -10,9 +10,11 @@ class ESObjectMapperTest {
 
     @Test
     fun `writes dates as strings in ES default format`() {
-        val serialisedVideo = ESObjectMapper.get().writeValueAsString(TestFactories.createVideoDocument(
-            releaseDate = LocalDate.of(2015, Month.MAY, 21)
-        ))
+        val serialisedVideo = ESObjectMapper.get().writeValueAsString(
+            TestFactories.createVideoDocument(
+                releaseDate = LocalDate.of(2015, Month.MAY, 21)
+            )
+        )
 
         assertThat(serialisedVideo).contains("2015-05-21")
     }

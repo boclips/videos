@@ -2,8 +2,8 @@ package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.User
-import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.ZonedDateTime

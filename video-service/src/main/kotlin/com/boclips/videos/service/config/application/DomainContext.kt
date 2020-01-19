@@ -64,7 +64,12 @@ class DomainContext(
         collectionAccessService: CollectionAccessService,
         eventService: EventService
     ): CollectionReadService {
-        return CollectionReadService(collectionRepository, collectionSearchService, collectionAccessService, eventService)
+        return CollectionReadService(
+            collectionRepository,
+            collectionSearchService,
+            collectionAccessService,
+            eventService
+        )
     }
 
     @Bean

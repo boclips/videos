@@ -8,7 +8,8 @@ import org.springframework.hateoas.mediatype.hal.Jackson2HalModule
 
 class ObjectMapperDefinition {
     companion object {
-        @JvmStatic fun default(): ObjectMapper {
+        @JvmStatic
+        fun default(): ObjectMapper {
             val defaultObjectMapper = ObjectMapper()
             defaultObjectMapper.registerModule(Jackson2HalModule())
             defaultObjectMapper.registerModule(JavaTimeModule())

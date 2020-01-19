@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 object VideoTypeConverter {
 
     fun convert(legacyType: ContentType): VideoType {
-        return when(legacyType) {
+        return when (legacyType) {
             ContentType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
             ContentType.NEWS -> VideoType.NEWS
             ContentType.STOCK -> VideoType.STOCK

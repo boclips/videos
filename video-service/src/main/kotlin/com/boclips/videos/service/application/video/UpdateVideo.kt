@@ -22,7 +22,8 @@ open class UpdateVideo(
         if (user.isPermittedToUpdateVideo.not()) throw OperationForbiddenException()
 
         val updateTitle = updateRequest.title?.let { VideoUpdateCommand.ReplaceTitle(VideoId(id), it) }
-        val updateDescription = updateRequest.description?.let { VideoUpdateCommand.ReplaceDescription(VideoId(id), it) }
+        val updateDescription =
+            updateRequest.description?.let { VideoUpdateCommand.ReplaceDescription(VideoId(id), it) }
         val replacePromoted = updateRequest.promoted?.let { VideoUpdateCommand.ReplacePromoted(VideoId(id), it) }
         val updateSubjectIds = updateRequest.subjectIds?.let { subjectIdList ->
             val allSubjects = subjectRepository.findAll()

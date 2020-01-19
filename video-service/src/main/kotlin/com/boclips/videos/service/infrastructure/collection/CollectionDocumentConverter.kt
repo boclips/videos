@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -29,7 +29,10 @@ object CollectionDocumentConverter {
             title = collectionDocument.title,
             owner = UserId(value = collectionDocument.owner),
             videos = videoIds,
-            createdAt = ZonedDateTime.ofInstant(collectionDocument.createdAt ?: Instant.ofEpochSecond(collectionDocument.id.timestamp.toLong()), ZoneOffset.UTC),
+            createdAt = ZonedDateTime.ofInstant(
+                collectionDocument.createdAt ?: Instant.ofEpochSecond(collectionDocument.id.timestamp.toLong()),
+                ZoneOffset.UTC
+            ),
             updatedAt = ZonedDateTime.ofInstant(collectionDocument.updatedAt, ZoneOffset.UTC),
             isPublic = isPubliclyVisible,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,

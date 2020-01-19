@@ -6,7 +6,7 @@ import feign.RequestTemplate
 
 interface FakeClient<T> {
     fun add(element: T): T
-    fun findAll() : List<T>
+    fun findAll(): List<T>
     fun clear()
 
     companion object {

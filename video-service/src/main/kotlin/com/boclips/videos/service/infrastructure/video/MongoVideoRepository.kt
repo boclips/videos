@@ -42,7 +42,6 @@ import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
-import org.litote.kmongo.addToSet
 import org.litote.kmongo.combine
 import org.litote.kmongo.div
 import org.litote.kmongo.elemMatch

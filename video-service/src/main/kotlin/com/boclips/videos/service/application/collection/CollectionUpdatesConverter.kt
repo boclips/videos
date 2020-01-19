@@ -5,9 +5,9 @@ import com.boclips.videos.service.application.collection.exceptions.InvalidAttac
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 
 class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {

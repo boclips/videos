@@ -87,7 +87,6 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
         assertThat(results).containsExactlyInAnyOrder("1", "2", "3")
     }
 
-
     @Test
     fun `matches tags regardless of case`() {
         videoIndexWriter.upsert(

@@ -13,7 +13,7 @@ open class ApiUserService(private val userServiceClient: UserServiceClient) : Us
     override fun getSubjectIds(userId: String): Set<String>? {
         val user = try {
             userServiceClient.findUser(userId) ?: return null
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             logger.error(e) { "Error fetching subjects for user $userId" }
             return null
         }

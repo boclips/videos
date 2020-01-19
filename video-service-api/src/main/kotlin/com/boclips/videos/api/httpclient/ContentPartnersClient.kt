@@ -1,4 +1,3 @@
-
 package com.boclips.videos.api.httpclient
 
 import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
@@ -7,7 +6,6 @@ import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
-import com.boclips.videos.api.response.video.VideoResource
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Feign
 import feign.Logger

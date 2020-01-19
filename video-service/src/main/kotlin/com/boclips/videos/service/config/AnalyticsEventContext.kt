@@ -30,5 +30,4 @@ class AnalyticsEventContext(private val eventService: EventService) {
     fun saveCollectionInteractedWithEvent(): SaveCollectionInteractedWithEvent {
         return SaveCollectionInteractedWithEvent(eventService)
     }
-
 }

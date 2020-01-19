@@ -7,8 +7,8 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
+import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 
 class CreateCollection(
     private val collectionCreationService: CollectionCreationService,

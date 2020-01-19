@@ -35,7 +35,12 @@ class CollectionSearchQueryTest {
             hasLessonPlans = null
         )
 
-        assertThat(query.toSearchQuery().sort).isEqualTo(Sort.ByField(CollectionMetadata::hasAttachments, SortOrder.DESC))
+        assertThat(query.toSearchQuery().sort).isEqualTo(
+            Sort.ByField(
+                CollectionMetadata::hasAttachments,
+                SortOrder.DESC
+            )
+        )
     }
 
     @Test
@@ -50,7 +55,12 @@ class CollectionSearchQueryTest {
             hasLessonPlans = null
         )
 
-        assertThat(query.toSearchQuery().sort).isEqualTo(Sort.ByField(CollectionMetadata::hasAttachments, SortOrder.DESC))
+        assertThat(query.toSearchQuery().sort).isEqualTo(
+            Sort.ByField(
+                CollectionMetadata::hasAttachments,
+                SortOrder.DESC
+            )
+        )
     }
 
     @Test

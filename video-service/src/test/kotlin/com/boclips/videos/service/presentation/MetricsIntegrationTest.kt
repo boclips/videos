@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asIngestor
-import com.boclips.videos.service.testsupport.asTeacher
 import com.boclips.videos.service.testsupport.asUserWithRoles
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test

@@ -13,7 +13,7 @@ class CollectionQuery(
     val hasLessonPlans: Boolean? = null
 ) : SearchQuery<CollectionMetadata>(phrase, sort)
 
-data class VisibilityForOwner (
+data class VisibilityForOwner(
     val owner: String?,
     val visibility: CollectionVisibilityQuery
 )

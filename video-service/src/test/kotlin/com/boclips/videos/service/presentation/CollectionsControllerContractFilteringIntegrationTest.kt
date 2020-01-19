@@ -79,7 +79,12 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].title", equalTo("a video title")))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].createdBy", equalTo("A content provider")))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0].playback._links.thumbnail.href", not(isEmptyString())))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.collections[0].videos[0].playback._links.thumbnail.href",
+                    not(isEmptyString())
+                )
+            )
             .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
             .andExpect(jsonPath("$._links.self.href").exists())

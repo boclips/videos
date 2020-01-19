@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.model.playback
 
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -27,5 +26,4 @@ class PlaybackIdTest {
         assertThat(playbackId.type).isEqualTo(PlaybackProviderType.YOUTUBE)
         assertThat(playbackId.value).isEqualTo("youtube-123")
     }
-
 }

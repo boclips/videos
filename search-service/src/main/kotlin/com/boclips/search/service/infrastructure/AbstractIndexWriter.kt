@@ -167,7 +167,8 @@ abstract class AbstractIndexWriter<T>(
         )
 
         return IndexRequest(
-            indexName)
+            indexName
+        )
             .id(getIdentifier(item))
             .source(document, XContentType.JSON)
     }

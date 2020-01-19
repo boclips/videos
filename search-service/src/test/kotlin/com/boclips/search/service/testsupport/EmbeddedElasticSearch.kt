@@ -16,7 +16,7 @@ import java.time.Duration
 abstract class EmbeddedElasticSearchIntegrationTest {
     lateinit var esClient: RestHighLevelClient
 
-    companion object: KLogging() {
+    companion object : KLogging() {
         val CLIENT: ElasticSearchClient
 
         init {
@@ -42,7 +42,6 @@ abstract class EmbeddedElasticSearchIntegrationTest {
                 username = "",
                 password = ""
             )
-
         }
     }
 

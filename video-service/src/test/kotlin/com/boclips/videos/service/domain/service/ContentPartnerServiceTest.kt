@@ -1,10 +1,10 @@
 package com.boclips.videos.service.domain.service
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock

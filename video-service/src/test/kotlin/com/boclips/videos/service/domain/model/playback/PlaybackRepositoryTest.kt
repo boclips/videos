@@ -61,7 +61,6 @@ class PlaybackRepositoryTest {
         assertThat(playbackRepository.find(listOf(kalturaVideo, youtubeVideo))).hasSize(2)
     }
 
-
     @Test
     fun `removes a video for Kaltura, does nothing for youtube`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")

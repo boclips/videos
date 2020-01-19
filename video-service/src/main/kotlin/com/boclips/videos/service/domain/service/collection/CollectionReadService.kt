@@ -42,7 +42,7 @@ class CollectionReadService(
             pageIndex = query.pageIndex,
             pageSize = query.pageSize,
             totalResults = collectionIds.size.toLong(),
-            pageResourceIds = collectionIds.map{collectionId ->  collectionId.value},
+            pageResourceIds = collectionIds.map { collectionId -> collectionId.value },
             user = user
         )
 

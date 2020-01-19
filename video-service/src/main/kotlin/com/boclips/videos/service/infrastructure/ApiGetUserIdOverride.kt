@@ -10,7 +10,7 @@ class ApiGetUserIdOverride(private val userServiceClient: UserServiceClient) : G
     override operator fun invoke(user: User): UserId? =
         userServiceClient.findUser(user.id)
             ?.let { userServiceClient.getAccount(it.organisationAccountId) }
-            ?.takeIf { it.organisation.allowsOverridingUserIds}
+            ?.takeIf { it.organisation.allowsOverridingUserIds }
             ?.let { BoclipsUserIdHeaderExtractor.getUserId() }
             ?.let(::UserId)
 }

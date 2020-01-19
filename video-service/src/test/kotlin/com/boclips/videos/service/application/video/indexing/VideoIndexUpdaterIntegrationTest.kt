@@ -1,12 +1,12 @@
 package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.EventConverter

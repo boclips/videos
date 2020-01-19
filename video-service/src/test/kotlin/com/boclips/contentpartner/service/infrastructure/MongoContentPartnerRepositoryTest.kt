@@ -5,11 +5,11 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestrictions
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.contentpartner.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
@@ -219,7 +219,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             text = "New restrictions"
         )
 
-        mongoContentPartnerRepository.update(listOf(ContentPartnerUpdateCommand.ReplaceLegalRestrictions(contentPartner.contentPartnerId, legalRestrictions)))
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceLegalRestrictions(
+                    contentPartner.contentPartnerId,
+                    legalRestrictions
+                )
+            )
+        )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
         assertThat(updatedContentPartner?.legalRestrictions).isEqualTo(legalRestrictions)

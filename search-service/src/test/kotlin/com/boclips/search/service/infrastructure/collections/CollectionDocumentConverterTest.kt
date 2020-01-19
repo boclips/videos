@@ -43,6 +43,7 @@ class CollectionDocumentConverterTest {
             )
         )
     }
+
     @Test
     fun `convert search hit without lesson plans`() {
         val searchHit = SearchHit(14).sourceRef(

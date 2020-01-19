@@ -36,11 +36,13 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     @Test
     fun `can retrieve collections by word matching on description`() {
         collectionIndexWriter.safeRebuildIndex(
-            sequenceOf(SearchableCollectionMetadataFactory.create(
-                id = "1",
-                title = "Beautiful Boy Dancing",
-                description = "Plot twist, the boy is a dog. They taught a dog to dance!"
-            ))
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    title = "Beautiful Boy Dancing",
+                    description = "Plot twist, the boy is a dog. They taught a dog to dance!"
+                )
+            )
         )
 
         val results =
@@ -52,19 +54,21 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     @Test
     fun `boosts title matches over description matches`() {
         collectionIndexWriter.safeRebuildIndex(
-            sequenceOf(SearchableCollectionMetadataFactory.create(
-                id = "1",
-                title = "You won't believe what this dog can do.",
-                description = "Beautiful Boy Dancing"
-            ), SearchableCollectionMetadataFactory.create(
-                id = "2",
-                title = "Control",
-                description = "Control element"
-            ), SearchableCollectionMetadataFactory.create(
-                id = "3",
-                title = "Beautiful Boy Dancing",
-                description = "Plot twist, the boy is a dog. They taught a dog to dance!"
-            ))
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    title = "You won't believe what this dog can do.",
+                    description = "Beautiful Boy Dancing"
+                ), SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    title = "Control",
+                    description = "Control element"
+                ), SearchableCollectionMetadataFactory.create(
+                    id = "3",
+                    title = "Beautiful Boy Dancing",
+                    description = "Plot twist, the boy is a dog. They taught a dog to dance!"
+                )
+            )
         )
 
         val results =

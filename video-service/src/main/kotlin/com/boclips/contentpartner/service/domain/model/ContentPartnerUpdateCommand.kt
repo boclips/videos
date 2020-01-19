@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.domain.model
 
-import java.util.*
+import java.util.Currency
 
 sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId) {
 

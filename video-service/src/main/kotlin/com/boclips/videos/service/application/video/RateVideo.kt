@@ -1,12 +1,12 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.api.request.video.RateVideoRequest
 import mu.KLogging
 import org.springframework.validation.annotation.Validated
 import javax.validation.Valid

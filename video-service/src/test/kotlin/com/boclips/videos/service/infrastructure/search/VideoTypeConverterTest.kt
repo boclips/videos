@@ -13,5 +13,4 @@ class VideoTypeConverterTest {
         assertThat(VideoTypeConverter.convert(ContentType.NEWS)).isEqualTo(VideoType.NEWS)
         assertThat(VideoTypeConverter.convert(ContentType.STOCK)).isEqualTo(VideoType.STOCK)
     }
-
 }

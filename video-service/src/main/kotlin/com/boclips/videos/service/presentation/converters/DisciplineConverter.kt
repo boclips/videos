@@ -12,7 +12,7 @@ class DisciplineConverter {
                 code = discipline.code,
                 name = discipline.name,
                 subjects = discipline.subjects.map { SubjectResource(id = it.id.value, name = it.name) }
-                )
+            )
         }
     }
 }

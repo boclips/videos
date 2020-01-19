@@ -37,7 +37,7 @@ class VideoDocumentConverterTest {
             keywords = listOf("keyword1", "keyword2"),
             subjects = setOf(TestFactories.createSubject(), TestFactories.createSubject()),
             releasedOn = LocalDate.ofYearDay(2018, 10),
-            ingestedAt = ZonedDateTime.of(2019, 11, 12, 13, 14, 15, 160000000,  ZoneOffset.UTC),
+            ingestedAt = ZonedDateTime.of(2019, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             legalRestrictions = "legal restrictions",
             language = Locale.GERMANY,
             transcript = "hello",

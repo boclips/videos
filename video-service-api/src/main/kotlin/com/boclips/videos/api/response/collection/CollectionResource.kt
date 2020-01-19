@@ -5,7 +5,6 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.Link
 import java.time.ZonedDateTime
 

@@ -30,11 +30,13 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
     @Test
     fun `creates a new index and upserts the collections provided with description`() {
         indexWriter.safeRebuildIndex(
-            sequenceOf(SearchableCollectionMetadataFactory.create(
-                id = "1",
-                title = "Beautiful Boy Dancing",
-                description = "A verbose description about this collection"
-            ))
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    title = "Beautiful Boy Dancing",
+                    description = "A verbose description about this collection"
+                )
+            )
         )
 
         assertThat(indexReader.count(CollectionQuery("verbose"))).isEqualTo(1)

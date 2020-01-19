@@ -11,7 +11,10 @@ import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import java.util.Currency
 
 class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: LegalRestrictionsRepository) {
-    fun convert(id: ContentPartnerId, createContentPartnerRequest: CreateContentPartnerRequest): List<ContentPartnerUpdateCommand> {
+    fun convert(
+        id: ContentPartnerId,
+        createContentPartnerRequest: CreateContentPartnerRequest
+    ): List<ContentPartnerUpdateCommand> {
         val commandCreator = ContentPartnerUpdateCommandCreator(id, createContentPartnerRequest)
         return listOfNotNull(
             commandCreator.updateNameOrNot(),

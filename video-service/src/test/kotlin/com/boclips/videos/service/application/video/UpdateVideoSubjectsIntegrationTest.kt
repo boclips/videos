@@ -3,8 +3,8 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.events.video.VideoUpdated
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
