@@ -9,7 +9,6 @@ logging:
   level:
     com.boclips.kalturaclient: debug
     feign: debug
-    org.springframework.boot: debug
 
 management:
   endpoint:
