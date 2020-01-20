@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+commonLabels:
+  app: video-service
+commonAnnotations:
+  boclips-version: "1"
+images:
+- name: eu.gcr.io/boclips-prod/boclips/video-service
+  newTag: "1"
+patches:
+- path: spread-across-zones.yaml
+  target:
+    group: apps
+    kind: Deployment
+    version: v1
+- path: boot-time.yaml
+  target:
+    group: apps
+    kind: Deployment
+    version: v1
+- path: scale.yaml
+  target:
+    group: apps
+    kind: Deployment
+    version: v1
+vars:
+- fieldref:
+    fieldPath: metadata.annotations.boclips-version
+  name: VERSION
+  objref:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: video-service
