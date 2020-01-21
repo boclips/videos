@@ -6,8 +6,10 @@ resources:
 commonLabels:
   app: video-service
 commonAnnotations:
-  boclips-version: "3"
+  boclips-version: "4"
 images:
+- name: eu.gcr.io/boclips-prod/boclips/
+  newTag: "4"
 - name: eu.gcr.io/boclips-prod/boclips/video-service
   newTag: "3"
 patches:
