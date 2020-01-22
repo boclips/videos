@@ -35,6 +35,8 @@ class CreateVideo(
     companion object : KLogging()
 
     operator fun invoke(createRequest: CreateVideoRequest, user: User): Video {
+        logger.info { "Received video creation request for video ${createRequest.providerId}: $createRequest" }
+
         val contentPartner = findContentPartner(createRequest)
             ?: throw ContentPartnerNotFoundException(
                 "Could not find content partner with id: ${createRequest.providerId}"
@@ -43,6 +45,8 @@ class CreateVideo(
         val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
         val videoPlayback = findVideoPlayback(playbackId)
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
+
+        logger.info { "Obtained video playback and subjects for video ${createRequest.providerId}" }
 
         val videoToBeCreated =
             createVideoRequestToVideoConverter.convert(
@@ -57,6 +61,8 @@ class CreateVideo(
         } catch (ex: VideoNotCreatedException) {
             throw VideoAssetAlreadyExistsException(ex.video.contentPartner.name, ex.video.videoReference)
         }
+
+        logger.info { "Successfully created video ${createRequest.providerId}" }
 
         if (createRequest.analyseVideo) {
             triggerVideoAnalysis(createdVideo)
