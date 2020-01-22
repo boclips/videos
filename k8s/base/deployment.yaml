@@ -10,7 +10,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: video-service
-        image: eu.gcr.io/boclips-prod/boclips/video-service:1
+        image: app:1
         env:
         - name: SENTRY_RELEASE
           value: video-service-$(VERSION)
