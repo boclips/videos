@@ -534,7 +534,7 @@ object UserFactory {
         boclipsEmployee: Boolean = false,
         isPermittedToViewAnyCollection: Boolean = false,
         isPermittedToShareVideo: Boolean = false,
-        eventIdSupplier: () -> String? = { null },
+        overrideIdSupplier: () -> String? = { null },
         accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
                 videoAccess = VideoAccessRule.Everything,
@@ -551,7 +551,7 @@ object UserFactory {
             isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
             isPermittedToShareVideo = isPermittedToShareVideo,
-            eventIdSupplier = { eventIdSupplier()?.let(::UserId) },
+            overrideIdSupplier = { overrideIdSupplier()?.let(::UserId) },
             accessRulesSupplier = accessRulesSupplier
         )
     }

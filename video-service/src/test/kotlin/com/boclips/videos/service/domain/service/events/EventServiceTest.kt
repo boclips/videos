@@ -426,7 +426,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         eventService.publishVideoInteractedWithEvent(
             videoId = VideoId(videoId),
             subtype = "share-to-google-classroom",
-            user = UserFactory.sample(id = "user@example.com", eventIdSupplier = { overridingId })
+            user = UserFactory.sample(id = "user@example.com", overrideIdSupplier = { overridingId })
         )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)

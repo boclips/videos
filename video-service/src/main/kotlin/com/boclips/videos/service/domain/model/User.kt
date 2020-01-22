@@ -8,12 +8,12 @@ open class User(
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
     val isPermittedToShareVideo: Boolean,
-    val eventIdSupplier: () -> UserId? = { null },
+    val overrideIdSupplier: () -> UserId? = { null },
     val context: RequestContext,
     val accessRulesSupplier: (user: User) -> AccessRules
 ) {
     val accessRules: AccessRules by lazy { accessRulesSupplier(this) }
-    val eventId: UserId? by lazy { eventIdSupplier() }
+    val overrideId: UserId? by lazy { overrideIdSupplier() }
 }
 
 data class RequestContext(val origin: String?)
