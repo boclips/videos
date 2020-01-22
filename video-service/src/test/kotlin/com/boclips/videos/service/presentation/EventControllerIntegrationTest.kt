@@ -39,7 +39,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     inner class OverridingUserIdViaHeader {
         @Test
         fun `it uses user id provided via Boclips-User-Id header in the event when organisation allows that`() {
-            val videoId = aValidId()
             val userId = aValidId()
             val overrideUserId = aValidId()
             val accountId = aValidId()
@@ -54,7 +53,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     .header("Boclips-User-Id", overrideUserId)
                     .content(
                         """{
-                            "videoId":"$videoId",
+                            "videoId":"${aValidId()}",
                             "segmentStartSeconds":1469.128248,
                             "segmentEndSeconds":1470.728248
                         }""".trimIndent()
@@ -64,7 +63,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
-            assertThat(event.userId).isEqualTo(overrideUserId)
+            assertThat(event.userId).isEqualTo(userId)
+            assertThat(event.overrideUserId).isEqualTo(overrideUserId)
         }
 
         @Test
