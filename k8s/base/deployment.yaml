@@ -6,8 +6,6 @@ metadata:
     sidecar.jaegertracing.io/inject: jaeger
 spec:
   template:
-    metadata:
-      name: video-service
     spec:
       terminationGracePeriodSeconds: 30
       containers:
