@@ -17,6 +17,7 @@ class ServiceAccountTokenFactory(serviceAccountCredentials: ServiceAccountCreden
         return currentToken.access_token!!
     }
 
+    @Synchronized
     private fun shouldRefreshToken(): Boolean {
         if (lastRefreshTime == null) {
             return true
