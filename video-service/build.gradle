@@ -95,13 +95,13 @@ dependencies {
     implementation("io.micrometer:micrometer-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
 
-    implementation('com.github.boclips:boclips-spring-web:0.64.0')
+    implementation('com.github.boclips:boclips-spring-web:0.128.0')
     implementation('com.github.boclips:boclips-spring-security:0.296.0')
     implementation("com.github.boclips:event-bus:2.11.3")
 
     implementation("com.github.boclips:kaltura-client:0.117.0")
 
-    implementation("com.github.boclips:user-service:0.377.0")
+    implementation("com.github.boclips:user-service:10")
     implementation('org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE') // Required by user-service client
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1")
