@@ -10,16 +10,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class WhatToExpectControllerIntegrationTest : AbstractSpringIntegrationTest() {
+class ContentCategoriesControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
      @Test
      fun `returns available video types for authenticated API users`() {
-         mockMvc.perform(get("/v1/what-to-expect").asApiUser())
+         mockMvc.perform(get("/v1/content-categories").asApiUser())
              .andExpect(status().isOk)
-             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.whatToExpect", Matchers.hasSize<Any>(19)))
-             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.whatToExpect",
+             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.contentCategories", Matchers.hasSize<Any>(19)))
+             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.contentCategories",
                  Matchers.containsInAnyOrder("360 and Virtual reality",
                      "Animation",
                      "Documentary shorts",
@@ -45,7 +45,7 @@ class WhatToExpectControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns a 403 response for unauthenticated users`() {
-        mockMvc.perform(get("/v1/video-types"))
+        mockMvc.perform(get("/v1/content-categories"))
             .andExpect(status().isForbidden)
     }
 }

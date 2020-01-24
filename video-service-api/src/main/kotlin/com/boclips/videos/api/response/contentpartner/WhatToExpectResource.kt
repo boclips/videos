@@ -3,11 +3,11 @@ package com.boclips.videos.api.response.contentpartner
 
 import org.springframework.hateoas.server.core.Relation
 
-@Relation(collectionRelation = "whatToExpect")
-open class WhatToExpectResource(
-    var _embedded: WhatToExpectWrapperResource
+@Relation(collectionRelation = "contentCategories")
+open class ContentCategoriesResource(
+    var _embedded: ContentCategoriesWrapperResource
  )
 
-data class WhatToExpectWrapperResource(
-    val whatToExpect:  List<String>
+data class ContentCategoriesWrapperResource(
+    val contentCategories:  List<String>
 )

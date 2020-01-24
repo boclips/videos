@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsController
+import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
@@ -12,7 +13,6 @@ import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.WhatToExpectLinkBuilder
 import org.springframework.hateoas.EntityModel
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,7 +31,7 @@ class LinksController(
     private val tagsLinkBuilder: TagsLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
-    private val whatToExpectLinkBuilder: WhatToExpectLinkBuilder,
+    private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -61,7 +61,7 @@ class LinksController(
                 tagsLinkBuilder.tags(),
                 videoTypeLinkBuilder.videoTypes(),
                 eventsLinkBuilder.createPlaybackEventsLink(),
-                whatToExpectLinkBuilder.whatToExpect()
+                contentCategoriesLinkBuilder.contentCategries()
             )
         )
     }

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-enum class WhatToExpect(val value: String) {
+enum class ContentCategories(val value: String) {
     VIRTUAL_REALITY_360("360 and Virtual reality"),
     ANIMATION("Animation"),
     DOCUMENATRY_SHORTS("Documentary shorts"),

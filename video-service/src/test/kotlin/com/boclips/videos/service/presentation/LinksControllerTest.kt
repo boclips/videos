@@ -57,6 +57,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.disciplines").doesNotExist())
             .andExpect(jsonPath("$._links.tags").doesNotExist())
             .andExpect(jsonPath("$._links.videoTypes").doesNotExist())
+            .andExpect(jsonPath("$._links.contentCategories").doesNotExist())
     }
 
     @Test
@@ -129,6 +130,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `return videoTypes link when called as API user`() {
         mockMvc.perform(get("/v1").asApiUser()).andExpect(status().isOk)
             .andExpect(jsonPath("$._links.videoTypes.href", endsWith("/video-types")))
+    }
+
+    @Test
+    fun `return contentCategories link when called as API user`() {
+        mockMvc.perform(get("/v1").asApiUser()).andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.contentCategories.href", endsWith("/content-categories")))
     }
 
     @Test
