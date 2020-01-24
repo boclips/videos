@@ -2,8 +2,6 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.presentation.converters.DisciplineConverter
-import com.boclips.videos.service.testsupport.DisciplineFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -43,7 +41,8 @@ class DisciplinesLinkBuilderTest {
     @Test
     fun `discipline link defaults to self`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
-        assertThat(disciplinesLinkBuilder.discipline(DisciplineConverter.from(DisciplineFactory.sample(id = "id")))).isEqualTo(
+
+        assertThat(disciplinesLinkBuilder.discipline(id = "id")).isEqualTo(
             Link("https://localhost/v1/disciplines/id", "self")
         )
     }
@@ -53,8 +52,8 @@ class DisciplinesLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
         assertThat(
             disciplinesLinkBuilder.discipline(
-                DisciplineConverter.from(DisciplineFactory.sample(id = "id")),
-                "rel"
+                "rel",
+                "id"
             )
         ).isEqualTo(Link("https://localhost/v1/disciplines/id", "rel"))
     }
@@ -63,7 +62,7 @@ class DisciplinesLinkBuilderTest {
     fun `subjects for discipline`() {
         setSecurityContext("teacher@boclips.com", UserRoles.UPDATE_DISCIPLINES)
 
-        assertThat(disciplinesLinkBuilder.subjectsForDiscipline(DisciplineConverter.from(DisciplineFactory.sample(id = "id")))).isEqualTo(
+        assertThat(disciplinesLinkBuilder.subjectsForDiscipline("id")).isEqualTo(
             Link("https://localhost/v1/disciplines/id/subjects", "subjects")
         )
     }

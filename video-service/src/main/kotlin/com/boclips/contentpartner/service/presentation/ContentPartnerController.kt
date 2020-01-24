@@ -11,7 +11,6 @@ import com.boclips.videos.api.response.contentpartner.ContentPartnerWrapperResou
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -67,11 +66,12 @@ class ContentPartnerController(
     }
 
     @GetMapping("/{id}")
-    fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): EntityModel<ContentPartnerResource> {
+    fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): ResponseEntity<ContentPartnerResource> {
         val user = getCurrentUser()
-        return fetchContentPartner(contentPartnerId!!, user).let {
-            EntityModel(it, contentPartnersLinkBuilder.self(it.id))
-        }
+        val contentPartnerResource = fetchContentPartner(contentPartnerId!!, user)
+            .copy(_links = listOf(contentPartnersLinkBuilder.self(contentPartnerId)).map { it.rel.value() to it }.toMap())
+
+        return ResponseEntity(contentPartnerResource, HttpStatus.OK)
     }
 
     @PostMapping

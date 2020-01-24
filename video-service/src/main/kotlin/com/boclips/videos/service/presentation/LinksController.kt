@@ -13,7 +13,10 @@ import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
-import org.springframework.hateoas.EntityModel
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+import org.springframework.hateoas.Link
+import org.springframework.hateoas.Links
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -36,33 +39,42 @@ class LinksController(
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
     @GetMapping
-    fun get(request: SecurityContextHolderAwareRequestWrapper): EntityModel<String> {
-        return EntityModel(
-            "", listOfNotNull(
-                videosLinkBuilder.videoLink(),
-                collectionsLinkBuilder.publicCollections(),
-                subjectsLinkBuilder.subjects(),
-                distributionMethodsLinkBuilder.distributionMethods(), //belongs to contentpartner-service links
-                videosLinkBuilder.adminSearchLink(),
-                videosLinkBuilder.adminVideoSearchLink(),
-                collectionsLinkBuilder.adminCollectionSearch(),
-                videosLinkBuilder.searchVideosLink(),
-                collectionsLinkBuilder.bookmarkedCollections(),
-                collectionsLinkBuilder.searchPublicCollections(),
-                collectionsLinkBuilder.searchCollections(),
-                collectionsLinkBuilder.collection(null),
-                collectionsLinkBuilder.collectionsByOwner(),
-                collectionsLinkBuilder.myCollections(),
-                collectionsLinkBuilder.createCollection(),
-                LegalRestrictionsController.getAllLink(),
-                contentPartnersLinkBuilder.contentPartnerLink(null),
-                contentPartnersLinkBuilder.contentPartnersLink(),
-                disciplinesLinkBuilder.disciplines(),
-                tagsLinkBuilder.tags(),
-                videoTypeLinkBuilder.videoTypes(),
-                eventsLinkBuilder.createPlaybackEventsLink(),
-                contentCategoriesLinkBuilder.contentCategries()
+    fun get(request: SecurityContextHolderAwareRequestWrapper): LinksResource {
+        return LinksResource(
+            Links.of(
+                listOfNotNull(
+                    distributionMethodsLinkBuilder.distributionMethods(), //belongs to contentpartner-service links
+                    videosLinkBuilder.videoLink(),
+                    collectionsLinkBuilder.publicCollections(),
+                    subjectsLinkBuilder.subjects(),
+                    videosLinkBuilder.adminSearchLink(),
+                    videosLinkBuilder.adminVideoSearchLink(),
+                    collectionsLinkBuilder.adminCollectionSearch(),
+                    videosLinkBuilder.searchVideosLink(),
+                    collectionsLinkBuilder.bookmarkedCollections(),
+                    collectionsLinkBuilder.searchPublicCollections(),
+                    collectionsLinkBuilder.searchCollections(),
+                    collectionsLinkBuilder.collection(null),
+                    collectionsLinkBuilder.collectionsByOwner(),
+                    collectionsLinkBuilder.myCollections(),
+                    collectionsLinkBuilder.createCollection(),
+                    LegalRestrictionsController.getAllLink(),
+                    contentPartnersLinkBuilder.contentPartnerLink(null),
+                    contentPartnersLinkBuilder.contentPartnersLink(),
+                    disciplinesLinkBuilder.disciplines(),
+                    tagsLinkBuilder.tags(),
+                    videoTypeLinkBuilder.videoTypes(),
+                    eventsLinkBuilder.createPlaybackEventsLink(),
+                    contentCategoriesLinkBuilder.contentCategries()
+                )
             )
         )
+    }
+}
+
+class LinksResource(@JsonIgnore private val links: Links) {
+    @JsonProperty("_links")
+    fun getLinks(): Map<String, Link> {
+        return links.map { it.rel.value() to it }.toMap()
     }
 }

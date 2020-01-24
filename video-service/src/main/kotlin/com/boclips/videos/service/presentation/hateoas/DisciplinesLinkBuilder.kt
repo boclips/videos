@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.utils.UserExtractor.getIfHasRole
-import com.boclips.videos.api.response.discipline.DisciplineResource
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
 
@@ -10,12 +9,12 @@ class DisciplinesLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         Link(getDisciplineRoot().toUriString(), rel)
     }
 
-    fun discipline(discipline: DisciplineResource, rel: String = "self") = getIfHasRole(UserRoles.VIEW_DISCIPLINES) {
-        Link(getDisciplineRoot().pathSegment(discipline.id).toUriString(), rel)
+    fun discipline(rel: String = "self", id: String) = getIfHasRole(UserRoles.VIEW_DISCIPLINES) {
+        Link(getDisciplineRoot().pathSegment(id).toUriString(), rel)
     }
 
-    fun subjectsForDiscipline(discipline: DisciplineResource) = getIfHasRole(UserRoles.UPDATE_DISCIPLINES) {
-        Link(getDisciplineRoot().pathSegment(discipline.id).pathSegment("subjects").toUriString(), "subjects")
+    fun subjectsForDiscipline(id: String) = getIfHasRole(UserRoles.UPDATE_DISCIPLINES) {
+        Link(getDisciplineRoot().pathSegment(id).pathSegment("subjects").toUriString(), "subjects")
     }
 
     private fun getDisciplineRoot() = uriComponentsBuilderFactory.getInstance()

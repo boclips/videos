@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.discipline.CreateDisciplineRequest
 import com.boclips.videos.api.response.discipline.DisciplineResource
+import com.boclips.videos.api.response.discipline.DisciplinesResource
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
@@ -9,8 +10,6 @@ import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubje
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
-import org.springframework.hateoas.CollectionModel
-import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -37,37 +36,30 @@ class DisciplinesController(
 ) : BaseController(accessRuleService, getUserIdOverride) {
 
     @GetMapping("/{id}")
-    fun discipline(@PathVariable id: String): EntityModel<DisciplineResource> =
-        getDiscipline(id).let {
-            EntityModel(
-                it,
-                listOfNotNull(
-                    disciplinesLinkBuilder.discipline(it, "self"),
-                    disciplinesLinkBuilder.subjectsForDiscipline(it)
-                )
-            )
-        }
+    fun discipline(@PathVariable id: String): DisciplineResource {
+        return getDiscipline(id)
+    }
 
     @GetMapping
-    fun disciplines(): CollectionModel<EntityModel<DisciplineResource>> {
-        return CollectionModel(
-            getDisciplines().map { EntityModel(it) },
-            listOfNotNull(disciplinesLinkBuilder.disciplines("self"))
-        )
+    fun disciplines(): DisciplinesResource {
+        return getDisciplines()
     }
 
     @PostMapping
     fun createADiscipline(@Valid @RequestBody createDisciplineRequest: CreateDisciplineRequest): ResponseEntity<Any> {
         val discipline = createDiscipline(createDisciplineRequest)
+
         val headers = HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, disciplinesLinkBuilder.discipline(discipline)?.href)
+            set(HttpHeaders.LOCATION, disciplinesLinkBuilder.discipline(id = discipline.id)?.href)
         }
+
         return ResponseEntity(discipline(discipline.id), headers, HttpStatus.CREATED)
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping(path = ["/{id}/subjects"])
     fun putSubjects(@PathVariable id: String, @RequestBody body: String) {
-        replaceDisciplineSubjects(id, body.lines())
+        val subjectIds = body.lines().map { it.substringAfter("/subjects/") }
+        replaceDisciplineSubjects(disciplineId = id, subjectIds = subjectIds)
     }
 }

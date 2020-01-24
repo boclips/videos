@@ -1,31 +1,28 @@
 package com.boclips.videos.service.application.disciplines
 
-import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.presentation.converters.DisciplineConverter
-import com.boclips.videos.service.testsupport.DisciplineFactory
-import com.nhaarman.mockitokotlin2.whenever
+import com.boclips.videos.api.request.discipline.CreateDisciplineRequest
+import com.boclips.videos.api.request.subject.CreateSubjectRequest
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.beans.factory.annotation.Autowired
 
-@ExtendWith(MockitoExtension::class)
-class ReplaceDisciplineSubjectsTest {
+class ReplaceDisciplineSubjectsTest : AbstractSpringIntegrationTest() {
+    @Autowired
+    lateinit var replaceDisciplineSubjects: ReplaceDisciplineSubjects
+
+    @Autowired
+    lateinit var createDiscipline: CreateDiscipline
 
     @Test
-    fun `replace subject updates with new subjects`(@Mock disciplineRepository: DisciplineRepository, @Mock subjectRepository: SubjectRepository) {
-        val replaceDisciplineSubjects = ReplaceDisciplineSubjects(disciplineRepository, subjectRepository)
+    fun `replace subject updates with new subjects`() {
+        val disciplineResource = createDiscipline.invoke(CreateDisciplineRequest("colombia", "COL"))
+        assertThat(disciplineResource.subjects).isEmpty()
 
-        val originalDiscipline = DisciplineFactory.sample()
-        whenever(disciplineRepository.findOne("discipline-id")).thenReturn(originalDiscipline)
+        val subject = createSubject.invoke(CreateSubjectRequest("bogota"))
+        val discipline = replaceDisciplineSubjects.invoke(disciplineResource.id, listOf(subject.id.value))
 
-        val newDiscipline = replaceDisciplineSubjects(
-            "discipline-id",
-            listOf("https://example.com/subjects/subject-1", "https://example.com/subjects/subject-1")
-        )
-
-        assertThat(newDiscipline).isEqualTo(DisciplineConverter.from(originalDiscipline.copy(subjects = listOf())))
+        assertThat(discipline.subjects.map { it.id.value }).containsExactly(subject.id.value)
+        assertThat(discipline.name).isEqualTo("colombia")
     }
 }

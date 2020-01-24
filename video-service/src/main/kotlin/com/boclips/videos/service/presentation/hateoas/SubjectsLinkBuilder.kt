@@ -13,8 +13,8 @@ class SubjectsLinkBuilder(private val uriComponentsBuilderFactory: UriComponents
         return Link(getSubjectsRoot().toUriString(), rel)
     }
 
-    fun self(subject: SubjectResource): Link {
-        return Link(getSubjectsRoot().pathSegment(subject.id).toUriString(), "self")
+    fun self(id: String): Link {
+        return Link(getSubjectsRoot().pathSegment(id).toUriString(), "self")
     }
 
     fun updateSubject(subject: SubjectResource): Link? {

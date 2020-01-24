@@ -6,11 +6,13 @@ import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class GetDiscipline(
-    private val disciplineRepository: DisciplineRepository
+    private val disciplineRepository: DisciplineRepository,
+    private val disciplineConverter: DisciplineConverter
 ) {
     operator fun invoke(disciplineId: String): DisciplineResource {
-        return disciplineRepository.findOne(disciplineId)?.let {
-            DisciplineConverter.from(it)
-        } ?: throw ResourceNotFoundApiException("Not found", "Discipline with id $disciplineId cannot be found")
+        val discipline = disciplineRepository.findOne(disciplineId)
+
+        return discipline?.let { disciplineConverter.convert(it) }
+            ?: throw ResourceNotFoundApiException("Not found", "Discipline with id $disciplineId cannot be found")
     }
 }

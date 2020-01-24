@@ -69,8 +69,10 @@ import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
+import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
@@ -303,22 +305,27 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getDiscipline(): GetDiscipline {
-        return GetDiscipline(disciplineRepository)
+    fun disciplineConverter(disciplinesLinkBuilder: DisciplinesLinkBuilder): DisciplineConverter {
+        return DisciplineConverter(disciplinesLinkBuilder = disciplinesLinkBuilder)
     }
 
     @Bean
-    fun getDisciplines(): GetDisciplines {
-        return GetDisciplines(disciplineRepository)
+    fun getDiscipline(disciplineConverter: DisciplineConverter): GetDiscipline {
+        return GetDiscipline(disciplineRepository = disciplineRepository, disciplineConverter = disciplineConverter)
     }
 
     @Bean
-    fun createDiscipline(): CreateDiscipline {
-        return CreateDiscipline(disciplineRepository)
+    fun getDisciplines(disciplineConverter: DisciplineConverter): GetDisciplines {
+        return GetDisciplines(disciplineRepository, disciplineConverter)
     }
 
     @Bean
-    fun replaceDisciplineSubjects(): ReplaceDisciplineSubjects {
+    fun createDiscipline(disciplineConverter: DisciplineConverter): CreateDiscipline {
+        return CreateDiscipline(disciplineRepository, disciplineConverter)
+    }
+
+    @Bean
+    fun replaceDisciplineSubjects(disciplineConverter: DisciplineConverter): ReplaceDisciplineSubjects {
         return ReplaceDisciplineSubjects(disciplineRepository, subjectRepository)
     }
 

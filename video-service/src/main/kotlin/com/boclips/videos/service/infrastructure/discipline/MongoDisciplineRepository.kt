@@ -68,11 +68,13 @@ class MongoDisciplineRepository(
         mongoClient.getDatabase(DATABASE_NAME).getCollection<DisciplineDocument>(collectionName)
 
     private fun toDiscipline(document: DisciplineDocument): Discipline {
+        val subjects = subjectRepository.findByIds(document.subjects.map { it.toHexString() })
+
         return Discipline(
             id = DisciplineId(document.id.toHexString()),
             name = document.name,
             code = document.code,
-            subjects = subjectRepository.findByIds(document.subjects.map { it.toHexString() })
+            subjects = subjects
         )
     }
 }
