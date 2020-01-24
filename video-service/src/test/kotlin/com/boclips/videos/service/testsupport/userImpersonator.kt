@@ -34,7 +34,8 @@ fun MockHttpServletRequestBuilder.asApiUser(email: String = "api-user@gmail.com"
                 UserRoles.VIEW_VIDEO_TYPES,
                 UserRoles.VIEW_COLLECTIONS,
                 UserRoles.VIEW_CONTENT_PARTNERS,
-                UserRoles.API
+                UserRoles.API,
+                UserRoles.VIEW_WHAT_TO_EXPECT
             )
     )
 

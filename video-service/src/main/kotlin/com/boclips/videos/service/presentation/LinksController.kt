@@ -12,6 +12,7 @@ import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.WhatToExpectLinkBuilder
 import org.springframework.hateoas.EntityModel
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,6 +31,7 @@ class LinksController(
     private val tagsLinkBuilder: TagsLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
+    private val whatToExpectLinkBuilder: WhatToExpectLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -58,7 +60,8 @@ class LinksController(
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
                 videoTypeLinkBuilder.videoTypes(),
-                eventsLinkBuilder.createPlaybackEventsLink()
+                eventsLinkBuilder.createPlaybackEventsLink(),
+                whatToExpectLinkBuilder.whatToExpect()
             )
         )
     }
