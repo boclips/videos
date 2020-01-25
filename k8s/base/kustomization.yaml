@@ -6,11 +6,11 @@ resources:
 commonLabels:
   app: video-service
 commonAnnotations:
-  boclips-version: "22"
+  boclips-version: "23"
 images:
 - name: app
   newName: eu.gcr.io/boclips-prod/boclips/video-service
-  newTag: "22"
+  newTag: "23"
 patches:
 - path: spread-across-zones.yaml
   target:
