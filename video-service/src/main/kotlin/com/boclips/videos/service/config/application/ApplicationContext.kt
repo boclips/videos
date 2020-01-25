@@ -321,7 +321,7 @@ class ApplicationContext(
 
     @Bean
     fun createDiscipline(disciplineConverter: DisciplineConverter): CreateDiscipline {
-        return CreateDiscipline(disciplineRepository, disciplineConverter)
+        return CreateDiscipline(disciplineRepository)
     }
 
     @Bean

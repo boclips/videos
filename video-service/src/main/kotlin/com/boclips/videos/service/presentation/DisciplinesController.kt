@@ -50,10 +50,10 @@ class DisciplinesController(
         val discipline = createDiscipline(createDisciplineRequest)
 
         val headers = HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, disciplinesLinkBuilder.discipline(id = discipline.id)?.href)
+            set(HttpHeaders.LOCATION, disciplinesLinkBuilder.discipline(id = discipline.id.value)?.href)
         }
 
-        return ResponseEntity(discipline(discipline.id), headers, HttpStatus.CREATED)
+        return ResponseEntity(discipline(discipline.id.value), headers, HttpStatus.CREATED)
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

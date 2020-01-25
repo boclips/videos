@@ -20,7 +20,7 @@ class ReplaceDisciplineSubjectsTest : AbstractSpringIntegrationTest() {
         assertThat(disciplineResource.subjects).isEmpty()
 
         val subject = createSubject.invoke(CreateSubjectRequest("bogota"))
-        val discipline = replaceDisciplineSubjects.invoke(disciplineResource.id, listOf(subject.id.value))
+        val discipline = replaceDisciplineSubjects.invoke(disciplineResource.id.value, listOf(subject.id.value))
 
         assertThat(discipline.subjects.map { it.id.value }).containsExactly(subject.id.value)
         assertThat(discipline.name).isEqualTo("colombia")

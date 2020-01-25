@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -26,6 +27,7 @@ class DisciplinesControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `create a discipline`() {
         createDiscipline(code = "math", name = "Mathematics")
             .andExpect(status().isCreated)
+            .andExpect(header().exists("Location"))
     }
 
     @Test
