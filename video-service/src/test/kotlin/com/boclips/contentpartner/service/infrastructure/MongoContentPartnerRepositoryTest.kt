@@ -6,7 +6,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.TestFactories
@@ -214,7 +214,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `replace legal restrictions`() {
         val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
-        val legalRestrictions = LegalRestrictions(
+        val legalRestrictions = LegalRestriction(
             id = LegalRestrictionsId(TestFactories.aValidId()),
             text = "New restrictions"
         )
@@ -229,7 +229,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
-        assertThat(updatedContentPartner?.legalRestrictions).isEqualTo(legalRestrictions)
+        assertThat(updatedContentPartner?.legalRestriction).isEqualTo(legalRestrictions)
     }
 
     @Nested

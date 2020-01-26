@@ -46,7 +46,7 @@ class CreateContentPartner(private val contentPartnerRepository: ContentPartnerR
                         Credit
                             .YoutubeCredit(it)
                     } ?: Credit.PartnerCredit,
-                    legalRestrictions = null,
+                    legalRestriction = null,
                     distributionMethods = methods,
                     remittance = createRequest.currency?.let { Remittance(Currency.getInstance(it)) }
                 )

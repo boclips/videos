@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -10,8 +10,8 @@ data class LegalRestrictionsDocument(
     val text: String
 ) {
 
-    fun toRestrictions(): LegalRestrictions {
-        return LegalRestrictions(
+    fun toRestrictions(): LegalRestriction {
+        return LegalRestriction(
             id = LegalRestrictionsId(
                 id.toHexString()
             ), text = text
@@ -20,11 +20,11 @@ data class LegalRestrictionsDocument(
 
     companion object {
 
-        fun from(legalRestrictions: LegalRestrictions): LegalRestrictionsDocument {
+        fun from(legalRestriction: LegalRestriction): LegalRestrictionsDocument {
             return LegalRestrictionsDocument(
                 ObjectId(
-                    legalRestrictions.id.value
-                ), legalRestrictions.text
+                    legalRestriction.id.value
+                ), legalRestriction.text
             )
         }
     }

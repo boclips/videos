@@ -3,13 +3,9 @@ package com.boclips.videos.api.response.contentpartner
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.hateoas.Link
 
-data class LegalRestrictionsResource(
-    val _embedded: LegalRestrictionsWrapper,
+data class LegalRestrictionResource(
+    val id: String,
+    val text: String,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, Link>?
 )
-
-data class LegalRestrictionsWrapper(
-    val legalRestrictions: List<LegalRestrictionResource>
-)
-

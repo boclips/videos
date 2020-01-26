@@ -2,9 +2,9 @@ package com.boclips.contentpartner.service.domain.model
 
 interface LegalRestrictionsRepository {
 
-    fun create(text: String): LegalRestrictions
+    fun create(text: String): LegalRestriction
 
-    fun findById(id: LegalRestrictionsId): LegalRestrictions?
+    fun findById(id: LegalRestrictionsId): LegalRestriction?
 
-    fun findAll(): List<LegalRestrictions>
+    fun findAll(): List<LegalRestriction>
 }

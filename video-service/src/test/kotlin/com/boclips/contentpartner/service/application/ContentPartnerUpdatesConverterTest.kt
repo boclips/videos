@@ -84,7 +84,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
         assertThat(commands).hasSize(1)
         assertThat(commands[0]).isInstanceOfSatisfying(ContentPartnerUpdateCommand.ReplaceLegalRestrictions::class.java) { command ->
             assertThat(command.contentPartnerId).isEqualTo(ContentPartnerId("123"))
-            assertThat(command.legalRestrictions).isEqualTo(legalRestrictions)
+            assertThat(command.legalRestriction).isEqualTo(legalRestrictions)
         }
     }
 

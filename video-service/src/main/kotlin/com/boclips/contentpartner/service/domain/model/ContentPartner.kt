@@ -5,7 +5,7 @@ data class ContentPartner(
     val name: String,
     val ageRange: AgeRange,
     val credit: Credit,
-    val legalRestrictions: LegalRestrictions?,
+    val legalRestriction: LegalRestriction?,
     val distributionMethods: Set<DistributionMethod>,
     val remittance: Remittance?
 ) {

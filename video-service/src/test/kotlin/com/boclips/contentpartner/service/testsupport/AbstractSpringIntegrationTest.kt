@@ -254,7 +254,7 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveLegalRestrictions(text: String = "No restrictions."): LegalRestrictionsId {
         val createdResource = createLegalRestrictions(text = text)
-        return LegalRestrictionsId(createdResource.id)
+        return LegalRestrictionsId(createdResource.id.value)
     }
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {

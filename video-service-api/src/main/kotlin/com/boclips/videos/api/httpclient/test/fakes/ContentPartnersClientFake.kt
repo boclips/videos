@@ -31,7 +31,7 @@ class ContentPartnersClientFake : ContentPartnersClient, FakeClient<ContentPartn
             id = id,
             name = createContentPartnerRequest.name!!,
             currency = createContentPartnerRequest.currency,
-            legalRestrictions = null,
+            legalRestriction = null,
             distributionMethods = setOf(),
             official = true
         )

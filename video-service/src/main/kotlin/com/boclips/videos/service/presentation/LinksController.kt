@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
-import com.boclips.contentpartner.service.presentation.LegalRestrictionsController
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.videos.service.domain.service.AccessRuleService
@@ -35,6 +35,7 @@ class LinksController(
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
     private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
+    private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -58,7 +59,7 @@ class LinksController(
                     collectionsLinkBuilder.collectionsByOwner(),
                     collectionsLinkBuilder.myCollections(),
                     collectionsLinkBuilder.createCollection(),
-                    LegalRestrictionsController.getAllLink(),
+                    legalRestrictionsLinkBuilder.getAllLink(),
                     contentPartnersLinkBuilder.contentPartnerLink(null),
                     contentPartnersLinkBuilder.contentPartnersLink(),
                     disciplinesLinkBuilder.disciplines(),

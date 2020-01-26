@@ -1,6 +1,11 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsLinkBuilder
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsToResourceConverter
+import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
@@ -40,6 +45,26 @@ class PresentationContext(val videoService: VideoService) {
     @Bean
     fun videosLinkBuilder(uriComponentsBuilderFactory: UriComponentsBuilderFactory): VideosLinkBuilder {
         return VideosLinkBuilder(uriComponentsBuilderFactory)
+    }
+
+    @Bean
+    fun legalRestrictionsLinkBuilder(): LegalRestrictionsLinkBuilder {
+        return LegalRestrictionsLinkBuilder()
+    }
+
+    @Bean
+    fun ageRangeToResourceConverter(): AgeRangeToResourceConverter {
+        return AgeRangeToResourceConverter()
+    }
+
+    @Bean
+    fun collectionUpdatesConverter(subjectRepository: SubjectRepository): CollectionUpdatesConverter {
+        return CollectionUpdatesConverter(subjectRepository) // TODO: should not depend on repository
+    }
+
+    @Bean
+    fun legalRestrictionsConverter(legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder): LegalRestrictionsToResourceConverter {
+        return LegalRestrictionsToResourceConverter(legalRestrictionsLinkBuilder)
     }
 
     @Bean //TODO: collectionResourceFactory mixes different abstractions, address smell

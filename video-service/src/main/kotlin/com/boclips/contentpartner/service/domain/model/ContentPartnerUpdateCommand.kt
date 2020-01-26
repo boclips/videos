@@ -14,7 +14,7 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
         contentPartnerId: ContentPartnerId, val distributionMethods: Set<DistributionMethod>
     ) : ContentPartnerUpdateCommand(contentPartnerId)
 
-    class ReplaceLegalRestrictions(contentPartnerId: ContentPartnerId, val legalRestrictions: LegalRestrictions) :
+    class ReplaceLegalRestrictions(contentPartnerId: ContentPartnerId, val legalRestriction: LegalRestriction) :
         ContentPartnerUpdateCommand(contentPartnerId)
 
     class ReplaceCurrency(contentPartnerId: ContentPartnerId, val currency: Currency) :

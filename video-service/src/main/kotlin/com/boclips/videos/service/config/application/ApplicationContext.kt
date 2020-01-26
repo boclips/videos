@@ -335,18 +335,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun ageRangeToResourceConverter(): AgeRangeToResourceConverter {
-        return AgeRangeToResourceConverter()
-    }
-
-    @Bean
     fun broadcastVideos(): BroadcastVideos {
         return BroadcastVideos(videoRepository, eventBus)
-    }
-
-    @Bean
-    fun collectionUpdatesConverter(): CollectionUpdatesConverter {
-        return CollectionUpdatesConverter(subjectRepository)
     }
 
     @Bean

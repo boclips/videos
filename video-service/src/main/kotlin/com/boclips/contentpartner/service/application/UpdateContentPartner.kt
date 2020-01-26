@@ -24,7 +24,7 @@ class UpdateContentPartner(
             if (legalRestrictionsRequest.id.isNullOrEmpty()) {
                 val legalRestrictions = createLegalRestrictions(legalRestrictionsRequest.text)
                 createRequest.legalRestrictions =
-                    LegalRestrictionsRequest(id = legalRestrictions.id)
+                    LegalRestrictionsRequest(id = legalRestrictions.id.value)
             }
         }
 
@@ -48,7 +48,7 @@ class UpdateContentPartner(
                                 .max(contentPartner.ageRange.max())
                                 .build()
                         )
-                        .legalRestrictions(contentPartner.legalRestrictions?.text)
+                        .legalRestrictions(contentPartner.legalRestriction?.text)
                         .build()
                 )
                 .build()

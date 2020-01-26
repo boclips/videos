@@ -8,7 +8,7 @@ data class ContentPartnerResource(
     val name: String,
     val ageRange: AgeRangeResource? = null,
     val official: Boolean,
-    val legalRestrictions: LegalRestrictionsResource? = null,
+    val legalRestriction: LegalRestrictionResource? = null,
     val distributionMethods: Set<DistributionMethodResource>,
     val currency: String?,
 

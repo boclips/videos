@@ -79,9 +79,9 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedContentPartner.name).isEqualTo("My better content partner")
         assertThat(updatedContentPartner.ageRange.min()).isEqualTo(9)
         assertThat(updatedContentPartner.ageRange.max()).isEqualTo(14)
-        assertThat(updatedContentPartner.legalRestrictions).isNotNull
-        assertThat(updatedContentPartner.legalRestrictions?.id).isEqualTo(legalRestrictionsId)
-        assertThat(updatedContentPartner.legalRestrictions?.text).isEqualTo("Legal restrictions")
+        assertThat(updatedContentPartner.legalRestriction).isNotNull
+        assertThat(updatedContentPartner.legalRestriction?.id).isEqualTo(legalRestrictionsId)
+        assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("Legal restrictions")
     }
 
     @Test
@@ -116,8 +116,8 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val updatedContentPartner = contentPartnerRepository.findById(originalContentPartner.contentPartnerId)!!
-        assertThat(updatedContentPartner.legalRestrictions).isNotNull
-        assertThat(updatedContentPartner.legalRestrictions?.id?.value).isNotBlank()
-        assertThat(updatedContentPartner.legalRestrictions?.text).isEqualTo("New legal restrictions")
+        assertThat(updatedContentPartner.legalRestriction).isNotNull
+        assertThat(updatedContentPartner.legalRestriction?.id?.value).isNotBlank()
+        assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("New legal restrictions")
     }
 }

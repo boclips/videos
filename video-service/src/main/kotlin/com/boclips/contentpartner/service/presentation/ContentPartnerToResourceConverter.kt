@@ -6,7 +6,10 @@ import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 
-class ContentPartnerToResourceConverter(private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder) {
+class ContentPartnerToResourceConverter(
+    private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
+) {
     fun convert(contentPartner: ContentPartner, user: User): ContentPartnerResource {
         return ContentPartnerResource(
             id = contentPartner.contentPartnerId.value,
@@ -16,10 +19,8 @@ class ContentPartnerToResourceConverter(private val contentPartnersLinkBuilder: 
                 is Credit.PartnerCredit -> true
                 is Credit.YoutubeCredit -> false
             },
-            legalRestrictions = contentPartner.legalRestrictions?.let {
-                LegalRestrictionsToResourceConverter().convert(
-                    it
-                )
+            legalRestriction = contentPartner.legalRestriction?.let {
+                legalRestrictionsToResourceConverter.convert(it)
             },
             distributionMethods = DistributionMethodResourceConverter.toDeliveryMethodResources(
                 contentPartner.distributionMethods

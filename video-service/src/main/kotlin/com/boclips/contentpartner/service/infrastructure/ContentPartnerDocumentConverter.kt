@@ -21,7 +21,7 @@ object ContentPartnerDocumentConverter {
             name = contentPartner.name,
             ageRangeMax = contentPartner.ageRange.max(),
             ageRangeMin = contentPartner.ageRange.min(),
-            legalRestrictions = contentPartner.legalRestrictions?.let { LegalRestrictionsDocument.from(it) },
+            legalRestrictions = contentPartner.legalRestriction?.let { LegalRestrictionsDocument.from(it) },
             distributionMethods = contentPartner.distributionMethods
                 .map(DistributionMethodDocumentConverter::toDocument)
                 .toSet(),
@@ -42,7 +42,7 @@ object ContentPartnerDocumentConverter {
                     channelId = it
                 )
             } ?: Credit.PartnerCredit,
-            legalRestrictions = document.legalRestrictions?.toRestrictions(),
+            legalRestriction = document.legalRestrictions?.toRestrictions(),
             distributionMethods = reconstructDistributionMethods(
                 document
             ),

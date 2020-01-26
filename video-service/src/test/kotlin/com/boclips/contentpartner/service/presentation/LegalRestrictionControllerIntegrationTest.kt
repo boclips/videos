@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
 
-class LegalRestrictionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
+class LegalRestrictionControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var mockMvc: MockMvc

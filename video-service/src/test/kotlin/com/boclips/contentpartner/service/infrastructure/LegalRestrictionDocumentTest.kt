@@ -1,13 +1,13 @@
 package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 
-class LegalRestrictionsDocumentTest {
+class LegalRestrictionDocumentTest {
 
     @Test
     fun toRestrictions() {
@@ -19,7 +19,7 @@ class LegalRestrictionsDocumentTest {
         val restrictions = document.toRestrictions()
 
         assertThat(restrictions).isEqualTo(
-            LegalRestrictions(
+            LegalRestriction(
                 id = LegalRestrictionsId("5d81099a195d1081a0cfc4ea"),
                 text = "Do not use this video ever"
             )
@@ -29,7 +29,7 @@ class LegalRestrictionsDocumentTest {
     @Test
     fun from() {
         val id = TestFactories.aValidId()
-        val restrictions = LegalRestrictions(
+        val restrictions = LegalRestriction(
             id = LegalRestrictionsId(id),
             text = "No restrictions"
         )

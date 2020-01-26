@@ -1,13 +1,27 @@
 package com.boclips.contentpartner.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.LegalRestrictions
+import com.boclips.contentpartner.service.domain.model.LegalRestriction
+import com.boclips.videos.api.response.contentpartner.LegalRestrictionResource
 import com.boclips.videos.api.response.contentpartner.LegalRestrictionsResource
+import com.boclips.videos.api.response.contentpartner.LegalRestrictionsWrapper
 
-class LegalRestrictionsToResourceConverter {
-    fun convert(legalRestrictions: LegalRestrictions): LegalRestrictionsResource {
+class LegalRestrictionsToResourceConverter(private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder) {
+    fun convert(legalRestriction: LegalRestriction): LegalRestrictionResource {
+        return LegalRestrictionResource(
+            id = legalRestriction.id.value,
+            text = legalRestriction.text,
+            _links = listOfNotNull(legalRestrictionsLinkBuilder.self(legalRestriction.id.value))
+                .map { it.rel.value() to it }
+                .toMap()
+        )
+    }
+
+    fun convert(legalRestriction: List<LegalRestriction>): LegalRestrictionsResource {
+        val legalRestrictionsResources = legalRestriction.map { convert(it) }
+
         return LegalRestrictionsResource(
-            id = legalRestrictions.id.value,
-            text = legalRestrictions.text
+            _embedded = LegalRestrictionsWrapper(legalRestrictions = legalRestrictionsResources),
+            _links = listOfNotNull(legalRestrictionsLinkBuilder.createLink()).map { it.rel.value() to it }.toMap()
         )
     }
 }
