@@ -35,7 +35,8 @@ class TagsLinkBuilderTest {
 
     @Test
     fun `tag link defaults to self`() {
-        assertThat(tagsLinkBuilder.tag(TagResource("id"))).isEqualTo(
+        val rel = TagResource("id")
+        assertThat(tagsLinkBuilder.tag(id = rel.id)).isEqualTo(
             Link(
                 "https://localhost/v1/tags/id",
                 "self"
@@ -45,10 +46,11 @@ class TagsLinkBuilderTest {
 
     @Test
     fun `tag link with rel`() {
+        val rel = TagResource("id")
         assertThat(
             tagsLinkBuilder.tag(
-                TagResource("id"),
-                "rel"
+                "rel",
+                rel.id
             )
         ).isEqualTo(Link("https://localhost/v1/tags/id", "rel"))
     }
@@ -57,6 +59,7 @@ class TagsLinkBuilderTest {
     fun `when no view tags role`() {
         setSecurityContext("bambi")
         assertThat(tagsLinkBuilder.tags()).isNull()
-        assertThat(tagsLinkBuilder.tag(TagResource("id"))).isNull()
+        val rel = TagResource("id")
+        assertThat(tagsLinkBuilder.tag(id = rel.id)).isNull()
     }
 }

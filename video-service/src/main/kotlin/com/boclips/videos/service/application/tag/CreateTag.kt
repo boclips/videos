@@ -14,7 +14,8 @@ open class CreateTag(
         if (tagRepository.findByLabel(tagLabel) != null) {
             throw TagExistsException(tagLabel)
         }
+
         return tagRepository.create(label = tagLabel)
-            .let { TagResource(id = it.id.value, label = it.label) }
+            .let { TagResource(id = it.id.value, label = it.label, _links = emptyMap()) }
     }
 }

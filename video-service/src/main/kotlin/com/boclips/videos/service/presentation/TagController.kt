@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.response.tag.TagResource
+import com.boclips.videos.api.response.tag.TagsResource
 import com.boclips.videos.service.application.exceptions.TagExistsException
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
@@ -10,11 +11,10 @@ import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
-import org.springframework.hateoas.CollectionModel
-import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -34,25 +34,32 @@ class TagController(
     private val deleteTag: DeleteTag,
     private val getTags: GetTags,
     private val createTag: CreateTag,
+    private val tagsConverter: TagConverter,
     private val tagsLinkBuilder: TagsLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
 
     @GetMapping("/{id}")
-    fun tag(@PathVariable id: String): EntityModel<TagResource> =
-        getTag(id).let { EntityModel(it, tagsLinkBuilder.tag(it, "self")) }
+    fun tag(@PathVariable id: String): ResponseEntity<TagResource> {
+        val tag = getTag(id)
+
+        val resource = tagsConverter.convert(tag)
+
+        return ResponseEntity(resource, HttpStatus.OK)
+    }
 
     @GetMapping
-    fun tags(): CollectionModel<EntityModel<TagResource>> {
-        return CollectionModel(
-            getTags().map { EntityModel(it, tagsLinkBuilder.tag(it, "self")) },
-            tagsLinkBuilder.tags("self")
-        )
+    fun tags(): ResponseEntity<TagsResource> {
+        val allTags = getTags()
+
+        val resource = tagsConverter.convert(allTags)
+
+        return ResponseEntity(resource, HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun removeTags(@PathVariable id: String): ResponseEntity<Void> {
+    fun removeTags(@PathVariable id: String): ResponseEntity<Unit> {
         deleteTag(TagId(value = id))
         return ResponseEntity(HttpStatus.OK)
     }
@@ -70,9 +77,11 @@ class TagController(
                 )
             )
         }
+
         val headers = HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, tagsLinkBuilder.tag(tag)?.href)
+            set(HttpHeaders.LOCATION, tagsLinkBuilder.tag(id = tag.id)?.href)
         }
+
         return ResponseEntity(headers, HttpStatus.CREATED)
     }
 }
