@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
-import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
+import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
@@ -98,8 +98,8 @@ class PresentationContext(val videoService: VideoService) {
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsToResourceConverter: AttachmentToResourceConverter,
         collectionsLinkBuilder: CollectionsLinkBuilder
-    ): CollectionResourceFactory {
-        return CollectionResourceFactory(
+    ): CollectionResourceConverter {
+        return CollectionResourceConverter(
             VideoToResourceConverter(
                 videosLinkBuilder,
                 playbackToResourceConverter

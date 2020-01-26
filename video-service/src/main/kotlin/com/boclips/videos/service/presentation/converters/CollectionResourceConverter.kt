@@ -2,13 +2,17 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.collection.CollectionResource
+import com.boclips.videos.api.response.collection.CollectionsResource
+import com.boclips.videos.api.response.collection.CollectionsWrapperResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import org.springframework.hateoas.PagedModel
 
-class CollectionResourceFactory(
+class CollectionResourceConverter(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val attachmentsToResourceConverter: AttachmentToResourceConverter,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
@@ -78,6 +82,34 @@ class CollectionResourceFactory(
                 collectionsLinkBuilder.bookmark(collection, user),
                 collectionsLinkBuilder.unbookmark(collection, user),
                 collectionsLinkBuilder.interactedWith(collection)
+            ).map { it.rel.value() to it }.toMap()
+        )
+    }
+
+    fun buildCollectionsResource(
+        collections: Page<Collection>,
+        currentUser: User,
+        projection: Projection?
+    ): Any {
+        return CollectionsResource(
+            _embedded = CollectionsWrapperResource(collections.elements.map {
+                buildCollectionResource(
+                    it,
+                    projection ?: Projection.list,
+                    currentUser
+                )
+            }),
+            page = PagedModel.PageMetadata(
+                collections.pageInfo.pageRequest.size.toLong(),
+                collections.pageInfo.pageRequest.page.toLong(),
+                collections.pageInfo.totalElements,
+                collections.pageInfo.totalElements / collections.pageInfo.pageRequest.size.toLong()
+            ),
+            _links = listOfNotNull(
+                collectionsLinkBuilder.projections().list(),
+                collectionsLinkBuilder.projections().details(),
+                collectionsLinkBuilder.self(null),
+                collectionsLinkBuilder.next(collections.pageInfo)
             ).map { it.rel.value() to it }.toMap()
         )
     }

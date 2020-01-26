@@ -7,17 +7,13 @@ import com.boclips.videos.service.domain.model.UnboundedAgeRange
 
 class AgeRangeToResourceConverter {
     companion object {
-        fun convert(
-            ageRange: AgeRange?
-        ): AgeRangeResource? {
-            return when (ageRange) {
-                is BoundedAgeRange -> AgeRangeResource(
-                    ageRange.min,
-                    ageRange.max
-                )
-                is UnboundedAgeRange -> null
-                else -> null
-            }
+        fun convert(ageRange: AgeRange?): AgeRangeResource? = when (ageRange) {
+            is BoundedAgeRange -> AgeRangeResource(
+                ageRange.min,
+                ageRange.max
+            )
+            is UnboundedAgeRange -> null
+            else -> null
         }
     }
 }

@@ -4,8 +4,6 @@ import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
-import com.boclips.videos.api.response.collection.CollectionsResource
-import com.boclips.videos.api.response.collection.CollectionsWrapperResource
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -20,11 +18,10 @@ import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
-import com.boclips.videos.service.presentation.converters.CollectionResourceFactory
+import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.projections.WithProjection
 import mu.KLogging
-import org.springframework.hateoas.PagedModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -55,7 +52,7 @@ class CollectionsController(
     private val bookmarkCollection: BookmarkCollection,
     private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
-    private val collectionResourceFactory: CollectionResourceFactory,
+    private val collectionResourceConverter: CollectionResourceConverter,
     private val withProjection: WithProjection,
     accessRuleService: AccessRuleService,
     getUserIdOverride: GetUserIdOverride
@@ -87,30 +84,12 @@ class CollectionsController(
         }
 
         val collections: Page<Collection> = getCollections(collectionFilterRequest, user)
-
-        val payload = withProjection(
-            CollectionsResource(
-                _embedded = CollectionsWrapperResource(collections.elements.map {
-                    collectionResourceFactory.buildCollectionResource(
-                        it,
-                        collectionFilterRequest.projection ?: Projection.list,
-                        user
-                    )
-                }),
-                page = PagedModel.PageMetadata(
-                    collections.pageInfo.pageRequest.size.toLong(),
-                    collections.pageInfo.pageRequest.page.toLong(),
-                    collections.pageInfo.totalElements,
-                    collections.pageInfo.totalElements / collections.pageInfo.pageRequest.size.toLong()
-                ),
-                _links = listOfNotNull(
-                    collectionsLinkBuilder.projections().list(),
-                    collectionsLinkBuilder.projections().details(),
-                    collectionsLinkBuilder.self(null),
-                    collectionsLinkBuilder.next(collections.pageInfo)
-                ).map { it.rel.value() to it }.toMap()
-            )
+        val collectionsResource = collectionResourceConverter.buildCollectionsResource(
+            collections,
+            getCurrentUser(),
+            collectionFilterRequest.projection
         )
+        val payload = withProjection(collectionsResource)
 
         return ResponseEntity(payload, HttpStatus.OK)
     }
@@ -149,15 +128,15 @@ class CollectionsController(
     }
 
     @GetMapping("/{id}")
-    fun show(
-        @PathVariable("id") id: String,
-        @RequestParam(required = false) projection: Projection? = Projection.list
-    ): MappingJacksonValue {
+    fun show(@PathVariable("id") id: String, @RequestParam(required = false) projection: Projection? = Projection.list): MappingJacksonValue {
         val collection = getCollection(id, getCurrentUser())
 
         val collectionResource = when (projection) {
-            Projection.details -> collectionResourceFactory.buildCollectionDetailsResource(collection, getCurrentUser())
-            else -> collectionResourceFactory.buildCollectionListResource(collection, getCurrentUser())
+            Projection.details -> collectionResourceConverter.buildCollectionDetailsResource(
+                collection,
+                getCurrentUser()
+            )
+            else -> collectionResourceConverter.buildCollectionListResource(collection, getCurrentUser())
         }
 
         return withProjection(collectionResource)
@@ -167,7 +146,6 @@ class CollectionsController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun addVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
         addVideoToCollection(collectionId = collectionId, videoId = videoId, requester = getCurrentUser())
-
         return null
     }
 
