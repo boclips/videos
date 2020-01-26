@@ -93,7 +93,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Kaltura`() {
-        val videoResource = videoToResourceConverter.convertVideo(kalturaVideo, UserFactory.sample(id = "user-id"))
+        val videoResource = videoToResourceConverter.convert(kalturaVideo, UserFactory.sample(id = "user-id"))
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -127,7 +127,7 @@ internal class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Youtube`() {
-        val videoResource = videoToResourceConverter.convertVideo(youtubeVideo, UserFactory.sample())
+        val videoResource = videoToResourceConverter.convert(youtubeVideo, UserFactory.sample())
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
@@ -164,7 +164,7 @@ internal class VideoToResourceConverterTest {
             tags = emptyList()
         )
 
-        val videoResource = videoToResourceConverter.convertVideo(video, UserFactory.sample())
+        val videoResource = videoToResourceConverter.convert(video, UserFactory.sample())
 
         assertThat(videoResource.bestFor).isEmpty()
     }
@@ -172,7 +172,7 @@ internal class VideoToResourceConverterTest {
     @Test
     fun `converts heterogenous video lists`() {
         val resultResource = videoToResourceConverter
-            .convertVideos(videos = listOf(youtubeVideo, kalturaVideo), user = UserFactory.sample())
+            .convert(videos = listOf(youtubeVideo, kalturaVideo), user = UserFactory.sample())
 
         assertThat(resultResource.map { it.playback!!.type }).containsExactlyInAnyOrder(
             "STREAM",

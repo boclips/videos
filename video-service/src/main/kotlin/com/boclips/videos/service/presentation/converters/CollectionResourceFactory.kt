@@ -25,7 +25,7 @@ class CollectionResourceFactory(
             id = collection.id.value,
             owner = collection.owner.value,
             title = collection.title,
-            videos = videoToResourceConverter.convertVideos(
+            videos = videoToResourceConverter.convert(
                 videoService.getPlayableVideos(collection.videos, user.accessRules.videoAccess),
                 user
             ),

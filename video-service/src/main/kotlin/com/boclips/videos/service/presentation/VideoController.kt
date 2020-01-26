@@ -28,7 +28,6 @@ import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
-import org.springframework.hateoas.PagedModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -115,17 +114,7 @@ class VideoController(
             user = getCurrentUser()
         )
 
-        val videosResource = VideosResource(
-            _embedded = VideosWrapperResource(videos = videos
-                .elements.toList()
-                .map { video -> videoToResourceConverter.convertVideo(video, getCurrentUser()) }),
-            _links = null,
-            page = PagedModel.PageMetadata(
-                pageSize.toLong(),
-                pageNumber.toLong(),
-                videos.pageInfo.totalElements
-            )
-        )
+        val videosResource = videoToResourceConverter.convert(videos = videos, user = getCurrentUser())
 
         return ResponseEntity(videosResource, HttpStatus.OK)
     }
@@ -134,7 +123,7 @@ class VideoController(
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
         val user = getCurrentUser()
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), user)
-            .map { videoToResourceConverter.convertVideo(it, user) }
+            .map { videoToResourceConverter.convert(it, user) }
             .let {
                 ResponseEntity(
                     VideosResource(_embedded = VideosWrapperResource(videos = it), _links = null, page = null),
@@ -155,7 +144,7 @@ class VideoController(
         }
 
         val resources: VideoResource = searchVideo.byId(id, getCurrentUser())
-            .let { videoToResourceConverter.convertVideo(it, getCurrentUser()) }
+            .let { videoToResourceConverter.convert(it, getCurrentUser()) }
 
         val body: MappingJacksonValue = withProjection(
             resources
@@ -192,7 +181,7 @@ class VideoController(
     fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<VideoResource> {
         val resource: VideoResource = try {
             createVideo(createVideoRequest, getCurrentUser())
-                .let { videoToResourceConverter.convertVideo(it, getCurrentUser()) }
+                .let { videoToResourceConverter.convert(it, getCurrentUser()) }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(
                 ExceptionDetails(

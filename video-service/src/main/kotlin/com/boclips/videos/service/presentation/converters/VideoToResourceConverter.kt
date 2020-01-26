@@ -6,23 +6,40 @@ import com.boclips.videos.api.response.video.TagResource
 import com.boclips.videos.api.response.video.VideoBadge
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
+import com.boclips.videos.api.response.video.VideosResource
+import com.boclips.videos.api.response.video.VideosWrapperResource
+import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
+import org.springframework.hateoas.PagedModel
 import org.springframework.stereotype.Component
 
-@Component
 class VideoToResourceConverter(
     private val videosLinkBuilder: VideosLinkBuilder,
     private val playbackToResourceConverter: PlaybackToResourceConverter
 ) {
-    fun convertVideos(videos: List<Video>, user: User): List<VideoResource> {
-        return videos.map { video -> convertVideo(video, user) }
+    fun convert(videos: List<Video>, user: User): List<VideoResource> {
+        return videos.map { video -> convert(video, user) }
     }
 
-    fun convertVideo(video: Video, user: User): VideoResource {
+    fun convert(videos: Page<Video>, user: User): VideosResource {
+        return VideosResource(
+            _embedded = VideosWrapperResource(videos = videos
+                .elements.toList()
+                .map { video -> convert(video, user) }),
+            page = PagedModel.PageMetadata(
+                videos.pageInfo.pageRequest.size.toLong(),
+                videos.pageInfo.pageRequest.page.toLong(),
+                videos.pageInfo.totalElements
+            ),
+            _links = null
+        )
+    }
+
+    fun convert(video: Video, user: User): VideoResource {
         return VideoResource(
             id = video.videoId.value,
             title = video.title,

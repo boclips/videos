@@ -13,6 +13,8 @@ import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -72,6 +74,22 @@ class PresentationContext(val videoService: VideoService) {
     @Bean
     fun tagsConverter(tagsLinkBuilder: TagsLinkBuilder): TagConverter {
         return TagConverter(tagsLinkBuilder)
+    }
+
+    @Bean
+    fun videoConverter(
+        videosLinkBuilder: VideosLinkBuilder,
+        playbackToResourceConverter: PlaybackToResourceConverter
+    ): VideoToResourceConverter {
+        return VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
+    }
+
+    @Bean
+    fun playbackConverter(
+        eventsLinkBuilder: EventsLinkBuilder,
+        playbacksLinkBuilder: PlaybacksLinkBuilder
+    ): PlaybackToResourceConverter {
+        return PlaybackToResourceConverter(eventsLinkBuilder, playbacksLinkBuilder)
     }
 
     @Bean //TODO: collectionResourceFactory mixes different abstractions, address smell

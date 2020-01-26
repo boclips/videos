@@ -7,9 +7,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import org.springframework.hateoas.Link
-import org.springframework.stereotype.Component
 
-@Component
 class PlaybackToResourceConverter(
     val eventsLinkBuilder: EventsLinkBuilder,
     val playbacksLinkBuilder: PlaybacksLinkBuilder
