@@ -1,8 +1,9 @@
 package com.boclips.videos.api.response.contentpartner
 
-import org.springframework.hateoas.server.core.Relation
+class DistributionMethodsResource(val _embedded: DistributionMethodWrapper)
 
-@Relation(collectionRelation = "distributionMethods")
+class DistributionMethodWrapper(val distributionMethods: List<DistributionMethodResource>)
+
 enum class DistributionMethodResource {
     DOWNLOAD,
     STREAM
