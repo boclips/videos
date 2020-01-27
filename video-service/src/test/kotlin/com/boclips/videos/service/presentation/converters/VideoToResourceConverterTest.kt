@@ -20,6 +20,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.util.Locale
 
 internal class VideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
@@ -42,6 +43,7 @@ internal class VideoToResourceConverterTest {
                 )
             )
         ),
+        language = Locale("khm"),
         tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id")),
         promoted = true
     )
@@ -117,6 +119,8 @@ internal class VideoToResourceConverterTest {
         assertThat(videoResource.yourRating).isEqualTo(3.0)
         assertThat(videoResource.bestFor!!.map { it.label }).containsOnly("tag-label")
         assertThat(videoResource.promoted).isEqualTo(true)
+        assertThat(videoResource.language?.code).isEqualTo("khm")
+        assertThat(videoResource.language?.displayName).isEqualTo("Central Khmer")
 
         val playbackResource = videoResource.playback!! as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")

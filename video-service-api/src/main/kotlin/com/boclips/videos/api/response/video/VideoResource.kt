@@ -40,6 +40,8 @@ data class VideoResource(
     val createdBy: String? = null,
     @get:JsonView(PublicApiProjection::class)
     val promoted: Boolean? = null,
+    @get:JsonView(PublicApiProjection::class)
+    val language: LanguageResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val contentPartner: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)

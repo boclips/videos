@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.api.response.video.LanguageResource
 import com.boclips.videos.api.response.video.TagResource
 import com.boclips.videos.api.response.video.VideoBadge
 import com.boclips.videos.api.response.video.VideoResource
@@ -15,7 +16,6 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
-import org.springframework.stereotype.Component
 
 class VideoToResourceConverter(
     private val videosLinkBuilder: VideosLinkBuilder,
@@ -60,6 +60,7 @@ class VideoToResourceConverter(
             yourRating = video.ratings.firstOrNull { it.userId == user.id }?.rating?.toDouble(),
             bestFor = video.tags.map { TagResource(it.tag.label) },
             promoted = video.promoted,
+            language = video.language?.let { LanguageResource.from(it) },
             _links = (resourceLinks(video.videoId.value) + actionLinks(video)).map { it.rel.value() to it }.toMap()
         )
     }
