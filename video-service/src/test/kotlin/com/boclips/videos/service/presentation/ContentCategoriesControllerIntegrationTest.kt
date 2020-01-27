@@ -2,7 +2,8 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
@@ -18,9 +19,32 @@ class ContentCategoriesControllerIntegrationTest : AbstractSpringIntegrationTest
      fun `returns available video types for authenticated API users`() {
          mockMvc.perform(get("/v1/content-categories").asApiUser())
              .andExpect(status().isOk)
-             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.contentCategories", Matchers.hasSize<Any>(19)))
-             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.contentCategories",
-                 Matchers.containsInAnyOrder("360 and Virtual reality",
+             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.contentCategories", hasSize<Any>(19)))
+             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.contentCategories[*].key",
+                 containsInAnyOrder(
+                     "VIRTUAL_REALITY_360",
+                     "ANIMATION",
+                     "DOCUMENATRY_SHORTS",
+                     "EARLY_CHILDHOOD" ,
+                     "EDUCTIONAL_SONGS" ,
+                     "INSPIRATION_FOR_LESSONS" ,
+                     "INSTRUCTIONAL_VIDEOS" ,
+                     "INTERVIEW" ,
+                     "HISTORICAL_ARCHIVE" ,
+                     "MUSIC" ,
+                     "NARRATED" ,
+                     "NEWS_STORIES" ,
+                     "PRATIVAL_EXPERIMENTS" ,
+                     "SONGS" ,
+                     "STOCK_CLIPS" ,
+                     "STUDY_SKILLS" ,
+                     "SUSTAINABILITY" ,
+                     "WITH_A_CHILD_HOST" ,
+                     "WITH_A_CHILD"
+                 )
+             ))
+             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.contentCategories[*].label",
+                 containsInAnyOrder("360 and Virtual reality",
                      "Animation",
                      "Documentary shorts",
                      "Early childhood",

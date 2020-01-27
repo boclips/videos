@@ -9,5 +9,10 @@ open class ContentCategoriesResource(
  )
 
 data class ContentCategoriesWrapperResource(
-    val contentCategories:  List<String>
+    val contentCategories:  List<ContentCategoryResource>
+)
+
+data class ContentCategoryResource(
+    val key: String,
+    val label: String
 )

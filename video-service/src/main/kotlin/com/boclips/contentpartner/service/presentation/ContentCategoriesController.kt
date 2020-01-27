@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.videos.api.response.contentpartner.ContentCategoriesResource
 import com.boclips.videos.api.response.contentpartner.ContentCategoriesWrapperResource
+import com.boclips.videos.api.response.contentpartner.ContentCategoryResource
 import com.boclips.videos.service.domain.model.video.ContentCategories
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
@@ -20,7 +21,7 @@ class ContentCategoriesController(
     fun contentCategories(): ContentCategoriesResource {
         return ContentCategoriesResource(
             _embedded = ContentCategoriesWrapperResource(
-                contentCategories = ContentCategories.values().map { it.value }.toList()
+                contentCategories = ContentCategories.values().map { ContentCategoryResource(key = it.name, label = it.value) }.toList()
             )
         )
     }
