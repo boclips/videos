@@ -79,4 +79,12 @@ class CreateVideoRequestTest {
         assertThat(violations).hasSize(1)
         assertThat(violations.first().message).isEqualTo("Video type is required")
     }
+
+    @Test
+    fun `validate language`() {
+        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(language = "fwafaw"))
+
+        assertThat(violations).hasSize(1)
+        assertThat(violations.first().message).isEqualTo("Invalid ISO 639-2/T language code")
+    }
 }

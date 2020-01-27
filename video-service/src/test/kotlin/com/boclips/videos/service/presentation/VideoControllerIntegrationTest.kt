@@ -859,6 +859,43 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `create new video with a language`() {
+        val contentPartnerId = saveContentPartner().contentPartnerId.value
+
+        createMediaEntry(
+            id = "entry-$123",
+            duration = Duration.ofMinutes(1)
+        )
+
+        val content = """
+            {
+                "providerVideoId": "1",
+                "providerId": "$contentPartnerId",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "videoType": "INSTRUCTIONAL_CLIPS",
+                "playbackId": "entry-$123",
+                "playbackProvider": "KALTURA",
+                "language": "ave"
+            }
+        """.trimIndent()
+
+        val createdResourceUrl =
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isCreated)
+                .andReturn().response.getHeader("Location")
+
+        mockMvc.perform(get(createdResourceUrl!!).asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.language.code", equalTo("ave")))
+            .andExpect(jsonPath("$.language.displayName", equalTo("Avestan")))
+    }
+
+    @Test
     fun `search videos and sort by rating`() {
         val firstTitle = "low-rated"
         val secondTitle = "high-rated"

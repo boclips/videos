@@ -34,7 +34,8 @@ class VideoServiceApiFactory {
             playbackProvider: String? = "KALTURA",
             analyseVideo: Boolean = false,
             subjects: Set<String> = setOf(),
-            youtubeChannelId: String = "1234"
+            youtubeChannelId: String = "1234",
+            language: String? = "cym"
         ) = CreateVideoRequest(
             providerId = providerId,
             providerVideoId = providerVideoId,
@@ -48,7 +49,8 @@ class VideoServiceApiFactory {
             playbackProvider = playbackProvider,
             analyseVideo = analyseVideo,
             subjects = subjects,
-            youtubeChannelId = youtubeChannelId
+            youtubeChannelId = youtubeChannelId,
+            language = language
         )
 
         @JvmStatic

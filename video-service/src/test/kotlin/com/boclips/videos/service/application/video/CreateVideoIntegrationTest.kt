@@ -212,6 +212,25 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.title).isEqualTo("the latest and greatest Bloomberg video")
     }
 
+    @Test
+    fun `can create a video with language from an ISO 639-2 code`() {
+        createMediaEntry(
+            id = "entry-$123",
+            duration = Duration.ofMinutes(1)
+        )
+
+        val contentPartner = saveContentPartner()
+
+        val createRequest = VideoServiceApiFactory.createCreateVideoRequest(
+            language = "wel",
+            providerId = contentPartner.contentPartnerId.value,
+            playbackId = "entry-\$123"
+        )
+        val createdVideo = createVideo(createRequest, UserFactory.sample())
+
+        assertThat(createdVideo.language?.displayLanguage).isEqualTo("Welsh")
+    }
+
     private fun createAVideo(title: String) {
         createMediaEntry(
             id = "entry-$123",

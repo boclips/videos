@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.video.VideoSubjects
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.Locale
 
 class CreateVideoRequestToVideoConverter {
     fun convert(
@@ -42,7 +43,7 @@ class CreateVideoRequestToVideoConverter {
                 items = subjects.toSet()
             ),
             topics = emptySet(),
-            language = null,
+            language = createVideoRequest.language?.let { Locale.forLanguageTag(it) },
             transcript = null,
             ratings = emptyList(),
             tags = emptyList(),
