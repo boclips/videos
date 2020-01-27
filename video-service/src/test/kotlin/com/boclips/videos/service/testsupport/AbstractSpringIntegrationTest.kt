@@ -241,7 +241,8 @@ abstract class AbstractSpringIntegrationTest {
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
         ),
-        subjectIds: Set<String> = setOf()
+        subjectIds: Set<String> = setOf(),
+        language: String? = null
     ): VideoId {
         val retrievedContentPartnerId =
             saveContentPartner(name = contentProvider, distributionMethods = distributionMethods).contentPartnerId.value
@@ -277,7 +278,9 @@ abstract class AbstractSpringIntegrationTest {
                 analyseVideo = false,
                 ageRangeMin = ageRange.min(),
                 ageRangeMax = ageRange.max(),
-                subjects = subjectIds
+                subjects = subjectIds,
+                language = language
+
             ),
             UserFactory.sample()
         )

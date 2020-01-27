@@ -230,5 +230,18 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
                 )
             ).containsExactly(videoId.value)
         }
+
+        @Test
+        fun `does not override language if already present`() {
+            val videoId = saveVideo(language = Locale.CANADA.isO3Language)
+
+            val videoAnalysed =
+                createVideoAnalysed(videoId = videoId.value, language = Locale.GERMAN)
+
+            fakeEventBus.publish(videoAnalysed)
+
+            val video = videoRepository.find(videoId)!!
+            assertThat(video.language?.isO3Language).isEqualTo(Locale.CANADA.isO3Language)
+        }
     }
 }

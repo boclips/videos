@@ -114,7 +114,7 @@ class VideoAnalysisService(
     private fun updateMetadata(video: Video, analysedVideo: VideoAnalysed) {
         videoRepository.bulkUpdate(
             listOf(
-                VideoUpdateCommand.ReplaceLanguage(video.videoId, analysedVideo.language),
+                VideoUpdateCommand.ReplaceLanguage(video.videoId, video.language ?: analysedVideo.language),
                 VideoUpdateCommand.ReplaceTranscript(video.videoId, analysedVideo.transcript),
                 VideoUpdateCommand.ReplaceTopics(video.videoId, convertTopics(analysedVideo.topics)),
                 VideoUpdateCommand.ReplaceKeywords(
