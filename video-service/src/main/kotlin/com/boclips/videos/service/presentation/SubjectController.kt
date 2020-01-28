@@ -45,7 +45,7 @@ class SubjectController(
     @GetMapping("/{id}")
     fun subject(@PathVariable id: String): SubjectResource {
         return getSubject(id)
-            .copy(_links = listOfNotNull(subjectsLinkBuilder.self(id)).map { it.rel.value() to it }.toMap())
+            .copy(_links = listOfNotNull(subjectsLinkBuilder.self(id)).map { it.rel to it }.toMap())
     }
 
     @GetMapping
@@ -56,13 +56,13 @@ class SubjectController(
                     subjectsLinkBuilder.self(it.id),
                     subjectsLinkBuilder.updateSubject(it)
                 )
-                    .map { it.rel.value() to it }.toMap()
+                    .map { it.rel to it }.toMap()
             )
         }
 
         return SubjectsResource(
             _embedded = SubjectsWrapperResource(subjectResources),
-            _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel.value() to it }.toMap()
+            _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel to it }.toMap()
         )
     }
 

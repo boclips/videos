@@ -3,12 +3,12 @@ package com.boclips.videos.api.response.video
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.request.video.PlaybackResource
+import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonView
-import org.springframework.hateoas.Link
 import java.time.LocalDate
 
 data class VideoResource(
@@ -53,6 +53,6 @@ data class VideoResource(
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var _links: Map<String, Link>?
+    var _links: Map<String, HateoasLink>?
 )
 
