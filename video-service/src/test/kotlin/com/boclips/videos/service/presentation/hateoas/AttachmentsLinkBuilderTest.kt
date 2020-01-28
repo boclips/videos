@@ -5,7 +5,6 @@ import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.hateoas.Link
 
 class AttachmentsLinkBuilderTest {
     @Test
@@ -19,9 +18,9 @@ class AttachmentsLinkBuilderTest {
             linkToResource = "http://example.com/download"
         )
 
-        val link: Link = linkBuilder.download(attachment)
+        val link = linkBuilder.download(attachment)
 
         assertThat(link.href).isEqualTo("http://example.com/download")
-        assertThat(link.rel.value()).isEqualTo("download")
+        assertThat(link.rel).isEqualTo("download")
     }
 }

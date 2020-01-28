@@ -35,7 +35,7 @@ class ContentPartnerToResourceConverter(
             awards = contentPartner.awards,
             notes = contentPartner.notes,
             language = contentPartner.language?.let { it -> toLanguageResource(it) },
-            _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value)).map { it.rel.value() to it }.toMap()
+            _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value)).map { it.rel to it }.toMap()
         )
     }
 }

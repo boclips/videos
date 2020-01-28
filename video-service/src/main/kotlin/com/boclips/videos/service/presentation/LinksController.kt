@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilde
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
+import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
@@ -16,7 +17,6 @@ import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.Links
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,40 +42,48 @@ class LinksController(
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): LinksResource {
         return LinksResource(
-            Links.of(
-                listOfNotNull(
-                    distributionMethodsLinkBuilder.distributionMethods(), //belongs to contentpartner-service links
-                    videosLinkBuilder.videoLink(),
-                    collectionsLinkBuilder.publicCollections(),
-                    subjectsLinkBuilder.subjects(),
-                    videosLinkBuilder.adminSearchLink(),
-                    videosLinkBuilder.adminVideoSearchLink(),
-                    collectionsLinkBuilder.adminCollectionSearch(),
-                    videosLinkBuilder.searchVideosLink(),
-                    collectionsLinkBuilder.bookmarkedCollections(),
-                    collectionsLinkBuilder.searchPublicCollections(),
-                    collectionsLinkBuilder.searchCollections(),
-                    collectionsLinkBuilder.collection(null),
-                    collectionsLinkBuilder.collectionsByOwner(),
-                    collectionsLinkBuilder.myCollections(),
-                    collectionsLinkBuilder.createCollection(),
-                    legalRestrictionsLinkBuilder.getAllLink(),
-                    contentPartnersLinkBuilder.contentPartnerLink(null),
-                    contentPartnersLinkBuilder.contentPartnersLink(),
-                    disciplinesLinkBuilder.disciplines(),
-                    tagsLinkBuilder.tags(),
-                    videoTypeLinkBuilder.videoTypes(),
-                    eventsLinkBuilder.createPlaybackEventsLink(),
-                    contentCategoriesLinkBuilder.contentCategries()
-                )
+            links = listOfNotNull(
+                distributionMethodsLinkBuilder.distributionMethods(), //belongs to contentpartner-service links
+                videosLinkBuilder.videoLink(),
+                collectionsLinkBuilder.publicCollections(),
+                subjectsLinkBuilder.subjects(),
+                videosLinkBuilder.adminSearchLink(),
+                videosLinkBuilder.adminVideoSearchLink(),
+                collectionsLinkBuilder.adminCollectionSearch(),
+                videosLinkBuilder.searchVideosLink(),
+                collectionsLinkBuilder.bookmarkedCollections(),
+                collectionsLinkBuilder.searchPublicCollections(),
+                collectionsLinkBuilder.searchCollections(),
+                collectionsLinkBuilder.collection(null),
+                collectionsLinkBuilder.collectionsByOwner(),
+                collectionsLinkBuilder.myCollections(),
+                collectionsLinkBuilder.createCollection(),
+                legalRestrictionsLinkBuilder.getAllLink(),
+                contentPartnersLinkBuilder.contentPartnerLink(null),
+                contentPartnersLinkBuilder.contentPartnersLink(),
+                disciplinesLinkBuilder.disciplines(),
+                tagsLinkBuilder.tags(),
+                videoTypeLinkBuilder.videoTypes(),
+                eventsLinkBuilder.createPlaybackEventsLink(),
+                contentCategoriesLinkBuilder.contentCategries()
             )
         )
     }
 }
 
-class LinksResource(@JsonIgnore private val links: Links) {
+class LinksResource(@JsonIgnore private val links: List<Any>) {
     @JsonProperty("_links")
-    fun getLinks(): Map<String, Link> {
-        return links.map { it.rel.value() to it }.toMap()
+    fun getLinks(): Map<String, HateoasLink> {
+        return links
+            .map {
+                return@map when (it) {
+                    is Link -> HateoasLink.of(it)
+                    is HateoasLink -> it
+                    else -> throw IllegalStateException("Link type unrecognised.")
+                }
+            }
+            .map {
+                it.rel to it
+            }.toMap()
     }
 }

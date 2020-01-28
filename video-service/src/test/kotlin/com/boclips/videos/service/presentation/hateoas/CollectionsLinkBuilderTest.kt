@@ -37,7 +37,7 @@ class CollectionsLinkBuilderTest {
         )
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&public=true&page=0&size=2")
-        assertThat(link.rel.value()).isEqualTo("publicCollections")
+        assertThat(link.rel).isEqualTo("publicCollections")
     }
 
     @Test
@@ -51,8 +51,8 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.searchPublicCollections()!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?public=true{&query,subject,projection,page,size}")
-        assertThat(link.rel.value()).isEqualTo("searchPublicCollections")
-        assertThat(link.isTemplated).isEqualTo(true)
+        assertThat(link.rel).isEqualTo("searchPublicCollections")
+        assertThat(link.templated).isEqualTo(true)
     }
 
     @Test
@@ -66,8 +66,8 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.searchCollections()!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,public,projection,page,size}")
-        assertThat(link.rel.value()).isEqualTo("searchCollections")
-        assertThat(link.isTemplated).isEqualTo(true)
+        assertThat(link.rel).isEqualTo("searchCollections")
+        assertThat(link.templated).isEqualTo(true)
     }
 
     @Test
@@ -85,7 +85,7 @@ class CollectionsLinkBuilderTest {
         )!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&public=true&bookmarked=true&page=0&size=2")
-        assertThat(link.rel.value()).isEqualTo("bookmarkedCollections")
+        assertThat(link.rel).isEqualTo("bookmarkedCollections")
     }
 
     @Test
@@ -114,7 +114,7 @@ class CollectionsLinkBuilderTest {
         )!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&page=0&size=2&owner=user1")
-        assertThat(link.rel.value()).isEqualTo("myCollections")
+        assertThat(link.rel).isEqualTo("myCollections")
     }
 
     @Test
@@ -139,7 +139,7 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.createCollection()!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections")
-        assertThat(link.rel.value()).isEqualTo("createCollection")
+        assertThat(link.rel).isEqualTo("createCollection")
     }
 
     @Test
@@ -175,7 +175,7 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.collection(id = "c123")!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections/c123")
-        assertThat(link.rel.value()).isEqualTo("collection")
+        assertThat(link.rel).isEqualTo("collection")
     }
 
     @Test
@@ -189,8 +189,8 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.collection(id = null)!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections/{id}")
-        assertThat(link.rel.value()).isEqualTo("collection")
-        assertThat(link.isTemplated).isTrue()
+        assertThat(link.rel).isEqualTo("collection")
+        assertThat(link.templated).isTrue()
     }
 
     @Test
@@ -212,8 +212,8 @@ class CollectionsLinkBuilderTest {
             )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123")
-        assertThat(link.rel.value()).isEqualTo("edit")
-        assertThat(link.isTemplated).isFalse()
+        assertThat(link.rel).isEqualTo("edit")
+        assertThat(link.templated).isFalse()
     }
 
     @Test
@@ -235,8 +235,8 @@ class CollectionsLinkBuilderTest {
             )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123")
-        assertThat(link.rel.value()).isEqualTo("remove")
-        assertThat(link.isTemplated).isFalse()
+        assertThat(link.rel).isEqualTo("remove")
+        assertThat(link.templated).isFalse()
     }
 
     @Test
@@ -256,8 +256,8 @@ class CollectionsLinkBuilderTest {
         )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123/videos/{video_id}")
-        assertThat(link.rel.value()).isEqualTo("addVideo")
-        assertThat(link.isTemplated).isTrue()
+        assertThat(link.rel).isEqualTo("addVideo")
+        assertThat(link.templated).isTrue()
     }
 
     @Test
@@ -277,8 +277,8 @@ class CollectionsLinkBuilderTest {
         )
 
         assertThat(link!!.href).isEqualTo("https://localhost/v1/collections/c123/videos/{video_id}")
-        assertThat(link.rel.value()).isEqualTo("removeVideo")
-        assertThat(link.isTemplated).isTrue()
+        assertThat(link.rel).isEqualTo("removeVideo")
+        assertThat(link.templated).isTrue()
     }
 
     @Test
@@ -350,7 +350,7 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.self()
 
         assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&public=true&page=0&size=2")
-        assertThat(link.rel.value()).isEqualTo("self")
+        assertThat(link.rel).isEqualTo("self")
     }
 
     @Test
@@ -360,8 +360,8 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.interactedWith(TestFactories.createCollection(id = CollectionId("c123")))
 
         assertThat(link.href).contains("/v1/collections/c123/events")
-        assertThat(link.isTemplated).isEqualTo(false)
-        assertThat(link.rel.value()).isEqualTo("interactedWith")
+        assertThat(link.templated).isEqualTo(false)
+        assertThat(link.rel).isEqualTo("interactedWith")
     }
 
     @Test
@@ -383,7 +383,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasParameter("page", "0")
         assertThat(url).hasParameter("size", "2")
 
-        assertThat(link.rel.value()).isEqualTo("details")
+        assertThat(link.rel).isEqualTo("details")
     }
 
     @Test
@@ -405,7 +405,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasParameter("page", "0")
         assertThat(url).hasParameter("size", "2")
 
-        assertThat(link.rel.value()).isEqualTo("list")
+        assertThat(link.rel).isEqualTo("list")
     }
 
     @Test
@@ -427,7 +427,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasNoParameter("page", "0")
         assertThat(url).hasParameter("size", "2")
 
-        assertThat(link?.rel?.value()).isEqualTo("next")
+        assertThat(link?.rel).isEqualTo("next")
     }
 
     @Test
@@ -458,7 +458,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasParameter("owner", "pony")
         assertThat(url).hasParameter("page", "1")
         assertThat(url).hasParameter("size", "2")
-        assertThat(link?.rel?.value()).isEqualTo("next")
+        assertThat(link?.rel).isEqualTo("next")
     }
 
     @Test
@@ -482,7 +482,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasHost("localhost")
         assertThat(url).hasPath("/v1/collections/collection-id")
         assertThat(url).hasParameter("bookmarked", "true")
-        assertThat(link?.rel?.value()).isEqualTo("bookmark")
+        assertThat(link?.rel).isEqualTo("bookmark")
     }
 
     @Test
@@ -565,7 +565,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasHost("localhost")
         assertThat(url).hasPath("/v1/collections/collection-id")
         assertThat(url).hasParameter("bookmarked", "false")
-        assertThat(link?.rel?.value()).isEqualTo("unbookmark")
+        assertThat(link?.rel).isEqualTo("unbookmark")
     }
 
     @Test
