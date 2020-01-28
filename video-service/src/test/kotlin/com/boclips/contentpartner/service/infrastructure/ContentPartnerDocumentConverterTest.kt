@@ -24,7 +24,8 @@ internal class ContentPartnerDocumentConverterTest {
             credit = Credit.PartnerCredit,
             legalRestriction = TestFactories.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),
-            remittance = Remittance(Currency.getInstance("GBP"))
+            remittance = Remittance(Currency.getInstance("GBP")),
+            description = "This is a description"
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

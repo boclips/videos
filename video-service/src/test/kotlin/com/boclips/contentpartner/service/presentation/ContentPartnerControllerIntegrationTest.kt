@@ -64,7 +64,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                         "min": 11,
                         "max": 18
                     },
-                "currency": "USD"   
+                "currency": "USD",
+                "description": "This is a description"
             }
         """
 

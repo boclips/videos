@@ -7,7 +7,8 @@ data class ContentPartner(
     val credit: Credit,
     val legalRestriction: LegalRestriction?,
     val distributionMethods: Set<DistributionMethod>,
-    val remittance: Remittance?
+    val remittance: Remittance?,
+    val description: String?
 ) {
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)

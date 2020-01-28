@@ -25,7 +25,8 @@ object ContentPartnerDocumentConverter {
             distributionMethods = contentPartner.distributionMethods
                 .map(DistributionMethodDocumentConverter::toDocument)
                 .toSet(),
-            remittanceCurrency = contentPartner.remittance?.currency?.currencyCode
+            remittanceCurrency = contentPartner.remittance?.currency?.currencyCode,
+            description = contentPartner.description
         )
     }
 
@@ -46,7 +47,8 @@ object ContentPartnerDocumentConverter {
             distributionMethods = reconstructDistributionMethods(
                 document
             ),
-            remittance = document.remittanceCurrency?.let { Remittance(Currency.getInstance(it)) }
+            remittance = document.remittanceCurrency?.let { Remittance(Currency.getInstance(it)) },
+            description = document.description
         )
     }
 

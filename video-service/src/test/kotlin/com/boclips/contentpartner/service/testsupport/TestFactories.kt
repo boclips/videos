@@ -31,7 +31,8 @@ object TestFactories {
         credit: Credit = Credit.PartnerCredit,
         legalRestriction: LegalRestriction? = null,
         distributionMethods: Set<DistributionMethod> = emptySet(),
-        remittance: Remittance? = null
+        remittance: Remittance? = null,
+        description: String? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -40,7 +41,8 @@ object TestFactories {
             credit = credit,
             legalRestriction = legalRestriction,
             distributionMethods = distributionMethods,
-            remittance = remittance
+            remittance = remittance,
+            description = description
         )
     }
 

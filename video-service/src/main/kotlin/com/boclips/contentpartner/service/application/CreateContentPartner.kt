@@ -48,7 +48,8 @@ class CreateContentPartner(private val contentPartnerRepository: ContentPartnerR
                     } ?: Credit.PartnerCredit,
                     legalRestriction = null,
                     distributionMethods = methods,
-                    remittance = createRequest.currency?.let { Remittance(Currency.getInstance(it)) }
+                    remittance = createRequest.currency?.let { Remittance(Currency.getInstance(it)) },
+                    description = createRequest.description
                 )
             )
     }

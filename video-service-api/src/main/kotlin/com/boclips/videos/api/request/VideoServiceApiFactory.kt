@@ -91,7 +91,8 @@ class VideoServiceApiFactory {
             accreditedToYtChannel: String? = null,
             distributionMethods: Set<DistributionMethodResource>? = null,
             legalRestrictions: LegalRestrictionsRequest? = null,
-            currency: String? = null
+            currency: String? = null,
+            description: String? = null
         ): CreateContentPartnerRequest {
             return CreateContentPartnerRequest(
                 name = name,
@@ -99,7 +100,8 @@ class VideoServiceApiFactory {
                 accreditedToYtChannelId = accreditedToYtChannel,
                 distributionMethods = distributionMethods,
                 legalRestrictions = legalRestrictions,
-                currency = currency
+                currency = currency,
+                description = description
             )
         }
 

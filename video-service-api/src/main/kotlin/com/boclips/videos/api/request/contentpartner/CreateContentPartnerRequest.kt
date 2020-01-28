@@ -12,5 +12,6 @@ data class CreateContentPartnerRequest(
     @field:Valid var ageRange: AgeRangeRequest? = null,
     val distributionMethods: Set<DistributionMethodResource>? = null,
     @field:CurrencyCode
-    val currency: String? = null
+    val currency: String? = null,
+    val description: String? = null
 )
