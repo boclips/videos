@@ -69,7 +69,7 @@ class ContentPartnerController(
     fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): ResponseEntity<ContentPartnerResource> {
         val user = getCurrentUser()
         val contentPartnerResource = fetchContentPartner(contentPartnerId!!, user)
-            .copy(_links = listOf(contentPartnersLinkBuilder.self(contentPartnerId)).map { it.rel to it }.toMap())
+            .copy(_links = listOf(contentPartnersLinkBuilder.self(contentPartnerId)).map { it.rel.value() to it }.toMap())
 
         return ResponseEntity(contentPartnerResource, HttpStatus.OK)
     }

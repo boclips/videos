@@ -12,7 +12,7 @@ class AttachmentToResourceConverter(private val attachmentsLinkBuilder: Attachme
             id = attachment.attachmentId.value,
             description = attachment.description,
             type = attachment.type.name,
-            _links = listOfNotNull(attachmentsLinkBuilder.download(attachment)).map { it.rel to it }.toMap()
+            _links = listOfNotNull(attachmentsLinkBuilder.download(attachment)).map { it.rel.value() to it }.toMap()
         )
     }
 }

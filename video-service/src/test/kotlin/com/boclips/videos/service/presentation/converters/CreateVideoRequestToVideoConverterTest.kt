@@ -38,7 +38,7 @@ class CreateVideoRequestToVideoConverterTest {
         val video = converter.convert(createCreateVideoRequest(), createKalturaPlayback(), contentPartner, subjects)
 
         assertThat(video.ingestedAt).isAfter(LocalDate.now().minusDays(1).atStartOfDay(ZoneOffset.UTC))
-        assertThat(video.ingestedAt).isBefore(LocalDate.now().plusDays(2).atStartOfDay(ZoneOffset.UTC))
+        assertThat(video.ingestedAt).isBefore(LocalDate.now().plusDays(1).atStartOfDay(ZoneOffset.UTC))
     }
 
     @Test

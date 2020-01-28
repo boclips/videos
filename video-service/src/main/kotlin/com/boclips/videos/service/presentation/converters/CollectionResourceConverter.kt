@@ -51,7 +51,7 @@ class CollectionResourceConverter(
                 collectionsLinkBuilder.bookmark(collection, user),
                 collectionsLinkBuilder.unbookmark(collection, user),
                 collectionsLinkBuilder.interactedWith(collection)
-            ).map { it.rel to it }.toMap()
+            ).map { it.rel.value() to it }.toMap()
         )
     }
 
@@ -82,7 +82,7 @@ class CollectionResourceConverter(
                 collectionsLinkBuilder.bookmark(collection, user),
                 collectionsLinkBuilder.unbookmark(collection, user),
                 collectionsLinkBuilder.interactedWith(collection)
-            ).map { it.rel to it }.toMap()
+            ).map { it.rel.value() to it }.toMap()
         )
     }
 
@@ -110,7 +110,7 @@ class CollectionResourceConverter(
                 collectionsLinkBuilder.projections().details(),
                 collectionsLinkBuilder.self(null),
                 collectionsLinkBuilder.next(collections.pageInfo)
-            ).map { it.rel to it }.toMap()
+            ).map { it.rel.value() to it }.toMap()
         )
     }
 }

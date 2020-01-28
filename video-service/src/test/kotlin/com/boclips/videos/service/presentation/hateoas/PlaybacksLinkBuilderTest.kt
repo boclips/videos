@@ -35,7 +35,7 @@ internal class PlaybacksLinkBuilderTest {
 
             assertThat(link).isNotNull
             assertThat(link!!.href).isEqualTo("https://download.me")
-            assertThat(link.rel).isEqualTo("download")
+            assertThat(link.rel.value()).isEqualTo("download")
         }
 
         @Test
@@ -70,7 +70,7 @@ internal class PlaybacksLinkBuilderTest {
             assertThat(link).isNotNull
             assertThat(link!!.href).contains("thumbnail-entry-id")
             assertThat(link.href).contains("{thumbnailWidth}")
-            assertThat(link.rel).isEqualTo("thumbnail")
+            assertThat(link.rel.value()).isEqualTo("thumbnail")
         }
 
         @Test
@@ -81,7 +81,7 @@ internal class PlaybacksLinkBuilderTest {
 
             assertThat(link).isNotNull
             assertThat(link!!.href).isEqualTo("expected-thumbnail-url")
-            assertThat(link.rel).isEqualTo("thumbnail")
+            assertThat(link.rel.value()).isEqualTo("thumbnail")
         }
 
         @Test
@@ -109,7 +109,7 @@ internal class PlaybacksLinkBuilderTest {
             assertThat(link!!.href).contains("preview-entry-id")
             assertThat(link.href).contains("{thumbnailWidth}")
             assertThat(link.href).contains("{thumbnailCount}")
-            assertThat(link.rel).isEqualTo("videoPreview")
+            assertThat(link.rel.value()).isEqualTo("videoPreview")
         }
 
         @Test

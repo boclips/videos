@@ -1,7 +1,7 @@
 package com.boclips.videos.api.response.contentpartner
 
-import com.boclips.videos.api.response.HateoasLink
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.springframework.hateoas.Link
 
 data class ContentPartnerResource(
     val id: String,
@@ -13,5 +13,5 @@ data class ContentPartnerResource(
     val currency: String?,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var _links: Map<String, HateoasLink>? = null
+    var _links: Map<String, Link>? = null
 )

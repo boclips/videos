@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.LanguageResource
@@ -62,7 +61,7 @@ class VideoToResourceConverter(
             bestFor = video.tags.map { TagResource(it.tag.label) },
             promoted = video.promoted,
             language = video.language?.let { LanguageResource.from(it) },
-            _links = (resourceLinks(video.videoId.value) + actionLinks(video)).map { it.rel to it }.toMap()
+            _links = (resourceLinks(video.videoId.value) + actionLinks(video)).map { it.rel.value() to it }.toMap()
         )
     }
 
@@ -70,7 +69,7 @@ class VideoToResourceConverter(
         return videoIds.map { videoId ->
             VideoResource(
                 id = videoId.value,
-                _links = resourceLinks(videoId.value).map { it.rel to it }.toMap()
+                _links = resourceLinks(videoId.value).map { it.rel.value() to it }.toMap()
             )
         }
     }
@@ -92,7 +91,7 @@ class VideoToResourceConverter(
             videosLinkBuilder.createVideoInteractedWithEvent(videoId)
         )
 
-    private fun actionLinks(video: Video): List<HateoasLink> = listOfNotNull(
+    private fun actionLinks(video: Video) = listOfNotNull(
         videosLinkBuilder.rateLink(video),
         videosLinkBuilder.updateLink(video),
         videosLinkBuilder.tagLink(video),

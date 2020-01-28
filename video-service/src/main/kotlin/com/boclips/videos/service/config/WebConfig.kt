@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.springframework.context.annotation.Configuration
 import org.springframework.hateoas.MediaTypes.HAL_JSON
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -29,6 +30,7 @@ class WebConfig : WebMvcConfigurer {
     override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
         converters.forEach {
             if (it is MappingJackson2HttpMessageConverter) {
+                it.objectMapper.registerModule(Jackson2HalModule())
                 it.objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true)
                 it.supportedMediaTypes = listOf(HAL_JSON, HAL_JSON, MediaType.ALL)
 

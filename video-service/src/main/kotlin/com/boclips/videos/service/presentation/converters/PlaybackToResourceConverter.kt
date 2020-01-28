@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
-import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
@@ -20,18 +19,18 @@ class PlaybackToResourceConverter(
                 duration = playback.duration,
                 id = playback.id.value,
                 referenceId = playback.referenceId,
-                _links = links(playback).map { it.rel to it }.toMap()
+                _links = links(playback).map { it.rel.value() to it }.toMap()
             )
         }
         is VideoPlayback.YoutubePlayback -> YoutubePlaybackResource(
             duration = playback.duration,
             id = playback.id.value,
-            _links = links(playback).map { it.rel to it }.toMap()
+            _links = links(playback).map { it.rel.value() to it }.toMap()
         )
         else -> throw Exception()
     }
 
-    fun links(videoPlayback: VideoPlayback): List<HateoasLink> {
+    fun links(videoPlayback: VideoPlayback): List<Link> {
         return listOfNotNull(
             this.eventsLinkBuilder.createPlaybackEventLink(),
             this.eventsLinkBuilder.createPlayerInteractedWithEventLink(),

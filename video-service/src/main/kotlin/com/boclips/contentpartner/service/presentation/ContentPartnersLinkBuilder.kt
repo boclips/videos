@@ -1,7 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.security.utils.UserExtractor.getIfHasRole
-import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
@@ -11,14 +10,12 @@ class ContentPartnersLinkBuilder(private val uriComponentsBuilderFactory: UriCom
         const val CONTENT_PARTNERS = "contentPartners"
     }
 
-    fun self(id: String): HateoasLink {
-        val withSelfRel = WebMvcLinkBuilder.linkTo(
+    fun self(id: String): Link {
+        return WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(ContentPartnerController::class.java).getContentPartner(
                 id
             )
         ).withSelfRel()
-
-        return HateoasLink(href = withSelfRel.href, rel = withSelfRel.rel.value())
     }
 
     fun contentPartnerLink(id: String?): Link? {
