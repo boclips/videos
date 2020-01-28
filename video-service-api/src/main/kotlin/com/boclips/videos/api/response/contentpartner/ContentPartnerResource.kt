@@ -12,6 +12,12 @@ data class ContentPartnerResource(
     val distributionMethods: Set<DistributionMethodResource>,
     val currency: String?,
     val description:String? = null,
+    // val contentCategories: List<ContentCategoryResource>? = null,
+    // val languages: List<LanguageResource>? = null,
+    // val hubspotId: String? = null,
+    // val awards: String? = null,
+    // val notes: String? = null,
+
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, Link>? = null
