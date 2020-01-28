@@ -11,6 +11,7 @@ data class ContentPartnerResource(
     val legalRestriction: LegalRestrictionResource? = null,
     val distributionMethods: Set<DistributionMethodResource>,
     val currency: String?,
+    val description:String? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, Link>? = null
