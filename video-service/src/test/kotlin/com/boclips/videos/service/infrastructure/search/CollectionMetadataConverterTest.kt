@@ -47,4 +47,23 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.visibility).isEqualTo(CollectionVisibility.PRIVATE)
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(true)
     }
+
+    @Test
+    fun `convert with age range`() {
+        val collectionWithLessonPlan = TestFactories.createCollection(
+            id = CollectionId(value = "test-id"),
+            title = "Collection with lesson plan",
+            owner = "12903012381",
+            isPublic = false,
+            bookmarks = setOf(UserId(value = "userId1")),
+            attachments = setOf(AttachmentFactory.sampleWithLessonPlan()),
+            ageRangeMin = 3,
+            ageRangeMax = 10
+        )
+
+        val collectionMetadata = CollectionMetadataConverter.convert(collectionWithLessonPlan)
+
+        assertThat(collectionMetadata.ageRangeMin).isEqualTo(3)
+        assertThat(collectionMetadata.ageRangeMax).isEqualTo(10)
+    }
 }

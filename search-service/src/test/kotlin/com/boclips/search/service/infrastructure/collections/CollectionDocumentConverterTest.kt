@@ -39,7 +39,9 @@ class CollectionDocumentConverterTest {
                 hasAttachments = false,
                 owner = "juan",
                 description = "Collection under test",
-                hasLessonPlans = false
+                hasLessonPlans = false,
+                ageRangeMin = null,
+                ageRangeMax = null
             )
         )
     }
@@ -72,7 +74,9 @@ class CollectionDocumentConverterTest {
                 hasAttachments = false,
                 owner = "juan",
                 description = "Collection under test",
-                hasLessonPlans = null
+                hasLessonPlans = null,
+                ageRangeMin = null,
+                ageRangeMax = null
             )
         )
     }

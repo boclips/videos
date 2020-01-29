@@ -38,7 +38,9 @@ class CollectionIndexWriter private constructor(client: RestHighLevelClient, ind
         owner = entry.owner,
         bookmarkedBy = entry.bookmarkedByUsers,
         description = entry.description,
-        hasLessonPlans = entry.hasLessonPlans
+        hasLessonPlans = entry.hasLessonPlans,
+        ageRangeMin = entry.ageRangeMin,
+        ageRangeMax = entry.ageRangeMax
     )
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id

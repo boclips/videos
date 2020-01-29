@@ -12,7 +12,10 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(HAS_ATTACHMENTS) val hasAttachments: Boolean?,
     @param:JsonProperty(OWNER) val owner: String?,
     @param:JsonProperty(DESCRIPTION) val description: String?,
-    @param:JsonProperty(HAS_LESSON_PLANS) val hasLessonPlans: Boolean?
+    @param:JsonProperty(HAS_LESSON_PLANS) val hasLessonPlans: Boolean?,
+    @param:JsonProperty(AGE_RANGE_MIN) val ageRangeMin: Int?,
+    @param:JsonProperty(AGE_RANGE_MAX) val ageRangeMax: Int?
+
 ) {
     companion object {
         const val ID = "id"
@@ -24,5 +27,7 @@ data class CollectionDocument @JsonCreator constructor(
         const val BOOKMARKED_BY = "bookmarkedBy"
         const val DESCRIPTION = "description"
         const val HAS_LESSON_PLANS = "hasLessonPlans"
+        const val AGE_RANGE_MIN = "ageRangeMin"
+        const val AGE_RANGE_MAX = "ageRangeMax"
     }
 }

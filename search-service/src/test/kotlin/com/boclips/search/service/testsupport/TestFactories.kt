@@ -97,7 +97,9 @@ object SearchableCollectionMetadataFactory {
         owner: String = "some-user-id",
         bookmarkedBy: Set<String> = setOf(owner),
         description: String = "",
-        hasLessonPlans: Boolean? = null
+        hasLessonPlans: Boolean? = null,
+        ageRangeMin: Int? = null,
+        ageRangeMax: Int? = null
     ) = CollectionMetadata(
         id = id,
         title = title,
@@ -107,7 +109,9 @@ object SearchableCollectionMetadataFactory {
         bookmarkedByUsers = bookmarkedBy,
         hasAttachments = hasAttachments,
         description = description,
-        hasLessonPlans = hasLessonPlans
+        hasLessonPlans = hasLessonPlans,
+        ageRangeMin = ageRangeMin,
+        ageRangeMax = ageRangeMax
     )
 }
 

@@ -9,5 +9,7 @@ data class CollectionMetadata(
     val bookmarkedByUsers: Set<String>,
     val hasAttachments: Boolean,
     val description: String?,
-    val hasLessonPlans: Boolean?
+    val hasLessonPlans: Boolean?,
+    val ageRangeMin: Int?,
+    val ageRangeMax: Int?
 )
