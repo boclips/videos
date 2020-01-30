@@ -15,7 +15,8 @@ data class ContentPartner(
     val hubspotId: String? = null,
     val language: Locale? = null,
     val awards: String? = null,
-    val notes: String? = null
+    val notes: String? = null,
+    val contentTypes: List<ContentPartnerType>? = emptyList()
 ) {
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)

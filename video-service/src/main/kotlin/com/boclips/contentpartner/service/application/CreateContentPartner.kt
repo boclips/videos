@@ -6,6 +6,7 @@ import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
@@ -39,7 +40,7 @@ class CreateContentPartner(private val contentPartnerRepository: ContentPartnerR
             throw ContentPartnerConflictException(name)
         }
 
-        if(!createRequest.contentCategories.isNullOrEmpty()) {
+        if (!createRequest.contentCategories.isNullOrEmpty()) {
             if (createRequest.contentCategories?.any { request -> request !in ContentCategories.values().map { it.name } }!!) {
                 throw InvalidContentCategoryException()
             }
@@ -63,7 +64,8 @@ class CreateContentPartner(private val contentPartnerRepository: ContentPartnerR
                     hubspotId = createRequest.hubspotId,
                     awards = createRequest.awards,
                     notes = createRequest.notes,
-                    language = createRequest.language?.let { Locale.forLanguageTag(it) }
+                    language = createRequest.language?.let { Locale.forLanguageTag(it) },
+                    contentTypes = createRequest.contentTypes?.map { ContentPartnerType.valueOf(it) }
                 )
             )
     }

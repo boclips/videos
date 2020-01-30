@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.testsupport
 import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
@@ -38,7 +39,8 @@ object TestFactories {
         hubspotId: String? = null,
         awards: String? = null,
         notes: String? = null,
-        language: Locale? = null
+        language: Locale? = null,
+        contentTypes: List<ContentPartnerType>? = emptyList()
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -53,7 +55,8 @@ object TestFactories {
             hubspotId = hubspotId,
             awards = awards,
             notes = notes,
-            language = language
+            language = language,
+            contentTypes = contentTypes
         )
     }
 
@@ -68,7 +71,8 @@ object TestFactories {
         hubspotId: String? = null,
         awards: String? = null,
         notes: String? = null,
-        language: String? = null
+        language: String? = null,
+        contentTypes: List<String>? = emptyList()
     ) = ContentPartnerDocument(
         id = objectId,
         youtubeChannelId = youtubeChannelId,
@@ -80,7 +84,8 @@ object TestFactories {
         hubspotId = hubspotId,
         awards = awards,
         notes = notes,
-        language = language
+        language = language,
+        contentTypes = contentTypes
     )
 
     fun createLegalRestrictions(text: String = "No restrictions."): LegalRestriction {

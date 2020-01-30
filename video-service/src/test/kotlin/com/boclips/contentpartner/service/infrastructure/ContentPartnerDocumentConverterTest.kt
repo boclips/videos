@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
@@ -31,7 +32,8 @@ internal class ContentPartnerDocumentConverterTest {
             hubspotId = "123456789d",
             awards = "first award",
             notes = "first note",
-            language = Locale.forLanguageTag("spa")
+            language = Locale.forLanguageTag("spa"),
+            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL)
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

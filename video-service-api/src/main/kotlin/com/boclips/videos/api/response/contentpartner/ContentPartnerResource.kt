@@ -17,6 +17,7 @@ data class ContentPartnerResource(
     val hubspotId: String? = null,
     val awards: String? = null,
     val notes: String? = null,
+    val contentTypes: List<String>? = emptyList(),
 
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

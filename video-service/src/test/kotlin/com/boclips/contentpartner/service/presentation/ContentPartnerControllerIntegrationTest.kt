@@ -105,7 +105,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "notes": "note one",
                 "hubspotId": "123456789",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
-                "language": "spa"
+                "language": "spa",
+                "contentTypes": ["NEWS","INSTRUCTIONAL"]
             }
         """
 
@@ -125,6 +126,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].description", equalTo("This is a description")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].awards", equalTo("award")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].notes", equalTo("note one")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].contentTypes", containsInAnyOrder("NEWS", "INSTRUCTIONAL")))
             .andExpect(
                 jsonPath(
                     "$._embedded.contentPartners[0].contentCategories[*].key",

@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
@@ -32,7 +33,8 @@ object ContentPartnerDocumentConverter {
             hubspotId = contentPartner.hubspotId,
             awards = contentPartner.awards,
             notes = contentPartner.notes,
-            language = contentPartner.language?.toLanguageTag()
+            language = contentPartner.language?.toLanguageTag(),
+            contentTypes = contentPartner.contentTypes?.map { it.name }
         )
     }
 
@@ -59,7 +61,8 @@ object ContentPartnerDocumentConverter {
             hubspotId = document.hubspotId,
             awards = document.awards,
             notes = document.notes,
-            language = document.language?.let { Locale.forLanguageTag(it) }
+            language = document.language?.let { Locale.forLanguageTag(it) },
+            contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) }
         )
     }
 

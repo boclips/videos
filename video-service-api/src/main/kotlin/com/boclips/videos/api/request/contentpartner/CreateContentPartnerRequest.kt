@@ -10,7 +10,8 @@ data class CreateContentPartnerRequest(
     val name: String? = null,
     val accreditedToYtChannelId: String? = null,
     var legalRestrictions: LegalRestrictionsRequest? = null,
-    @field:Valid var ageRange: AgeRangeRequest? = null,
+    @field:Valid
+    var ageRange: AgeRangeRequest? = null,
     val distributionMethods: Set<DistributionMethodResource>? = null,
     @field:CurrencyCode
     val currency: String? = null,
@@ -20,5 +21,6 @@ data class CreateContentPartnerRequest(
     val awards: String? = null,
     val notes: String? = null,
     @field:Language
-    val language: String? = null
+    val language: String? = null,
+    val contentTypes: List<String>? = emptyList()
 )

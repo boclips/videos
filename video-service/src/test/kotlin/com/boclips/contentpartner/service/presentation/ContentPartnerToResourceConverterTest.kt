@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
@@ -42,7 +43,8 @@ class ContentPartnerToResourceConverterTest {
             hubspotId = "12345678d",
             awards = "first award",
             notes = "first note",
-            language = Locale.forLanguageTag("spa")
+            language = Locale.forLanguageTag("spa"),
+            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK)
         )
 
         val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner, user)
@@ -62,6 +64,8 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.notes).isEqualTo("first note")
         assertThat(contentPartnerResource.language?.code).isEqualTo(Locale.forLanguageTag("spa"))
         assertThat(contentPartnerResource.language?.name).isEqualTo("Spanish")
+        assertThat(contentPartnerResource.contentTypes).hasSize(2)
+        assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder("INSTRUCTIONAL", "STOCK")
     }
 
     @Test
