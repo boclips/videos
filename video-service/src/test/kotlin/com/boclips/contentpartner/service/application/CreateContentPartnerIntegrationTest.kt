@@ -1,12 +1,17 @@
 package com.boclips.contentpartner.service.application
 
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.ContentCategoryRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.util.Locale
 
 class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
@@ -77,5 +82,49 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(officialContentPartner.contentPartnerId).isNotEqualTo(youtubeContentPartner)
+    }
+
+    @Test
+    fun `cannot create a content partner with an invalid content category`() {
+        assertThrows<InvalidContentCategoryException> {
+            createContentPartner(
+                VideoServiceApiFactory.createContentPartnerRequest(
+                    contentCategories = listOf(ContentCategoryRequest(key = "non existent"))
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `can create a content partner with a content category`() {
+        val contentPartnerWithCategory = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                contentCategories = listOf(ContentCategoryRequest(key = "VIRTUAL_REALITY_360"))
+            )
+        )
+
+        assertThat(contentPartnerWithCategory.contentCategories).hasSize(1)
+    }
+
+    @Test
+    fun `can create a content partner with a selected language`() {
+        val contentPartnerWithCategory = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                language = "spa"
+            )
+        )
+
+        val languageTag = Locale.forLanguageTag("spa");
+        assertThat(contentPartnerWithCategory.language).isEqualTo(languageTag)
+    }
+
+    @Test
+    fun `cannot create the same content partner twice`() {
+        createContentPartner(VideoServiceApiFactory.createContentPartnerRequest())
+        assertThrows<ContentPartnerConflictException> {
+            createContentPartner(
+                VideoServiceApiFactory.createContentPartnerRequest()
+            )
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.boclips.contentpartner.service.domain.model
 
+import java.util.Locale
+
 data class ContentPartner(
     val contentPartnerId: ContentPartnerId,
     val name: String,
@@ -8,7 +10,12 @@ data class ContentPartner(
     val legalRestriction: LegalRestriction?,
     val distributionMethods: Set<DistributionMethod>,
     val remittance: Remittance?,
-    val description: String?
+    val description: String?,
+    val contentCategories: List<ContentCategory>? = null,
+    val hubspotId: String? = null,
+    val language: Locale? = null,
+    val awards: String? = null,
+    val notes: String? = null
 ) {
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)

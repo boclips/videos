@@ -1,5 +1,6 @@
 package com.boclips.videos.api.request.video
 
+import com.boclips.videos.api.request.validators.LanguageValidator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

@@ -1,4 +1,4 @@
-package com.boclips.videos.api.request.video
+package com.boclips.videos.api.request.validators
 
 import java.util.Locale
 import javax.validation.Constraint

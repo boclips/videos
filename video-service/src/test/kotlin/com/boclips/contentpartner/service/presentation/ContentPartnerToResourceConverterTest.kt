@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.domain.model.ContentCategory
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.Currency
+import java.util.Locale
 
 class ContentPartnerToResourceConverterTest {
     lateinit var contentPartnerToResourceConverter: ContentPartnerToResourceConverter
@@ -35,7 +37,13 @@ class ContentPartnerToResourceConverterTest {
             credit = Credit.PartnerCredit,
             legalRestriction = TestFactories.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
-            remittance = Remittance(Currency.getInstance("GBP"))
+            remittance = Remittance(Currency.getInstance("GBP")),
+            description = "this is a description",
+            contentCategories = listOf(ContentCategory(key = "ANIMATION")),
+            hubspotId = "12345678d",
+            awards = "first award",
+            notes = "first note",
+            language = Locale.forLanguageTag("spa")
         )
 
         val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner, user)
@@ -48,6 +56,13 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.legalRestriction?.text).isEqualTo("Forbidden in the EU")
         assertThat(contentPartnerResource.distributionMethods).isEqualTo(setOf(DistributionMethodResource.STREAM))
         assertThat(contentPartnerResource.currency).isEqualTo("GBP")
+        assertThat(contentPartnerResource.description).isEqualTo("this is a description")
+        assertThat(contentPartnerResource.contentCategories?.first()?.key).isEqualTo("ANIMATION")
+        assertThat(contentPartnerResource.hubspotId).isEqualTo("12345678d")
+        assertThat(contentPartnerResource.awards).isEqualTo("first award")
+        assertThat(contentPartnerResource.notes).isEqualTo("first note")
+        assertThat(contentPartnerResource.language?.code).isEqualTo(Locale.forLanguageTag("spa"))
+        assertThat(contentPartnerResource.language?.name).isEqualTo("Spanish")
     }
 
     @Test

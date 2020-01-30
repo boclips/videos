@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.ContentCategory
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
@@ -9,6 +10,7 @@ import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.types.ObjectId
 import java.util.Currency
+import java.util.Locale
 
 object ContentPartnerDocumentConverter {
     fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {
@@ -26,7 +28,12 @@ object ContentPartnerDocumentConverter {
                 .map(DistributionMethodDocumentConverter::toDocument)
                 .toSet(),
             remittanceCurrency = contentPartner.remittance?.currency?.currencyCode,
-            description = contentPartner.description
+            description = contentPartner.description,
+            contentCategories = contentPartner.contentCategories?.map { it -> ContentCategoryDocument.from(it) },
+            hubspotId = contentPartner.hubspotId,
+            awards = contentPartner.awards,
+            notes = contentPartner.notes,
+            language = contentPartner.language?.toLanguageTag()
         )
     }
 
@@ -48,7 +55,14 @@ object ContentPartnerDocumentConverter {
                 document
             ),
             remittance = document.remittanceCurrency?.let { Remittance(Currency.getInstance(it)) },
-            description = document.description
+            description = document.description,
+            contentCategories = document.contentCategories?.mapNotNull { category ->
+                category.key?.let { ContentCategory(key = it) }
+            },
+            hubspotId = document.hubspotId,
+            awards = document.awards,
+            notes = document.notes,
+            language = document.language?.let { Locale.forLanguageTag(it) }
         )
     }
 

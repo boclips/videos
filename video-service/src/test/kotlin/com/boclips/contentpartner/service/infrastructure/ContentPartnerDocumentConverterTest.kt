@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.ContentCategory
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
@@ -12,6 +13,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Currency
+import java.util.Locale
 
 internal class ContentPartnerDocumentConverterTest {
 
@@ -25,7 +27,12 @@ internal class ContentPartnerDocumentConverterTest {
             legalRestriction = TestFactories.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),
             remittance = Remittance(Currency.getInstance("GBP")),
-            description = "This is a description"
+            description = "This is a description",
+            contentCategories = listOf(ContentCategory(key = "category_key")),
+            hubspotId = "123456789d",
+            awards = "first award",
+            notes = "first note",
+            language = Locale.forLanguageTag("spa")
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

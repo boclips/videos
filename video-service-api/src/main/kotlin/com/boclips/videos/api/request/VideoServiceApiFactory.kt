@@ -2,6 +2,7 @@ package com.boclips.videos.api.request
 
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.ContentCategoryRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
@@ -92,7 +93,12 @@ class VideoServiceApiFactory {
             distributionMethods: Set<DistributionMethodResource>? = null,
             legalRestrictions: LegalRestrictionsRequest? = null,
             currency: String? = null,
-            description: String? = null
+            description: String? = null,
+            contentCategories: List<ContentCategoryRequest>? = null,
+            hubspotId: String? = null,
+            awards: String? = null,
+            notes: String? = null,
+            language: String? = null
         ): CreateContentPartnerRequest {
             return CreateContentPartnerRequest(
                 name = name,
@@ -101,7 +107,12 @@ class VideoServiceApiFactory {
                 distributionMethods = distributionMethods,
                 legalRestrictions = legalRestrictions,
                 currency = currency,
-                description = description
+                description = description,
+                contentCategories = contentCategories,
+                hubspotId = hubspotId,
+                awards = awards,
+                notes = notes,
+                language = language
             )
         }
 

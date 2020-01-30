@@ -1,5 +1,6 @@
 package com.boclips.videos.api.request.contentpartner
 
+import com.boclips.videos.api.request.validators.Language
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -13,5 +14,11 @@ data class CreateContentPartnerRequest(
     val distributionMethods: Set<DistributionMethodResource>? = null,
     @field:CurrencyCode
     val currency: String? = null,
-    val description: String? = null
+    val description: String? = null,
+    val contentCategories: List<ContentCategoryRequest>? = null,
+    val hubspotId: String? = null,
+    val awards: String? = null,
+    val notes: String? = null,
+    @field:Language
+    val language: String? = null
 )

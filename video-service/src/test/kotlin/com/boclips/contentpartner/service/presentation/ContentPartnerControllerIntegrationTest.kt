@@ -65,7 +65,12 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                         "max": 18
                     },
                 "currency": "USD",
-                "description": "This is a description"
+                "description": "This is a description",
+                "awards": "award",
+                "notes": "note one",
+                "hubspotId": "123456789",
+                "contentCategories": [{"key":"VIRTUAL_REALITY_360"}, {"key":"HISTORICAL_ARCHIVE"}],
+                "language": "spa"
             }
         """
 

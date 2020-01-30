@@ -1,5 +1,6 @@
 package com.boclips.videos.api.request.video
 
+import com.boclips.videos.api.request.validators.Language
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull

@@ -5,6 +5,8 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.contentpartner.toLanguageResource
+import com.boclips.videos.service.domain.model.video.toContentCategoryResource
 
 class ContentPartnerToResourceConverter(
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
@@ -28,6 +30,11 @@ class ContentPartnerToResourceConverter(
             description = contentPartner.description,
             currency = if (user.isPermittedToAccessBackoffice)
                 contentPartner.remittance?.currency?.currencyCode else null,
+            contentCategories = contentPartner.contentCategories?.map { it -> toContentCategoryResource(it.key) },
+            hubspotId = contentPartner.hubspotId,
+            awards = contentPartner.awards,
+            notes = contentPartner.notes,
+            language = contentPartner.language?.let { it -> toLanguageResource(it) },
             _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value)).map { it.rel.value() to it }.toMap()
         )
     }
