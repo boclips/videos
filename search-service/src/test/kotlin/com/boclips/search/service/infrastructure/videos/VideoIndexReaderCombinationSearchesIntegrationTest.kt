@@ -47,7 +47,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     id = "1",
                     title = "TED",
                     ageRangeMin = 3,
-                    ageRangeMax = 15,
+                    ageRangeMax = 5,
                     subjects = setOf(createSubjectMetadata("subject-1"))
                 ),
                 SearchableVideoMetadataFactory.create(

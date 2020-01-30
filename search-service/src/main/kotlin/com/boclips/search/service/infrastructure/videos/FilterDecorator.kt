@@ -88,39 +88,23 @@ class FilterDecorator(private val existingQuery: BoolQueryBuilder) {
         return queryBuilder
     }
 
-    private fun beWithinAgeRange(min: Int?, max: Int?): BoolQueryBuilder {
+    private fun beWithinAgeRange(filterMin: Int?, filterMax: Int?): BoolQueryBuilder {
         return QueryBuilders
             .boolQuery()
             .apply {
-                if (min == null) {
-                    max?.let {
-                        must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply { to(it) })
-                    }
-                } else {
-                    should(
-                        QueryBuilders.boolQuery().apply {
-                            must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply {
-                                to(min)
-                            })
-                            must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MAX).apply {
-                                from(min)
-                            })
-                        }
-                    )
-
-                    should(
-                        QueryBuilders.boolQuery().apply {
-                            must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply {
-                                from(min)
-                            })
-                            max?.let {
-                                must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply {
-                                    to(it)
-                                })
-                            }
-                        }
-                    )
+                if (filterMin != null) {
+                    must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MIN).apply {
+                        gte(filterMin)
+                        lt(filterMax)
+                    })
                 }
+                if (filterMax != null) {
+                    must(QueryBuilders.rangeQuery(VideoDocument.AGE_RANGE_MAX).apply {
+                        gt(filterMin)
+                        lte(filterMax)
+                    })
+                }
+
             }
     }
 

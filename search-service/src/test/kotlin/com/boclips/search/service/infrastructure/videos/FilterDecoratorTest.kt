@@ -57,65 +57,27 @@ class FilterDecoratorTest {
       },
       {
         "bool" : {
-          "should" : [
+          "must" : [
             {
-              "bool" : {
-                "must" : [
-                  {
-                    "range" : {
-                      "ageRangeMin" : {
-                        "from" : null,
-                        "to" : 5,
-                        "include_lower" : true,
-                        "include_upper" : true,
-                        "boost" : 1.0
-                      }
-                    }
-                  },
-                  {
-                    "range" : {
-                      "ageRangeMax" : {
-                        "from" : 5,
-                        "to" : null,
-                        "include_lower" : true,
-                        "include_upper" : true,
-                        "boost" : 1.0
-                      }
-                    }
-                  }
-                ],
-                "adjust_pure_negative" : true,
-                "boost" : 1.0
+              "range" : {
+                "ageRangeMin" : {
+                  "from" : 5,
+                  "to" : 10,
+                  "include_lower" : true,
+                  "include_upper" : false,
+                  "boost" : 1.0
+                }
               }
             },
             {
-              "bool" : {
-                "must" : [
-                  {
-                    "range" : {
-                      "ageRangeMin" : {
-                        "from" : 5,
-                        "to" : null,
-                        "include_lower" : true,
-                        "include_upper" : true,
-                        "boost" : 1.0
-                      }
-                    }
-                  },
-                  {
-                    "range" : {
-                      "ageRangeMin" : {
-                        "from" : null,
-                        "to" : 10,
-                        "include_lower" : true,
-                        "include_upper" : true,
-                        "boost" : 1.0
-                      }
-                    }
-                  }
-                ],
-                "adjust_pure_negative" : true,
-                "boost" : 1.0
+              "range" : {
+                "ageRangeMax" : {
+                  "from" : 5,
+                  "to" : 10,
+                  "include_lower" : false,
+                  "include_upper" : true,
+                  "boost" : 1.0
+                }
               }
             }
           ],
