@@ -1,7 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.ContentCategory
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
@@ -29,7 +28,7 @@ object ContentPartnerDocumentConverter {
                 .toSet(),
             remittanceCurrency = contentPartner.remittance?.currency?.currencyCode,
             description = contentPartner.description,
-            contentCategories = contentPartner.contentCategories?.map { it -> ContentCategoryDocument.from(it) },
+            contentCategories = contentPartner.contentCategories,
             hubspotId = contentPartner.hubspotId,
             awards = contentPartner.awards,
             notes = contentPartner.notes,
@@ -56,9 +55,7 @@ object ContentPartnerDocumentConverter {
             ),
             remittance = document.remittanceCurrency?.let { Remittance(Currency.getInstance(it)) },
             description = document.description,
-            contentCategories = document.contentCategories?.mapNotNull { category ->
-                category.key?.let { ContentCategory(key = it) }
-            },
+            contentCategories = document.contentCategories,
             hubspotId = document.hubspotId,
             awards = document.awards,
             notes = document.notes,

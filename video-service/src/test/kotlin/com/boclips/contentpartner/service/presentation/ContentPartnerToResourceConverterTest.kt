@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.ContentCategory
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
@@ -39,7 +38,7 @@ class ContentPartnerToResourceConverterTest {
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(Currency.getInstance("GBP")),
             description = "this is a description",
-            contentCategories = listOf(ContentCategory(key = "ANIMATION")),
+            contentCategories = listOf("ANIMATION"),
             hubspotId = "12345678d",
             awards = "first award",
             notes = "first note",

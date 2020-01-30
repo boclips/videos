@@ -1,7 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.ContentCategory
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
@@ -28,7 +27,7 @@ internal class ContentPartnerDocumentConverterTest {
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),
             remittance = Remittance(Currency.getInstance("GBP")),
             description = "This is a description",
-            contentCategories = listOf(ContentCategory(key = "category_key")),
+            contentCategories = listOf("category_key"),
             hubspotId = "123456789d",
             awards = "first award",
             notes = "first note",

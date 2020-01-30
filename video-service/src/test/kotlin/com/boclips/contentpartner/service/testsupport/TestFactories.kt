@@ -1,7 +1,6 @@
 package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.ContentCategory
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.Credit
@@ -12,7 +11,6 @@ import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.domain.model.RequestContext
 import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.domain.model.UserId
-import com.boclips.contentpartner.service.infrastructure.ContentCategoryDocument
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
@@ -36,7 +34,7 @@ object TestFactories {
         distributionMethods: Set<DistributionMethod> = emptySet(),
         remittance: Remittance? = null,
         description: String? = null,
-        contentCategories: List<ContentCategory>? = emptyList(),
+        contentCategories: List<String>? = emptyList(),
         hubspotId: String? = null,
         awards: String? = null,
         notes: String? = null,
@@ -66,7 +64,7 @@ object TestFactories {
         ageRangeMax: Nothing? = null,
         ageRangeMin: Nothing? = null,
         distributionMethods: Set<DistributionMethodDocument>? = null,
-        contentCategories: List<ContentCategoryDocument>? = emptyList(),
+        contentCategories: List<String>? = emptyList(),
         hubspotId: String? = null,
         awards: String? = null,
         notes: String? = null,

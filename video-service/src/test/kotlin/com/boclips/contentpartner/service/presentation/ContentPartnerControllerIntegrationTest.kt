@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationT
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -69,7 +70,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "awards": "award",
                 "notes": "note one",
                 "hubspotId": "123456789",
-                "contentCategories": [{"key":"VIRTUAL_REALITY_360"}, {"key":"HISTORICAL_ARCHIVE"}],
+                "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa"
             }
         """
@@ -85,6 +86,59 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         )
             .andExpect(status().isConflict)
             .andExpectApiErrorPayload()
+    }
+
+    @Test
+    fun `creates content partner with correct values`() {
+        val content = """
+            {
+                "searchable": false,
+                "name": "TED",
+                "ageRange":
+                    {
+                        "min": 11,
+                        "max": 18
+                    },
+                "currency": "USD",
+                "description": "This is a description",
+                "awards": "award",
+                "notes": "note one",
+                "hubspotId": "123456789",
+                "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
+                "language": "spa"
+            }
+        """
+
+        mockMvc.perform(
+            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content)
+        )
+            .andExpect(status().isCreated)
+            .andExpect(header().exists("Location"))
+
+        mockMvc.perform(
+            get("/v1/content-partners?name=TED").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
+            .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].currency", equalTo("USD")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].description", equalTo("This is a description")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].awards", equalTo("award")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].notes", equalTo("note one")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].contentCategories[*].key",
+                    containsInAnyOrder("ANIMATION", "HISTORICAL_ARCHIVE")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].contentCategories[*].label",
+                    containsInAnyOrder("Animation", "Historical archive")
+                )
+            )
+            .andExpect(jsonPath("$._embedded.contentPartners[0].language.code", equalTo("spa")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].language.name", equalTo("Spanish")))
     }
 
     @Test

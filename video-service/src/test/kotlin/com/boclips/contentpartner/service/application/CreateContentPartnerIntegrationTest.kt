@@ -89,7 +89,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThrows<InvalidContentCategoryException> {
             createContentPartner(
                 VideoServiceApiFactory.createContentPartnerRequest(
-                    contentCategories = listOf(ContentCategoryRequest(key = "non existent"))
+                    contentCategories = listOf("non existent")
                 )
             )
         }
@@ -99,7 +99,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can create a content partner with a content category`() {
         val contentPartnerWithCategory = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
-                contentCategories = listOf(ContentCategoryRequest(key = "VIRTUAL_REALITY_360"))
+                contentCategories = listOf("VIRTUAL_REALITY_360")
             )
         )
 

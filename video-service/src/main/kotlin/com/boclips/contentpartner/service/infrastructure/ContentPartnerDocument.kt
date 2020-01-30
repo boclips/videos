@@ -17,7 +17,7 @@ data class ContentPartnerDocument(
     val distributionMethods: Set<DistributionMethodDocument>? = null,
     val remittanceCurrency: String? = null,
     val description: String? = null,
-    val contentCategories: List<ContentCategoryDocument>? = null,
+    val contentCategories: List<String>? = emptyList(),
     val language: String? = null,
     val hubspotId: String? = null,
     val awards: String? = null,

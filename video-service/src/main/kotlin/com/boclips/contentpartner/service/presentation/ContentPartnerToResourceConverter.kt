@@ -30,7 +30,7 @@ class ContentPartnerToResourceConverter(
             description = contentPartner.description,
             currency = if (user.isPermittedToAccessBackoffice)
                 contentPartner.remittance?.currency?.currencyCode else null,
-            contentCategories = contentPartner.contentCategories?.map { it -> toContentCategoryResource(it.key) },
+            contentCategories = contentPartner.contentCategories?.map { toContentCategoryResource(it) },
             hubspotId = contentPartner.hubspotId,
             awards = contentPartner.awards,
             notes = contentPartner.notes,

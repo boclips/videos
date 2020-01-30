@@ -15,7 +15,7 @@ data class CreateContentPartnerRequest(
     @field:CurrencyCode
     val currency: String? = null,
     val description: String? = null,
-    val contentCategories: List<ContentCategoryRequest>? = null,
+    val contentCategories: List<String>? = emptyList(),
     val hubspotId: String? = null,
     val awards: String? = null,
     val notes: String? = null,
