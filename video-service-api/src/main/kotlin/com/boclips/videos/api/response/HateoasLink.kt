@@ -1,8 +1,9 @@
 package com.boclips.videos.api.response
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.hateoas.Link
 
-data class HateoasLink(val href: String, val rel: String) {
+data class HateoasLink(val href: String, @field:JsonIgnore val rel: String = "") {
     var templated: Boolean = href.contains(Regex("\\{.*\\}"))
 
     companion object {
