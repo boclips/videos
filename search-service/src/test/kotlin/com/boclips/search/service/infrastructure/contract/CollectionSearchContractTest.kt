@@ -122,6 +122,26 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
     @ParameterizedTest
     @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds a collection matching age range`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "Pre-school", ageRangeMin = 3, ageRangeMax = 5),
+                SearchableCollectionMetadataFactory.create(id = "Lower-Elementary", ageRangeMin = 5, ageRangeMax = 7)
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(query = CollectionQuery(ageRangeMin = 5, ageRangeMax = 7))
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("Lower-Elementary")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
     fun `gets all collections when empty query`(
         readService: IndexReader<CollectionMetadata, CollectionQuery>,
         writeService: IndexWriter<CollectionMetadata>

@@ -49,6 +49,15 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                 else
                     true
             }
+            .filter { entry ->
+                val queryAgeMin = query.ageRangeMin ?: 0
+                val queryAgeMax = query.ageRangeMax ?: 100
+
+                val entryAgeMin = entry.value.ageRangeMin ?: 0
+                val entryAgeMax = entry.value.ageRangeMax ?: 100
+
+                entryAgeMin in queryAgeMin until queryAgeMax && entryAgeMax > queryAgeMin && entryAgeMax <= queryAgeMax
+            }
             .map { collection -> collection.key }
     }
 
