@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.unstemmed
+import com.boclips.search.service.infrastructure.common.FilterDecorator
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions

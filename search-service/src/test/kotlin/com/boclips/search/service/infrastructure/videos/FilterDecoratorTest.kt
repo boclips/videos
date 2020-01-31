@@ -1,7 +1,9 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.infrastructure.common.FilterDecorator
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.index.query.QueryBuilders
 import org.junit.jupiter.api.Test
@@ -11,7 +13,7 @@ import java.time.LocalDate
 class FilterDecoratorTest {
 
     @Test
-    fun `attaches all filters`() {
+    fun `attaches all filters for video`() {
         val boolQuery = QueryBuilders.boolQuery()
         val videoQuery = VideoQuery(
             phrase = "some phrase",
@@ -57,36 +59,6 @@ class FilterDecoratorTest {
       },
       {
         "bool" : {
-          "must" : [
-            {
-              "range" : {
-                "ageRangeMin" : {
-                  "from" : 5,
-                  "to" : 10,
-                  "include_lower" : true,
-                  "include_upper" : false,
-                  "boost" : 1.0
-                }
-              }
-            },
-            {
-              "range" : {
-                "ageRangeMax" : {
-                  "from" : 5,
-                  "to" : 10,
-                  "include_lower" : false,
-                  "include_upper" : true,
-                  "boost" : 1.0
-                }
-              }
-            }
-          ],
-          "adjust_pure_negative" : true,
-          "boost" : 1.0
-        }
-      },
-      {
-        "bool" : {
           "should" : [
             {
               "match_phrase" : {
@@ -119,6 +91,90 @@ class FilterDecoratorTest {
             "value" : "boclips",
             "boost" : 1.0
           }
+        }
+      },
+      {
+        "bool" : {
+          "must" : [
+            {
+              "range" : {
+                "ageRangeMin" : {
+                  "from" : 5,
+                  "to" : 10,
+                  "include_lower" : true,
+                  "include_upper" : false,
+                  "boost" : 1.0
+                }
+              }
+            },
+            {
+              "range" : {
+                "ageRangeMax" : {
+                  "from" : 5,
+                  "to" : 10,
+                  "include_lower" : false,
+                  "include_upper" : true,
+                  "boost" : 1.0
+                }
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0
+        }
+      }
+    ],
+    "adjust_pure_negative" : true,
+    "boost" : 1.0
+  }
+}
+        """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `attaches all filters for collection`() {
+        val boolQuery = QueryBuilders.boolQuery()
+        val collectionQuery = CollectionQuery(
+            ageRangeMax = 10,
+            ageRangeMin = 5
+        )
+
+        FilterDecorator(boolQuery).apply(collectionQuery)
+
+        assertThat(boolQuery.toString()).isEqualTo(
+            """
+{
+  "bool" : {
+    "filter" : [
+      {
+        "bool" : {
+          "must" : [
+            {
+              "range" : {
+                "ageRangeMin" : {
+                  "from" : 5,
+                  "to" : 10,
+                  "include_lower" : true,
+                  "include_upper" : false,
+                  "boost" : 1.0
+                }
+              }
+            },
+            {
+              "range" : {
+                "ageRangeMax" : {
+                  "from" : 5,
+                  "to" : 10,
+                  "include_lower" : false,
+                  "include_upper" : true,
+                  "boost" : 1.0
+                }
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0
         }
       }
     ],

@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.infrastructure.common.FilterDecorator
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -144,6 +145,9 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 if (query.hasLessonPlans != null) {
                     filter(QueryBuilders.termsQuery(CollectionDocument.HAS_LESSON_PLANS, query.hasLessonPlans))
                 }
+            }
+            .apply {
+                FilterDecorator(this).apply(query)
             }
     }
 

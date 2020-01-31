@@ -1,8 +1,11 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.infrastructure.common.HasAgeRange
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
+
+
 
 data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
@@ -16,15 +19,15 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(DURATION_SECONDS) val durationSeconds: Long?,
     @param:JsonProperty(SOURCE) val source: String?,
     @param:JsonProperty(TRANSCRIPT) val transcript: String?,
-    @param:JsonProperty(AGE_RANGE_MIN) val ageRangeMin: Int?,
-    @param:JsonProperty(AGE_RANGE_MAX) val ageRangeMax: Int?,
+    @param:JsonProperty(HasAgeRange.AGE_RANGE_MIN) override val ageRangeMin: Int?,
+    @param:JsonProperty(HasAgeRange.AGE_RANGE_MAX) override val ageRangeMax: Int?,
     @param:JsonProperty(TYPE) val type: String?,
     @param:JsonProperty(SUBJECT_IDS) val subjectIds: Set<String>?,
     @param:JsonProperty(SUBJECT_NAMES) val subjectNames: Set<String>?,
     @param:JsonProperty(PROMOTED) val promoted: Boolean?,
     @param:JsonProperty(MEAN_RATING) val meanRating: Double?,
     @param:JsonProperty(SUBJECTS_SET_MANUALLY) val subjectsSetManually: Boolean?
-) {
+) :HasAgeRange {
     companion object {
         const val ID = "id"
         const val TITLE = "title"
@@ -37,8 +40,6 @@ data class VideoDocument @JsonCreator constructor(
         const val DURATION_SECONDS = "durationSeconds"
         const val SOURCE = "source"
         const val TRANSCRIPT = "transcript"
-        const val AGE_RANGE_MIN = "ageRangeMin"
-        const val AGE_RANGE_MAX = "ageRangeMax"
         const val SUBJECT_IDS = "subjectIds"
         const val SUBJECT_NAMES = "subjectNames"
         const val TYPE = "type"
