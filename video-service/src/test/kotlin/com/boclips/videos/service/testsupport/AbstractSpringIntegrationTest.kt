@@ -329,7 +329,9 @@ abstract class AbstractSpringIntegrationTest {
         videos: List<String> = emptyList(),
         public: Boolean = false,
         bookmarkedBy: String? = null,
-        subjects: Set<Subject> = emptySet()
+        subjects: Set<Subject> = emptySet(),
+        ageRangeMin: Int? = null,
+        ageRangeMax: Int? = null
     ): CollectionId {
         val user = UserFactory.sample(id = owner)
 
@@ -342,7 +344,8 @@ abstract class AbstractSpringIntegrationTest {
             collectionId = collectionId.value,
             updateCollectionRequest = UpdateCollectionRequest(
                 isPublic = public,
-                subjects = subjects.map { it.id.value }.toSet()
+                subjects = subjects.map { it.id.value }.toSet(),
+                ageRange = com.boclips.videos.api.request.agerange.AgeRangeRequest(ageRangeMin, ageRangeMax)
             ),
             requester = user
         )

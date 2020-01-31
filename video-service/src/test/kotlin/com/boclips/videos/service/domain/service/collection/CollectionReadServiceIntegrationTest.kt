@@ -70,6 +70,51 @@ internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationT
         }
 
         @Test
+        fun `when searching collections filtered by age range`() {
+            saveCollection(
+                title = "pre-school collection", videos = listOf(
+                    TestFactories.createVideoId().value,
+                    TestFactories.createVideoId().value
+                ),
+                ageRangeMin = 3,
+                ageRangeMax = 5
+            )
+            val lowerElementaryCollectionId: CollectionId = saveCollection(
+                title = "lower-elementary collection", videos = listOf(
+                    TestFactories.createVideoId().value,
+                    TestFactories.createVideoId().value
+                ),
+                ageRangeMin = 5,
+                ageRangeMax = 7
+            )
+
+            val collectionSearchQuery = CollectionSearchQuery(
+                text = "collection",
+                pageSize = 5,
+                pageIndex = 0,
+                subjectIds = emptyList(),
+                permittedCollections = null,
+                visibilityForOwners = setOf(
+                    VisibilityForOwner(
+                        owner = null,
+                        visibility = CollectionVisibilityQuery.privateOnly()
+                    )
+                ),
+                hasLessonPlans = null,
+                ageRangeMin = 5,
+                ageRangeMax = 7
+            )
+
+            val results = collectionReadService.search(
+                query = collectionSearchQuery,
+                user = UserFactory.sample(id = "user-id-34")
+            )
+
+            assertThat(results.elements).hasSize(1)
+            assertThat(results.elements.elementAt(0).id).isEqualTo(lowerElementaryCollectionId)
+        }
+
+        @Test
         fun `when searching collections it sends a ResourcesSearched event`() {
             val collectionId = saveCollection(
                 title = "a collection", videos = listOf(

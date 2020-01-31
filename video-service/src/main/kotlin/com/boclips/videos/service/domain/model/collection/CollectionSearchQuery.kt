@@ -14,7 +14,9 @@ class CollectionSearchQuery(
     val pageSize: Int,
     val pageIndex: Int,
     val permittedCollections: List<CollectionId>?,
-    val hasLessonPlans: Boolean?
+    val hasLessonPlans: Boolean?,
+    val ageRangeMin: Int? = null,
+    val ageRangeMax: Int? = null
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
@@ -29,7 +31,9 @@ class CollectionSearchQuery(
             )
             else -> null
         },
-        hasLessonPlans = this.hasLessonPlans
+        hasLessonPlans = this.hasLessonPlans,
+        ageRangeMin = this.ageRangeMin,
+        ageRangeMax = this.ageRangeMax
     )
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize
