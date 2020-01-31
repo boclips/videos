@@ -31,7 +31,9 @@ class CollectionSearchQueryAssemblerTest {
             size = 30,
             user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.asOwner("my-id") }),
             owner = "other-id",
-            hasLessonPlans = true
+            hasLessonPlans = true,
+            ageRangeMin = 3,
+            ageRangeMax = 7
         )
 
         assertThat(query.text).isEqualTo("minute physics")
@@ -41,6 +43,8 @@ class CollectionSearchQueryAssemblerTest {
         assertThat(query.pageIndex).isEqualTo(1)
         assertThat(query.pageSize).isEqualTo(30)
         assertThat(query.hasLessonPlans).isTrue()
+        assertThat(query.ageRangeMin).isEqualTo(3)
+        assertThat(query.ageRangeMax).isEqualTo(7)
     }
 
     @Test
@@ -409,7 +413,9 @@ class CollectionSearchQueryAssemblerTest {
                 videoAccess = VideoAccessRule.Everything,
                 collectionAccess = CollectionAccessRule.public()
             )
-        })
+        }),
+        ageRangeMin: Int? = null,
+        ageRangeMax: Int? = null
     ) = CollectionSearchQueryAssembler()(
         query,
         subjects,
@@ -419,6 +425,8 @@ class CollectionSearchQueryAssemblerTest {
         page,
         size,
         hasLessonPlans,
-        user
+        user,
+        ageRangeMin,
+        ageRangeMax
     )
 }

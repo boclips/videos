@@ -174,6 +174,21 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next").doesNotExist())
     }
+    @Test
+    fun `filter for age range`() {
+        val lowerCollectionId = createCollection("lower")
+        val upperCollectionId = createCollection("upper")
+        updateCollectionAgeRange(lowerCollectionId, ageRangeMin = 3, ageRangeMax = 5)
+        updateCollectionAgeRange(upperCollectionId, ageRangeMin = 5, ageRangeMax = 7)
+        updateCollectionToBePublic(lowerCollectionId)
+        updateCollectionToBePublic(upperCollectionId)
+
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=5&public=true&ageRangeMin=5&ageRangeMax=7").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", equalTo(upperCollectionId)))
+    }
 
     @Test
     fun `query search public collections`() {

@@ -70,6 +70,17 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .andExpect(status().isNoContent)
     }
 
+    fun updateCollectionAgeRange(collectionId: String,
+        ageRangeMin: Int? = null,
+        ageRangeMax: Int? = null) {
+        mockMvc.perform(
+            MockMvcRequestBuilders.patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
+                """{"ageRange": {"min": $ageRangeMin, "max": $ageRangeMax}}"""
+            ).asTeacher()
+        )
+            .andExpect(status().isNoContent)
+    }
+
     fun updateCollectionAttachment(
         collectionId: String,
         attachmentType: String,

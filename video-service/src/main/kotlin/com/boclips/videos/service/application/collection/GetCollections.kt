@@ -23,7 +23,9 @@ class GetCollections(
             page = collectionFilterRequest.page,
             size = collectionFilterRequest.size,
             hasLessonPlans = collectionFilterRequest.has_lesson_plans,
-            user = user
+            user = user,
+            ageRangeMin = collectionFilterRequest.ageRangeMin,
+            ageRangeMax = collectionFilterRequest.ageRangeMax
         )
 
         return collectionReadService.search(assembledQuery, user)
