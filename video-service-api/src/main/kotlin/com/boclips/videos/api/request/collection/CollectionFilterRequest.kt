@@ -12,6 +12,6 @@ class CollectionFilterRequest(
     val projection: Projection? = Projection.list,
     val has_lesson_plans: Boolean? = null,
     val subject: String? = null,
-    val ageRangeMin: Int? = null,
-    val ageRangeMax: Int? = null
+    val age_range_min: Int? = null,
+    val age_range_max: Int? = null
 )
