@@ -92,7 +92,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             HateoasLink(
                 href = getCollectionsRoot()
                     .queryParam("public", true)
-                    .toUriString() + "{&query,subject,projection,page,size}",
+                    .toUriString() + "{&query,subject,projection,page,size,age_range_min,age_range_max}",
                 rel = "searchPublicCollections"
             )
         }
@@ -112,7 +112,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
             HateoasLink(
                 href = getCollectionsRoot()
-                    .toUriString() + "{?query,subject,public,projection,page,size}",
+                    .toUriString() + "{?query,subject,public,projection,page,size,age_range_min,age_range_max}",
                 rel = "searchCollections"
             )
         }
