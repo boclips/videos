@@ -27,18 +27,19 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                 if (subjectQuery(query)) entry.value.subjectIds.any { query.subjectIds.contains(it) } else true
             }
             .filter { entry ->
-                if (query.visibilityForOwners.isNotEmpty()) {
-                    query.visibilityForOwners.any { v ->
-                        v.visibility.contains(entry.value.visibility)
-                            && v.owner?.let { it == entry.value.owner } ?: true
-                    }
+                val visibilityMatches = if (query.visibilityForOwners.isNotEmpty()) query.visibilityForOwners.any {
+                    it.visibility.contains(entry.value.visibility)
+                        && it.owner?.let { owner -> owner == entry.value.owner } ?: true
                 } else true
-            }
-            .filter { entry ->
-                if (bookmarkQuery(query))
-                    entry.value.bookmarkedByUsers.contains(query.bookmarkedBy)
-                else
-                    true
+
+                val bookmarkMatches =
+                    if (bookmarkQuery(query)) entry.value.bookmarkedByUsers.contains(query.bookmarkedBy) else true
+
+                if (query.visibilityForOwners.any { it.owner != null } && bookmarkQuery(query)) {
+                    bookmarkMatches || visibilityMatches
+                } else {
+                    bookmarkMatches && visibilityMatches
+                }
             }
             .filter { entry ->
                 if (query.hasLessonPlans != null) query.hasLessonPlans == entry.value.hasLessonPlans else true

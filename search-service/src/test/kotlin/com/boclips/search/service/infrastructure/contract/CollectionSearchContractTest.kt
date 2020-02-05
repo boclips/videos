@@ -3,6 +3,8 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
+import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
+import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
@@ -160,6 +162,92 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `combines own collections with bookmarked collections`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "100",
+                    owner = "teacher",
+                    bookmarkedBy = emptySet()
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "101",
+                    owner = "stranger",
+                    bookmarkedBy = setOf("teacher")
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "102",
+                    owner = "stranger",
+                    bookmarkedBy = emptySet()
+                )
+            )
+        )
+
+        val results = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = "teacher", visibility = CollectionVisibilityQuery.All)
+                    ),
+                    bookmarkedBy = "teacher"
+                )
+            )
+        )
+
+        assertThat(results).hasSize(2)
+        assertThat(results).contains("100")
+        assertThat(results).contains("101")
+        assertThat(results).doesNotContain("102")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `does not combine public collections with bookmarked collections, without an owner`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "100",
+                    owner = "teacher",
+                    bookmarkedBy = emptySet()
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "101",
+                    owner = "stranger",
+                    bookmarkedBy = setOf("teacher")
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "102",
+                    owner = "stranger",
+                    bookmarkedBy = emptySet()
+                )
+            )
+        )
+
+        val results = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())
+                    ),
+                    bookmarkedBy = "teacher"
+                )
+            )
+        )
+
+        assertThat(results).hasSize(1)
+        assertThat(results).doesNotContain("100")
+        assertThat(results).contains("101")
+        assertThat(results).doesNotContain("102")
     }
 
     @ParameterizedTest
