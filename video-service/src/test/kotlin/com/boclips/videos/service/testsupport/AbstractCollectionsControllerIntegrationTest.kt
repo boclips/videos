@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -35,12 +36,13 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun createCollection(
         title: String = "a collection name",
         description: String = "a description",
-        public: Boolean = false
+        public: Boolean = false,
+        owner: String = "teacher@gmail.com"
     ) =
         mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content(
                 """{"title": "$title", "description": "$description", "public": $public}"""
-            ).asTeacher()
+            ).asTeacher(owner)
         )
             .andExpect(status().isCreated)
             .andReturn().response.getHeader("Location")!!.substringAfterLast("/")
@@ -133,5 +135,16 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun MvcResult.extractVideoLink(relName: String, videoId: String): URI {
         val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.$relName.href")
         return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
+    }
+
+    protected fun bookmarkCollection(collectionId: String, user: String) {
+        mockMvc.perform(patch(bookmarkLink(collectionId, user)).contentType(MediaType.APPLICATION_JSON).asTeacher(user))
+            .andExpect(status().isOk)
+    }
+
+    private fun bookmarkLink(collectionId: String, user: String): URI {
+        return getCollection(collectionId, user)
+            .andReturn()
+            .extractLink("bookmark")
     }
 }

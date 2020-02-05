@@ -223,6 +223,26 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
+    fun `query search for my collections and my bookmarked collections`() {
+        val teacher = "teacher"
+        val stranger = "stranger"
+
+        createCollection(title = "mine", public = true, owner = teacher)
+        createCollection(title = "bookmarked", public = true, owner = stranger).apply {
+            bookmarkCollection(this, teacher)
+        }
+        createCollection(title = "strangers", public = true, owner = stranger)
+
+        mockMvc.perform(
+            get("/v1/collections?owner=$teacher&bookmarked=true").asTeacher(teacher)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("bookmarked")))
+            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("mine")))
+    }
+
+    @Test
     fun `can filter public collections by multiple subjects with commas`() {
         val frenchCollection = createCollectionWithTitle("French Collection for with Subjects")
         val germanCollection = createCollectionWithTitle("German Collection for with Subjects")

@@ -738,11 +738,6 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isNoContent)
     }
 
-    private fun bookmarkCollection(collectionId: String, user: String) {
-        mockMvc.perform(patch(bookmarkLink(collectionId, user)).contentType(MediaType.APPLICATION_JSON).asTeacher(user))
-            .andExpect(status().isOk)
-    }
-
     private fun updateCollectionToBePublicAndRename(collectionId: String, title: String) {
         mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"public": "true", "title": "$title"}""").asTeacher())
             .andExpect(status().isNoContent)
@@ -769,11 +764,5 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         return getCollection(collectionId)
             .andReturn()
             .extractVideoLink("removeVideo", videoId)
-    }
-
-    private fun bookmarkLink(collectionId: String, user: String): URI {
-        return getCollection(collectionId, user)
-            .andReturn()
-            .extractLink("bookmark")
     }
 }
