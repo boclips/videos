@@ -15,7 +15,7 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -177,7 +177,7 @@ abstract class AbstractSpringIntegrationTest {
     ): VideoId {
         val retrievedContentPartnerId = try {
             createContentPartner(
-                CreateContentPartnerRequest(
+                UpsertContentPartnerRequest(
                     name = contentProvider,
                     distributionMethods = distributionMethods
                 )

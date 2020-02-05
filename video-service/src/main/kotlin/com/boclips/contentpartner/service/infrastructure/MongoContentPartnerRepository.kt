@@ -115,6 +115,34 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 ContentPartnerDocument::remittanceCurrency,
                 updateCommand.currency.currencyCode
             )
+            is ContentPartnerUpdateCommand.ReplaceContentTypes -> set(
+                ContentPartnerDocument::contentTypes,
+                updateCommand.contentType
+            )
+            is ContentPartnerUpdateCommand.ReplaceContentCategories -> set(
+                ContentPartnerDocument::contentCategories,
+                updateCommand.contentCategories
+            )
+            is ContentPartnerUpdateCommand.ReplaceLanguage -> set(
+                ContentPartnerDocument::language,
+                updateCommand.language
+            )
+            is ContentPartnerUpdateCommand.ReplaceDescription -> set(
+                ContentPartnerDocument::description,
+                updateCommand.description
+            )
+            is ContentPartnerUpdateCommand.ReplaceAwards -> set(
+                ContentPartnerDocument::awards,
+                updateCommand.awards
+            )
+            is ContentPartnerUpdateCommand.ReplaceHubspotId -> set(
+                ContentPartnerDocument::hubspotId,
+                updateCommand.hubspotId
+            )
+            is ContentPartnerUpdateCommand.ReplaceNotes -> set(
+                ContentPartnerDocument::notes,
+                updateCommand.notes
+            )
         }
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))

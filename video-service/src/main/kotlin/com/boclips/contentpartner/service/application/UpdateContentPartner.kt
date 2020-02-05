@@ -6,9 +6,12 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
-import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
+import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import org.springframework.stereotype.Component
+
+import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner
+import com.boclips.eventbus.domain.contentpartner.ContentPartnerId as EventBusContentPartnerId
 
 @Component
 class UpdateContentPartner(
@@ -17,38 +20,47 @@ class UpdateContentPartner(
     private val createLegalRestrictions: CreateLegalRestrictions,
     private val eventBus: EventBus
 ) {
-    operator fun invoke(contentPartnerId: String, createRequest: CreateContentPartnerRequest): ContentPartner {
+    operator fun invoke(contentPartnerId: String, upsertRequest: UpsertContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
-
-        createRequest.legalRestrictions?.let { legalRestrictionsRequest ->
-            if (legalRestrictionsRequest.id.isNullOrEmpty()) {
-                val legalRestrictions = createLegalRestrictions(legalRestrictionsRequest.text)
-                createRequest.legalRestrictions =
-                    LegalRestrictionsRequest(id = legalRestrictions.id.value)
-            }
-        }
-
-        val updateCommands = contentPartnerUpdatesConverter.convert(id, createRequest)
-        contentPartnerRepository.update(updateCommands)
 
         val contentPartner = contentPartnerRepository.findById(id)
             ?: throw ContentPartnerNotFoundException(
                 "Could not find content partner: ${id.value}"
             )
 
+        upsertRequest.legalRestrictions?.let { legalRestrictionsRequest ->
+            if (legalRestrictionsRequest.id.isNullOrEmpty()) {
+                val legalRestrictions = createLegalRestrictions(legalRestrictionsRequest.text)
+                upsertRequest.legalRestrictions =
+                    LegalRestrictionsRequest(id = legalRestrictions.id.value)
+            }
+        }
+
+        val updateCommands = contentPartnerUpdatesConverter.convert(id, upsertRequest, contentPartner)
+        contentPartnerRepository.update(updateCommands)
+
+        val updatedContentPartner = contentPartnerRepository.findById(id)!!
+
         eventBus.publish(
             ContentPartnerUpdated.builder()
                 .contentPartner(
-                    com.boclips.eventbus.domain.contentpartner.ContentPartner.builder()
-                        .id(com.boclips.eventbus.domain.contentpartner.ContentPartnerId(contentPartner.contentPartnerId.value))
-                        .name(contentPartner.name)
+                    EventBusContentPartner.builder()
+                        .id(EventBusContentPartnerId(updatedContentPartner.contentPartnerId.value))
+                        .name(updatedContentPartner.name)
                         .ageRange(
                             com.boclips.eventbus.domain.AgeRange.builder()
-                                .min(contentPartner.ageRange.min())
-                                .max(contentPartner.ageRange.max())
+                                .min(updatedContentPartner.ageRange.min())
+                                .max(updatedContentPartner.ageRange.max())
                                 .build()
                         )
-                        .legalRestrictions(contentPartner.legalRestriction?.text)
+                        .awards(updatedContentPartner.awards)
+                        .description(updatedContentPartner.description)
+                        .contentTypes(updatedContentPartner.contentTypes?.map { it.name })
+                        .contentCategories(updatedContentPartner.contentCategories)
+                        .language(updatedContentPartner.language)
+                        .hubspotId(updatedContentPartner.hubspotId)
+                        .notes(updatedContentPartner.notes)
+                        .legalRestrictions(updatedContentPartner.legalRestriction?.text)
                         .build()
                 )
                 .build()
@@ -57,3 +69,5 @@ class UpdateContentPartner(
         return contentPartner
     }
 }
+
+

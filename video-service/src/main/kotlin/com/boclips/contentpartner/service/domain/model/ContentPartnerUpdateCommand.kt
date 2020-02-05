@@ -19,4 +19,25 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class ReplaceCurrency(contentPartnerId: ContentPartnerId, val currency: Currency) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceContentTypes(contentPartnerId: ContentPartnerId, val contentType: List<String>) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceContentCategories(contentPartnerId: ContentPartnerId, val contentCategories: List<String>) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceLanguage(contentPartnerId: ContentPartnerId, val language: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceDescription(contentPartnerId: ContentPartnerId, val description: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceAwards(contentPartnerId: ContentPartnerId, val awards: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceHubspotId(contentPartnerId: ContentPartnerId, val hubspotId: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceNotes(contentPartnerId: ContentPartnerId, val notes: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
 }

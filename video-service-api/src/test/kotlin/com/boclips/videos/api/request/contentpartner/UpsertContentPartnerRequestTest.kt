@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import javax.validation.Validation
 import javax.validation.Validator
 
-class CreateContentPartnerRequestTest {
+class UpsertContentPartnerRequestTest {
     private lateinit var validator: Validator
 
     @BeforeEach

@@ -5,7 +5,7 @@ import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
-data class CreateContentPartnerRequest(
+data class UpsertContentPartnerRequest(
     @field:NotBlank
     val name: String? = null,
     val accreditedToYtChannelId: String? = null,
@@ -16,11 +16,11 @@ data class CreateContentPartnerRequest(
     @field:CurrencyCode
     val currency: String? = null,
     val description: String? = null,
-    val contentCategories: List<String>? = emptyList(),
+    val contentCategories: List<String>? = null,
     val hubspotId: String? = null,
     val awards: String? = null,
     val notes: String? = null,
     @field:Language
     val language: String? = null,
-    val contentTypes: List<String>? = emptyList()
+    val contentTypes: List<String>? = null
 )

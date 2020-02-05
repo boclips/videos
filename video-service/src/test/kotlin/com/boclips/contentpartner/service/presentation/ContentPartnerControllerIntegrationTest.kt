@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -126,7 +126,12 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].description", equalTo("This is a description")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].awards", equalTo("award")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].notes", equalTo("note one")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].contentTypes", containsInAnyOrder("NEWS", "INSTRUCTIONAL")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].contentTypes",
+                    containsInAnyOrder("NEWS", "INSTRUCTIONAL")
+                )
+            )
             .andExpect(
                 jsonPath(
                     "$._embedded.contentPartners[0].contentCategories[*].key",
@@ -256,7 +261,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andReturn().response.getHeaders("Location").first()
 
         mockMvc.perform(
-            put(cpUrl).asBoclipsEmployee()
+            patch(cpUrl).asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(updatedContent)
         )
             .andExpect(status().isNoContent)
@@ -310,7 +315,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         val id = saveContentPartner().contentPartnerId.value
 
         mockMvc.perform(
-            put("/v1/content-partners/$id").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+            patch("/v1/content-partners/$id").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
                 """{
                         "distributionMethods": ["STREAM"],
                         "name": "TED",

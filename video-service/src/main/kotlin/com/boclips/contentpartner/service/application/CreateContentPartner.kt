@@ -11,37 +11,37 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
-import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
 import org.bson.types.ObjectId
 import java.util.Currency
 import java.util.Locale
 
 class CreateContentPartner(private val contentPartnerRepository: ContentPartnerRepository) {
-    operator fun invoke(createRequest: CreateContentPartnerRequest): ContentPartner {
-        val ageRange = createRequest.ageRange?.let {
+    operator fun invoke(upsertRequest: UpsertContentPartnerRequest): ContentPartner {
+        val ageRange = upsertRequest.ageRange?.let {
             AgeRange
                 .bounded(min = it.min, max = it.max)
         } ?: AgeRange.unbounded()
 
-        val methods = createRequest.distributionMethods?.let(
+        val methods = upsertRequest.distributionMethods?.let(
             DistributionMethodResourceConverter::toDistributionMethods
         ) ?: DistributionMethod.ALL
 
-        val name = createRequest.name!!
+        val name = upsertRequest.name!!
 
         val filters = ContentPartnerFiltersConverter.convert(
             name = name,
-            official = createRequest.accreditedToYtChannelId == null,
-            accreditedYTChannelId = createRequest.accreditedToYtChannelId
+            official = upsertRequest.accreditedToYtChannelId == null,
+            accreditedYTChannelId = upsertRequest.accreditedToYtChannelId
         )
 
         if (contentPartnerRepository.findAll(filters).toList().isNotEmpty()) {
             throw ContentPartnerConflictException(name)
         }
 
-        if (!createRequest.contentCategories.isNullOrEmpty()) {
-            if (createRequest.contentCategories?.any { request -> request !in ContentCategories.values().map { it.name } }!!) {
+        if (!upsertRequest.contentCategories.isNullOrEmpty()) {
+            if (upsertRequest.contentCategories?.any { request -> request !in ContentCategories.values().map { it.name } }!!) {
                 throw InvalidContentCategoryException()
             }
         }
@@ -52,20 +52,20 @@ class CreateContentPartner(private val contentPartnerRepository: ContentPartnerR
                     contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                     name = name,
                     ageRange = ageRange,
-                    credit = createRequest.accreditedToYtChannelId?.let {
+                    credit = upsertRequest.accreditedToYtChannelId?.let {
                         Credit
                             .YoutubeCredit(it)
                     } ?: Credit.PartnerCredit,
                     legalRestriction = null,
                     distributionMethods = methods,
-                    remittance = createRequest.currency?.let { Remittance(Currency.getInstance(it)) },
-                    description = createRequest.description,
-                    contentCategories = createRequest.contentCategories,
-                    hubspotId = createRequest.hubspotId,
-                    awards = createRequest.awards,
-                    notes = createRequest.notes,
-                    language = createRequest.language?.let { Locale.forLanguageTag(it) },
-                    contentTypes = createRequest.contentTypes?.map { ContentPartnerType.valueOf(it) }
+                    remittance = upsertRequest.currency?.let { Remittance(Currency.getInstance(it)) },
+                    description = upsertRequest.description,
+                    contentCategories = upsertRequest.contentCategories,
+                    hubspotId = upsertRequest.hubspotId,
+                    awards = upsertRequest.awards,
+                    notes = upsertRequest.notes,
+                    language = upsertRequest.language?.let { Locale.forLanguageTag(it) },
+                    contentTypes = upsertRequest.contentTypes?.map { ContentPartnerType.valueOf(it) }
                 )
             )
     }

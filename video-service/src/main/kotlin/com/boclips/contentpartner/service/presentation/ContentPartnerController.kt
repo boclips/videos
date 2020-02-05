@@ -5,7 +5,7 @@ import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
-import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnerWrapperResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
@@ -15,9 +15,9 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -75,23 +75,23 @@ class ContentPartnerController(
     }
 
     @PostMapping
-    fun postContentPartner(@Valid @RequestBody createCreateContentPartnerRequest: CreateContentPartnerRequest): ResponseEntity<Void> {
-        val contentPartner = createContentPartner(createCreateContentPartnerRequest)
+    fun postContentPartner(@Valid @RequestBody createUpsertContentPartnerRequest: UpsertContentPartnerRequest): ResponseEntity<Void> {
+        val contentPartner = createContentPartner(createUpsertContentPartnerRequest)
 
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",
-                contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value).href.toString()
+                contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value).href
             )
         }, HttpStatus.CREATED)
     }
 
-    @PutMapping("/{id}")
-    fun putContentPartner(
+    @PatchMapping("/{id}")
+    fun patchContentPartner(
         @PathVariable("id") contentPartnerId: String,
-        @Valid @RequestBody updateCreateContentPartnerRequest: CreateContentPartnerRequest
+        @Valid @RequestBody updateUpsertContentPartnerRequest: UpsertContentPartnerRequest
     ): ResponseEntity<Void> {
-        updateContentPartner(contentPartnerId = contentPartnerId, createRequest = updateCreateContentPartnerRequest)
+        updateContentPartner(contentPartnerId = contentPartnerId, upsertRequest = updateUpsertContentPartnerRequest)
 
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }

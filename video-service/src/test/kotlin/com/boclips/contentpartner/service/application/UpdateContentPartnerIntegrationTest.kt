@@ -7,12 +7,11 @@ import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationT
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.api.request.contentpartner.CreateContentPartnerRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
+import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,9 +26,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoRepository: VideoRepository
-
-    @Autowired
-    lateinit var videoService: VideoService
 
     lateinit var originalContentPartner: ContentPartner
 
@@ -59,7 +55,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions")
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            createRequest = CreateContentPartnerRequest(
+            upsertRequest = UpsertContentPartnerRequest(
                 name = "My better content partner",
                 ageRange = AgeRangeRequest(
                     min = 9,
@@ -86,13 +82,25 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `emits event`() {
+        val description = "Test description"
+        val contentCategories = listOf("WITH_A_HOST")
+        val contentTypes = listOf("NEWS")
+        val notes = "This is an interesting CP"
+        val hubspotId = "12345678"
+
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            createRequest = CreateContentPartnerRequest(
+            upsertRequest = UpsertContentPartnerRequest(
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
-                )
+                ),
+                language = "spa",
+                description = description,
+                contentCategories = contentCategories,
+                contentTypes = contentTypes,
+                notes = notes,
+                hubspotId = hubspotId
             )
         )
 
@@ -100,14 +108,20 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val event = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java)
 
-        assertThat(event.contentPartner.id).isNotNull
+        assertThat(event.contentPartner.id.value).isEqualTo(originalContentPartner.contentPartnerId.value)
+        assertThat(event.contentPartner.language.isO3Language).isEqualTo("spa")
+        assertThat(event.contentPartner.description).isEqualTo(description)
+        assertThat(event.contentPartner.contentCategories).isEqualTo(contentCategories)
+        assertThat(event.contentPartner.contentTypes).isEqualTo(contentTypes)
+        assertThat(event.contentPartner.notes).isEqualTo(notes)
+        assertThat(event.contentPartner.hubspotId).isEqualTo(hubspotId)
     }
 
     @Test
     fun `legal restrictions get created when id not set`() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            createRequest = CreateContentPartnerRequest(
+            upsertRequest = UpsertContentPartnerRequest(
                 legalRestrictions = LegalRestrictionsRequest(
                     id = "",
                     text = "New legal restrictions"
