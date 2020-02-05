@@ -105,6 +105,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                     endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com")
                 )
             )
+            .andExpect(
+                jsonPath(
+                    "$._links.mySavedCollections.href",
+                    endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com&bookmarked=true")
+                )
+            )
             .andExpect(jsonPath("$._links.createPlaybackEvent").doesNotExist())
             .andExpect(jsonPath("$._links.createPlaybackEvents.href", endsWith("events/playback/batch")))
 

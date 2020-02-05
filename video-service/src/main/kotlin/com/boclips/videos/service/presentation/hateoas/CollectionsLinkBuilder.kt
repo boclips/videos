@@ -152,6 +152,22 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
+    fun mySavedCollections(
+        projection: Projection = Projection.list,
+        page: Int = 0,
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
+    ): HateoasLink? {
+        return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
+            HateoasLink(
+                href = collectionsLink(projection = projection, page = page, size = size)
+                    .queryParam("owner", currentUser)
+                    .queryParam("bookmarked", true)
+                    .toUriString(),
+                rel = "mySavedCollections"
+            )
+        }
+    }
+
     fun collectionsByOwner(
         projection: Projection = Projection.list,
         page: Int = 0,

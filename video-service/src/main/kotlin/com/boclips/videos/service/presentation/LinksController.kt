@@ -57,6 +57,7 @@ class LinksController(
                 collectionsLinkBuilder.collection(null),
                 collectionsLinkBuilder.collectionsByOwner(),
                 collectionsLinkBuilder.myCollections(),
+                collectionsLinkBuilder.mySavedCollections(),
                 collectionsLinkBuilder.createCollection(),
                 legalRestrictionsLinkBuilder.getAllLink(),
                 contentPartnersLinkBuilder.contentPartnerLink(null),
