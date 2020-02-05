@@ -96,45 +96,44 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                 }
             }
             .apply {
-                filter(
-                    QueryBuilders.boolQuery().apply {
-                        query.visibilityForOwners.forEach { visibilityForOwner ->
-                            should(
-                                QueryBuilders.boolQuery().apply {
-                                    visibilityForOwner.owner?.let {
-                                        must(QueryBuilders.termQuery(CollectionDocument.OWNER, it))
-                                    }
-                                    must(
-                                        QueryBuilders.termsQuery(
-                                            CollectionDocument.VISIBILITY,
-                                            when (visibilityForOwner.visibility) {
-                                                CollectionVisibilityQuery.All -> listOf("public", "private")
-                                                is CollectionVisibilityQuery.One -> when (visibilityForOwner.visibility.collectionVisibility) {
-                                                    CollectionVisibility.PUBLIC -> listOf("public")
-                                                    CollectionVisibility.PRIVATE -> listOf("private")
-                                                }
+                if (query.visibilityForOwners.isNotEmpty()) {
+                    filter(
+                        QueryBuilders.boolQuery().apply {
+                            query.visibilityForOwners.forEach { visibilityForOwner ->
+                                should(
+                                    QueryBuilders
+                                        .boolQuery().apply {
+                                            visibilityForOwner.owner?.let {
+                                                must(QueryBuilders.termQuery(CollectionDocument.OWNER, it))
                                             }
-                                        )
-                                    )
-                                }
-                            )
-                        }
-
-                        if (query.bookmarkedBy != null) {
-                            logger.info { "Search query checking if bookmarked by: ${query.bookmarkedBy}" }
-                            should(
-                                QueryBuilders.termQuery(
-                                    CollectionDocument.BOOKMARKED_BY,
-                                    query.bookmarkedBy
+                                            must(
+                                                QueryBuilders.termsQuery(
+                                                    CollectionDocument.VISIBILITY,
+                                                    when (visibilityForOwner.visibility) {
+                                                        CollectionVisibilityQuery.All -> listOf("public", "private")
+                                                        is CollectionVisibilityQuery.One -> when (visibilityForOwner.visibility.collectionVisibility) {
+                                                            CollectionVisibility.PUBLIC -> listOf("public")
+                                                            CollectionVisibility.PRIVATE -> listOf("private")
+                                                        }
+                                                    }
+                                                )
+                                            )
+                                        }
                                 )
-                            )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
             .apply {
                 if (query.subjectIds.isNotEmpty()) {
                     filter(matchSubjects(query.subjectIds))
+                }
+            }
+            .apply {
+                if (query.bookmarkedBy != null) {
+                    logger.info { "Search query checking if bookmarked by: ${query.bookmarkedBy}" }
+                    filter(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, query.bookmarkedBy))
                 }
             }
             .apply {

@@ -2,8 +2,6 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
@@ -119,46 +117,6 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Boi")))
 
         Assertions.assertThat(results).containsExactly("100")
-    }
-
-    @Test
-    fun `owner and bookmark filters operate inclusively`() {
-        collectionIndexWriter.safeRebuildIndex(
-            sequenceOf(
-                SearchableCollectionMetadataFactory.create(
-                    id = "100",
-                    owner = "teacher",
-                    bookmarkedBy = emptySet()
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "101",
-                    owner = "stranger",
-                    bookmarkedBy = setOf("teacher")
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "102",
-                    owner = "stranger",
-                    bookmarkedBy = emptySet()
-                )
-            )
-        )
-
-        val results =
-            collectionIndexReader.search(
-                PaginatedSearchRequest(
-                    query = CollectionQuery(
-                        visibilityForOwners = setOf(
-                            VisibilityForOwner(owner = "teacher", visibility = CollectionVisibilityQuery.All)
-                        ),
-                        bookmarkedBy = "teacher"
-                    )
-                )
-            )
-
-        Assertions.assertThat(results).hasSize(2)
-        Assertions.assertThat(results).contains("100")
-        Assertions.assertThat(results).contains("101")
-        Assertions.assertThat(results).doesNotContain("102")
     }
 
     @Test

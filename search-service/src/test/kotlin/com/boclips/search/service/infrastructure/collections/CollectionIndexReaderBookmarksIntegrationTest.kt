@@ -19,7 +19,7 @@ class CollectionIndexReaderBookmarksIntegrationTest : EmbeddedElasticSearchInteg
     }
 
     @Test
-    fun `returns bookmarked collections for a user`() {
+    fun `returns public and private collections of an owner`() {
         collectionIndexWriter.safeRebuildIndex(
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
