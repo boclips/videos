@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery.Companion.privateOnly
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery.Companion.publicOnly
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
+import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
@@ -29,6 +30,7 @@ class CollectionSearchQueryAssemblerTest {
             public = true,
             page = 1,
             size = 30,
+            sort = CollectionSortKey.TITLE,
             user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.asOwner("my-id") }),
             owner = "other-id",
             hasLessonPlans = true,
@@ -42,6 +44,7 @@ class CollectionSearchQueryAssemblerTest {
         assertThat(query.bookmarkedBy).isEqualTo("my-id")
         assertThat(query.pageIndex).isEqualTo(1)
         assertThat(query.pageSize).isEqualTo(30)
+        assertThat(query.sort).isEqualTo(CollectionSortKey.TITLE)
         assertThat(query.hasLessonPlans).isTrue()
         assertThat(query.ageRangeMin).isEqualTo(3)
         assertThat(query.ageRangeMax).isEqualTo(7)
@@ -407,6 +410,7 @@ class CollectionSearchQueryAssemblerTest {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
+        sort: CollectionSortKey? = null,
         hasLessonPlans: Boolean? = null,
         user: User = UserFactory.sample(accessRulesSupplier = {
             AccessRules(
@@ -424,6 +428,7 @@ class CollectionSearchQueryAssemblerTest {
         owner,
         page,
         size,
+        sort,
         hasLessonPlans,
         user,
         ageRangeMin,

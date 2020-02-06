@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.videos.api.request.collection.CollectionSortKey
 
 class CollectionSearchQuery(
     val text: String?,
@@ -16,7 +17,8 @@ class CollectionSearchQuery(
     val permittedCollections: List<CollectionId>?,
     val hasLessonPlans: Boolean?,
     val ageRangeMin: Int? = null,
-    val ageRangeMax: Int? = null
+    val ageRangeMax: Int? = null,
+    val sort: CollectionSortKey? = null
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
@@ -24,12 +26,19 @@ class CollectionSearchQuery(
         visibilityForOwners = this.visibilityForOwners,
         bookmarkedBy = this.bookmarkedBy,
         permittedIds = this.permittedCollections?.map { it.value },
-        sort = when {
-            this.text.isNullOrBlank() -> Sort.ByField(
-                CollectionMetadata::hasAttachments,
-                SortOrder.DESC
+        sort = when (this.sort) {
+            CollectionSortKey.TITLE -> Sort.ByField(
+                CollectionMetadata::title,
+                SortOrder.ASC
             )
-            else -> null
+            else -> if (this.text.isNullOrBlank()) {
+                Sort.ByField(
+                    CollectionMetadata::hasAttachments,
+                    SortOrder.DESC
+                )
+            } else {
+                null
+            }
         },
         hasLessonPlans = this.hasLessonPlans,
         ageRangeMin = this.ageRangeMin,

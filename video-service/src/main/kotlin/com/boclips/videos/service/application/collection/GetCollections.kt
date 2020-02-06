@@ -22,6 +22,7 @@ class GetCollections(
             owner = collectionFilterRequest.owner,
             page = collectionFilterRequest.page,
             size = collectionFilterRequest.size,
+            sort = collectionFilterRequest.sort_by,
             hasLessonPlans = collectionFilterRequest.has_lesson_plans,
             user = user,
             ageRangeMin = collectionFilterRequest.age_range_min,

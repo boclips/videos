@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
+import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.UserId
@@ -19,6 +20,7 @@ class CollectionSearchQueryAssembler {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
+        sort: CollectionSortKey? = null,
         hasLessonPlans: Boolean? = null,
         user: User,
         ageRangeMin: Int? = null,
@@ -50,6 +52,7 @@ class CollectionSearchQueryAssembler {
             },
             pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE,
             pageIndex = page ?: 0,
+            sort = sort,
             hasLessonPlans = hasLessonPlans,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax

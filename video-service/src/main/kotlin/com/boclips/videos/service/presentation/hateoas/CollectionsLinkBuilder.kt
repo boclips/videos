@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.request.Projection
+import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.config.security.UserRoles
@@ -162,6 +163,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                 href = collectionsLink(projection = projection, page = page, size = size)
                     .queryParam("owner", currentUser)
                     .queryParam("bookmarked", true)
+                    .queryParam("sort_by", CollectionSortKey.TITLE)
                     .toUriString(),
                 rel = "mySavedCollections"
             )

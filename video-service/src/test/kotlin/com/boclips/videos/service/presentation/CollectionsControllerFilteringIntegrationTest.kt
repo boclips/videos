@@ -223,23 +223,25 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `query search for my collections and my bookmarked collections`() {
+    fun `query search for my collections and my bookmarked collections sorted alphabetically`() {
         val teacher = "teacher"
         val stranger = "stranger"
 
         createCollection(title = "mine", public = true, owner = teacher)
+        createCollection(title = "strangers", public = true, owner = stranger)
+        createCollection(title = "another collection", public = true, owner = teacher)
         createCollection(title = "bookmarked", public = true, owner = stranger).apply {
             bookmarkCollection(this, teacher)
         }
-        createCollection(title = "strangers", public = true, owner = stranger)
 
         mockMvc.perform(
-            get("/v1/collections?owner=$teacher&bookmarked=true").asTeacher(teacher)
+            get("/v1/collections?owner=$teacher&bookmarked=true&sort_by=TITLE").asTeacher(teacher)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("bookmarked")))
-            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("mine")))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("another collection")))
+            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("bookmarked")))
+            .andExpect(jsonPath("$._embedded.collections[2].title", equalTo("mine")))
     }
 
     @Test
