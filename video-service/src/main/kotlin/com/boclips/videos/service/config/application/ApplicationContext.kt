@@ -97,7 +97,8 @@ class ApplicationContext(
     val contentPartnerService: ContentPartnerService,
     val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
-    val accessRuleService: AccessRuleService
+    val accessRuleService: AccessRuleService,
+    val userServiceClient: UserServiceClient
 ) {
     @Bean
     fun searchVideo(
@@ -171,7 +172,7 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetCollection {
-        return GetCollection(collectionReadService)
+        return GetCollection(collectionReadService, userServiceClient)
     }
 
     @Bean

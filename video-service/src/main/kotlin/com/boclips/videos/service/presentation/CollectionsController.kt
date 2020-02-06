@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
@@ -128,8 +129,14 @@ class CollectionsController(
     }
 
     @GetMapping("/{id}")
-    fun show(@PathVariable("id") id: String, @RequestParam(required = false) projection: Projection? = Projection.list): MappingJacksonValue {
-        val collection = getCollection(id, getCurrentUser())
+    fun show(
+        @PathVariable("id") id: String,
+        @RequestParam(required = false) projection: Projection? = Projection.list,
+        @RequestParam(name = "referer", required = false) referer: String? = null,
+        @RequestParam(name = "shareCode", required = false) shareCode: String? = null
+    ): MappingJacksonValue {
+        val collection =
+            getCollection(collectionId = id, user = getCurrentUser(), referer = referer, shareCode = shareCode)
 
         val collectionResource = when (projection) {
             Projection.details -> collectionResourceConverter.buildCollectionDetailsResource(

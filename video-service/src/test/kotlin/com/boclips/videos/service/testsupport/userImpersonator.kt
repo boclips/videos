@@ -4,6 +4,12 @@ import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
+fun MockHttpServletRequestBuilder.asAnonymousUser() =
+    this.with(
+        SecurityMockMvcRequestPostProcessors
+            .anonymous()
+    )
+
 fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com") =
     this.with(
         SecurityMockMvcRequestPostProcessors

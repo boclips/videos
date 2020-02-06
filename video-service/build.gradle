@@ -101,7 +101,7 @@ dependencies {
 
     implementation("com.github.boclips:kaltura-client:0.117.0")
 
-    implementation("com.github.boclips:user-service:10")
+    implementation("com.github.boclips:user-service:34")
     implementation('org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE') // Required by user-service client
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1")

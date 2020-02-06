@@ -535,6 +535,7 @@ object UserFactory {
         isPermittedToViewAnyCollection: Boolean = false,
         isPermittedToShareVideo: Boolean = false,
         overrideIdSupplier: () -> String? = { null },
+        isAuthenticated: Boolean = true,
         accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
                 videoAccess = VideoAccessRule.Everything,
@@ -544,13 +545,14 @@ object UserFactory {
     ): User {
         return User(
             id = UserId(id),
-            isAuthenticated = true,
+            isAuthenticated = isAuthenticated,
             isBoclipsEmployee = boclipsEmployee,
             context = RequestContext(origin = "https://teachers.boclips.com"),
             isPermittedToUpdateVideo = true,
             isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
             isPermittedToShareVideo = isPermittedToShareVideo,
+            isPermittedToViewCollections = true,
             overrideIdSupplier = { overrideIdSupplier()?.let(::UserId) },
             accessRulesSupplier = accessRulesSupplier
         )

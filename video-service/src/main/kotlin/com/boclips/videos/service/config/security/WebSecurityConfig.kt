@@ -84,7 +84,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(POST, "/v1/collections").hasRole(ROLE.INSERT_COLLECTIONS)
             .antMatchers(GET, "/v1/collections").hasRole(ROLE.VIEW_COLLECTIONS)
-            .antMatchers(GET, "/v1/collections/*").hasRole(ROLE.VIEW_COLLECTIONS)
+            .antMatchers(GET, "/v1/collections/*").permitAll()
             .antMatchers(PATCH, "/v1/collections/*").hasRole(ROLE.UPDATE_COLLECTIONS)
             .antMatchers(DELETE, "/v1/collections/*").hasRole(ROLE.DELETE_COLLECTIONS)
             .antMatchers(PUT, "/v1/collections/*/videos/*").hasRole(ROLE.UPDATE_COLLECTIONS)

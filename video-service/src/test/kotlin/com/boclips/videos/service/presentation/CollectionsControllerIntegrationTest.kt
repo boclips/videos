@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.users.client.model.TeacherPlatformAttributes
+import com.boclips.users.client.model.User
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -8,6 +10,7 @@ import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.collection.CollectionVisibilityDocument
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
+import com.boclips.videos.service.testsupport.asAnonymousUser
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
@@ -475,6 +478,36 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
+    }
+
+    @Test
+    fun `fetching a collection as anonymous user providing a valid shareCode and referer`() {
+        val collectionId = createCollection(title = "Some Public Collection", public = true)
+        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+
+        mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=TEST").asAnonymousUser())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.title", equalTo("Some Public Collection")))
+    }
+
+    @Test
+    fun `fetching a collection as anonymous user providing an invalid shareCode and referer`() {
+        val collectionId = createCollection(title = "Some Public Collection", public = true)
+        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+
+        mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=INVALID").asAnonymousUser())
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `fetching a collection as anonymous user not providing a shareCode or referer returns forbidden`() {
+        val collectionId = createCollection(title = "Some Public Collection", public = true)
+        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asAnonymousUser())
+            .andExpect(status().isForbidden)
     }
 
     @Test
