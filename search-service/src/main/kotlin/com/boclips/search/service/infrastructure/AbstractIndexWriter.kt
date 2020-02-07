@@ -26,7 +26,7 @@ abstract class AbstractIndexWriter<T>(
     private val esIndex: Index
 ) : IndexWriter<T> {
     companion object : KLogging() {
-        private const val UPSERT_BATCH_SIZE = 500
+        private const val UPSERT_BATCH_SIZE = 250
     }
 
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
