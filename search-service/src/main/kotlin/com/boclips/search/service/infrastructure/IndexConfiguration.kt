@@ -5,6 +5,7 @@ interface IndexConfiguration {
 
     companion object {
         const val FIELD_DESCRIPTOR_UNSTEMMED = "unstemmed"
+        const val FIELD_DESCRIPTOR_KEYWORD = "keyword"
 
         object Analyzers {
             const val ENGLISH = "english_analyzer"
@@ -50,6 +51,9 @@ interface IndexConfiguration {
                 FIELD_DESCRIPTOR_UNSTEMMED to mapOf(
                     "type" to "text",
                     "analyzer" to Analyzers.UNSTEMMED
+                ),
+                FIELD_DESCRIPTOR_KEYWORD to mapOf(
+                    "type" to "keyword"
                 )
             )
         )

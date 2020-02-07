@@ -8,6 +8,8 @@ import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.testsupport.CollectionSearchProvider
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
@@ -175,16 +177,24 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                 SearchableCollectionMetadataFactory.create(
                     id = "100",
                     owner = "teacher",
+                    title = "Kappa",
                     bookmarkedBy = emptySet()
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "101",
                     owner = "stranger",
+                    title = "Beta",
                     bookmarkedBy = setOf("teacher")
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "102",
                     owner = "stranger",
+                    bookmarkedBy = emptySet()
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "103",
+                    owner = "teacher",
+                    title = "Alpha",
                     bookmarkedBy = emptySet()
                 )
             )
@@ -196,15 +206,14 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                     visibilityForOwners = setOf(
                         VisibilityForOwner(owner = "teacher", visibility = CollectionVisibilityQuery.All)
                     ),
-                    bookmarkedBy = "teacher"
+                    bookmarkedBy = "teacher",
+                    sort = Sort.ByField(CollectionMetadata::title, SortOrder.ASC)
                 )
             )
         )
 
-        assertThat(results).hasSize(2)
-        assertThat(results).contains("100")
-        assertThat(results).contains("101")
-        assertThat(results).doesNotContain("102")
+        assertThat(results).hasSize(3)
+        assertThat(results).containsExactly("103", "101", "100")
     }
 
     @ParameterizedTest

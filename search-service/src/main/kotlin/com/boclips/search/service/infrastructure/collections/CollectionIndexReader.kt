@@ -19,6 +19,7 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder
+import kotlin.reflect.full.createType
 
 class CollectionIndexReader(val client: RestHighLevelClient) :
     IndexReader<CollectionMetadata, CollectionQuery> {
@@ -51,10 +52,18 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
 
         if (query.sort != null) {
             Do exhaustive when (query.sort) {
-                is Sort.ByField -> esQuery.sort(
-                    query.sort.fieldName.name,
-                    SortOrder.fromString(query.sort.order.toString())
-                )
+                is Sort.ByField -> {
+                    val prefix = if (query.sort.fieldName.returnType == String::class.createType()) {
+                        ".keyword"
+                    } else {
+                        ""
+                    }
+
+                    esQuery.sort(
+                        query.sort.fieldName.name + prefix,
+                        SortOrder.fromString(query.sort.order.toString())
+                    )
+                }
                 is Sort.ByRandom -> TODO()
             }
         }
@@ -130,7 +139,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                             )
                         }
 
-                        if (query.bookmarkedBy != null && query.visibilityForOwners.any {it.owner == null})  {
+                        if (query.bookmarkedBy != null && query.visibilityForOwners.any { it.owner == null }) {
                             minimumShouldMatch(2)
                         }
                     }
