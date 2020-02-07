@@ -43,7 +43,7 @@ interface IndexConfiguration {
             "type" to "keyword"
         )
 
-        val freeText = mapOf(
+        val freeTextSortable = mapOf(
             "type" to "text",
             "analyzer" to Analyzers.ENGLISH,
             "search_analyzer" to Analyzers.ENGLISH_SEARCH,
@@ -54,6 +54,18 @@ interface IndexConfiguration {
                 ),
                 FIELD_DESCRIPTOR_KEYWORD to mapOf(
                     "type" to "keyword"
+                )
+            )
+        )
+
+        val freeText = mapOf(
+            "type" to "text",
+            "analyzer" to Analyzers.ENGLISH,
+            "search_analyzer" to Analyzers.ENGLISH_SEARCH,
+            "fields" to mapOf(
+                FIELD_DESCRIPTOR_UNSTEMMED to mapOf(
+                    "type" to "text",
+                    "analyzer" to Analyzers.UNSTEMMED
                 )
             )
         )

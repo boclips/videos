@@ -12,7 +12,7 @@ class CollectionIndexConfiguration : IndexConfiguration {
     override fun generateMapping(): Map<String, Any> {
         return mapOf(
             "properties" to mapOf(
-                TITLE to IndexConfiguration.Fields.freeText,
+                TITLE to IndexConfiguration.Fields.freeTextSortable,
                 OWNER to IndexConfiguration.Fields.simpleText,
                 BOOKMARKED_BY to IndexConfiguration.Fields.simpleTextArray,
                 VISIBILITY to IndexConfiguration.Fields.simpleText,
