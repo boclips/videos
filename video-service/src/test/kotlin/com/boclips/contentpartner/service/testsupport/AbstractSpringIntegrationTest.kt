@@ -228,14 +228,21 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun saveContentPartner(
-        name: String = "TeD",
-        ageRange: AgeRangeRequest = AgeRangeRequest(
-            3,
-            10
+        name: String? = "TED",
+        ageRange: AgeRangeRequest? = AgeRangeRequest(
+            min = 5,
+            max = 11
         ),
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
-        currency: String? = null
+        currency: String? = null,
+        description: String? = null,
+        contentCategories: List<String>? = null,
+        hubspotId: String? = null,
+        awards: String? = null,
+        notes: String? = null,
+        language: String? = null
+
     ): ContentPartner {
         val createdContentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -243,7 +250,13 @@ abstract class AbstractSpringIntegrationTest {
                 ageRange = ageRange,
                 accreditedToYtChannel = accreditedToYtChannel,
                 distributionMethods = distributionMethods,
-                currency = currency
+                currency = currency,
+                description = description,
+                contentCategories = contentCategories,
+                hubspotId = hubspotId,
+                awards = awards,
+                notes = notes,
+                language = language
             )
         )
 

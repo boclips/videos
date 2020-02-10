@@ -9,6 +9,7 @@ import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.nullValue
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -331,5 +332,72 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         mockMvc.perform(get("/v1/content-partners/$id").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.distributionMethods", equalTo(listOf("STREAM"))))
+    }
+
+    @Nested
+    inner class ContentPartnerResourceProjections {
+        @Test
+        fun `Boclips internal user projection`() {
+            val contentPartner = saveContentPartner(
+                name = "hello",
+                currency = "CAD",
+                awards = "this is an award",
+                description = "this is a description",
+                contentCategories = listOf("WITH_A_HOST"),
+                hubspotId = "123456",
+                notes = "this is a note",
+                language = "eng"
+            )
+
+
+            mockMvc.perform(
+                get(
+                    "/v1/content-partners/${contentPartner.contentPartnerId.value}"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name", equalTo("hello")))
+                .andExpect(jsonPath("$.currency").exists())
+                .andExpect(jsonPath("$.awards").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.contentCategories").exists())
+                .andExpect(jsonPath("$.hubspotId").exists())
+                .andExpect(jsonPath("$.notes").exists())
+                .andExpect(jsonPath("$.language").exists())
+                .andExpect(jsonPath("$.ageRange").exists())
+        }
+
+        @Test
+        fun `Api user projection`() {
+            val contentPartner = saveContentPartner(
+                name = "hello",
+                currency = "CAD",
+                awards = "this is an award",
+                description = "this is a description",
+                contentCategories = listOf("WITH_A_HOST"),
+                hubspotId = "123456",
+                notes = "this is a note",
+                language = "eng"
+            )
+
+
+            mockMvc.perform(
+                get(
+                    "/v1/content-partners/${contentPartner.contentPartnerId.value}"
+                ).asApiUser()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name", equalTo("hello")))
+                .andExpect(jsonPath("$.awards").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.contentCategories").exists())
+                .andExpect(jsonPath("$.notes").exists())
+                .andExpect(jsonPath("$.language").exists())
+                .andExpect(jsonPath("$.ageRange").exists())
+                .andExpect(jsonPath("$.currency").doesNotExist())
+                .andExpect(jsonPath("$.hubspotId").doesNotExist())
+                .andExpect(jsonPath("$.official").doesNotExist())
+                .andExpect(jsonPath("$.distributionMethods").doesNotExist())
+        }
     }
 }
