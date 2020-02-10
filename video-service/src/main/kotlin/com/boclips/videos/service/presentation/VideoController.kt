@@ -56,7 +56,6 @@ class VideoController(
     private val rateVideo: RateVideo,
     private val videoTranscriptService: VideoTranscriptService,
     private val objectMapper: ObjectMapper,
-    private val withProjection: WithProjection,
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
     private val videoRepository: VideoRepository,
@@ -134,7 +133,7 @@ class VideoController(
 
     @CrossOrigin(allowCredentials = "true")
     @GetMapping(path = ["/v1/videos/{id}"])
-    fun getVideo(@PathVariable("id") id: String?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null): ResponseEntity<MappingJacksonValue> {
+    fun getVideo(@PathVariable("id") id: String?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null): ResponseEntity<VideoResource> {
         val headers = HttpHeaders()
         if (playbackConsumer == null) {
             headers.add(
@@ -146,11 +145,7 @@ class VideoController(
         val resources: VideoResource = searchVideo.byId(id, getCurrentUser())
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
 
-        val body: MappingJacksonValue = withProjection(
-            resources
-        )
-
-        return ResponseEntity(body, headers, HttpStatus.OK)
+        return ResponseEntity(resources, headers, HttpStatus.OK)
     }
 
     @DeleteMapping("/v1/videos/{id}")
@@ -226,7 +221,7 @@ class VideoController(
         @PathVariable id: String,
         @RequestParam subjectIds: List<String>? = emptyList(), //TODO: move to updateRequest if the spring gods allow it
         updateRequest: UpdateVideoRequest
-    ): ResponseEntity<MappingJacksonValue> {
+    ): ResponseEntity<VideoResource> {
         val updateRequestWithSubjects = updateRequest.copy(subjectIds = subjectIds)
 
         return updateVideo(id, updateRequestWithSubjects, getCurrentUser()).let { this.getVideo(id) }

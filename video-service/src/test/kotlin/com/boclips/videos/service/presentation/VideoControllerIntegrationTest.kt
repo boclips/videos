@@ -110,12 +110,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("powerful video about elephants")))
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("test description 3")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2018-02-11")))
-            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("enabled-cp")))
+            .andExpect(jsonPath("$._embedded.videos[0].createdBy", equalTo("enabled-cp")))
             .andExpect(jsonPath("$._embedded.videos[0].legalRestrictions", equalTo("None")))
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].subjects[0].name", equalTo("Maths")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
-            .andExpect(jsonPath("$._embedded.videos[0].playback.referenceId", equalTo("ref-entry-id-123")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT23S")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("STREAM")))
             .andExpect(
@@ -233,7 +232,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants took out jobs")))
             .andExpect(jsonPath("$._embedded.videos[0].description", equalTo("it's a video from youtube")))
             .andExpect(jsonPath("$._embedded.videos[0].releasedOn", equalTo("2017-02-11")))
-            .andExpect(jsonPath("$._embedded.videos[0].contentPartner", equalTo("enabled-cp2")))
+            .andExpect(jsonPath("$._embedded.videos[0].createdBy", equalTo("enabled-cp2")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.id").exists())
             .andExpect(jsonPath("$._embedded.videos[0].playback.type", equalTo("YOUTUBE")))
             .andExpect(jsonPath("$._embedded.videos[0].playback.duration", equalTo("PT56S")))
@@ -484,6 +483,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+
+            mockMvc.perform(get("/v1/videos?query=powerful").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerVideoId").exists())
+                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerId").exists())
+                .andExpect(jsonPath("$._embedded.videos[0].type").exists())
         }
 
         @Test
@@ -574,6 +580,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.contentPartnerId").doesNotExist())
                 .andExpect(jsonPath("$.type").doesNotExist())
                 .andExpect(jsonPath("$.status").doesNotExist())
+
+            mockMvc.perform(get("/v1/videos?query=powerful").asApiUser())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerVideoId").doesNotExist())
+                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerId").doesNotExist())
+                .andExpect(jsonPath("$._embedded.videos[0].type").doesNotExist())
+                .andExpect(jsonPath("$._embedded.videos[0].status").doesNotExist())
         }
     }
 
