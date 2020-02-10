@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -9,8 +9,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionNotFoundExce
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 
 class GetCollection(
-    private val collectionReadService: CollectionReadService,
-    private val userServiceClient: UserServiceClient
+    private val collectionReadService: CollectionReadService
 ) {
     operator fun invoke(
         collectionId: String,
@@ -18,13 +17,16 @@ class GetCollection(
         referer: String? = null,
         shareCode: String? = null
     ): Collection {
-        if ((user.isAuthenticated && user.isPermittedToViewCollections)
-            || userServiceClient.validateShareCode(referer, shareCode)
-        ) {
-            return collectionReadService.find(CollectionId(value = collectionId), user)
-                ?: throw CollectionNotFoundException(collectionId)
-        } else {
-            throw OperationForbiddenException("Unauthenticated users must provide a valid share code and referer id")
+        val findCollectionResult =
+            collectionReadService.find(CollectionId(value = collectionId), user, referer, shareCode)
+
+        if (findCollectionResult.collection != null) {
+            return findCollectionResult.collection
+        }
+
+        when (findCollectionResult.accessValidationResult.error) {
+            is AccessError.InvalidShareCode -> throw OperationForbiddenException()
+            else -> throw CollectionNotFoundException(collectionId)
         }
     }
 }

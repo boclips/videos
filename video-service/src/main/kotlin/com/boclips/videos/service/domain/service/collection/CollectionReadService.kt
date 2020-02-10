@@ -5,11 +5,14 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.AccessError
+import com.boclips.videos.service.domain.model.AccessValidationResult
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.collection.FindCollectionResult
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
@@ -66,24 +69,36 @@ class CollectionReadService(
         return collectionSearchService.count(collectionSearchQuery.toSearchQuery())
     }
 
-    fun find(id: CollectionId, user: User): Collection? =
-        findIf(id, user, ::hasReadAccess)
+    fun find(id: CollectionId, user: User, referer: String? = null, shareCode: String? = null): FindCollectionResult =
+        collectionRepository.find(id)?.let {
+            val accessValidationResult = validateReadAccess(it, user, referer, shareCode)
+            return if (accessValidationResult.successful) {
+                FindCollectionResult.success(collection = loadWithAccessibleVideos(it, user))
+            } else {
+                FindCollectionResult.error(accessValidationResult = accessValidationResult)
+            }
+        } ?: FindCollectionResult.error(
+            accessValidationResult = AccessValidationResult(
+                false,
+                error = AccessError.Default(id, user.id)
+            )
+        )
 
     fun findWritable(id: CollectionId, user: User): Collection? =
-        findIf(id, user, ::hasWriteAccess)
-
-    private fun findIf(
-        id: CollectionId,
-        user: User,
-        condition: (Collection, User) -> Boolean
-    ): Collection? {
-        val videoAccess = user.accessRules.videoAccess
-
-        return collectionRepository.find(id)
-            ?.takeIf { condition(it, user) }
-            ?.let { collection ->
-                withPermittedVideos(collection, videoAccess)
+        collectionRepository.find(id)?.let {
+            if (!hasWriteAccess(it, user)) {
+                null
+            } else {
+                loadWithAccessibleVideos(it, user)
             }
+        }
+
+    private fun loadWithAccessibleVideos(
+        collection: Collection,
+        user: User
+    ): Collection {
+        val videoAccess = user.accessRules.videoAccess
+        return withPermittedVideos(collection, videoAccess)
     }
 
     private fun hasWriteAccess(
@@ -98,12 +113,14 @@ class CollectionReadService(
             }
         }
 
-    private fun hasReadAccess(
+    private fun validateReadAccess(
         collection: Collection,
-        user: User
-    ): Boolean =
-        collectionAccessService.hasReadAccess(collection, user).also {
-            if (!it) {
+        user: User,
+        referer: String? = null,
+        shareCode: String? = null
+    ): AccessValidationResult =
+        collectionAccessService.validateReadAccess(collection, user, referer, shareCode).also {
+            if (!it.successful) {
                 logger.info {
                     "User ${user.id} does not have read access to Collection ${collection.id}"
                 }

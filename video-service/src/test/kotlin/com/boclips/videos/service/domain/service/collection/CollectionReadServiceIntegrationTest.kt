@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
+class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var collectionReadService: CollectionReadService
 
@@ -163,7 +163,7 @@ internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationT
             val collection = collectionReadService.find(
                 collectionId,
                 UserFactory.sample()
-            )!!
+            ).collection!!
             assertThat(collection.id).isEqualTo(collectionId)
             assertThat(collection.videos).containsExactly(videoId)
         }
@@ -193,7 +193,7 @@ internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationT
                         )
                     )
                 })
-            )!!
+            ).collection!!
 
             assertThat(collection.id).isEqualTo(collectionId)
             assertThat(collection.videos).containsExactly(firstPermittedId)
@@ -201,11 +201,12 @@ internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationT
 
         @Test
         fun `cannot find missing collection by ID`() {
+
             assertThat(
                 collectionReadService.find(
                     CollectionId("nonexistent"),
                     UserFactory.sample()
-                )
+                ).collection
             ).isNull()
         }
 
@@ -221,7 +222,7 @@ internal class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationT
                             )
                         )
                     })
-                )
+                ).collection
             ).isNull()
         }
     }

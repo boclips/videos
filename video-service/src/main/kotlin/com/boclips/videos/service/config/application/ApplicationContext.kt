@@ -67,7 +67,6 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
@@ -172,7 +171,7 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetCollection {
-        return GetCollection(collectionReadService, userServiceClient)
+        return GetCollection(collectionReadService)
     }
 
     @Bean

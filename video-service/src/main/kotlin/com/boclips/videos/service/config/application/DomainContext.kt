@@ -82,7 +82,7 @@ class DomainContext(
 
     @Bean
     fun collectionAccessService(): CollectionAccessService {
-        return CollectionAccessService()
+        return CollectionAccessService(userServiceClient)
     }
 
     @Primary

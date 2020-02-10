@@ -15,7 +15,7 @@ class BookmarkCollection(
     private val collectionReadService: CollectionReadService
 ) {
     operator fun invoke(collectionId: String, user: User) {
-        val collection = collectionReadService.find(CollectionId(value = collectionId), user = user)
+        val collection = collectionReadService.find(CollectionId(value = collectionId), user = user).collection
             ?: throw CollectionNotFoundException(collectionId)
 
         if (collection.owner == user.id) throw CollectionIllegalOperationException(

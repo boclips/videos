@@ -16,7 +16,7 @@ class CollectionCreationService(
 
         addVideosToCollection(videos, createdCollection, user)
 
-        return collectionReadService.find(createdCollection.id, user)
+        return collectionReadService.find(createdCollection.id, user).collection
     }
 
     private fun addVideosToCollection(

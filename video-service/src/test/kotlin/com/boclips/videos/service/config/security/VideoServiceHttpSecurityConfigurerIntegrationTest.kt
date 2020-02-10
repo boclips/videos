@@ -164,12 +164,6 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
 
     @Test
     fun `teachers can access specific collections`() {
-        mockMvc.perform(get("/v1/collections/53fbf4615c3b9f41c381b6a3"))
-            .andExpect(status().isForbidden)
-
-        mockMvc.perform(get("/v1/collections/53fbf4615c3b9f41c381b6a3").asReporter())
-            .andExpect(status().isForbidden)
-
         mockMvc.perform(get("/v1/collections/53fbf4615c3b9f41c381b6a3").asTeacher())
             .andExpect(status().`is`(not401Or403()))
     }

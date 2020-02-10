@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
