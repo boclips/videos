@@ -8,7 +8,6 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -173,7 +172,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].currency", nullValue()))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].currency").doesNotExist())
     }
 
     @Test
@@ -337,7 +336,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     @Nested
     inner class ContentPartnerResourceProjections {
         @Test
-        fun `Boclips internal user projection`() {
+        fun `boclips internal user has access to all fields`() {
             val contentPartner = saveContentPartner(
                 name = "hello",
                 currency = "CAD",
@@ -365,10 +364,26 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.notes").exists())
                 .andExpect(jsonPath("$.language").exists())
                 .andExpect(jsonPath("$.ageRange").exists())
+
+            mockMvc.perform(
+                get(
+                    "/v1/content-partners?name=hello"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
+                .andExpect(jsonPath("$._embedded.contentPartners[0].currency").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].awards").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].description").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].contentCategories").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].hubspotId").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].notes").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].language").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange").exists())
         }
 
         @Test
-        fun `Api user projection`() {
+        fun `api user only has access to certain fields`() {
             val contentPartner = saveContentPartner(
                 name = "hello",
                 currency = "CAD",
@@ -398,6 +413,24 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.hubspotId").doesNotExist())
                 .andExpect(jsonPath("$.official").doesNotExist())
                 .andExpect(jsonPath("$.distributionMethods").doesNotExist())
+
+            mockMvc.perform(
+                get(
+                    "/v1/content-partners?name=hello"
+                ).asApiUser()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
+                .andExpect(jsonPath("$._embedded.contentPartners[0].awards").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].description").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].contentCategories").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].notes").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].language").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].currency").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].hubspotId").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].official").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].distributionMethods").doesNotExist())
         }
     }
 }

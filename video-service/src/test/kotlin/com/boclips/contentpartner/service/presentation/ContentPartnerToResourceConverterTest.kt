@@ -67,21 +67,4 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.contentTypes).hasSize(2)
         assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder("INSTRUCTIONAL", "STOCK")
     }
-
-    @Test
-    fun `converted content partner resource has no currency if user does not have backoffice role`() {
-        val user = UserFactory.sample()
-
-        val contentPartner = TestFactories.createContentPartner(
-            credit = Credit.PartnerCredit,
-            legalRestriction = TestFactories.createLegalRestrictions(text = "Forbidden in the EU"),
-            distributionMethods = setOf(DistributionMethod.STREAM),
-            remittance = Remittance(Currency.getInstance("GBP"))
-        )
-
-        val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner, user)
-
-        assertThat(contentPartnerResource.id).isNotEmpty()
-        assertThat(contentPartnerResource.currency).isEqualTo(null)
-    }
 }

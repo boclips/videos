@@ -199,7 +199,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 tokenFactory = TestTokenFactory(
                     "sombody@world.com",
                     UserRoles.INSERT_CONTENT_PARTNERS,
-                    UserRoles.VIEW_CONTENT_PARTNERS
+                    UserRoles.VIEW_CONTENT_PARTNERS,
+                    UserRoles.BACKOFFICE
                 )
             )
 

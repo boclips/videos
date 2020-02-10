@@ -28,8 +28,7 @@ class ContentPartnerToResourceConverter(
                 contentPartner.distributionMethods
             ),
             description = contentPartner.description,
-            currency = if (user.isPermittedToAccessBackoffice)
-                contentPartner.remittance?.currency?.currencyCode else null,
+            currency = contentPartner.remittance?.currency?.currencyCode,
             contentCategories = contentPartner.contentCategories?.map { toContentCategoryResource(it) },
             hubspotId = contentPartner.hubspotId,
             awards = contentPartner.awards,

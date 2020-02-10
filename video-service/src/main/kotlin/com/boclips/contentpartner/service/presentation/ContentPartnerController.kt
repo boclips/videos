@@ -6,15 +6,14 @@ import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnerWrapperResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.presentation.projections.WithProjection
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.json.MappingJacksonValue
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,8 +33,7 @@ class ContentPartnerController(
     private val fetchContentPartner: GetContentPartner,
     private val fetchContentPartners: GetContentPartners,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
-    private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter,
-    private val withProjection: WithProjection
+    private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter
 ) : BaseController() {
     @PostMapping("/{contentPartnerId}/videos/search")
     fun postSearchVideoByProviderId(
@@ -68,16 +66,12 @@ class ContentPartnerController(
     }
 
     @GetMapping("/{id}")
-    fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): ResponseEntity<MappingJacksonValue> {
+    fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): ResponseEntity<ContentPartnerResource> {
         val user = getCurrentUser()
         val contentPartnerResource = fetchContentPartner(contentPartnerId!!, user)
             .copy(_links = listOf(contentPartnersLinkBuilder.self(contentPartnerId)).map { it.rel to it }.toMap())
 
-        val body: MappingJacksonValue = withProjection(
-            contentPartnerResource
-        )
-
-        return ResponseEntity(body, HttpStatus.OK)
+        return ResponseEntity(contentPartnerResource, HttpStatus.OK)
     }
 
     @PostMapping
