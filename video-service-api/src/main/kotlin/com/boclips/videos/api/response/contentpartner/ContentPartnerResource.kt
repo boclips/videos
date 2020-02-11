@@ -31,11 +31,11 @@ data class ContentPartnerResource(
     @get:JsonView(BoclipsInternalProjection::class)
     val hubspotId: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
-    val currency: String?,
+    val currency: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
-    val official: Boolean,
+    val official: Boolean? = null,
     @get:JsonView(BoclipsInternalProjection::class)
-    val distributionMethods: Set<DistributionMethodResource>,
+    val distributionMethods: Set<DistributionMethodResource>? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null
