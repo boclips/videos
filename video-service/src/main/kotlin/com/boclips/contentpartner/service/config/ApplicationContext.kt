@@ -26,8 +26,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getContentPartner(contentPartnerToResourceConverter: ContentPartnerToResourceConverter): GetContentPartner {
-        return GetContentPartner(contentPartnerRepository, contentPartnerToResourceConverter)
+    fun getContentPartner(): GetContentPartner {
+        return GetContentPartner(contentPartnerRepository)
     }
 
     @Bean

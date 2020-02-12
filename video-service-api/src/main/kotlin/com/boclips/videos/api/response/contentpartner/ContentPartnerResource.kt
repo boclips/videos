@@ -27,6 +27,8 @@ data class ContentPartnerResource(
     val notes: String? = null,
     @get:JsonView(PublicApiProjection::class)
     val contentTypes: List<String>? = emptyList(),
+    @get:JsonView(PublicApiProjection::class)
+    val oneLineDescription: String? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
     val hubspotId: String? = null,
@@ -36,6 +38,8 @@ data class ContentPartnerResource(
     val official: Boolean? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val distributionMethods: Set<DistributionMethodResource>? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val marketingInformation: ContentPartnerMarketingResource? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null

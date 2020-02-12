@@ -9,7 +9,6 @@ import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import org.springframework.stereotype.Component
-
 import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId as EventBusContentPartnerId
 
@@ -23,11 +22,6 @@ class UpdateContentPartner(
     operator fun invoke(contentPartnerId: String, upsertRequest: UpsertContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
 
-        val contentPartner = contentPartnerRepository.findById(id)
-            ?: throw ContentPartnerNotFoundException(
-                "Could not find content partner: ${id.value}"
-            )
-
         upsertRequest.legalRestrictions?.let { legalRestrictionsRequest ->
             if (legalRestrictionsRequest.id.isNullOrEmpty()) {
                 val legalRestrictions = createLegalRestrictions(legalRestrictionsRequest.text)
@@ -36,10 +30,11 @@ class UpdateContentPartner(
             }
         }
 
-        val updateCommands = contentPartnerUpdatesConverter.convert(id, upsertRequest, contentPartner)
+        val updateCommands = contentPartnerUpdatesConverter.convert(id, upsertRequest)
         contentPartnerRepository.update(updateCommands)
 
-        val updatedContentPartner = contentPartnerRepository.findById(id)!!
+        val updatedContentPartner = contentPartnerRepository.findById(id)
+            ?: throw ContentPartnerNotFoundException("Could not find content partner: $contentPartnerId")
 
         eventBus.publish(
             ContentPartnerUpdated.builder()
@@ -66,7 +61,7 @@ class UpdateContentPartner(
                 .build()
         )
 
-        return contentPartner
+        return updatedContentPartner
     }
 }
 

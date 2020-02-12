@@ -15,6 +15,7 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -241,8 +242,9 @@ abstract class AbstractSpringIntegrationTest {
         hubspotId: String? = null,
         awards: String? = null,
         notes: String? = null,
-        language: String? = null
-
+        language: String? = null,
+        oneLineDescription: String? = null,
+        marketingInformation: ContentPartnerMarketingRequest? = null
     ): ContentPartner {
         val createdContentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -256,7 +258,9 @@ abstract class AbstractSpringIntegrationTest {
                 hubspotId = hubspotId,
                 awards = awards,
                 notes = notes,
-                language = language
+                language = language,
+                oneLineDescription = oneLineDescription,
+                marketingInformation = marketingInformation
             )
         )
 

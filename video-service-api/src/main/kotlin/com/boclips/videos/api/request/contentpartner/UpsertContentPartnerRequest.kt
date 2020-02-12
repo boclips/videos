@@ -22,5 +22,7 @@ data class UpsertContentPartnerRequest(
     val notes: String? = null,
     @field:Language
     val language: String? = null,
-    val contentTypes: List<String>? = null
+    val contentTypes: List<String>? = null,
+    val oneLineDescription: String? = null,
+    val marketingInformation: ContentPartnerMarketingRequest? = null
 )

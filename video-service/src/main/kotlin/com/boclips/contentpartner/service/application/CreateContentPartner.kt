@@ -9,7 +9,9 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
+import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
@@ -64,8 +66,12 @@ class CreateContentPartner(private val contentPartnerRepository: ContentPartnerR
                     hubspotId = upsertRequest.hubspotId,
                     awards = upsertRequest.awards,
                     notes = upsertRequest.notes,
-                    language = upsertRequest.language?.let { Locale.forLanguageTag(it) },
-                    contentTypes = upsertRequest.contentTypes?.map { ContentPartnerType.valueOf(it) }
+                    language = upsertRequest.language?.let(Locale::forLanguageTag),
+                    contentTypes = upsertRequest.contentTypes?.map(ContentPartnerType::valueOf),
+                    marketingInformation = MarketingInformation(
+                        oneLineDescription = upsertRequest.oneLineDescription,
+                        status = upsertRequest.marketingInformation?.status?.let(ContentPartnerStatusConverter::convert)
+                    )
                 )
             )
     }

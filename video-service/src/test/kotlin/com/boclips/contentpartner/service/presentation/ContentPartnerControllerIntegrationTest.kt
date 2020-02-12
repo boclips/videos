@@ -1,6 +1,8 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -203,6 +205,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `create content partner accredited to youtube`() {
+        val oneLineDescription = "My one-line description"
+        val status = ContentPartnerStatusRequest.NeedsContent
+
         val content = """
             {
                 "searchable": false,
@@ -212,7 +217,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                         "min": 11,
                         "max": 18
                     },
-                "accreditedToYtChannelId": "some-yt-channel-id"
+                "accreditedToYtChannelId": "some-yt-channel-id",
+                "oneLineDescription": "$oneLineDescription",
+                "marketingInformation": {"status": "$status"}
             }
         """
 
@@ -223,10 +230,22 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         )
             .andExpect(status().isCreated)
             .andExpect(header().exists("Location"))
+            .andDo {
+                val location = it.response.getHeaderValue("Location") as String
+                val id = location.split('/').last()
+
+                mockMvc.perform(
+                    get("/v1/content-partners/$id").asBoclipsEmployee()
+                )
+                    .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
+                    .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
+            }
     }
 
     @Test
     fun `updating a content partner`() {
+        val oneLineDescription = "My one line descripTION!"
+        val status = ContentPartnerStatusRequest.WaitingForIngest
         val originalContent = """
             {
                 "searchable": false,
@@ -248,7 +267,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     {
                         "min": 11,
                         "max": 18
-                    }
+                    },
+                "oneLineDescription": "$oneLineDescription",
+                "marketingInformation": {"status": "$status"}
             }
         """
 
@@ -272,6 +293,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$.currency", equalTo("GBP")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(11)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(18)))
+            .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
+            .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
             .andExpect(jsonPath("$._links.self.href", equalTo(cpUrl)))
     }
 
@@ -345,9 +368,12 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 contentCategories = listOf("WITH_A_HOST"),
                 hubspotId = "123456",
                 notes = "this is a note",
-                language = "eng"
+                language = "eng",
+                oneLineDescription = "This is a single-line description",
+                marketingInformation = ContentPartnerMarketingRequest(
+                    status = ContentPartnerStatusRequest.HaveReachedOut
+                )
             )
-
 
             mockMvc.perform(
                 get(
@@ -364,6 +390,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.notes").exists())
                 .andExpect(jsonPath("$.language").exists())
                 .andExpect(jsonPath("$.ageRange").exists())
+                .andExpect(jsonPath("$.marketingInformation").exists())
 
             mockMvc.perform(
                 get(
@@ -380,6 +407,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].notes").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].language").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").exists())
         }
 
         @Test
@@ -413,6 +441,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.hubspotId").doesNotExist())
                 .andExpect(jsonPath("$.official").doesNotExist())
                 .andExpect(jsonPath("$.distributionMethods").doesNotExist())
+                .andExpect(jsonPath("$.marketingInformation").doesNotExist())
 
             mockMvc.perform(
                 get(
@@ -431,6 +460,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].hubspotId").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].official").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].distributionMethods").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").doesNotExist())
         }
     }
 }

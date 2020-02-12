@@ -3,8 +3,9 @@ package com.boclips.videos.api.request
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
+import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -97,7 +98,9 @@ class VideoServiceApiFactory {
             hubspotId: String? = null,
             awards: String? = null,
             notes: String? = null,
-            language: String? = null
+            language: String? = null,
+            oneLineDescription: String? = null,
+            marketingInformation: ContentPartnerMarketingRequest? = null
         ): UpsertContentPartnerRequest {
             return UpsertContentPartnerRequest(
                 name = name,
@@ -111,7 +114,9 @@ class VideoServiceApiFactory {
                 hubspotId = hubspotId,
                 awards = awards,
                 notes = notes,
-                language = language
+                language = language,
+                oneLineDescription = oneLineDescription,
+                marketingInformation = marketingInformation
             )
         }
 

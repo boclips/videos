@@ -3,9 +3,11 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.types.ObjectId
@@ -34,7 +36,22 @@ object ContentPartnerDocumentConverter {
             awards = contentPartner.awards,
             notes = contentPartner.notes,
             language = contentPartner.language?.toLanguageTag(),
-            contentTypes = contentPartner.contentTypes?.map { it.name }
+            contentTypes = contentPartner.contentTypes?.map { it.name },
+            marketingInformation = contentPartner.marketingInformation?.let {
+                MarketingInformationDocument(
+                    oneLineDescription = it.oneLineDescription,
+                    status = when (it.status) {
+                        ContentPartnerStatus.NeedsIntroduction -> ContentPartnerStatusDocument.NeedsIntroduction
+                        ContentPartnerStatus.HaveReachedOut -> ContentPartnerStatusDocument.HaveReachedOut
+                        ContentPartnerStatus.NeedsContent -> ContentPartnerStatusDocument.NeedsContent
+                        ContentPartnerStatus.WaitingForIngest -> ContentPartnerStatusDocument.WaitingForIngest
+                        ContentPartnerStatus.ShouldAddToSite -> ContentPartnerStatusDocument.ShouldAddToSite
+                        ContentPartnerStatus.ShouldPromote -> ContentPartnerStatusDocument.ShouldPromote
+                        ContentPartnerStatus.Promoted -> ContentPartnerStatusDocument.Promoted
+                        null -> null
+                    }
+                )
+            }
         )
     }
 
@@ -62,7 +79,22 @@ object ContentPartnerDocumentConverter {
             awards = document.awards,
             notes = document.notes,
             language = document.language?.let { Locale.forLanguageTag(it) },
-            contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) }
+            contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) },
+            marketingInformation = document.marketingInformation?.let {
+                MarketingInformation(
+                    oneLineDescription = it.oneLineDescription,
+                    status = when (it.status) {
+                        ContentPartnerStatusDocument.NeedsIntroduction -> ContentPartnerStatus.NeedsIntroduction
+                        ContentPartnerStatusDocument.HaveReachedOut -> ContentPartnerStatus.HaveReachedOut
+                        ContentPartnerStatusDocument.NeedsContent -> ContentPartnerStatus.NeedsContent
+                        ContentPartnerStatusDocument.WaitingForIngest -> ContentPartnerStatus.WaitingForIngest
+                        ContentPartnerStatusDocument.ShouldAddToSite -> ContentPartnerStatus.ShouldAddToSite
+                        ContentPartnerStatusDocument.ShouldPromote -> ContentPartnerStatus.ShouldPromote
+                        ContentPartnerStatusDocument.Promoted -> ContentPartnerStatus.Promoted
+                        null -> null
+                    }
+                )
+            }
         )
     }
 

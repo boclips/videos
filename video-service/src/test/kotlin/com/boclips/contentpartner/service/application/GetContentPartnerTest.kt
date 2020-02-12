@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.testsupport.UserFactory
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.jupiter.api.Test
@@ -10,10 +9,8 @@ class GetContentPartnerTest {
 
     @Test
     fun `when content partner not found throws`() {
-        val user = UserFactory.sample()
-
         assertThrows<ResourceNotFoundApiException> {
-            GetContentPartner(mock(), mock()).invoke("doesn't exist id", user)
+            GetContentPartner(mock()).invoke("doesn't exist id")
         }
     }
 }

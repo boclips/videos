@@ -51,7 +51,6 @@ class ContentPartnerController(
 
     @GetMapping
     fun getContentPartners(contentPartnerFilterRequest: ContentPartnerFilterRequest): ContentPartnersResource {
-        val user = getCurrentUser()
         val contentPartners = fetchContentPartners(
             name = contentPartnerFilterRequest.name,
             official = contentPartnerFilterRequest.official,
@@ -59,7 +58,7 @@ class ContentPartnerController(
         )
 
         val resources = contentPartners.map {
-            contentPartnerToResourceConverter.convert(it, user)
+            contentPartnerToResourceConverter.convert(it)
         }
 
         return ContentPartnersResource(_embedded = ContentPartnerWrapperResource(contentPartners = resources))
@@ -67,8 +66,8 @@ class ContentPartnerController(
 
     @GetMapping("/{id}")
     fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): ResponseEntity<ContentPartnerResource> {
-        val user = getCurrentUser()
-        val contentPartnerResource = fetchContentPartner(contentPartnerId!!, user)
+        val contentPartnerResource = fetchContentPartner(contentPartnerId!!)
+            .let { contentPartnerToResourceConverter.convert(it) }
             .copy(_links = listOf(contentPartnersLinkBuilder.self(contentPartnerId)).map { it.rel to it }.toMap())
 
         return ResponseEntity(contentPartnerResource, HttpStatus.OK)

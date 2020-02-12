@@ -40,4 +40,10 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class ReplaceNotes(contentPartnerId: ContentPartnerId, val notes: String) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceMarketingStatus(contentPartnerId: ContentPartnerId, val status: ContentPartnerStatus) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceOneLineDescription(contentPartnerId: ContentPartnerId, val oneLineDescription: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
 }

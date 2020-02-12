@@ -42,8 +42,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 name = "Hello",
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
-            ),
-            contentPartner = originalContentPartner
+            )
         )
         val command =
             commands.find { it is ContentPartnerUpdateCommand.ReplaceDistributionMethods } as ContentPartnerUpdateCommand.ReplaceDistributionMethods
@@ -57,8 +56,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 name = "Hello"
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -76,8 +74,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
                 ageRange = AgeRangeRequest(1, 3),
                 name = null,
                 accreditedToYtChannelId = "test"
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -96,8 +93,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
                 legalRestrictions = LegalRestrictionsRequest(
                     id = legalRestrictions.id.value
                 )
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         assertThat(commands).hasSize(1)
@@ -114,8 +110,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 contentTypes = listOf("NEWS", "STOCK", "INSTRUCTIONAL")
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -130,8 +125,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 contentCategories = listOf("DOCUMENTARY_SHORTS", "ANIMATION")
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -146,8 +140,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 language = "spa"
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -162,8 +155,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 description = "This is a new description"
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -178,8 +170,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 awards = "This is a new award"
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -194,8 +185,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 hubspotId = "1a2s3d4f5g6h7j8k9l"
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =
@@ -210,8 +200,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
                 notes = "this is a note"
-            ),
-            contentPartner = originalContentPartner
+            )
         )
 
         val command =

@@ -17,6 +17,7 @@ import org.bson.types.ObjectId
 import org.litote.kmongo.SetTo
 import org.litote.kmongo.and
 import org.litote.kmongo.combine
+import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
@@ -142,6 +143,14 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             is ContentPartnerUpdateCommand.ReplaceNotes -> set(
                 ContentPartnerDocument::notes,
                 updateCommand.notes
+            )
+            is ContentPartnerUpdateCommand.ReplaceMarketingStatus -> set(
+                ContentPartnerDocument::marketingInformation / MarketingInformationDocument::status,
+                updateCommand.status
+            )
+            is ContentPartnerUpdateCommand.ReplaceOneLineDescription -> set(
+                ContentPartnerDocument::marketingInformation / MarketingInformationDocument::oneLineDescription,
+                updateCommand.oneLineDescription
             )
         }
 

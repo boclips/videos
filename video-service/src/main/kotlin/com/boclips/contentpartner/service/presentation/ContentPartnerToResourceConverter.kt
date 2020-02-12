@@ -2,7 +2,6 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.toLanguageResource
@@ -12,7 +11,7 @@ class ContentPartnerToResourceConverter(
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
 ) {
-    fun convert(contentPartner: ContentPartner, user: User): ContentPartnerResource {
+    fun convert(contentPartner: ContentPartner): ContentPartnerResource {
         return ContentPartnerResource(
             id = contentPartner.contentPartnerId.value,
             name = contentPartner.name,
@@ -35,7 +34,12 @@ class ContentPartnerToResourceConverter(
             notes = contentPartner.notes,
             language = contentPartner.language?.let { it -> toLanguageResource(it) },
             contentTypes = contentPartner.contentTypes?.map { it.name },
-            _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value)).map { it.rel to it }.toMap()
+            oneLineDescription = contentPartner.marketingInformation?.oneLineDescription,
+            marketingInformation = MarketingInformationToResourceConverter
+                .from(contentPartner.marketingInformation),
+            _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value))
+                .map { it.rel to it }
+                .toMap()
         )
     }
 }
