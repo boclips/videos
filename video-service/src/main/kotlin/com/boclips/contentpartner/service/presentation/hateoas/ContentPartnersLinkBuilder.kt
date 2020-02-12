@@ -1,5 +1,7 @@
-package com.boclips.contentpartner.service.presentation
+package com.boclips.contentpartner.service.presentation.hateoas
 
+import com.boclips.contentpartner.service.presentation.ContentPartnerController
+import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles

@@ -58,6 +58,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.tags").doesNotExist())
             .andExpect(jsonPath("$._links.videoTypes").doesNotExist())
             .andExpect(jsonPath("$._links.contentCategories").doesNotExist())
+            .andExpect(jsonPath("$._links.marketingStatuses").doesNotExist())
     }
 
     @Test
@@ -130,6 +131,26 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
+            .andExpect(jsonPath("$._links.marketingStatuses").doesNotExist())
+    }
+
+    @Test
+    fun `as boclips employee`() {
+        mockMvc.perform(get("/v1").asBoclipsEmployee()).andExpect(status().isOk)
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
+            .andExpect(jsonPath("$._links.adminVideoSearch.href", containsString("/videos/search")))
+            .andExpect(
+                jsonPath(
+                    "$._links.adminCollectionSearch.href",
+                    containsString("/collections{?query,subject,projection,page,size}")
+                )
+            )
+            .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
+            .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
+            .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
+            .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.marketingStatuses.href", endsWith("/marketing-statuses")))
     }
 
     @Test
@@ -142,36 +163,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `return contentCategories link when called as API user`() {
         mockMvc.perform(get("/v1").asApiUser()).andExpect(status().isOk)
             .andExpect(jsonPath("$._links.contentCategories.href", endsWith("/content-categories")))
-    }
-
-    @Test
-    fun `as Boclips employee see admin search`() {
-        mockMvc.perform(get("/v1").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
-            .andExpect(jsonPath("$._links.adminVideoSearch.href", containsString("/videos/search")))
-            .andExpect(
-                jsonPath(
-                    "$._links.adminCollectionSearch.href",
-                    containsString("/collections{?query,subject,projection,page,size}")
-                )
-            )
-    }
-
-    @Test
-    fun `as Boclips employee see distribution methods`() {
-        mockMvc.perform(get("/v1").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
-    }
-
-    @Test
-    fun `as Boclips employee I can view content partners link with correct role`() {
-        mockMvc.perform(get("/v1").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
-            .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
-            .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
     }
 
     @Test

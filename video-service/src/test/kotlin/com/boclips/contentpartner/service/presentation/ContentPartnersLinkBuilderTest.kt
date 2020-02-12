@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.nhaarman.mockitokotlin2.mock
@@ -17,7 +18,8 @@ class ContentPartnersLinkBuilderTest {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
 
-        contentPartnersLinkBuilder = ContentPartnersLinkBuilder(mock)
+        contentPartnersLinkBuilder =
+            ContentPartnersLinkBuilder(mock)
     }
 
     @Test

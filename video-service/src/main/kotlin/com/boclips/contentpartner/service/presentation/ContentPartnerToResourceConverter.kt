@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeToResourceConverter
+import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.toLanguageResource
 import com.boclips.videos.service.domain.model.video.toContentCategoryResource

@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
+import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.videos.api.response.contentpartner.LegalRestrictionResource
 import com.boclips.videos.api.response.contentpartner.LegalRestrictionsResource
 import com.boclips.videos.api.response.contentpartner.LegalRestrictionsWrapper

@@ -7,7 +7,7 @@ import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
-import com.boclips.contentpartner.service.presentation.ContentPartnersLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsToResourceConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

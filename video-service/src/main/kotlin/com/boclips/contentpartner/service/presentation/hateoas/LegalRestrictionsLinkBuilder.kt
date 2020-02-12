@@ -1,5 +1,6 @@
-package com.boclips.contentpartner.service.presentation
+package com.boclips.contentpartner.service.presentation.hateoas
 
+import com.boclips.contentpartner.service.presentation.LegalRestrictionsController
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link

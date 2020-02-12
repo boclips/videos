@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.Remittance
+import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.nhaarman.mockitokotlin2.mock
@@ -23,7 +24,9 @@ class ContentPartnerToResourceConverterTest {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
         contentPartnerToResourceConverter = ContentPartnerToResourceConverter(
-            contentPartnersLinkBuilder = ContentPartnersLinkBuilder(mock),
+            contentPartnersLinkBuilder = ContentPartnersLinkBuilder(
+                mock
+            ),
             legalRestrictionsToResourceConverter = LegalRestrictionsToResourceConverter(mock())
         )
     }

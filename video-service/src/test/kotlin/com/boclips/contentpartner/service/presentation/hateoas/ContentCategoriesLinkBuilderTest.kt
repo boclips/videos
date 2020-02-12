@@ -15,7 +15,7 @@ class ContentCategoriesLinkBuilderTest : AbstractSpringIntegrationTest() {
     fun `returns a link to available video types`() {
         setSecurityContext("api@boclips.com", UserRoles.VIEW_CONTENT_CATEGORIES)
 
-        val link = contentCategoriesLinkBuilder.contentCategries()
+        val link = contentCategoriesLinkBuilder.contentCategories()
 
         Assertions.assertThat(link?.rel?.value()).isEqualTo("contentCategories")
         Assertions.assertThat(link?.href).endsWith("/v1/content-categories")
