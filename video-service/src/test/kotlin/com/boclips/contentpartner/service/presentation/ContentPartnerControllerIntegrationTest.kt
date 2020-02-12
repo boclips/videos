@@ -223,23 +223,20 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             }
         """
 
-        mockMvc.perform(
+        val contentPartnerUrl = mockMvc.perform(
             post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
                 content
             )
         )
             .andExpect(status().isCreated)
             .andExpect(header().exists("Location"))
-            .andDo {
-                val location = it.response.getHeaderValue("Location") as String
-                val id = location.split('/').last()
+            .andReturn().response.getHeaders("Location").first()
 
-                mockMvc.perform(
-                    get("/v1/content-partners/$id").asBoclipsEmployee()
-                )
-                    .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
-                    .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
-            }
+        mockMvc.perform(
+            get(contentPartnerUrl).asBoclipsEmployee()
+        )
+            .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
+            .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
     }
 
     @Test
