@@ -49,4 +49,7 @@ object UserRoles {
     const val INSERT_TAGS = "INSERT_TAGS"
     const val DELETE_TAGS = "DELETE_TAGS"
     const val VIEW_TAGS = "VIEW_TAGS"
+
+    const val INSERT_AGE_RANGES = "INSERT_AGE_RANGES"
+    const val VIEW_AGE_RANGES = "VIEW_AGE_RANGES"
 }

@@ -21,7 +21,8 @@ fun MockHttpServletRequestBuilder.asTeacher(email: String = "teacher@gmail.com")
                 UserRoles.UPDATE_COLLECTIONS,
                 UserRoles.DELETE_COLLECTIONS,
                 UserRoles.INSERT_COLLECTIONS,
-                UserRoles.INSERT_EVENTS
+                UserRoles.INSERT_EVENTS,
+                UserRoles.VIEW_AGE_RANGES
             )
     )
 
@@ -68,6 +69,9 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.INSERT_DISCIPLINES,
                 UserRoles.UPDATE_DISCIPLINES,
                 UserRoles.VIEW_DISTRIBUTION_METHODS,
+                UserRoles.VIEW_ANY_COLLECTION,
+                UserRoles.VIEW_AGE_RANGES,
+                UserRoles.INSERT_AGE_RANGES,
                 UserRoles.VIEW_ANY_COLLECTION,
                 UserRoles.VIEW_MARKETING_STATUSES
             )

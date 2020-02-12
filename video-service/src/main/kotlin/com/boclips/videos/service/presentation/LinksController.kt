@@ -1,9 +1,10 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
+import com.boclips.contentpartner.service.presentation.EduAgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.AccessRuleService
@@ -37,6 +38,7 @@ class LinksController(
     private val eventsLinkBuilder: EventsLinkBuilder,
     private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
     private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
+    private val ageRangesLinkBuilder: EduAgeRangeLinkBuilder,
     private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
@@ -69,6 +71,7 @@ class LinksController(
                 videoTypeLinkBuilder.videoTypes(),
                 eventsLinkBuilder.createPlaybackEventsLink(),
                 contentCategoriesLinkBuilder.contentCategories(),
+                ageRangesLinkBuilder.ageRanges(),
                 marketingStatusLinkBuilder.marketingStatuses()
             )
         )

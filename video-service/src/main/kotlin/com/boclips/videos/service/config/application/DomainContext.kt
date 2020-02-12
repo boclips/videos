@@ -2,8 +2,10 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.EduAgeRangeRepository
 import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
 import com.boclips.contentpartner.service.infrastructure.MongoLegalRestrictionsRepository
+import com.boclips.contentpartner.service.infrastructure.MongoEduAgeRangeRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.users.client.UserServiceClient
@@ -127,6 +129,11 @@ class DomainContext(
     @Bean
     fun contentPartnerRepository(): ContentPartnerRepository {
         return MongoContentPartnerRepository(mongoClient)
+    }
+
+    @Bean
+    fun eduAgeRangeRepository(): EduAgeRangeRepository {
+        return MongoEduAgeRangeRepository(mongoClient)
     }
 
     @Bean

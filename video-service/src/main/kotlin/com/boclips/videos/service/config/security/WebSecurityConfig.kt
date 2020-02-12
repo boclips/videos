@@ -106,6 +106,10 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(GET, "/v1/legal-restrictions/*").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/legal-restrictions").hasRole(ROLE.UPDATE_VIDEOS)
 
+            .antMatchers(GET, "/v1/age-ranges").hasRole(ROLE.VIEW_AGE_RANGES)
+            .antMatchers(GET, "/v1/age-ranges/*").hasRole(ROLE.VIEW_AGE_RANGES)
+            .antMatchers(POST, "/v1/age-ranges").hasRole(ROLE.INSERT_AGE_RANGES)
+
             .antMatchers(GET, "/v1/marketing-statuses").hasRole(ROLE.VIEW_MARKETING_STATUSES)
 
             .anyRequest().denyAll()

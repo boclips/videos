@@ -8,6 +8,8 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.EduAgeRange
+import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.domain.model.RequestContext
 import com.boclips.contentpartner.service.domain.model.User
@@ -92,6 +94,12 @@ object TestFactories {
         return LegalRestriction(
             id = LegalRestrictionsId(TestFactories.aValidId()),
             text = text
+        )
+    }
+
+    fun createEduAgeRange(id: String = "123", label: String = "Label", min: Int = 3, max: Int = 5): EduAgeRange {
+        return EduAgeRange(
+            EduAgeRangeId(id), label, min, max
         )
     }
 }
