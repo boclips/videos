@@ -10,9 +10,11 @@ class CreateEduAgeRange(private val eduAgeRangeRepository: EduAgeRangeRepository
         return eduAgeRangeRepository.create(
             EduAgeRange(
                 id = EduAgeRangeId(createEduAgeRange.id),
-                label = createEduAgeRange.label!!.let { it },
-                min = createEduAgeRange.min!!.let { it },
-                max = createEduAgeRange.max!!.let { it }
+                label = createEduAgeRange.label?.let { it }
+                    ?: throw IllegalStateException("Cannot create an age range with a label"),
+                min = createEduAgeRange.min?.let { it }
+                    ?: throw IllegalStateException("Cannot create an age range with non minimum"),
+                max = createEduAgeRange.max?.let { it }
             )
         )
     }

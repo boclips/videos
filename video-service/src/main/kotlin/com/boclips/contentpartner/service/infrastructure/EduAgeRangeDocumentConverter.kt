@@ -7,7 +7,7 @@ object EduAgeRangeDocumentConverter {
     fun toEduAgeRangeDocument(eduAgeRange: EduAgeRange): EduAgeRangeDocument {
         return EduAgeRangeDocument(
             id = eduAgeRange.id.value,
-            label = eduAgeRange.label.let {it},
+            label = eduAgeRange.label,
             min = eduAgeRange.min,
             max = eduAgeRange.max
         )

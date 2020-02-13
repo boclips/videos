@@ -50,6 +50,31 @@ class EduAgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can create an age range without an upper bound`() {
+        val ageRangeUrl = mockMvc.perform(
+            post("/v1/age-ranges").contentType(MediaType.APPLICATION_JSON).content(
+                """
+                {
+                    "id": "id1",
+                    "label" : "label1",
+                    "min": 3,
+                    "max": null
+                }
+                """.trimIndent()
+            ).asBoclipsEmployee()
+        ).andExpect(status().isCreated).andReturn().response.getHeader("Location")!!
+
+
+        mockMvc.perform(get(ageRangeUrl).asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$.id", equalTo("id1")))
+            .andExpect(jsonPath("$.label", equalTo("label1")))
+            .andExpect(jsonPath("$.min", equalTo(3)))
+            .andExpect(jsonPath("$.max", equalTo(null)))
+    }
+
+    @Test
     fun `returns a 400 response when mandatory fields are not present`() {
         mockMvc.perform(
             post("/v1/age-ranges").contentType(MediaType.APPLICATION_JSON).content(

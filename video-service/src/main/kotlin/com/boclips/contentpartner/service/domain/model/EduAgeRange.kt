@@ -4,5 +4,5 @@ data class EduAgeRange(
     val id: EduAgeRangeId,
     val label: String,
     val min: Int,
-    val max: Int
+    val max: Int?
 )

@@ -10,6 +10,5 @@ data class EduAgeRangeRequest(
     val label: String? = null,
     @field:NotNull(message = "Age range lower bound is required")
     val min: Int? = null,
-    @field:NotNull(message = "Age range upper bound is required")
     val max: Int? = null
 )
