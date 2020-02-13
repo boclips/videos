@@ -10,6 +10,7 @@ import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.EduAgeRange
 import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
+import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.domain.model.RequestContext
 import com.boclips.contentpartner.service.domain.model.User
@@ -42,7 +43,8 @@ object TestFactories {
         awards: String? = null,
         notes: String? = null,
         language: Locale? = null,
-        contentTypes: List<ContentPartnerType>? = emptyList()
+        contentTypes: List<ContentPartnerType>? = emptyList(),
+        marketingInformation: MarketingInformation? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -58,7 +60,8 @@ object TestFactories {
             awards = awards,
             notes = notes,
             language = language,
-            contentTypes = contentTypes
+            contentTypes = contentTypes,
+            marketingInformation = marketingInformation
         )
     }
 

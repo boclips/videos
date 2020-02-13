@@ -12,12 +12,12 @@ data class ContentPartner(
     val remittance: Remittance?,
     val description: String?,
     val contentCategories: List<String>? = emptyList(),
-    val hubspotId: String? = null,
-    val language: Locale? = null,
-    val awards: String? = null,
-    val notes: String? = null,
+    val hubspotId: String?,
+    val language: Locale?,
+    val awards: String?,
+    val notes: String?,
     val contentTypes: List<ContentPartnerType>? = emptyList(),
-    val marketingInformation: MarketingInformation? = null
+    val marketingInformation: MarketingInformation?
 ) {
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)

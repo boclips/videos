@@ -3,9 +3,11 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -33,7 +35,11 @@ internal class ContentPartnerDocumentConverterTest {
             awards = "first award",
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
-            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL)
+            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL),
+            marketingInformation = MarketingInformation(
+                oneLineDescription = "1l",
+                status = ContentPartnerStatus.NeedsIntroduction
+            )
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)
