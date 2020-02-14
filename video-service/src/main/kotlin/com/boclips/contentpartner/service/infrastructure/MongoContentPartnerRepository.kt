@@ -93,7 +93,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             is ContentPartnerUpdateCommand.ReplaceAgeRanges ->
                 set(
                     ContentPartnerDocument::ageRanges,
-                    updateCommand.ageRangeBuckets.ageRanges.map { EduAgeRangeDocumentConverter.toEduAgeRangeDocument(it) }
+                    updateCommand.ageRangeBuckets.ageRanges.map { AgeRangeDocumentConverter.toAgeRangeDocument(it) }
                 )
             is ContentPartnerUpdateCommand.ReplaceDistributionMethods ->
                 set(

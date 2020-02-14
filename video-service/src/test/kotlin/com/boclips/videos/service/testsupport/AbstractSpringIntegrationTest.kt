@@ -1,7 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.application.CreateContentPartner
-import com.boclips.contentpartner.service.application.CreateEduAgeRange
+import com.boclips.contentpartner.service.application.CreateAgeRange
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
@@ -126,7 +126,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createTag: CreateTag
 
     @Autowired
-    lateinit var createEduAgeRange: CreateEduAgeRange
+    lateinit var createAgeRange: CreateAgeRange
 
     @Autowired
     lateinit var indexUpdater: VideoIndexUpdater

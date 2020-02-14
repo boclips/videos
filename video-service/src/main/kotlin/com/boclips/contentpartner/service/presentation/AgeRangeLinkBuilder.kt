@@ -6,14 +6,14 @@ import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
-class EduAgeRangeLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
+class AgeRangeLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     object Rels {
         const val AGE_RANGES = "ageRanges"
     }
 
     fun self(id: String): HateoasLink {
         val withSelfRel = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(EduAgeRangeController::class.java).getEduAgeRange(
+            WebMvcLinkBuilder.methodOn(AgeRangeController::class.java).getAgeRange(
                 id
             )
         ).withSelfRel()

@@ -24,7 +24,7 @@ object ContentPartnerDocumentConverter {
             },
             name = contentPartner.name,
             ageRanges = contentPartner.ageRangeBuckets.ageRanges.map {
-                EduAgeRangeDocumentConverter.toEduAgeRangeDocument(
+                AgeRangeDocumentConverter.toAgeRangeDocument(
                     it
                 )
             },
@@ -64,7 +64,7 @@ object ContentPartnerDocumentConverter {
             name = document.name,
             ageRangeBuckets = AgeRangeBuckets(
                 ageRanges = document.ageRanges
-                    ?.map { EduAgeRangeDocumentConverter.toEduAgeRange(it) }
+                    ?.map { AgeRangeDocumentConverter.toAgeRange(it) }
                     ?: emptyList()
             ),
             credit = document.youtubeChannelId?.let {

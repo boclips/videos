@@ -4,14 +4,14 @@ import com.boclips.contentpartner.service.testsupport.TestFactories
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 
-class EducationalAgeRangesTest {
+class AgeRangeBucketsTest {
     @Test
     fun `min of all ranges`() {
         val ranges = AgeRangeBuckets(
             ageRanges = listOf(
-                TestFactories.createEduAgeRange(min = 1),
-                TestFactories.createEduAgeRange(min = 2),
-                TestFactories.createEduAgeRange(min = 3)
+                TestFactories.createAgeRange(min = 1),
+                TestFactories.createAgeRange(min = 2),
+                TestFactories.createAgeRange(min = 3)
             )
         )
 
@@ -22,10 +22,10 @@ class EducationalAgeRangesTest {
     fun `max of all ranges`() {
         val ranges = AgeRangeBuckets(
             ageRanges = listOf(
-                TestFactories.createEduAgeRange(max = 2),
-                TestFactories.createEduAgeRange(max = 1),
-                TestFactories.createEduAgeRange(max = null),
-                TestFactories.createEduAgeRange(max = 3)
+                TestFactories.createAgeRange(max = 2),
+                TestFactories.createAgeRange(max = 1),
+                TestFactories.createAgeRange(max = null),
+                TestFactories.createAgeRange(max = 3)
             )
         )
 

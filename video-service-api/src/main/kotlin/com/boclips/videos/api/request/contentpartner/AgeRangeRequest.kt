@@ -1,13 +1,14 @@
 package com.boclips.videos.api.request.contentpartner
 
-import javax.validation.constraints.Max
-import javax.validation.constraints.Min
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 
 data class AgeRangeRequest(
-    @field:Min(value = 3, message = "Age range min must be at least 3")
-    @field:Max(value = 19, message = "Age range min must be less than or equal to 19")
-    var min: Int?,
-
-    @field:Max(value = 19, message = "Age range max must be less than or equal to 19")
-    var max: Int?
+    @field:NotBlank(message = "Id is required")
+    val id: String,
+    @field:NotBlank(message = "Label is required")
+    val label: String? = null,
+    @field:NotNull(message = "Age range lower bound is required")
+    val min: Int? = null,
+    val max: Int? = null
 )

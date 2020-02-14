@@ -201,7 +201,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             listOf(
                 ContentPartnerUpdateCommand.ReplaceAgeRanges(
                     contentPartnerId = contentPartner.contentPartnerId,
-                    ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createEduAgeRange(min = 10, max = 20)))
+                    ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createAgeRange(min = 10, max = 20)))
                 )
             )
         )

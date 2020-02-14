@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.application.CreateContentPartner
-import com.boclips.contentpartner.service.application.CreateEduAgeRange
+import com.boclips.contentpartner.service.application.CreateAgeRange
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
@@ -81,7 +81,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createContentPartner: CreateContentPartner
 
     @Autowired
-    lateinit var createEduAgeRange: CreateEduAgeRange
+    lateinit var createAgeRange: CreateAgeRange
 
     @Autowired
     lateinit var getContentPartners: GetContentPartners

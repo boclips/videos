@@ -1,9 +1,13 @@
 package com.boclips.videos.api.response.contentpartner
 
+import com.boclips.videos.api.response.HateoasLink
+import com.fasterxml.jackson.annotation.JsonInclude
+
 data class AgeRangeResource(
+    val id: String,
+    val label: String?,
     val min: Int?,
     val max: Int?,
-    val ids: List<String>
-) {
-    fun getLabel() = min?.let { max?.let { "$min-$max" } ?: "$min+" } ?: ""
-}
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var _links: Map<String, HateoasLink>? = null
+)

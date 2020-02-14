@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.contentpartner.service.presentation.EduAgeRangeLinkBuilder
+import com.boclips.contentpartner.service.presentation.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
@@ -38,7 +38,7 @@ class LinksController(
     private val eventsLinkBuilder: EventsLinkBuilder,
     private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
     private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
-    private val ageRangesLinkBuilder: EduAgeRangeLinkBuilder,
+    private val ageRangesLinkBuilder: AgeRangeLinkBuilder,
     private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService

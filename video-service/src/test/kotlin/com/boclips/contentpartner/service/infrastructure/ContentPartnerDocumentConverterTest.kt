@@ -24,7 +24,7 @@ internal class ContentPartnerDocumentConverterTest {
         val original = ContentPartner(
             contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
             name = "The grandest content partner there ever lived",
-            ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createEduAgeRange())),
+            ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createAgeRange())),
             credit = Credit.PartnerCredit,
             legalRestriction = TestFactories.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),

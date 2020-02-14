@@ -9,7 +9,7 @@ data class ContentPartnerDocument(
     @BsonId val id: ObjectId,
     val youtubeChannelId: String? = null,
     val name: String,
-    val ageRanges: List<EduAgeRangeDocument>? = emptyList(),
+    val ageRanges: List<AgeRangeDocument>? = emptyList(),
     val lastModified: Instant? = null,
     val createdAt: Instant? = null,
     val legalRestrictions: LegalRestrictionsDocument? = null,

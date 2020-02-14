@@ -6,8 +6,8 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.EduAgeRange
-import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
+import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
@@ -16,7 +16,7 @@ import com.boclips.contentpartner.service.domain.model.RequestContext
 import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.domain.model.UserId
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
-import com.boclips.contentpartner.service.infrastructure.EduAgeRangeDocument
+import com.boclips.contentpartner.service.infrastructure.AgeRangeDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
@@ -77,7 +77,7 @@ object TestFactories {
         notes: String? = null,
         language: String? = null,
         contentTypes: List<String>? = emptyList(),
-        ageRanges: List<EduAgeRangeDocument>? = emptyList()
+        ageRanges: List<AgeRangeDocument>? = emptyList()
     ) = ContentPartnerDocument(
         id = objectId,
         youtubeChannelId = youtubeChannelId,
@@ -99,9 +99,9 @@ object TestFactories {
         )
     }
 
-    fun createEduAgeRange(id: String = "123", label: String = "Label", min: Int = 3, max: Int? = 5): EduAgeRange {
-        return EduAgeRange(
-            EduAgeRangeId(id), label, min, max
+    fun createAgeRange(id: String = "123", label: String = "Label", min: Int = 3, max: Int? = 5): AgeRange {
+        return AgeRange(
+            AgeRangeId(id), label, min, max
         )
     }
 }

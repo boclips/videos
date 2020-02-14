@@ -2,7 +2,7 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
-import com.boclips.contentpartner.service.application.exceptions.InvalidEduAgeRangeException
+import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
@@ -10,8 +10,8 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
-import com.boclips.contentpartner.service.domain.model.EduAgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
@@ -24,13 +24,13 @@ import java.util.Locale
 
 class CreateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
-    private val eduAgeRangeRepository: EduAgeRangeRepository
+    private val ageRangeRepository: AgeRangeRepository
 ) {
     operator fun invoke(upsertRequest: UpsertContentPartnerRequest): ContentPartner {
         val ageRanges = upsertRequest.ageRanges?.let {
             it.map { rawAgeRangeId ->
-                EduAgeRangeId(rawAgeRangeId).let { ageRangeId ->
-                    eduAgeRangeRepository.findById(ageRangeId) ?: throw InvalidEduAgeRangeException(ageRangeId)
+                AgeRangeId(rawAgeRangeId).let { ageRangeId ->
+                    ageRangeRepository.findById(ageRangeId) ?: throw InvalidAgeRangeException(ageRangeId)
                 }
             }
         } ?: emptyList()

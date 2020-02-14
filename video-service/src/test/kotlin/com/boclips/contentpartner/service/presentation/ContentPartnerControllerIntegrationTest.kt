@@ -3,7 +3,7 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
-import com.boclips.videos.api.request.contentpartner.EduAgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -93,8 +93,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `creates content partner with correct values`() {
-        createEduAgeRange(EduAgeRangeRequest(id = "early", min = 3, max = 5, label = "3-5"))
-        createEduAgeRange(EduAgeRangeRequest(id = "not-so-early", min = 5, max = 7, label = "3-7"))
+        createAgeRange(AgeRangeRequest(id = "early", min = 3, max = 5, label = "3-5"))
+        createAgeRange(AgeRangeRequest(id = "not-so-early", min = 5, max = 7, label = "3-7"))
 
         val content = """
             {
@@ -254,8 +254,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `updating a content partner`() {
-        createEduAgeRange(EduAgeRangeRequest(id = "early-years", min = 10, max = 15, label = "10-15"))
-        createEduAgeRange(EduAgeRangeRequest(id = "late-years", label = "123", min = 50, max = 60))
+        createAgeRange(AgeRangeRequest(id = "early-years", min = 10, max = 15, label = "10-15"))
+        createAgeRange(AgeRangeRequest(id = "late-years", label = "123", min = 50, max = 60))
 
         val oneLineDescription = "My one line descripTION!"
         val status = ContentPartnerStatusRequest.WaitingForIngest
@@ -305,7 +305,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `get all content partners`() {
-        createEduAgeRange(EduAgeRangeRequest(id = "early-years", min = 10, max = 15, label = "10-15"))
+        createAgeRange(AgeRangeRequest(id = "early-years", min = 10, max = 15, label = "10-15"))
 
         val originalContent = """
             {

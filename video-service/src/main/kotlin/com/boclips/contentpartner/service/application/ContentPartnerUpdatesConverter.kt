@@ -1,11 +1,11 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
+import com.boclips.contentpartner.service.domain.model.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand.ReplaceDistributionMethods
-import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
-import com.boclips.contentpartner.service.domain.model.EduAgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
@@ -15,7 +15,7 @@ import java.util.Currency
 
 class ContentPartnerUpdatesConverter(
     private val legalRestrictionsRepository: LegalRestrictionsRepository,
-    private val eduAgeRangeRepository: EduAgeRangeRepository
+    private val ageRangeRepository: AgeRangeRepository
 ) {
     fun convert(
         id: ContentPartnerId,
@@ -24,7 +24,7 @@ class ContentPartnerUpdatesConverter(
         ContentPartnerUpdateCommandCreator(id, upsertContentPartnerRequest).let { commandCreator ->
             listOfNotNull(
                 commandCreator.updateName(),
-                commandCreator.updateAgeRanges(eduAgeRangeRepository),
+                commandCreator.updateAgeRanges(ageRangeRepository),
                 commandCreator.updateLegalRestrictions(legalRestrictionsRepository),
                 commandCreator.updateHiddenDeliveryMethods(),
                 commandCreator.updateCurrency(),
@@ -61,10 +61,10 @@ class ContentPartnerUpdateCommandCreator(
             ContentPartnerUpdateCommand.ReplaceName(contentPartnerId = id, name = it)
         }
 
-    fun updateAgeRanges(eduAgeRangeRepository: EduAgeRangeRepository): ContentPartnerUpdateCommand.ReplaceAgeRanges? =
+    fun updateAgeRanges(ageRangeRepository: AgeRangeRepository): ContentPartnerUpdateCommand.ReplaceAgeRanges? =
         upsertContentPartnerRequest.ageRanges?.let {
-            val ageRanges = it.mapNotNull { eduAgeRangeId ->
-                eduAgeRangeRepository.findById(EduAgeRangeId(eduAgeRangeId))
+            val ageRanges = it.mapNotNull { ageRangeId ->
+                ageRangeRepository.findById(AgeRangeId(ageRangeId))
             }
             ContentPartnerUpdateCommand.ReplaceAgeRanges(id, AgeRangeBuckets(ageRanges = ageRanges))
         }

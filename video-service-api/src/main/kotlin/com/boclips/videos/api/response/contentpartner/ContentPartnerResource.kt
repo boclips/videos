@@ -12,7 +12,7 @@ data class ContentPartnerResource(
     @get:JsonView(PublicApiProjection::class)
     val name: String,
     @get:JsonView(PublicApiProjection::class)
-    val ageRange: AgeRangeResource? = null,
+    val ageRange: AgeRangeBucketsResource? = null,
     @get:JsonView(PublicApiProjection::class)
     val legalRestriction: LegalRestrictionResource? = null,
     @get:JsonView(PublicApiProjection::class)

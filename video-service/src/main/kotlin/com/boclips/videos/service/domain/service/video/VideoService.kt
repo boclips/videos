@@ -84,7 +84,7 @@ class VideoService(
             throw VideoNotCreatedException(videoToBeCreated)
         }
 
-        var eduAgeRange = videoToBeCreated.ageRange
+        var ageRange = videoToBeCreated.ageRange
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
             contentPartnerRepository.findById(
                 contentPartnerId = ContentPartnerId(
@@ -92,7 +92,7 @@ class VideoService(
                 )
             )
                 ?.apply {
-                    eduAgeRange = if (this.ageRangeBuckets.min != null && this.ageRangeBuckets.max != null) {
+                    ageRange = if (this.ageRangeBuckets.min != null && this.ageRangeBuckets.max != null) {
                         AgeRange.bounded(this.ageRangeBuckets.min, this.ageRangeBuckets.max)
                     } else {
                         AgeRange.unbounded()
@@ -100,7 +100,7 @@ class VideoService(
                 }
         }
 
-        return videoRepository.create(videoToBeCreated.copy(ageRange = eduAgeRange))
+        return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
     }
 
     private fun getPlayableVideo(videoId: VideoId): Video {

@@ -1,14 +1,14 @@
 package com.boclips.contentpartner.service.application.exceptions
 
-import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
+import com.boclips.contentpartner.service.domain.model.AgeRangeId
 import com.boclips.web.exceptions.BoclipsApiException
 import com.boclips.web.exceptions.ExceptionDetails
 import org.springframework.http.HttpStatus
 
-class InvalidEduAgeRangeException(eduAgeRangeId: EduAgeRangeId) : BoclipsApiException(
+class InvalidAgeRangeException(ageRangeId: AgeRangeId) : BoclipsApiException(
     exceptionDetails = ExceptionDetails(
         error = "Invalid age range",
-        message = "${eduAgeRangeId.value} is not a recognised age range",
+        message = "${ageRangeId.value} is not a recognised age range",
         status = HttpStatus.BAD_REQUEST
     )
 )

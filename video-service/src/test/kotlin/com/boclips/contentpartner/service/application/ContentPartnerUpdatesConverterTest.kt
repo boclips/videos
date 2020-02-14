@@ -6,7 +6,7 @@ import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.EduAgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -67,7 +67,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates command for updating the age range`() {
-        createEduAgeRange(EduAgeRangeRequest(id = "early-years", label = "label", min = 1, max = 3))
+        createAgeRange(AgeRangeRequest(id = "early-years", label = "label", min = 1, max = 3))
 
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,

@@ -1,3 +1,3 @@
 package com.boclips.contentpartner.service.domain.model
 
-data class EduAgeRangeId(val value: String)
+data class AgeRangeId(val value: String)
