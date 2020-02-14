@@ -188,7 +188,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.collection(id = null)!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections/{id}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections/{id}{?referer,shareCode}")
         assertThat(link.rel).isEqualTo("collection")
         assertThat(link.templated).isTrue()
     }

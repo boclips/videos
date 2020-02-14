@@ -123,7 +123,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.createPlaybackEvents.href", endsWith("events/playback/batch")))
 
             .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())
-            .andExpect(jsonPath("$._links.collection.href", endsWith("collections/{id}")))
+            .andExpect(jsonPath("$._links.collection.href", endsWith("collections/{id}{?referer,shareCode}")))
             .andExpect(jsonPath("$._links.collection.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.createCollection.href", endsWith("collections")))
             .andExpect(jsonPath("$._links.disciplines.href", endsWith("disciplines")))

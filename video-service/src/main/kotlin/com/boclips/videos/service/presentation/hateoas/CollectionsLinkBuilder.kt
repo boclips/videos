@@ -247,7 +247,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return if (id == null) {
             HateoasLink.of(
                 Link(
-                    getCollectionsRoot().toUriString() + "/{id}",
+                    getCollectionsRoot().toUriString() + "/{id}{?referer,shareCode}",
                     rel
                 )
             )
