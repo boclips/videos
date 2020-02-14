@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.application.CreateContentPartner
+import com.boclips.contentpartner.service.application.CreateEduAgeRange
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
@@ -14,7 +15,6 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -81,6 +81,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createContentPartner: CreateContentPartner
+
+    @Autowired
+    lateinit var createEduAgeRange: CreateEduAgeRange
 
     @Autowired
     lateinit var getContentPartners: GetContentPartners
@@ -230,10 +233,7 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveContentPartner(
         name: String? = "TED",
-        ageRange: AgeRangeRequest? = AgeRangeRequest(
-            min = 5,
-            max = 11
-        ),
+        ageRanges: List<String> = emptyList(),
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null,
@@ -249,7 +249,7 @@ abstract class AbstractSpringIntegrationTest {
         val createdContentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = name,
-                ageRange = ageRange,
+                ageRanges = ageRanges,
                 accreditedToYtChannel = accreditedToYtChannel,
                 distributionMethods = distributionMethods,
                 currency = currency,

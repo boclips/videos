@@ -2,11 +2,10 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
+import com.boclips.contentpartner.service.application.exceptions.InvalidEduAgeRangeException
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.api.request.contentpartner.ContentCategoryRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,10 +18,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = "My content partner",
-                ageRange = AgeRangeRequest(
-                    min = 7,
-                    max = 11
-                ),
                 distributionMethods = null
             )
         )
@@ -35,10 +30,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = "My content partner",
-                ageRange = AgeRangeRequest(
-                    min = 7,
-                    max = 11
-                ),
                 distributionMethods = setOf(
                     DistributionMethodResource.DOWNLOAD,
                     DistributionMethodResource.STREAM
@@ -54,10 +45,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val contentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = "My content partner",
-                ageRange = AgeRangeRequest(
-                    min = 7,
-                    max = 11
-                ),
                 distributionMethods = null
             )
         )
@@ -124,6 +111,17 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThrows<ContentPartnerConflictException> {
             createContentPartner(
                 VideoServiceApiFactory.createContentPartnerRequest()
+            )
+        }
+    }
+
+    @Test
+    fun `cannot create a content partner with an unrecognised age range bucket`() {
+        assertThrows<InvalidEduAgeRangeException> {
+            createContentPartner(
+                VideoServiceApiFactory.createContentPartnerRequest(
+                    ageRanges = listOf("A missing age range")
+                )
             )
         }
     }

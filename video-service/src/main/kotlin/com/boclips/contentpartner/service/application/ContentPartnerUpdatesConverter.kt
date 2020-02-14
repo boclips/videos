@@ -1,9 +1,11 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand.ReplaceDistributionMethods
+import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
+import com.boclips.contentpartner.service.domain.model.EduAgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
@@ -11,7 +13,10 @@ import com.boclips.contentpartner.service.presentation.DistributionMethodResourc
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import java.util.Currency
 
-class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: LegalRestrictionsRepository) {
+class ContentPartnerUpdatesConverter(
+    private val legalRestrictionsRepository: LegalRestrictionsRepository,
+    private val eduAgeRangeRepository: EduAgeRangeRepository
+) {
     fun convert(
         id: ContentPartnerId,
         upsertContentPartnerRequest: UpsertContentPartnerRequest
@@ -19,7 +24,7 @@ class ContentPartnerUpdatesConverter(private val legalRestrictionsRepository: Le
         ContentPartnerUpdateCommandCreator(id, upsertContentPartnerRequest).let { commandCreator ->
             listOfNotNull(
                 commandCreator.updateName(),
-                commandCreator.updateAgeRange(),
+                commandCreator.updateAgeRanges(eduAgeRangeRepository),
                 commandCreator.updateLegalRestrictions(legalRestrictionsRepository),
                 commandCreator.updateHiddenDeliveryMethods(),
                 commandCreator.updateCurrency(),
@@ -56,9 +61,12 @@ class ContentPartnerUpdateCommandCreator(
             ContentPartnerUpdateCommand.ReplaceName(contentPartnerId = id, name = it)
         }
 
-    fun updateAgeRange(): ContentPartnerUpdateCommand.ReplaceAgeRange? =
-        upsertContentPartnerRequest.ageRange?.let {
-            ContentPartnerUpdateCommand.ReplaceAgeRange(id, AgeRange.bounded(min = it.min, max = it.max))
+    fun updateAgeRanges(eduAgeRangeRepository: EduAgeRangeRepository): ContentPartnerUpdateCommand.ReplaceAgeRanges? =
+        upsertContentPartnerRequest.ageRanges?.let {
+            val ageRanges = it.mapNotNull { eduAgeRangeId ->
+                eduAgeRangeRepository.findById(EduAgeRangeId(eduAgeRangeId))
+            }
+            ContentPartnerUpdateCommand.ReplaceAgeRanges(id, AgeRangeBuckets(ageRanges = ageRanges))
         }
 
     fun updateLegalRestrictions(legalRestrictionsRepository: LegalRestrictionsRepository): ContentPartnerUpdateCommand.ReplaceLegalRestrictions? =

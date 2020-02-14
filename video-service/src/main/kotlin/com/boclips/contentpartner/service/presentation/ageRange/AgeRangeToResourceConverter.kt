@@ -1,23 +1,14 @@
 package com.boclips.contentpartner.service.presentation.ageRange
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.BoundedAgeRange
-import com.boclips.contentpartner.service.domain.model.UnboundedAgeRange
+import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.videos.api.response.contentpartner.AgeRangeResource
 
 class AgeRangeToResourceConverter {
     companion object {
         fun convert(
-            ageRange: AgeRange?
-        ): AgeRangeResource? {
-            return when (ageRange) {
-                is BoundedAgeRange -> AgeRangeResource(
-                    ageRange.min,
-                    ageRange.max
-                )
-                is UnboundedAgeRange -> null
-                else -> null
-            }
+            ageRange: AgeRangeBuckets
+        ): AgeRangeResource {
+            return AgeRangeResource(min = ageRange.min, max = ageRange.max, ids = ageRange.ids.map { it.value })
         }
     }
 }

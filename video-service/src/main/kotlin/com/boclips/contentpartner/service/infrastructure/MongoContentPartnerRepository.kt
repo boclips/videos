@@ -14,7 +14,6 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.SetTo
 import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.div
@@ -91,16 +90,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
     private fun updateCommandsToBson(updateCommand: ContentPartnerUpdateCommand): Bson {
         val update = when (updateCommand) {
             is ContentPartnerUpdateCommand.ReplaceName -> set(ContentPartnerDocument::name, updateCommand.name)
-            is ContentPartnerUpdateCommand.ReplaceAgeRange ->
+            is ContentPartnerUpdateCommand.ReplaceAgeRanges ->
                 set(
-                    SetTo(
-                        ContentPartnerDocument::ageRangeMin,
-                        updateCommand.ageRange.min()
-                    ),
-                    SetTo(
-                        ContentPartnerDocument::ageRangeMax,
-                        updateCommand.ageRange.max()
-                    )
+                    ContentPartnerDocument::ageRanges,
+                    updateCommand.ageRangeBuckets.ageRanges.map { EduAgeRangeDocumentConverter.toEduAgeRangeDocument(it) }
                 )
             is ContentPartnerUpdateCommand.ReplaceDistributionMethods ->
                 set(

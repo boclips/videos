@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
@@ -23,8 +23,11 @@ object ContentPartnerDocumentConverter {
                 else -> null
             },
             name = contentPartner.name,
-            ageRangeMax = contentPartner.ageRange.max(),
-            ageRangeMin = contentPartner.ageRange.min(),
+            ageRanges = contentPartner.ageRangeBuckets.ageRanges.map {
+                EduAgeRangeDocumentConverter.toEduAgeRangeDocument(
+                    it
+                )
+            },
             legalRestrictions = contentPartner.legalRestriction?.let { LegalRestrictionsDocument.from(it) },
             distributionMethods = contentPartner.distributionMethods
                 .map(DistributionMethodDocumentConverter::toDocument)
@@ -59,10 +62,11 @@ object ContentPartnerDocumentConverter {
         return ContentPartner(
             contentPartnerId = ContentPartnerId(value = document.id.toString()),
             name = document.name,
-            ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
-                document.ageRangeMin,
-                document.ageRangeMax
-            ) else AgeRange.unbounded(),
+            ageRangeBuckets = AgeRangeBuckets(
+                ageRanges = document.ageRanges
+                    ?.map { EduAgeRangeDocumentConverter.toEduAgeRange(it) }
+                    ?: emptyList()
+            ),
             credit = document.youtubeChannelId?.let {
                 Credit.YoutubeCredit(
                     channelId = it

@@ -44,8 +44,8 @@ class UpdateContentPartner(
                         .name(updatedContentPartner.name)
                         .ageRange(
                             com.boclips.eventbus.domain.AgeRange.builder()
-                                .min(updatedContentPartner.ageRange.min())
-                                .max(updatedContentPartner.ageRange.max())
+                                .min(updatedContentPartner.ageRangeBuckets.min)
+                                .max(updatedContentPartner.ageRangeBuckets.max)
                                 .build()
                         )
                         .awards(updatedContentPartner.awards)

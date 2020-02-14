@@ -2,13 +2,16 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
-import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.application.exceptions.InvalidEduAgeRangeException
+import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.EduAgeRangeId
+import com.boclips.contentpartner.service.domain.model.EduAgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
@@ -19,12 +22,18 @@ import org.bson.types.ObjectId
 import java.util.Currency
 import java.util.Locale
 
-class CreateContentPartner(private val contentPartnerRepository: ContentPartnerRepository) {
+class CreateContentPartner(
+    private val contentPartnerRepository: ContentPartnerRepository,
+    private val eduAgeRangeRepository: EduAgeRangeRepository
+) {
     operator fun invoke(upsertRequest: UpsertContentPartnerRequest): ContentPartner {
-        val ageRange = upsertRequest.ageRange?.let {
-            AgeRange
-                .bounded(min = it.min, max = it.max)
-        } ?: AgeRange.unbounded()
+        val ageRanges = upsertRequest.ageRanges?.let {
+            it.map { rawAgeRangeId ->
+                EduAgeRangeId(rawAgeRangeId).let { ageRangeId ->
+                    eduAgeRangeRepository.findById(ageRangeId) ?: throw InvalidEduAgeRangeException(ageRangeId)
+                }
+            }
+        } ?: emptyList()
 
         val methods = upsertRequest.distributionMethods?.let(
             DistributionMethodResourceConverter::toDistributionMethods
@@ -53,7 +62,7 @@ class CreateContentPartner(private val contentPartnerRepository: ContentPartnerR
                 ContentPartner(
                     contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
                     name = name,
-                    ageRange = ageRange,
+                    ageRangeBuckets = AgeRangeBuckets(ageRanges),
                     credit = upsertRequest.accreditedToYtChannelId?.let {
                         Credit
                             .YoutubeCredit(it)

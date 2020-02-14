@@ -92,8 +92,8 @@ class VideoService(
                 )
             )
                 ?.apply {
-                    eduAgeRange = if (this.ageRange.min() != null && this.ageRange.max() != null) {
-                        AgeRange.bounded(this.ageRange.min(), this.ageRange.max())
+                    eduAgeRange = if (this.ageRangeBuckets.min != null && this.ageRangeBuckets.max != null) {
+                        AgeRange.bounded(this.ageRangeBuckets.min, this.ageRangeBuckets.max)
                     } else {
                         AgeRange.unbounded()
                     }

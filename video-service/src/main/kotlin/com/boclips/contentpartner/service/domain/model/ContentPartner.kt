@@ -5,7 +5,9 @@ import java.util.Locale
 data class ContentPartner(
     val contentPartnerId: ContentPartnerId,
     val name: String,
-    val ageRange: AgeRange,
+    val ageRangeBuckets: AgeRangeBuckets = AgeRangeBuckets(
+        ageRanges = emptyList()
+    ),
     val credit: Credit,
     val legalRestriction: LegalRestriction?,
     val distributionMethods: Set<DistributionMethod>,

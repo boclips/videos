@@ -1,13 +1,12 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentpartner.EduAgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -68,19 +67,22 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates command for updating the age range`() {
+        createEduAgeRange(EduAgeRangeRequest(id = "early-years", label = "label", min = 1, max = 3))
+
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
             upsertContentPartnerRequest = UpsertContentPartnerRequest(
-                ageRange = AgeRangeRequest(1, 3),
+                ageRanges = listOf("early-years"),
                 name = null,
                 accreditedToYtChannelId = "test"
             )
         )
 
         val command =
-            commands.find { it is ContentPartnerUpdateCommand.ReplaceAgeRange } as ContentPartnerUpdateCommand.ReplaceAgeRange
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceAgeRanges } as ContentPartnerUpdateCommand.ReplaceAgeRanges
 
-        assertThat(command.ageRange).isEqualTo(AgeRange.bounded(1, 3))
+        assertThat(command.ageRangeBuckets.max).isEqualTo(3)
+        assertThat(command.ageRangeBuckets.min).isEqualTo(1)
     }
 
     @Test

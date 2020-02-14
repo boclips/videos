@@ -43,16 +43,4 @@ class UpsertContentPartnerRequestTest {
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }
-
-    @Test
-    fun `invalid age range`() {
-        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(
-            ageRange = AgeRangeRequest(
-                min = -666,
-                max = null
-            )
-        )
-        val violations = validator.validate(validRequest)
-        assertThat(violations).hasSize(1)
-    }
 }

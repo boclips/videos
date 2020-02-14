@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
+import com.boclips.videos.api.request.contentpartner.EduAgeRangeRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -92,6 +93,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `creates content partner with correct values`() {
+        createEduAgeRange(EduAgeRangeRequest(id = "early", min = 3, max = 5, label = "3-5"))
+        createEduAgeRange(EduAgeRangeRequest(id = "not-so-early", min = 5, max = 7, label = "3-7"))
+
         val content = """
             {
                 "searchable": false,
@@ -108,7 +112,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "hubspotId": "123456789",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa",
-                "contentTypes": ["NEWS","INSTRUCTIONAL"]
+                "contentTypes": ["NEWS","INSTRUCTIONAL"],
+                "ageRanges": ["early", "not-so-early"]
             }
         """
 
@@ -148,6 +153,14 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             )
             .andExpect(jsonPath("$._embedded.contentPartners[0].language.code", equalTo("spa")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].language.name", equalTo("Spanish")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].ageRange.ids",
+                    containsInAnyOrder("early", "not-so-early")
+                )
+            )
+            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.min", equalTo(3)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.max", equalTo(7)))
     }
 
     @Test
@@ -241,6 +254,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `updating a content partner`() {
+        createEduAgeRange(EduAgeRangeRequest(id = "early-years", min = 10, max = 15, label = "10-15"))
+        createEduAgeRange(EduAgeRangeRequest(id = "late-years", label = "123", min = 50, max = 60))
+
         val oneLineDescription = "My one line descripTION!"
         val status = ContentPartnerStatusRequest.WaitingForIngest
         val originalContent = """
@@ -248,11 +264,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "searchable": false,
                 "name": "TED-ED",
                 "currency": "USD",
-                "ageRange":
-                    {
-                        "min": 10,
-                        "max": 19
-                    }
+                "ageRanges": ["early-years"]
             }
         """
         val updatedContent = """
@@ -260,11 +272,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "searchable": false,
                 "name": "TED",
                 "currency": "GBP",
-                "ageRange":
-                    {
-                        "min": 11,
-                        "max": 18
-                    },
+                "ageRanges": ["late-years"],
                 "oneLineDescription": "$oneLineDescription",
                 "marketingInformation": {"status": "$status"}
             }
@@ -288,8 +296,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.name", equalTo("TED")))
             .andExpect(jsonPath("$.currency", equalTo("GBP")))
-            .andExpect(jsonPath("$.ageRange.min", equalTo(11)))
-            .andExpect(jsonPath("$.ageRange.max", equalTo(18)))
+            .andExpect(jsonPath("$.ageRange.min", equalTo(50)))
+            .andExpect(jsonPath("$.ageRange.max", equalTo(60)))
             .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
             .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
             .andExpect(jsonPath("$._links.self.href", equalTo(cpUrl)))
@@ -297,30 +305,26 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `get all content partners`() {
+        createEduAgeRange(EduAgeRangeRequest(id = "early-years", min = 10, max = 15, label = "10-15"))
+
         val originalContent = """
             {
                 "searchable": false,
                 "name": "TED-ED",
                 "currency": "USD",
-                "ageRange":
-                    {
-                        "min": 10,
-                        "max": 19
-                    }
+                "ageRanges": ["early-years"]
             }"""
 
         mockMvc.perform(
             post("/v1/content-partners").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(originalContent)
-        )
+        ).andExpect(status().isCreated)
 
         mockMvc.perform(get("/v1/content-partners").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED-ED")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].currency", equalTo("USD")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.min", equalTo(10)))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.max", equalTo(19)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
             .andExpect(
                 jsonPath(
@@ -338,12 +342,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             patch("/v1/content-partners/$id").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
                 """{
                         "distributionMethods": ["STREAM"],
-                        "name": "TED",
-                        "ageRange":
-                        {
-                            "min": 11,
-                            "max": 18
-                        }
+                        "name": "TED"
                     }"""
             )
         ).andExpect(status().isNoContent)

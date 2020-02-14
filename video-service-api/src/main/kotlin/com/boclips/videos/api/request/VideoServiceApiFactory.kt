@@ -1,7 +1,6 @@
 package com.boclips.videos.api.request
 
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
@@ -85,10 +84,7 @@ class VideoServiceApiFactory {
         @JvmStatic
         fun createContentPartnerRequest(
             name: String? = "TED",
-            ageRange: AgeRangeRequest? = AgeRangeRequest(
-                min = 5,
-                max = 11
-            ),
+            ageRanges: List<String>? = emptyList(),
             accreditedToYtChannel: String? = null,
             distributionMethods: Set<DistributionMethodResource>? = null,
             legalRestrictions: LegalRestrictionsRequest? = null,
@@ -104,7 +100,7 @@ class VideoServiceApiFactory {
         ): UpsertContentPartnerRequest {
             return UpsertContentPartnerRequest(
                 name = name,
-                ageRange = ageRange,
+                ageRanges = ageRanges,
                 accreditedToYtChannelId = accreditedToYtChannel,
                 distributionMethods = distributionMethods,
                 legalRestrictions = legalRestrictions,

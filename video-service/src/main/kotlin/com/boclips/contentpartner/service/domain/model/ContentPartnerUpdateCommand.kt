@@ -7,7 +7,7 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
     class ReplaceName(contentPartnerId: ContentPartnerId, val name: String) :
         ContentPartnerUpdateCommand(contentPartnerId)
 
-    class ReplaceAgeRange(contentPartnerId: ContentPartnerId, val ageRange: AgeRange) :
+    class ReplaceAgeRanges(contentPartnerId: ContentPartnerId, val ageRangeBuckets: AgeRangeBuckets) :
         ContentPartnerUpdateCommand(contentPartnerId)
 
     class ReplaceDistributionMethods(

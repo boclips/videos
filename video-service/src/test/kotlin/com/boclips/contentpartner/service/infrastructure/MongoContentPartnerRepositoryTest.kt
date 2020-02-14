@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
@@ -193,22 +193,22 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `replaces age range`() {
         val contentPartner = mongoContentPartnerRepository.create(
             TestFactories.createContentPartner(
-                ageRange = AgeRange.unbounded()
+                ageRanges = AgeRangeBuckets(emptyList())
             )
         )
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceAgeRange(
+                ContentPartnerUpdateCommand.ReplaceAgeRanges(
                     contentPartnerId = contentPartner.contentPartnerId,
-                    ageRange = AgeRange.bounded(10, 20)
+                    ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createEduAgeRange(min = 10, max = 20)))
                 )
             )
         )
 
         val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
-        assertThat(updatedAsset.ageRange.min()).isEqualTo(10)
-        assertThat(updatedAsset.ageRange.max()).isEqualTo(20)
+        assertThat(updatedAsset.ageRangeBuckets.min).isEqualTo(10)
+        assertThat(updatedAsset.ageRangeBuckets.max).isEqualTo(20)
     }
 
     @Test

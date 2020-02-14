@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.application.CreateContentPartner
+import com.boclips.contentpartner.service.application.CreateEduAgeRange
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
@@ -18,7 +19,6 @@ import com.boclips.users.client.model.contract.SelectedVideosContract
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -124,6 +124,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createTag: CreateTag
+
+    @Autowired
+    lateinit var createEduAgeRange: CreateEduAgeRange
 
     @Autowired
     lateinit var indexUpdater: VideoIndexUpdater
@@ -361,10 +364,7 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveContentPartner(
         name: String = "TeD",
-        ageRange: AgeRangeRequest = AgeRangeRequest(
-            3,
-            10
-        ),
+        ageRanges: List<String>? = emptyList(),
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null
@@ -373,7 +373,7 @@ abstract class AbstractSpringIntegrationTest {
             createContentPartner(
                 VideoServiceApiFactory.createContentPartnerRequest(
                     name = name,
-                    ageRange = ageRange,
+                    ageRanges = ageRanges,
                     accreditedToYtChannel = accreditedToYtChannel,
                     distributionMethods = distributionMethods,
                     currency = currency

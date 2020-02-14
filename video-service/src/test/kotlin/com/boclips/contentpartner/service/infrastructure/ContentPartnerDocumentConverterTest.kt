@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
+import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
@@ -24,7 +24,7 @@ internal class ContentPartnerDocumentConverterTest {
         val original = ContentPartner(
             contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
             name = "The grandest content partner there ever lived",
-            ageRange = AgeRange.bounded(5, 11),
+            ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createEduAgeRange())),
             credit = Credit.PartnerCredit,
             legalRestriction = TestFactories.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),

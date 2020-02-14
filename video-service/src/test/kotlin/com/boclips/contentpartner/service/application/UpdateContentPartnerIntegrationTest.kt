@@ -6,7 +6,6 @@ import com.boclips.contentpartner.service.domain.model.UnboundedAgeRange
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -36,10 +35,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         originalContentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = "My content partner",
-                ageRange = AgeRangeRequest(
-                    min = 7,
-                    max = 11
-                ),
                 distributionMethods = emptySet(),
                 legalRestrictions = null
             )
@@ -57,10 +52,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             contentPartnerId = originalContentPartner.contentPartnerId.value,
             upsertRequest = UpsertContentPartnerRequest(
                 name = "My better content partner",
-                ageRange = AgeRangeRequest(
-                    min = 9,
-                    max = 14
-                ),
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
@@ -73,8 +64,6 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedContentPartner = contentPartnerRepository.findById(originalContentPartner.contentPartnerId)!!
         assertThat(updatedContentPartner.name).isEqualTo("My better content partner")
-        assertThat(updatedContentPartner.ageRange.min()).isEqualTo(9)
-        assertThat(updatedContentPartner.ageRange.max()).isEqualTo(14)
         assertThat(updatedContentPartner.legalRestriction).isNotNull
         assertThat(updatedContentPartner.legalRestriction?.id).isEqualTo(legalRestrictionsId)
         assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("Legal restrictions")

@@ -2,7 +2,6 @@ package com.boclips.videos.api.request.contentpartner
 
 import com.boclips.videos.api.request.validators.Language
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
 data class UpsertContentPartnerRequest(
@@ -10,8 +9,7 @@ data class UpsertContentPartnerRequest(
     val name: String? = null,
     val accreditedToYtChannelId: String? = null,
     var legalRestrictions: LegalRestrictionsRequest? = null,
-    @field:Valid
-    var ageRange: AgeRangeRequest? = null,
+    var ageRanges: List<String>? = null,
     val distributionMethods: Set<DistributionMethodResource>? = null,
     @field:CurrencyCode
     val currency: String? = null,

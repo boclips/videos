@@ -16,7 +16,7 @@ class ContentPartnerToResourceConverter(
         return ContentPartnerResource(
             id = contentPartner.contentPartnerId.value,
             name = contentPartner.name,
-            ageRange = AgeRangeToResourceConverter.convert(contentPartner.ageRange),
+            ageRange = AgeRangeToResourceConverter.convert(contentPartner.ageRangeBuckets),
             official = when (contentPartner.credit) {
                 is Credit.PartnerCredit -> true
                 is Credit.YoutubeCredit -> false
