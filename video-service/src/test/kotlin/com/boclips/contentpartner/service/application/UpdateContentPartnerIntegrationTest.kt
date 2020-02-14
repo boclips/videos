@@ -2,7 +2,6 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.UnboundedAgeRange
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.VideoServiceApiFactory
@@ -40,8 +39,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         videoId = saveVideo(
-            contentProvider = "My content partner",
-            ageRange = UnboundedAgeRange
+            contentProvider = "My content partner"
         )
     }
 

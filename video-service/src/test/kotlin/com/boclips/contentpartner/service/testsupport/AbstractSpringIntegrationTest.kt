@@ -5,8 +5,6 @@ import com.boclips.contentpartner.service.application.CreateEduAgeRange
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
-import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.BoundedAgeRange
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
@@ -169,10 +167,8 @@ abstract class AbstractSpringIntegrationTest {
         type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
-        ageRange: AgeRange = BoundedAgeRange(
-            min = 7,
-            max = 11
-        ),
+        ageRangeMin: Int? = null,
+        ageRangeMax: Int? = null,
         distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
@@ -219,8 +215,8 @@ abstract class AbstractSpringIntegrationTest {
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
                 analyseVideo = false,
-                ageRangeMin = ageRange.min(),
-                ageRangeMax = ageRange.max(),
+                ageRangeMin = ageRangeMin,
+                ageRangeMax = ageRangeMax,
                 subjects = subjectIds
             ),
             user = com.boclips.videos.service.testsupport.UserFactory.sample()

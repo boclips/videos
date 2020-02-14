@@ -10,12 +10,7 @@ data class EduAgeRange(
 data class AgeRangeBuckets(
     val ageRanges: List<EduAgeRange>
 ) {
-    private val overallAgeRange = AgeRange.bounded(
-        min = ageRanges.minBy { it.min }?.min,
-        max = ageRanges.maxBy { it.max ?: -1 }?.max
-    )
-
-    val min = overallAgeRange.min
-    val max = overallAgeRange.max
+    val min: Int? by lazy { ageRanges.minBy { it.min }?.min }
+    val max: Int? by lazy { ageRanges.maxBy { it.max ?: -1 }?.max }
     val ids = ageRanges.map { it.id }
 }
