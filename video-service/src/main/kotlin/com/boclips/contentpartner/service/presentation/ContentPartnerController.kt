@@ -75,8 +75,8 @@ class ContentPartnerController(
     }
 
     @PostMapping
-    fun postContentPartner(@Valid @RequestBody createUpsertContentPartnerRequest: UpsertContentPartnerRequest): ResponseEntity<Void> {
-        val contentPartner = createContentPartner(createUpsertContentPartnerRequest)
+    fun postContentPartner(@Valid @RequestBody upsertContentPartnerRequest: UpsertContentPartnerRequest): ResponseEntity<Void> {
+        val contentPartner = createContentPartner(upsertContentPartnerRequest)
 
         return ResponseEntity(HttpHeaders().apply {
             set(
