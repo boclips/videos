@@ -52,7 +52,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.myCollections").doesNotExist())
             .andExpect(jsonPath("$._links.collectionsByOwner").doesNotExist())
             .andExpect(jsonPath("$._links.bookmarkedCollections").doesNotExist())
-            .andExpect(jsonPath("$._links.collection").doesNotExist())
+            .andExpect(jsonPath("$._links.collection").exists())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
             .andExpect(jsonPath("$._links.disciplines").doesNotExist())
             .andExpect(jsonPath("$._links.tags").doesNotExist())

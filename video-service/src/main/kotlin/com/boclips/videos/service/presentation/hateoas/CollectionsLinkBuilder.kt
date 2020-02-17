@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.security.utils.UserExtractor.getCurrentUserIfNotAnonymous
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionSortKey
@@ -21,7 +22,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     }
 
     fun collection(id: String?): HateoasLink? {
-        return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { collectionResourceLink(id, "collection") }
+        return collectionResourceLink(id, "collection")
     }
 
     fun editCollection(collection: Collection, user: User): HateoasLink? {
@@ -209,7 +210,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     }
 
     fun bookmark(collection: Collection, user: User): HateoasLink? =
-        if (collection.isBookmarkedBy(user) || collection.isOwner(user) || !collection.isPublic) {
+        if (getCurrentUserIfNotAnonymous() == null || collection.isBookmarkedBy(user) || collection.isOwner(user) || !collection.isPublic) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collection.id.value)

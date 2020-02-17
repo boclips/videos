@@ -159,9 +159,9 @@ class CollectionsLinkBuilderTest {
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
-        val link = collectionsLinkBuilder.collection(id = "c123")
+        val link = collectionsLinkBuilder.collection(id = "c123")!!
 
-        assertThat(link).isNull()
+        assertThat(link).isNotNull
     }
 
     @Test
@@ -462,7 +462,28 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
+    fun `bookmark when anonymous`() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val user = UserFactory.sample()
+
+        val link = collectionsLinkBuilder.bookmark(
+            collection = TestFactories.createCollection(
+                isPublic = true,
+                owner = "another-user"
+            ),
+            user = user
+        )
+
+        assertThat(link).isNull()
+    }
+
+    @Test
     fun `bookmark when public and unbookmarked`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
+
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
