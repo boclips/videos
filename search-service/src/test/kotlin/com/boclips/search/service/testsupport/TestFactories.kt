@@ -96,7 +96,7 @@ object SearchableCollectionMetadataFactory {
         hasAttachments: Boolean = false,
         owner: String = "some-user-id",
         bookmarkedBy: Set<String> = setOf(owner),
-        description: String = "",
+        description: String = "some default description",
         hasLessonPlans: Boolean? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null

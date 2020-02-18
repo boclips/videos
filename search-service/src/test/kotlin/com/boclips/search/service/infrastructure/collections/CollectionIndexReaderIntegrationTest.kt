@@ -122,6 +122,18 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
     }
 
     @Test
+    fun `cannot retrieve collections with empty descriptions`() {
+        collectionIndexWriter.safeRebuildIndex(
+            sequenceOf(SearchableCollectionMetadataFactory.create(id = "100", title = "test", description = ""))
+        )
+
+        val results =
+            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "test")))
+
+        Assertions.assertThat(results).isEmpty()
+    }
+
+    @Test
     fun `owner and bookmark filters operate inclusively`() {
         collectionIndexWriter.safeRebuildIndex(
             sequenceOf(

@@ -102,6 +102,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                             )
                             .should(QueryBuilders.matchPhraseQuery(CollectionDocument.DESCRIPTION, query.phrase))
                     )
+                            .must(QueryBuilders.wildcardQuery(CollectionDocument.DESCRIPTION, "?*"))
                 }
             }
             .apply {
