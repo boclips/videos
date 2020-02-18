@@ -317,5 +317,25 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
             assertThat(updatedAsset.distributionMethods).isEmpty()
         }
+
+        @Test
+        fun `replaces educational resources`() {
+            val contentPartner = mongoContentPartnerRepository.create(
+                TestFactories.createContentPartner(
+                    educationalResources = "this is a resource"
+                )
+            )
+
+            mongoContentPartnerRepository.update(
+                listOf(
+                    ContentPartnerUpdateCommand.ReplaceEducationalResources(
+                        contentPartner.contentPartnerId, "New Resource"
+                    )
+                )
+            )
+
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            assertThat(updatedAsset.educationalResources).isEqualTo("New Resource")
+        }
     }
 }

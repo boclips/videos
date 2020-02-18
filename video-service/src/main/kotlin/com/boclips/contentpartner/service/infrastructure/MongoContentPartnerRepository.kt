@@ -149,6 +149,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 ContentPartnerDocument::isTranscriptProvided,
                 updateCommand.isTranscriptProvided
             )
+            is ContentPartnerUpdateCommand.ReplaceEducationalResources -> set(
+                ContentPartnerDocument::educationalResources,
+                updateCommand.educationalResources
+            )
         }
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))

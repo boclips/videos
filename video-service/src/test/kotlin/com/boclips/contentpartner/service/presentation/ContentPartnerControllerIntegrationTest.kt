@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -91,10 +91,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpectApiErrorPayload()
     }
 
-        @Test
-        fun `creates content partner with correct values`() {
-            createAgeRange(AgeRangeRequest(id = "early", min = 3, max = 5, label = "3-5"))
-            createAgeRange(AgeRangeRequest(id = "not-so-early", min = 5, max = 7, label = "3-7"))
+    @Test
+    fun `creates content partner with correct values`() {
+        createAgeRange(AgeRangeRequest(id = "early", min = 3, max = 5, label = "3-5"))
+        createAgeRange(AgeRangeRequest(id = "not-so-early", min = 5, max = 7, label = "3-7"))
 
         val content = """
             {
@@ -114,7 +114,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "language": "spa",
                 "contentTypes": ["NEWS","INSTRUCTIONAL"],
                 "ageRanges": ["early", "not-so-early"],
-                "isTranscriptProvided": true
+                "isTranscriptProvided": true,
+                "educationalResources": "This is a resource"
             }
         """
 
@@ -163,6 +164,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.min", equalTo(3)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.max", equalTo(7)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].isTranscriptProvided", equalTo(true)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources", equalTo("This is a resource")))
     }
 
     @Test
@@ -371,7 +373,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 marketingInformation = ContentPartnerMarketingRequest(
                     status = ContentPartnerStatusRequest.HaveReachedOut
                 ),
-                isTranscriptProvided = true
+                isTranscriptProvided = true,
+                educationalResources = "this is a resource"
             )
 
             mockMvc.perform(
@@ -390,6 +393,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.language").exists())
                 .andExpect(jsonPath("$.ageRange").exists())
                 .andExpect(jsonPath("$.marketingInformation").exists())
+                .andExpect(jsonPath("$.educationalResources").exists())
 
             mockMvc.perform(
                 get(
@@ -407,6 +411,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].language").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources").exists())
         }
 
         @Test
@@ -460,6 +465,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].official").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].distributionMethods").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources").doesNotExist())
         }
     }
 }

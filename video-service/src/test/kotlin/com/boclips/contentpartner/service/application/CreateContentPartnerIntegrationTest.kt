@@ -138,4 +138,17 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(contentPartnerWithTranscript.isTranscriptProvided).isEqualTo(isTranscriptProvided)
     }
+
+    @Test
+    fun `can create a content partner with educational resources`() {
+        val educationalResources = "This is an educational resource";
+
+        val contentPartnerWithEducationalResources = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                educationalResources = educationalResources
+            )
+        )
+
+        assertThat(contentPartnerWithEducationalResources.educationalResources).isEqualTo(educationalResources)
+    }
 }

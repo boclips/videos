@@ -1,17 +1,17 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
-import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
+import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
+import com.boclips.contentpartner.service.domain.model.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
@@ -81,7 +81,8 @@ class CreateContentPartner(
                         oneLineDescription = upsertRequest.oneLineDescription,
                         status = upsertRequest.marketingInformation?.status?.let(ContentPartnerStatusConverter::convert)
                     ),
-                    isTranscriptProvided = upsertRequest.isTranscriptProvided
+                    isTranscriptProvided = upsertRequest.isTranscriptProvided,
+                    educationalResources = upsertRequest.educationalResources
                 )
             )
     }

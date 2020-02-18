@@ -23,5 +23,6 @@ data class UpsertContentPartnerRequest(
     val contentTypes: List<String>? = null,
     val oneLineDescription: String? = null,
     val marketingInformation: ContentPartnerMarketingRequest? = null,
-    val isTranscriptProvided: Boolean? = null
+    val isTranscriptProvided: Boolean? = null,
+    val educationalResources: String? = null
 )

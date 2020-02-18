@@ -18,7 +18,8 @@ data class ContentPartner(
     val notes: String?,
     val contentTypes: List<ContentPartnerType>? = emptyList(),
     val marketingInformation: MarketingInformation?,
-    val isTranscriptProvided: Boolean?
+    val isTranscriptProvided: Boolean?,
+    val educationalResources: String?
 ) {
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)

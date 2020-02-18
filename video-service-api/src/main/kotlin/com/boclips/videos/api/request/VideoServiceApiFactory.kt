@@ -97,7 +97,8 @@ class VideoServiceApiFactory {
             language: String? = null,
             oneLineDescription: String? = null,
             marketingInformation: ContentPartnerMarketingRequest? = null,
-            isTranscriptProvided: Boolean? = null
+            isTranscriptProvided: Boolean? = null,
+            educationalResources: String? = null
         ): UpsertContentPartnerRequest {
             return UpsertContentPartnerRequest(
                 name = name,
@@ -114,7 +115,8 @@ class VideoServiceApiFactory {
                 language = language,
                 oneLineDescription = oneLineDescription,
                 marketingInformation = marketingInformation,
-                isTranscriptProvided = isTranscriptProvided
+                isTranscriptProvided = isTranscriptProvided,
+                educationalResources = educationalResources
             )
         }
 

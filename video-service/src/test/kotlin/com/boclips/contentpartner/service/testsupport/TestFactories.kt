@@ -1,13 +1,13 @@
 package com.boclips.contentpartner.service.testsupport
 
+import com.boclips.contentpartner.service.domain.model.AgeRange
 import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
+import com.boclips.contentpartner.service.domain.model.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
@@ -15,8 +15,8 @@ import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.domain.model.RequestContext
 import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.domain.model.UserId
-import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.infrastructure.AgeRangeDocument
+import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
@@ -46,7 +46,8 @@ object TestFactories {
         language: Locale? = null,
         contentTypes: List<ContentPartnerType>? = emptyList(),
         marketingInformation: MarketingInformation? = null,
-        isTranscriptProvided: Boolean? = null
+        isTranscriptProvided: Boolean? = null,
+        educationalResources: String? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -64,7 +65,8 @@ object TestFactories {
             language = language,
             contentTypes = contentTypes,
             marketingInformation = marketingInformation,
-            isTranscriptProvided = isTranscriptProvided
+            isTranscriptProvided = isTranscriptProvided,
+            educationalResources = educationalResources
         )
     }
 

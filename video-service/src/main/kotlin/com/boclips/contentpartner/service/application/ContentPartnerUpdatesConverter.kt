@@ -37,7 +37,8 @@ class ContentPartnerUpdatesConverter(
                 commandCreator.updateNotes(),
                 commandCreator.updateMarketingStatus(),
                 commandCreator.updateOneLineDescription(),
-                commandCreator.updateIsTranscriptProvided()
+                commandCreator.updateIsTranscriptProvided(),
+                commandCreator.updateEducationalResources()
             )
         }
 }
@@ -132,6 +133,13 @@ class ContentPartnerUpdateCommandCreator(
     fun updateIsTranscriptProvided(): ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided? =
         upsertContentPartnerRequest.isTranscriptProvided?.let {
             ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided(
+                id, it
+            )
+        }
+
+    fun updateEducationalResources(): ContentPartnerUpdateCommand.ReplaceEducationalResources? =
+        upsertContentPartnerRequest.educationalResources?.let {
+            ContentPartnerUpdateCommand.ReplaceEducationalResources(
                 id, it
             )
         }

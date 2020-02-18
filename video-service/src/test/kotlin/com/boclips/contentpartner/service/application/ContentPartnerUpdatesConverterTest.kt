@@ -225,4 +225,19 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         assertThat(command.isTranscriptProvided).isTrue()
     }
+
+    @Test
+    fun `creates command for updating content partner educational resources`() {
+        val commands = contentPartnerUpdatesConverter.convert(
+            id = originalContentPartner.contentPartnerId,
+            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+                educationalResources = "This is a resource"
+            )
+        )
+
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceEducationalResources } as ContentPartnerUpdateCommand.ReplaceEducationalResources
+
+        assertThat(command.educationalResources).contains("This is a resource")
+    }
 }

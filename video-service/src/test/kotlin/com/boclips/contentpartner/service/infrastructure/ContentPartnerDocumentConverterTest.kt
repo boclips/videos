@@ -40,7 +40,8 @@ internal class ContentPartnerDocumentConverterTest {
                 oneLineDescription = "1l",
                 status = ContentPartnerStatus.NeedsIntroduction
             ),
-            isTranscriptProvided = true
+            isTranscriptProvided = true,
+            educationalResources = "this is an edu resource"
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

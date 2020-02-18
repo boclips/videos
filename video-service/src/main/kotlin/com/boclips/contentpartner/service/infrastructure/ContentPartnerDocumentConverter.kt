@@ -55,7 +55,8 @@ object ContentPartnerDocumentConverter {
                     }
                 )
             },
-            isTranscriptProvided = contentPartner.isTranscriptProvided
+            isTranscriptProvided = contentPartner.isTranscriptProvided,
+            educationalResources = contentPartner.educationalResources
         )
     }
 
@@ -100,7 +101,8 @@ object ContentPartnerDocumentConverter {
                     }
                 )
             },
-            isTranscriptProvided = document.isTranscriptProvided
+            isTranscriptProvided = document.isTranscriptProvided,
+            educationalResources = document.educationalResources
         )
     }
 

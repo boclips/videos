@@ -49,4 +49,7 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class ReplaceIsTranscriptProvided(contentPartnerId: ContentPartnerId, val isTranscriptProvided: Boolean) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceEducationalResources(contentPartnerId: ContentPartnerId, val educationalResources: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
 }
