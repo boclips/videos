@@ -80,7 +80,8 @@ class CreateContentPartner(
                     marketingInformation = MarketingInformation(
                         oneLineDescription = upsertRequest.oneLineDescription,
                         status = upsertRequest.marketingInformation?.status?.let(ContentPartnerStatusConverter::convert)
-                    )
+                    ),
+                    isTranscriptProvided = upsertRequest.isTranscriptProvided
                 )
             )
     }

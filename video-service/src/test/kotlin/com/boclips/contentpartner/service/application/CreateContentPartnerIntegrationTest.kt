@@ -125,4 +125,17 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         }
     }
+
+    @Test
+    fun `can create a content partner with provided transcript `() {
+        val isTranscriptProvided = true;
+
+        val contentPartnerWithTranscript = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                isTranscriptProvided = isTranscriptProvided
+            )
+        )
+
+        assertThat(contentPartnerWithTranscript.isTranscriptProvided).isEqualTo(isTranscriptProvided)
+    }
 }

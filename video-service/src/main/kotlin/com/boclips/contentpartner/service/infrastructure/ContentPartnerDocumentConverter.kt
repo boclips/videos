@@ -54,7 +54,8 @@ object ContentPartnerDocumentConverter {
                         null -> null
                     }
                 )
-            }
+            },
+            isTranscriptProvided = contentPartner.isTranscriptProvided
         )
     }
 
@@ -98,7 +99,8 @@ object ContentPartnerDocumentConverter {
                         null -> null
                     }
                 )
-            }
+            },
+            isTranscriptProvided = document.isTranscriptProvided
         )
     }
 

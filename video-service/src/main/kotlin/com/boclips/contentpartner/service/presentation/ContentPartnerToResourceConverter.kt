@@ -38,6 +38,7 @@ class ContentPartnerToResourceConverter(
             oneLineDescription = contentPartner.marketingInformation?.oneLineDescription,
             marketingInformation = MarketingInformationToResourceConverter
                 .from(contentPartner.marketingInformation),
+            isTranscriptProvided = contentPartner.isTranscriptProvided,
             _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value))
                 .map { it.rel to it }
                 .toMap()

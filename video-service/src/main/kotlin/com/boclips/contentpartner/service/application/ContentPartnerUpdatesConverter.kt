@@ -36,7 +36,8 @@ class ContentPartnerUpdatesConverter(
                 commandCreator.updateHubspotId(),
                 commandCreator.updateNotes(),
                 commandCreator.updateMarketingStatus(),
-                commandCreator.updateOneLineDescription()
+                commandCreator.updateOneLineDescription(),
+                commandCreator.updateIsTranscriptProvided()
             )
         }
 }
@@ -124,6 +125,13 @@ class ContentPartnerUpdateCommandCreator(
     fun updateOneLineDescription(): ContentPartnerUpdateCommand.ReplaceOneLineDescription? =
         upsertContentPartnerRequest.oneLineDescription?.let {
             ContentPartnerUpdateCommand.ReplaceOneLineDescription(
+                id, it
+            )
+        }
+
+    fun updateIsTranscriptProvided(): ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided? =
+        upsertContentPartnerRequest.isTranscriptProvided?.let {
+            ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided(
                 id, it
             )
         }

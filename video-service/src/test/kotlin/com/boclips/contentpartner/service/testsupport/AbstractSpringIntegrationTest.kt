@@ -240,7 +240,8 @@ abstract class AbstractSpringIntegrationTest {
         notes: String? = null,
         language: String? = null,
         oneLineDescription: String? = null,
-        marketingInformation: ContentPartnerMarketingRequest? = null
+        marketingInformation: ContentPartnerMarketingRequest? = null,
+        isTranscriptProvided: Boolean? = null
     ): ContentPartner {
         val createdContentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -256,7 +257,8 @@ abstract class AbstractSpringIntegrationTest {
                 notes = notes,
                 language = language,
                 oneLineDescription = oneLineDescription,
-                marketingInformation = marketingInformation
+                marketingInformation = marketingInformation,
+                isTranscriptProvided = isTranscriptProvided
             )
         )
 

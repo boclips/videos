@@ -46,4 +46,7 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class ReplaceOneLineDescription(contentPartnerId: ContentPartnerId, val oneLineDescription: String) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceIsTranscriptProvided(contentPartnerId: ContentPartnerId, val isTranscriptProvided: Boolean) :
+        ContentPartnerUpdateCommand(contentPartnerId)
 }

@@ -45,7 +45,8 @@ object TestFactories {
         notes: String? = null,
         language: Locale? = null,
         contentTypes: List<ContentPartnerType>? = emptyList(),
-        marketingInformation: MarketingInformation? = null
+        marketingInformation: MarketingInformation? = null,
+        isTranscriptProvided: Boolean? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -62,7 +63,8 @@ object TestFactories {
             notes = notes,
             language = language,
             contentTypes = contentTypes,
-            marketingInformation = marketingInformation
+            marketingInformation = marketingInformation,
+            isTranscriptProvided = isTranscriptProvided
         )
     }
 
@@ -77,6 +79,7 @@ object TestFactories {
         notes: String? = null,
         language: String? = null,
         contentTypes: List<String>? = emptyList(),
+        isTranscriptProvided: Boolean? = null,
         ageRanges: List<AgeRangeDocument>? = emptyList()
     ) = ContentPartnerDocument(
         id = objectId,
@@ -89,7 +92,8 @@ object TestFactories {
         notes = notes,
         language = language,
         contentTypes = contentTypes,
-        ageRanges = ageRanges
+        ageRanges = ageRanges,
+        isTranscriptProvided = isTranscriptProvided
     )
 
     fun createLegalRestrictions(text: String = "No restrictions."): LegalRestriction {

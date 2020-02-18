@@ -22,5 +22,6 @@ data class UpsertContentPartnerRequest(
     val language: String? = null,
     val contentTypes: List<String>? = null,
     val oneLineDescription: String? = null,
-    val marketingInformation: ContentPartnerMarketingRequest? = null
+    val marketingInformation: ContentPartnerMarketingRequest? = null,
+    val isTranscriptProvided: Boolean? = null
 )

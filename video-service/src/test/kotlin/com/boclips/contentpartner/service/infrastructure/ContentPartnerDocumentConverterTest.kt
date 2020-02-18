@@ -39,7 +39,8 @@ internal class ContentPartnerDocumentConverterTest {
             marketingInformation = MarketingInformation(
                 oneLineDescription = "1l",
                 status = ContentPartnerStatus.NeedsIntroduction
-            )
+            ),
+            isTranscriptProvided = true
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

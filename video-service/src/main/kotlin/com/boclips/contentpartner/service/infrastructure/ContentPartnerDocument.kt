@@ -22,6 +22,7 @@ data class ContentPartnerDocument(
     val awards: String? = null,
     val notes: String? = null,
     val contentTypes: List<String>? = null,
-    val marketingInformation: MarketingInformationDocument? = null
+    val marketingInformation: MarketingInformationDocument? = null,
+    val isTranscriptProvided: Boolean? = null
 ) {
 }
