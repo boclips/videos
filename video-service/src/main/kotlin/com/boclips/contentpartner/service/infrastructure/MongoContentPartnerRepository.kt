@@ -153,6 +153,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 ContentPartnerDocument::educationalResources,
                 updateCommand.educationalResources
             )
+            is ContentPartnerUpdateCommand.ReplaceCurriculumAligned -> set(
+                ContentPartnerDocument::curriculumAligned,
+                updateCommand.curriculumAligned
+            )
         }
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))

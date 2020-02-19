@@ -82,7 +82,8 @@ class CreateContentPartner(
                         status = upsertRequest.marketingInformation?.status?.let(ContentPartnerStatusConverter::convert)
                     ),
                     isTranscriptProvided = upsertRequest.isTranscriptProvided,
-                    educationalResources = upsertRequest.educationalResources
+                    educationalResources = upsertRequest.educationalResources,
+                    curriculumAligned = upsertRequest.curriculumAligned
                 )
             )
     }

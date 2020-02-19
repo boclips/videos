@@ -38,7 +38,8 @@ class ContentPartnerUpdatesConverter(
                 commandCreator.updateMarketingStatus(),
                 commandCreator.updateOneLineDescription(),
                 commandCreator.updateIsTranscriptProvided(),
-                commandCreator.updateEducationalResources()
+                commandCreator.updateEducationalResources(),
+                commandCreator.updateCurriculumAligned()
             )
         }
 }
@@ -140,6 +141,13 @@ class ContentPartnerUpdateCommandCreator(
     fun updateEducationalResources(): ContentPartnerUpdateCommand.ReplaceEducationalResources? =
         upsertContentPartnerRequest.educationalResources?.let {
             ContentPartnerUpdateCommand.ReplaceEducationalResources(
+                id, it
+            )
+        }
+
+    fun updateCurriculumAligned(): ContentPartnerUpdateCommand.ReplaceCurriculumAligned? =
+        upsertContentPartnerRequest.curriculumAligned?.let {
+            ContentPartnerUpdateCommand.ReplaceCurriculumAligned(
                 id, it
             )
         }

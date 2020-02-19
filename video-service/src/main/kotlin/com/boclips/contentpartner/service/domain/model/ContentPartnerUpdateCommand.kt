@@ -52,4 +52,7 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class ReplaceEducationalResources(contentPartnerId: ContentPartnerId, val educationalResources: String) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceCurriculumAligned(contentPartnerId: ContentPartnerId, val curriculumAligned: String) :
+        ContentPartnerUpdateCommand(contentPartnerId)
 }

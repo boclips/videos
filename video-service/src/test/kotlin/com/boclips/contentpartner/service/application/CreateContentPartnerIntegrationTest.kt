@@ -151,4 +151,17 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(contentPartnerWithEducationalResources.educationalResources).isEqualTo(educationalResources)
     }
+
+    @Test
+    fun `can create a content partner with curriculum aligned`() {
+        val curriculumAligned = "This is a curriculum";
+
+        val contentPartnerWithCurriculumAligned = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                curriculumAligned = curriculumAligned
+            )
+        )
+
+        assertThat(contentPartnerWithCurriculumAligned.curriculumAligned).isEqualTo(curriculumAligned)
+    }
 }

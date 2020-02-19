@@ -232,6 +232,60 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         assertThat(updatedContentPartner?.legalRestriction).isEqualTo(legalRestrictions)
     }
 
+    @Test
+    fun `replace curriculumAligned`() {
+        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val curriculumAligned = "this is a curriculum"
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceCurriculumAligned(
+                    contentPartner.contentPartnerId,
+                    curriculumAligned
+                )
+            )
+        )
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.curriculumAligned).isEqualTo(curriculumAligned)
+    }
+
+    @Test
+    fun `replace isTranscriptProvided`() {
+        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val isTranscriptProvided = true
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided(
+                    contentPartner.contentPartnerId,
+                    isTranscriptProvided
+                )
+            )
+        )
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
+    }
+
+    @Test
+    fun `replace educational resources`() {
+        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val educationalResources = "this is a educational resource"
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceEducationalResources(
+                    contentPartner.contentPartnerId,
+                    educationalResources
+                )
+            )
+        )
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.educationalResources).isEqualTo(educationalResources)
+    }
+
     @Nested
     inner class OverridingDistributionMethods {
         @Test
