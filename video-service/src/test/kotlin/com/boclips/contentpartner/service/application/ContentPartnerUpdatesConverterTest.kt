@@ -240,4 +240,49 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         assertThat(command.educationalResources).contains("This is a resource")
     }
+
+    @Test
+    fun `creates command for updating content partner best for tags`() {
+        val commands = contentPartnerUpdatesConverter.convert(
+            id = originalContentPartner.contentPartnerId,
+            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+                bestForTags = listOf("123", "456")
+            )
+        )
+
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceBestForTags } as ContentPartnerUpdateCommand.ReplaceBestForTags
+
+        assertThat(command.bestForTags).containsExactlyInAnyOrder("123", "456")
+    }
+
+    @Test
+    fun `creates command for updating content partner curriculum`() {
+        val commands = contentPartnerUpdatesConverter.convert(
+            id = originalContentPartner.contentPartnerId,
+            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+                curriculumAligned = "curriculum"
+            )
+        )
+
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceCurriculumAligned } as ContentPartnerUpdateCommand.ReplaceCurriculumAligned
+
+        assertThat(command.curriculumAligned).contains("curriculum")
+    }
+
+    @Test
+    fun `creates command for updating content partner subjects`() {
+        val commands = contentPartnerUpdatesConverter.convert(
+            id = originalContentPartner.contentPartnerId,
+            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+                subjects = listOf("subject 1", "subject 2")
+            )
+        )
+
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceSubjects } as ContentPartnerUpdateCommand.ReplaceSubjects
+
+        assertThat(command.subjects).containsExactlyInAnyOrder("subject 1", "subject 2")
+    }
 }

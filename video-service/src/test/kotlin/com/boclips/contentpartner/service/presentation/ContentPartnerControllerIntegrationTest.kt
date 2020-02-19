@@ -118,7 +118,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "ageRanges": ["early", "not-so-early"],
                 "isTranscriptProvided": true,
                 "educationalResources": "This is a resource",
-                "curriculumAligned": "This is a curriculum"
+                "curriculumAligned": "This is a curriculum",
+                "bestForTags": ["123", "345"],
+                "subjects": ["subject 1", "subject 2"]
             }
         """
 
@@ -169,6 +171,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].isTranscriptProvided", equalTo(true)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources", equalTo("This is a resource")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].curriculumAligned", equalTo("This is a curriculum")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].bestForTags", containsInAnyOrder("123", "345")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].subjects", containsInAnyOrder("subject 1", "subject 2")))
     }
 
     @Test
@@ -275,7 +279,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "ageRanges": ["early-years"],
                 "curriculumAligned": "This is a curriculum 1",
                 "educationalResources": "This is a resource 2",
-                "isTranscriptProvided": false
+                "isTranscriptProvided": false,
+                "bestForTags": ["222","333"],
+                "subjects": ["subject 1", "subject 2"]
             }
         """
         val updatedContent = """
@@ -288,7 +294,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "marketingInformation": {"status": "$status"},
                 "curriculumAligned": "This is a curriculum 2",
                 "educationalResources": "This is a resource 3",
-                "isTranscriptProvided": true
+                "isTranscriptProvided": true,
+                "bestForTags": ["123", "345"],
+                "subjects": ["sub 1", "sub 2"]
             }
         """
 
@@ -318,6 +326,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$.educationalResources", equalTo("This is a resource 3")))
             .andExpect(jsonPath("$.isTranscriptProvided", equalTo(true)))
             .andExpect(jsonPath("$._links.self.href", equalTo(cpUrl)))
+            .andExpect(jsonPath("$.bestForTags", containsInAnyOrder("123", "345")))
+            .andExpect(jsonPath("$.subjects", containsInAnyOrder("sub 1", "sub 2")))
     }
 
     @Test
@@ -404,7 +414,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 ),
                 isTranscriptProvided = true,
                 educationalResources = "this is a resource",
-                curriculumAligned = "this is a curriculum"
+                curriculumAligned = "this is a curriculum",
+                bestForTags = listOf("123", "456"),
+                subjects = listOf("subject 1", "subject 2")
             )
 
             mockMvc.perform(
@@ -425,6 +437,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.marketingInformation").exists())
                 .andExpect(jsonPath("$.educationalResources").exists())
                 .andExpect(jsonPath("$.curriculumAligned").exists())
+                .andExpect(jsonPath("$.bestForTags").exists())
+                .andExpect(jsonPath("$.subjects").exists())
 
             mockMvc.perform(
                 get(
@@ -444,6 +458,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].curriculumAligned").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].bestForTags").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].subjects").exists())
         }
 
         @Test
@@ -459,7 +475,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 language = "eng",
                 curriculumAligned = "this is a curriculum",
                 isTranscriptProvided = true,
-                educationalResources = "this is an educational resource"
+                educationalResources = "this is an educational resource",
+                bestForTags = listOf("123"),
+                subjects = listOf("subject 1")
             )
 
 
@@ -485,6 +503,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.educationalResources").doesNotExist())
                 .andExpect(jsonPath("$.marketingInformation").doesNotExist())
                 .andExpect(jsonPath("$.curriculumAligned").doesNotExist())
+                .andExpect(jsonPath("$.bestForTags").doesNotExist())
+                .andExpect(jsonPath("$.subjects").doesNotExist())
 
             mockMvc.perform(
                 get(
@@ -506,6 +526,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].curriculumAligned").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].bestForTags").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].subjects").doesNotExist())
         }
     }
 }

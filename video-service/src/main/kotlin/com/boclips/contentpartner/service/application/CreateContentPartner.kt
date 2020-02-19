@@ -83,7 +83,9 @@ class CreateContentPartner(
                     ),
                     isTranscriptProvided = upsertRequest.isTranscriptProvided,
                     educationalResources = upsertRequest.educationalResources,
-                    curriculumAligned = upsertRequest.curriculumAligned
+                    curriculumAligned = upsertRequest.curriculumAligned,
+                    bestForTags = upsertRequest.bestForTags,
+                    subjects = upsertRequest.subjects
                 )
             )
     }

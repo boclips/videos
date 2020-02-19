@@ -39,7 +39,9 @@ class ContentPartnerUpdatesConverter(
                 commandCreator.updateOneLineDescription(),
                 commandCreator.updateIsTranscriptProvided(),
                 commandCreator.updateEducationalResources(),
-                commandCreator.updateCurriculumAligned()
+                commandCreator.updateCurriculumAligned(),
+                commandCreator.updateBestForTags(),
+                commandCreator.updateSubjects()
             )
         }
 }
@@ -148,6 +150,19 @@ class ContentPartnerUpdateCommandCreator(
     fun updateCurriculumAligned(): ContentPartnerUpdateCommand.ReplaceCurriculumAligned? =
         upsertContentPartnerRequest.curriculumAligned?.let {
             ContentPartnerUpdateCommand.ReplaceCurriculumAligned(
+                id, it
+            )
+        }
+
+    fun updateBestForTags(): ContentPartnerUpdateCommand.ReplaceBestForTags? =
+        upsertContentPartnerRequest.bestForTags?.let {
+            ContentPartnerUpdateCommand.ReplaceBestForTags(
+                id, it
+            )
+        }
+    fun updateSubjects(): ContentPartnerUpdateCommand.ReplaceSubjects? =
+        upsertContentPartnerRequest.subjects?.let {
+            ContentPartnerUpdateCommand.ReplaceSubjects(
                 id, it
             )
         }

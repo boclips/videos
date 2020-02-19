@@ -46,6 +46,10 @@ data class ContentPartnerResource(
     val educationalResources: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val curriculumAligned: String? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val bestForTags: List<String>? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val subjects: List<String>? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null

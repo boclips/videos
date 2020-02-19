@@ -1,8 +1,8 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
-import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
+import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
@@ -163,5 +163,31 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(contentPartnerWithCurriculumAligned.curriculumAligned).isEqualTo(curriculumAligned)
+    }
+
+    @Test
+    fun `can create a content partner with best for tags`() {
+        val bestForTags = listOf("123", "345");
+
+        val contentPartnerWithBestForTags = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                bestForTags = bestForTags
+            )
+        )
+
+        assertThat(contentPartnerWithBestForTags.bestForTags).isEqualTo(bestForTags)
+    }
+
+    @Test
+    fun `can create a content partner with subjects`() {
+        val subjects = listOf("subject 1", "subject 2");
+
+        val contentPartnerWithBestForTags = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                subjects = subjects
+            )
+        )
+
+        assertThat(contentPartnerWithBestForTags.subjects).isEqualTo(subjects)
     }
 }

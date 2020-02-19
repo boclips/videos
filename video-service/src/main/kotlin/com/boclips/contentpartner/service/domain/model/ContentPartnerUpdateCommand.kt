@@ -55,4 +55,10 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
 
     class ReplaceCurriculumAligned(contentPartnerId: ContentPartnerId, val curriculumAligned: String) :
         ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceBestForTags(contentPartnerId: ContentPartnerId, val bestForTags: List<String>) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceSubjects(contentPartnerId: ContentPartnerId, val subjects: List<String>) :
+        ContentPartnerUpdateCommand(contentPartnerId)
 }

@@ -286,6 +286,42 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         assertThat(updatedContentPartner?.educationalResources).isEqualTo(educationalResources)
     }
 
+    @Test
+    fun `replace best for tags`() {
+        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val bestForTags = listOf("123", "456")
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceBestForTags(
+                    contentPartner.contentPartnerId,
+                    bestForTags
+                )
+            )
+        )
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.bestForTags).isEqualTo(bestForTags)
+    }
+
+    @Test
+    fun `replace subjects`() {
+        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val subjects = listOf("subject 1", "subject 2")
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceSubjects(
+                    contentPartner.contentPartnerId,
+                    subjects
+                )
+            )
+        )
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.subjects).isEqualTo(subjects)
+    }
+
     @Nested
     inner class OverridingDistributionMethods {
         @Test
@@ -390,6 +426,46 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
             assertThat(updatedAsset.educationalResources).isEqualTo("New Resource")
+        }
+
+        @Test
+        fun `replaces best for tags`() {
+            val contentPartner = mongoContentPartnerRepository.create(
+                TestFactories.createContentPartner(
+                    bestForTags = listOf("123", "345")
+                )
+            )
+
+            mongoContentPartnerRepository.update(
+                listOf(
+                    ContentPartnerUpdateCommand.ReplaceBestForTags(
+                        contentPartner.contentPartnerId, listOf("555", "666")
+                    )
+                )
+            )
+
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            assertThat(updatedAsset.bestForTags).containsExactlyInAnyOrder("555", "666")
+        }
+
+        @Test
+        fun `replaces subjects`() {
+            val contentPartner = mongoContentPartnerRepository.create(
+                TestFactories.createContentPartner(
+                    subjects = listOf("subject 1", "subject 2")
+                )
+            )
+
+            mongoContentPartnerRepository.update(
+                listOf(
+                    ContentPartnerUpdateCommand.ReplaceSubjects(
+                        contentPartner.contentPartnerId, listOf("subject 3", "subject 4")
+                    )
+                )
+            )
+
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            assertThat(updatedAsset.subjects).containsExactlyInAnyOrder("subject 3", "subject 4")
         }
     }
 }

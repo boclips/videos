@@ -41,6 +41,8 @@ class ContentPartnerToResourceConverter(
             isTranscriptProvided = contentPartner.isTranscriptProvided,
             educationalResources = contentPartner.educationalResources,
             curriculumAligned = contentPartner.curriculumAligned,
+            bestForTags = contentPartner.bestForTags,
+            subjects = contentPartner.subjects,
             _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value))
                 .map { it.rel to it }
                 .toMap()

@@ -57,7 +57,9 @@ object ContentPartnerDocumentConverter {
             },
             isTranscriptProvided = contentPartner.isTranscriptProvided,
             educationalResources = contentPartner.educationalResources,
-            curriculumAligned = contentPartner.curriculumAligned
+            curriculumAligned = contentPartner.curriculumAligned,
+            bestForTags = contentPartner.bestForTags,
+            subjects = contentPartner.subjects
         )
     }
 
@@ -104,7 +106,9 @@ object ContentPartnerDocumentConverter {
             },
             isTranscriptProvided = document.isTranscriptProvided,
             educationalResources = document.educationalResources,
-            curriculumAligned = document.curriculumAligned
+            curriculumAligned = document.curriculumAligned,
+            bestForTags = document.bestForTags,
+            subjects = document.subjects
         )
     }
 

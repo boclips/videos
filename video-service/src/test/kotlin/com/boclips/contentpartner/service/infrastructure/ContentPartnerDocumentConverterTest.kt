@@ -42,7 +42,9 @@ internal class ContentPartnerDocumentConverterTest {
             ),
             isTranscriptProvided = true,
             educationalResources = "this is an edu resource",
-            curriculumAligned = "this is a curriculum"
+            curriculumAligned = "this is a curriculum",
+            bestForTags = listOf("123", "345"),
+            subjects = listOf("subject 1", "subjects 2")
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

@@ -48,7 +48,9 @@ object TestFactories {
         marketingInformation: MarketingInformation? = null,
         isTranscriptProvided: Boolean? = null,
         educationalResources: String? = null,
-        curriculumAligned: String? = null
+        curriculumAligned: String? = null,
+        bestForTags: List<String>? = null,
+        subjects: List<String>? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -68,7 +70,9 @@ object TestFactories {
             marketingInformation = marketingInformation,
             isTranscriptProvided = isTranscriptProvided,
             educationalResources = educationalResources,
-            curriculumAligned = curriculumAligned
+            curriculumAligned = curriculumAligned,
+            bestForTags = bestForTags,
+            subjects = subjects
         )
     }
 

@@ -157,6 +157,14 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 ContentPartnerDocument::curriculumAligned,
                 updateCommand.curriculumAligned
             )
+            is ContentPartnerUpdateCommand.ReplaceBestForTags -> set(
+                ContentPartnerDocument::bestForTags,
+                updateCommand.bestForTags
+            )
+            is ContentPartnerUpdateCommand.ReplaceSubjects -> set(
+                ContentPartnerDocument::subjects,
+                updateCommand.subjects
+            )
         }
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))

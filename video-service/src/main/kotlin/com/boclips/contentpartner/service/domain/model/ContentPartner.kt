@@ -20,7 +20,9 @@ data class ContentPartner(
     val marketingInformation: MarketingInformation?,
     val isTranscriptProvided: Boolean?,
     val educationalResources: String?,
-    val curriculumAligned: String?
+    val curriculumAligned: String?,
+    val bestForTags: List<String>?,
+    val subjects: List<String>?
 ) {
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)
