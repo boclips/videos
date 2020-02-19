@@ -16,6 +16,9 @@ outputs:
 
 params:
   YOUTUBE_API_KEY:
+  GCS_BUCKET_NAME:
+  GCS_SECRET:
+  GCS_PROJECT_ID:
 
 caches:
 - path: .gradle/
