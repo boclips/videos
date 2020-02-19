@@ -386,7 +386,12 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         fakeSignedLinkProvider.setLink(sampleLink)
 
         val location = mockMvc.perform(
-            post("/v1/content-partners/signed-upload-link").asBoclipsEmployee()
+            post("/v1/content-partners/signed-upload-link").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+                """{
+                    |   "filename": "myImage.png"
+                    |}
+                """.trimMargin()
+            )
         )
             .andExpect(status().isNoContent)
             .andExpect(header().exists("Location"))

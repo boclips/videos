@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 class GcsSignedLinkProvider(
     private val config: GcsProperties
 ) : SignedLinkProvider {
-    override fun getLink(): URL {
+    override fun getLink(filename: String): URL {
         // mostly taken from https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers#storage-signed-url-object-java
 
         val storage: Storage = StorageOptions.newBuilder()
@@ -27,12 +27,16 @@ class GcsSignedLinkProvider(
         val objectName = UUID.randomUUID().toString()
 
         // Define Resource
-        val blobInfo: BlobInfo = BlobInfo.newBuilder(BlobId.of(config.bucketName, objectName)).build()
+        val blobInfo: BlobInfo =
+            BlobInfo
+                .newBuilder(BlobId.of(config.bucketName, objectName))
+                .build()
 
         // Generate Signed URL
         val extensionHeaders: MutableMap<String, String> =
             HashMap()
         extensionHeaders["Content-Type"] = "application/octet-stream"
+        extensionHeaders["Content-Disposition"] = "attachment; filename=\"$filename\""
 
         return storage.signUrl(
             blobInfo,

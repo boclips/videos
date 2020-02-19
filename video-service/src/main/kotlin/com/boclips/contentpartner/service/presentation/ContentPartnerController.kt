@@ -100,8 +100,10 @@ class ContentPartnerController(
     }
 
     @PostMapping("/signed-upload-link")
-    fun signedUploadLink(): ResponseEntity<Void> {
-        val link = signedLinkProvider.getLink()
+    fun signedUploadLink(
+        @RequestBody signedLinkRequest: SignedLinkRequest
+    ): ResponseEntity<Void> {
+        val link = signedLinkProvider.getLink(signedLinkRequest.filename)
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",
