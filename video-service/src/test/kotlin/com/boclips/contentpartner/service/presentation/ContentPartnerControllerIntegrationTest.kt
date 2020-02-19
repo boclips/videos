@@ -7,6 +7,7 @@ import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.net.URI
 
 class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -365,6 +367,22 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         mockMvc.perform(get("/v1/content-partners/$id").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.distributionMethods", equalTo(listOf("STREAM"))))
+    }
+
+    @Test
+    fun `retrieves a signed link`() {
+        val sampleLink = URI("http://sample.com/").toURL()
+
+        fakeSignedLinkProvider.setLink(sampleLink)
+
+        val location = mockMvc.perform(
+            post("/v1/content-partners/signed-upload-link").asBoclipsEmployee()
+        )
+            .andExpect(status().isNoContent)
+            .andExpect(header().exists("Location"))
+            .andReturn().response.getHeaders("Location").first()
+
+        assertThat(sampleLink.toString()).isEqualTo(location)
     }
 
     @Nested

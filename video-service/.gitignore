@@ -1,6 +1,7 @@
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
+src/test/resources/contract-test-setup.json
 
 ### STS ###
 .apt_generated

@@ -30,6 +30,11 @@ management:
     mongo:
       enabled: false
 
+gcs:
+  secret:
+  project-id:
+  bucket-name:
+
 legacy:
   solr:
     host: solr

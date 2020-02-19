@@ -7,9 +7,12 @@ import com.boclips.contentpartner.service.application.AgeRangeResourceConverter
 import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.GetAgeRange
+import com.boclips.contentpartner.service.config.properties.GcsProperties
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
+import com.boclips.contentpartner.service.infrastructure.GcsSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsToResourceConverter
@@ -70,5 +73,10 @@ class ApplicationContext(
     @Bean
     fun contentPartnerUpdatesConverter(): ContentPartnerUpdatesConverter {
         return ContentPartnerUpdatesConverter(legalRestrictionsRepository, ageRangeRepository)
+    }
+
+    @Bean
+    fun signedLinkProvider(config: GcsProperties): SignedLinkProvider {
+        return GcsSignedLinkProvider(config)
     }
 }

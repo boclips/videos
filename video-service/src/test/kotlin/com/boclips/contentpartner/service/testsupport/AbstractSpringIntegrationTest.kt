@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
@@ -53,7 +54,7 @@ import java.util.UUID
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test", "fakes", "fakes-kaltura", "fakes-search", "fakes-youtube", "fakes-security")
+@ActiveProfiles("test", "fakes", "fakes-kaltura", "fakes-search", "fakes-youtube", "fakes-security", "fakes-signed-link")
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
@@ -64,6 +65,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var collectionSearchService: CollectionSearchService
+
+    @Autowired
+    lateinit var fakeSignedLinkProvider: TestSignedLinkProvider
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -137,6 +141,8 @@ abstract class AbstractSpringIntegrationTest {
 
         userServiceClient.clearContracts()
         userServiceClient.clearUser()
+
+        fakeSignedLinkProvider.clearLink()
 
         reset(legacyVideoSearchService)
 

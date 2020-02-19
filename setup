@@ -3,8 +3,14 @@
 # This assumes you have provisioned the machine
 ktlint --apply-to-idea-project
 
-# Generate external contract test configuration
+# Generate YouTube contract test configuration
 pushd video-service/src/test_youtube_contract/resources/
 ./setup-contract-test
-echo "set up contract tests"
+echo "setting up YouTube contract tests"
+popd
+
+# Generate SignedLinkProvider contract test
+pushd video-service/src/test/resources/
+./setup-content-partner-test
+echo "setting up SignedLinkProvider contract tests"
 popd

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cwd="$(cd "$(dirname "$0")" && pwd)"
+
+bo show secret concourse-main boclips.videos > "$cwd/contract-test-setup.json"

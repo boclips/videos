@@ -13,6 +13,8 @@ import org.hamcrest.Matcher
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -22,7 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrationTest() {
+class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -287,6 +289,31 @@ class VideoServiceHttpSecurityConfigurerIntegrationTest : AbstractSpringIntegrat
             .andExpect(status().isForbidden)
 
         mockMvc.perform(post("/v1/content-partners/ted/videos/search").asIngestor())
+            .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
+    fun `content partner signed url can only be created with special role`() {
+        mockMvc.perform(post("/v1/content-partners/signed-upload-link"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/signed-upload-link").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(
+            post("/v1/content-partners/signed-upload-link").with(
+                user("user")
+                    .roles(UserRoles.INSERT_CONTENT_PARTNERS)
+            )
+        )
+            .andExpect(status().`is`(not401Or403()))
+
+        mockMvc.perform(
+            post("/v1/content-partners/signed-upload-link").with(
+                user("user")
+                    .roles(UserRoles.UPDATE_CONTENT_PARTNERS)
+            )
+        )
             .andExpect(status().`is`(not401Or403()))
     }
 

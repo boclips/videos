@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.UpdateContentPartner
+import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -34,7 +36,8 @@ class ContentPartnerController(
     private val fetchContentPartner: GetContentPartner,
     private val fetchContentPartners: GetContentPartners,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
-    private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter
+    private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter,
+    private val signedLinkProvider: SignedLinkProvider
 ) : BaseController() {
     @PostMapping("/{contentPartnerId}/videos/search")
     fun postSearchVideoByProviderId(
@@ -94,5 +97,16 @@ class ContentPartnerController(
         updateContentPartner(contentPartnerId = contentPartnerId, upsertRequest = updateUpsertContentPartnerRequest)
 
         return ResponseEntity(HttpStatus.NO_CONTENT)
+    }
+
+    @PostMapping("/signed-upload-link")
+    fun signedUploadLink(): ResponseEntity<Void> {
+        val link = signedLinkProvider.getLink()
+        return ResponseEntity(HttpHeaders().apply {
+            set(
+                "Location",
+                link.toString()
+            )
+        }, HttpStatus.NO_CONTENT)
     }
 }
