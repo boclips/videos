@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.types.ObjectId
@@ -15,6 +16,10 @@ import java.util.Currency
 import java.util.Locale
 
 object ContentPartnerDocumentConverter {
+    private fun getAgeRangeBuckets(ageRangeBuckets: List<AgeRangeDocument>?) =
+        ageRangeBuckets?.map { AgeRangeDocumentConverter.toAgeRange(it) }
+            ?: emptyList()
+
     fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {
         return ContentPartnerDocument(
             id = ObjectId(contentPartner.contentPartnerId.value),
@@ -55,11 +60,11 @@ object ContentPartnerDocumentConverter {
                     }
                 )
             },
-            isTranscriptProvided = contentPartner.isTranscriptProvided,
-            educationalResources = contentPartner.educationalResources,
-            curriculumAligned = contentPartner.curriculumAligned,
-            bestForTags = contentPartner.bestForTags,
-            subjects = contentPartner.subjects
+            isTranscriptProvided = contentPartner.pedagogyInformation?.isTranscriptProvided,
+            educationalResources = contentPartner.pedagogyInformation?.educationalResources,
+            curriculumAligned = contentPartner.pedagogyInformation?.curriculumAligned,
+            bestForTags = contentPartner.pedagogyInformation?.bestForTags,
+            subjects = contentPartner.pedagogyInformation?.subjects
         )
     }
 
@@ -68,9 +73,9 @@ object ContentPartnerDocumentConverter {
             contentPartnerId = ContentPartnerId(value = document.id.toString()),
             name = document.name,
             ageRangeBuckets = AgeRangeBuckets(
-                ageRanges = document.ageRanges
-                    ?.map { AgeRangeDocumentConverter.toAgeRange(it) }
-                    ?: emptyList()
+                ageRanges = getAgeRangeBuckets(
+                    document.ageRanges
+                )
             ),
             credit = document.youtubeChannelId?.let {
                 Credit.YoutubeCredit(
@@ -104,11 +109,19 @@ object ContentPartnerDocumentConverter {
                     }
                 )
             },
-            isTranscriptProvided = document.isTranscriptProvided,
-            educationalResources = document.educationalResources,
-            curriculumAligned = document.curriculumAligned,
-            bestForTags = document.bestForTags,
-            subjects = document.subjects
+            pedagogyInformation = PedagogyInformation(
+                isTranscriptProvided = document.isTranscriptProvided,
+                educationalResources = document.educationalResources,
+                curriculumAligned = document.curriculumAligned,
+                bestForTags = document.bestForTags,
+                subjects = document.subjects,
+                ageRangeBuckets = AgeRangeBuckets(
+                    ageRanges = getAgeRangeBuckets(
+                        document.ageRanges
+                    )
+                )
+            )
+
         )
     }
 

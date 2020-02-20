@@ -102,11 +102,6 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             {
                 "searchable": false,
                 "name": "TED",
-                "ageRange":
-                    {
-                        "min": 11,
-                        "max": 18
-                    },
                 "currency": "USD",
                 "description": "This is a description",
                 "awards": "award",
@@ -166,13 +161,42 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     containsInAnyOrder("early", "not-so-early")
                 )
             )
-            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.min", equalTo(3)))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange.max", equalTo(7)))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].isTranscriptProvided", equalTo(true)))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources", equalTo("This is a resource")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].curriculumAligned", equalTo("This is a curriculum")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].bestForTags", containsInAnyOrder("123", "345")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].subjects", containsInAnyOrder("subject 1", "subject 2")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].pedagogyInformation.ageRanges.ids",
+                    containsInAnyOrder("early", "not-so-early")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].pedagogyInformation.isTranscriptProvided",
+                    equalTo(true)
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].pedagogyInformation.educationalResources",
+                    equalTo("This is a resource")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].pedagogyInformation.curriculumAligned",
+                    equalTo("This is a curriculum")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].pedagogyInformation.bestForTags",
+                    containsInAnyOrder("123", "345")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].pedagogyInformation.subjects",
+                    containsInAnyOrder("subject 1", "subject 2")
+                )
+            )
     }
 
     @Test
@@ -292,7 +316,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "ageRanges": ["late-years"],
                 "oneLineDescription": "$oneLineDescription",
                 "marketingInformation": {"status": "$status"},
-                "curriculumAligned": "This is a curriculum 2",
+                "curriculumAligned": "This is a curriculum 3",
                 "educationalResources": "This is a resource 3",
                 "isTranscriptProvided": true,
                 "bestForTags": ["123", "345"],
@@ -322,12 +346,43 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$.ageRange.max", equalTo(60)))
             .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
             .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
-            .andExpect(jsonPath("$.curriculumAligned", equalTo("This is a curriculum 2")))
-            .andExpect(jsonPath("$.educationalResources", equalTo("This is a resource 3")))
-            .andExpect(jsonPath("$.isTranscriptProvided", equalTo(true)))
+            .andExpect(
+                jsonPath(
+                    "$.pedagogyInformation.ageRanges.ids",
+                    containsInAnyOrder("late-years")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$.pedagogyInformation.isTranscriptProvided",
+                    equalTo(true)
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$.pedagogyInformation.educationalResources",
+                    equalTo("This is a resource 3")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$.pedagogyInformation.curriculumAligned",
+                    equalTo("This is a curriculum 3")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$.pedagogyInformation.bestForTags",
+                    containsInAnyOrder("123", "345")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$.pedagogyInformation.subjects",
+                    containsInAnyOrder("sub 1", "sub 2")
+                )
+            )
             .andExpect(jsonPath("$._links.self.href", equalTo(cpUrl)))
-            .andExpect(jsonPath("$.bestForTags", containsInAnyOrder("123", "345")))
-            .andExpect(jsonPath("$.subjects", containsInAnyOrder("sub 1", "sub 2")))
     }
 
     @Test
@@ -440,10 +495,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.language").exists())
                 .andExpect(jsonPath("$.ageRange").exists())
                 .andExpect(jsonPath("$.marketingInformation").exists())
-                .andExpect(jsonPath("$.educationalResources").exists())
-                .andExpect(jsonPath("$.curriculumAligned").exists())
-                .andExpect(jsonPath("$.bestForTags").exists())
-                .andExpect(jsonPath("$.subjects").exists())
+                .andExpect(jsonPath("$.pedagogyInformation.educationalResources").exists())
+                .andExpect(jsonPath("$.pedagogyInformation.curriculumAligned").exists())
+                .andExpect(jsonPath("$.pedagogyInformation.bestForTags").exists())
+                .andExpect(jsonPath("$.pedagogyInformation.subjects").exists())
 
             mockMvc.perform(
                 get(
@@ -461,10 +516,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].language").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").exists())
-                .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources").exists())
-                .andExpect(jsonPath("$._embedded.contentPartners[0].curriculumAligned").exists())
-                .andExpect(jsonPath("$._embedded.contentPartners[0].bestForTags").exists())
-                .andExpect(jsonPath("$._embedded.contentPartners[0].subjects").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].pedagogyInformation.educationalResources").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].pedagogyInformation.curriculumAligned").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].pedagogyInformation.bestForTags").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].pedagogyInformation.subjects").exists())
         }
 
         @Test
@@ -504,12 +559,13 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.official").doesNotExist())
                 .andExpect(jsonPath("$.distributionMethods").doesNotExist())
                 .andExpect(jsonPath("$.marketingInformation").doesNotExist())
-                .andExpect(jsonPath("$.curriculumAligned").doesNotExist())
-                .andExpect(jsonPath("$.educationalResources").doesNotExist())
+                .andExpect(jsonPath("$.pedagogyInformation.curriculumAligned").doesNotExist())
+                .andExpect(jsonPath("$.pedagogyInformation.educationalResources").doesNotExist())
                 .andExpect(jsonPath("$.marketingInformation").doesNotExist())
-                .andExpect(jsonPath("$.curriculumAligned").doesNotExist())
-                .andExpect(jsonPath("$.bestForTags").doesNotExist())
-                .andExpect(jsonPath("$.subjects").doesNotExist())
+                .andExpect(jsonPath("$.pedagogyInformation.curriculumAligned").doesNotExist())
+                .andExpect(jsonPath("$.pedagogyInformation.bestForTags").doesNotExist())
+                .andExpect(jsonPath("$.pedagogyInformation.subjects").doesNotExist())
+                .andExpect(jsonPath("$.pedagogyInformation").doesNotExist())
 
             mockMvc.perform(
                 get(

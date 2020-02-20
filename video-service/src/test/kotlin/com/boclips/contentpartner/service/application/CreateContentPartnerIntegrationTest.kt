@@ -136,7 +136,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithTranscript.isTranscriptProvided).isEqualTo(isTranscriptProvided)
+        assertThat(contentPartnerWithTranscript.pedagogyInformation?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
     }
 
     @Test
@@ -149,7 +149,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithEducationalResources.educationalResources).isEqualTo(educationalResources)
+        assertThat(contentPartnerWithEducationalResources.pedagogyInformation?.educationalResources).isEqualTo(educationalResources)
     }
 
     @Test
@@ -162,7 +162,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithCurriculumAligned.curriculumAligned).isEqualTo(curriculumAligned)
+        assertThat(contentPartnerWithCurriculumAligned.pedagogyInformation?.curriculumAligned).isEqualTo(curriculumAligned)
     }
 
     @Test
@@ -175,7 +175,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithBestForTags.bestForTags).isEqualTo(bestForTags)
+        assertThat(contentPartnerWithBestForTags.pedagogyInformation?.bestForTags).isEqualTo(bestForTags)
     }
 
     @Test
@@ -188,6 +188,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithBestForTags.subjects).isEqualTo(subjects)
+        assertThat(contentPartnerWithBestForTags.pedagogyInformation?.subjects).isEqualTo(subjects)
     }
 }

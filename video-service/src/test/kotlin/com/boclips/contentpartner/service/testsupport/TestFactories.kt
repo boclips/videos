@@ -11,6 +11,7 @@ import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.domain.model.RequestContext
 import com.boclips.contentpartner.service.domain.model.User
@@ -46,11 +47,7 @@ object TestFactories {
         language: Locale? = null,
         contentTypes: List<ContentPartnerType>? = emptyList(),
         marketingInformation: MarketingInformation? = null,
-        isTranscriptProvided: Boolean? = null,
-        educationalResources: String? = null,
-        curriculumAligned: String? = null,
-        bestForTags: List<String>? = null,
-        subjects: List<String>? = null
+        pedagogyInformation: PedagogyInformation? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -68,11 +65,7 @@ object TestFactories {
             language = language,
             contentTypes = contentTypes,
             marketingInformation = marketingInformation,
-            isTranscriptProvided = isTranscriptProvided,
-            educationalResources = educationalResources,
-            curriculumAligned = curriculumAligned,
-            bestForTags = bestForTags,
-            subjects = subjects
+            pedagogyInformation = pedagogyInformation
         )
     }
 

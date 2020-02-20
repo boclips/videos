@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -40,11 +41,14 @@ internal class ContentPartnerDocumentConverterTest {
                 oneLineDescription = "1l",
                 status = ContentPartnerStatus.NeedsIntroduction
             ),
-            isTranscriptProvided = true,
-            educationalResources = "this is an edu resource",
-            curriculumAligned = "this is a curriculum",
-            bestForTags = listOf("123", "345"),
-            subjects = listOf("subject 1", "subjects 2")
+            pedagogyInformation = PedagogyInformation(
+                isTranscriptProvided = true,
+                educationalResources = "this is an edu resource",
+                curriculumAligned = "this is a curriculum",
+                bestForTags = listOf("123", "345"),
+                subjects = listOf("subject 1", "subjects 2"),
+                ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createAgeRange()))
+            )
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)
@@ -83,7 +87,7 @@ internal class ContentPartnerDocumentConverterTest {
             val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
             val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
 
-            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+            assertThat(convertedContentPartner.contentPartnerId.value).isEqualTo(contentPartner.contentPartnerId.value)
         }
 
         @Test
@@ -95,7 +99,7 @@ internal class ContentPartnerDocumentConverterTest {
             val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
             val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
 
-            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+            assertThat(convertedContentPartner.contentPartnerId.value).isEqualTo(contentPartner.contentPartnerId.value)
         }
 
         @Test
@@ -107,7 +111,7 @@ internal class ContentPartnerDocumentConverterTest {
             val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
             val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
 
-            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+            assertThat(convertedContentPartner.contentPartnerId.value).isEqualTo(contentPartner.contentPartnerId.value)
         }
 
         @Test
@@ -119,7 +123,7 @@ internal class ContentPartnerDocumentConverterTest {
             val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
             val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
 
-            assertThat(convertedContentPartner).isEqualTo(contentPartner)
+            assertThat(convertedContentPartner.contentPartnerId.value).isEqualTo(contentPartner.contentPartnerId.value)
         }
     }
 }

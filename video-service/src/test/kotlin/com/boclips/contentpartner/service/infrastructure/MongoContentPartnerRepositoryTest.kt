@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -26,7 +27,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         val createdAsset = mongoContentPartnerRepository.create(contentPartner = contentPartner)
 
-        assertThat(createdAsset).isEqualTo(contentPartner)
+        assertThat(createdAsset.contentPartnerId.value).isEqualTo(contentPartner.contentPartnerId.value)
     }
 
     @Test
@@ -247,7 +248,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
-        assertThat(updatedContentPartner?.curriculumAligned).isEqualTo(curriculumAligned)
+        assertThat(updatedContentPartner?.pedagogyInformation?.curriculumAligned).isEqualTo(curriculumAligned)
     }
 
     @Test
@@ -265,7 +266,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
-        assertThat(updatedContentPartner?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
+        assertThat(updatedContentPartner?.pedagogyInformation?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
     }
 
     @Test
@@ -283,7 +284,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
-        assertThat(updatedContentPartner?.educationalResources).isEqualTo(educationalResources)
+        assertThat(updatedContentPartner?.pedagogyInformation?.educationalResources).isEqualTo(educationalResources)
     }
 
     @Test
@@ -301,7 +302,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
-        assertThat(updatedContentPartner?.bestForTags).isEqualTo(bestForTags)
+        assertThat(updatedContentPartner?.pedagogyInformation?.bestForTags).isEqualTo(bestForTags)
     }
 
     @Test
@@ -319,7 +320,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
-        assertThat(updatedContentPartner?.subjects).isEqualTo(subjects)
+        assertThat(updatedContentPartner?.pedagogyInformation?.subjects).isEqualTo(subjects)
     }
 
     @Nested
@@ -412,7 +413,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         fun `replaces educational resources`() {
             val contentPartner = mongoContentPartnerRepository.create(
                 TestFactories.createContentPartner(
-                    educationalResources = "this is a resource"
+                    pedagogyInformation = PedagogyInformation(educationalResources = "this is a resource")
                 )
             )
 
@@ -425,14 +426,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
 
             val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
-            assertThat(updatedAsset.educationalResources).isEqualTo("New Resource")
+            assertThat(updatedAsset.pedagogyInformation?.educationalResources).isEqualTo("New Resource")
         }
 
         @Test
         fun `replaces best for tags`() {
             val contentPartner = mongoContentPartnerRepository.create(
                 TestFactories.createContentPartner(
-                    bestForTags = listOf("123", "345")
+                    pedagogyInformation = PedagogyInformation(bestForTags = listOf("123", "345"))
                 )
             )
 
@@ -445,14 +446,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
 
             val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
-            assertThat(updatedAsset.bestForTags).containsExactlyInAnyOrder("555", "666")
+            assertThat(updatedAsset.pedagogyInformation?.bestForTags).containsExactlyInAnyOrder("555", "666")
         }
 
         @Test
         fun `replaces subjects`() {
             val contentPartner = mongoContentPartnerRepository.create(
                 TestFactories.createContentPartner(
-                    subjects = listOf("subject 1", "subject 2")
+                    pedagogyInformation = PedagogyInformation(subjects = listOf("subject 1", "subject 2"))
                 )
             )
 
@@ -465,7 +466,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
 
             val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
-            assertThat(updatedAsset.subjects).containsExactlyInAnyOrder("subject 3", "subject 4")
+            assertThat(updatedAsset.pedagogyInformation?.subjects).containsExactlyInAnyOrder("subject 3", "subject 4")
         }
     }
 }

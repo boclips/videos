@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
@@ -38,11 +39,16 @@ class ContentPartnerToResourceConverter(
             oneLineDescription = contentPartner.marketingInformation?.oneLineDescription,
             marketingInformation = MarketingInformationToResourceConverter
                 .from(contentPartner.marketingInformation),
-            isTranscriptProvided = contentPartner.isTranscriptProvided,
-            educationalResources = contentPartner.educationalResources,
-            curriculumAligned = contentPartner.curriculumAligned,
-            bestForTags = contentPartner.bestForTags,
-            subjects = contentPartner.subjects,
+            pedagogyInformation = PedagogyInformationToResourceConverter.from(
+                pedagogyInformation = PedagogyInformation(
+                    isTranscriptProvided = contentPartner.pedagogyInformation?.isTranscriptProvided,
+                    educationalResources = contentPartner.pedagogyInformation?.educationalResources,
+                    curriculumAligned = contentPartner.pedagogyInformation?.curriculumAligned,
+                    bestForTags = contentPartner.pedagogyInformation?.bestForTags,
+                    subjects = contentPartner.pedagogyInformation?.subjects,
+                    ageRangeBuckets = contentPartner.ageRangeBuckets
+                )
+            ),
             _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value))
                 .map { it.rel to it }
                 .toMap()
