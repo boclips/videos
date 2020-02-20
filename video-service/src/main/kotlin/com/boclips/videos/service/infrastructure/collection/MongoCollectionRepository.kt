@@ -36,7 +36,7 @@ import java.time.Instant
 class MongoCollectionRepository(
     private val mongoClient: MongoClient,
     private val collectionUpdates: CollectionUpdates = CollectionUpdates(),
-    private val mongoCollectionFilterContractAdapter: MongoCollectionFilterContractAdapter,
+    private val mongoCollectionFilterAccessRuleAdapter: MongoCollectionFilterAccessRuleAdapter,
     private val batchProcessingConfig: BatchProcessingConfig,
     private val collectionSubjects: CollectionSubjects
 ) : CollectionRepository {

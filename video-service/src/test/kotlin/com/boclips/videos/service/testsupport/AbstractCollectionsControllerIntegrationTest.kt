@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.users.client.model.contract.SelectedCollectionsContract
+import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
@@ -30,7 +30,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     @BeforeEach
     fun cleanupContracts() {
-        userServiceClient.clearContracts()
+        userServiceClient.clearAccessRules()
     }
 
     fun createCollection(
@@ -122,7 +122,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     }
 
     fun createSelectedCollectionsContract(vararg contractedCollectionIds: String) {
-        userServiceClient.addContract(SelectedCollectionsContract().apply {
+        userServiceClient.addAccessRule(SelectedCollectionsAccessRule().apply {
             name = UUID.randomUUID().toString()
             collectionIds = contractedCollectionIds.toList()
         })

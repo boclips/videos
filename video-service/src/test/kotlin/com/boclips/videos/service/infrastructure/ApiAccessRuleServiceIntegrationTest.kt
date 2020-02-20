@@ -1,8 +1,8 @@
 package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
-import com.boclips.users.client.model.contract.SelectedCollectionsContract
-import com.boclips.users.client.model.contract.SelectedVideosContract
+import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.SelectedVideosAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -23,18 +23,18 @@ import org.springframework.web.client.HttpClientErrorException
 class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `passes through client's response if all is well`() {
-        val collectionsContract = SelectedCollectionsContract().apply {
+        val collectionsContract = SelectedCollectionsAccessRule().apply {
             name = "Test Contract"
             collectionIds = listOf("test-collection-id")
         }
 
         val videoId = ObjectId().toHexString()
-        val videosContract = SelectedVideosContract().apply {
+        val videosContract = SelectedVideosAccessRule().apply {
             name = "Test Contract"
             videoIds = listOf(videoId)
         }
 
-        whenever(userServiceClient.getContracts(anyString()))
+        whenever(userServiceClient.getAccessRules(anyString()))
             .thenReturn(listOf(collectionsContract, videosContract))
 
         val accessRules = accessRuleService.getRules(UserFactory.sample(id = "test-user"))
@@ -49,7 +49,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     inner class CollectionsAccess {
         @Test
         fun `has access specific user's collections when no contracts specified`() {
-            whenever(userServiceClient.getContracts(anyString()))
+            whenever(userServiceClient.getAccessRules(anyString()))
                 .thenReturn(emptyList())
 
             val user = UserFactory.sample(id = "test-user")
@@ -66,7 +66,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `has access to everything if is allowed to view any collection`() {
-            whenever(userServiceClient.getContracts(anyString()))
+            whenever(userServiceClient.getAccessRules(anyString()))
                 .thenReturn(emptyList())
 
             val user = UserFactory.sample(id = "test-user", isPermittedToViewAnyCollection = true)
@@ -80,7 +80,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     inner class VideoAccess {
         @Test
         fun `has access to everything when no contracts specified`() {
-            whenever(userServiceClient.getContracts(anyString()))
+            whenever(userServiceClient.getAccessRules(anyString()))
                 .thenReturn(emptyList())
 
             val user = UserFactory.sample(id = "test-user")
@@ -92,12 +92,12 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retries up to 3 times when client throws errors`() {
-        val collectionsContract = SelectedCollectionsContract().apply {
+        val collectionsContract = SelectedCollectionsAccessRule().apply {
             name = "Test Contract"
             collectionIds = listOf("test-collection-id")
         }
 
-        whenever(userServiceClient.getContracts(anyString()))
+        whenever(userServiceClient.getAccessRules(anyString()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenReturn(listOf(collectionsContract))
@@ -109,7 +109,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `when rules cannot be obtained, revert to public access`() {
-        whenever(userServiceClient.getContracts(anyString()))
+        whenever(userServiceClient.getAccessRules(anyString()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenThrow(RuntimeException("Something bad happened again!"))

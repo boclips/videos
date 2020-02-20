@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.UserServiceClient
-import com.boclips.users.client.model.contract.Contract
-import com.boclips.users.client.model.contract.SelectedCollectionsContract
-import com.boclips.users.client.model.contract.SelectedVideosContract
+import com.boclips.users.client.model.accessrule.AccessRule
+import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.SelectedVideosAccessRule
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
@@ -24,18 +24,18 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         backoff = Backoff(multiplier = 1.5)
     )
     override fun getRules(user: User): AccessRules {
-        val contracts = userServiceClient.getContracts(user.id.value)
+        val contracts = userServiceClient.getAccessRules(user.id.value)
         return AccessRules(
             collectionAccess = getCollectionAccessRule(contracts, user),
             videoAccess = getVideoAccessRule(contracts)
         )
     }
 
-    private fun getCollectionAccessRule(contracts: List<Contract>, user: User): CollectionAccessRule {
+    private fun getCollectionAccessRule(contracts: List<AccessRule>, user: User): CollectionAccessRule {
         val collectionIds: List<CollectionId> = contracts
             .flatMap { contract ->
                 when (contract) {
-                    is SelectedCollectionsContract -> contract.collectionIds.map { CollectionId(it) }
+                    is SelectedCollectionsAccessRule -> contract.collectionIds.map { CollectionId(it) }
                     else -> emptyList()
                 }
             }
@@ -49,8 +49,8 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         }
     }
 
-    private fun getVideoAccessRule(contracts: List<Contract>): VideoAccessRule {
-        val videoIds: List<VideoId> = contracts.filterIsInstance<SelectedVideosContract>()
+    private fun getVideoAccessRule(contracts: List<AccessRule>): VideoAccessRule {
+        val videoIds: List<VideoId> = contracts.filterIsInstance<SelectedVideosAccessRule>()
             .flatMap { contract -> contract.videoIds.map { id -> VideoId(id) } }
 
         return when {

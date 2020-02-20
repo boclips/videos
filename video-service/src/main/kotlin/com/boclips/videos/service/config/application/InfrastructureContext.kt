@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.infrastructure.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.ApiGetUserIdOverride
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
-import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterContractAdapter
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterAccessRuleAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
@@ -50,7 +50,7 @@ class InfrastructureContext(
     }
 
     @Bean
-    fun mongoCollectionFilterContractAdapter() = MongoCollectionFilterContractAdapter()
+    fun mongoCollectionFilterContractAdapter() = MongoCollectionFilterAccessRuleAdapter()
 
     @Bean
     fun collectionSubjects(): CollectionSubjects {
@@ -63,7 +63,7 @@ class InfrastructureContext(
     ): MongoCollectionRepository {
         return MongoCollectionRepository(
             mongoClient = mongoClient(),
-            mongoCollectionFilterContractAdapter = mongoCollectionFilterContractAdapter(),
+            mongoCollectionFilterAccessRuleAdapter = mongoCollectionFilterContractAdapter(),
             batchProcessingConfig = batchProcessingConfig,
             collectionSubjects = collectionSubjects()
         )
