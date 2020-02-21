@@ -24,18 +24,18 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         backoff = Backoff(multiplier = 1.5)
     )
     override fun getRules(user: User): AccessRules {
-        val contracts = userServiceClient.getAccessRules(user.id.value)
+        val accessRules = userServiceClient.getAccessRules(user.id.value)
         return AccessRules(
-            collectionAccess = getCollectionAccessRule(contracts, user),
-            videoAccess = getVideoAccessRule(contracts)
+            collectionAccess = getCollectionAccessRule(accessRules, user),
+            videoAccess = getVideoAccessRule(accessRules)
         )
     }
 
-    private fun getCollectionAccessRule(contracts: List<AccessRule>, user: User): CollectionAccessRule {
-        val collectionIds: List<CollectionId> = contracts
-            .flatMap { contract ->
-                when (contract) {
-                    is SelectedCollectionsAccessRule -> contract.collectionIds.map { CollectionId(it) }
+    private fun getCollectionAccessRule(accessRules: List<AccessRule>, user: User): CollectionAccessRule {
+        val collectionIds: List<CollectionId> = accessRules
+            .flatMap { accessRule ->
+                when (accessRule) {
+                    is SelectedCollectionsAccessRule -> accessRule.collectionIds.map { CollectionId(it) }
                     else -> emptyList()
                 }
             }
@@ -49,9 +49,9 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         }
     }
 
-    private fun getVideoAccessRule(contracts: List<AccessRule>): VideoAccessRule {
-        val videoIds: List<VideoId> = contracts.filterIsInstance<SelectedVideosAccessRule>()
-            .flatMap { contract -> contract.videoIds.map { id -> VideoId(id) } }
+    private fun getVideoAccessRule(accessRules: List<AccessRule>): VideoAccessRule {
+        val videoIds: List<VideoId> = accessRules.filterIsInstance<SelectedVideosAccessRule>()
+            .flatMap { accessRule -> accessRule.videoIds.map { id -> VideoId(id) } }
 
         return when {
             videoIds.isNotEmpty() -> VideoAccessRule.SpecificIds(
