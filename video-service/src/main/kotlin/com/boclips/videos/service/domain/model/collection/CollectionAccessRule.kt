@@ -3,13 +3,21 @@ package com.boclips.videos.service.domain.model.collection
 import com.boclips.videos.service.domain.model.UserId
 
 sealed class CollectionAccessRule {
-    object PublicOnly : CollectionAccessRule()
+    object PublicOnly : CollectionAccessRule() {
+        override fun toString() = "PublicOnly"
+    }
     data class SpecificOwner(val owner: UserId) : CollectionAccessRule() {
         fun isMe(user: UserId) = owner == user
+        override fun toString() = "SpecificOwner($owner)"
     }
 
-    data class SpecificIds(val collectionIds: Set<CollectionId>) : CollectionAccessRule()
-    object Everything : CollectionAccessRule()
+    data class SpecificIds(val collectionIds: Set<CollectionId>) : CollectionAccessRule() {
+        override fun toString() = "SpecificIds(${collectionIds.size} collections)"
+    }
+    object Everything : CollectionAccessRule() {
+        override fun toString() = "Everything"
+
+    }
 
     companion object {
         fun public(): CollectionAccessRule {
