@@ -5,12 +5,12 @@ import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerMarketingInformation
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.domain.model.RequestContext
@@ -46,8 +46,8 @@ object TestFactories {
         notes: String? = null,
         language: Locale? = null,
         contentTypes: List<ContentPartnerType>? = emptyList(),
-        marketingInformation: MarketingInformation? = null,
-        pedagogyInformation: PedagogyInformation? = null
+        pedagogyInformation: PedagogyInformation? = null,
+        marketingInformation: ContentPartnerMarketingInformation? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,

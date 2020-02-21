@@ -12,10 +12,9 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
-import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
+import com.boclips.contentpartner.service.presentation.ContentPartnerMarketingInformationConverter
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
@@ -78,10 +77,6 @@ class CreateContentPartner(
                     notes = upsertRequest.notes,
                     language = upsertRequest.language?.let(Locale::forLanguageTag),
                     contentTypes = upsertRequest.contentTypes?.map(ContentPartnerType::valueOf),
-                    marketingInformation = MarketingInformation(
-                        oneLineDescription = upsertRequest.oneLineDescription,
-                        status = upsertRequest.marketingInformation?.status?.let(ContentPartnerStatusConverter::convert)
-                    ),
                     pedagogyInformation = PedagogyInformation(
                         isTranscriptProvided = upsertRequest.isTranscriptProvided,
                         educationalResources = upsertRequest.educationalResources,
@@ -89,7 +84,8 @@ class CreateContentPartner(
                         bestForTags = upsertRequest.bestForTags,
                         subjects = upsertRequest.subjects,
                         ageRangeBuckets = AgeRangeBuckets(ageRanges)
-                    )
+                    ),
+                    marketingInformation = ContentPartnerMarketingInformationConverter.convert(upsertRequest)
                 )
             )
     }

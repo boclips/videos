@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.domain.model
 
+import java.net.URL
 import java.util.Currency
 
 sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId) {
@@ -42,6 +43,15 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
         ContentPartnerUpdateCommand(contentPartnerId)
 
     class ReplaceMarketingStatus(contentPartnerId: ContentPartnerId, val status: ContentPartnerStatus) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceMarketingLogos(contentPartnerId: ContentPartnerId, val logos: List<URL>) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceMarketingShowreel(contentPartnerId: ContentPartnerId, val showreel: URL?) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceMarketingSampleVideos(contentPartnerId: ContentPartnerId, val sampleVideos: List<URL>) :
         ContentPartnerUpdateCommand(contentPartnerId)
 
     class ReplaceOneLineDescription(contentPartnerId: ContentPartnerId, val oneLineDescription: String) :

@@ -3,18 +3,20 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerMarketingInformation
 import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.videos.api.common.Specified
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.net.URL
 import java.util.Currency
 import java.util.Locale
 
@@ -37,9 +39,12 @@ internal class ContentPartnerDocumentConverterTest {
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL),
-            marketingInformation = MarketingInformation(
+            marketingInformation = ContentPartnerMarketingInformation(
                 oneLineDescription = "1l",
-                status = ContentPartnerStatus.NeedsIntroduction
+                status = ContentPartnerStatus.NEEDS_INTRODUCTION,
+                logos = listOf(URL("http://www.server.com/1.png")),
+                showreel = Specified(URL("http://www.server.com/2.png")),
+                sampleVideos = listOf(URL("http://www.server.com/3.png"))
             ),
             pedagogyInformation = PedagogyInformation(
                 isTranscriptProvided = true,

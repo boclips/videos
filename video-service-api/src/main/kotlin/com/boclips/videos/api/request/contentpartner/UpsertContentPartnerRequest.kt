@@ -22,10 +22,12 @@ data class UpsertContentPartnerRequest(
     val language: String? = null,
     val contentTypes: List<String>? = null,
     val oneLineDescription: String? = null,
-    val marketingInformation: ContentPartnerMarketingRequest? = null,
+    val marketingInformation: ContentPartnerMarketingInformationRequest? = null,
     val isTranscriptProvided: Boolean? = null,
     val educationalResources: String? = null,
     val curriculumAligned: String? = null,
     val bestForTags: List<String>? = null,
     val subjects: List<String>? = null
 )
+
+

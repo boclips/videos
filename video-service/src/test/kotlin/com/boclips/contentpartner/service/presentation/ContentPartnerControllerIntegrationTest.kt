@@ -1,8 +1,9 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
@@ -60,7 +61,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `creates content partner and rejects an existing content partner`() {
+    fun `create a content partner and rejects an existing content partner`() {
         val content = """
             {
                 "searchable": false,
@@ -94,7 +95,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `creates content partner with correct values`() {
+    fun `create content partner with correct values`() {
         createAgeRange(AgeRangeRequest(id = "early", min = 3, max = 5, label = "3-5"))
         createAgeRange(AgeRangeRequest(id = "not-so-early", min = 5, max = 7, label = "3-7"))
 
@@ -115,7 +116,14 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "educationalResources": "This is a resource",
                 "curriculumAligned": "This is a curriculum",
                 "bestForTags": ["123", "345"],
-                "subjects": ["subject 1", "subject 2"]
+                "subjects": ["subject 1", "subject 2"],
+                "oneLineDescription": "My one-line description",
+                "marketingInformation": {
+                    "status": "PROMOTED",
+                    "logos": ["http://sample1.com", "http://sample2.com"],
+                    "showreel": "http://sample3.com",
+                    "sampleVideos": ["http://sample4.com", "http://sample5.com"]
+                }
             }
         """
 
@@ -135,6 +143,31 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].description", equalTo("This is a description")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].awards", equalTo("award")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].notes", equalTo("note one")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].oneLineDescription",
+                    equalTo("My one-line description")
+                )
+            )
+            .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation.status", equalTo("PROMOTED")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].marketingInformation.logos",
+                    containsInAnyOrder("http://sample1.com", "http://sample2.com")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].marketingInformation.showreel",
+                    equalTo("http://sample3.com")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].marketingInformation.sampleVideos",
+                    containsInAnyOrder("http://sample4.com", "http://sample5.com")
+                )
+            )
             .andExpect(
                 jsonPath(
                     "$._embedded.contentPartners[0].contentTypes",
@@ -255,7 +288,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     @Test
     fun `create content partner accredited to youtube`() {
         val oneLineDescription = "My one-line description"
-        val status = ContentPartnerStatusRequest.NeedsContent
+        val status = ContentPartnerStatusRequest.NEEDS_CONTENT
 
         val content = """
             {
@@ -268,7 +301,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     },
                 "accreditedToYtChannelId": "some-yt-channel-id",
                 "oneLineDescription": "$oneLineDescription",
-                "marketingInformation": {"status": "$status"}
+                "marketingInformation": {
+                    "status": "$status"
+                }
             }
         """
 
@@ -289,18 +324,23 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `updating a content partner`() {
+    fun `update a content partner`() {
         createAgeRange(AgeRangeRequest(id = "early-years", min = 10, max = 15, label = "10-15"))
         createAgeRange(AgeRangeRequest(id = "late-years", label = "123", min = 50, max = 60))
 
-        val oneLineDescription = "My one line descripTION!"
-        val status = ContentPartnerStatusRequest.WaitingForIngest
         val originalContent = """
             {
                 "searchable": false,
                 "name": "TED-ED",
                 "currency": "USD",
                 "ageRanges": ["early-years"],
+                "oneLineDescription": "My one line descripTION",
+                "marketingInformation": {
+                    "status": "NEEDS_INTRODUCTION",
+                    "logos": ["http://server.com/logo.png", "http://server.com/logo2.png"],
+                    "showreel": "http://server.com/myshowreel.mov",
+                    "sampleVideos": ["http://server.com/sample1.mp4", "http://server.com/sample2.mp4"]
+                },
                 "curriculumAligned": "This is a curriculum 1",
                 "educationalResources": "This is a resource 2",
                 "isTranscriptProvided": false,
@@ -314,9 +354,14 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "name": "TED",
                 "currency": "GBP",
                 "ageRanges": ["late-years"],
-                "oneLineDescription": "$oneLineDescription",
-                "marketingInformation": {"status": "$status"},
                 "curriculumAligned": "This is a curriculum 3",
+                "oneLineDescription": "My new one line descripTION",
+                "marketingInformation": {
+                    "status": "WAITING_FOR_INGEST",
+                    "logos": ["http://server.com/newlogo.png", "http://server.com/newlogo2.png"],
+                    "showreel": "http://server.com/newmyshowreel.mov",
+                    "sampleVideos": ["http://server.com/newsample1.mp4", "http://server.com/newsample2.mp4"]
+                },
                 "educationalResources": "This is a resource 3",
                 "isTranscriptProvided": true,
                 "bestForTags": ["123", "345"],
@@ -344,8 +389,6 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$.currency", equalTo("GBP")))
             .andExpect(jsonPath("$.ageRange.min", equalTo(50)))
             .andExpect(jsonPath("$.ageRange.max", equalTo(60)))
-            .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
-            .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
             .andExpect(
                 jsonPath(
                     "$.pedagogyInformation.ageRanges.ids",
@@ -380,6 +423,21 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 jsonPath(
                     "$.pedagogyInformation.subjects",
                     containsInAnyOrder("sub 1", "sub 2")
+                )
+            )
+            .andExpect(jsonPath("$.oneLineDescription", equalTo("My new one line descripTION")))
+            .andExpect(jsonPath("$.marketingInformation.status", equalTo("WAITING_FOR_INGEST")))
+            .andExpect(
+                jsonPath(
+                    "$.marketingInformation.logos",
+                    containsInAnyOrder("http://server.com/newlogo.png", "http://server.com/newlogo2.png")
+                )
+            )
+            .andExpect(jsonPath("$.marketingInformation.showreel", equalTo("http://server.com/newmyshowreel.mov")))
+            .andExpect(
+                jsonPath(
+                    "$.marketingInformation.sampleVideos",
+                    containsInAnyOrder("http://server.com/newsample1.mp4", "http://server.com/newsample2.mp4")
                 )
             )
             .andExpect(jsonPath("$._links.self.href", equalTo(cpUrl)))
@@ -469,8 +527,11 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 notes = "this is a note",
                 language = "eng",
                 oneLineDescription = "This is a single-line description",
-                marketingInformation = ContentPartnerMarketingRequest(
-                    status = ContentPartnerStatusRequest.HaveReachedOut
+                marketingInformation = ContentPartnerMarketingInformationRequest(
+                    status = ContentPartnerStatusRequest.HAVE_REACHED_OUT,
+                    logos = listOf("http://server.com/logo.png"),
+                    showreel = Specified("http://server.com/showreel.mov"),
+                    sampleVideos = listOf("http://server.com/sample.mov")
                 ),
                 isTranscriptProvided = true,
                 educationalResources = "this is a resource",

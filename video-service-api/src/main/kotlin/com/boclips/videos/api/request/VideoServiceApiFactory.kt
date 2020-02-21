@@ -2,7 +2,7 @@ package com.boclips.videos.api.request
 
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
-import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
@@ -96,7 +96,7 @@ class VideoServiceApiFactory {
             notes: String? = null,
             language: String? = null,
             oneLineDescription: String? = null,
-            marketingInformation: ContentPartnerMarketingRequest? = null,
+            marketingInformation: ContentPartnerMarketingInformationRequest? = null,
             isTranscriptProvided: Boolean? = null,
             educationalResources: String? = null,
             curriculumAligned: String? = null,

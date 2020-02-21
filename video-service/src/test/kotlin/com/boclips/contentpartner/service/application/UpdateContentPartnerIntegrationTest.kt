@@ -4,7 +4,10 @@ import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
+import com.boclips.videos.api.common.ExplicitlyNull
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -14,6 +17,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.Optional
 
 class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -35,7 +39,10 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = "My content partner",
                 distributionMethods = emptySet(),
-                legalRestrictions = null
+                legalRestrictions = null,
+                marketingInformation = ContentPartnerMarketingInformationRequest(
+                    showreel = Specified("http://www.server.com/showreel.mov")
+                )
             )
         )
         videoId = saveVideo(
@@ -120,5 +127,41 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedContentPartner.legalRestriction).isNotNull
         assertThat(updatedContentPartner.legalRestriction?.id?.value).isNotBlank()
         assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("New legal restrictions")
+    }
+
+    @Test
+    fun `marketing showreel preserved when showreel is updated to null`() {
+        updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            upsertRequest = UpsertContentPartnerRequest(
+                marketingInformation = ContentPartnerMarketingInformationRequest(
+                    showreel = null
+                )
+            )
+        )
+
+        val updatedContentPartner = contentPartnerRepository.findById(
+            originalContentPartner.contentPartnerId
+        )!!
+        assertThat(updatedContentPartner.marketingInformation?.showreel).isEqualTo(
+            originalContentPartner.marketingInformation?.showreel
+        )
+    }
+
+    @Test
+    fun `marketing showreel preserved when showreel is updated with a value of ExplicitlyNull`() {
+        updateContentPartner(
+            contentPartnerId = originalContentPartner.contentPartnerId.value,
+            upsertRequest = UpsertContentPartnerRequest(
+                marketingInformation = ContentPartnerMarketingInformationRequest(
+                    showreel = ExplicitlyNull()
+                )
+            )
+        )
+
+        val updatedContentPartner = contentPartnerRepository.findById(
+            originalContentPartner.contentPartnerId
+        )!!
+        assertThat(updatedContentPartner.marketingInformation?.showreel).isNull()
     }
 }

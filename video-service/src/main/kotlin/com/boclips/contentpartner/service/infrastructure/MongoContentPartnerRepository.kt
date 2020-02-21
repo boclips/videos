@@ -141,6 +141,18 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::status,
                 updateCommand.status
             )
+            is ContentPartnerUpdateCommand.ReplaceMarketingLogos -> set(
+                ContentPartnerDocument::marketingInformation / MarketingInformationDocument::logos,
+                updateCommand.logos.map {it.toString()}
+            )
+            is ContentPartnerUpdateCommand.ReplaceMarketingShowreel -> set(
+                ContentPartnerDocument::marketingInformation / MarketingInformationDocument::showreel,
+                updateCommand.showreel.toString()
+            )
+            is ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos -> set(
+                ContentPartnerDocument::marketingInformation / MarketingInformationDocument::sampleVideos,
+                updateCommand.sampleVideos.map {it.toString()}
+            )
             is ContentPartnerUpdateCommand.ReplaceOneLineDescription -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::oneLineDescription,
                 updateCommand.oneLineDescription

@@ -14,7 +14,7 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -246,7 +246,7 @@ abstract class AbstractSpringIntegrationTest {
         notes: String? = null,
         language: String? = null,
         oneLineDescription: String? = null,
-        marketingInformation: ContentPartnerMarketingRequest? = null,
+        marketingInformation: ContentPartnerMarketingInformationRequest? = null,
         isTranscriptProvided: Boolean? = null,
         educationalResources: String? = null,
         curriculumAligned: String? = null,

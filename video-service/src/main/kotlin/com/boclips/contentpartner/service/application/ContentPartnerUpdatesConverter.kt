@@ -8,8 +8,11 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateComma
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand.ReplaceDistributionMethods
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.presentation.ContentPartnerStatusConverter
+import com.boclips.contentpartner.service.presentation.ContentPartnerMarketingStatusConverter
+import com.boclips.contentpartner.service.presentation.ContentPartnerUrlConverter
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
+import com.boclips.videos.api.common.ExplicitlyNull
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import java.util.Currency
 
@@ -35,8 +38,11 @@ class ContentPartnerUpdatesConverter(
                 commandCreator.updateAwards(),
                 commandCreator.updateHubspotId(),
                 commandCreator.updateNotes(),
-                commandCreator.updateMarketingStatus(),
                 commandCreator.updateOneLineDescription(),
+                commandCreator.updateMarketingStatus(),
+                commandCreator.updateMarketingLogos(),
+                commandCreator.updateMarketingShowreel(),
+                commandCreator.updateMarketingSampleVideos(),
                 commandCreator.updateIsTranscriptProvided(),
                 commandCreator.updateEducationalResources(),
                 commandCreator.updateCurriculumAligned(),
@@ -119,51 +125,59 @@ class ContentPartnerUpdateCommandCreator(
             ContentPartnerUpdateCommand.ReplaceNotes(id, notes)
         }
 
+    fun updateOneLineDescription(): ContentPartnerUpdateCommand.ReplaceOneLineDescription? =
+        upsertContentPartnerRequest.oneLineDescription?.let {
+            ContentPartnerUpdateCommand.ReplaceOneLineDescription(id, it)
+        }
+
     fun updateMarketingStatus(): ContentPartnerUpdateCommand.ReplaceMarketingStatus? =
         upsertContentPartnerRequest.marketingInformation?.status?.let {
-            ContentPartnerUpdateCommand.ReplaceMarketingStatus(
-                id, ContentPartnerStatusConverter.convert(it)
+            ContentPartnerUpdateCommand.ReplaceMarketingStatus(id, ContentPartnerMarketingStatusConverter.convert(it))
+        }
+
+    fun updateMarketingLogos(): ContentPartnerUpdateCommand.ReplaceMarketingLogos? =
+        upsertContentPartnerRequest.marketingInformation?.logos?.let {
+            ContentPartnerUpdateCommand.ReplaceMarketingLogos(id, it.map(ContentPartnerUrlConverter::convert))
+        }
+
+    fun updateMarketingShowreel(): ContentPartnerUpdateCommand.ReplaceMarketingShowreel? =
+        upsertContentPartnerRequest.marketingInformation?.showreel?.let {
+            ContentPartnerUpdateCommand.ReplaceMarketingShowreel(
+                id,
+                when (it) {
+                    is Specified -> ContentPartnerUrlConverter.convert(it.value)
+                    is ExplicitlyNull -> null
+                }
             )
         }
 
-    fun updateOneLineDescription(): ContentPartnerUpdateCommand.ReplaceOneLineDescription? =
-        upsertContentPartnerRequest.oneLineDescription?.let {
-            ContentPartnerUpdateCommand.ReplaceOneLineDescription(
-                id, it
-            )
+    fun updateMarketingSampleVideos(): ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos? =
+        upsertContentPartnerRequest.marketingInformation?.sampleVideos?.let {
+            ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos(id, it.map(ContentPartnerUrlConverter::convert))
         }
 
     fun updateIsTranscriptProvided(): ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided? =
         upsertContentPartnerRequest.isTranscriptProvided?.let {
-            ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided(
-                id, it
-            )
+            ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided(id, it)
         }
 
     fun updateEducationalResources(): ContentPartnerUpdateCommand.ReplaceEducationalResources? =
         upsertContentPartnerRequest.educationalResources?.let {
-            ContentPartnerUpdateCommand.ReplaceEducationalResources(
-                id, it
-            )
+            ContentPartnerUpdateCommand.ReplaceEducationalResources(id, it)
         }
 
     fun updateCurriculumAligned(): ContentPartnerUpdateCommand.ReplaceCurriculumAligned? =
         upsertContentPartnerRequest.curriculumAligned?.let {
-            ContentPartnerUpdateCommand.ReplaceCurriculumAligned(
-                id, it
-            )
+            ContentPartnerUpdateCommand.ReplaceCurriculumAligned(id, it)
         }
 
     fun updateBestForTags(): ContentPartnerUpdateCommand.ReplaceBestForTags? =
         upsertContentPartnerRequest.bestForTags?.let {
-            ContentPartnerUpdateCommand.ReplaceBestForTags(
-                id, it
-            )
+            ContentPartnerUpdateCommand.ReplaceBestForTags(id, it)
         }
+
     fun updateSubjects(): ContentPartnerUpdateCommand.ReplaceSubjects? =
         upsertContentPartnerRequest.subjects?.let {
-            ContentPartnerUpdateCommand.ReplaceSubjects(
-                id, it
-            )
+            ContentPartnerUpdateCommand.ReplaceSubjects(id, it)
         }
 }

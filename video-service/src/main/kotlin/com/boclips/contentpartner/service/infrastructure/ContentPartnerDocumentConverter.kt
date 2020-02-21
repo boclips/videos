@@ -3,15 +3,19 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerMarketingInformation
 import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
+import com.boclips.videos.api.common.ExplicitlyNull
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.types.ObjectId
+import java.net.MalformedURLException
+import java.net.URL
 import java.util.Currency
 import java.util.Locale
 
@@ -49,15 +53,23 @@ object ContentPartnerDocumentConverter {
                 MarketingInformationDocument(
                     oneLineDescription = it.oneLineDescription,
                     status = when (it.status) {
-                        ContentPartnerStatus.NeedsIntroduction -> ContentPartnerStatusDocument.NeedsIntroduction
-                        ContentPartnerStatus.HaveReachedOut -> ContentPartnerStatusDocument.HaveReachedOut
-                        ContentPartnerStatus.NeedsContent -> ContentPartnerStatusDocument.NeedsContent
-                        ContentPartnerStatus.WaitingForIngest -> ContentPartnerStatusDocument.WaitingForIngest
-                        ContentPartnerStatus.ShouldAddToSite -> ContentPartnerStatusDocument.ShouldAddToSite
-                        ContentPartnerStatus.ShouldPromote -> ContentPartnerStatusDocument.ShouldPromote
-                        ContentPartnerStatus.Promoted -> ContentPartnerStatusDocument.Promoted
+                        ContentPartnerStatus.NEEDS_INTRODUCTION -> ContentPartnerStatusDocument.NEEDS_INTRODUCTION
+                        ContentPartnerStatus.HAVE_REACHED_OUT -> ContentPartnerStatusDocument.HAVE_REACHED_OUT
+                        ContentPartnerStatus.NEEDS_CONTENT -> ContentPartnerStatusDocument.NEEDS_CONTENT
+                        ContentPartnerStatus.WAITING_FOR_INGEST -> ContentPartnerStatusDocument.WAITING_FOR_INGEST
+                        ContentPartnerStatus.SHOULD_ADD_TO_SITE -> ContentPartnerStatusDocument.SHOULD_ADD_TO_SITE
+                        ContentPartnerStatus.SHOULD_PROMOTE -> ContentPartnerStatusDocument.SHOULD_PROMOTE
+                        ContentPartnerStatus.PROMOTED -> ContentPartnerStatusDocument.PROMOTED
                         null -> null
-                    }
+                    },
+                    logos = it.logos?.map { logoUrl -> logoUrl.toString() },
+                    showreel = it.showreel?.let { showreel ->
+                        when (showreel) {
+                            is Specified -> showreel.value.toString()
+                            is ExplicitlyNull -> null
+                        }
+                    },
+                    sampleVideos = it.sampleVideos?.map { sampleVideoUrl -> sampleVideoUrl.toString() }
                 )
             },
             isTranscriptProvided = contentPartner.pedagogyInformation?.isTranscriptProvided,
@@ -95,18 +107,21 @@ object ContentPartnerDocumentConverter {
             language = document.language?.let { Locale.forLanguageTag(it) },
             contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) },
             marketingInformation = document.marketingInformation?.let {
-                MarketingInformation(
+                ContentPartnerMarketingInformation(
                     oneLineDescription = it.oneLineDescription,
                     status = when (it.status) {
-                        ContentPartnerStatusDocument.NeedsIntroduction -> ContentPartnerStatus.NeedsIntroduction
-                        ContentPartnerStatusDocument.HaveReachedOut -> ContentPartnerStatus.HaveReachedOut
-                        ContentPartnerStatusDocument.NeedsContent -> ContentPartnerStatus.NeedsContent
-                        ContentPartnerStatusDocument.WaitingForIngest -> ContentPartnerStatus.WaitingForIngest
-                        ContentPartnerStatusDocument.ShouldAddToSite -> ContentPartnerStatus.ShouldAddToSite
-                        ContentPartnerStatusDocument.ShouldPromote -> ContentPartnerStatus.ShouldPromote
-                        ContentPartnerStatusDocument.Promoted -> ContentPartnerStatus.Promoted
+                        ContentPartnerStatusDocument.NEEDS_INTRODUCTION -> ContentPartnerStatus.NEEDS_INTRODUCTION
+                        ContentPartnerStatusDocument.HAVE_REACHED_OUT -> ContentPartnerStatus.HAVE_REACHED_OUT
+                        ContentPartnerStatusDocument.NEEDS_CONTENT -> ContentPartnerStatus.NEEDS_CONTENT
+                        ContentPartnerStatusDocument.WAITING_FOR_INGEST -> ContentPartnerStatus.WAITING_FOR_INGEST
+                        ContentPartnerStatusDocument.SHOULD_ADD_TO_SITE -> ContentPartnerStatus.SHOULD_ADD_TO_SITE
+                        ContentPartnerStatusDocument.SHOULD_PROMOTE -> ContentPartnerStatus.SHOULD_PROMOTE
+                        ContentPartnerStatusDocument.PROMOTED -> ContentPartnerStatus.PROMOTED
                         null -> null
-                    }
+                    },
+                    logos = it.logos?.mapNotNull(::safeToUrl),
+                    showreel = it.showreel?.let(::safeToUrl)?.let { url -> Specified(url) },
+                    sampleVideos = it.sampleVideos?.mapNotNull(::safeToUrl)
                 )
             },
             pedagogyInformation = PedagogyInformation(
@@ -148,4 +163,11 @@ object ContentPartnerDocumentConverter {
             .map(DistributionMethodDocumentConverter::fromDocument)
             .toSet()
     }
+
+    private fun safeToUrl(s: String): URL? =
+        try {
+            URL(s)
+        } catch (e: MalformedURLException) {
+            null
+        }
 }
