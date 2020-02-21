@@ -515,7 +515,6 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                 mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=INVALID").asTeacher())
                     .andExpect(status().isForbidden)
             }
-
         }
 
         @Nested
@@ -548,6 +547,26 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
                 mockMvc.perform(get("/v1/collections/$collectionId"))
                     .andExpect(status().isForbidden)
+            }
+
+            @Test
+            fun `does not return collection attachments`() {
+                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+                val collectionId = createCollection(title = "Some Public Collection", public = true)
+                updateCollectionAttachment(
+                    collectionId = collectionId,
+                    attachmentDescription = "test attachment",
+                    attachmentType = "LESSON_PLAN",
+                    attachmentURL = "www.google.com"
+                )
+
+                mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=TEST"))
+                    .andExpect(status().isOk)
+                    .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                    .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                    .andExpect(jsonPath("$.title", equalTo("Some Public Collection")))
+                    .andExpect(jsonPath("$.attachments", hasSize<Any>(0)))
+
             }
         }
     }

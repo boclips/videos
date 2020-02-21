@@ -4,6 +4,9 @@ import com.boclips.eventbus.domain.ResourceType
 import com.boclips.eventbus.events.resource.ResourcesSearched
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
+import com.boclips.users.client.model.TeacherPlatformAttributes
+import com.boclips.users.client.model.User
+import com.boclips.videos.api.request.collection.AttachmentRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
@@ -224,6 +227,28 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                     })
                 ).collection
             ).isNull()
+        }
+
+        @Test
+        fun `collection does not contain attachments for unauthenticated users with share code`() {
+            val collectionId = saveCollection(
+                owner = "12345", public = false, attachment = AttachmentRequest(
+                    linkToResource = "www.lesson-plan.com",
+                    description = "new description",
+                    type = "LESSON_PLAN"
+                )
+            )
+            userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("ABCD")))
+
+            val collection = collectionReadService.find(
+                collectionId,
+                UserFactory.sample(isAuthenticated = false),
+                "12345",
+                "ABCD"
+
+            ).collection!!
+
+            assertThat(collection.attachments.isEmpty()).isTrue()
         }
     }
 

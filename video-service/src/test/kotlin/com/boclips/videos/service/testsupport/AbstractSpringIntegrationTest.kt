@@ -18,6 +18,7 @@ import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.SelectedVideosAccessRule
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
+import com.boclips.videos.api.request.collection.AttachmentRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -74,7 +75,15 @@ import java.util.UUID
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test", "fakes", "fakes-kaltura", "fakes-search", "fakes-youtube", "fakes-security", "fakes-signed-link")
+@ActiveProfiles(
+    "test",
+    "fakes",
+    "fakes-kaltura",
+    "fakes-search",
+    "fakes-youtube",
+    "fakes-security",
+    "fakes-signed-link"
+)
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
@@ -334,7 +343,8 @@ abstract class AbstractSpringIntegrationTest {
         bookmarkedBy: String? = null,
         subjects: Set<Subject> = emptySet(),
         ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null
+        ageRangeMax: Int? = null,
+        attachment: AttachmentRequest? = null
     ): CollectionId {
         val user = UserFactory.sample(id = owner)
 
@@ -348,7 +358,8 @@ abstract class AbstractSpringIntegrationTest {
             updateCollectionRequest = UpdateCollectionRequest(
                 isPublic = public,
                 subjects = subjects.map { it.id.value }.toSet(),
-                ageRange = com.boclips.videos.api.request.agerange.AgeRangeRequest(ageRangeMin, ageRangeMax)
+                ageRange = com.boclips.videos.api.request.agerange.AgeRangeRequest(ageRangeMin, ageRangeMax),
+                attachment = attachment
             ),
             requester = user
         )

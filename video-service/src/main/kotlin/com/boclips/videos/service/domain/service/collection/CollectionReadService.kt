@@ -73,7 +73,10 @@ class CollectionReadService(
         collectionRepository.find(id)?.let {
             val accessValidationResult = validateReadAccess(it, user, referer, shareCode)
             return if (accessValidationResult.successful) {
-                FindCollectionResult.success(collection = loadWithAccessibleVideos(it, user))
+                var collection = loadWithAccessibleVideos(it, user)
+                collection = loadWithAccessibleAttachments(collection, user, referer, shareCode)
+
+                FindCollectionResult.success(collection = collection)
             } else {
                 FindCollectionResult.error(accessValidationResult = accessValidationResult)
             }
@@ -92,6 +95,20 @@ class CollectionReadService(
                 loadWithAccessibleVideos(it, user)
             }
         }
+
+    private fun loadWithAccessibleAttachments(
+        collection: Collection,
+        user: User,
+        referer: String?,
+        shareCode: String?
+    ): Collection {
+        return if (!user.isAuthenticated && shareCode != null && referer != null) {
+            collection.copy(attachments = emptySet())
+        }
+        else {
+            collection
+        }
+    }
 
     private fun loadWithAccessibleVideos(
         collection: Collection,
