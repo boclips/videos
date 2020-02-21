@@ -31,13 +31,13 @@ class VideoService(
         val videoIds = videoSearchService.search(searchRequest).map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
 
-        logger.info { "Returning ${playableVideos.size} videos for query $query" }
+        logger.info { "Returning ${playableVideos.size} videos for query $query and access rule $videoAccessRule" }
 
         return playableVideos
     }
 
     fun count(videoSearchQuery: VideoSearchQuery, videoAccessRule: VideoAccessRule): Long {
-        logger.info { "Counted videos for query $videoSearchQuery" }
+        logger.info { "Counted videos for query $videoSearchQuery and access rule $videoAccessRule\"" }
         return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccessRule))
     }
 
