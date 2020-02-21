@@ -15,6 +15,8 @@ open class User(
 ) {
     val accessRules: AccessRules by lazy { accessRulesSupplier(this) }
     val overrideId: UserId? by lazy { overrideIdSupplier() }
+
+    override fun toString() = "User(id=$id)"
 }
 
 data class RequestContext(val origin: String?)
