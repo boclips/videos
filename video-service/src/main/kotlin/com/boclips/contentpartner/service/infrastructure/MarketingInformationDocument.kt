@@ -1,7 +1,5 @@
 package com.boclips.contentpartner.service.infrastructure
 
-import java.net.URL
-
 data class MarketingInformationDocument(
     val oneLineDescription: String? = null,
     val status: ContentPartnerStatusDocument? = null,
