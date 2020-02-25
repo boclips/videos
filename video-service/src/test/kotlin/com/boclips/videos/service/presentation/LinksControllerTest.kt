@@ -137,9 +137,9 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
+            .andExpect(jsonPath("$._links.contentPartnersSignedUploadLink").doesNotExist())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
     }
-
 
     @Test
     fun `return age ranges link when called as Boclips employee api user`() {
@@ -161,6 +161,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
             .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
+            .andExpect(
+                jsonPath(
+                    "$._links.contentPartnersSignedUploadLink.href",
+                    containsString("content-partners/signed-upload-link")
+                )
+            )
             .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
             .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.marketingStatuses.href", endsWith("/marketing-statuses")))

@@ -66,6 +66,7 @@ class LinksController(
                 legalRestrictionsLinkBuilder.getAllLink(),
                 contentPartnersLinkBuilder.contentPartnerLink(null),
                 contentPartnersLinkBuilder.contentPartnersLink(),
+                contentPartnersLinkBuilder.contentPartnersSignedUploadLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
                 videoTypeLinkBuilder.videoTypes(),
