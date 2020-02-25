@@ -82,7 +82,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                             .boolQuery()
                             .must(
                                 QueryBuilders
-                                    .matchQuery(
+                                    .matchPhraseQuery(
                                         CollectionDocument.TITLE,
                                         query.phrase
                                     )
@@ -95,7 +95,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                             .boolQuery()
                             .must(
                                 QueryBuilders
-                                    .matchQuery(
+                                    .matchPhraseQuery(
                                         CollectionDocument.DESCRIPTION,
                                         query.phrase
                                     )
